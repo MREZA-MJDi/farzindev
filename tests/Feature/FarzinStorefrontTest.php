@@ -331,6 +331,40 @@ class FarzinStorefrontTest extends TestCase
         $this->assertAuthenticatedAs($user);
     }
 
+    public function test_customer_can_login_with_persian_mobile_digits(): void
+    {
+        $customer = $this->customer([
+            'email' => 'mobile-login@farzin.test',
+            'phone' => '09123456789',
+        ]);
+
+        $this->post(route('login.store'), [
+            'phone' => '۰۹۱۲۳۴۵۶۷۸۹',
+            'password' => 'password',
+        ])->assertRedirect(route('account.index'));
+
+        $this->assertAuthenticatedAs($customer);
+    }
+
+    public function test_customer_can_register_with_mobile_without_email(): void
+    {
+        $this->post(route('register.store'), [
+            'first_name' => 'مریم',
+            'last_name' => 'فرجی',
+            'phone' => '۰۹۱۲۳۴۵۶۷۸۹',
+            'password' => 'FarzinPass123',
+            'password_confirmation' => 'FarzinPass123',
+            'terms' => '1',
+        ])->assertRedirect(route('account.index'));
+
+        $this->assertDatabaseHas('users', [
+            'phone' => '09123456789',
+            'email' => null,
+            'role' => 'customer',
+            'name' => 'مریم فرجی',
+        ]);
+    }
+
     public function test_invalid_login_does_not_authenticate_the_user(): void
     {
         $user = $this->customer(['email' => 'customer@farzin.test']);
