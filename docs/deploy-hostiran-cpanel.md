@@ -25,7 +25,8 @@ If the primary domain is fixed to `public_html`:
 
 - Put the Laravel application in a private directory such as `/home/CPANEL_USER/farzin-app` (not inside `public_html`).
 - Copy the *contents* of the project's `public/` folder into `public_html/`, including `.htaccess` and the prebuilt `build/` assets.
-- Edit `public_html/index.php` so its two bootstrap paths target the private app folder, for example:
+- Edit `public_html/index.php` so all three Laravel paths target the private app folder. If the directories are siblings (`public_html` and `farzin-app`), use:
+  - `if (file_exists($maintenance = __DIR__.'/../farzin-app/storage/framework/maintenance.php')) { require $maintenance; }`
   - `require __DIR__.'/../farzin-app/vendor/autoload.php';`
   - `$app = require_once __DIR__.'/../farzin-app/bootstrap/app.php';`
   Replace `farzin-app` with the actual directory name. Do **not** copy `.env`, `vendor`, `storage`, `app`, or `database` into `public_html`.
