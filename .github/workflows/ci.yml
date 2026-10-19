@@ -13,8 +13,8 @@ permissions:
   contents: read
 
 jobs:
-  backend-tests:
-    name: Laravel feature tests
+  quality:
+    name: Laravel tests and production build
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -27,6 +27,12 @@ jobs:
           extensions: mbstring, pdo_sqlite, sqlite3, fileinfo, gd, curl
           coverage: none
 
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
       - name: Install Composer dependencies
         run: composer install --prefer-dist --no-interaction --no-progress
 
@@ -36,24 +42,11 @@ jobs:
       - name: Prepare application key
         run: php artisan key:generate
 
-      - name: Run Laravel tests
-        run: php artisan test
-
-  frontend-build:
-    name: Vite production build
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: 22
-          cache: npm
-
       - name: Install npm dependencies
         run: npm ci
 
       - name: Build production assets
         run: npm run build
+
+      - name: Run Laravel tests
+        run: php artisan test
