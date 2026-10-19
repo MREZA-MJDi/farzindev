@@ -9,50 +9,25 @@ class CategorySeeder extends Seeder
 {
     public function run(): void
     {
+        // Hide only the known demo categories from the old furniture catalogue.
+        Category::query()
+            ->whereIn('slug', ['furniture', 'chairs', 'tables', 'decor', 'accessories'])
+            ->update(['is_active' => false]);
+
         $categories = [
             [
-                'name' => 'مبلمان',
-                'slug' => 'furniture',
-                'description' => 'مجموعه مبلمان مدرن و مینیمال SilaGallery',
-                'image' => 'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?auto=format&fit=crop&w=1200&q=85',
+                'name' => 'هود آشپزخانه',
+                'slug' => 'hoods',
+                'description' => 'انواع هود آشپزخانه برای تهویه بهتر، کاهش بو و هماهنگی با طراحی آشپزخانه.',
                 'is_active' => true,
                 'sort_order' => 1,
             ],
-
             [
-                'name' => 'صندلی',
-                'slug' => 'chairs',
-                'description' => 'صندلی‌های راحتی، دکوراتیو و ناهارخوری',
-                'image' => 'https://images.unsplash.com/photo-1503602642458-232111445657?auto=format&fit=crop&w=1200&q=85',
+                'name' => 'سینک ظرفشویی',
+                'slug' => 'sinks',
+                'description' => 'راهنمای انتخاب و مشاهده مدل‌های سینک ظرفشویی برای آشپزخانه‌های مدرن و کاربردی.',
                 'is_active' => true,
                 'sort_order' => 2,
-            ],
-
-            [
-                'name' => 'میز',
-                'slug' => 'tables',
-                'description' => 'میزهای پذیرایی، عسلی و ناهارخوری',
-                'image' => 'https://images.unsplash.com/photo-1532372320572-cda25653a26d?auto=format&fit=crop&w=1200&q=85',
-                'is_active' => true,
-                'sort_order' => 3,
-            ],
-
-            [
-                'name' => 'دکوراسیون',
-                'slug' => 'decor',
-                'description' => 'محصولات دکوراتیو برای فضای زندگی',
-                'image' => 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?auto=format&fit=crop&w=1200&q=85',
-                'is_active' => true,
-                'sort_order' => 4,
-            ],
-
-            [
-                'name' => 'اکسسوری',
-                'slug' => 'accessories',
-                'description' => 'اکسسوری‌های خاص برای تکمیل فضای شما',
-                'image' => 'https://images.unsplash.com/photo-1507473885765-e6ed057f782c?auto=format&fit=crop&w=1200&q=85',
-                'is_active' => true,
-                'sort_order' => 5,
             ],
         ];
 

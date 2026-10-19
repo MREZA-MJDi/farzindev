@@ -1,8 +1,8 @@
 @extends('layouts.app')
 
-@section('title', 'ورود | SilaGallery')
+@section('title', 'ورود | فرزین')
 
-@section('description', 'ورود به حساب کاربری SilaGallery')
+@section('description', 'ورود به حساب کاربری فرزین')
 
 @section('content')
 
@@ -25,7 +25,7 @@
                         </h1>
 
                         <p class="mt-3 text-sm text-[var(--livora-stone)]">
-                            برای ادامه وارد حساب SilaGallery خود شوید.
+                            برای ادامه وارد حساب کاربری فرزین شوید.
                         </p>
 
                     </div>
@@ -53,13 +53,19 @@
                             @csrf
 
                             <x-ui.input
-                                type="email"
-                                name="email"
-                                label="ایمیل"
-                                placeholder="example@email.com"
-                                :value="old('email')"
+                                type="text"
+                                name="phone"
+                                label="شماره موبایل یا ایمیل مدیر"
+                                placeholder="09123456789 یا admin@farajihome.com"
+                                :value="old('phone')"
+                                autocomplete="username"
+                                inputmode="text"
                                 required
                             />
+
+                            <p class="-mt-3 text-xs leading-6 text-[var(--livora-stone)]">
+                                مدیر فروشگاه می‌تواند با ایمیل مدیریتی خود نیز وارد شود.
+                            </p>
 
                             <div>
 
@@ -73,10 +79,10 @@
                                     </label>
 
                                     <a
-                                        href="#"
+                                        href="{{ route('contact') }}"
                                         class="text-xs text-[var(--livora-accent)]"
                                     >
-                                        رمز عبور را فراموش کرده‌اید؟
+                                        برای بازیابی رمز عبور با پشتیبانی تماس بگیرید
                                     </a>
 
                                 </div>

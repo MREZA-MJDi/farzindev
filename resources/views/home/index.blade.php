@@ -1,10 +1,10 @@
 @extends('layouts.app')
 
-@section('title', 'سیلا گالری | مبلمان و لوازم خانه')
+@section('title', 'فرزین فرجی | تولیدکننده هود و سینک آشپزخانه')
 
 @section(
     'description',
-    'SilaGallery؛ انتخابی دقیق برای خانه‌ای که قرار است ماندگار باشد. کشف مجموعه مبلمان، دکوراسیون و خرید اقساطی.'
+    'فرزین فرجی؛ معرفی مجموعه و تولید هود و سینک آشپزخانه، آشنایی با رویکرد تولید و مشاهده کاتالوگ محصولات فرزین.'
 )
 
 @section('canonical', url('/'))
@@ -18,12 +18,12 @@
 
     <meta
         property="og:title"
-        content="SilaGallery | مبلمان و لوازم خانه"
+        content="فرزین فرجی | تولید هود و سینک آشپزخانه"
     >
 
     <meta
         property="og:description"
-        content="کشف مجموعه منتخب SilaGallery برای فضاهایی که قرار است شخصیت داشته باشند."
+        content="با فرزین فرجی و مجموعه هود و سینک فرزین آشنا شوید؛ مسیر تولید، محصولات و اطلاعات فنی."
     >
 
     <meta
@@ -38,19 +38,19 @@
 
     <meta
         name="twitter:title"
-        content="SilaGallery | مبلمان و لوازم خانه"
+        content="فرزین فرجی | تولید هود و سینک آشپزخانه"
     >
 
     <meta
         name="twitter:description"
-        content="کشف مجموعه منتخب SilaGallery برای فضاهایی که قرار است شخصیت داشته باشند."
+        content="با فرزین فرجی و مجموعه هود و سینک فرزین آشنا شوید؛ مسیر تولید، محصولات و اطلاعات فنی."
     >
 
     <script type="application/ld+json">
     {
         "@@context": "https://schema.org",
         "@@type": "WebSite",
-        "name": "SilaGallery",
+        "name": "فرزین فرجی | هود و سینک آشپزخانه",
         "url": @json(url('/')),
         "potentialAction": {
             "@@type": "SearchAction",
@@ -64,9 +64,15 @@
     {
         "@@context": "https://schema.org",
         "@@type": "Organization",
-        "name": "SilaGallery",
-        "url": @json(url('/'))
-        }
+        "name": "فرزین فرجی",
+        "url": @json(url('/')),
+        "description": "معرفی فرزین فرجی و محصولات هود و سینک آشپزخانه",
+        "founder": {
+            "@@type": "Person",
+            "name": "فرزین فرجی"
+        },
+        "knowsAbout": ["هود آشپزخانه", "سینک ظرفشویی"]
+    }
 </script>
 
 @endpush
@@ -132,17 +138,17 @@
 
                                 <span class="h-px w-8 bg-[var(--livora-accent)]"></span>
 
-                                Furniture & Living
+                                FARZIN · MANUFACTURING
 
                             </div>
 
 
                             <h1 class="sila-home-hero-title mt-6 font-semibold leading-[1.06] tracking-tight text-[var(--livora-ink)]">
 
-                                خانه‌ای که
+                                فرزین فرجی
 
                                 <span class="block text-[var(--livora-accent)]">
-                                    شبیه توست.
+                                    از نگاه تولید، تا جزئیات آشپزخانه.
                                 </span>
 
                             </h1>
@@ -150,8 +156,9 @@
 
                             <p class="mt-7 max-w-lg text-sm leading-8 text-[var(--livora-stone)] sm:text-base">
 
-                                مجموعه‌ای منتخب از مبلمان و عناصر خانه برای ساختن فضایی
-                                گرم، ماندگار و دقیق؛ از انتخاب اول تا آخرین جزئیات.
+                                فرزین در حوزه هود و سینک آشپزخانه فعالیت می‌کند.
+                                اینجا می‌توانید با مجموعه، محصولات و نکاتی که در انتخاب یک محصول کاربردی اهمیت دارند آشنا شوید؛
+                                از شناخت مدل‌ها تا بررسی مشخصات پیش از خرید.
 
                             </p>
 
@@ -161,10 +168,10 @@
                                 {{-- CTA 01 --}}
 
                                 <a
-                                    href="{{ route('shop.index') }}"
+                                    href="{{ route('about') }}"
                                     class="inline-flex items-center justify-center rounded-2xl border border-[var(--livora-border)] bg-[var(--livora-white)] px-6 py-4 text-sm font-medium text-[var(--livora-ink)] transition-colors duration-300 hover:border-[var(--livora-ink)]"
                               >
-                                    کشف مجموعه
+                                    آشنایی با مجموعه
 
 
                                 </a>
@@ -191,11 +198,11 @@
                             <div class="rounded-2xl border border-[var(--livora-border)] bg-[var(--livora-white)] p-4">
 
                                 <p class="text-[10px] uppercase tracking-[0.16em] text-[var(--livora-stone)]">
-                                    Quality
+                                    OUR WORK
                                 </p>
 
                                 <p class="mt-2 text-sm font-semibold">
-                                    انتخاب‌شده
+                                    هود و سینک
                                 </p>
 
                             </div>
@@ -204,11 +211,11 @@
                             <div class="rounded-2xl border border-[var(--livora-border)] bg-[var(--livora-white)] p-4">
 
                                 <p class="text-[10px] uppercase tracking-[0.16em] text-[var(--livora-stone)]">
-                                    Payment
+                                    PRODUCT DETAIL
                                 </p>
 
                                 <p class="mt-2 text-sm font-semibold">
-                                    اقساطی
+                                    توجه به جزئیات
                                 </p>
 
                             </div>
@@ -217,11 +224,11 @@
                             <div class="rounded-2xl border border-[var(--livora-border)] bg-[var(--livora-white)] p-4">
 
                                 <p class="text-[10px] uppercase tracking-[0.16em] text-[var(--livora-stone)]">
-                                    Service
+                                    FARZIN
                                 </p>
 
                                 <p class="mt-2 text-sm font-semibold">
-                                    همراه شما
+                                    مسیر تولید
                                 </p>
 
                             </div>
@@ -390,7 +397,7 @@
                             <div class="flex min-h-[430px] items-center justify-center bg-[var(--livora-surface)]">
 
                                 <span class="text-sm tracking-[0.2em] text-[var(--livora-stone)]">
-                                    SilaGallery
+                                    فرزین
                                 </span>
 
                             </div>
@@ -407,6 +414,46 @@
 
 
         {{-- =========================================================
+             MAKER STORY
+        ========================================================== --}}
+        <section class="relative overflow-hidden border-t border-[var(--livora-border)] bg-[var(--livora-ink)] text-white">
+            <div aria-hidden="true" class="pointer-events-none absolute -left-28 -top-24 h-80 w-80 rounded-full bg-[var(--livora-accent)]/20 blur-3xl"></div>
+            <x-layout.container>
+                <div class="relative grid gap-10 py-16 sm:py-20 lg:grid-cols-[0.85fr_1.15fr] lg:items-end lg:py-24">
+                    <div>
+                        <p class="text-[10px] font-semibold uppercase tracking-[0.24em] text-cyan-300">THE MAKER BEHIND FARZIN</p>
+                        <h2 class="mt-5 max-w-xl text-3xl font-semibold leading-tight tracking-tight sm:text-4xl lg:text-5xl">
+                            هر محصول،
+                            <span class="block text-cyan-300">داستانی از تصمیم‌ها و جزئیات دارد.</span>
+                        </h2>
+                        <p class="mt-6 max-w-lg text-sm leading-8 text-white/65">
+                            فرزین فرجی و مجموعه فرزین در حوزه هود و سینک آشپزخانه فعالیت می‌کنند.
+                            هدف این صفحه، معرفی مجموعه و کمک به شناخت دقیق‌تر محصولات، مشخصات و انتخاب مناسب برای هر فضاست.
+                        </p>
+                        <a href="{{ route('about') }}" class="mt-8 inline-flex items-center gap-3 rounded-xl border border-white/20 px-5 py-3 text-sm font-medium text-white transition hover:border-cyan-300 hover:bg-white/5">
+                            آشنایی با فرزین فرجی <span aria-hidden="true">←</span>
+                        </a>
+                    </div>
+                    <div class="grid gap-3 sm:grid-cols-2">
+                        <article class="rounded-3xl border border-white/10 bg-white/[0.04] p-6 sm:p-7">
+                            <span class="text-xs font-medium tracking-[0.18em] text-cyan-300">01 / PRODUCT</span>
+                            <h3 class="mt-6 text-lg font-semibold">شناخت محصول</h3>
+                            <p class="mt-3 text-sm leading-7 text-white/60">ابعاد، امکانات، موجودی و مشخصات هر مدل را در صفحه محصول بررسی کنید.</p>
+                        </article>
+                        <article class="rounded-3xl border border-white/10 bg-white/[0.04] p-6 sm:p-7">
+                            <span class="text-xs font-medium tracking-[0.18em] text-cyan-300">02 / MAKER</span>
+                            <h3 class="mt-6 text-lg font-semibold">شناخت مجموعه</h3>
+                            <p class="mt-3 text-sm leading-7 text-white/60">با مسیر کاری فرزین و تمرکز مجموعه بر هود و سینک آشپزخانه آشنا شوید.</p>
+                        </article>
+                        <div class="sm:col-span-2 rounded-2xl border border-cyan-300/20 bg-cyan-300/[0.06] px-5 py-4">
+                            <p class="text-sm font-medium">محصولات واقعی، اطلاعات شفاف، انتخاب آگاهانه</p>
+                        </div>
+                    </div>
+                </div>
+            </x-layout.container>
+        </section>
+
+        {{-- =========================================================
              CATEGORY DISCOVERY
         ========================================================== --}}
 
@@ -421,17 +468,16 @@
                         <div class="max-w-2xl">
 
                             <p class="text-[10px] font-medium uppercase tracking-[0.22em] text-[var(--livora-accent)]">
-                                Shop by space
+                                SHOP BY CATEGORY
                             </p>
 
                             <h2 class="mt-3 text-3xl font-semibold tracking-tight sm:text-4xl">
-                                برای هر گوشه، یک انتخاب دقیق.
+                                برای هر آشپزخانه، انتخابی دقیق.
                             </h2>
 
                             <p class="mt-4 max-w-xl text-sm leading-8 text-[var(--livora-stone)]">
 
-                                از نشیمن و اتاق خواب تا میز ناهارخوری و جزئیات کوچک‌تر،
-                                دسته‌بندی مناسب فضای خودتان را پیدا کنید.
+                                از هودهای آشپزخانه تا سینک‌های ظرفشویی، مدل‌ها را بر اساس نیاز و فضای نصب بررسی کنید.
 
                             </p>
 
@@ -453,7 +499,7 @@
                     </div>
 
 
-                    <div class="mt-9 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                    <div class="mt-9 grid gap-4 sm:grid-cols-2 lg:grid-cols-2">
 
                         @foreach($categories->take(4) as $category)
 
@@ -494,11 +540,11 @@
                             </p>
 
                             <h2 class="mt-3 text-3xl font-semibold tracking-tight sm:text-4xl">
-                                انتخاب‌های این فصل
+                                محصولات فرزین
                             </h2>
 
                             <p class="mt-3 max-w-xl text-sm leading-8 text-[var(--livora-stone)]">
-                                محصولاتی که برای فرم، کیفیت و حضورشان در فضا انتخاب شده‌اند.
+                                مشخصات، ویژگی‌ها و مدل‌های موجود را کنار هم ببینید و گزینه مناسب آشپزخانه خود را پیدا کنید.
                             </p>
 
                         </div>
@@ -538,7 +584,7 @@
                         <div class="mt-10 rounded-3xl border border-[var(--livora-border)] bg-[var(--livora-surface)] p-10 text-center">
 
                             <p class="text-sm text-[var(--livora-stone)]">
-                                محصولات منتخب به‌زودی اینجا نمایش داده می‌شوند.
+                                محصولات فرزین پس از ثبت در پنل مدیریت، در این بخش نمایش داده می‌شوند.
                             </p>
 
                         </div>
@@ -553,189 +599,50 @@
 
 
         {{-- =========================================================
-             INSTALLMENT HERO
+             FARZIN CHOOSING GUIDE
         ========================================================== --}}
 
         <section class="border-t border-[var(--livora-border)] bg-[var(--livora-ink)] text-white">
-
             <x-layout.container>
-
                 <div class="py-16 sm:py-20">
-
                     <div class="grid items-center gap-10 lg:grid-cols-[1.1fr_0.9fr]">
-
-
                         <div>
-
-                            <p class="text-[10px] font-medium uppercase tracking-[0.22em] text-white/45">
-                                SilaGallery INSTALLMENTS
+                            <p class="text-[10px] font-medium uppercase tracking-[0.22em] text-cyan-300">
+                                FARZIN BUYING GUIDE
                             </p>
-
                             <h2 class="mt-4 max-w-xl text-3xl font-semibold tracking-tight sm:text-4xl lg:text-5xl">
-
-                                خانه‌تان را انتخاب کنید.
-
-                                <span class="block text-white/50">
-                                    پرداختش را برنامه‌ریزی کنید.
-                                </span>
-
+                                انتخاب بهتر،
+                                <span class="block text-cyan-300">از شناخت جزئیات شروع می‌شود.</span>
                             </h2>
-
-
-                            <p class="mt-6 max-w-xl text-sm leading-8 text-white/60">
-
-                                بعضی از محصولات Livora می‌توانند با شرایط اقساطی
-                                تعریف‌شده توسط فروشگاه خریداری شوند؛
-                                پیش‌پرداخت، تعداد چک و فاصله سررسید از قبل مشخص است.
-
+                            <p class="mt-6 max-w-xl text-sm leading-8 text-white/70">
+                                پیش از خرید هود یا سینک، ابعاد محل نصب، نوع استفاده و مشخصات فنی را بررسی کنید.
+                                اگر بین چند مدل مردد هستید، برای انتخاب مناسب‌تر با فرزین تماس بگیرید.
                             </p>
-
-
-                            {{-- Installment CTA --}}
-
-                            <a
-                                href="{{ route('shop.index') }}"
-                                class="mt-8 inline-flex items-center rounded-2xl bg-white px-6 py-4 text-sm font-medium text-[var(--livora-ink)] transition-colors duration-300 hover:bg-[var(--livora-cream)]"
-                            >
-                                مشاهده محصولات اقساطی
+                            <a href="{{ route('categories.index') }}"
+                               class="mt-8 inline-flex items-center rounded-2xl bg-cyan-300 px-6 py-4 text-sm font-semibold text-slate-950 transition hover:bg-white">
+                                بررسی دسته‌بندی‌ها
                             </a>
-
                         </div>
-
-
                         <div class="grid grid-cols-2 gap-3">
-
                             <div class="rounded-3xl border border-white/10 bg-white/5 p-5 sm:p-6">
-
-                                <span class="text-[10px] uppercase tracking-[0.18em] text-white/40">
-                                    Today
-                                </span>
-
-                                <p class="mt-4 text-2xl font-semibold">
-                                    50%
-                                </p>
-
-                                <p class="mt-2 text-xs leading-6 text-white/45">
-                                    پیش‌پرداخت نمونه
-                                </p>
-
+                                <span class="text-[10px] uppercase tracking-[0.18em] text-white/50">01 / FIT</span>
+                                <p class="mt-4 text-lg font-semibold">ابعاد و نصب</p>
+                                <p class="mt-2 text-xs leading-6 text-white/60">عرض کابینت و فضای نصب را با اندازه‌های محصول تطبیق دهید.</p>
                             </div>
-
-
                             <div class="rounded-3xl border border-white/10 bg-white/5 p-5 sm:p-6">
-
-                                <span class="text-[10px] uppercase tracking-[0.18em] text-white/40">
-                                    Cheques
-                                </span>
-
-                                <p class="mt-4 text-2xl font-semibold">
-                                    2+
-                                </p>
-
-                                <p class="mt-2 text-xs leading-6 text-white/45">
-                                    قابل تنظیم توسط فروشگاه
-                                </p>
-
+                                <span class="text-[10px] uppercase tracking-[0.18em] text-white/50">02 / USE</span>
+                                <p class="mt-4 text-lg font-semibold">نیاز روزمره</p>
+                                <p class="mt-2 text-xs leading-6 text-white/60">امکانات و روش نگهداری را متناسب با سبک آشپزی انتخاب کنید.</p>
                             </div>
-
-
-                            <div class="col-span-2 rounded-3xl border border-white/10 bg-white/[0.07] p-5 sm:p-6">
-
-                                <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-
-                                    <div>
-
-                                        <p class="text-sm font-semibold">
-                                            شرایط هر محصول متفاوت است
-                                        </p>
-
-                                        <p class="mt-2 text-xs leading-6 text-white/45">
-                                            درصد پیش‌پرداخت و برنامه تسویه را در صفحه محصول ببینید.
-                                        </p>
-
-                                    </div>
-
-
-                                    <span class="inline-flex w-fit rounded-full border border-white/10 px-4 py-2 text-[11px] text-white/60">
-                                        Transparent pricing
-                                    </span>
-
-                                </div>
-
+                            <div class="col-span-2 rounded-3xl border border-cyan-300/30 bg-cyan-300/10 p-5 sm:p-6">
+                                <p class="text-sm font-semibold">اطلاعات شفاف، انتخاب مطمئن‌تر</p>
+                                <p class="mt-2 text-xs leading-6 text-white/65">مشخصات و قیمت نهایی هر محصول باید در صفحه همان محصول بررسی شود.</p>
                             </div>
-
                         </div>
-
                     </div>
-
                 </div>
-
             </x-layout.container>
-
         </section>
-
-
-        {{-- =========================================================
-             INSTALLMENT PRODUCT PICKS
-        ========================================================== --}}
-
-        @if($installmentProducts->isNotEmpty())
-
-            <section class="border-t border-[var(--livora-border)] bg-[var(--livora-white)]">
-
-                <x-layout.container>
-
-                    <div class="py-16 sm:py-20">
-
-                        <div class="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-
-                            <div>
-
-                                <p class="text-[10px] font-medium uppercase tracking-[0.22em] text-[var(--livora-accent)]">
-                                    Flexible payment
-                                </p>
-
-                                <h2 class="mt-3 text-3xl font-semibold tracking-tight sm:text-4xl">
-                                    محصولاتی با امکان خرید اقساطی
-                                </h2>
-
-                                <p class="mt-3 max-w-xl text-sm leading-8 text-[var(--livora-stone)]">
-                                    شرایط پرداخت را قبل از خرید ببینید و آگاهانه انتخاب کنید.
-                                </p>
-
-                            </div>
-
-
-                            <a
-                                href="{{ route('shop.index') }}"
-                                class="text-sm font-medium text-[var(--livora-accent)] transition-colors duration-300 hover:text-[var(--livora-ink)]"
-                            >
-                                مشاهده فروشگاه
-                            </a>
-
-                        </div>
-
-
-                        <div class="mt-10 grid grid-cols-2 gap-4 lg:grid-cols-4">
-
-                            @foreach($installmentProducts as $product)
-
-                                <x-product.card
-                                    :product="$product"
-                                />
-
-                            @endforeach
-
-                        </div>
-
-                    </div>
-
-                </x-layout.container>
-
-            </section>
-
-        @endif
-
 
         {{-- =========================================================
              NEW ARRIVALS
@@ -756,11 +663,11 @@
                             </p>
 
                             <h2 class="mt-3 text-3xl font-semibold tracking-tight sm:text-4xl">
-                                تازه‌های SilaGallery
+                                تازه‌های فرزین
                             </h2>
 
                             <p class="mt-3 max-w-xl text-sm leading-8 text-[var(--livora-stone)]">
-                                تازه‌ترین انتخاب‌هایی که به مجموعه اضافه شده‌اند.
+                                مدل‌هایی که به‌تازگی به کاتالوگ فرزین اضافه شده‌اند.
                             </p>
 
                         </div>
@@ -770,7 +677,7 @@
                             href="{{ route('shop.index', ['sort' => 'newest']) }}"
                             class="text-sm font-medium text-[var(--livora-accent)] transition-colors duration-300 hover:text-[var(--livora-ink)]"
                         >
-                            تازه‌ترین محصولات
+                            محصولات تازه
                         </a>
 
                     </div>
@@ -795,7 +702,7 @@
                         <div class="mt-10 rounded-3xl border border-[var(--livora-border)] bg-[var(--livora-surface)] p-10 text-center">
 
                             <p class="text-sm text-[var(--livora-stone)]">
-                                محصولات جدید به‌زودی اضافه می‌شوند.
+                                به‌محض ثبت محصولات جدید در پنل مدیریت، اینجا نمایش داده می‌شوند.
                             </p>
 
                         </div>
@@ -830,10 +737,10 @@
 
                             <h2 class="mt-4 text-3xl font-semibold tracking-tight sm:text-4xl">
 
-                                فقط مبلمان نیست.
+                                فقط یک انتخاب نیست.
 
                                 <span class="block text-[var(--livora-accent)]">
-                                    سبک زندگی است.
+                                    تفاوتی در کارایی روزمره است.
                                 </span>
 
                             </h2>
@@ -841,9 +748,8 @@
 
                             <p class="mt-5 max-w-lg text-sm leading-8 text-[var(--livora-stone)]">
 
-                                برای انتخاب بهتر، فقط قیمت کافی نیست؛
-                                از اندازه‌گیری فضا و انتخاب رنگ تا ترکیب متریال،
-                                تصمیم‌های درست را ساده‌تر می‌کنیم.
+                                برای انتخاب هود و سینک، ابعاد کابینت، فضای نصب، جنس بدنه و شیوه نظافت را در نظر بگیرید.
+                                راهنمای فرزین کمک می‌کند گزینه‌ها را آگاهانه‌تر مقایسه کنید.
 
                             </p>
 
@@ -852,7 +758,7 @@
                                 href="{{ route('about') }}"
                                 class="mt-7 inline-flex items-center text-sm font-medium text-[var(--livora-ink)] transition-colors duration-300 hover:text-[var(--livora-accent)]"
                             >
-                                درباره SilaGallery
+                                درباره فرزین
 
                                 <span class="mr-2">
                                     ←
@@ -872,11 +778,11 @@
                                 </span>
 
                                 <h3 class="mt-8 text-base font-semibold">
-                                    اندازه‌گیری درست
+                                    ابعاد و فضای نصب
                                 </h3>
 
                                 <p class="mt-3 text-xs leading-7 text-[var(--livora-stone)]">
-                                    قبل از انتخاب، ابعاد فضا و مسیر ورود محصول را بررسی کنید.
+                                    پیش از سفارش، عرض کابینت و ابعاد محل نصب را با مشخصات محصول تطبیق دهید.
                                 </p>
 
                             </article>
@@ -889,11 +795,11 @@
                                 </span>
 
                                 <h3 class="mt-8 text-base font-semibold">
-                                    متریال و رنگ
+                                    جنس و نگهداری
                                 </h3>
 
                                 <p class="mt-3 text-xs leading-7 text-[var(--livora-stone)]">
-                                    محصولی انتخاب کنید که با نور، رنگ و شخصیت فضای شما هماهنگ باشد.
+                                    جنس سینک، نوع سطح و روش نظافت را با میزان استفاده روزانه هماهنگ کنید.
                                 </p>
 
                             </article>
@@ -906,11 +812,11 @@
                                 </span>
 
                                 <h3 class="mt-8 text-base font-semibold">
-                                    خرید آگاهانه
+                                    مقایسه مشخصات
                                 </h3>
 
                                 <p class="mt-3 text-xs leading-7 text-[var(--livora-stone)]">
-                                    قیمت، شرایط اقساط، مشخصات و خدمات را کنار هم مقایسه کنید.
+                                    ابعاد، نوع نصب، امکانات، گارانتی و قیمت را کنار هم مقایسه کنید.
                                 </p>
 
                             </article>
@@ -956,15 +862,15 @@
                     <div class="px-2 py-8 sm:px-8">
 
                         <p class="text-[10px] uppercase tracking-[0.18em] text-[var(--livora-stone)]">
-                            Payment
+                            SMART CHOICE
                         </p>
 
                         <h3 class="mt-3 text-sm font-semibold">
-                            پرداخت منعطف
+                            انتخاب متناسب
                         </h3>
 
                         <p class="mt-2 text-xs leading-7 text-[var(--livora-stone)]">
-                            برای برخی محصولات، شرایط خرید اقساطی در دسترس است.
+                            برای برخی محصولات، شرایط خرید انتخاب کاربردی در دسترس است.
                         </p>
 
                     </div>
@@ -1023,11 +929,11 @@
                     <div class="mx-auto max-w-3xl text-center">
 
                         <p class="text-[10px] font-medium uppercase tracking-[0.24em] text-[var(--livora-accent)]">
-                            SilaGallery
+                            فرزین
                         </p>
 
                         <h2 class="mt-5 text-4xl font-semibold tracking-tight sm:text-5xl">
-                            چیزی برای ماندن پیدا کنید.
+                            انتخابی دقیق برای آشپزخانه‌تان پیدا کنید.
                         </h2>
 
                         <p class="mx-auto mt-5 max-w-2xl text-sm leading-8 text-[var(--livora-stone)]">

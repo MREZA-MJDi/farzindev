@@ -37,7 +37,7 @@
                 @click="mobileOpen = false"
                 class="text-xl font-semibold tracking-[0.22em] text-[var(--livora-ink)]"
             >
-                SilaGallery
+                فرزین
             </a>
 
             <button
@@ -144,11 +144,20 @@
                     </a>
 
                     <a
+                        href="{{ route('blog.index') }}"
+                        @click="mobileOpen = false"
+                        class="flex items-center justify-between px-4 py-4 text-sm font-medium"
+                    >
+                        <span>بلاگ و راهنمای خرید</span>
+                        <span class="text-[var(--livora-stone)]">←</span>
+                    </a>
+
+                    <a
                         href="{{ route('about') }}"
                         @click="mobileOpen = false"
                         class="flex items-center justify-between px-4 py-4 text-sm font-medium"
                     >
-                        <span>درباره SilaGallery</span>
+                        <span>درباره فرزین</span>
                         <span class="text-[var(--livora-stone)]">←</span>
                     </a>
 
@@ -170,7 +179,7 @@
             <div class="mt-8">
 
                 <p class="px-2 text-[10px] font-medium uppercase tracking-[0.2em] text-[var(--livora-accent)]">
-                    MY SilaGallery
+                    FARZIN GUIDE
                 </p>
 
                 <div class="mt-3 grid grid-cols-2 gap-3">
@@ -277,15 +286,15 @@
             <div class="mt-8 rounded-3xl bg-[var(--livora-ink)] p-5 text-white">
 
                 <p class="text-[10px] uppercase tracking-[0.18em] text-white/40">
-                    FLEXIBLE PAYMENT
+                    FARZIN BUYING GUIDE
                 </p>
 
                 <h2 class="mt-3 text-lg font-semibold">
-                    بعضی انتخاب‌ها را می‌توانی اقساطی بخری.
+                    برای انتخاب هود و سینک، اول مشخصات را دقیق بررسی کن.
                 </h2>
 
                 <p class="mt-2 text-xs leading-7 text-white/50">
-                    شرایط پیش‌پرداخت و برنامه چک هر محصول در صفحه خودش نمایش داده می‌شود.
+                    ابعاد، نوع نصب و ویژگی‌های محصول را با نیاز آشپزخانه‌ات تطبیق بده.
                 </p>
 
                 <a
@@ -309,11 +318,11 @@
                 <div>
 
                     <p class="text-[10px] uppercase tracking-[0.18em] text-[var(--livora-stone)]">
-                        SilaGallery
+                        فرزین
                     </p>
 
                     <p class="mt-1 text-[11px] text-[var(--livora-stone)]">
-                        Furniture & Living
+                        Kitchen Appliances
                     </p>
 
                 </div>

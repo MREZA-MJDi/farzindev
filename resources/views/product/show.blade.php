@@ -8,18 +8,18 @@
     */
 
     $pageTitle = str_ireplace(
-        'SilaGallery',
-        'سیلاگالری',
+        'فرزین',
+        'فرزین',
         $product->meta_title
-            ?: ($product->name . ' | سیلاگالری')
+            ?: ($product->name . ' | فرزین')
     );
 
     $pageDescription = str_ireplace(
-        'SilaGallery',
-        'سیلاگالری',
+        'فرزین',
+        'فرزین',
         $product->meta_description
             ?: ($product->short_description
-                ?: ('خرید ' . $product->name . ' با مشاهده قیمت، مشخصات و شرایط خرید در سیلاگالری.'))
+                ?: ('خرید ' . $product->name . ' با مشاهده قیمت، مشخصات و شرایط خرید در فرزین.'))
     );
 
     /*
@@ -216,7 +216,7 @@
 {
     "@@context": "https://schema.org",
     "@@type": "WebSite",
-    "name": "سیلاگالری",
+    "name": "فرزین",
     "url": @json(url('/')),
     "potentialAction": {
         "@@type": "SearchAction",
@@ -230,10 +230,37 @@
 {
     "@@context": "https://schema.org",
     "@@type": "Organization",
-    "name": "سیلاگالری",
+    "name": "فرزین",
     "url": @json(url('/'))
         }
 </script>
+
+    {{-- Product entity data for search engines --}}
+    <script type="application/ld+json">
+    {
+        "@@context": "https://schema.org",
+        "@@type": "Product",
+        "name": @json($product->name),
+        "description": @json($pageDescription),
+        "sku": @json($product->sku),
+        "url": @json(route('product.show', $product->slug)),
+        "brand": {
+            "@@type": "Brand",
+            "name": "فرزین"
+        }@if($mainImage),
+        "image": @json([$mainImage])@endif
+        @if($product->category),
+        "category": @json($product->category->name)@endif
+        @if((float) $product->price > 0),
+        "offers": {
+            "@@type": "Offer",
+            "url": @json(route('product.show', $product->slug)),
+            "priceCurrency": "IRR",
+            "price": @json((int) round((float) $product->price * 10)),
+            "availability": @json($availability)
+        }@endif
+    }
+    </script>
 
 @endpush
 
@@ -340,7 +367,7 @@
                             @if($product->is_featured)
 
                                 <span class="rounded-full border border-[var(--livora-border)] bg-[var(--livora-white)] px-3 py-1.5 text-[10px] font-medium text-[var(--livora-ink)]">
-                                منتخب سیلاگالری
+                                منتخب فرزین
                             </span>
 
                             @endif

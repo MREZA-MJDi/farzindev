@@ -12,23 +12,22 @@
 
                 <a
                     href="{{ route('home') }}"
-                    aria-label="SilaGallery"
+                    aria-label="فرزین"
                     class="inline-flex items-center"
                 >
                     <span class="text-2xl font-semibold tracking-[0.24em] text-white transition hover:text-[var(--livora-cream)]">
-                        SilaGallery
+                        فرزین
                     </span>
                 </a>
 
                 <p class="mt-6 max-w-sm text-sm leading-8 text-white/50">
-                    مبلمان و عناصر خانه برای فضاهایی که قرار است
-                    شخصیت داشته باشند و سال‌ها ماندگار بمانند.
+                    هود و سینک آشپزخانه؛ انتخابی دقیق برای کارایی بهتر و هماهنگی با فضای شما.
                 </p>
 
                 <div class="mt-7 flex flex-wrap gap-2">
 
                     <span class="rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-[10px] text-white/50">
-                        Furniture
+                        HOODS
                     </span>
 
                     <span class="rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-[10px] text-white/50">
@@ -36,7 +35,7 @@
                     </span>
 
                     <span class="rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-[10px] text-white/50">
-                        Installment
+                        SINKS
                     </span>
 
                 </div>
@@ -68,6 +67,13 @@
                         class="text-sm text-white/55 transition hover:text-white"
                     >
                         دسته‌بندی‌ها
+                    </a>
+
+                    <a
+                        href="{{ route('blog.index') }}"
+                        class="text-sm text-white/55 transition hover:text-white"
+                    >
+                        بلاگ و راهنمای خرید
                     </a>
 
                     <a
@@ -188,27 +194,9 @@
                     CONTACT
                 </p>
 
-                <div class="mt-5 space-y-4">
-
-                    <a
-                        href="tel:{{ config('app.contact.phone') }}"
-                        class="block break-all text-sm text-white/55 transition hover:text-white"
-                    >
-                        {{ config('app.contact.phone', '+98 00 000 0000') }}
-                    </a>
-
-                    <a
-                        href="mailto:{{ config('app.contact.email') }}"
-                        class="block break-all text-sm text-white/55 transition hover:text-white"
-                    >
-                        {{ config('app.contact.email', 'hello@livora.ir') }}
-                    </a>
-
-                    <p class="text-sm leading-7 text-white/45">
-                        {{ config('app.contact.address', 'تهران، ایران') }}
-                    </p>
-
-                </div>
+                <p class="mt-5 max-w-xs text-sm leading-7 text-white/50">
+                    برای مشاوره‌ی انتخاب هود و سینک یا پیگیری سفارش، از صفحه‌ی تماس با فرزین پیام بفرستید.
+                </p>
 
 
                 {{-- Contact CTA --}}
@@ -216,7 +204,7 @@
                     href="{{ route('contact') }}"
                     class="mt-6 inline-flex items-center rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-xs font-medium text-white transition hover:border-white/20 hover:bg-white/10"
                 >
-                    ارتباط با SilaGallery
+                    ارتباط با فرزین
                     <span class="mr-2">←</span>
                 </a>
 
@@ -245,11 +233,11 @@
             <div class="border-b border-white/10 py-5 sm:border-b-0 sm:px-6 sm:py-6">
 
                 <p class="text-[10px] uppercase tracking-[0.18em] text-white/35">
-                    INSTALLMENT
+                    SINKS
                 </p>
 
                 <p class="mt-2 text-xs leading-6 text-white/50">
-                    برای محصولات دارای شرایط اقساط، پیش‌پرداخت و برنامه تسویه شفاف نمایش داده می‌شود.
+                    مشخصات، ابعاد و نوع نصب هر محصول را پیش از ثبت سفارش بررسی کنید.
                 </p>
 
             </div>
@@ -261,7 +249,7 @@
                 </p>
 
                 <p class="mt-2 text-xs leading-6 text-white/50">
-                    برای راهنمایی درباره محصول، سفارش یا پرداخت با ما در تماس باشید.
+                    برای راهنمایی انتخاب محصول یا پیگیری سفارش با تیم فرزین در تماس باشید.
                 </p>
 
             </div>
@@ -277,7 +265,7 @@
             <div>
 
                 <p class="text-xs text-white/40">
-                    © {{ date('Y') }} SilaGallery.
+                    © {{ date('Y') }} فرزین.
                     تمامی حقوق محفوظ است.
                 </p>
 

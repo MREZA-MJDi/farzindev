@@ -16,13 +16,13 @@
             <div
                 class="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-[var(--admin-text)] text-xs font-bold tracking-[0.12em] text-white transition duration-300 group-hover:bg-[var(--admin-accent)]"
             >
-                LV
+                FZ
             </div>
 
             <div class="min-w-0">
 
                 <p class="truncate text-sm font-bold tracking-[0.18em] text-[var(--admin-text)]">
-                    SilaGallery
+                    فرزین
                 </p>
 
                 <p class="mt-0.5 text-[9px] uppercase tracking-[0.16em] text-[var(--admin-muted)]">

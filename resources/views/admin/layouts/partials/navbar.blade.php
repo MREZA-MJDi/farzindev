@@ -120,7 +120,7 @@
                 <div class="hidden items-center gap-2 text-[9px] text-[var(--admin-muted)] sm:flex">
 
                     <span>
-                        SilaGallery
+                        فرزین
                     </span>
 
                     <span>

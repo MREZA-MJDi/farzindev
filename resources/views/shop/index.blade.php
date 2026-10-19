@@ -1,10 +1,10 @@
 @extends('layouts.app')
 
-@section('title', 'فروشگاه مبلمان | SilaGallery')
+@section('title', 'فروشگاه هود و سینک | فرزین')
 
 @section(
     'description',
-    'خرید مبلمان و لوازم خانه از SilaGallery؛ مشاهده محصولات جدید، ویژه، تخفیف‌دار و دارای شرایط خرید اقساطی.'
+    'خرید هود و سینک آشپزخانه از فرزین؛ مشخصات محصولات، مدل‌ها و گزینه‌های موجود را بررسی و مقایسه کنید.'
 )
 
 @section('canonical', route('shop.index'))
@@ -18,12 +18,12 @@
 
     <meta
         property="og:title"
-        content="فروشگاه مبلمان | SilaGallery"
+        content="فروشگاه هود و سینک | فرزین"
     >
 
     <meta
         property="og:description"
-        content="مجموعه مبلمان و لوازم خانه SilaGallery را ببینید و محصول مناسب فضای خود را پیدا کنید."
+        content="مدل‌های هود و سینک فرزین را ببینید و گزینه متناسب با فضای نصب خود را پیدا کنید."
     >
 
     <meta
@@ -38,19 +38,19 @@
 
     <meta
         name="twitter:title"
-        content="فروشگاه مبلمان | SilaGallery"
+        content="فروشگاه هود و سینک | فرزین"
     >
 
     <meta
         name="twitter:description"
-        content="مجموعه منتخب SilaGallery برای خانه‌ای زیباتر و ماندگارتر."
+        content="کاتالوگ هود و سینک فرزین برای انتخابی متناسب با نیاز آشپزخانه."
     >
 
     <script type="application/ld+json">
     {
         "@@context": "https://schema.org",
         "@@type": "WebSite",
-        "name": "SilaGallery",
+        "name": "فرزین",
         "url": @json(url('/')),
         "potentialAction": {
             "@@type": "SearchAction",
@@ -112,7 +112,7 @@
                         <div class="max-w-3xl">
 
                             <p class="text-[10px] font-medium uppercase tracking-[0.22em] text-[var(--livora-accent)]">
-                                SilaGallery COLLECTION
+                                FARZIN COLLECTION
                             </p>
 
                             <h1 class="mt-3 text-4xl font-semibold tracking-tight text-[var(--livora-ink)] sm:text-5xl">
@@ -120,7 +120,7 @@
                             </h1>
 
                             <p class="mt-4 max-w-2xl text-sm leading-8 text-[var(--livora-stone)]">
-                                مجموعه‌ای منتخب از مبلمان و عناصر خانه برای فضاهایی که قرار است
+                                مجموعه‌ای منتخب از هود و سینک و تجهیزات آشپزخانه برای فضاهایی که قرار است
                                 شخصیت و ماندگاری داشته باشند.
                             </p>
 
@@ -222,7 +222,7 @@
                             <div class="rounded-3xl border border-[var(--livora-border)] bg-[var(--livora-surface)] p-5">
 
                                 <p class="text-[10px] uppercase tracking-[0.18em] text-[var(--livora-accent)]">
-                                    SilaGallery
+                                    فرزین
                                 </p>
 
                                 <h3 class="mt-3 text-sm font-semibold">
@@ -230,7 +230,7 @@
                                 </h3>
 
                                 <p class="mt-2 text-xs leading-7 text-[var(--livora-stone)]">
-                                    قیمت، طراحی، موجودی و شرایط خرید اقساطی را
+                                    قیمت، مشخصات فنی، موجودی و ویژگی‌های هر مدل را
                                     قبل از انتخاب محصول بررسی کنید.
                                 </p>
 
@@ -308,7 +308,7 @@
                                     </p>
 
                                     <p class="mt-2 text-sm font-medium text-[var(--livora-ink)]">
-                                        مجموعه SilaGallery
+                                        مجموعه فرزین
                                     </p>
 
                                 </div>

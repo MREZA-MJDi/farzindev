@@ -2,12 +2,12 @@
 
 @section(
     'title',
-    'انتخاب روش پرداخت | ' . $order->order_number . ' | SilaGallery'
+    'انتخاب روش پرداخت | ' . $order->order_number . ' | فرزین'
 )
 
 @section(
     'description',
-    'انتخاب روش پرداخت سفارش در SilaGallery؛ پرداخت آنلاین یا خرید اقساطی با شرایط مشخص.'
+    'انتخاب روش پرداخت سفارش در فرزین؛ پرداخت آنلاین یا خرید اقساطی با شرایط مشخص.'
 )
 
 @section(
@@ -480,7 +480,7 @@
 
 
                     {{-- =================================================
-                         SilaGallery INSTALLMENT
+                         فرزین INSTALLMENT
                     ================================================== --}}
 
                     <section
@@ -494,7 +494,7 @@
                                 <div>
 
                                     <p class="text-[10px] font-medium uppercase tracking-[0.2em] text-white/40">
-                                        SilaGallery INSTALLMENT
+                                        فرزین INSTALLMENT
                                     </p>
 
                                     <h2 class="mt-3 text-2xl font-semibold">

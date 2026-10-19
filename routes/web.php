@@ -12,6 +12,7 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ShopController;
+use App\Http\Controllers\SitemapController;
 use App\Http\Controllers\WishlistController;
 use App\Http\Controllers\Admin\CategoryController as AdminCategoryController;
 use App\Http\Controllers\Admin\CustomerController as AdminCustomerController;
@@ -32,8 +33,15 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', [HomeController::class, 'index'])
     ->name('home');
 
+Route::get('/sitemap.xml', SitemapController::class)
+    ->name('sitemap');
+
 Route::get('/shop', [ShopController::class, 'index'])
     ->name('shop.index');
+
+Route::view('/blog', 'blog.index')
+    ->name('blog.index');
+
 
 Route::get('/product/{slug}', [ProductController::class, 'show'])
     ->name('product.show');

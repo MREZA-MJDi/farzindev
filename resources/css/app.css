@@ -4,7 +4,7 @@
 
 
 /* =========================================================
-   LIVORA DESIGN TOKENS
+   FARZIN DESIGN TOKENS
    ========================================================= */
 
 /*:root {*/
@@ -95,7 +95,7 @@ body {
     background:
         radial-gradient(
             circle at top left,
-            rgba(154, 118, 88, 0.035),
+            rgba(37, 99, 235, 0.035),
             transparent 30rem
         ),
         var(--livora-cream);
@@ -607,15 +607,15 @@ h6 {
 
     border:
         1px solid
-        rgba(154, 118, 88, 0.18);
+        rgba(37, 99, 235, 0.18);
 
     border-radius: 1rem;
 
     background:
         linear-gradient(
             135deg,
-            rgba(154, 118, 88, 0.08),
-            rgba(154, 118, 88, 0.025)
+            rgba(37, 99, 235, 0.08),
+            rgba(37, 99, 235, 0.025)
         );
 }
 
@@ -676,7 +676,7 @@ h6 {
 
     border-top:
         1px solid
-        rgba(154, 118, 88, 0.12);
+        rgba(37, 99, 235, 0.12);
 
     color: var(--livora-stone);
 
@@ -812,7 +812,7 @@ h6 {
 }
 
 
-/* SilaGallery responsive safeguards */
+/* Farzin responsive safeguards */
 :root { --site-content-max: 1440px; }
 .livora-container { max-width: var(--site-content-max); }
 .livora-button, .admin-btn { white-space: nowrap; flex: 0 0 auto; }
@@ -820,30 +820,26 @@ h6 {
 @media (min-width: 768px) { .livora-button { min-height: 3rem; } }
 
 
-/* SilaGallery wordmark */
-.silagallery-wordmark {
+/* Farzin wordmark */
+.farzin-wordmark {
     display: inline-flex;
-    align-items: baseline;
-    gap: 0.04em;
+    align-items: center;
     color: var(--livora-ink);
-    font-family: Georgia, "Times New Roman", serif;
+    font-family: var(--livora-font-family), sans-serif;
+    font-size: 1.55rem;
+    font-weight: 850;
     line-height: 1;
-    letter-spacing: -0.035em;
+    letter-spacing: 0;
     transition: opacity 180ms ease, transform 180ms ease;
 }
-.silagallery-wordmark__main {
-    font-size: 1.48rem;
-    font-weight: 700;
-    letter-spacing: -0.045em;
+.farzin-wordmark__main {
+    color: var(--livora-ink);
+    font-size: inherit;
+    font-weight: inherit;
+    letter-spacing: 0;
 }
-.silagallery-wordmark__sub {
-    font-size: 0.92rem;
-    font-weight: 400;
-    letter-spacing: 0.02em;
-    opacity: 0.82;
-}
-a:hover .silagallery-wordmark {
-    opacity: 0.72;
+a:hover .farzin-wordmark {
+    opacity: 0.78;
     transform: translateY(-1px);
 }
 

@@ -3,28 +3,28 @@
 
 
 /* =========================================================
-   LIVORA ADMIN DESIGN SYSTEM
+   FARZIN ADMIN DESIGN SYSTEM
    ========================================================= */
 
 :root {
     /* Brand */
-    --admin-text: #1c1b19;
-    --admin-text-soft: #4e4a44;
-    --admin-muted: #8b857c;
+    --admin-text: #111827;
+    --admin-text-soft: #334155;
+    --admin-muted: #64748B;
 
     /* Background */
-    --admin-bg: #f3f1ed;
-    --admin-surface: #ece9e3;
-    --admin-white: #fbfaf8;
+    --admin-bg: #F5F8FC;
+    --admin-surface: #EAF1FA;
+    --admin-white: #FFFFFF;
 
     /* Brand Accent */
-    --admin-accent: #9a7658;
-    --admin-accent-dark: #76583f;
-    --admin-accent-soft: #eee3d8;
+    --admin-accent: #2563EB;
+    --admin-accent-dark: #1D4ED8;
+    --admin-accent-soft: #DBEAFE;
 
     /* Borders */
-    --admin-border: #ddd8d0;
-    --admin-border-dark: #c5beb4;
+    --admin-border: #D9E3F0;
+    --admin-border-dark: #A7B8CC;
 
     /* States */
     --admin-success: #15803d;
@@ -90,7 +90,7 @@ body {
     background:
         radial-gradient(
             circle at top right,
-            rgba(154, 118, 88, 0.035),
+            rgba(37, 99, 235, 0.035),
             transparent 28rem
         ),
         var(--admin-bg);
@@ -518,7 +518,7 @@ p {
 
     box-shadow:
         0 0 0 3px
-        rgba(154, 118, 88, 0.08);
+        rgba(37, 99, 235, 0.08);
 }
 
 .admin-input:disabled,
@@ -738,7 +738,7 @@ p {
 
     box-shadow:
         0 0 0 3px
-        rgba(154, 118, 88, 0.08);
+        rgba(37, 99, 235, 0.08);
 }
 
 .admin-search-icon {
@@ -1243,7 +1243,7 @@ p {
         linear-gradient(
             to top,
             var(--admin-accent-dark),
-            #d5b28f
+            #67E8F9
         );
 
     transition:
@@ -1462,7 +1462,7 @@ p {
 }
 
 
-/* SilaGallery admin responsive safeguards */
+/* Farzin admin responsive safeguards */
 .admin-btn { white-space: nowrap; flex: 0 0 auto; min-width: max-content; }
 .admin-btn svg { flex: 0 0 auto; }
 .admin-page-header { min-width: 0; }

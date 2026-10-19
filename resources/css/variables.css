@@ -1,132 +1,61 @@
 :root {
+    /* Farzin kitchen-appliance storefront palette: cool white, graphite, electric blue. */
+    --livora-ink: #111827;
+    --livora-charcoal: #0B1220;
 
-    /* =====================================================
-       BRAND
-    ====================================================== */
+    --livora-chocolate: #1E3A5F;
+    --livora-chocolate-dark: #122846;
+    --livora-chocolate-soft: #DBEAFE;
 
-    --livora-ink: #181715;
-    --livora-charcoal: #24221f;
+    --livora-cream: #F5F8FC;
+    --livora-white: #FFFFFF;
+    --livora-surface: #EAF1FA;
 
-    /* Chocolate */
-    --livora-chocolate: #5a4638;
-    --livora-chocolate-dark: #3f3027;
-    --livora-chocolate-soft: #eee5de;
+    --livora-sand: #D4DFED;
+    --livora-stone: #65758B;
 
+    /* Primary brand accent */
+    --livora-accent: #2563EB;
+    --livora-accent-dark: #1D4ED8;
+    --livora-accent-soft: #DBEAFE;
 
-    /* =====================================================
-       SURFACES
-    ====================================================== */
+    /* Secondary electric-cyan accent */
+    --livora-sage: #06B6D4;
+    --livora-sage-dark: #0891B2;
+    --livora-sage-soft: #CFFAFE;
 
-    --livora-cream: #f3efe8;
-    --livora-white: #faf9f6;
-    --livora-surface: #eee8df;
+    --livora-border: #D9E3F0;
+    --livora-border-dark: #A7B8CC;
 
+    --livora-success: #15803D;
+    --livora-success-soft: #DCFCE7;
+    --livora-warning: #B45309;
+    --livora-warning-soft: #FEF3C7;
+    --livora-danger: #B91C1C;
+    --livora-danger-soft: #FEE2E2;
+    --livora-info: #0369A1;
+    --livora-info-soft: #E0F2FE;
 
-    /* =====================================================
-       WARM NEUTRALS
-    ====================================================== */
-
-    --livora-sand: #d8d0c4;
-    --livora-stone: #a79f93;
-
-
-    /* =====================================================
-       ORIGINAL WARM ACCENT
-    ====================================================== */
-
-    --livora-accent: #9a7658;
-    --livora-accent-dark: #76583f;
-    --livora-accent-soft: #ede2d7;
-
-
-    /* =====================================================
-       SAGE GREEN
-    ====================================================== */
-
-    --livora-sage: #68755d;
-    --livora-sage-dark: #4f5c46;
-    --livora-sage-soft: #e5e9df;
-
-
-    /* =====================================================
-       BORDERS
-    ====================================================== */
-
-    --livora-border: #d6d0c7;
-    --livora-border-dark: #bbb2a6;
-
-
-    /* =====================================================
-       STATES
-    ====================================================== */
-
-    --livora-success: #3f7650;
-    --livora-success-soft: #e8f1e9;
-
-    --livora-warning: #b45309;
-    --livora-warning-soft: #fff7ed;
-
-    --livora-danger: #b91c1c;
-    --livora-danger-soft: #fef2f2;
-
-    --livora-info: #0369a1;
-    --livora-info-soft: #f0f9ff;
-
-
-    /* =====================================================
-       SHADOWS
-    ====================================================== */
-
-    --livora-shadow-sm:
-        0 4px 14px rgba(24, 23, 21, 0.05);
-
-    --livora-shadow-md:
-        0 12px 35px rgba(24, 23, 21, 0.08);
-
-    --livora-shadow-lg:
-        0 25px 70px rgba(24, 23, 21, 0.12);
-
-
-    /* =====================================================
-       RADIUS
-    ====================================================== */
+    --livora-shadow-sm: 0 4px 14px rgba(15, 23, 42, 0.055);
+    --livora-shadow-md: 0 12px 35px rgba(15, 23, 42, 0.09);
+    --livora-shadow-lg: 0 25px 70px rgba(15, 23, 42, 0.14);
 
     --livora-radius-sm: 0.75rem;
     --livora-radius-md: 1rem;
     --livora-radius-lg: 1.5rem;
     --livora-radius-xl: 2rem;
 
-
-    /* =====================================================
-       MOTION
-    ====================================================== */
-
     --livora-duration-fast: 180ms;
     --livora-duration: 300ms;
     --livora-duration-slow: 650ms;
 
+    --livora-container: 1440px;
+}
 
-    /* =====================================================
-       CONTAINER
-    ====================================================== */
-
-    --livora-container: 1440px;}
-
-/* =========================================================
-LIVORA CONTAINER SYSTEM
-========================================================= */
-
+/* Shared responsive container */
 .livora-container {
     width: 100%;
     max-width: var(--livora-container);
-
     margin-inline: auto;
-
-    padding-inline: clamp(
-        1rem,
-        3vw,
-        2.5rem
-    );
+    padding-inline: clamp(1rem, 3vw, 2.5rem);
 }
-
-

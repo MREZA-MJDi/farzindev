@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Auth;
 
+use App\Support\IranianMobile;
 use Illuminate\Foundation\Http\FormRequest;
 
 class LoginRequest extends FormRequest
@@ -13,20 +14,24 @@ class LoginRequest extends FormRequest
 
     public function rules(): array
     {
-        return [
-            'email' => [
-                'required',
-                'email:rfc',
-                'max:255',
-            ],
+        $identifier = (string) $this->input('phone', '');
+        $identifierRule = str_contains($identifier, '@')
+            ? 'email:rfc'
+            : 'regex:/^09\d{9}$/';
 
+        return [
+            'phone' => [
+                'required',
+                'string',
+                'max:255',
+                $identifierRule,
+            ],
             'password' => [
                 'required',
                 'string',
                 'min:8',
                 'max:255',
             ],
-
             'remember' => [
                 'nullable',
                 'boolean',
@@ -37,9 +42,10 @@ class LoginRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'email.required' => 'وارد کردن ایمیل الزامی است.',
-            'email.email' => 'فرمت ایمیل صحیح نیست.',
-            'password.required' => 'وارد کردن رمز عبور الزامی است.',
+            'phone.required' => 'شماره موبایل را وارد کنید.',
+            'phone.email' => 'برای ورود با ایمیل مدیر، یک ایمیل معتبر وارد کنید.',
+            'phone.regex' => 'شماره موبایل باید مانند 09123456789 باشد.',
+            'password.required' => 'رمز عبور را وارد کنید.',
             'password.min' => 'رمز عبور باید حداقل ۸ کاراکتر باشد.',
         ];
     }
@@ -47,7 +53,7 @@ class LoginRequest extends FormRequest
     public function attributes(): array
     {
         return [
-            'email' => 'ایمیل',
+            'phone' => 'شماره موبایل',
             'password' => 'رمز عبور',
             'remember' => 'مرا به خاطر بسپار',
         ];
@@ -55,7 +61,13 @@ class LoginRequest extends FormRequest
 
     protected function prepareForValidation(): void
     {
+        // Keep compatibility with older clients that still send an email field.
+        $identifier = trim((string) $this->input('phone', $this->input('email', '')));
+
         $this->merge([
+            'phone' => str_contains($identifier, '@')
+                ? mb_strtolower($identifier)
+                : IranianMobile::normalize($identifier),
             'remember' => $this->boolean('remember'),
         ]);
     }

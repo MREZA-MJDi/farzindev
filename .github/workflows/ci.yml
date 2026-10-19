@@ -1,0 +1,74 @@
+name: Farzin CI
+
+on:
+  push:
+    branches:
+      - main
+      - feature/farzin-storefront-rebrand
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  quality:
+    name: Laravel tests and production build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          extensions: mbstring, pdo_sqlite, sqlite3, fileinfo, gd, curl
+          coverage: none
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install Composer dependencies
+        run: composer install --prefer-dist --no-interaction --no-progress
+
+      - name: Prepare application environment
+        run: cp .env.example .env
+
+      - name: Prepare application key
+        run: php artisan key:generate
+
+      - name: Install npm dependencies
+        run: npm ci
+
+      - name: Build production assets
+        run: npm run build
+
+      - name: Run Laravel tests
+        run: php artisan test
+
+      - name: Install production Composer dependencies
+        run: composer install --no-dev --prefer-dist --no-interaction --no-progress --optimize-autoloader
+
+      - name: Package cPanel release
+        run: |
+          zip -qr /tmp/farzin-cpanel-deploy.zip . \
+            -x ".git/*" \
+               "node_modules/*" \
+               "tests/*" \
+               ".env" \
+               "storage/logs/*" \
+               "database/*.sqlite"
+          mv /tmp/farzin-cpanel-deploy.zip ./farzin-cpanel-deploy.zip
+
+      - name: Upload cPanel release package
+        uses: actions/upload-artifact@v4
+        with:
+          name: farzin-cpanel-deploy
+          path: farzin-cpanel-deploy.zip
+          if-no-files-found: error
+          retention-days: 7

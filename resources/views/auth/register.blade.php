@@ -1,8 +1,8 @@
 @extends('layouts.app')
 
-@section('title', 'ثبت نام | SilaGallery')
+@section('title', 'ثبت نام | فرزین')
 
-@section('description', 'ایجاد حساب کاربری در SilaGallery')
+@section('description', 'ایجاد حساب کاربری در فرزین')
 
 @section('content')
 
@@ -17,7 +17,7 @@
                     <div class="text-center">
 
                         <p class="text-xs font-medium uppercase tracking-[0.2em] text-[var(--livora-accent)]">
-                            JOIN SilaGallery
+                            عضویت در فرزین
                         </p>
 
                         <h1 class="mt-3 text-3xl font-semibold text-[var(--livora-ink)]">
@@ -25,7 +25,7 @@
                         </h1>
 
                         <p class="mt-3 text-sm leading-7 text-[var(--livora-stone)]">
-                            برای خرید و پیگیری سفارش‌ها حساب SilaGallery خود را ایجاد کنید.
+                            برای ثبت سفارش و پیگیری خریدها، حساب کاربری فرزین بسازید.
                         </p>
 
                     </div>
@@ -74,21 +74,24 @@
 
 
                             <x-ui.input
-                                type="email"
-                                name="email"
-                                label="ایمیل"
-                                placeholder="example@email.com"
-                                :value="old('email')"
+                                type="tel"
+                                name="phone"
+                                label="شماره موبایل"
+                                placeholder="09123456789"
+                                :value="old('phone')"
+                                autocomplete="tel"
+                                inputmode="tel"
                                 required
                             />
 
 
                             <x-ui.input
-                                type="tel"
-                                name="phone"
-                                label="شماره موبایل"
-                                placeholder="09121234567"
-                                :value="old('phone')"
+                                type="email"
+                                name="email"
+                                label="ایمیل (اختیاری)"
+                                placeholder="example@email.com"
+                                :value="old('email')"
+                                autocomplete="email"
                             />
 
 
@@ -132,7 +135,7 @@
                                     >
                                         قوانین و شرایط
                                     </a>
-                                    SilaGallery موافقم.
+                                    فرزین موافقم.
                                 </span>
 
                             </label>
