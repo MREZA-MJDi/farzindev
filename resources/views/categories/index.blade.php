@@ -1,10 +1,10 @@
 @extends('layouts.app')
 
-@section('title', 'دسته‌بندی محصولات | SilaGallery')
+@section('title', 'دسته‌بندی هود و سینک | فرزین')
 
 @section(
     'description',
-    'دسته‌بندی‌های مختلف مبلمان و لوازم خانه در SilaGallery را ببینید و محصول مناسب فضای خود را پیدا کنید.'
+    'دسته‌بندی‌های هود آشپزخانه و سینک ظرفشویی فرزین را ببینید و مدل مناسب فضای نصب خود را پیدا کنید.'
 )
 
 @section('canonical', route('categories.index'))
@@ -22,12 +22,12 @@
 
     <meta
         property="og:title"
-        content="دسته‌بندی محصولات | SilaGallery"
+        content="دسته‌بندی هود و سینک | فرزین"
     >
 
     <meta
         property="og:description"
-        content="دسته‌بندی‌های مختلف مبلمان و لوازم خانه در SilaGallery."
+        content="دسته‌بندی‌های هود آشپزخانه و سینک ظرفشویی فرزین."
     >
 
     <meta
@@ -77,7 +77,7 @@
 
                         <p class="mt-5 max-w-2xl text-sm leading-8 text-[var(--livora-stone)] sm:text-base">
                             از مبلمان و نشیمن تا میز، صندلی و سایر عناصر خانه؛
-                            مجموعه‌های SilaGallery را بر اساس فضای موردنظر بررسی کن.
+                            مجموعه‌های فرزین را بر اساس فضای موردنظر بررسی کن.
                         </p>
 
                     </div>
@@ -129,7 +129,7 @@
 
                         <div class="mx-auto flex h-20 w-20 items-center justify-center rounded-[1.75rem] bg-[var(--livora-white)]">
                         <span class="text-xs tracking-[0.2em] text-[var(--livora-stone)]">
-                            LV
+                            FZ
                         </span>
                         </div>
 
@@ -138,11 +138,11 @@
                         </p>
 
                         <h2 class="mt-3 text-3xl font-semibold">
-                            هنوز دسته‌بندی‌ای وجود ندارد.
+                            هنوز دسته‌بندی‌ای ثبت نشده است.
                         </h2>
 
                         <p class="mx-auto mt-4 max-w-md text-sm leading-8 text-[var(--livora-stone)]">
-                            دسته‌بندی‌های فروشگاه به‌زودی در این بخش نمایش داده می‌شوند.
+                            دسته‌بندی‌ها پس از ثبت در پنل مدیریت در این بخش نمایش داده می‌شوند.
                         </p>
 
                         <a
@@ -171,7 +171,7 @@
                     <div>
 
                         <p class="text-[10px] uppercase tracking-[0.2em] text-[var(--livora-accent)]">
-                            SilaGallery
+                            فرزین
                         </p>
 
                         <h2 class="mt-2 text-2xl font-semibold">
