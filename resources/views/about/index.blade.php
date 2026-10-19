@@ -49,7 +49,7 @@
     <script type="application/ld+json">
 {
     "@@context": "https://schema.org",
-    "@@type": "WebSite",
+    "@@type": "AboutPage",
     "name": "فرزین",
     "url": @json(url('/')),
     "potentialAction": {
@@ -194,6 +194,37 @@
 
         </section>
 
+
+        {{-- =========================================================
+             FACTORY AND WORK
+        ========================================================== --}}
+        <section class="relative overflow-hidden bg-[var(--livora-ink)] text-white">
+            <div aria-hidden="true" class="pointer-events-none absolute -right-24 top-0 h-72 w-72 rounded-full bg-[var(--livora-accent)]/20 blur-3xl"></div>
+            <x-layout.container>
+                <div class="relative grid gap-10 py-16 sm:py-20 lg:grid-cols-[0.85fr_1.15fr] lg:items-end lg:py-24">
+                    <div>
+                        <p class="text-[10px] font-semibold uppercase tracking-[0.24em] text-cyan-300">FACTORY & PROCESS</p>
+                        <h2 class="mt-5 text-3xl font-semibold leading-tight sm:text-4xl lg:text-5xl">
+                            پشت محصول را هم بشناسید.
+                        </h2>
+                    </div>
+                    <div class="max-w-3xl">
+                        <p class="text-base leading-9 text-white/80 sm:text-lg">
+                            برای شناخت یک هود یا سینک، ظاهر محصول تنها بخشی از ماجراست.
+                            ابعاد، نوع نصب، جنس، امکانات و شیوه نگهداری هم اهمیت دارند.
+                            معرفی فرزین قرار است مسیر آشنایی با مجموعه و محصولات را روشن‌تر کند.
+                        </p>
+                        <p class="mt-5 text-sm leading-8 text-white/60">
+                            اطلاعات اختصاصی هر مدل باید با مشخصات فنی تأییدشده همان محصول همراه باشد؛
+                            به همین دلیل ویژگی‌ها و جزئیات قابل‌بررسی در صفحه محصول ارائه می‌شوند.
+                        </p>
+                        <a href="{{ route('shop.index') }}" class="mt-7 inline-flex items-center gap-3 rounded-xl bg-[var(--livora-accent)] px-5 py-3.5 text-sm font-semibold text-white transition hover:bg-cyan-400 hover:text-slate-950">
+                            دیدن کاتالوگ محصولات <span aria-hidden="true">←</span>
+                        </a>
+                    </div>
+                </div>
+            </x-layout.container>
+        </section>
 
         {{-- =========================================================
              VALUES
