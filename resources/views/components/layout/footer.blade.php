@@ -207,7 +207,7 @@
                         href="mailto:{{ config('app.contact.email') }}"
                         class="block break-all text-sm text-white/55 transition hover:text-white"
                     >
-                        {{ config('app.contact.email', 'hello@farzin.ir') }}
+                        {{ config('app.contact.email', 'info@farzin.example') }}
                     </a>
 
                     <p class="text-sm leading-7 text-white/45">
