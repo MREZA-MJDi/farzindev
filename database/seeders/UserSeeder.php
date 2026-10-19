@@ -10,7 +10,8 @@ class UserSeeder extends Seeder
 {
     public function run(): void
     {
-        $adminPassword = env('ADMIN_PASSWORD');
+        // Use config() instead of env() so seeding also works if config is cached.
+        $adminPassword = config('farzin.admin.password');
 
         if (blank($adminPassword)) {
             if (app()->environment(['local', 'testing'])) {
@@ -24,10 +25,10 @@ class UserSeeder extends Seeder
 
         User::updateOrCreate(
             [
-                'email' => env('ADMIN_EMAIL', 'admin@farzin.test'),
+                'email' => config('farzin.admin.email', 'admin@farajihome.com'),
             ],
             [
-                'name' => env('ADMIN_NAME', 'Farzin Admin'),
+                'name' => config('farzin.admin.name', 'Farzin Admin'),
                 'role' => 'admin',
                 'password' => Hash::make($adminPassword),
                 'email_verified_at' => now(),
