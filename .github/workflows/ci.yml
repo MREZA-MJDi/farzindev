@@ -56,14 +56,14 @@ jobs:
 
       - name: Package cPanel release
         run: |
-          zip -qr farzin-cpanel-deploy.zip . \
+          zip -qr /tmp/farzin-cpanel-deploy.zip . \
             -x ".git/*" \
                "node_modules/*" \
                "tests/*" \
                ".env" \
                "storage/logs/*" \
-               "database/*.sqlite" \
-               "farzin-cpanel-deploy.zip"
+               "database/*.sqlite"
+          mv /tmp/farzin-cpanel-deploy.zip ./farzin-cpanel-deploy.zip
 
       - name: Upload cPanel release package
         uses: actions/upload-artifact@v4
