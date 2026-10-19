@@ -8,23 +8,23 @@
 
 :root {
     /* Brand */
-    --admin-text: #111827;
-    --admin-text-soft: #334155;
-    --admin-muted: #64748B;
+    --admin-text: #111416;
+    --admin-text-soft: #394347;
+    --admin-muted: #707B7F;
 
     /* Background */
-    --admin-bg: #F5F8FC;
-    --admin-surface: #EAF1FA;
-    --admin-white: #FFFFFF;
+    --admin-bg: #F2F4F4;
+    --admin-surface: #E8ECEE;
+    --admin-white: #FCFDFD;
 
     /* Brand Accent */
-    --admin-accent: #2563EB;
-    --admin-accent-dark: #1D4ED8;
-    --admin-accent-soft: #DBEAFE;
+    --admin-accent: #355F65;
+    --admin-accent-dark: #284B50;
+    --admin-accent-soft: #E3ECEE;
 
     /* Borders */
-    --admin-border: #D9E3F0;
-    --admin-border-dark: #A7B8CC;
+    --admin-border: #D8DEE0;
+    --admin-border-dark: #AAB5B9;
 
     /* States */
     --admin-success: #15803d;
@@ -90,7 +90,7 @@ body {
     background:
         radial-gradient(
             circle at top right,
-            rgba(37, 99, 235, 0.035),
+            rgba(17, 20, 22, 0.025),
             transparent 28rem
         ),
         var(--admin-bg);
@@ -518,7 +518,7 @@ p {
 
     box-shadow:
         0 0 0 3px
-        rgba(37, 99, 235, 0.08);
+        rgba(53, 95, 101, 0.10);
 }
 
 .admin-input:disabled,
@@ -738,7 +738,7 @@ p {
 
     box-shadow:
         0 0 0 3px
-        rgba(37, 99, 235, 0.08);
+        rgba(53, 95, 101, 0.10);
 }
 
 .admin-search-icon {
@@ -1243,7 +1243,7 @@ p {
         linear-gradient(
             to top,
             var(--admin-accent-dark),
-            #67E8F9
+            #A4BDC0
         );
 
     transition:
