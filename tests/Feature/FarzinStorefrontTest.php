@@ -36,6 +36,11 @@ class FarzinStorefrontTest extends TestCase
             ->assertSee('فرزین')
             ->assertSee('هود آشپزخانه');
 
+        $this->get(route('about'))
+            ->assertOk()
+            ->assertSee('فرزین فرجی')
+            ->assertSee('FACTORY &amp; PROCESS', false);
+
         $this->get(route('blog.index'))
             ->assertOk()
             ->assertSee('بلاگ فرزین')
@@ -170,7 +175,9 @@ class FarzinStorefrontTest extends TestCase
 
         $this->get(route('product.show', $active->slug))
             ->assertOk()
-            ->assertSee($active->name);
+            ->assertSee($active->name)
+            ->assertSee('"@type": "Product"', false)
+            ->assertSee('"priceCurrency": "IRR"', false);
 
         $this->get(route('product.show', $archived->slug))
             ->assertNotFound();
