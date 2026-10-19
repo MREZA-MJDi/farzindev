@@ -39,7 +39,7 @@ class FarzinStorefrontTest extends TestCase
         $this->get(route('about'))
             ->assertOk()
             ->assertSee('فرزین فرجی')
-            ->assertSee('FACTORY &amp; PROCESS', false);
+            ->assertSee('FACTORY & PROCESS', false);
 
         $this->get(route('blog.index'))
             ->assertOk()
