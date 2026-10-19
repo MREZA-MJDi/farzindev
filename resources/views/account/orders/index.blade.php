@@ -1,10 +1,10 @@
 @extends('layouts.app')
 
-@section('title', 'سفارش‌های من | SilaGallery')
+@section('title', 'سفارش‌های من | فرزین')
 
 @section(
     'description',
-    'مشاهده و مدیریت سفارش‌های شما در SilaGallery.'
+    'مشاهده و مدیریت سفارش‌های شما در فرزین.'
 )
 
 @push('seo')
@@ -129,7 +129,7 @@
                             </h2>
 
                             <p class="mx-auto mt-4 max-w-md text-sm leading-8 text-[var(--livora-stone)]">
-                                اولین انتخابت را از مجموعه SilaGallery پیدا کن.
+                                اولین انتخابت را از مجموعه فرزین پیدا کن.
                             </p>
 
                             <a
@@ -255,7 +255,7 @@
                                                             @else
 
                                                                 <div class="flex h-full w-full items-center justify-center text-[9px] tracking-wider text-[var(--livora-stone)]">
-                                                                    SilaGallery
+                                                                    فرزین
                                                                 </div>
 
                                                             @endif
