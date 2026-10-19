@@ -1,8 +1,8 @@
 @extends('layouts.app')
 
-@section('title', 'ورود | SilaGallery')
+@section('title', 'ورود | فرزین')
 
-@section('description', 'ورود به حساب کاربری SilaGallery')
+@section('description', 'ورود به حساب کاربری فرزین')
 
 @section('content')
 
@@ -25,7 +25,7 @@
                         </h1>
 
                         <p class="mt-3 text-sm text-[var(--livora-stone)]">
-                            برای ادامه وارد حساب SilaGallery خود شوید.
+                            برای ادامه وارد حساب کاربری فرزین شوید.
                         </p>
 
                     </div>
