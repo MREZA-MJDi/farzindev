@@ -24,10 +24,10 @@ class UserSeeder extends Seeder
 
         User::updateOrCreate(
             [
-                'email' => env('ADMIN_EMAIL', 'admin@silagallery.test'),
+                'email' => env('ADMIN_EMAIL', 'admin@farzin.test'),
             ],
             [
-                'name' => env('ADMIN_NAME', 'SilaGallery Admin'),
+                'name' => env('ADMIN_NAME', 'Farzin Admin'),
                 'role' => 'admin',
                 'password' => Hash::make($adminPassword),
                 'email_verified_at' => now(),
@@ -37,7 +37,7 @@ class UserSeeder extends Seeder
         if (app()->environment(['local', 'testing'])) {
             User::updateOrCreate(
                 [
-                    'email' => 'demo@livora.test',
+                    'email' => 'demo@farzin.test',
                 ],
                 [
                     'name' => 'Demo User',
