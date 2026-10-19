@@ -50,3 +50,25 @@ jobs:
 
       - name: Run Laravel tests
         run: php artisan test
+
+      - name: Install production Composer dependencies
+        run: composer install --no-dev --prefer-dist --no-interaction --no-progress --optimize-autoloader
+
+      - name: Package cPanel release
+        run: |
+          zip -qr farzin-cpanel-deploy.zip . \
+            -x ".git/*" \
+               "node_modules/*" \
+               "tests/*" \
+               ".env" \
+               "storage/logs/*" \
+               "database/*.sqlite" \
+               "farzin-cpanel-deploy.zip"
+
+      - name: Upload cPanel release package
+        uses: actions/upload-artifact@v4
+        with:
+          name: farzin-cpanel-deploy
+          path: farzin-cpanel-deploy.zip
+          if-no-files-found: error
+          retention-days: 7
