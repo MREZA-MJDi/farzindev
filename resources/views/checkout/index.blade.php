@@ -1,10 +1,10 @@
 @extends('layouts.app')
 
-@section('title', 'تسویه حساب | SilaGallery')
+@section('title', 'تسویه حساب | فرزین')
 
 @section(
     'description',
-    'تکمیل اطلاعات سفارش و ادامه فرآیند پرداخت در SilaGallery.'
+    'تکمیل اطلاعات سفارش و ادامه فرآیند پرداخت در فرزین.'
 )
 
 @section('content')
