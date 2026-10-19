@@ -404,7 +404,7 @@ class FarzinStorefrontTest extends TestCase
                 'password' => 'wrong-password',
             ])
             ->assertRedirect(route('login'))
-            ->assertSessionHasErrors('email');
+            ->assertSessionHasErrors('phone');
 
         $this->assertGuest();
     }
