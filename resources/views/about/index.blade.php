@@ -203,7 +203,7 @@
             <x-layout.container>
                 <div class="relative grid gap-10 py-16 sm:py-20 lg:grid-cols-[0.85fr_1.15fr] lg:items-end lg:py-24">
                     <div>
-                        <p class="text-[10px] font-semibold uppercase tracking-[0.24em] text-cyan-300">FACTORY & PROCESS</p>
+                        <p class="text-[10px] font-semibold uppercase tracking-[0.24em] text-[#b7c9cb]">FACTORY & PROCESS</p>
                         <h2 class="mt-5 text-3xl font-semibold leading-tight sm:text-4xl lg:text-5xl">
                             پشت محصول را هم بشناسید.
                         </h2>
@@ -218,7 +218,7 @@
                             اطلاعات اختصاصی هر مدل باید با مشخصات فنی تأییدشده همان محصول همراه باشد؛
                             به همین دلیل ویژگی‌ها و جزئیات قابل‌بررسی در صفحه محصول ارائه می‌شوند.
                         </p>
-                        <a href="{{ route('shop.index') }}" class="mt-7 inline-flex items-center gap-3 rounded-xl bg-[var(--livora-accent)] px-5 py-3.5 text-sm font-semibold text-white transition hover:bg-cyan-400 hover:text-slate-950">
+                        <a href="{{ route('shop.index') }}" class="mt-7 inline-flex items-center gap-3 rounded-xl bg-[var(--livora-accent)] px-5 py-3.5 text-sm font-semibold text-white transition hover:bg-white hover:text-[var(--livora-ink)]">
                             دیدن کاتالوگ محصولات <span aria-hidden="true">←</span>
                         </a>
                     </div>
