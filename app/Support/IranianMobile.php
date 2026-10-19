@@ -10,8 +10,12 @@ final class IranianMobile
      * Supports Persian/Arabic digits, +98/0098 country prefixes,
      * and common separators. Validation is intentionally separate.
      */
-    public static function normalize(?string $input): ?string
+    public static function normalize(mixed $input): ?string
     {
+        if (! is_string($input) && ! is_numeric($input)) {
+            return null;
+        }
+
         if ($input === null) {
             return null;
         }
