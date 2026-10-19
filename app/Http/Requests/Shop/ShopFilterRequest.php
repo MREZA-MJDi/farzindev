@@ -59,7 +59,7 @@ class ShopFilterRequest extends FormRequest
                 'nullable',
                 'numeric',
                 'min:0',
-                'gte:min_price',
+                ...($this->filled('min_price') ? ['gte:min_price'] : []),
             ],
 
             /*
