@@ -1,47 +1,48 @@
-# LIVORA
+# Farzin — فروشگاه هود و سینک آشپزخانه
 
-LIVORA is a furniture and home-living e-commerce project built with Laravel. Its documented product direction includes catalogue browsing, product details, categories, filtering, cart and wishlist experiences, customer accounts, orders, payment-provider integration, and installment purchasing. Features and payment providers must be verified against the current implementation before being treated as live or production-ready.
+این مخزن نسخه‌ی توسعه‌ی فروشگاه اینترنتی فرزین است. پروژه با Laravel ساخته شده و برای کاتالوگ هود، سینک و تجهیزات مرتبط آشپزخانه آماده‌سازی می‌شود.
 
-## Dedicated dashboard
-LIVORA includes its own dedicated administration dashboard for the store's operational workflow. The README describes the product scope; verify each management and payment operation against the current implementation before treating it as production-ready.
+## فناوری‌ها
+- PHP 8.2+ و Laravel 12
+- Blade، Tailwind CSS 4، Alpine.js و Vite
+- Eloquent ORM و Laravel migrations
 
-## Technology
-- PHP `^8.2`, Laravel `^12.0`
-- Blade, Tailwind CSS, Alpine.js, Vite
-- Laravel database migrations and Eloquent
-- Frontend build managed by npm/Vite
+## قابلیت‌های موجود در کد
+- صفحه‌ی اصلی، فروشگاه، دسته‌بندی و صفحه‌ی محصول
+- تصاویر محصول و واریانت‌ها
+- جست‌وجو و فیلتر کاتالوگ
+- سبد خرید، علاقه‌مندی‌ها، حساب مشتری و سفارش‌ها
+- پنل مدیریت محصولات، دسته‌بندی‌ها، تصاویر، واریانت‌ها، سفارش‌ها و پیام‌های تماس
+- زیرساخت پرداخت و خرید اقساطی؛ اتصال درگاه و فرایند نهایی پرداخت باید پیش از استفاده‌ی واقعی جداگانه تنظیم و آزمایش شود.
 
-## Requirements
-PHP 8.2+, Composer, Node.js/npm, and a configured Laravel-supported database.
+## راه‌اندازی در Windows
+از ریشه‌ی پروژه اجرا کنید:
 
-## Local setup
-```bash
-git clone https://github.com/MREZA-MJDi/livora.git
-cd livora
+```bat
 composer install
+copy .env.example .env
+php artisan key:generate
 ```
 
-Copy `.env.example` to `.env` (`copy .env.example .env` in Windows CMD; `cp .env.example .env` on macOS/Linux), create a local database, and configure the `DB_*` values. Set payment credentials only in your local environment and only when the corresponding gateway is configured.
+یک دیتابیس محلی بسازید و مقادیر `DB_*` در `.env` را تنظیم کنید. برای مدیر پنل، مقدارهای اختصاصی و امن `ADMIN_EMAIL` و `ADMIN_PASSWORD` را وارد کنید؛ رمز پیش‌فرض را در محیط واقعی استفاده نکنید.
 
-```bash
-php artisan key:generate
+```bat
 php artisan migrate
 npm install
 npm run build
 php artisan storage:link
+php artisan db:seed
 php artisan serve
 ```
 
-Open `http://127.0.0.1:8000`. For Vite hot reload, run `npm run dev` in a separate terminal.
+سپس `http://127.0.0.1:8000` را باز کنید. برای توسعه‌ی زنده‌ی فرانت‌اند، در ترمینال دیگری `npm run dev` را اجرا کنید.
 
-## Tests
-```bash
+## کاتالوگ واقعی
+Seeder پیش‌فرض دو دسته‌بندی پایه‌ی «هود آشپزخانه» و «سینک ظرفشویی» را آماده می‌کند و کالاهای نمایشی قدیمی مبلمان را از فهرست فعال خارج می‌کند. محصولات، مشخصات واقعی، قیمت‌ها، موجودی‌ها و تصاویر فرزین باید از پنل مدیریت ثبت شوند؛ داده‌ی فروش واقعی را با اطلاعات ساختگی پر نکنید.
+
+## تست‌ها
+```bat
 php artisan test
 ```
 
-## Payments and data safety
-Use gateway sandbox credentials for development. Never store secret keys in source control, and never claim that a payment succeeded based only on a browser redirect; payment status must be confirmed by the application's verified gateway flow. Review migrations and seeders before using them with non-disposable data.
-
-## Links
-- Repository: https://github.com/MREZA-MJDi/livora
-- Laravel documentation: https://laravel.com/docs/12.x
+پیش از استقرار عمومی، مجوزهای پنل، آپلود تصاویر، تنظیمات تماس، جریان تأیید پرداخت، ایمیل و اجرای برنامه با `APP_DEBUG=false` را آزمایش کنید. فایل `.env` و اطلاعات محرمانه را در Git منتشر نکنید.
