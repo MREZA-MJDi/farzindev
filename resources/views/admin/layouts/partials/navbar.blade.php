@@ -23,12 +23,21 @@
         'admin.customers.show' => 'جزئیات مشتری',
         'admin.customers.edit' => 'ویرایش مشتری',
 
+        'admin.product-images.index' => 'تصاویر محصولات',
+        'admin.product-images.create' => 'افزودن تصویر محصول',
+        'admin.product-images.edit' => 'ویرایش تصویر محصول',
+        'admin.product-images.show' => 'جزئیات تصویر محصول',
+
+        'admin.product-variants.index' => 'تنوع‌های محصول',
+        'admin.product-variants.create' => 'افزودن تنوع محصول',
+        'admin.product-variants.edit' => 'ویرایش تنوع محصول',
+        'admin.product-variants.show' => 'جزئیات تنوع محصول',
+
         'admin.media.index' => 'رسانه',
         'admin.media.create' => 'افزودن رسانه',
 
         'admin.contact-messages.index' => 'پیام‌های کاربران',
         'admin.contact-messages.show' => 'مشاهده پیام',
-        'admin.contact-settings.edit' => 'تنظیمات تماس',
     ];
 
     $pageTitle = $pageTitles[$currentRouteName]
@@ -195,29 +204,86 @@
                  SEARCH
             ====================================================== --}}
 
-            <div class="relative hidden md:block">
+            <div
+                class="relative hidden md:block"
+                x-data='{
+                    query: "",
+                    pages: [
+                        { title: "داشبورد", url: @js(route("admin.dashboard")), terms: "home overview dashboard" },
+                        { title: "محصولات", url: @js(route("admin.products.index")), terms: "product catalog کالا" },
+                        { title: "دسته‌بندی‌ها", url: @js(route("admin.categories.index")), terms: "category دسته ها" },
+                        { title: "تصاویر محصولات", url: @js(route("admin.product-images.index")), terms: "images photos media تصویر" },
+                        { title: "تنوع‌های محصول", url: @js(route("admin.product-variants.index")), terms: "variants options ویژگی" },
+                        { title: "سفارش‌ها", url: @js(route("admin.orders.index")), terms: "orders sales" },
+                        { title: "مشتریان", url: @js(route("admin.customers.index")), terms: "customers users" },
+                        { title: "رسانه", url: @js(route("admin.media.index")), terms: "media uploads فایل آپلود" },
+                        { title: "پیام‌های کاربران", url: @js(route("admin.contact-messages.index")), terms: "contact messages support" }
+                    ],
+                    get matches() {
+                        const term = this.query.trim().toLocaleLowerCase();
+                        if (!term) return [];
+                        return this.pages.filter((page) =>
+                            (page.title + " " + page.terms).toLocaleLowerCase().includes(term)
+                        ).slice(0, 6);
+                    },
+                    goToFirst() {
+                        if (this.matches.length) window.location.assign(this.matches[0].url);
+                    }
+                }'
+                @click.outside="query = ''"
+            >
+                <form role="search" @submit.prevent="goToFirst()">
+                    <label for="admin-quick-search" class="sr-only">جست‌وجوی بخش‌های پنل</label>
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke-width="1.5"
+                        stroke="currentColor"
+                        class="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--admin-muted)]"
+                        aria-hidden="true"
+                    >
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            d="m21 21-4.35-4.35m1.35-5.4a6.75 6.75 0 1 1-13.5 0 6.75 6.75 0 0 1 13.5 0Z"
+                        />
+                    </svg>
 
-                <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke-width="1.5"
-                    stroke="currentColor"
-                    class="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--admin-muted)]"
+                    <input
+                        id="admin-quick-search"
+                        type="search"
+                        x-model="query"
+                        @keydown.escape="query = ''"
+                        :aria-expanded="(query.trim().length > 0).toString()"
+                        aria-controls="admin-quick-search-results"
+                        autocomplete="off"
+                        placeholder="جست‌وجوی بخش‌های پنل..."
+                        class="h-10 w-44 rounded-xl border border-[var(--admin-border)] bg-[var(--admin-surface)] py-2 pr-10 pl-3 text-[10px] text-[var(--admin-text)] outline-none transition placeholder:text-[var(--admin-muted)] focus:border-[var(--admin-accent)] focus:bg-[var(--admin-white)] xl:w-56"
+                    >
+                </form>
+
+                <div
+                    id="admin-quick-search-results"
+                    x-show="query.trim().length > 0"
+                    x-cloak
+                    x-transition
+                    class="absolute left-0 top-[calc(100%+8px)] z-50 w-64 overflow-hidden rounded-2xl border border-[var(--admin-border)] bg-[var(--admin-white)] p-2 shadow-[var(--admin-shadow-lg)]"
                 >
-                    <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        d="m21 21-4.35-4.35m1.35-5.4a6.75 6.75 0 1 1-13.5 0 6.75 6.75 0 0 1 13.5 0Z"
-                    />
-                </svg>
-
-                <input
-                    type="search"
-                    placeholder="جستجو در پنل..."
-                    class="h-10 w-44 rounded-xl border border-[var(--admin-border)] bg-[var(--admin-surface)] py-2 pr-10 pl-3 text-[10px] text-[var(--admin-text)] outline-none transition placeholder:text-[var(--admin-muted)] focus:border-[var(--admin-accent)] focus:bg-[var(--admin-white)] xl:w-56"
-                >
-
+                    <template x-for="page in matches" :key="page.url">
+                        <a
+                            :href="page.url"
+                            @click="query = ''"
+                            class="block rounded-xl px-3 py-2.5 text-xs text-[var(--admin-text)] transition hover:bg-[var(--admin-surface)]"
+                        >
+                            <span x-text="page.title"></span>
+                            <span class="mr-2 text-[10px] text-[var(--admin-muted)]" aria-hidden="true">↗</span>
+                        </a>
+                    </template>
+                    <p x-show="matches.length === 0" class="px-3 py-3 text-xs text-[var(--admin-muted)]">
+                        بخشی پیدا نشد؛ نام صفحه را ساده‌تر وارد کنید.
+                    </p>
+                </div>
             </div>
 
 

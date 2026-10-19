@@ -247,7 +247,7 @@
                     id="image"
                     name="image"
                     type="file"
-                    accept="image/*"
+                    accept="image/jpeg,image/png,image/webp"
                     class="admin-input p-2"
                 >
 

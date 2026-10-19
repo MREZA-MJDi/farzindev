@@ -834,7 +834,7 @@
                         maxlength="255"
                         value="{{ old('meta_title', $product->meta_title ?? '') }}"
                         class="admin-input"
-                        placeholder="مثلاً خرید مبل راحتی مدل Milano | SilaGallery"
+                        placeholder="مثلاً هود آشپزخانه مدل آریا | فرزین"
                     >
 
 

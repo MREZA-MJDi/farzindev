@@ -24,7 +24,7 @@ class MediaUploadRequest extends FormRequest
                 'required',
                 'file',
                 'max:10240',
-                'mimes:jpg,jpeg,png,webp,gif,svg,pdf,doc,docx,xls,xlsx,zip',
+                'mimes:jpg,jpeg,png,webp,gif,pdf,doc,docx,xls,xlsx,zip',
             ],
 
             'alt' => [
@@ -50,7 +50,7 @@ class MediaUploadRequest extends FormRequest
             'file.required' => 'انتخاب فایل الزامی است.',
             'file.file' => 'فایل انتخاب‌شده معتبر نیست.',
             'file.max' => 'حجم فایل نباید بیشتر از ۱۰ مگابایت باشد.',
-            'file.mimes' => 'فرمت فایل مجاز نیست.',
+            'file.mimes' => 'فرمت فایل مجاز نیست؛ SVG در کتابخانه رسانه پذیرفته نمی‌شود.',
 
             'alt.string' => 'متن جایگزین باید یک متن معتبر باشد.',
             'alt.max' => 'متن جایگزین نمی‌تواند بیشتر از ۲۵۵ کاراکتر باشد.',

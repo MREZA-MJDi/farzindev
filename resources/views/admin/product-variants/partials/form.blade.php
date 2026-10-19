@@ -184,12 +184,12 @@
                             value="{{ old('color_hex', $productVariant->color_hex ?? '') }}"
                             dir="ltr"
                             class="admin-input flex-1 text-left"
-                            placeholder="#C8A27A"
+                            placeholder="#355F65"
                         >
 
                         <p class="text-xs leading-6 text-[var(--admin-muted)]">
                             برای نوع «رنگ» اختیاری است؛ مثال:
-                            <span dir="ltr">#C8A27A</span>
+                            <span dir="ltr">#355F65</span>
                         </p>
 
                     </div>
