@@ -1182,6 +1182,202 @@ class FarzinStorefrontTest extends TestCase
         $this->assertDatabaseMissing('cart_items', ['id' => $itemB->id]);
     }
 
+    public function test_customer_can_update_default_and_delete_only_their_own_addresses(): void
+    {
+        $customer = $this->customer();
+        $otherCustomer = $this->customer();
+
+        $first = $customer->addresses()->create([
+            'title' => 'خانه',
+            'first_name' => 'Farzin',
+            'last_name' => 'Buyer',
+            'phone' => '09123456789',
+            'province' => 'Tehran',
+            'city' => 'Tehran',
+            'address' => 'نشانی اول، پلاک ۱',
+            'postal_code' => '1234567890',
+            'is_default' => true,
+        ]);
+        $second = $customer->addresses()->create([
+            'title' => 'محل کار',
+            'first_name' => 'Farzin',
+            'last_name' => 'Buyer',
+            'phone' => '09123456789',
+            'province' => 'Tehran',
+            'city' => 'Tehran',
+            'address' => 'نشانی دوم، پلاک ۲',
+            'postal_code' => '1234567890',
+            'is_default' => false,
+        ]);
+        $foreign = $otherCustomer->addresses()->create([
+            'title' => 'آدرس دیگر مشتری',
+            'first_name' => 'Other',
+            'last_name' => 'Buyer',
+            'phone' => '09123456789',
+            'province' => 'Tehran',
+            'city' => 'Tehran',
+            'address' => 'نشانی مشتری دیگر، پلاک ۳',
+            'postal_code' => '1234567890',
+            'is_default' => true,
+        ]);
+
+        $updatedAddress = [
+            'title' => 'خانه به‌روزشده',
+            'first_name' => 'Farzin',
+            'last_name' => 'Buyer',
+            'phone' => '09123456789',
+            'province' => 'Tehran',
+            'city' => 'Tehran',
+            'address' => 'نشانی به‌روزشده، پلاک ۱۰',
+            'postal_code' => '1234567890',
+            'is_default' => '1',
+        ];
+
+        $this->actingAs($customer)
+            ->from(route('account.addresses.index'))
+            ->put(route('account.addresses.update', $first), $updatedAddress)
+            ->assertRedirect(route('account.addresses.index'))
+            ->assertSessionHas('success');
+
+        $this->assertDatabaseHas('addresses', [
+            'id' => $first->id,
+            'title' => 'خانه به‌روزشده',
+            'address' => 'نشانی به‌روزشده، پلاک ۱۰',
+            'is_default' => true,
+        ]);
+        $this->assertDatabaseHas('addresses', [
+            'id' => $second->id,
+            'is_default' => false,
+        ]);
+
+        $this->patch(route('account.addresses.default', $second))
+            ->assertRedirect(route('account.addresses.index'))
+            ->assertSessionHas('success');
+
+        $this->assertDatabaseHas('addresses', [
+            'id' => $second->id,
+            'is_default' => true,
+        ]);
+        $this->assertDatabaseHas('addresses', [
+            'id' => $first->id,
+            'is_default' => false,
+        ]);
+
+        $this->delete(route('account.addresses.destroy', $foreign))
+            ->assertForbidden();
+
+        $this->delete(route('account.addresses.destroy', $first))
+            ->assertRedirect(route('account.addresses.index'))
+            ->assertSessionHas('success');
+
+        $this->assertDatabaseMissing('addresses', ['id' => $first->id]);
+        $this->assertDatabaseHas('addresses', ['id' => $foreign->id]);
+    }
+
+    public function test_admin_can_update_product_image_and_replace_the_old_file_safely(): void
+    {
+        Storage::fake('public');
+        $admin = $this->admin();
+        $product = $this->product($this->category(['slug' => 'hoods']), [
+            'name' => 'Update Image Hood',
+            'slug' => 'update-image-hood',
+            'sku' => 'FAR-UPDATE-IMAGE',
+        ]);
+
+        Storage::disk('public')->put('products/images/original-primary.webp', 'old primary bytes');
+        Storage::disk('public')->put('products/images/secondary.webp', 'old secondary bytes');
+
+        $primary = ProductImage::create([
+            'product_id' => $product->id,
+            'path' => 'products/images/original-primary.webp',
+            'alt' => 'تصویر اصلی قدیمی',
+            'sort_order' => 0,
+            'is_primary' => true,
+        ]);
+        $secondary = ProductImage::create([
+            'product_id' => $product->id,
+            'path' => 'products/images/secondary.webp',
+            'alt' => 'تصویر دوم',
+            'sort_order' => 1,
+            'is_primary' => false,
+        ]);
+
+        $this->actingAs($admin)
+            ->put(route('admin.product-images.update', $secondary), [
+                'product_id' => $product->id,
+                'image' => UploadedFile::fake()->image('hood-updated.webp', 120, 80),
+                'alt' => 'تصویر جدید محصول',
+                'sort_order' => 0,
+                'is_primary' => '1',
+            ])
+            ->assertRedirect(route('admin.product-images.index', [
+                'product_id' => $product->id,
+            ]))
+            ->assertSessionHas('success');
+
+        $secondary->refresh();
+        $this->assertTrue($secondary->is_primary);
+        $this->assertSame('تصویر جدید محصول', $secondary->alt);
+        $this->assertDatabaseHas('product_images', [
+            'id' => $primary->id,
+            'is_primary' => false,
+        ]);
+        Storage::disk('public')->assertMissing('products/images/secondary.webp');
+        Storage::disk('public')->assertMissing('products/images/original-primary.webp');
+        Storage::disk('public')->assertExists($secondary->path);
+    }
+
+    public function test_installment_payment_redirect_uses_gateway_result_and_rejects_foreign_orders(): void
+    {
+        $owner = $this->customer();
+        $otherCustomer = $this->customer();
+        $order = $this->order($owner, [
+            'payment_method' => 'installment',
+            'installment_enabled' => true,
+            'installment_cash_percent' => 50,
+            'installment_cash_amount' => 500000,
+            'installment_deferred_amount' => 500000,
+            'installment_remainder_method' => 'cheque',
+            'installment_cheque_count' => 2,
+            'installment_interval_months' => 2,
+            'subtotal' => 1000000,
+            'total' => 1000000,
+        ]);
+
+        $paymentService = \Mockery::mock(PaymentService::class);
+        $paymentService->shouldReceive('startInstallmentPayment')
+            ->once()
+            ->withArgs(fn ($passedOrder, $gateway) =>
+                (int) $passedOrder->id === (int) $order->id
+                && $gateway === 'digipay'
+            )
+            ->andReturn([
+                'success' => true,
+                'redirect_url' => 'https://sandbox.example.test/pay/farzin-order',
+            ]);
+        $this->app->instance(PaymentService::class, $paymentService);
+
+        $this->actingAs($owner)
+            ->post(route('checkout.payment.installment', $order), [
+                'gateway' => 'digipay',
+            ])
+            ->assertRedirect('https://sandbox.example.test/pay/farzin-order');
+
+        $this->actingAs($otherCustomer)
+            ->post(route('checkout.payment.installment', $order), [
+                'gateway' => 'digipay',
+            ])
+            ->assertForbidden();
+
+        $this->actingAs($owner)
+            ->from(route('checkout.payment', $order))
+            ->post(route('checkout.payment.installment', $order), [
+                'gateway' => 'unknown-gateway',
+            ])
+            ->assertRedirect(route('checkout.payment', $order))
+            ->assertSessionHasErrors('gateway');
+    }
+
     private function category(array $attributes = []): Category
     {
         return Category::create(array_merge([
