@@ -233,6 +233,68 @@ class FarzinStorefrontTest extends TestCase
         ]);
     }
 
+    public function test_guest_cart_is_merged_on_login_without_losing_variant_selection(): void
+    {
+        $product = $this->product($this->category(['slug' => 'hoods']), [
+            'name' => 'Variant Hood',
+            'slug' => 'variant-hood',
+            'sku' => 'FAR-VARIANT-CART',
+            'price' => 15000000,
+            'stock' => 10,
+        ]);
+        $variant = ProductVariant::create([
+            'product_id' => $product->id,
+            'type' => 'color',
+            'name' => 'رنگ',
+            'value' => 'black',
+            'sku' => 'FAR-VARIANT-CART-BLACK',
+            'price_adjustment' => 500000,
+            'stock' => 5,
+            'is_active' => true,
+        ]);
+
+        $this->postJson(route('cart.add', $product), [
+            'quantity' => 2,
+            'variants' => ['color' => $variant->id],
+        ])->assertOk()
+            ->assertJsonPath('cart_count', 2);
+
+        $guestCart = Cart::query()
+            ->whereNull('user_id')
+            ->where('status', 'active')
+            ->firstOrFail();
+        $guestItem = $guestCart->items()->firstOrFail();
+        $selectedVariantKey = $guestItem->variant_key;
+        $selectedVariantOptions = $guestItem->variant_options;
+
+        $customer = $this->customer([
+            'email' => 'cart-owner@farzin.test',
+        ]);
+
+        $this->post(route('login.store'), [
+            'email' => $customer->email,
+            'password' => 'password',
+        ])->assertRedirect(route('account.index'));
+
+        $userCart = Cart::query()
+            ->where('user_id', $customer->id)
+            ->where('status', 'active')
+            ->firstOrFail();
+        $userItem = $userCart->items()->firstOrFail();
+
+        $this->assertSame($selectedVariantKey, $userItem->variant_key);
+        $this->assertEquals($selectedVariantOptions, $userItem->variant_options);
+        $this->assertSame(2, (int) $userItem->quantity);
+
+        $this->assertDatabaseHas('carts', [
+            'id' => $guestCart->id,
+            'status' => 'converted',
+        ]);
+        $this->assertDatabaseMissing('cart_items', [
+            'cart_id' => $guestCart->id,
+        ]);
+    }
+
     public function test_customer_registration_creates_a_customer_account(): void
     {
         $this->post(route('register.store'), [
