@@ -16,14 +16,14 @@
     --livora-stone: #697378;
 
     /* One brand accent, used with restraint. */
-    --livora-accent: #087F89;
-    --livora-accent-dark: #066A72;
-    --livora-accent-soft: #DDF2F3;
+    --livora-accent: #355F65;
+    --livora-accent-dark: #284B50;
+    --livora-accent-soft: #E3ECEE;
 
     /* Same accent family, softened for contrast on dark surfaces. */
-    --livora-sage: #8BE0E4;
-    --livora-sage-dark: #087F89;
-    --livora-sage-soft: #DDF2F3;
+    --livora-sage: #A4BDC0;
+    --livora-sage-dark: #355F65;
+    --livora-sage-soft: #E3ECEE;
 
     --livora-border: #D8DEE0;
     --livora-border-dark: #AAB5B9;
