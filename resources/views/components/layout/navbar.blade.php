@@ -16,8 +16,8 @@
                     class="group inline-flex items-center"
                     aria-label="فرزین"
                 >
-                    <span class="silagallery-wordmark" aria-hidden="true">
-                        <span class="silagallery-wordmark__main">فرزین</span>
+                    <span class="farzin-wordmark" aria-hidden="true">
+                        <span class="farzin-wordmark__main">فرزین</span>
                     </span>
                 </a>
 
