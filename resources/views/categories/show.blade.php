@@ -2,13 +2,13 @@
 
 @section(
     'title',
-    $category->name . ' | خرید مبلمان و محصولات خانه | SilaGallery'
+    $category->name . ' | خرید هود و سینک و محصولات خانه | فرزین'
 )
 
 @section(
     'description',
     $category->meta_description
-        ?? ('مشاهده و خرید محصولات دسته‌بندی ' . $category->name . ' در SilaGallery؛ بررسی قیمت، مشخصات و شرایط خرید اقساطی.')
+        ?? ('مشاهده و خرید محصولات دسته‌بندی ' . $category->name . ' در فرزین؛ بررسی قیمت، مشخصات و شرایط خرید اقساطی.')
 )
 
 @section(
@@ -25,12 +25,12 @@
 
     <meta
         property="og:title"
-        content="{{ $category->name }} | SilaGallery"
+        content="{{ $category->name }} | فرزین"
     >
 
     <meta
         property="og:description"
-        content="{{ $category->meta_description ?? ('محصولات ' . $category->name . ' در SilaGallery') }}"
+        content="{{ $category->meta_description ?? ('محصولات ' . $category->name . ' در فرزین') }}"
     >
 
     <meta
@@ -52,12 +52,12 @@
 
     <meta
         name="twitter:title"
-        content="{{ $category->name }} | SilaGallery"
+        content="{{ $category->name }} | فرزین"
     >
 
     <meta
         name="twitter:description"
-        content="{{ $category->meta_description ?? ('محصولات ' . $category->name . ' در SilaGallery') }}"
+        content="{{ $category->meta_description ?? ('محصولات ' . $category->name . ' در فرزین') }}"
     >
 
     @if($category->image)
@@ -71,7 +71,7 @@
 {
     "@@context": "https://schema.org",
     "@@type": "WebSite",
-    "name": "SilaGallery",
+    "name": "فرزین",
     "url": @json(url('/')),
     "potentialAction": {
         "@@type": "SearchAction",
@@ -85,7 +85,7 @@
 {
     "@@context": "https://schema.org",
     "@@type": "Organization",
-    "name": "SilaGallery",
+    "name": "فرزین",
     "url": @json(url('/'))
         }
 </script>
@@ -195,7 +195,7 @@
 
                                 <div class="flex aspect-[4/3] items-center justify-center">
                                 <span class="text-xs tracking-[0.2em] text-[var(--livora-stone)]">
-                                    SilaGallery
+                                    فرزین
                                 </span>
                                 </div>
 
@@ -329,7 +329,7 @@
                         <p>
                             هنگام انتخاب محصول از این مجموعه، علاوه بر ظاهر،
                             به ابعاد فضا، متریال، رنگ، کاربرد و هماهنگی آن با سایر عناصر خانه توجه کنید.
-                            SilaGallery تلاش می‌کند اطلاعات موردنیاز برای یک انتخاب آگاهانه را
+                            فرزین تلاش می‌کند اطلاعات موردنیاز برای یک انتخاب آگاهانه را
                             در صفحه هر محصول در اختیار شما قرار دهد.
                         </p>
 
@@ -354,7 +354,7 @@
                     <div>
 
                         <p class="text-[10px] uppercase tracking-[0.2em] text-[var(--livora-accent)]">
-                            SilaGallery
+                            فرزین
                         </p>
 
                         <h2 class="mt-2 text-2xl font-semibold">
