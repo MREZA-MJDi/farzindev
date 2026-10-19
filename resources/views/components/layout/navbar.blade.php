@@ -14,10 +14,10 @@
                 <a
                     href="{{ route('home') }}"
                     class="group inline-flex items-center"
-                    aria-label="SilaGallery"
+                    aria-label="فرزین"
                 >
                     <span class="silagallery-wordmark" aria-hidden="true">
-                        <span class="silagallery-wordmark__main">Sila</span><span class="silagallery-wordmark__sub">Gallery</span>
+                        <span class="silagallery-wordmark__main">فرزین</span>
                     </span>
                 </a>
 
@@ -70,6 +70,21 @@
                     دسته‌بندی‌ها
 
                     @if(request()->routeIs('categories.*'))
+                        <span class="absolute inset-x-0 -bottom-1 mx-auto h-px w-5 bg-[var(--livora-accent)]"></span>
+                    @endif
+                </a>
+
+                <a
+                    href="{{ route('blog.index') }}"
+                    @class([
+                        'relative py-2 text-sm font-medium transition duration-300',
+                        'text-[var(--livora-ink)]' => request()->routeIs('blog.*'),
+                        'text-[var(--livora-stone)] hover:text-[var(--livora-ink)]' => !request()->routeIs('blog.*'),
+                    ])
+                >
+                    بلاگ
+
+                    @if(request()->routeIs('blog.*'))
                         <span class="absolute inset-x-0 -bottom-1 mx-auto h-px w-5 bg-[var(--livora-accent)]"></span>
                     @endif
                 </a>
