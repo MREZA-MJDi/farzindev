@@ -1,31 +1,32 @@
 :root {
-    /* Farzin kitchen-appliance storefront palette: cool white, graphite, electric blue. */
-    --livora-ink: #111827;
-    --livora-charcoal: #0B1220;
+    /* Farzin signature palette: matte black, graphite, pearly white, one cool accent. */
+    --livora-ink: #111416;
+    --livora-charcoal: #1B2023;
 
-    --livora-chocolate: #1E3A5F;
-    --livora-chocolate-dark: #122846;
-    --livora-chocolate-soft: #DBEAFE;
+    /* Legacy token names retained so existing storefront components stay compatible. */
+    --livora-chocolate: #272D31;
+    --livora-chocolate-dark: #171B1E;
+    --livora-chocolate-soft: #E0E6E8;
 
-    --livora-cream: #F5F8FC;
-    --livora-white: #FFFFFF;
-    --livora-surface: #EAF1FA;
+    --livora-cream: #F2F4F4;
+    --livora-white: #FCFDFD;
+    --livora-surface: #E8ECEE;
 
-    --livora-sand: #D4DFED;
-    --livora-stone: #65758B;
+    --livora-sand: #C8D0D3;
+    --livora-stone: #697378;
 
-    /* Primary brand accent */
-    --livora-accent: #2563EB;
-    --livora-accent-dark: #1D4ED8;
-    --livora-accent-soft: #DBEAFE;
+    /* One brand accent, used with restraint. */
+    --livora-accent: #355F65;
+    --livora-accent-dark: #284B50;
+    --livora-accent-soft: #E3ECEE;
 
-    /* Secondary electric-cyan accent */
-    --livora-sage: #06B6D4;
-    --livora-sage-dark: #0891B2;
-    --livora-sage-soft: #CFFAFE;
+    /* Same accent family, softened for contrast on dark surfaces. */
+    --livora-sage: #A4BDC0;
+    --livora-sage-dark: #355F65;
+    --livora-sage-soft: #E3ECEE;
 
-    --livora-border: #D9E3F0;
-    --livora-border-dark: #A7B8CC;
+    --livora-border: #D8DEE0;
+    --livora-border-dark: #AAB5B9;
 
     --livora-success: #15803D;
     --livora-success-soft: #DCFCE7;
@@ -36,9 +37,9 @@
     --livora-info: #0369A1;
     --livora-info-soft: #E0F2FE;
 
-    --livora-shadow-sm: 0 4px 14px rgba(15, 23, 42, 0.055);
-    --livora-shadow-md: 0 12px 35px rgba(15, 23, 42, 0.09);
-    --livora-shadow-lg: 0 25px 70px rgba(15, 23, 42, 0.14);
+    --livora-shadow-sm: 0 5px 18px rgba(17, 20, 22, 0.055);
+    --livora-shadow-md: 0 16px 42px rgba(17, 20, 22, 0.10);
+    --livora-shadow-lg: 0 30px 80px rgba(17, 20, 22, 0.16);
 
     --livora-radius-sm: 0.75rem;
     --livora-radius-md: 1rem;
@@ -46,8 +47,8 @@
     --livora-radius-xl: 2rem;
 
     --livora-duration-fast: 180ms;
-    --livora-duration: 300ms;
-    --livora-duration-slow: 650ms;
+    --livora-duration: 320ms;
+    --livora-duration-slow: 720ms;
 
     --livora-container: 1440px;
 }

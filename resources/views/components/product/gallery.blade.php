@@ -35,7 +35,7 @@
 
     $productName =
         $resolvedProduct?->name
-        ?? 'محصول SilaGallery';
+        ?? 'محصول فرزین';
 
     /*
     |--------------------------------------------------------------------------
@@ -285,7 +285,7 @@
                     <div class="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl border border-[var(--livora-border)] bg-[var(--livora-white)]">
 
                         <span class="text-xs tracking-[0.2em] text-[var(--livora-stone)]">
-                            LV
+                            FZ
                         </span>
 
                     </div>
