@@ -67,77 +67,107 @@
 
     <div class="overflow-hidden bg-[var(--livora-cream)]">
 
-        {{-- =========================================================
-             HERO
-        ========================================================== --}}
-
-        <section class="border-b border-[var(--livora-border)] bg-[var(--livora-white)]">
+        {{-- Compact editorial hero: clear copy on the right, motion-led brand visual on the left. --}}
+        <section class="farzin-contact-hero relative overflow-hidden" data-farzin-contact-hero aria-labelledby="contact-hero-title">
+            <div class="farzin-contact-hero__grid" aria-hidden="true"></div>
+            <div class="farzin-contact-hero__glow" aria-hidden="true"></div>
 
             <x-layout.container>
-
-                <div class="py-10 sm:py-16 lg:py-20">
-
-                    <nav
-                        aria-label="breadcrumb"
-                        class="flex flex-wrap items-center gap-2 text-[11px] text-[var(--livora-stone)]"
-                    >
-
-                        <a
-                            href="{{ route('home') }}"
-                            class="transition hover:text-[var(--livora-ink)]"
-                        >
-                            خانه
-                        </a>
-
-                        <span>/</span>
-
-                        <span class="text-[var(--livora-ink)]">
-                            تماس با ما
-                        </span>
-
-                    </nav>
-
-
-                    <div class="mt-10 grid items-end gap-10 lg:grid-cols-[1.1fr_0.9fr]">
-
-                        <div class="max-w-4xl">
-
-                            <p class="text-[10px] font-medium uppercase tracking-[0.24em] text-[var(--livora-accent)]">
-                                GET IN TOUCH
-                            </p>
-
-                            <h1 class="mt-5 text-5xl font-semibold leading-[1.02] tracking-tight sm:text-6xl lg:text-7xl">
-                                برای انتخاب بهتر،
-                                <span class="block text-[var(--livora-accent)]">
-                                    کنار شما هستیم.
-                                </span>
-                            </h1>
-
-                        </div>
-
-
-                        <div>
-
-                            <p class="text-sm leading-8 text-[var(--livora-stone)] sm:text-base">
-                                برای راهنمایی انتخاب هود و سینک، بررسی مشخصات محصول
-                                یا هر موضوع دیگری می‌توانید با فرزین در ارتباط باشید.
-                            </p>
-
-                            <a
-                                href="#contact-form"
-                                class="mt-7 inline-flex items-center rounded-2xl bg-[var(--livora-ink)] px-6 py-4 text-sm font-medium text-white transition hover:bg-[var(--livora-accent)]"
-                            >
-                                ارسال پیام
-                            </a>
-
-                        </div>
-
-                    </div>
-
+                <div class="farzin-contact-hero__breadcrumb">
+                    <a href="{{ route('home') }}">خانه</a>
+                    <span aria-hidden="true">/</span>
+                    <span aria-current="page">تماس با ما</span>
                 </div>
 
-            </x-layout.container>
+                <div class="farzin-contact-hero__layout">
+                    <div class="farzin-contact-hero__copy">
+                        <p class="farzin-contact-hero__eyebrow" data-contact-reveal>
+                            <span aria-hidden="true"></span>
+                            FARZIN / CONTACT
+                        </p>
 
+                        <h1 id="contact-hero-title" class="farzin-contact-hero__title" data-contact-reveal>
+                            برای انتخاب بهتر،
+                            <span>کنار شما هستیم.</span>
+                        </h1>
+
+                        <p class="farzin-contact-hero__description" data-contact-reveal>
+                            برای انتخاب هود و سینک، بررسی مشخصات یا پیگیری سفارش، مستقیم با تیم فرزین در ارتباط باشید.
+                        </p>
+
+                        <div class="farzin-contact-hero__actions" data-contact-reveal>
+                            <a href="#contact-form" class="farzin-contact-hero__primary">
+                                ارسال پیام
+                                <span aria-hidden="true">↙</span>
+                            </a>
+                            @if($contactSetting?->phone)
+                                <a href="tel:{{ $contactSetting->phone }}" class="farzin-contact-hero__secondary">
+                                    تماس مستقیم
+                                </a>
+                            @else
+                                <a href="{{ route('shop.index') }}" class="farzin-contact-hero__secondary">
+                                    مشاهده محصولات
+                                </a>
+                            @endif
+                        </div>
+                    </div>
+
+                    <div class="farzin-contact-hero__visual" data-contact-art role="img" aria-label="تصویرسازی متحرک از محصولات و ارتباط با فرزین">
+                        <div class="farzin-contact-hero__ring farzin-contact-hero__ring--outer" aria-hidden="true"></div>
+                        <div class="farzin-contact-hero__ring farzin-contact-hero__ring--inner" aria-hidden="true"></div>
+                        <div class="farzin-contact-hero__visual-index"><span>FZ</span><i aria-hidden="true"></i><span>SUPPORT / 24</span></div>
+
+                        <svg class="farzin-contact-hero__product" viewBox="0 0 620 420" fill="none" aria-hidden="true">
+                            <defs>
+                                <linearGradient id="contactSteel" x1="160" y1="110" x2="425" y2="280" gradientUnits="userSpaceOnUse">
+                                    <stop stop-color="#F7FAFA"/>
+                                    <stop offset=".32" stop-color="#AEB9BC"/>
+                                    <stop offset=".54" stop-color="#E9EEEF"/>
+                                    <stop offset=".78" stop-color="#7D898D"/>
+                                    <stop offset="1" stop-color="#DDE4E6"/>
+                                </linearGradient>
+                                <linearGradient id="contactGlass" x1="190" y1="210" x2="460" y2="300" gradientUnits="userSpaceOnUse">
+                                    <stop stop-color="#343D41"/>
+                                    <stop offset=".5" stop-color="#14191B"/>
+                                    <stop offset="1" stop-color="#5B666A"/>
+                                </linearGradient>
+                                <filter id="contactShadow" x="40" y="40" width="540" height="360" filterUnits="userSpaceOnUse">
+                                    <feGaussianBlur stdDeviation="18"/>
+                                </filter>
+                            </defs>
+                            <ellipse cx="314" cy="335" rx="175" ry="24" fill="#000" fill-opacity=".35" filter="url(#contactShadow)"/>
+                            <g class="farzin-contact-hero__hood">
+                                <path d="M244 58H367V164H244V58Z" fill="url(#contactSteel)" stroke="#F7FAFA" stroke-opacity=".5"/>
+                                <path d="M194 163H420L475 224H141L194 163Z" fill="url(#contactSteel)" stroke="#F7FAFA" stroke-opacity=".7"/>
+                                <path d="M156 225H459L438 256H178L156 225Z" fill="url(#contactGlass)" stroke="#AEB9BC" stroke-opacity=".65"/>
+                                <path d="M208 238H408" stroke="#F7FAFA" stroke-opacity=".35" stroke-width="2"/>
+                                <path d="M236 248H380" stroke="#A4BDC0" stroke-opacity=".75" stroke-width="3" stroke-linecap="round"/>
+                                <path d="M268 77H344" stroke="#fff" stroke-opacity=".6" stroke-width="2"/>
+                                <path d="M267 91H344" stroke="#7D898D" stroke-opacity=".4" stroke-width="1.5"/>
+                                <path d="M215 177H399" stroke="#fff" stroke-opacity=".35" stroke-width="2"/>
+                            </g>
+                            <g class="farzin-contact-hero__message">
+                                <rect x="337" y="258" width="176" height="92" rx="18" fill="#F8FAFA" fill-opacity=".97" stroke="#D7E0E2"/>
+                                <circle cx="362" cy="282" r="5" fill="#355F65"/>
+                                <path d="M376 282H478" stroke="#A5B2B6" stroke-width="4" stroke-linecap="round"/>
+                                <path d="M357 300H470" stroke="#D0D8DA" stroke-width="4" stroke-linecap="round"/>
+                                <path d="M357 314H442" stroke="#D0D8DA" stroke-width="4" stroke-linecap="round"/>
+                                <path d="M393 350L383 363L415 350" fill="#F8FAFA" stroke="#D7E0E2" stroke-linejoin="round"/>
+                            </g>
+                            <g class="farzin-contact-hero__signal">
+                                <circle cx="144" cy="116" r="6" fill="#A4BDC0"/>
+                                <circle cx="144" cy="116" r="18" stroke="#A4BDC0" stroke-opacity=".5"/>
+                                <circle cx="144" cy="116" r="31" stroke="#A4BDC0" stroke-opacity=".22"/>
+                            </g>
+                        </svg>
+
+                        <div class="farzin-contact-hero__note">
+                            <span class="farzin-contact-hero__note-line" aria-hidden="true"></span>
+                            <span>HOODS · SINKS · SUPPORT</span>
+                        </div>
+                    </div>
+                </div>
+            </x-layout.container>
         </section>
 
 
@@ -149,7 +179,7 @@
 
             <x-layout.container>
 
-                <div class="grid gap-4 py-10 sm:grid-cols-2 lg:grid-cols-4">
+                <div class="grid gap-3 py-6 sm:grid-cols-2 lg:grid-cols-4">
 
                     {{-- PHONE --}}
 
@@ -157,13 +187,13 @@
 
                         <a
                             href="tel:{{ $contactSetting->phone }}"
-                            class="group rounded-[2rem] border border-[var(--livora-border)] bg-[var(--livora-white)] p-6 transition duration-300 hover:-translate-y-1 hover:border-[var(--livora-ink)]"
+                            class="group rounded-[1.5rem] border border-[var(--livora-border)] bg-[var(--livora-white)] p-5 transition duration-300 hover:-translate-y-1 hover:border-[var(--livora-ink)]"
                         >
 
                             @else
 
                                 <div
-                                    class="rounded-[2rem] border border-[var(--livora-border)] bg-[var(--livora-white)] p-6"
+                                    class="rounded-[1.5rem] border border-[var(--livora-border)] bg-[var(--livora-white)] p-5"
                                 >
 
                                     @endif
@@ -172,7 +202,7 @@
                                         01
                                     </div>
 
-                                    <p class="mt-7 text-[10px] uppercase tracking-[0.18em] text-[var(--livora-accent)]">
+                                    <p class="mt-4 text-[10px] uppercase tracking-[0.18em] text-[var(--livora-accent)]">
                                         PHONE
                                     </p>
 
@@ -201,13 +231,13 @@
 
                     <a
                         href="mailto:{{ $contactSetting->email }}"
-                        class="group rounded-[2rem] border border-[var(--livora-border)] bg-[var(--livora-white)] p-6 transition duration-300 hover:-translate-y-1 hover:border-[var(--livora-ink)]"
+                        class="group rounded-[1.5rem] border border-[var(--livora-border)] bg-[var(--livora-white)] p-5 transition duration-300 hover:-translate-y-1 hover:border-[var(--livora-ink)]"
                     >
 
                         @else
 
                             <div
-                                class="rounded-[2rem] border border-[var(--livora-border)] bg-[var(--livora-white)] p-6"
+                                class="rounded-[1.5rem] border border-[var(--livora-border)] bg-[var(--livora-white)] p-5"
                             >
 
                                 @endif
@@ -216,7 +246,7 @@
                                     02
                                 </div>
 
-                                <p class="mt-7 text-[10px] uppercase tracking-[0.18em] text-[var(--livora-accent)]">
+                                <p class="mt-4 text-[10px] uppercase tracking-[0.18em] text-[var(--livora-accent)]">
                                     EMAIL
                                 </p>
 
@@ -241,13 +271,13 @@
 
     {{-- SUPPORT --}}
 
-    <div class="rounded-[2rem] border border-[var(--livora-border)] bg-[var(--livora-white)] p-6">
+    <div class="rounded-[1.5rem] border border-[var(--livora-border)] bg-[var(--livora-white)] p-5">
 
         <div class="flex h-11 w-11 items-center justify-center rounded-2xl bg-[var(--livora-surface)] text-xs font-semibold">
             03
         </div>
 
-        <p class="mt-7 text-[10px] uppercase tracking-[0.18em] text-[var(--livora-accent)]">
+        <p class="mt-4 text-[10px] uppercase tracking-[0.18em] text-[var(--livora-accent)]">
             SUPPORT
         </p>
 
@@ -264,13 +294,13 @@
 
     {{-- ONLINE --}}
 
-    <div class="rounded-[2rem] border border-[var(--livora-border)] bg-[var(--livora-white)] p-6">
+    <div class="rounded-[1.5rem] border border-[var(--livora-border)] bg-[var(--livora-white)] p-5">
 
         <div class="flex h-11 w-11 items-center justify-center rounded-2xl bg-[var(--livora-surface)] text-xs font-semibold">
             04
         </div>
 
-        <p class="mt-7 text-[10px] uppercase tracking-[0.18em] text-[var(--livora-accent)]">
+        <p class="mt-4 text-[10px] uppercase tracking-[0.18em] text-[var(--livora-accent)]">
             ONLINE
         </p>
 
@@ -299,7 +329,7 @@
 
         <x-layout.container>
 
-            <div class="grid gap-8 py-14 sm:py-16 lg:grid-cols-[0.8fr_1.2fr] lg:py-24">
+            <div class="grid gap-6 py-8 sm:py-10 lg:grid-cols-[0.8fr_1.2fr] lg:py-12">
 
                 {{-- INFO --}}
 
@@ -321,9 +351,9 @@
 
                     {{-- ADDRESS --}}
 
-                    <div class="mt-10 space-y-3">
+                    <div class="mt-6 space-y-3">
 
-                        <div class="rounded-3xl border border-[var(--livora-border)] bg-[var(--livora-white)] p-5">
+                        <div class="rounded-2xl border border-[var(--livora-border)] bg-[var(--livora-white)] p-4">
 
                             <p class="text-[10px] uppercase tracking-[0.18em] text-[var(--livora-accent)]">
                                 ADDRESS
@@ -338,7 +368,7 @@
 
                         {{-- HOURS --}}
 
-                        <div class="rounded-3xl border border-[var(--livora-border)] bg-[var(--livora-white)] p-5">
+                        <div class="rounded-2xl border border-[var(--livora-border)] bg-[var(--livora-white)] p-4">
 
                             <p class="text-[10px] uppercase tracking-[0.18em] text-[var(--livora-accent)]">
                                 HOURS
@@ -353,7 +383,7 @@
 
                         {{-- INSTALLMENT --}}
 
-                        <div class="rounded-3xl border border-[var(--livora-border)] bg-[var(--livora-white)] p-5">
+                        <div class="rounded-2xl border border-[var(--livora-border)] bg-[var(--livora-white)] p-4">
 
                             <p class="text-[10px] uppercase tracking-[0.18em] text-[var(--livora-accent)]">
                                 INSTALLMENT
