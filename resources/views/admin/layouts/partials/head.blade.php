@@ -25,14 +25,14 @@
 ========================================================= --}}
 
 <title>
-    @yield('title', 'داشبورد مدیریت') | SilaGallery
+    @yield('title', 'داشبورد مدیریت') | فرزین
 </title>
 
 <meta
     name="description"
     content="@yield(
         'meta_description',
-        'پنل مدیریت فروشگاه SilaGallery'
+        'پنل مدیریت فروشگاه فرزین'
     )"
 />
 
