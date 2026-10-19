@@ -51,6 +51,9 @@ class AuthController extends Controller
                 ]);
         }
 
+        // Capture the guest cart key before the session guard rotates the session ID.
+        $guestCartSessionId = $request->session()->getId();
+
         if (! Auth::attempt([
             'email' => $email,
             'password' => $credentials['password'],
@@ -73,7 +76,7 @@ class AuthController extends Controller
 
         $request->session()->regenerate();
 
-        $this->mergeGuestCartIntoUserCart($request);
+        $this->mergeGuestCartIntoUserCart($request, $guestCartSessionId);
 
         /*
         |--------------------------------------------------------------------------
@@ -135,11 +138,14 @@ class AuthController extends Controller
             ]);
         });
 
+        // Login rotates the session ID, so keep the guest cart's original key.
+        $guestCartSessionId = $request->session()->getId();
+
         Auth::login($user);
 
         $request->session()->regenerate();
 
-        $this->mergeGuestCartIntoUserCart($request);
+        $this->mergeGuestCartIntoUserCart($request, $guestCartSessionId);
 
 
         if ($request->user()->isAdmin()) {
@@ -177,9 +183,10 @@ class AuthController extends Controller
     }
 
     protected function mergeGuestCartIntoUserCart(
-        Request $request
+        Request $request,
+        ?string $guestSessionId = null
     ): void {
-        $sessionId = $request->session()->getId();
+        $sessionId = $guestSessionId ?? $request->session()->getId();
 
         $guestCart = Cart::query()
             ->where(
@@ -210,17 +217,31 @@ class AuthController extends Controller
             );
 
         foreach ($guestCart->items as $guestItem) {
-            $existingItem = $userCart
+            $existingItemQuery = $userCart
                 ->items()
-                ->where(
-                    'product_id',
-                    $guestItem->product_id
-                )
-                ->where(
-                    'product_variant_id',
-                    $guestItem->product_variant_id
-                )
-                ->first();
+                ->where('product_id', $guestItem->product_id);
+
+            if ($guestItem->variant_key !== null) {
+                $existingItemQuery->where(function ($query) use ($guestItem) {
+                    $query->where('variant_key', $guestItem->variant_key);
+
+                    // Merge pre-snapshot, no-variant cart rows with the new "base" key.
+                    if ($guestItem->variant_key === 'base') {
+                        $query->orWhere(function ($legacy) {
+                            $legacy
+                                ->whereNull('variant_key')
+                                ->whereNull('variant_options')
+                                ->whereNull('product_variant_id');
+                        });
+                    }
+                });
+            } else {
+                $existingItemQuery
+                    ->whereNull('variant_key')
+                    ->where('product_variant_id', $guestItem->product_variant_id);
+            }
+
+            $existingItem = $existingItemQuery->first();
 
             if ($existingItem) {
                 $existingItem->increment(
@@ -232,17 +253,12 @@ class AuthController extends Controller
             }
 
             $userCart->items()->create([
-                'product_id' =>
-                    $guestItem->product_id,
-
-                'product_variant_id' =>
-                    $guestItem->product_variant_id,
-
-                'quantity' =>
-                    $guestItem->quantity,
-
-                'unit_price' =>
-                    $guestItem->unit_price,
+                'product_id' => $guestItem->product_id,
+                'product_variant_id' => $guestItem->product_variant_id,
+                'variant_key' => $guestItem->variant_key,
+                'variant_options' => $guestItem->variant_options,
+                'quantity' => $guestItem->quantity,
+                'unit_price' => $guestItem->unit_price,
             ]);
         }
 
