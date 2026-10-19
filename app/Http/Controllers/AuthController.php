@@ -68,7 +68,7 @@ class AuthController extends Controller
             return back()
                 ->withInput($request->only('phone', 'email'))
                 ->withErrors([
-                    'email' =>
+                    'phone' =>
                         'شماره موبایل یا رمز عبور صحیح نیست.',
                 ]);
         }
