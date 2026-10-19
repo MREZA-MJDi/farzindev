@@ -47,7 +47,7 @@ class AuthController extends Controller
             return back()
                 ->withInput($request->only('phone'))
                 ->withErrors([
-                    'email' =>
+                    'phone' =>
                         "تعداد تلاش‌ها زیاد است. {$seconds} ثانیه دیگر دوباره تلاش کنید.",
                 ]);
         }
@@ -66,7 +66,7 @@ class AuthController extends Controller
             );
 
             return back()
-                ->withInput($request->only('email'))
+                ->withInput($request->only('phone', 'email'))
                 ->withErrors([
                     'email' =>
                         'شماره موبایل یا رمز عبور صحیح نیست.',
