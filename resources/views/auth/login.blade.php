@@ -53,13 +53,19 @@
                             @csrf
 
                             <x-ui.input
-                                type="email"
-                                name="email"
-                                label="ایمیل"
-                                placeholder="example@email.com"
-                                :value="old('email')"
+                                type="tel"
+                                name="phone"
+                                label="شماره موبایل"
+                                placeholder="09123456789"
+                                :value="old('phone')"
+                                autocomplete="username"
+                                inputmode="tel"
                                 required
                             />
+
+                            <p class="-mt-3 text-xs leading-6 text-[var(--livora-stone)]">
+                                مدیر فروشگاه می‌تواند با ایمیل مدیریتی خود نیز وارد شود.
+                            </p>
 
                             <div>
 
@@ -73,10 +79,10 @@
                                     </label>
 
                                     <a
-                                        href="#"
+                                        href="{{ route('contact') }}"
                                         class="text-xs text-[var(--livora-accent)]"
                                     >
-                                        رمز عبور را فراموش کرده‌اید؟
+                                        برای بازیابی رمز عبور با پشتیبانی تماس بگیرید
                                     </a>
 
                                 </div>
