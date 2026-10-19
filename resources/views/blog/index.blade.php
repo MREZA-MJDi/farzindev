@@ -24,21 +24,21 @@
 @section('content')
 <div class="overflow-hidden bg-[var(--livora-cream)]">
     <section class="relative overflow-hidden bg-[var(--livora-ink)] text-white">
-        <div class="pointer-events-none absolute -left-24 -top-28 h-80 w-80 rounded-full border border-cyan-300/20"></div>
-        <div class="pointer-events-none absolute -left-10 -top-14 h-52 w-52 rounded-full border border-blue-400/25"></div>
+        <div class="pointer-events-none absolute -left-24 -top-28 h-80 w-80 rounded-full border border-white/10"></div>
+        <div class="pointer-events-none absolute -left-10 -top-14 h-52 w-52 rounded-full border border-white/10"></div>
         <x-layout.container>
             <div class="relative py-14 sm:py-20 lg:py-24">
                 <nav aria-label="مسیر صفحه" class="flex items-center gap-2 text-xs text-white/55">
                     <a href="{{ route('home') }}" class="transition hover:text-white">خانه</a>
                     <span>/</span>
-                    <span class="text-cyan-200">بلاگ فرزین</span>
+                    <span class="text-[#b7c9cb]">بلاگ فرزین</span>
                 </nav>
                 <div class="mt-10 grid gap-10 lg:grid-cols-[1fr_0.55fr] lg:items-end">
                     <div class="max-w-4xl">
-                        <p class="text-[10px] font-semibold uppercase tracking-[0.28em] text-cyan-300">FARZIN / FIELD NOTES</p>
+                        <p class="text-[10px] font-semibold uppercase tracking-[0.28em] text-[#b7c9cb]">FARZIN / FIELD NOTES</p>
                         <h1 class="mt-5 text-4xl font-semibold leading-tight tracking-tight sm:text-5xl lg:text-7xl">
                             انتخاب آگاهانه،
-                            <span class="block text-cyan-300">از همین‌جا شروع می‌شود.</span>
+                            <span class="block text-[#b7c9cb]">از همین‌جا شروع می‌شود.</span>
                         </h1>
                     </div>
                     <p class="max-w-xl text-sm leading-8 text-white/65 sm:text-base">
@@ -47,8 +47,8 @@
                     </p>
                 </div>
                 <div class="mt-12 flex flex-wrap gap-3">
-                    <a href="#articles" class="inline-flex items-center rounded-2xl bg-cyan-300 px-5 py-3.5 text-sm font-semibold text-slate-950 transition hover:bg-white">خواندن راهنماها <span class="mr-2">↓</span></a>
-                    <a href="{{ route('categories.index') }}" class="inline-flex items-center rounded-2xl border border-white/20 px-5 py-3.5 text-sm font-medium text-white transition hover:border-cyan-300 hover:text-cyan-200">مشاهده محصولات</a>
+                    <a href="#articles" class="inline-flex items-center rounded-2xl bg-white px-5 py-3.5 text-sm font-semibold text-[var(--livora-ink)] transition hover:bg-[#d6dfe0]">خواندن راهنماها <span class="mr-2">↓</span></a>
+                    <a href="{{ route('categories.index') }}" class="inline-flex items-center rounded-2xl border border-white/20 px-5 py-3.5 text-sm font-medium text-white transition hover:border-white/60 hover:text-white">مشاهده محصولات</a>
                 </div>
             </div>
         </x-layout.container>
@@ -67,10 +67,10 @@
             <div class="grid gap-5 pb-14 sm:grid-cols-2 lg:grid-cols-3 lg:pb-20">
                 <a href="#hood-guide" class="group flex flex-col rounded-[1.75rem] border border-[var(--livora-border)] bg-[var(--livora-cream)] p-6 transition duration-300 hover:-translate-y-1 hover:border-[var(--livora-accent)] hover:shadow-[var(--livora-shadow-md)] sm:p-7">
                     <div class="flex items-center justify-between">
-                        <span class="rounded-full bg-blue-100 px-3 py-1.5 text-[10px] font-semibold text-blue-800">هود آشپزخانه</span>
+                        <span class="rounded-full bg-[var(--livora-surface)] px-3 py-1.5 text-[10px] font-semibold text-[var(--livora-ink)]">هود آشپزخانه</span>
                         <span class="text-xs text-[var(--livora-stone)]">راهنمای ۰۱</span>
                     </div>
-                    <div class="mt-8 flex h-28 items-end overflow-hidden rounded-2xl bg-gradient-to-br from-slate-900 via-blue-900 to-cyan-500 p-5">
+                    <div class="mt-8 flex h-28 items-end overflow-hidden rounded-2xl bg-gradient-to-br from-[#111416] via-[#354247] to-[#8b9b9f] p-5">
                         <span class="text-2xl font-semibold text-white">انتخاب هود</span>
                     </div>
                     <h3 class="mt-6 text-xl font-semibold transition group-hover:text-[var(--livora-accent)]">قبل از خرید هود به چه نکاتی توجه کنیم؟</h3>
@@ -80,10 +80,10 @@
 
                 <a href="#sink-guide" class="group flex flex-col rounded-[1.75rem] border border-[var(--livora-border)] bg-[var(--livora-cream)] p-6 transition duration-300 hover:-translate-y-1 hover:border-[var(--livora-accent)] hover:shadow-[var(--livora-shadow-md)] sm:p-7">
                     <div class="flex items-center justify-between">
-                        <span class="rounded-full bg-cyan-100 px-3 py-1.5 text-[10px] font-semibold text-cyan-900">سینک ظرفشویی</span>
+                        <span class="rounded-full bg-[var(--livora-surface)] px-3 py-1.5 text-[10px] font-semibold text-[var(--livora-ink)]">سینک ظرفشویی</span>
                         <span class="text-xs text-[var(--livora-stone)]">راهنمای ۰۲</span>
                     </div>
-                    <div class="mt-8 flex h-28 items-end overflow-hidden rounded-2xl bg-gradient-to-br from-slate-800 via-slate-600 to-cyan-400 p-5">
+                    <div class="mt-8 flex h-28 items-end overflow-hidden rounded-2xl bg-gradient-to-br from-[#202629] via-[#59666a] to-[#a9bdc0] p-5">
                         <span class="text-2xl font-semibold text-white">شناخت سینک</span>
                     </div>
                     <h3 class="mt-6 text-xl font-semibold transition group-hover:text-[var(--livora-accent)]">چطور سینک متناسب با آشپزخانه انتخاب کنیم؟</h3>
@@ -93,10 +93,10 @@
 
                 <a href="#measure-guide" class="group flex flex-col rounded-[1.75rem] border border-[var(--livora-border)] bg-[var(--livora-cream)] p-6 transition duration-300 hover:-translate-y-1 hover:border-[var(--livora-accent)] hover:shadow-[var(--livora-shadow-md)] sm:p-7">
                     <div class="flex items-center justify-between">
-                        <span class="rounded-full bg-indigo-100 px-3 py-1.5 text-[10px] font-semibold text-indigo-900">قبل از سفارش</span>
+                        <span class="rounded-full bg-[var(--livora-surface)] px-3 py-1.5 text-[10px] font-semibold text-[var(--livora-ink)]">قبل از سفارش</span>
                         <span class="text-xs text-[var(--livora-stone)]">راهنمای ۰۳</span>
                     </div>
-                    <div class="mt-8 flex h-28 items-end overflow-hidden rounded-2xl bg-gradient-to-br from-blue-950 via-indigo-700 to-blue-400 p-5">
+                    <div class="mt-8 flex h-28 items-end overflow-hidden rounded-2xl bg-gradient-to-br from-[#111416] via-[#38474b] to-[#a9bdc0] p-5">
                         <span class="text-2xl font-semibold text-white">اندازه‌گیری دقیق</span>
                     </div>
                     <h3 class="mt-6 text-xl font-semibold transition group-hover:text-[var(--livora-accent)]">چک‌لیست اندازه‌گیری پیش از خرید</h3>
