@@ -27,10 +27,11 @@ class AuthController extends Controller
     ): RedirectResponse {
         $credentials = $request->validated();
 
-        $email = Str::lower($credentials['email']);
+        $identifier = $credentials['phone'];
+        $loginField = str_contains($identifier, '@') ? 'email' : 'phone';
 
         $throttleKey = Str::transliterate(
-            Str::lower($email) .
+            Str::lower($identifier) .
             '|' .
             $request->ip()
         );
@@ -44,7 +45,7 @@ class AuthController extends Controller
             );
 
             return back()
-                ->withInput($request->only('email'))
+                ->withInput($request->only('phone'))
                 ->withErrors([
                     'email' =>
                         "تعداد تلاش‌ها زیاد است. {$seconds} ثانیه دیگر دوباره تلاش کنید.",
@@ -55,7 +56,7 @@ class AuthController extends Controller
         $guestCartSessionId = $request->session()->getId();
 
         if (! Auth::attempt([
-            'email' => $email,
+            $loginField => $identifier,
             'password' => $credentials['password'],
         ], $credentials['remember'] ?? false)) {
 
@@ -68,7 +69,7 @@ class AuthController extends Controller
                 ->withInput($request->only('email'))
                 ->withErrors([
                     'email' =>
-                        'ایمیل یا رمز عبور صحیح نیست.',
+                        'شماره موبایل یا رمز عبور صحیح نیست.',
                 ]);
         }
 
@@ -121,9 +122,11 @@ class AuthController extends Controller
                     $validated['last_name']
                 ),
 
-                'email' => Str::lower(
-                    $validated['email']
-                ),
+                'email' => filled($validated['email'] ?? null)
+                    ? Str::lower($validated['email'])
+                    : null,
+
+                'phone' => $validated['phone'],
 
                 'password' => Hash::make(
                     $validated['password']
