@@ -1,10 +1,10 @@
 @extends('layouts.app')
 
-@section('title', 'درباره فرزین | هود و سینک آشپزخانه')
+@section('title', 'درباره فرزین فرجی | تولید هود و سینک آشپزخانه')
 
 @section(
     'description',
-    'با فرزین آشنا شوید؛ مرجعی برای آشنایی با هود و سینک آشپزخانه؛ با تمرکز بر انتخاب آگاهانه، مشخصات روشن و تجربه خرید ساده.'
+    'با فرزین فرجی و مجموعه فعال در حوزه تولید هود و سینک آشپزخانه آشنا شوید؛ معرفی مجموعه، رویکرد تولید و کاتالوگ محصولات.'
 )
 
 @section('canonical', route('about'))
@@ -18,12 +18,12 @@
 
     <meta
         property="og:title"
-        content="درباره فرزین | هود و سینک آشپزخانه"
+        content="درباره فرزین فرجی | تولید هود و سینک آشپزخانه"
     >
 
     <meta
         property="og:description"
-        content="فرزین برای ساده‌تر کردن انتخاب هود و سینک آشپزخانه و دسترسی شفاف‌تر به مشخصات محصولات شکل گرفته است."
+        content="آشنایی با فرزین فرجی و مجموعه تولید هود و سینک آشپزخانه؛ معرفی محصولات و رویکرد مجموعه."
     >
 
     <meta
@@ -38,12 +38,12 @@
 
     <meta
         name="twitter:title"
-        content="درباره فرزین"
+        content="درباره فرزین فرجی"
     >
 
     <meta
         name="twitter:description"
-        content="آشنایی با رویکرد فرزین در انتخاب هود و سینک آشپزخانه."
+        content="آشنایی با فرزین فرجی، تولید هود و سینک آشپزخانه و محصولات مجموعه."
     >
 
     <script type="application/ld+json">
@@ -64,9 +64,15 @@
 {
     "@@context": "https://schema.org",
     "@@type": "Organization",
-    "name": "فرزین",
-    "url": @json(url('/'))
-        }
+    "name": "فرزین فرجی",
+    "url": @json(url('/')),
+    "description": "معرفی مجموعه فرزین فرجی در حوزه هود و سینک آشپزخانه",
+    "founder": {
+        "@@type": "Person",
+        "name": "فرزین فرجی"
+    },
+    "knowsAbout": ["هود آشپزخانه", "سینک ظرفشویی"]
+}
 </script>
 
 @endpush
@@ -113,10 +119,10 @@
                             </p>
 
                             <h1 class="mt-5 text-5xl font-semibold leading-[1.02] tracking-tight sm:text-6xl lg:text-7xl">
-                                آشپزخانه، قلب خانه است.
+                                فرزین فرجی؛
                                 <span class="block text-[var(--livora-accent)]">
-                                و جزئیاتش اهمیت دارند.
-                            </span>
+                                    از تولید تا جزئیات آشپزخانه.
+                                </span>
                             </h1>
 
                         </div>
@@ -124,9 +130,9 @@
                         <div>
 
                             <p class="text-sm leading-8 text-[var(--livora-stone)] sm:text-base">
-                                فرزین با یک ایده ساده شکل گرفته است:
-                                انتخاب هود و سینک نباید فقط خرید یک محصول باشد؛
-                                باید بخشی از ساختن فضایی باشد که هر روز در آن زندگی می‌کنیم.
+                                فرزین فرجی در حوزه تولید هود و سینک آشپزخانه فعالیت می‌کند.
+                                این وب‌سایت برای معرفی مجموعه، نمایش محصولات و کمک به شناخت دقیق‌تر مدل‌ها و مشخصات آن‌ها طراحی شده است.
+                                جزئیات هر محصول را می‌توانید در کاتالوگ فرزین بررسی کنید.
                             </p>
 
                             <a
@@ -158,11 +164,11 @@
                     <div>
 
                         <p class="text-[10px] font-medium uppercase tracking-[0.22em] text-[var(--livora-accent)]">
-                            OUR APPROACH
+                            THE MAKER AND THE WORK
                         </p>
 
                         <h2 class="mt-4 text-3xl font-semibold tracking-tight sm:text-4xl">
-                            کمتر، اما بهتر انتخاب کن.
+                            تولید، محصول و تجربه‌ی استفاده.
                         </h2>
 
                     </div>
@@ -170,15 +176,14 @@
                     <div class="max-w-3xl">
 
                         <p class="text-lg leading-9 text-[var(--livora-ink)] sm:text-xl">
-                            ما باور داریم محصول خوب محصولی نیست که فقط در عکس زیبا باشد؛
-                            باید در استفاده روزمره، در کیفیت متریال، در تناسب با فضا
-                            و در سال‌هایی که کنار شما می‌ماند هم ارزش خودش را نشان دهد.
+                            محصول برای ما فقط یک تصویر یا نام در کاتالوگ نیست؛
+                            ابعاد، کاربرد و مشخصات آن باید برای خریدار قابل بررسی باشد.
+                            معرفی روشن محصول کمک می‌کند انتخاب بر پایه‌ی نیاز واقعی آشپزخانه انجام شود.
                         </p>
 
                         <p class="mt-6 text-sm leading-8 text-[var(--livora-stone)]">
-                            به همین دلیل در فرزین تلاش می‌کنیم تجربه کشف و خرید را
-                            ساده، شفاف و بدون شلوغی نگه داریم؛ از اطلاعات محصول و قیمت
-                            گرفته تا شرایط پرداخت و مسیر سفارش.
+                            در کنار معرفی مجموعه و مسیر کاری آن، کاتالوگ محصولات نیز بخشی از همین تجربه است:
+                            اطلاعات هر مدل باید کمک کند خریدار پیش از سفارش، تفاوت‌ها و تناسب آن را با فضای خود بررسی کند.
                         </p>
 
                     </div>
@@ -202,11 +207,11 @@
                     <div class="max-w-2xl">
 
                         <p class="text-[10px] font-medium uppercase tracking-[0.22em] text-[var(--livora-accent)]">
-                            WHAT MATTERS
+OUR FOCUS
                         </p>
 
                         <h2 class="mt-4 text-3xl font-semibold tracking-tight sm:text-4xl">
-                            چیزهایی که برای ما مهم‌اند.
+                            تمرکز مجموعه فرزین.
                         </h2>
 
                     </div>
@@ -220,7 +225,7 @@
                         </span>
 
                             <h3 class="mt-8 text-lg font-semibold">
-                                طراحی
+                                کاربرد
                             </h3>
 
                             <p class="mt-3 text-sm leading-8 text-[var(--livora-stone)]">
@@ -236,7 +241,7 @@
                         </span>
 
                             <h3 class="mt-8 text-lg font-semibold">
-                                کیفیت
+                                مشخصات روشن
                             </h3>
 
                             <p class="mt-3 text-sm leading-8 text-[var(--livora-stone)]">
@@ -252,7 +257,7 @@
                         </span>
 
                             <h3 class="mt-8 text-lg font-semibold">
-                                شفافیت
+                                انتخاب مناسب
                             </h3>
 
                             <p class="mt-3 text-sm leading-8 text-[var(--livora-stone)]">
@@ -268,7 +273,7 @@
                         </span>
 
                             <h3 class="mt-8 text-lg font-semibold">
-                                تجربه
+                                مسیر تولید
                             </h3>
 
                             <p class="mt-3 text-sm leading-8 text-[var(--livora-stone)]">
