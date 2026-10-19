@@ -235,6 +235,33 @@
         }
 </script>
 
+    {{-- Product entity data for search engines --}}
+    <script type="application/ld+json">
+    {
+        "@@context": "https://schema.org",
+        "@@type": "Product",
+        "name": @json($product->name),
+        "description": @json($pageDescription),
+        "sku": @json($product->sku),
+        "url": @json(route('product.show', $product->slug)),
+        "brand": {
+            "@@type": "Brand",
+            "name": "فرزین"
+        }@if($mainImage),
+        "image": @json([$mainImage])@endif
+        @if($product->category),
+        "category": @json($product->category->name)@endif
+        @if((float) $product->price > 0),
+        "offers": {
+            "@@type": "Offer",
+            "url": @json(route('product.show', $product->slug)),
+            "priceCurrency": "IRR",
+            "price": @json((int) round((float) $product->price * 10)),
+            "availability": @json($availability)
+        }@endif
+    }
+    </script>
+
 @endpush
 
 @section('content')
