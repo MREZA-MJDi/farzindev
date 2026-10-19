@@ -157,20 +157,26 @@ class FarzinStorefrontTest extends TestCase
             'stock' => 8,
         ]);
 
-        $this->postJson(route('cart.add', $product), ['quantity' => 2])
-            ->assertOk()
+        $firstAdd = $this->postJson(route('cart.add', $product), ['quantity' => 2]);
+
+        $firstAdd->assertOk()
             ->assertJsonPath('cart_count', 2)
             ->assertJsonPath('subtotal', 25000000);
+
+        $sessionCookie = $firstAdd->getCookie(config('session.cookie'));
+
+        $this->withCookie(
+            config('session.cookie'),
+            $sessionCookie?->getValue() ?? ''
+        )
+            ->postJson(route('cart.add', $product), ['quantity' => 1])
+            ->assertOk()
+            ->assertJsonPath('cart_count', 3);
 
         $guestCart = Cart::query()
             ->whereNull('user_id')
             ->where('status', 'active')
             ->firstOrFail();
-
-        $this->withCookie(config('session.cookie'), $guestCart->session_id)
-            ->postJson(route('cart.add', $product), ['quantity' => 1])
-            ->assertOk()
-            ->assertJsonPath('cart_count', 3);
 
         $this->assertDatabaseCount('cart_items', 1);
         $this->assertDatabaseHas('cart_items', [
@@ -260,11 +266,19 @@ class FarzinStorefrontTest extends TestCase
             'is_active' => true,
         ]);
 
-        $this->postJson(route('cart.add', $product), [
+        $firstAdd = $this->postJson(route('cart.add', $product), [
             'quantity' => 2,
             'variants' => ['color' => $variant->id],
-        ])->assertOk()
+        ]);
+
+        $firstAdd->assertOk()
             ->assertJsonPath('cart_count', 2);
+
+        $sessionCookie = $firstAdd->getCookie(config('session.cookie'));
+        $this->withCookie(
+            config('session.cookie'),
+            $sessionCookie?->getValue() ?? ''
+        );
 
         $guestCart = Cart::query()
             ->whereNull('user_id')
