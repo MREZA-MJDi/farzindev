@@ -1,10 +1,10 @@
 @extends('layouts.app')
 
-@section('title', 'درباره SilaGallery | مبلمان و سبک زندگی')
+@section('title', 'درباره فرزین | هود و سینک آشپزخانه')
 
 @section(
     'description',
-    'با SilaGallery آشنا شوید؛ مجموعه‌ای برای انتخاب مبلمان و عناصر خانه با تمرکز بر طراحی، کیفیت، تجربه خرید و پرداخت منعطف.'
+    'با فرزین آشنا شوید؛ مرجعی برای آشنایی با هود و سینک آشپزخانه؛ با تمرکز بر انتخاب آگاهانه، مشخصات روشن و تجربه خرید ساده.'
 )
 
 @section('canonical', route('about'))
@@ -18,12 +18,12 @@
 
     <meta
         property="og:title"
-        content="درباره SilaGallery | مبلمان و سبک زندگی"
+        content="درباره فرزین | هود و سینک آشپزخانه"
     >
 
     <meta
         property="og:description"
-        content="SilaGallery برای انتخاب دقیق‌تر، خرید ساده‌تر و ساختن خانه‌ای ماندگار شکل گرفته است."
+        content="فرزین برای ساده‌تر کردن انتخاب هود و سینک آشپزخانه و دسترسی شفاف‌تر به مشخصات محصولات شکل گرفته است."
     >
 
     <meta
@@ -38,19 +38,19 @@
 
     <meta
         name="twitter:title"
-        content="درباره SilaGallery"
+        content="درباره فرزین"
     >
 
     <meta
         name="twitter:description"
-        content="داستان، فلسفه و تجربه برند SilaGallery."
+        content="آشنایی با رویکرد فرزین در انتخاب هود و سینک آشپزخانه."
     >
 
     <script type="application/ld+json">
 {
     "@@context": "https://schema.org",
     "@@type": "WebSite",
-    "name": "SilaGallery",
+    "name": "فرزین",
     "url": @json(url('/')),
     "potentialAction": {
         "@@type": "SearchAction",
@@ -64,7 +64,7 @@
 {
     "@@context": "https://schema.org",
     "@@type": "Organization",
-    "name": "SilaGallery",
+    "name": "فرزین",
     "url": @json(url('/'))
         }
 </script>
@@ -109,13 +109,13 @@
                         <div class="max-w-4xl">
 
                             <p class="text-[10px] font-medium uppercase tracking-[0.24em] text-[var(--livora-accent)]">
-                                ABOUT SilaGallery
+                                ABOUT FARZIN
                             </p>
 
                             <h1 class="mt-5 text-5xl font-semibold leading-[1.02] tracking-tight sm:text-6xl lg:text-7xl">
-                                خانه فقط یک فضا نیست.
+                                آشپزخانه، قلب خانه است.
                                 <span class="block text-[var(--livora-accent)]">
-                                بخشی از زندگی ماست.
+                                و جزئیاتش اهمیت دارند.
                             </span>
                             </h1>
 
@@ -124,8 +124,8 @@
                         <div>
 
                             <p class="text-sm leading-8 text-[var(--livora-stone)] sm:text-base">
-                                SilaGallery با یک ایده ساده شکل گرفته است:
-                                انتخاب مبلمان نباید فقط خرید یک محصول باشد؛
+                                فرزین با یک ایده ساده شکل گرفته است:
+                                انتخاب هود و سینک نباید فقط خرید یک محصول باشد؛
                                 باید بخشی از ساختن فضایی باشد که هر روز در آن زندگی می‌کنیم.
                             </p>
 
@@ -133,7 +133,7 @@
                                 href="{{ route('shop.index') }}"
                                 class="mt-7 inline-flex items-center rounded-2xl bg-[var(--livora-ink)] px-6 py-4 text-sm font-medium !text-white transition-colors duration-300 hover:bg-[var(--livora-accent)] hover:!text-white"
                             >
-                                کشف مجموعه SilaGallery
+                                مشاهده محصولات فرزین
                             </a>
                         </div>
 
@@ -176,7 +176,7 @@
                         </p>
 
                         <p class="mt-6 text-sm leading-8 text-[var(--livora-stone)]">
-                            به همین دلیل در SilaGallery تلاش می‌کنیم تجربه کشف و خرید را
+                            به همین دلیل در فرزین تلاش می‌کنیم تجربه کشف و خرید را
                             ساده، شفاف و بدون شلوغی نگه داریم؛ از اطلاعات محصول و قیمت
                             گرفته تا شرایط پرداخت و مسیر سفارش.
                         </p>
@@ -306,7 +306,7 @@
                         </h2>
 
                         <p class="mt-4 text-sm leading-8 text-[var(--livora-stone)]">
-                            تجربه SilaGallery فقط به صفحه محصول محدود نمی‌شود.
+                            تجربه فرزین فقط به صفحه محصول محدود نمی‌شود.
                             تمام مسیر برای انتخاب راحت‌تر طراحی شده است.
                         </p>
 
@@ -439,7 +439,7 @@
                         </h2>
 
                         <p class="mt-5 max-w-2xl text-sm leading-8 text-white/55">
-                            برخی محصولات SilaGallery می‌توانند با شرایط اقساطی تعریف‌شده توسط فروشگاه خریداری شوند.
+                            برخی محصولات فرزین می‌توانند با شرایط اقساطی تعریف‌شده توسط فروشگاه خریداری شوند.
                             درصد پیش‌پرداخت، تعداد چک و فاصله سررسید برای هر محصول مشخص است.
                         </p>
 
@@ -519,7 +519,7 @@
                     <div class="mx-auto max-w-3xl text-center">
 
                         <p class="text-[10px] font-medium uppercase tracking-[0.24em] text-[var(--livora-accent)]">
-                            SilaGallery
+                            فرزین
                         </p>
 
                         <h2 class="mt-5 text-4xl font-semibold tracking-tight sm:text-5xl">
@@ -527,7 +527,7 @@
                         </h2>
 
                         <p class="mx-auto mt-5 max-w-2xl text-sm leading-8 text-[var(--livora-stone)]">
-                            مجموعه SilaGallery را ببین و محصولی را پیدا کن که فقط خانه را پر نکند؛
+                            مجموعه فرزین را ببین و محصولی را پیدا کن که فقط خانه را پر نکند؛
                             بلکه بخشی از شخصیت آن شود.
                         </p>
 
