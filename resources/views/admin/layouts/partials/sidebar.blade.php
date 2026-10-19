@@ -16,7 +16,7 @@
             <div
                 class="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-[var(--admin-text)] text-xs font-bold tracking-[0.12em] text-white transition duration-300 group-hover:bg-[var(--admin-accent)]"
             >
-                LV
+                FZ
             </div>
 
             <div class="min-w-0">
