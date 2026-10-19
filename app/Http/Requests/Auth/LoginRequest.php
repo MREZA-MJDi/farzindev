@@ -61,7 +61,8 @@ class LoginRequest extends FormRequest
 
     protected function prepareForValidation(): void
     {
-        $identifier = trim((string) $this->input('phone', ''));
+        // Keep compatibility with older clients that still send an email field.
+        $identifier = trim((string) $this->input('phone', $this->input('email', '')));
 
         $this->merge([
             'phone' => str_contains($identifier, '@')
