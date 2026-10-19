@@ -38,12 +38,12 @@
 
     <meta
         name="twitter:title"
-        content="فرزین | هود و سینک آشپزخانه"
+        content="فرزین فرجی | تولید هود و سینک آشپزخانه"
     >
 
     <meta
         name="twitter:description"
-        content="مدل‌های هود و سینک فرزین را ببینید و مشخصات هر محصول را پیش از خرید بررسی کنید."
+        content="با فرزین فرجی و مجموعه هود و سینک فرزین آشنا شوید؛ مسیر تولید، محصولات و اطلاعات فنی."
     >
 
     <script type="application/ld+json">
@@ -168,7 +168,7 @@
                                 {{-- CTA 01 --}}
 
                                 <a
-                                    href="{{ route('shop.index') }}"
+                                    href="{{ route('about') }}"
                                     class="inline-flex items-center justify-center rounded-2xl border border-[var(--livora-border)] bg-[var(--livora-white)] px-6 py-4 text-sm font-medium text-[var(--livora-ink)] transition-colors duration-300 hover:border-[var(--livora-ink)]"
                               >
                                     آشنایی با مجموعه
