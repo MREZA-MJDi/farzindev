@@ -147,8 +147,9 @@ class FarzinStorefrontTest extends TestCase
             ->assertNotFound();
     }
 
-    public function test_guest_can_add_product_to_cart_and_repeated_adds_merge(): void
+    public function test_customer_can_add_product_to_cart_and_repeated_adds_merge(): void
     {
+        $customer = $this->customer();
         $product = $this->product($this->category(['slug' => 'hoods']), [
             'name' => 'Farzin Hood 60',
             'slug' => 'farzin-hood-60',
@@ -157,26 +158,16 @@ class FarzinStorefrontTest extends TestCase
             'stock' => 8,
         ]);
 
-        $firstAdd = $this->postJson(route('cart.add', $product), ['quantity' => 2]);
-
-        $firstAdd->assertOk()
+        $this->actingAs($customer)
+            ->postJson(route('cart.add', $product), ['quantity' => 2])
+            ->assertOk()
             ->assertJsonPath('cart_count', 2)
             ->assertJsonPath('subtotal', 25000000);
 
-        $sessionCookie = $firstAdd->getCookie(config('session.cookie'));
-
-        $this->withCookie(
-            config('session.cookie'),
-            $sessionCookie?->getValue() ?? ''
-        )
-            ->postJson(route('cart.add', $product), ['quantity' => 1])
+        $this->postJson(route('cart.add', $product), ['quantity' => 1])
             ->assertOk()
-            ->assertJsonPath('cart_count', 3);
-
-        $guestCart = Cart::query()
-            ->whereNull('user_id')
-            ->where('status', 'active')
-            ->firstOrFail();
+            ->assertJsonPath('cart_count', 3)
+            ->assertJsonPath('subtotal', 37500000);
 
         $this->assertDatabaseCount('cart_items', 1);
         $this->assertDatabaseHas('cart_items', [
