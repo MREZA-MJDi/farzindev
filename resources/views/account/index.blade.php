@@ -1,10 +1,10 @@
 @extends('layouts.app')
 
-@section('title', 'حساب کاربری | SilaGallery')
+@section('title', 'حساب کاربری | فرزین')
 
 @section(
     'description',
-    'مدیریت حساب کاربری، سفارش‌ها، آدرس‌ها و علاقه‌مندی‌های شما در SilaGallery.'
+    'مدیریت حساب کاربری، سفارش‌ها، آدرس‌ها و علاقه‌مندی‌های شما در فرزین.'
 )
 
 @push('seo')
@@ -17,7 +17,7 @@
 @section('content')
 
     @php
-        $userName = $user->name ?: 'کاربر SilaGallery';
+        $userName = $user->name ?: 'کاربر فرزین';
 
         $recentOrders = $orders;
 
@@ -104,7 +104,7 @@
                         <div>
 
                             <p class="text-[10px] font-medium uppercase tracking-[0.22em] text-[var(--livora-accent)]">
-                                MY SilaGallery
+                                MY فرزین
                             </p>
 
                             <h1 class="mt-3 text-3xl font-semibold tracking-tight sm:text-4xl">
@@ -451,7 +451,7 @@
                                     </h3>
 
                                     <p class="mx-auto mt-2 max-w-md text-sm leading-7 text-[var(--livora-stone)]">
-                                        اولین انتخابت را از فروشگاه SilaGallery پیدا کن.
+                                        اولین انتخابت را از فروشگاه فرزین پیدا کن.
                                     </p>
 
                                     <a
@@ -638,7 +638,7 @@
                                 href="{{ route('contact') }}"
                                 class="mt-4 inline-flex text-xs font-medium text-[var(--livora-ink)] underline underline-offset-4"
                             >
-                                تماس با SilaGallery
+                                تماس با فرزین
                             </a>
 
                         </div>
