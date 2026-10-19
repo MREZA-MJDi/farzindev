@@ -74,21 +74,24 @@
 
 
                             <x-ui.input
-                                type="email"
-                                name="email"
-                                label="ایمیل"
-                                placeholder="example@email.com"
-                                :value="old('email')"
+                                type="tel"
+                                name="phone"
+                                label="شماره موبایل"
+                                placeholder="09123456789"
+                                :value="old('phone')"
+                                autocomplete="tel"
+                                inputmode="tel"
                                 required
                             />
 
 
                             <x-ui.input
-                                type="tel"
-                                name="phone"
-                                label="شماره موبایل"
-                                placeholder="09121234567"
-                                :value="old('phone')"
+                                type="email"
+                                name="email"
+                                label="ایمیل (اختیاری)"
+                                placeholder="example@email.com"
+                                :value="old('email')"
+                                autocomplete="email"
                             />
 
 
