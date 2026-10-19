@@ -1,10 +1,10 @@
 @extends('layouts.app')
 
-@section('title', 'فرزین | خرید هود و سینک آشپزخانه')
+@section('title', 'فرزین فرجی | تولیدکننده هود و سینک آشپزخانه')
 
 @section(
     'description',
-    'فرزین؛ مرجع انتخاب هود آشپزخانه و سینک ظرفشویی. محصولات را بر اساس فضای نصب، نیاز و مشخصات فنی مقایسه کنید.'
+    'فرزین فرجی؛ معرفی مجموعه و تولید هود و سینک آشپزخانه، آشنایی با رویکرد تولید و مشاهده کاتالوگ محصولات فرزین.'
 )
 
 @section('canonical', url('/'))
@@ -18,12 +18,12 @@
 
     <meta
         property="og:title"
-        content="فرزین | هود و سینک آشپزخانه"
+        content="فرزین فرجی | تولید هود و سینک آشپزخانه"
     >
 
     <meta
         property="og:description"
-        content="مدل‌های هود و سینک فرزین را ببینید و مشخصات هر محصول را پیش از خرید بررسی کنید."
+        content="با فرزین فرجی و مجموعه هود و سینک فرزین آشنا شوید؛ مسیر تولید، محصولات و اطلاعات فنی."
     >
 
     <meta
@@ -50,7 +50,7 @@
     {
         "@@context": "https://schema.org",
         "@@type": "WebSite",
-        "name": "Farzin",
+        "name": "فرزین فرجی | هود و سینک آشپزخانه",
         "url": @json(url('/')),
         "potentialAction": {
             "@@type": "SearchAction",
@@ -64,9 +64,15 @@
     {
         "@@context": "https://schema.org",
         "@@type": "Organization",
-        "name": "Farzin",
-        "url": @json(url('/'))
-        }
+        "name": "فرزین فرجی",
+        "url": @json(url('/')),
+        "description": "معرفی فرزین فرجی و محصولات هود و سینک آشپزخانه",
+        "founder": {
+            "@@type": "Person",
+            "name": "فرزین فرجی"
+        },
+        "knowsAbout": ["هود آشپزخانه", "سینک ظرفشویی"]
+    }
 </script>
 
 @endpush
@@ -132,17 +138,17 @@
 
                                 <span class="h-px w-8 bg-[var(--livora-accent)]"></span>
 
-                                KITCHEN APPLIANCES
+                                FARZIN · MANUFACTURING
 
                             </div>
 
 
                             <h1 class="sila-home-hero-title mt-6 font-semibold leading-[1.06] tracking-tight text-[var(--livora-ink)]">
 
-                                آشپزخانه‌ای که
+                                فرزین فرجی
 
                                 <span class="block text-[var(--livora-accent)]">
-                                    با انتخاب درست، کامل می‌شود.
+                                    از نگاه تولید، تا جزئیات آشپزخانه.
                                 </span>
 
                             </h1>
@@ -150,8 +156,9 @@
 
                             <p class="mt-7 max-w-lg text-sm leading-8 text-[var(--livora-stone)] sm:text-base">
 
-                                هود و سینک آشپزخانه را بر اساس فضای نصب، نیاز روزمره و مشخصات محصول انتخاب کنید؛
-                                فرزین کمک می‌کند با دید روشن‌تری تصمیم بگیرید.
+                                فرزین در حوزه هود و سینک آشپزخانه فعالیت می‌کند.
+                                اینجا می‌توانید با مجموعه، محصولات و نکاتی که در انتخاب یک محصول کاربردی اهمیت دارند آشنا شوید؛
+                                از شناخت مدل‌ها تا بررسی مشخصات پیش از خرید.
 
                             </p>
 
@@ -164,7 +171,7 @@
                                     href="{{ route('shop.index') }}"
                                     class="inline-flex items-center justify-center rounded-2xl border border-[var(--livora-border)] bg-[var(--livora-white)] px-6 py-4 text-sm font-medium text-[var(--livora-ink)] transition-colors duration-300 hover:border-[var(--livora-ink)]"
                               >
-                                    کشف مجموعه
+                                    آشنایی با مجموعه
 
 
                                 </a>
@@ -191,11 +198,11 @@
                             <div class="rounded-2xl border border-[var(--livora-border)] bg-[var(--livora-white)] p-4">
 
                                 <p class="text-[10px] uppercase tracking-[0.16em] text-[var(--livora-stone)]">
-                                    PRODUCT DETAILS
+                                    OUR WORK
                                 </p>
 
                                 <p class="mt-2 text-sm font-semibold">
-                                    مشخصات روشن
+                                    هود و سینک
                                 </p>
 
                             </div>
@@ -204,11 +211,11 @@
                             <div class="rounded-2xl border border-[var(--livora-border)] bg-[var(--livora-white)] p-4">
 
                                 <p class="text-[10px] uppercase tracking-[0.16em] text-[var(--livora-stone)]">
-                                    SMART CHOICE
+                                    PRODUCT DETAIL
                                 </p>
 
                                 <p class="mt-2 text-sm font-semibold">
-                                    انتخاب کاربردی
+                                    توجه به جزئیات
                                 </p>
 
                             </div>
@@ -217,11 +224,11 @@
                             <div class="rounded-2xl border border-[var(--livora-border)] bg-[var(--livora-white)] p-4">
 
                                 <p class="text-[10px] uppercase tracking-[0.16em] text-[var(--livora-stone)]">
-                                    SUPPORT
+                                    FARZIN
                                 </p>
 
                                 <p class="mt-2 text-sm font-semibold">
-                                    پاسخ‌گوی شما
+                                    مسیر تولید
                                 </p>
 
                             </div>
@@ -405,6 +412,46 @@
 
         </section>
 
+
+        {{-- =========================================================
+             MAKER STORY
+        ========================================================== --}}
+        <section class="relative overflow-hidden border-t border-[var(--livora-border)] bg-[var(--livora-ink)] text-white">
+            <div aria-hidden="true" class="pointer-events-none absolute -left-28 -top-24 h-80 w-80 rounded-full bg-[var(--livora-accent)]/20 blur-3xl"></div>
+            <x-layout.container>
+                <div class="relative grid gap-10 py-16 sm:py-20 lg:grid-cols-[0.85fr_1.15fr] lg:items-end lg:py-24">
+                    <div>
+                        <p class="text-[10px] font-semibold uppercase tracking-[0.24em] text-cyan-300">THE MAKER BEHIND FARZIN</p>
+                        <h2 class="mt-5 max-w-xl text-3xl font-semibold leading-tight tracking-tight sm:text-4xl lg:text-5xl">
+                            هر محصول،
+                            <span class="block text-cyan-300">داستانی از تصمیم‌ها و جزئیات دارد.</span>
+                        </h2>
+                        <p class="mt-6 max-w-lg text-sm leading-8 text-white/65">
+                            فرزین فرجی و مجموعه فرزین در حوزه هود و سینک آشپزخانه فعالیت می‌کنند.
+                            هدف این صفحه، معرفی مجموعه و کمک به شناخت دقیق‌تر محصولات، مشخصات و انتخاب مناسب برای هر فضاست.
+                        </p>
+                        <a href="{{ route('about') }}" class="mt-8 inline-flex items-center gap-3 rounded-xl border border-white/20 px-5 py-3 text-sm font-medium text-white transition hover:border-cyan-300 hover:bg-white/5">
+                            آشنایی با فرزین فرجی <span aria-hidden="true">←</span>
+                        </a>
+                    </div>
+                    <div class="grid gap-3 sm:grid-cols-2">
+                        <article class="rounded-3xl border border-white/10 bg-white/[0.04] p-6 sm:p-7">
+                            <span class="text-xs font-medium tracking-[0.18em] text-cyan-300">01 / PRODUCT</span>
+                            <h3 class="mt-6 text-lg font-semibold">شناخت محصول</h3>
+                            <p class="mt-3 text-sm leading-7 text-white/60">ابعاد، امکانات، موجودی و مشخصات هر مدل را در صفحه محصول بررسی کنید.</p>
+                        </article>
+                        <article class="rounded-3xl border border-white/10 bg-white/[0.04] p-6 sm:p-7">
+                            <span class="text-xs font-medium tracking-[0.18em] text-cyan-300">02 / MAKER</span>
+                            <h3 class="mt-6 text-lg font-semibold">شناخت مجموعه</h3>
+                            <p class="mt-3 text-sm leading-7 text-white/60">با مسیر کاری فرزین و تمرکز مجموعه بر هود و سینک آشپزخانه آشنا شوید.</p>
+                        </article>
+                        <div class="sm:col-span-2 rounded-2xl border border-cyan-300/20 bg-cyan-300/[0.06] px-5 py-4">
+                            <p class="text-sm font-medium">محصولات واقعی، اطلاعات شفاف، انتخاب آگاهانه</p>
+                        </div>
+                    </div>
+                </div>
+            </x-layout.container>
+        </section>
 
         {{-- =========================================================
              CATEGORY DISCOVERY
