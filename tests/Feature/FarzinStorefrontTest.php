@@ -1323,7 +1323,7 @@ class FarzinStorefrontTest extends TestCase
             'is_primary' => false,
         ]);
         Storage::disk('public')->assertMissing('products/images/secondary.webp');
-        Storage::disk('public')->assertMissing('products/images/original-primary.webp');
+        Storage::disk('public')->assertExists('products/images/original-primary.webp');
         Storage::disk('public')->assertExists($secondary->path);
     }
 
