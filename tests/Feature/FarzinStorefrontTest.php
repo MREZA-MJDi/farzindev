@@ -162,7 +162,13 @@ class FarzinStorefrontTest extends TestCase
             ->assertJsonPath('cart_count', 2)
             ->assertJsonPath('subtotal', 25000000);
 
-        $this->postJson(route('cart.add', $product), ['quantity' => 1])
+        $guestCart = Cart::query()
+            ->whereNull('user_id')
+            ->where('status', 'active')
+            ->firstOrFail();
+
+        $this->withCookie(config('session.cookie'), $guestCart->session_id)
+            ->postJson(route('cart.add', $product), ['quantity' => 1])
             ->assertOk()
             ->assertJsonPath('cart_count', 3);
 
@@ -272,7 +278,8 @@ class FarzinStorefrontTest extends TestCase
             'email' => 'cart-owner@farzin.test',
         ]);
 
-        $this->post(route('login.store'), [
+        $this->withCookie(config('session.cookie'), $guestCart->session_id)
+            ->post(route('login.store'), [
             'email' => $customer->email,
             'password' => 'password',
         ])->assertRedirect(route('account.index'));
