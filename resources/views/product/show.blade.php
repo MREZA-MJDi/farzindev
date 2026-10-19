@@ -8,18 +8,18 @@
     */
 
     $pageTitle = str_ireplace(
-        'SilaGallery',
-        'سیلاگالری',
+        'فرزین',
+        'فرزین',
         $product->meta_title
-            ?: ($product->name . ' | سیلاگالری')
+            ?: ($product->name . ' | فرزین')
     );
 
     $pageDescription = str_ireplace(
-        'SilaGallery',
-        'سیلاگالری',
+        'فرزین',
+        'فرزین',
         $product->meta_description
             ?: ($product->short_description
-                ?: ('خرید ' . $product->name . ' با مشاهده قیمت، مشخصات و شرایط خرید در سیلاگالری.'))
+                ?: ('خرید ' . $product->name . ' با مشاهده قیمت، مشخصات و شرایط خرید در فرزین.'))
     );
 
     /*
@@ -216,7 +216,7 @@
 {
     "@@context": "https://schema.org",
     "@@type": "WebSite",
-    "name": "سیلاگالری",
+    "name": "فرزین",
     "url": @json(url('/')),
     "potentialAction": {
         "@@type": "SearchAction",
@@ -230,7 +230,7 @@
 {
     "@@context": "https://schema.org",
     "@@type": "Organization",
-    "name": "سیلاگالری",
+    "name": "فرزین",
     "url": @json(url('/'))
         }
 </script>
@@ -340,7 +340,7 @@
                             @if($product->is_featured)
 
                                 <span class="rounded-full border border-[var(--livora-border)] bg-[var(--livora-white)] px-3 py-1.5 text-[10px] font-medium text-[var(--livora-ink)]">
-                                منتخب سیلاگالری
+                                منتخب فرزین
                             </span>
 
                             @endif
