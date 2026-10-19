@@ -33,19 +33,5 @@ class UserSeeder extends Seeder
                 'email_verified_at' => now(),
             ]
         );
-
-        if (app()->environment(['local', 'testing'])) {
-            User::updateOrCreate(
-                [
-                    'email' => 'demo@farzin.test',
-                ],
-                [
-                    'name' => 'Demo User',
-                    'role' => 'customer',
-                    'password' => Hash::make('password'),
-                    'email_verified_at' => now(),
-                ]
-            );
-        }
     }
 }
