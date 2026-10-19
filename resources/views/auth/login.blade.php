@@ -53,13 +53,13 @@
                             @csrf
 
                             <x-ui.input
-                                type="tel"
+                                type="text"
                                 name="phone"
-                                label="شماره موبایل"
-                                placeholder="09123456789"
+                                label="شماره موبایل یا ایمیل مدیر"
+                                placeholder="09123456789 یا admin@farajihome.com"
                                 :value="old('phone')"
                                 autocomplete="username"
-                                inputmode="tel"
+                                inputmode="text"
                                 required
                             />
 
