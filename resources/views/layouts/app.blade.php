@@ -10,12 +10,12 @@
     >
 
     <title>
-        @yield('title', 'سیلاگالری')
+        @yield('title', 'فرزین')
     </title>
 
     <meta
         name="description"
-        content="@yield('description', 'سیلاگالری — مبلمان و لوازم خانه')"
+        content="@yield('description', 'فرزین | هود و سینک آشپزخانه')"
     >
 
     @hasSection('keywords')
