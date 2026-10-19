@@ -194,27 +194,9 @@
                     CONTACT
                 </p>
 
-                <div class="mt-5 space-y-4">
-
-                    <a
-                        href="tel:{{ config('app.contact.phone') }}"
-                        class="block break-all text-sm text-white/55 transition hover:text-white"
-                    >
-                        {{ config('app.contact.phone', '+98 00 000 0000') }}
-                    </a>
-
-                    <a
-                        href="mailto:{{ config('app.contact.email') }}"
-                        class="block break-all text-sm text-white/55 transition hover:text-white"
-                    >
-                        {{ config('app.contact.email', 'info@farzin.example') }}
-                    </a>
-
-                    <p class="text-sm leading-7 text-white/45">
-                        {{ config('app.contact.address', 'تهران، ایران') }}
-                    </p>
-
-                </div>
+                <p class="mt-5 max-w-xs text-sm leading-7 text-white/50">
+                    برای مشاوره‌ی انتخاب هود و سینک یا پیگیری سفارش، از صفحه‌ی تماس با فرزین پیام بفرستید.
+                </p>
 
 
                 {{-- Contact CTA --}}
