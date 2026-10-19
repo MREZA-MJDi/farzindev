@@ -44,6 +44,35 @@ class FarzinStorefrontTest extends TestCase
             ->assertSee('چک‌لیست');
     }
 
+    public function test_sitemap_lists_public_pages_and_only_active_catalog_items(): void
+    {
+        $category = $this->category([
+            'name' => 'هود آشپزخانه',
+            'slug' => 'hoods',
+        ]);
+
+        $product = $this->product($category, [
+            'name' => 'هود فرزین نقشه سایت',
+            'slug' => 'farzin-hood-sitemap',
+        ]);
+
+        $inactive = $this->category([
+            'name' => 'دسته غیرفعال',
+            'slug' => 'inactive-sitemap-category',
+            'is_active' => false,
+        ]);
+
+        $response = $this->get(route('sitemap'));
+
+        $response->assertOk()
+            ->assertHeader('content-type', 'application/xml; charset=UTF-8')
+            ->assertSee(route('home'), false)
+            ->assertSee(route('about'), false)
+            ->assertSee(route('categories.show', $category->slug), false)
+            ->assertSee(route('product.show', $product->slug), false)
+            ->assertDontSee(route('categories.show', $inactive->slug), false);
+    }
+
     public function test_public_categories_only_show_active_categories(): void
     {
         $this->category(['name' => 'هود آشپزخانه', 'slug' => 'hoods']);
