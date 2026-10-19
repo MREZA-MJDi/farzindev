@@ -35,6 +35,10 @@ Route::get('/', [HomeController::class, 'index'])
 Route::get('/shop', [ShopController::class, 'index'])
     ->name('shop.index');
 
+Route::view('/blog', 'blog.index')
+    ->name('blog.index');
+
+
 Route::get('/product/{slug}', [ProductController::class, 'show'])
     ->name('product.show');
 
