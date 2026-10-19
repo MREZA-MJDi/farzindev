@@ -2,7 +2,7 @@
 
 @section(
     'title',
-    $category->name . ' | خرید هود و سینک و محصولات خانه | فرزین'
+    $category->name . ' | خرید هود و سینک آشپزخانه | فرزین'
 )
 
 @section(
