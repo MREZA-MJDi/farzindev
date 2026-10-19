@@ -866,6 +866,322 @@ class FarzinStorefrontTest extends TestCase
         ]);
     }
 
+    public function test_admin_can_update_and_soft_delete_a_product_without_exposing_it_publicly(): void
+    {
+        $admin = $this->admin();
+        $category = $this->category(['slug' => 'hoods']);
+        $product = $this->product($category, [
+            'name' => 'Original Hood',
+            'slug' => 'original-hood',
+            'sku' => 'FAR-PRODUCT-UPDATE',
+            'price' => 10000000,
+            'stock' => 4,
+        ]);
+
+        $this->actingAs($admin)
+            ->put(route('admin.products.update', $product), [
+                'category_id' => $category->id,
+                'name' => 'Updated Farzin Hood',
+                'slug' => 'updated-farzin-hood',
+                'sku' => 'FAR-PRODUCT-UPDATED',
+                'short_description' => 'توضیح به‌روزشده',
+                'description' => 'مشخصات فنی به‌روزشده محصول',
+                'price' => '۱۲,۵۰۰,۰۰۰',
+                'compare_at_price' => '۱۵,۰۰۰,۰۰۰',
+                'stock' => '9',
+                'status' => 'active',
+                'is_featured' => '1',
+                'is_new' => '1',
+                'installment_enabled' => '0',
+            ])
+            ->assertRedirect(route('admin.products.edit', $product))
+            ->assertSessionHas('success');
+
+        $product->refresh();
+
+        $this->assertSame('Updated Farzin Hood', $product->name);
+        $this->assertSame('updated-farzin-hood', $product->slug);
+        $this->assertEquals(12500000, (float) $product->price);
+        $this->assertSame(9, (int) $product->stock);
+        $this->get(route('product.show', $product->slug))
+            ->assertOk()
+            ->assertSee('Updated Farzin Hood');
+
+        $this->actingAs($admin)
+            ->delete(route('admin.products.destroy', $product))
+            ->assertRedirect(route('admin.products.index'))
+            ->assertSessionHas('success');
+
+        $this->assertSoftDeleted('products', ['id' => $product->id]);
+        $this->get(route('product.show', $product->slug))->assertNotFound();
+    }
+
+    public function test_admin_can_update_and_delete_an_empty_category(): void
+    {
+        $admin = $this->admin();
+        $category = $this->category([
+            'name' => 'Temporary category',
+            'slug' => 'temporary-category',
+        ]);
+
+        $this->actingAs($admin)
+            ->put(route('admin.categories.update', $category), [
+                'name' => 'هود توکار',
+                'slug' => 'built-in-hoods',
+                'description' => 'هودهای توکار فرزین',
+                'is_active' => '1',
+                'sort_order' => 2,
+            ])
+            ->assertRedirect(route('admin.categories.index'))
+            ->assertSessionHas('success');
+
+        $this->assertDatabaseHas('categories', [
+            'id' => $category->id,
+            'name' => 'هود توکار',
+            'slug' => 'built-in-hoods',
+            'sort_order' => 2,
+        ]);
+
+        $this->delete(route('admin.categories.destroy', $category->refresh()))
+            ->assertRedirect(route('admin.categories.index'))
+            ->assertSessionHas('success');
+
+        $this->assertDatabaseMissing('categories', ['id' => $category->id]);
+    }
+
+    public function test_admin_can_update_and_delete_a_product_variant(): void
+    {
+        $admin = $this->admin();
+        $product = $this->product($this->category(['slug' => 'hoods']), [
+            'name' => 'Variant CRUD Hood',
+            'slug' => 'variant-crud-hood',
+            'sku' => 'FAR-VARIANT-CRUD',
+        ]);
+        $variant = ProductVariant::create([
+            'product_id' => $product->id,
+            'type' => 'color',
+            'name' => 'رنگ',
+            'value' => 'silver',
+            'sku' => 'FAR-VARIANT-CRUD-SILVER',
+            'price_adjustment' => 0,
+            'stock' => 3,
+            'is_active' => true,
+        ]);
+
+        $this->actingAs($admin)
+            ->put(route('admin.product-variants.update', $variant), [
+                'product_id' => $product->id,
+                'type' => 'color',
+                'name' => 'رنگ بدنه',
+                'value' => 'black',
+                'sku' => 'FAR-VARIANT-CRUD-BLACK',
+                'price_adjustment' => '500000',
+                'stock' => '6',
+                'is_active' => '1',
+            ])
+            ->assertRedirect(route('admin.product-variants.index', [
+                'product_id' => $product->id,
+            ]))
+            ->assertSessionHas('success');
+
+        $variant->refresh();
+
+        $this->assertSame('black', $variant->value);
+        $this->assertSame('رنگ بدنه', $variant->name);
+        $this->assertEquals(500000, (float) $variant->price_adjustment);
+        $this->assertSame(6, (int) $variant->stock);
+
+        $this->delete(route('admin.product-variants.destroy', $variant))
+            ->assertRedirect(route('admin.product-variants.index', [
+                'product_id' => $product->id,
+            ]))
+            ->assertSessionHas('success');
+
+        $this->assertDatabaseMissing('product_variants', ['id' => $variant->id]);
+    }
+
+    public function test_deleting_primary_product_image_promotes_the_next_image_and_removes_file(): void
+    {
+        Storage::fake('public');
+        $admin = $this->admin();
+        $product = $this->product($this->category(['slug' => 'hoods']), [
+            'name' => 'Image Lifecycle Hood',
+            'slug' => 'image-lifecycle-hood',
+            'sku' => 'FAR-IMAGE-LIFECYCLE',
+        ]);
+
+        Storage::disk('public')->put('products/images/primary.webp', 'primary image bytes');
+        Storage::disk('public')->put('products/images/secondary.webp', 'secondary image bytes');
+
+        $primary = ProductImage::create([
+            'product_id' => $product->id,
+            'path' => 'products/images/primary.webp',
+            'alt' => 'تصویر اصلی',
+            'sort_order' => 0,
+            'is_primary' => true,
+        ]);
+        $secondary = ProductImage::create([
+            'product_id' => $product->id,
+            'path' => 'products/images/secondary.webp',
+            'alt' => 'تصویر دوم',
+            'sort_order' => 1,
+            'is_primary' => false,
+        ]);
+
+        $this->actingAs($admin)
+            ->delete(route('admin.product-images.destroy', $primary))
+            ->assertRedirect(route('admin.product-images.index', [
+                'product_id' => $product->id,
+            ]))
+            ->assertSessionHas('success');
+
+        $this->assertDatabaseMissing('product_images', ['id' => $primary->id]);
+        $this->assertDatabaseHas('product_images', [
+            'id' => $secondary->id,
+            'is_primary' => true,
+        ]);
+        Storage::disk('public')->assertMissing('products/images/primary.webp');
+        Storage::disk('public')->assertExists('products/images/secondary.webp');
+    }
+
+    public function test_admin_customer_update_changes_only_the_selected_customer(): void
+    {
+        $admin = $this->admin();
+        $customer = $this->customer([
+            'name' => 'Original Customer',
+            'email' => 'original@farzin.test',
+        ]);
+        $other = $this->customer([
+            'name' => 'Unchanged Customer',
+            'email' => 'unchanged@farzin.test',
+        ]);
+
+        $this->actingAs($admin)
+            ->put(route('admin.customers.update', $customer), [
+                'name' => 'Updated Customer',
+                'email' => 'updated@farzin.test',
+            ])
+            ->assertRedirect(route('admin.customers.show', $customer))
+            ->assertSessionHas('success');
+
+        $this->assertDatabaseHas('users', [
+            'id' => $customer->id,
+            'name' => 'Updated Customer',
+            'email' => 'updated@farzin.test',
+            'role' => 'customer',
+        ]);
+        $this->assertDatabaseHas('users', [
+            'id' => $other->id,
+            'name' => 'Unchanged Customer',
+            'email' => 'unchanged@farzin.test',
+        ]);
+
+        $this->put(route('admin.customers.update', $customer), [
+            'name' => 'Invalid Duplicate Email',
+            'email' => 'unchanged@farzin.test',
+        ])->assertSessionHasErrors('email');
+
+        $this->assertDatabaseHas('users', [
+            'id' => $customer->id,
+            'email' => 'updated@farzin.test',
+        ]);
+    }
+
+    public function test_customer_can_update_profile_and_logout(): void
+    {
+        $customer = $this->customer([
+            'name' => 'Original Profile',
+            'email' => 'profile@farzin.test',
+        ]);
+
+        $this->actingAs($customer)
+            ->from(route('account.profile.edit'))
+            ->put(route('account.profile.update'), [
+                'name' => 'Farzin Profile Updated',
+                'email' => 'profile.updated@farzin.test',
+            ])
+            ->assertRedirect(route('account.profile.edit'))
+            ->assertSessionHas('success');
+
+        $this->assertDatabaseHas('users', [
+            'id' => $customer->id,
+            'name' => 'Farzin Profile Updated',
+            'email' => 'profile.updated@farzin.test',
+        ]);
+
+        $this->post(route('logout'))
+            ->assertRedirect(route('home'));
+
+        $this->assertGuest();
+    }
+
+    public function test_customer_order_history_is_scoped_to_the_authenticated_customer(): void
+    {
+        $owner = $this->customer();
+        $otherCustomer = $this->customer();
+        $ownedOrder = $this->order($owner, ['order_number' => 'FAR-ORDER-OWNED']);
+        $foreignOrder = $this->order($otherCustomer, ['order_number' => 'FAR-ORDER-FOREIGN']);
+
+        $this->actingAs($owner)
+            ->get(route('account.orders.index'))
+            ->assertOk()
+            ->assertSee('FAR-ORDER-OWNED')
+            ->assertDontSee('FAR-ORDER-FOREIGN');
+
+        $this->get(route('account.orders.show', $ownedOrder))->assertOk();
+
+        $this->get(route('account.orders.show', $foreignOrder))->assertForbidden();
+    }
+
+    public function test_customer_can_remove_and_clear_only_their_own_cart_items(): void
+    {
+        $customer = $this->customer();
+        $productA = $this->product($this->category(['slug' => 'hoods']), [
+            'name' => 'Cart Product A',
+            'slug' => 'cart-product-a',
+            'sku' => 'FAR-CART-A',
+        ]);
+        $productB = $this->product($productA->category, [
+            'name' => 'Cart Product B',
+            'slug' => 'cart-product-b',
+            'sku' => 'FAR-CART-B',
+        ]);
+
+        $cart = Cart::create([
+            'user_id' => $customer->id,
+            'session_id' => null,
+            'status' => 'active',
+        ]);
+        $itemA = CartItem::create([
+            'cart_id' => $cart->id,
+            'product_id' => $productA->id,
+            'quantity' => 1,
+            'unit_price' => $productA->price,
+            'variant_key' => 'base',
+        ]);
+        $itemB = CartItem::create([
+            'cart_id' => $cart->id,
+            'product_id' => $productB->id,
+            'quantity' => 2,
+            'unit_price' => $productB->price,
+            'variant_key' => 'base',
+        ]);
+
+        $this->actingAs($customer)
+            ->from(route('cart.index'))
+            ->delete(route('cart.remove', $itemA))
+            ->assertRedirect(route('cart.index'));
+
+        $this->assertDatabaseMissing('cart_items', ['id' => $itemA->id]);
+        $this->assertDatabaseHas('cart_items', ['id' => $itemB->id]);
+
+        $this->from(route('cart.index'))
+            ->delete(route('cart.clear'))
+            ->assertRedirect(route('cart.index'));
+
+        $this->assertDatabaseMissing('cart_items', ['id' => $itemB->id]);
+    }
+
     private function category(array $attributes = []): Category
     {
         return Category::create(array_merge([
