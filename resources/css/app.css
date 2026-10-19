@@ -95,7 +95,7 @@ body {
     background:
         radial-gradient(
             circle at top left,
-            rgba(37, 99, 235, 0.035),
+            rgba(17, 20, 22, 0.025),
             transparent 30rem
         ),
         var(--livora-cream);
@@ -1148,7 +1148,7 @@ button[class*="bg-[var(--livora-ink)]"][class*="text-white"]:focus-visible {
     position: relative;
     overflow: hidden;
     background:
-        radial-gradient(circle at 50% 40%, rgba(139,224,228,.19), transparent 38%),
+        radial-gradient(circle at 50% 40%, rgba(164,189,192,.16), transparent 38%),
         linear-gradient(140deg, #edf0f1, #dfe4e6);
 }
 
@@ -1165,7 +1165,7 @@ button[class*="bg-[var(--livora-ink)]"][class*="text-white"]:focus-visible {
 
 .farzin-product-fallback::after {
     width: 47%;
-    border-color: rgba(8,127,137,.18);
+    border-color: rgba(53,95,101,.16);
 }
 
 .farzin-product-fallback__monogram {
@@ -1211,7 +1211,7 @@ button[class*="bg-[var(--livora-ink)]"][class*="text-white"]:focus-visible {
 
 .farzin-category-card__media {
     background:
-        radial-gradient(ellipse at 50% 30%, rgba(139,224,228,.10), transparent 60%),
+        radial-gradient(ellipse at 50% 30%, rgba(164,189,192,.09), transparent 60%),
         linear-gradient(135deg, #252b2e, #141719);
 }
 
@@ -1274,7 +1274,7 @@ button[class*="bg-[var(--livora-ink)]"][class*="text-white"]:focus-visible {
 .farzin-category-fallback {
     min-height: 230px;
     background:
-        radial-gradient(ellipse at 48% 42%, rgba(139,224,228,.12), transparent 40%),
+        radial-gradient(ellipse at 48% 42%, rgba(164,189,192,.10), transparent 40%),
         linear-gradient(140deg, #283033, #171c1e);
 }
 
