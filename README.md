@@ -1,48 +1,44 @@
-# Farzin — فروشگاه هود و سینک آشپزخانه
+# Farzin — Kitchen Hoods & Sinks
 
-این مخزن نسخه‌ی توسعه‌ی فروشگاه اینترنتی فرزین است. پروژه با Laravel ساخته شده و برای کاتالوگ هود، سینک و تجهیزات مرتبط آشپزخانه آماده‌سازی می‌شود.
+Farzin is a Persian RTL e-commerce storefront focused on kitchen range hoods and kitchen sinks. The project is built with Laravel and includes a product catalogue, category browsing, product variants and images, search/filtering, cart, customer accounts, order management, payment flows, and a dedicated admin dashboard. Payment and order workflows should be verified against the current implementation and configured gateway before production use.
 
-## فناوری‌ها
-- PHP 8.2+ و Laravel 12
-- Blade، Tailwind CSS 4، Alpine.js و Vite
-- Eloquent ORM و Laravel migrations
+## Technology
+- PHP `^8.2`, Laravel `^12.0`
+- Blade, Tailwind CSS 4, Alpine.js, Vite
+- Eloquent models and database migrations
+- Responsive Persian RTL storefront and administration dashboard
 
-## قابلیت‌های موجود در کد
-- صفحه‌ی اصلی، فروشگاه، دسته‌بندی و صفحه‌ی محصول
-- تصاویر محصول و واریانت‌ها
-- جست‌وجو و فیلتر کاتالوگ
-- سبد خرید، علاقه‌مندی‌ها، حساب مشتری و سفارش‌ها
-- پنل مدیریت محصولات، دسته‌بندی‌ها، تصاویر، واریانت‌ها، سفارش‌ها و پیام‌های تماس
-- زیرساخت پرداخت و خرید اقساطی؛ اتصال درگاه و فرایند نهایی پرداخت باید پیش از استفاده‌ی واقعی جداگانه تنظیم و آزمایش شود.
-
-## راه‌اندازی در Windows
-از ریشه‌ی پروژه اجرا کنید:
-
-```bat
+## Local setup
+```bash
+git clone https://github.com/MREZA-MJDi/farzindev.git
+cd farzindev
 composer install
-copy .env.example .env
-php artisan key:generate
 ```
 
-یک دیتابیس محلی بسازید و مقادیر `DB_*` در `.env` را تنظیم کنید. برای مدیر پنل، مقدارهای اختصاصی و امن `ADMIN_EMAIL` و `ADMIN_PASSWORD` را وارد کنید؛ رمز پیش‌فرض را در محیط واقعی استفاده نکنید.
+Copy `.env.example` to `.env` (Windows CMD: `copy .env.example .env`), configure the database, and set a strong local `ADMIN_PASSWORD`. Never commit the real `.env` file or production credentials.
 
-```bat
+```bash
+php artisan key:generate
 php artisan migrate
 npm install
 npm run build
 php artisan storage:link
-php artisan db:seed
 php artisan serve
 ```
 
-سپس `http://127.0.0.1:8000` را باز کنید. برای توسعه‌ی زنده‌ی فرانت‌اند، در ترمینال دیگری `npm run dev` را اجرا کنید.
+Open `http://127.0.0.1:8000`. For Vite hot reload, run `npm run dev` in a separate terminal.
 
-## کاتالوگ واقعی
-Seeder پیش‌فرض دو دسته‌بندی پایه‌ی «هود آشپزخانه» و «سینک ظرفشویی» را آماده می‌کند و کالاهای نمایشی قدیمی مبلمان را از فهرست فعال خارج می‌کند. محصولات، مشخصات واقعی، قیمت‌ها، موجودی‌ها و تصاویر فرزین باید از پنل مدیریت ثبت شوند؛ داده‌ی فروش واقعی را با اطلاعات ساختگی پر نکنید.
+## Catalogue and imagery
+- Create real Farzin products, specifications, stock, images, and variants from the admin dashboard.
+- The catalogue seeders no longer invent sample furniture products or prices.
+- Running the category seeder activates the Farzin hood and sink categories and hides the old demo furniture categories.
+- The product seeder archives the inherited demo products with the `LIV-*` SKU prefix. Existing order records are not deleted.
+- The `/blog` page contains a starter set of buying guides for hoods, sinks, and installation measurements. Its copy is currently maintained in `resources/views/blog/index.blade.php`, not in an admin CMS.
 
-## تست‌ها
-```bat
+## Tests
+```bash
 php artisan test
 ```
 
-پیش از استقرار عمومی، مجوزهای پنل، آپلود تصاویر، تنظیمات تماس، جریان تأیید پرداخت، ایمیل و اجرای برنامه با `APP_DEBUG=false` را آزمایش کنید. فایل `.env` و اطلاعات محرمانه را در Git منتشر نکنید.
+## Production safety
+Use sandbox credentials during payment integration testing. Confirm payment status through the verified gateway callback/server-side flow rather than relying on a browser redirect. Back up the database before running seeders on an existing installation and review migration changes before deployment.
