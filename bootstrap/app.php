@@ -2,6 +2,9 @@
 
 use App\Http\Middleware\AdminMiddleware;
 use App\Http\Middleware\CustomerMiddleware;
+use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Auth\AuthenticationException;
+use Illuminate\Validation\ValidationException;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -48,7 +51,13 @@ return Application::configure(
             Throwable $e,
             Request $request
         ) {
-            if (! $request->expectsJson()) {
+            if (
+                ! $request->expectsJson()
+                || $e instanceof HttpExceptionInterface
+                || $e instanceof AuthorizationException
+                || $e instanceof AuthenticationException
+                || $e instanceof ValidationException
+            ) {
                 return null;
             }
 
