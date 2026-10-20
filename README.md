@@ -42,5 +42,19 @@ Open `http://127.0.0.1:8000`. For Vite hot reload, run `npm run dev` in a separa
 php artisan test
 ```
 
+## Inventory reservations and scheduled tasks
+
+Stock is reserved transactionally when an order is created. A confirmed payment commits that reservation; a failed payment or cancellation releases it. If a gateway confirms payment after an unpaid reservation has expired and the stock is no longer available, the order is still recorded as paid and an explicit inventory warning appears in the admin dashboard so the order can be reconciled.
+
+Unpaid reservations expire after 24 hours. Enable the Laravel scheduler on the production server; otherwise stale unpaid reservations will need to be cancelled manually from the admin order page.
+
+For a Linux VPS, add this cron entry (replace the path and PHP binary with the values for the server):
+
+\`\`\`cron
+* * * * * cd /path/to/farzindev && php artisan schedule:run >> /dev/null 2>&1
+\`\`\`
+
+For cPanel, add the same command under **Cron Jobs** using the absolute project path and the server's PHP CLI binary.
+
 ## Production safety
 Use sandbox credentials during payment integration testing. Confirm payment status through the verified gateway callback/server-side flow rather than relying on a browser redirect. Back up the database before running seeders on an existing installation and review migration changes before deployment.
