@@ -3,8 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\Checkout\PlaceOrderRequest;
-use App\Services\Checkout\CheckoutOrderService;
 use App\Models\Cart;
+use App\Services\Checkout\CheckoutOrderService;
 use App\Models\Order;
 use App\Services\Installments\InstallmentPlanService;
 use App\Services\Payments\PaymentService;
@@ -386,9 +386,5 @@ class CheckoutController extends Controller
                 ]
             );
     }
-
-    /**
-     * Generate unique order number.
-     */
 
 }
