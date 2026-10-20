@@ -596,7 +596,7 @@ class CheckoutController extends Controller
     {
         do {
             $number =
-                'LV-'
+                'FZ-'
                 . now()->format('ymd')
                 . '-'
                 . strtoupper(
