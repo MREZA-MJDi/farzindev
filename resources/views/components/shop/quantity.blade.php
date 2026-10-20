@@ -29,6 +29,33 @@
         min: {{ (int) $min }},
         max: {{ $maxValue !== null ? $maxValue : 'null' }},
 
+        init() {
+            this.onVariantAvailabilityChanged = (event) => {
+                const nextMax = Number(event.detail?.max);
+
+                if (!Number.isFinite(nextMax) || nextMax < this.min) {
+                    return;
+                }
+
+                this.max = nextMax;
+                this.value = Math.min(this.value, nextMax);
+            };
+
+            window.addEventListener(
+                'product-variant-availability-changed',
+                this.onVariantAvailabilityChanged
+            );
+        },
+
+        destroy() {
+            if (this.onVariantAvailabilityChanged) {
+                window.removeEventListener(
+                    'product-variant-availability-changed',
+                    this.onVariantAvailabilityChanged
+                );
+            }
+        },
+
         decrease() {
             if (this.value > this.min) {
                 this.value--;
@@ -77,6 +104,7 @@
         min="{{ $min }}"
         @if($max !== null)
         max="{{ $max }}"
+        :max="max"
         @endif
         inputmode="numeric"
         autocomplete="off"
