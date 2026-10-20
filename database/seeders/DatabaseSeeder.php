@@ -8,6 +8,20 @@ class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
+        // Fail before mutating the catalogue if production admin credentials
+        // are missing; otherwise the seed would stop halfway through.
+        if (
+            app()->environment('production')
+            && (
+                blank(config('farzin.admin.email'))
+                || blank(config('farzin.admin.password'))
+            )
+        ) {
+            throw new \RuntimeException(
+                'Set ADMIN_EMAIL and ADMIN_PASSWORD before seeding the initial production database.'
+            );
+        }
+
         $this->call([
             CategorySeeder::class,
             ProductSeeder::class,
