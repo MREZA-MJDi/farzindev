@@ -2391,16 +2391,22 @@ class FarzinStorefrontTest extends TestCase
             'stock' => 6,
         ]);
 
-        $this->post(route('cart.add', $product), ['quantity' => 2])
-            ->assertRedirect(route('cart.index'));
+        $firstAdd = $this->postJson(route('cart.add', $product), ['quantity' => 2])
+            ->assertOk()
+            ->assertJsonPath('cart_count', 2);
 
-        $item = CartItem::query()
-            ->whereHas('cart', fn ($query) => $query
-                ->whereNull('user_id')
-                ->where('status', 'active'))
+        $sessionCookie = $firstAdd->getCookie(config('session.cookie'));
+        $cart = Cart::query()
+            ->whereNull('user_id')
+            ->where('status', 'active')
             ->firstOrFail();
+        $item = $cart->items()->firstOrFail();
 
-        $this->get(route('cart.index'))
+        // Keep the exact browser session that owns this guest cart in the request.
+        $this->withCookie(config('session.cookie'), $sessionCookie?->getValue() ?? '')
+            ->withCookie(config('session.cookie'), $cart->session_id)
+            ->withSession(['guest_cart_id' => $cart->id])
+            ->get(route('cart.index'))
             ->assertOk()
             ->assertSee(route('cart.update', $item), false)
             ->assertSee(route('cart.remove', $item), false)
