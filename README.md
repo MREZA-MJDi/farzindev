@@ -37,6 +37,14 @@ Open `http://127.0.0.1:8000`. For Vite hot reload, run `npm run dev` in a separa
 - To upload product covers and gallery images, the dashboard allows JPG/JPEG/PNG/WEBP up to 20 MB. The PHP runtime must accept requests of at least 26 MB for these limits to work.
 - The `/blog` page contains a starter set of buying guides for hoods, sinks, and installation measurements. Its copy is currently maintained in `resources/views/blog/index.blade.php`, not in an admin CMS.
 
+## Deployment
+
+The current deployment target is an Ubuntu VPS over SSH, not cPanel. Follow [the Ubuntu VPS deployment runbook](docs/deploy-vps-ubuntu.md) for server packages, Nginx, TLS, database permissions, safe releases, Laravel caches, uploads, scheduler, and production verification.
+
+[The older Hostiran cPanel guide](docs/deploy-hostiran-cpanel.md) is retained only for reference and should not be used as the current deployment procedure.
+
+The GitHub Actions workflow builds a `farzin-vps-release` artifact after the test suite, production asset build, seeder smoke tests and Laravel cache-command checks pass. A green artifact is not proof of live DNS/TLS, verified catalogue data, email delivery or payment-provider readiness. Keep the external gateways disabled until provider-specific merchant API requests and server-side callbacks pass sandbox verification.
+
 ## Tests
 ```bash
 php artisan test
