@@ -111,7 +111,9 @@ class CategoryController extends Controller
      */
     public function destroy(Category $category): RedirectResponse
     {
-        if ($category->products()->exists()) {
+        // Soft-deleted products still reference this category through
+        // a restrictive foreign key, so they must be considered too.
+        if ($category->products()->withTrashed()->exists()) {
             return redirect()
                 ->route('admin.categories.index')
                 ->with(
