@@ -7,6 +7,7 @@ use App\Models\Cart;
 use App\Models\Category;
 use App\Models\Product;
 use App\Models\ProductVariant;
+use App\Models\StorefrontSetting;
 use App\Models\Order;
 use App\Services\Installments\InstallmentPlanService;
 use App\Services\Inventory\InventoryReservationService;
@@ -267,7 +268,25 @@ class CheckoutController extends Controller
                     $subtotal += $unitPrice * (int) $item->quantity;
                 }
 
-                $shippingCost = 0;
+                $shippingFlatRate = max(
+                    0,
+                    (int) (StorefrontSetting::query()
+                        ->where('key', 'shipping_flat_rate')
+                        ->value('value') ?? 0)
+                );
+                $freeShippingThreshold = max(
+                    0,
+                    (int) (StorefrontSetting::query()
+                        ->where('key', 'shipping_free_threshold')
+                        ->value('value') ?? 0)
+                );
+
+                $shippingCost = $freeShippingThreshold > 0
+                    && $subtotal >= $freeShippingThreshold
+                    ? 0
+                    : $shippingFlatRate;
+
+                // Discounts remain zero until a validated promotion system exists.
                 $discount = 0;
                 $total = $subtotal + $shippingCost - $discount;
 
