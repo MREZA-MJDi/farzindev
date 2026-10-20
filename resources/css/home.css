@@ -666,3 +666,40 @@ body.home-body {
         transform: none !important;
     }
 }
+
+
+/* Keep real catalogue cards visible even before a product image is uploaded. */
+.fz-product-card__image--fallback {
+    display: grid;
+    place-items: center;
+    align-content: center;
+    gap: .85rem;
+    padding: 1.25rem;
+    background:
+        radial-gradient(circle at 50% 38%, rgba(37, 99, 235, .13), transparent 36%),
+        linear-gradient(145deg, #e7effb 0%, #e2f6f4 58%, #fff0e5 100%);
+}
+
+.fz-product-card__fallback-mark {
+    display: grid;
+    place-items: center;
+    width: clamp(4rem, 8vw, 6rem);
+    aspect-ratio: 1;
+    border: 1px solid rgba(37, 99, 235, .2);
+    border-radius: 1.45rem;
+    color: var(--fz-blue);
+    background: rgba(255, 255, 255, .72);
+    box-shadow: 0 14px 35px rgba(20, 39, 65, .08);
+    font-size: clamp(1.5rem, 3.5vw, 2.2rem);
+    font-weight: 900;
+    letter-spacing: -.06em;
+}
+
+.fz-product-card__fallback-label {
+    max-width: 100%;
+    color: var(--fz-muted);
+    font-size: .68rem;
+    font-weight: 650;
+    text-align: center;
+    overflow-wrap: anywhere;
+}
