@@ -54,6 +54,11 @@ class DashboardController extends Controller
             ])
             ->count();
 
+        $inventoryIssueOrders = Order::query()
+            ->whereNotNull('inventory_issue_at')
+            ->where('payment_status', 'paid')
+            ->count();
+
         $paidOrders = Order::query()
             ->where('payment_status', 'paid')
             ->count();
@@ -244,6 +249,7 @@ class DashboardController extends Controller
             'totalOrders' => $totalOrders,
             'pendingOrders' => $pendingOrders,
             'paidOrders' => $paidOrders,
+            'inventoryIssueOrders' => $inventoryIssueOrders,
 
             'totalRevenue' => $totalRevenue,
             'currentMonthRevenue' => $currentMonthRevenue,
