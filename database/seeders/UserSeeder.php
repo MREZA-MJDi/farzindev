@@ -24,16 +24,6 @@ class UserSeeder extends Seeder
             }
         }
 
-        if (blank($adminPassword)) {
-            if (app()->environment(['local', 'testing'])) {
-                $adminPassword = 'password';
-            } else {
-                throw new \RuntimeException(
-                    'ADMIN_PASSWORD must be configured before creating the production administrator.'
-                );
-            }
-        }
-
         $existingAdmin = User::query()->where('email', $email)->first();
 
         if ($existingAdmin) {
@@ -43,10 +33,19 @@ class UserSeeder extends Seeder
                 );
             }
 
-            // Never reset a live admin password or silently alter the account on
-            // every normal db:seed run. Use the documented password-reset flow
-            // or a controlled one-time operation to rotate administrator access.
+            // Existing admin accounts are left untouched. A password is required
+            // only when creating a new administrator on an empty database.
             return;
+        }
+
+        if (blank($adminPassword)) {
+            if (app()->environment(['local', 'testing'])) {
+                $adminPassword = 'password';
+            } else {
+                throw new \RuntimeException(
+                    'ADMIN_PASSWORD must be configured before creating the production administrator.'
+                );
+            }
         }
 
         User::create([
