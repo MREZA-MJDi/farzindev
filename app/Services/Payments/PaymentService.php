@@ -1335,8 +1335,7 @@ class PaymentService
         Payment $payment,
         array $result
     ): void {
-        $order =
-            $payment->order;
+        $order = $payment->order;
 
         if (! $order) {
             throw new RuntimeException(
@@ -1344,16 +1343,7 @@ class PaymentService
             );
         }
 
-        /*
-        |--------------------------------------------------------------------------
-        | Our local payment amount must be positive.
-        |--------------------------------------------------------------------------
-        */
-
-        $expectedPaymentAmount =
-            $this->normalizeAmount(
-                $payment->amount
-            );
+        $expectedPaymentAmount = $this->normalizeAmount($payment->amount);
 
         if ($expectedPaymentAmount <= 0) {
             throw new RuntimeException(
@@ -1361,78 +1351,36 @@ class PaymentService
             );
         }
 
-        /*
-        |--------------------------------------------------------------------------
-        | External gateway returned amount
-        |--------------------------------------------------------------------------
-        |
-        | For online payments, fail closed if the provider's verification
-        | response does not identify the amount it actually verified.
-        | A successful HTTP response alone is not proof of payment value.
-        |
-        */
-
-        $isOnlinePayment = ($payment->metadata['payment_method'] ?? null) === 'online';
-
+        // A gateway callback must carry an amount from the server-side
+        // verification response. Missing metadata on an older payment row
+        // must never turn a partial/ambiguous verification into a paid order.
         if (
-            $isOnlinePayment
-            && (
-                ! array_key_exists('amount', $result)
-                || $result['amount'] === null
-                || $result['amount'] === ''
-            )
+            ! array_key_exists('amount', $result)
+            || $result['amount'] === null
+            || $result['amount'] === ''
         ) {
             throw new RuntimeException(
                 'Gateway verification did not return a verified amount.'
             );
         }
 
-        if (
-            array_key_exists(
-                'amount',
-                $result
-            )
-            && $result['amount'] !== null
-        ) {
-            $receivedAmount =
-                $this->normalizeAmount(
-                    $result['amount']
-                );
+        $receivedAmount = $this->normalizeAmount($result['amount']);
 
-            if (
-                $expectedPaymentAmount !==
-                $receivedAmount
-            ) {
-                throw new RuntimeException(
-                    'Payment amount mismatch.'
-                );
-            }
+        if ($expectedPaymentAmount !== $receivedAmount) {
+            throw new RuntimeException(
+                'Payment amount mismatch.'
+            );
         }
 
-        /*
-        |--------------------------------------------------------------------------
-        | External online payment must equal current order total.
-        |--------------------------------------------------------------------------
-        |
-        | Internal Livora installment payments should NOT enter this
-        | method because they are a separate flow.
-        |
-        */
+        // PaymentService only verifies external gateway attempts. They pay
+        // the full order total; internal cheque/installment plans use their
+        // own service and must not pass through this callback.
+        $orderAmount = $this->normalizeAmount($order->total);
 
-        if ($isOnlinePayment) {
-            $orderAmount =
-                $this->normalizeAmount(
-                    $order->total
-                );
-
-            if (
-                $expectedPaymentAmount !==
-                $orderAmount
-            ) {
-                throw new RuntimeException(
-                    'Payment amount does not match order total.'
-                );
-            }
+        if ($expectedPaymentAmount !== $orderAmount) {
+            throw new RuntimeException(
+                'Payment amount does not match order total.'
+            );
         }
     }
 
