@@ -76,7 +76,8 @@ Route::get(
 Route::post(
     '/contact',
     [ContactController::class, 'store']
-)->name('contact.store');
+)->middleware('throttle:5,1')
+    ->name('contact.store');
 
 
 /*
@@ -99,26 +100,22 @@ Route::prefix('cart')
             [CartController::class, 'add']
         )->name('add');
 
+        // Guests can manage only items in the cart bound to their session.
+        // Ownership is enforced in CartController for both guests and customers.
         Route::patch(
             '/item/{item}',
             [CartController::class, 'update']
-        )
-            ->middleware('auth')
-            ->name('update');
+        )->name('update');
 
         Route::delete(
             '/item/{item}',
             [CartController::class, 'remove']
-        )
-            ->middleware('auth')
-            ->name('remove');
+        )->name('remove');
 
         Route::delete(
             '/',
             [CartController::class, 'clear']
-        )
-            ->middleware('auth')
-            ->name('clear');
+        )->name('clear');
     });
 
 
@@ -138,7 +135,8 @@ Route::middleware('guest')->group(function () {
     Route::post(
         '/login',
         [AuthController::class, 'login']
-    )->name('login.store');
+    )->middleware('throttle:5,1')
+        ->name('login.store');
 
     Route::get(
         '/register',
@@ -148,7 +146,8 @@ Route::middleware('guest')->group(function () {
     Route::post(
         '/register',
         [AuthController::class, 'register']
-    )->name('register.store');
+    )->middleware('throttle:10,1')
+        ->name('register.store');
 });
 
 

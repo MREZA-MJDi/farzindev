@@ -34,6 +34,8 @@ class SitemapController extends Controller
 
         $productPages = Product::query()
             ->active()
+            ->whereHas('category', fn ($categoryQuery) => $categoryQuery
+                ->where('is_active', true))
             ->orderBy('id')
             ->get(['slug', 'updated_at'])
             ->map(fn (Product $product): array => [

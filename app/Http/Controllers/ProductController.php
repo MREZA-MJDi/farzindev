@@ -16,6 +16,8 @@ class ProductController extends Controller
                 'variants.images',
             ])
             ->active()
+            ->whereHas('category', fn ($categoryQuery) => $categoryQuery
+                ->where('is_active', true))
             ->where('slug', $slug)
             ->firstOrFail();
 

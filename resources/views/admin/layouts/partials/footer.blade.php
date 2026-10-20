@@ -6,13 +6,13 @@
         <div class="flex items-center gap-3">
 
             <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-[var(--admin-text)] text-[9px] font-bold tracking-wider text-white">
-                LV
+                FZ
             </div>
 
             <div>
 
                 <p class="text-[10px] font-semibold tracking-[0.16em] text-[var(--admin-text)]">
-                    SilaGallery ADMIN
+                    FARZIN ADMIN
                 </p>
 
                 <p class="mt-0.5 text-[9px] text-[var(--admin-muted)]">
@@ -46,7 +46,7 @@
             <span class="hidden h-4 w-px bg-[var(--admin-border)] sm:block"></span>
 
             <span class="text-[9px] text-[var(--admin-muted)]">
-                © {{ date('Y') }} SilaGallery
+                © {{ date('Y') }} فرزین
             </span>
 
         </div>

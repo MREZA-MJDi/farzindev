@@ -252,7 +252,7 @@
                 >
 
                 <p class="mt-2 text-xs leading-6 text-[var(--admin-muted)]">
-                    فرمت‌های تصویری مجاز را انتخاب کنید.
+                    فرمت‌های مجاز: JPG، PNG و WEBP — حداکثر حجم تصویر ۲۰ مگابایت.
                 </p>
 
                 @error('image')
