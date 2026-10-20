@@ -504,7 +504,7 @@ class FarzinStorefrontTest extends TestCase
                 'status' => 'active',
                 'is_featured' => '1',
                 'is_new' => '1',
-                'image' => UploadedFile::fake()->image('farzin-hood.png', 120, 80),
+                'image' => UploadedFile::fake()->image('farzin-hood.png', 800, 600),
             ])
             ->assertRedirect(route('admin.products.index'))
             ->assertSessionHas('success');
@@ -523,6 +523,33 @@ class FarzinStorefrontTest extends TestCase
         $this->get(route('product.show', $product->slug))
             ->assertOk()
             ->assertSee($product->name);
+    }
+
+    public function test_admin_cannot_upload_a_low_resolution_product_image(): void
+    {
+        $admin = $this->admin();
+        $category = $this->category(['slug' => 'low-resolution-hoods']);
+
+        $this->actingAs($admin)
+            ->from(route('admin.products.create'))
+            ->post(route('admin.products.store'), [
+                'category_id' => $category->id,
+                'name' => 'Low Resolution Hood',
+                'slug' => 'low-resolution-hood',
+                'sku' => 'FAR-LOW-RESOLUTION',
+                'short_description' => 'تصویر آزمایشی با وضوح پایین',
+                'description' => 'این محصول باید به دلیل ابعاد کم تصویر رد شود.',
+                'price' => '24500000',
+                'stock' => 5,
+                'status' => 'active',
+                'image' => UploadedFile::fake()->image('too-small.jpg', 320, 240),
+            ])
+            ->assertRedirect(route('admin.products.create'))
+            ->assertSessionHasErrors('image');
+
+        $this->assertDatabaseMissing('products', [
+            'slug' => 'low-resolution-hood',
+        ]);
     }
 
     public function test_customer_can_place_order_and_cart_is_cleared_after_order_snapshot_is_saved(): void
@@ -829,7 +856,7 @@ class FarzinStorefrontTest extends TestCase
         $this->actingAs($admin)
             ->post(route('admin.product-images.store'), [
                 'product_id' => $product->id,
-                'image' => UploadedFile::fake()->image('hood-angle.png', 100, 80),
+                'image' => UploadedFile::fake()->image('hood-angle.png', 800, 600),
                 'alt' => 'تصویر جدید هود',
                 'sort_order' => 1,
                 'is_primary' => '1',
@@ -1425,7 +1452,7 @@ class FarzinStorefrontTest extends TestCase
         $this->actingAs($admin)
             ->put(route('admin.product-images.update', $secondary), [
                 'product_id' => $product->id,
-                'image' => UploadedFile::fake()->image('hood-updated.webp', 120, 80),
+                'image' => UploadedFile::fake()->image('hood-updated.webp', 800, 600),
                 'alt' => 'تصویر جدید محصول',
                 'sort_order' => 0,
                 'is_primary' => '1',
