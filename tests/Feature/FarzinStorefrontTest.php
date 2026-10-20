@@ -1290,6 +1290,29 @@ class FarzinStorefrontTest extends TestCase
         ]);
     }
 
+    public function test_admin_cannot_cancel_a_paid_order_without_verified_refund(): void
+    {
+        $admin = $this->admin();
+        $order = $this->order($this->customer(), [
+            'status' => 'processing',
+            'payment_status' => 'paid',
+        ]);
+
+        $this->actingAs($admin)
+            ->from(route('admin.orders.show', $order))
+            ->patch(route('admin.orders.status', $order), [
+                'status' => 'cancelled',
+            ])
+            ->assertRedirect(route('admin.orders.show', $order))
+            ->assertSessionHas('error');
+
+        $this->assertDatabaseHas('orders', [
+            'id' => $order->id,
+            'status' => 'processing',
+            'payment_status' => 'paid',
+        ]);
+    }
+
     public function test_admin_can_read_and_delete_a_contact_message(): void
     {
         $admin = $this->admin();
