@@ -4,6 +4,7 @@ namespace App\Services\Payments;
 
 use App\Models\Order;
 use App\Models\Payment;
+use App\Services\Inventory\InventoryReservationService;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
 use RuntimeException;
@@ -12,7 +13,8 @@ use Throwable;
 class PaymentService
 {
     public function __construct(
-        protected PaymentManager $paymentManager
+        protected PaymentManager $paymentManager,
+        protected InventoryReservationService $inventoryReservationService
     ) {
     }
 
@@ -74,6 +76,11 @@ class PaymentService
                     'این سفارش قبلاً پرداخت شده است.'
                 );
             }
+
+            // A previous failed/cancelled attempt may have released the
+            // reservation. Re-reserve under row locks before opening a new
+            // gateway attempt; failure prevents sending the customer to pay.
+            $this->inventoryReservationService->reserveForOrder($lockedOrder);
 
             /*
              * External provider = online.
@@ -705,6 +712,9 @@ class PaymentService
                         $this->syncOrderPaymentStatus(
                             $lockedPayment->order
                         );
+                        $this->releaseInventoryIfNoActivePaymentAttempts(
+                            $lockedPayment->order
+                        );
                     }
                 );
             }
@@ -943,26 +953,32 @@ class PaymentService
                         ),
                 ]);
 
-                $order =
-                    $lockedPayment->order;
-
-                if (! $order) {
-                    throw new RuntimeException(
-                        'سفارش مربوط به پرداخت پیدا نشد.'
-                    );
-                }
+                $order = Order::query()
+                    ->whereKey($lockedPayment->order_id)
+                    ->lockForUpdate()
+                    ->firstOrFail();
 
                 /*
                  * External gateways represent an online payment.
+                 * A successful late callback reopens an expired/cancelled
+                 * order, while InventoryReservationService either safely
+                 * commits the held stock or raises an explicit admin issue.
                  */
                 $order->update([
                     'payment_status' => 'paid',
 
                     'payment_method' => 'online',
 
-                    'payment_provider' =>
-                        $lockedPayment->gateway,
+                    'payment_provider' => $lockedPayment->gateway,
+
+                    'status' => $order->status === 'cancelled'
+                        ? 'pending'
+                        : $order->status,
                 ]);
+
+                $this->inventoryReservationService->commitForPaidOrder(
+                    $order->fresh()
+                );
             }
         );
     }
@@ -1032,6 +1048,9 @@ class PaymentService
                 ]);
 
                 $this->syncOrderPaymentStatus(
+                    $lockedPayment->order
+                );
+                $this->releaseInventoryIfNoActivePaymentAttempts(
                     $lockedPayment->order
                 );
             }
@@ -1112,6 +1131,34 @@ class PaymentService
         $order->update([
             'payment_status' => 'failed',
         ]);
+    }
+
+    /**
+     * Release stock only when no successful or in-flight payment attempt
+     * remains. This lets customers retry a failed gateway attempt safely.
+     */
+    protected function releaseInventoryIfNoActivePaymentAttempts(
+        ?Order $order
+    ): void {
+        if (! $order) {
+            return;
+        }
+
+        $order = $order->fresh();
+
+        if (! $order || $order->payment_status === 'paid') {
+            return;
+        }
+
+        if ($order->payments()->where('status', 'paid')->exists()) {
+            return;
+        }
+
+        if ($order->payments()->whereIn('status', ['pending', 'initiated'])->exists()) {
+            return;
+        }
+
+        $this->inventoryReservationService->releaseForOrder($order);
     }
 
     /**
