@@ -7,7 +7,9 @@ use App\Models\ContactSetting;
 use App\Models\StorefrontSetting;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use Throwable;
 use Illuminate\View\View;
 
 class StorefrontSettingController extends Controller
@@ -74,55 +76,77 @@ class StorefrontSettingController extends Controller
             ->where('key', 'shop_banner_image')
             ->value('value');
 
+        $newPath = null;
+
         if ($request->hasFile('shop_banner_image')) {
             $newPath = $request->file('shop_banner_image')->store('banners', 'public');
 
-            StorefrontSetting::query()->updateOrCreate(
-                ['key' => 'shop_banner_image'],
-                ['value' => $newPath]
-            );
-
-            if ($oldPath && $oldPath !== $newPath) {
-                Storage::disk('public')->delete($oldPath);
-            }
-        } elseif ($request->boolean('remove_shop_banner')) {
-            StorefrontSetting::query()->updateOrCreate(
-                ['key' => 'shop_banner_image'],
-                ['value' => null]
-            );
-
-            if ($oldPath) {
-                Storage::disk('public')->delete($oldPath);
+            if (! $newPath) {
+                return back()
+                    ->withInput()
+                    ->withErrors([
+                        'shop_banner_image' => 'ذخیره تصویر بنر انجام نشد؛ فایل قبلی حفظ شد.',
+                    ]);
             }
         }
 
-        StorefrontSetting::query()->updateOrCreate(
-            ['key' => 'shop_banner_title'],
-            ['value' => $data['shop_banner_title']]
-        );
+        $removeBanner = $newPath === null
+            && $request->boolean('remove_shop_banner');
 
-        StorefrontSetting::query()->updateOrCreate(
-            ['key' => 'shop_banner_subtitle'],
-            ['value' => $data['shop_banner_subtitle'] ?? null]
-        );
+        try {
+            DB::transaction(function () use ($data, $newPath, $removeBanner): void {
+                if ($newPath !== null || $removeBanner) {
+                    StorefrontSetting::query()->updateOrCreate(
+                        ['key' => 'shop_banner_image'],
+                        ['value' => $newPath]
+                    );
+                }
 
-        $contact = ContactSetting::query()->first() ?? new ContactSetting();
-        $contact->fill([
-            'phone' => $data['phone'] ?? null,
-            'email' => $data['email'] ?? null,
-            'whatsapp' => $data['whatsapp'] ?? null,
-            'instagram_url' => $data['instagram_url'] ?? null,
-            'address' => $data['address'] ?? null,
-            'hours' => $data['hours'] ?? null,
-            'phone_label' => $data['phone_label'] ?? null,
-            'email_label' => $data['email_label'] ?? null,
-            'support_label' => $data['support_label'] ?? null,
-            'support_description' => $data['support_description'] ?? null,
-            'online_label' => $data['online_label'] ?? null,
-            'online_description' => $data['online_description'] ?? null,
-            'is_active' => true,
-        ]);
-        $contact->save();
+                StorefrontSetting::query()->updateOrCreate(
+                    ['key' => 'shop_banner_title'],
+                    ['value' => $data['shop_banner_title']]
+                );
+
+                StorefrontSetting::query()->updateOrCreate(
+                    ['key' => 'shop_banner_subtitle'],
+                    ['value' => $data['shop_banner_subtitle'] ?? null]
+                );
+
+                $contact = ContactSetting::query()->first() ?? new ContactSetting();
+                $contact->fill([
+                    'phone' => $data['phone'] ?? null,
+                    'email' => $data['email'] ?? null,
+                    'whatsapp' => $data['whatsapp'] ?? null,
+                    'instagram_url' => $data['instagram_url'] ?? null,
+                    'address' => $data['address'] ?? null,
+                    'hours' => $data['hours'] ?? null,
+                    'phone_label' => $data['phone_label'] ?? null,
+                    'email_label' => $data['email_label'] ?? null,
+                    'support_label' => $data['support_label'] ?? null,
+                    'support_description' => $data['support_description'] ?? null,
+                    'online_label' => $data['online_label'] ?? null,
+                    'online_description' => $data['online_description'] ?? null,
+                    'is_active' => true,
+                ]);
+                $contact->save();
+            });
+        } catch (Throwable $e) {
+            // Keep the currently published image if the database update fails.
+            if ($newPath !== null) {
+                Storage::disk('public')->delete($newPath);
+            }
+
+            throw $e;
+        }
+
+        // The new settings have committed; only now remove the superseded file.
+        if (
+            ($newPath !== null || $removeBanner)
+            && $oldPath
+            && $oldPath !== $newPath
+        ) {
+            Storage::disk('public')->delete($oldPath);
+        }
 
         return redirect()
             ->route('admin.storefront-settings.edit')
