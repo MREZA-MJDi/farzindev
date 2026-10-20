@@ -794,7 +794,7 @@
 
                 <div class="space-y-3">
 
-                    @forelse($faqs as $index => $faq)
+                    @foreach($faqs as $index => $faq)
 
                         <article class="overflow-hidden rounded-3xl border border-[var(--livora-border)] bg-[var(--livora-cream)]">
 
@@ -842,7 +842,7 @@
 
                         </article>
 
-                    @endforelse
+                    @endforeach
 
                 </div>
 
