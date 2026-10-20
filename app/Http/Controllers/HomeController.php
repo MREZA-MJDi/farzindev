@@ -15,34 +15,96 @@ class HomeController extends Controller
             ->withCount([
                 'products' => fn ($query) => $query->active(),
             ])
-            ->with('latestActiveProduct.images')
+            ->with(['latestActiveProduct.images.media'])
             ->orderBy('sort_order')
+            ->limit(8)
             ->get();
 
         /*
-         * The homepage is kept in sync with admin CRUD by ordering active
-         * products by updated_at. Creating or editing a product therefore
-         * moves it into the homepage collection without requiring flags.
+         * The independent homepage is fed from the same catalogue as the
+         * shop. It uses a bounded query and excludes products without a
+         * resolvable image. The hero, cards and 3D mosaic have separate,
+         * non-overlapping products so visitors do not see repeated items.
          */
-        $featuredProducts = Product::query()
+        $catalogProducts = Product::query()
             ->active()
-            ->with(['category', 'images'])
+            ->whereHas('category', fn ($query) => $query->where('is_active', true))
+            ->whereHas('images', fn ($query) => $query
+                ->whereNotNull('path')
+                ->where('path', '!=', ''))
+            ->with([
+                'category',
+                'images.media',
+            ])
+            ->orderByDesc('is_featured')
+            ->orderByDesc('is_new')
             ->orderByDesc('updated_at')
-            ->limit(8)
-            ->get();
+            ->limit(150)
+            ->get()
+            ->filter(fn (Product $product) => $product->images->contains(
+                fn ($image) => filled($image->url)
+            ))
+            ->take(50)
+            ->values();
 
-        $newProducts = Product::query()
-            ->active()
-            ->new()
-            ->with(['category', 'images'])
-            ->latest()
-            ->limit(8)
-            ->get();
+        $heroProduct = $catalogProducts->first();
+
+        $featuredProducts = $catalogProducts
+            ->reject(fn (Product $product) => $product->id === $heroProduct?->id)
+            ->take(8)
+            ->values();
+
+        $usedProductIds = $featuredProducts
+            ->pluck('id')
+            ->push($heroProduct?->id)
+            ->filter()
+            ->values();
+
+        $newProducts = $catalogProducts
+            ->filter(fn (Product $product) => (bool) $product->is_new)
+            ->reject(fn (Product $product) => $usedProductIds->contains($product->id))
+            ->take(8)
+            ->values();
+
+        $usedProductIds = $usedProductIds
+            ->merge($newProducts->pluck('id'))
+            ->unique()
+            ->values();
+
+        $galleryProducts = $catalogProducts
+            ->reject(fn (Product $product) => $usedProductIds->contains($product->id))
+            ->values();
+
+        $demoImages = $galleryProducts
+            ->map(function (Product $product, int $index): array {
+                $image = $product->images->first(
+                    fn ($candidate) => filled($candidate->url)
+                );
+
+                return [
+                    'url' => $image->url,
+                    'alt' => $image->alt ?: $product->name,
+                    'product_url' => route('product.show', $product->slug),
+                    'product_id' => $product->id,
+                    'product_name' => $product->name,
+                    'product_price' => number_format((float) $product->price),
+                    'product_stock' => (int) $product->stock,
+                    'cart_url' => route('cart.add', $product),
+                    'category_name' => $product->category?->name ?? 'فرزین',
+                    'index' => $index,
+                ];
+            })
+            ->values();
 
         return view('home.index', [
             'categories' => $categories,
+            'heroProduct' => $heroProduct,
+            'demoImages' => $demoImages,
+            'gridGroups' => $demoImages->chunk(9)->values(),
             'featuredProducts' => $featuredProducts,
             'newProducts' => $newProducts,
+            'catalogCount' => $catalogProducts->count(),
+            'galleryCount' => $demoImages->count(),
         ]);
     }
 }
