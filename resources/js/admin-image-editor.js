@@ -206,8 +206,8 @@ function initImageEditor(input) {
                 URL.revokeObjectURL(objectUrl);
                 try {
                     rebuildStage();
-                    renderPreview();
                     say('ابعاد اصلی: ' + image.naturalWidth.toLocaleString('fa-IR') + ' × ' + image.naturalHeight.toLocaleString('fa-IR') + ' پیکسل؛ کادر را تنظیم کنید.');
+                    renderPreview();
                     resolve();
                 } catch (error) {
                     reject(error);
