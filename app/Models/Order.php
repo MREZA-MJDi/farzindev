@@ -39,6 +39,11 @@ class Order extends Model
         'unit',
 
         'notes',
+        'inventory_reserved_at',
+        'inventory_released_at',
+        'inventory_committed_at',
+        'inventory_issue_at',
+        'inventory_issue_reason',
 
         /*
          * Internal installment snapshot
@@ -59,6 +64,10 @@ class Order extends Model
             'shipping_cost' => 'decimal:2',
             'discount' => 'decimal:2',
             'total' => 'decimal:2',
+            'inventory_reserved_at' => 'datetime',
+            'inventory_released_at' => 'datetime',
+            'inventory_committed_at' => 'datetime',
+            'inventory_issue_at' => 'datetime',
 
             'installment_enabled' => 'boolean',
 
