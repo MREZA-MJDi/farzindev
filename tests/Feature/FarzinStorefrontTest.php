@@ -2339,6 +2339,32 @@ class FarzinStorefrontTest extends TestCase
         $this->assertSame(1, (int) $item->fresh()->quantity);
     }
 
+    public function test_guest_cart_page_exposes_session_owned_edit_remove_and_clear_controls(): void
+    {
+        $product = $this->product($this->category(['slug' => 'guest-cart-controls']), [
+            'name' => 'Guest Cart Controls Product',
+            'slug' => 'guest-cart-controls-product',
+            'sku' => 'FAR-GUEST-CART-CONTROLS',
+            'stock' => 6,
+        ]);
+
+        $this->post(route('cart.add', $product), ['quantity' => 2])
+            ->assertRedirect(route('cart.index'));
+
+        $item = CartItem::query()
+            ->whereHas('cart', fn ($query) => $query
+                ->whereNull('user_id')
+                ->where('status', 'active'))
+            ->firstOrFail();
+
+        $this->get(route('cart.index'))
+            ->assertOk()
+            ->assertSee(route('cart.update', $item), false)
+            ->assertSee(route('cart.remove', $item), false)
+            ->assertSee(route('cart.clear'), false)
+            ->assertDontSee('برای تغییر تعداد یا حذف کالا');
+    }
+
     public function test_guest_can_update_remove_and_clear_only_their_session_cart(): void
     {
         $product = $this->product($this->category(['slug' => 'hoods']), [
