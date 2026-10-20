@@ -206,7 +206,18 @@ class FarzinStorefrontTest extends TestCase
             'name' => 'Out Of Stock Hood',
             'slug' => 'out-of-stock-hood',
             'sku' => 'FAR-OUT-OF-STOCK',
+            // Parent stock must not override option-level stock when active variants exist.
+            'stock' => 9,
+        ]);
+        ProductVariant::create([
+            'product_id' => $unavailableProduct->id,
+            'type' => 'color',
+            'name' => 'رنگ',
+            'value' => 'white',
+            'sku' => 'FAR-OUT-OF-STOCK-WHITE',
+            'price_adjustment' => 0,
             'stock' => 0,
+            'is_active' => true,
         ]);
 
         $this->get(route('shop.index', ['in_stock' => 1]))
