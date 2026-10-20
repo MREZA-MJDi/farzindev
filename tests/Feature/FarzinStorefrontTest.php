@@ -1098,6 +1098,58 @@ class FarzinStorefrontTest extends TestCase
             ->assertNotFound();
     }
 
+    public function test_online_payment_callback_rejects_verified_response_without_amount(): void
+    {
+        $customer = $this->customer();
+        $order = $this->order($customer, [
+            'payment_status' => 'pending',
+        ]);
+        $payment = $order->payments()->create([
+            'user_id' => $customer->id,
+            'gateway' => 'digipay',
+            'authority' => 'AUTH-MISSING-AMOUNT',
+            'amount' => $order->total,
+            'status' => 'initiated',
+            'metadata' => [
+                'payment_method' => 'online',
+                'payment_flow' => 'external_gateway',
+            ],
+        ]);
+
+        $gateway = \Mockery::mock(
+            \App\Services\Payments\Contracts\InstallmentPaymentGatewayInterface::class
+        );
+        $gateway->shouldReceive('verifyPayment')
+            ->once()
+            ->andReturn([
+                'success' => true,
+                'amount' => null,
+                'transaction_id' => 'TX-MISSING-AMOUNT',
+                'message' => 'Verified',
+                'data' => ['status' => 'success'],
+            ]);
+
+        $manager = \Mockery::mock(\App\Services\Payments\PaymentManager::class);
+        $manager->shouldReceive('driver')
+            ->once()
+            ->with('digipay')
+            ->andReturn($gateway);
+        $this->app->instance(\App\Services\Payments\PaymentManager::class, $manager);
+
+        $result = app(PaymentService::class)->handleCallback(
+            'digipay',
+            ['authority' => 'AUTH-MISSING-AMOUNT']
+        );
+
+        $this->assertFalse($result['success']);
+        $this->assertSame('failed', $payment->fresh()->status);
+        $this->assertNotSame('paid', $order->fresh()->payment_status);
+        $this->assertDatabaseMissing('payments', [
+            'id' => $payment->id,
+            'status' => 'paid',
+        ]);
+    }
+
     public function test_payment_callback_is_public_but_failed_gateway_response_never_marks_an_order_paid(): void
     {
         $service = \Mockery::mock(PaymentService::class);
