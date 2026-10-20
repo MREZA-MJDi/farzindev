@@ -2242,6 +2242,49 @@ class FarzinStorefrontTest extends TestCase
         $this->assertEquals(6000000, (float) $freeShippingOrder->total);
     }
 
+    public function test_cart_page_shows_current_price_and_requires_acknowledgement_after_a_price_change(): void
+    {
+        $customer = $this->customer();
+        $product = $this->product($this->category(['slug' => 'cart-current-price']), [
+            'name' => 'Current Cart Price Product',
+            'slug' => 'current-cart-price-product',
+            'sku' => 'FAR-CURRENT-CART-PRICE',
+            'price' => 3000000,
+            'stock' => 5,
+        ]);
+        $cart = Cart::create([
+            'user_id' => $customer->id,
+            'session_id' => null,
+            'status' => 'active',
+        ]);
+        $item = CartItem::create([
+            'cart_id' => $cart->id,
+            'product_id' => $product->id,
+            'product_variant_id' => null,
+            'variant_key' => 'base',
+            'variant_options' => null,
+            'quantity' => 1,
+            'unit_price' => 1000000,
+        ]);
+
+        $this->actingAs($customer)
+            ->get(route('cart.index'))
+            ->assertOk()
+            ->assertSee(\App\Helpers\PersianNumberHelper::format(3000000))
+            ->assertSee('قیمت این کالا تغییر کرده است')
+            ->assertSee('تأیید قیمت و تعداد')
+            ->assertDontSee(route('checkout.index'), false);
+
+        $this->patch(route('cart.update', $item), ['quantity' => 1])
+            ->assertRedirect();
+
+        $this->get(route('cart.index'))
+            ->assertOk()
+            ->assertSee(\App\Helpers\PersianNumberHelper::format(3000000))
+            ->assertDontSee('قیمت این کالا تغییر کرده است')
+            ->assertSee(route('checkout.index'), false);
+    }
+
     public function test_cart_quantity_update_refreshes_the_current_product_price(): void
     {
         $customer = $this->customer();
