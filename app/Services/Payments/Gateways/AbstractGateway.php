@@ -103,6 +103,18 @@ abstract class AbstractGateway implements InstallmentPaymentGatewayInterface
             );
         }
 
+        $baseUrlParts = parse_url($baseUrl);
+
+        if (
+            ! is_array($baseUrlParts)
+            || ! isset($baseUrlParts['host'], $baseUrlParts['scheme'])
+            || strtolower((string) $baseUrlParts['scheme']) !== 'https'
+        ) {
+            throw new RuntimeException(
+                "{$this->gateway} base URL must use HTTPS."
+            );
+        }
+
         $request = Http::acceptJson()
             ->asJson()
             ->timeout(
@@ -278,12 +290,18 @@ abstract class AbstractGateway implements InstallmentPaymentGatewayInterface
                     $response
                 );
 
-            return [
-                'success' =>
-                    $paymentUrl !== null,
+            $parsedPaymentUrl = is_string($paymentUrl)
+                ? parse_url($paymentUrl)
+                : false;
+            $isSecurePaymentUrl = is_array($parsedPaymentUrl)
+                && isset($parsedPaymentUrl['scheme'], $parsedPaymentUrl['host'])
+                && strtolower((string) $parsedPaymentUrl['scheme']) === 'https'
+                && filter_var($paymentUrl, FILTER_VALIDATE_URL) !== false;
 
-                'payment_url' =>
-                    $paymentUrl,
+            return [
+                'success' => $isSecurePaymentUrl,
+
+                'payment_url' => $isSecurePaymentUrl ? $paymentUrl : null,
 
                 'authority' =>
                     $this->extractAuthority(
@@ -359,8 +377,21 @@ abstract class AbstractGateway implements InstallmentPaymentGatewayInterface
                 ];
             }
 
-            $response =
-                $result['data'];
+            $response = $result['data'];
+
+            // A 2xx HTTP response only proves transport success. It must also
+            // contain an explicit positive verification flag before it can be
+            // normalized as a successful payment. Child adapters may override
+            // this method once mapped to the official merchant response schema.
+            if (! $this->isVerificationSuccessful($response)) {
+                return [
+                    'success' => false,
+                    'amount' => null,
+                    'transaction_id' => null,
+                    'message' => 'Gateway response did not explicitly confirm payment verification.',
+                    'data' => $response,
+                ];
+            }
 
             return [
                 'success' =>
@@ -395,6 +426,23 @@ abstract class AbstractGateway implements InstallmentPaymentGatewayInterface
                 'data' => [],
             ];
         }
+    }
+
+    /**
+     * Detect an explicit positive provider verification result.
+     *
+     * Do not infer payment success from HTTP 2xx or amount presence alone.
+     * Concrete adapters must override this method to map the official
+     * provider response schema and success codes.
+     */
+    protected function isVerificationSuccessful(array $response): bool
+    {
+        return data_get($response, 'verified') === true
+            || data_get($response, 'success') === true
+            || data_get($response, 'data.verified') === true
+            || data_get($response, 'data.success') === true
+            || data_get($response, 'result.verified') === true
+            || data_get($response, 'result.success') === true;
     }
 
     /**
