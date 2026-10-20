@@ -372,27 +372,20 @@
 
                                         </div>
 
-                                        @auth
-
-                                            <form
-                                                action="{{ route('cart.clear') }}"
-                                                method="POST"
+                                        <form
+                                            action="{{ route('cart.clear') }}"
+                                            method="POST"
+                                        >
+                                            @csrf
+                                            @method('DELETE')
+                                            <button
+                                                type="submit"
+                                                class="text-xs text-[var(--livora-stone)] transition hover:text-red-600"
+                                                onclick="return confirm('آیا از خالی کردن سبد خرید مطمئن هستید؟')"
                                             >
-
-                                                @csrf
-                                                @method('DELETE')
-
-                                                <button
-                                                    type="submit"
-                                                    class="text-xs text-[var(--livora-stone)] transition hover:text-red-600"
-                                                    onclick="return confirm('آیا از خالی کردن سبد خرید مطمئن هستید؟')"
-                                                >
-                                                    پاک کردن سبد
-                                                </button>
-
-                                            </form>
-
-                                        @endauth
+                                                پاک کردن سبد
+                                            </button>
+                                        </form>
 
                                     </div>
 
@@ -539,7 +532,6 @@
 
 
                                                         {{-- Remove --}}
-                                                        @auth
 
                                                             <form
                                                                 action="{{ route('cart.remove', $item) }}"
@@ -574,65 +566,50 @@
 
                                                             </form>
 
-                                                        @endauth
+
 
                                                     </div>
 
 
                                                     <div class="mt-6 flex flex-col gap-4 border-t border-[var(--livora-border)] pt-5 sm:flex-row sm:items-center sm:justify-between">
 
-                                                        @if($isAuthenticated)
-
-                                                            {{-- Quantity --}}
-                                                            <div>
-
-                                                                <p class="mb-2 text-[10px] uppercase tracking-[0.16em] text-[var(--livora-stone)]">
-                                                                    تعداد
-                                                                </p>
-
-                                                                <form
-                                                                    action="{{ route('cart.update', $item) }}"
-                                                                    method="POST"
-                                                                    class="flex items-center gap-3"
-                                                                >
-
-                                                                    @csrf
-                                                                    @method('PATCH')
-
-                                                                    <x-shop.quantity
-                                                                        name="quantity"
-                                                                        :value="$item->quantity"
-                                                                        :max="max(1, $itemStock)"
-                                                                    />
-
-                                                                    <button
-                                                                        type="submit"
-                                                                        class="rounded-xl border border-[var(--livora-border)] px-3 py-2 text-[11px] font-medium text-[var(--livora-ink)] transition hover:border-[var(--livora-ink)]"
-                                                                    >
-                                                                        بروزرسانی
-                                                                    </button>
-
-                                                                </form>
-
-                                                            </div>
-
-                                                        @else
-
-                                                            <div class="rounded-2xl border border-[var(--livora-border)] bg-[var(--livora-surface)] px-4 py-3">
-
-                                                                <p class="text-[11px] leading-6 text-[var(--livora-stone)]">
-                                                                    برای تغییر تعداد یا حذف کالا،
-                                                                    <a
-                                                                        href="{{ route('login') }}"
-                                                                        class="font-medium text-[var(--livora-ink)] underline underline-offset-4"
-                                                                    >
-                                                                        وارد حساب شوید
-                                                                    </a>.
-                                                                </p>
-
-                                                            </div>
-
-                                                        @endif
+                                                        <div>
+                                                            <p class="mb-2 text-[10px] uppercase tracking-[0.16em] text-[var(--livora-stone)]">
+                                                                تعداد
+                                                            </p>
+                                                            {{-- Quantity controls are available to authenticated users and session-owned guests. --}}
+                                                                                                                        <div>
+                                                            
+                                                                                                                            <p class="mb-2 text-[10px] uppercase tracking-[0.16em] text-[var(--livora-stone)]">
+                                                                                                                                تعداد
+                                                                                                                            </p>
+                                                            
+                                                                                                                            <form
+                                                                                                                                action="{{ route('cart.update', $item) }}"
+                                                                                                                                method="POST"
+                                                                                                                                class="flex items-center gap-3"
+                                                                                                                            >
+                                                            
+                                                                                                                                @csrf
+                                                                                                                                @method('PATCH')
+                                                            
+                                                                                                                                <x-shop.quantity
+                                                                                                                                    name="quantity"
+                                                                                                                                    :value="$item->quantity"
+                                                                                                                                    :max="max(1, $itemStock)"
+                                                                                                                                />
+                                                            
+                                                                                                                                <button
+                                                                                                                                    type="submit"
+                                                                                                                                    class="rounded-xl border border-[var(--livora-border)] px-3 py-2 text-[11px] font-medium text-[var(--livora-ink)] transition hover:border-[var(--livora-ink)]"
+                                                                                                                                >
+                                                                                                                                    بروزرسانی
+                                                                                                                                </button>
+                                                            
+                                                                                                                            </form>
+                                                            
+                                                                                                                        </div>
+                                                        </div>
 
 
                                                         {{-- Total --}}
