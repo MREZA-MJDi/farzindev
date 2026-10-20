@@ -577,38 +577,28 @@
                                                             <p class="mb-2 text-[10px] uppercase tracking-[0.16em] text-[var(--livora-stone)]">
                                                                 تعداد
                                                             </p>
-                                                            {{-- Quantity controls are available to authenticated users and session-owned guests. --}}
-                                                                                                                        <div>
-                                                            
-                                                                                                                            <p class="mb-2 text-[10px] uppercase tracking-[0.16em] text-[var(--livora-stone)]">
-                                                                                                                                تعداد
-                                                                                                                            </p>
-                                                            
-                                                                                                                            <form
-                                                                                                                                action="{{ route('cart.update', $item) }}"
-                                                                                                                                method="POST"
-                                                                                                                                class="flex items-center gap-3"
-                                                                                                                            >
-                                                            
-                                                                                                                                @csrf
-                                                                                                                                @method('PATCH')
-                                                            
-                                                                                                                                <x-shop.quantity
-                                                                                                                                    name="quantity"
-                                                                                                                                    :value="$item->quantity"
-                                                                                                                                    :max="max(1, $itemStock)"
-                                                                                                                                />
-                                                            
-                                                                                                                                <button
-                                                                                                                                    type="submit"
-                                                                                                                                    class="rounded-xl border border-[var(--livora-border)] px-3 py-2 text-[11px] font-medium text-[var(--livora-ink)] transition hover:border-[var(--livora-ink)]"
-                                                                                                                                >
-                                                                                                                                    بروزرسانی
-                                                                                                                                </button>
-                                                            
-                                                                                                                            </form>
-                                                            
-                                                                                                                        </div>
+
+                                                            <form
+                                                                action="{{ route('cart.update', $item) }}"
+                                                                method="POST"
+                                                                class="flex items-center gap-3"
+                                                            >
+                                                                @csrf
+                                                                @method('PATCH')
+
+                                                                <x-shop.quantity
+                                                                    name="quantity"
+                                                                    :value="$item->quantity"
+                                                                    :max="max(1, $itemStock)"
+                                                                />
+
+                                                                <button
+                                                                    type="submit"
+                                                                    class="rounded-xl border border-[var(--livora-border)] px-3 py-2 text-[11px] font-medium text-[var(--livora-ink)] transition hover:border-[var(--livora-ink)]"
+                                                                >
+                                                                    بروزرسانی
+                                                                </button>
+                                                            </form>
                                                         </div>
 
 
