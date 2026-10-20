@@ -57,7 +57,7 @@ php artisan view:cache
 
 Only run `cp .env.example .env` for a brand-new app. Never overwrite an existing production `.env`. Generate the APP_KEY once and retain it for future deploys.
 
-Before `migrate --force`, create a database backup and review the pending migrations. The production seeder creates the hood/sink categories, archives known old demo-furniture products with the `LIV-*` SKU prefix, and creates/updates the admin from the environment; it does not create fictional products, orders or payments in production. Confirm the target database before running it.
+Before `migrate --force`, create a database backup and review the pending migrations. The production seeders create the hood/sink categories, archive known old demo-furniture products with the `LIV-*` SKU prefix, create/update the admin from the environment, and create 50 **preview-only** hood/sink catalogue rows plus local SVG preview illustrations. In production those preview products are saved as drafts with zero stock; they are not verified Farzin models, specifications, or prices and must not be published to customers. Replace their data with the official catalogue and upload real product photography in the admin before publishing. The seeders do not create fictional customer orders or payments in production. Confirm the target database before running them.
 
 If Terminal/SSH is unavailable, use cPanel File Manager or Git Version Control to upload source, but build `public/build` locally and upload Composer's `vendor/` directory from a machine using the same PHP-compatible dependency set. Do not leave deployment half-installed: the project must include `vendor/autoload.php` and `public/build/manifest.json`.
 
