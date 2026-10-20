@@ -86,7 +86,7 @@ APP_LOCALE=fa
 APP_FALLBACK_LOCALE=fa
 
 DB_CONNECTION=mysql
-DB_HOST=127.0.0.1
+DB_HOST=localhost
 DB_PORT=3306
 DB_DATABASE=farzin
 DB_USERNAME=farzin_app
@@ -103,12 +103,12 @@ MAIL_HOST=YOUR_SMTP_HOST
 MAIL_PORT=587
 MAIL_USERNAME=YOUR_SMTP_USERNAME
 MAIL_PASSWORD=YOUR_SMTP_PASSWORD
-MAIL_ENCRYPTION=tls
+MAIL_SCHEME=tls
 MAIL_FROM_ADDRESS=YOUR_VERIFIED_SENDER
 MAIL_FROM_NAME="Farzin"
 ```
 
-Keep the existing `APP_KEY` after the first generation. Do not regenerate it on normal releases. Keep `APP_DEBUG=false` on a public server. Do not enable a gateway until its server-side credentials, API endpoints, callback URL, verification response and amount unit have been verified with that provider.
+Keep the existing `APP_KEY` after the first generation. Do not regenerate it on normal releases. Keep `APP_DEBUG=false` on a public server. The `.env.example` lists each gateway's supported configuration keys, but the current adapters do not automatically exchange `client_id`/`client_secret` for provider tokens. Configure the provider's documented authentication flow in code before production use, and do not enable a gateway until its server-side credentials, API endpoints, callback URL, verification response and amount unit have been verified with that provider.
 
 Set `ADMIN_NAME`, `ADMIN_EMAIL` and a unique `ADMIN_PASSWORD` only if this is a fresh database that still needs the initial administrator seeded.
 
@@ -126,7 +126,7 @@ php artisan storage:link
 
 Run `php artisan key:generate` only when `APP_KEY` is blank for a new installation. For a database that already has real data, back it up first and run migrations only after reviewing them.
 
-On a **new, empty** database only, run `php artisan db:seed --force` after setting `ADMIN_PASSWORD`. The seeder creates the initial administrator and draft/zero-stock preview records; it is not a replacement for importing the verified commercial catalogue. Do not repeatedly seed a live catalogue without reviewing the seeder behavior. After the initial admin has been created, remove `ADMIN_PASSWORD` from `.env` so the one-time credential is not carried into a cached configuration.
+On a **new, empty** database only, run `php artisan db:seed --force` after setting `ADMIN_PASSWORD`. The seeder creates the initial administrator and draft/zero-stock preview records; it is not a replacement for importing the verified commercial catalogue. Do not repeatedly seed a live catalogue without reviewing the seeder behavior. After the initial admin has been created, remove `ADMIN_PASSWORD` from `.env` and rerun `php artisan config:cache` so the one-time credential is also removed from the cached configuration.
 
 Set upload limits in the PHP-FPM configuration to at least `upload_max_filesize=26M` and `post_max_size=28M` to support the application's 20 MB image limit. Reload PHP-FPM after changing these settings.
 
