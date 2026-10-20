@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\Checkout\PlaceOrderRequest;
 use App\Models\Cart;
-use App\Models\CartItem;
+use App\Models\Product;
 use App\Models\ProductVariant;
 use App\Models\Order;
 use App\Services\Installments\InstallmentPlanService;
@@ -130,42 +130,120 @@ class CheckoutController extends Controller
                     return null;
                 }
 
+                // Lock catalogue rows in a stable order and price the order
+                // from current database values, never from stale cart snapshots.
+                $productIds = $lockedCart->items
+                    ->pluck('product_id')
+                    ->filter()
+                    ->map(fn ($id) => (int) $id)
+                    ->unique()
+                    ->sort()
+                    ->values();
+
+                $lockedProducts = Product::query()
+                    ->whereIn('id', $productIds)
+                    ->orderBy('id')
+                    ->lockForUpdate()
+                    ->get()
+                    ->keyBy('id');
+
+                // Product option rows are also locked in a consistent order.
+                $activeVariantsByProduct = ProductVariant::query()
+                    ->whereIn('product_id', $productIds)
+                    ->where('is_active', true)
+                    ->orderBy('id')
+                    ->lockForUpdate()
+                    ->get()
+                    ->groupBy('product_id');
+
                 $subtotal = 0;
+                $checkedLines = [];
 
                 foreach ($lockedCart->items as $item) {
-                    if (! $item->product) {
+                    $product = $lockedProducts->get((int) $item->product_id);
+
+                    if (! $product || $product->status !== 'active') {
                         throw new \RuntimeException(
-                            'یکی از محصولات سبد دیگر در دسترس نیست. سبد را بررسی کنید.'
+                            'یکی از محصولات سبد دیگر برای خرید در دسترس نیست. سبد را بررسی کنید.'
                         );
                     }
 
-                    $variants = $this->resolveCartItemVariants($item);
+                    $item->setRelation('product', $product);
+
+                    $selectedVariantIds = $item->selectedVariantIds();
+                    $availableVariants = $activeVariantsByProduct->get(
+                        $product->id,
+                        collect()
+                    );
+
+                    $variants = collect($selectedVariantIds)
+                        ->map(fn ($id) => $availableVariants->firstWhere('id', (int) $id))
+                        ->filter()
+                        ->values();
+
+                    if (count($selectedVariantIds) !== $variants->count()) {
+                        throw new \RuntimeException(
+                            "یکی از گزینه‌های انتخاب‌شده برای «{$product->name}» دیگر در دسترس نیست."
+                        );
+                    }
+
+                    $selectedTypes = $variants->pluck('type')->unique()->values();
+                    $currentTypes = $availableVariants->pluck('type')->unique()->values();
 
                     if (
-                        count($item->selectedVariantIds())
-                        !== $variants->count()
+                        $selectedTypes->count() !== $variants->count()
+                        || $currentTypes->diff($selectedTypes)->isNotEmpty()
                     ) {
                         throw new \RuntimeException(
-                            "یکی از گزینه‌های انتخاب‌شده برای «{$item->product->name}» دیگر در دسترس نیست."
+                            "گزینه‌های محصول «{$product->name}» تغییر کرده‌اند. لطفاً سبد خرید را به‌روزرسانی کنید."
                         );
                     }
 
                     $stock = $variants->isNotEmpty()
                         ? (int) $variants->min('stock')
-                        : (int) $item->product->stock;
+                        : (int) $product->stock;
 
-                    if (
-                        $stock < 1
-                        || $item->quantity > $stock
-                    ) {
+                    if ($stock < 1 || (int) $item->quantity > $stock) {
                         throw new \RuntimeException(
-                            "موجودی محصول «{$item->product->name}» کافی نیست."
+                            "موجودی محصول «{$product->name}» کافی نیست."
                         );
                     }
 
-                    $subtotal +=
-                        (float) $item->unit_price
-                        * (int) $item->quantity;
+                    $unitPrice = max(
+                        0,
+                        round(
+                            (float) $product->price
+                            + (float) $variants->sum(
+                                fn (ProductVariant $variant) => (float) $variant->price_adjustment
+                            ),
+                            2
+                        )
+                    );
+
+                    $variantSnapshot = $variants
+                        ->map(fn (ProductVariant $variant) => [
+                            'id' => (int) $variant->id,
+                            'type' => (string) $variant->type,
+                            'name' => (string) $variant->name,
+                            'value' => (string) $variant->value,
+                            'sku' => $variant->sku,
+                            'color_hex' => $variant->color_hex,
+                            'price_adjustment' => (float) $variant->price_adjustment,
+                            'stock' => (int) $variant->stock,
+                        ])
+                        ->values()
+                        ->all();
+
+                    $checkedLines[(int) $item->id] = [
+                        'unit_price' => $unitPrice,
+                        'sku' => $variants->count() === 1
+                            ? ($variants->first()->sku ?: $product->sku)
+                            : $product->sku,
+                        'product_variant_id' => $variants->first()?->id,
+                        'variant_options' => $variantSnapshot ?: null,
+                    ];
+
+                    $subtotal += $unitPrice * (int) $item->quantity;
                 }
 
                 $shippingCost = 0;
@@ -203,17 +281,19 @@ class CheckoutController extends Controller
                 ]);
 
                 foreach ($lockedCart->items as $item) {
+                    $line = $checkedLines[(int) $item->id];
+
                     $order->items()->create([
                         'product_id' => $item->product_id,
-                        // Retain the legacy single-variant field and save the
-                        // full selected-variant snapshot for order history.
-                        'product_variant_id' => $item->product_variant_id,
-                        'variant_options' => $item->variant_options,
+                        // Keep the legacy link for single-variant integrations,
+                        // and snapshot the current option values at checkout.
+                        'product_variant_id' => $line['product_variant_id'],
+                        'variant_options' => $line['variant_options'],
                         'product_name' => $item->product->name,
-                        'sku' => $item->variant?->sku ?? $item->product->sku,
+                        'sku' => $line['sku'],
                         'quantity' => $item->quantity,
-                        'unit_price' => $item->unit_price,
-                        'total' => (float) $item->unit_price * (int) $item->quantity,
+                        'unit_price' => $line['unit_price'],
+                        'total' => $line['unit_price'] * (int) $item->quantity,
                     ]);
                 }
 
@@ -474,28 +554,6 @@ class CheckoutController extends Controller
                     'خطایی در تأیید پرداخت رخ داد.'
                 );
         }
-    }
-
-    /**
-     * Resolve all active variants represented by a cart item.
-     *
-     * The JSON snapshot keeps the historical selection even if a variant
-     * is later deleted, while this lookup validates live availability.
-     */
-    protected function resolveCartItemVariants(
-        CartItem $item
-    ) {
-        $ids = $item->selectedVariantIds();
-
-        if (empty($ids)) {
-            return collect();
-        }
-
-        return ProductVariant::query()
-            ->where('product_id', $item->product_id)
-            ->where('is_active', true)
-            ->whereIn('id', $ids)
-            ->get();
     }
 
     /**
