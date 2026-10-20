@@ -17,6 +17,9 @@ class DashboardController extends Controller
      */
     public function index()
     {
+        // Keep every calendar period in this report anchored to one timestamp.
+        $reportingDate = now();
+
         /*
         |--------------------------------------------------------------------------
         | Global Statistics
@@ -68,8 +71,8 @@ class DashboardController extends Controller
             ->where('payment_status', 'paid')
             ->sum('total');
 
-        [$currentMonthStart, $nextMonthStart] = JalaliHelper::monthRange(now());
-        [$previousMonthStart, $currentMonthStartForPrevious] = JalaliHelper::monthRange(now(), 1);
+        [$currentMonthStart, $nextMonthStart] = JalaliHelper::monthRange($reportingDate);
+        [$previousMonthStart, $currentMonthStartForPrevious] = JalaliHelper::monthRange($reportingDate, 1);
 
         $currentMonthRevenue = Order::query()
             ->where('payment_status', 'paid')
@@ -117,7 +120,7 @@ class DashboardController extends Controller
         |--------------------------------------------------------------------------
         */
 
-        $monthlyRevenue = $this->getMonthlyRevenue();
+        $monthlyRevenue = $this->getMonthlyRevenue($reportingDate);
 
         /*
         |--------------------------------------------------------------------------
@@ -270,12 +273,12 @@ class DashboardController extends Controller
     /**
      * Get revenue for the latest six months.
      */
-    protected function getMonthlyRevenue(): Collection
+    protected function getMonthlyRevenue(\DateTimeInterface $reportingDate): Collection
     {
         $months = collect();
 
         for ($monthsAgo = 5; $monthsAgo >= 0; $monthsAgo--) {
-            [$monthStart, $nextMonthStart] = JalaliHelper::monthRange(now(), $monthsAgo);
+            [$monthStart, $nextMonthStart] = JalaliHelper::monthRange($reportingDate, $monthsAgo);
 
             $revenue = Order::query()
                 ->where('payment_status', 'paid')
