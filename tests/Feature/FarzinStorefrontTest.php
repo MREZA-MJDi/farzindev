@@ -101,8 +101,25 @@ class FarzinStorefrontTest extends TestCase
             'is_active' => false,
         ]);
 
+        $product = $this->product($category, [
+            'name' => 'محصول دسته غیرفعال',
+            'slug' => 'inactive-category-product',
+            'sku' => 'FAR-INACTIVE-CATEGORY',
+        ]);
+
         $this->get(route('categories.show', $category->slug))
             ->assertNotFound();
+
+        $this->get(route('product.show', $product->slug))
+            ->assertNotFound();
+
+        $this->get(route('shop.index'))
+            ->assertOk()
+            ->assertDontSee($product->name);
+
+        $this->get(route('sitemap'))
+            ->assertOk()
+            ->assertDontSee(route('product.show', $product->slug), false);
     }
 
     public function test_shop_search_and_price_filters_exclude_unavailable_products(): void
@@ -548,6 +565,25 @@ class FarzinStorefrontTest extends TestCase
             'total' => 6000000,
         ]);
         $this->assertDatabaseMissing('cart_items', ['cart_id' => $cart->id]);
+
+        // Repeating checkout with the same now-empty cart must not create a
+        // second pending order from the original cart contents.
+        $this->post(route('checkout.place'), [
+            'first_name' => 'Farzin',
+            'last_name' => 'Buyer',
+            'phone' => '09123456789',
+            'email' => 'buyer@farzin.test',
+            'province' => 'Tehran',
+            'city' => 'Tehran',
+            'address' => ' خیابان نمونه، پلاک ۱',
+            'postal_code' => '1234567890',
+            'unit' => '2',
+            'notes' => 'تماس قبل از ارسال',
+        ])
+            ->assertRedirect(route('cart.index'))
+            ->assertSessionHas('error', 'سبد خرید شما خالی است.');
+
+        $this->assertDatabaseCount('orders', 1);
     }
 
     public function test_customer_cannot_view_another_customers_payment_page(): void
@@ -1446,6 +1482,100 @@ class FarzinStorefrontTest extends TestCase
             ])
             ->assertRedirect(route('checkout.payment', $order))
             ->assertSessionHasErrors('gateway');
+    }
+
+    public function test_guest_can_update_remove_and_clear_only_their_session_cart(): void
+    {
+        $product = $this->product($this->category(['slug' => 'hoods']), [
+            'name' => 'Guest Cart Hood',
+            'slug' => 'guest-cart-hood',
+            'sku' => 'FAR-GUEST-CART',
+            'stock' => 8,
+        ]);
+
+        $this->postJson(route('cart.add', $product), ['quantity' => 2])
+            ->assertOk()
+            ->assertJsonPath('cart_count', 2);
+
+        $cart = Cart::query()
+            ->whereNull('user_id')
+            ->where('status', 'active')
+            ->firstOrFail();
+        $item = $cart->items()->firstOrFail();
+
+        $this->patchJson(route('cart.update', $item), ['quantity' => 3])
+            ->assertOk()
+            ->assertJsonPath('cart_count', 3);
+
+        $this->deleteJson(route('cart.remove', $item))
+            ->assertOk()
+            ->assertJsonPath('cart_count', 0);
+
+        $this->assertDatabaseMissing('cart_items', ['id' => $item->id]);
+
+        $this->postJson(route('cart.add', $product), ['quantity' => 1])
+            ->assertOk()
+            ->assertJsonPath('cart_count', 1);
+
+        $this->deleteJson(route('cart.clear'))
+            ->assertOk()
+            ->assertJsonPath('cart_count', 0);
+    }
+
+    public function test_guest_cannot_modify_another_session_cart(): void
+    {
+        $product = $this->product($this->category(['slug' => 'hoods']), [
+            'name' => 'Foreign Session Hood',
+            'slug' => 'foreign-session-hood',
+            'sku' => 'FAR-FOREIGN-SESSION',
+        ]);
+
+        $cart = Cart::create([
+            'user_id' => null,
+            'session_id' => 'another-browser-session',
+            'status' => 'active',
+        ]);
+        $item = CartItem::create([
+            'cart_id' => $cart->id,
+            'product_id' => $product->id,
+            'quantity' => 1,
+            'unit_price' => $product->price,
+            'variant_key' => 'base',
+        ]);
+
+        $this->patchJson(route('cart.update', $item), ['quantity' => 2])
+            ->assertForbidden();
+
+        $this->deleteJson(route('cart.remove', $item))
+            ->assertForbidden();
+
+        $this->deleteJson(route('cart.clear'))
+            ->assertOk();
+
+        $this->assertDatabaseHas('cart_items', ['id' => $item->id]);
+    }
+
+    public function test_category_with_soft_deleted_products_cannot_be_deleted(): void
+    {
+        $admin = $this->admin();
+        $category = $this->category([
+            'name' => 'Category with archived product',
+            'slug' => 'category-with-trashed-product',
+        ]);
+        $product = $this->product($category, [
+            'name' => 'Soft Deleted Product',
+            'slug' => 'soft-deleted-product',
+            'sku' => 'FAR-SOFT-DELETED',
+        ]);
+        $product->delete();
+
+        $this->actingAs($admin)
+            ->delete(route('admin.categories.destroy', $category))
+            ->assertRedirect(route('admin.categories.index'))
+            ->assertSessionHas('error');
+
+        $this->assertDatabaseHas('categories', ['id' => $category->id]);
+        $this->assertSoftDeleted('products', ['id' => $product->id]);
     }
 
     private function category(array $attributes = []): Category
