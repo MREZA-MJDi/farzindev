@@ -1121,6 +1121,7 @@ class FarzinStorefrontTest extends TestCase
 
         \Illuminate\Support\Facades\Http::fake([
             'gateway.test/*' => \Illuminate\Support\Facades\Http::response([
+                'success' => true,
                 'amount' => (float) $payment->amount,
                 'transaction_id' => 'TX-AMBIGUOUS',
                 'status' => 'pending',
