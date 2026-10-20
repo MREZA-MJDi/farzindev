@@ -24,7 +24,9 @@ class ShopController extends Controller
                 'category',
                 'images',
             ])
-            ->active();
+            ->active()
+            ->whereHas('category', fn ($categoryQuery) => $categoryQuery
+                ->where('is_active', true));
 
         /*
         |--------------------------------------------------------------------------
