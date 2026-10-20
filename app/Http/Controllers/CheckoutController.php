@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\Checkout\PlaceOrderRequest;
 use App\Models\Cart;
+use App\Models\Category;
 use App\Models\Product;
 use App\Models\ProductVariant;
 use App\Models\Order;
@@ -147,6 +148,22 @@ class CheckoutController extends Controller
                     ->get()
                     ->keyBy('id');
 
+                $categoryIds = $lockedProducts
+                    ->pluck('category_id')
+                    ->filter()
+                    ->map(fn ($id) => (int) $id)
+                    ->unique()
+                    ->sort()
+                    ->values();
+
+                $activeCategoryIds = Category::query()
+                    ->whereIn('id', $categoryIds)
+                    ->where('is_active', true)
+                    ->orderBy('id')
+                    ->lockForUpdate()
+                    ->pluck('id')
+                    ->map(fn ($id) => (int) $id);
+
                 // Product option rows are also locked in a consistent order.
                 $activeVariantsByProduct = ProductVariant::query()
                     ->whereIn('product_id', $productIds)
@@ -162,9 +179,13 @@ class CheckoutController extends Controller
                 foreach ($lockedCart->items as $item) {
                     $product = $lockedProducts->get((int) $item->product_id);
 
-                    if (! $product || $product->status !== 'active') {
+                    if (
+                        ! $product
+                        || $product->status !== 'active'
+                        || ! $activeCategoryIds->contains((int) $product->category_id)
+                    ) {
                         throw new \RuntimeException(
-                            'یکی از محصولات سبد دیگر برای خرید در دسترس نیست. سبد را بررسی کنید.'
+                            'یکی از محصولات سبد یا دسته‌بندی آن دیگر برای خرید در دسترس نیست. سبد را بررسی کنید.'
                         );
                     }
 
