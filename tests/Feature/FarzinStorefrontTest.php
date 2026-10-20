@@ -2395,16 +2395,15 @@ class FarzinStorefrontTest extends TestCase
             ->assertOk()
             ->assertJsonPath('cart_count', 2);
 
-        $sessionCookie = $firstAdd->getCookie(config('session.cookie'));
         $cart = Cart::query()
             ->whereNull('user_id')
             ->where('status', 'active')
             ->firstOrFail();
         $item = $cart->items()->firstOrFail();
 
-        // Keep the exact browser session that owns this guest cart in the request.
-        $this->withCookie(config('session.cookie'), $sessionCookie?->getValue() ?? '')
-            ->withCookie(config('session.cookie'), $cart->session_id)
+        // Laravel's test client does not automatically replay response cookies
+        // between requests; preserve the exact session that owns this cart.
+        $this->withCookie(config('session.cookie'), $cart->session_id)
             ->withSession(['guest_cart_id' => $cart->id])
             ->get(route('cart.index'))
             ->assertOk()
