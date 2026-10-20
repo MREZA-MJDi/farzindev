@@ -5,8 +5,10 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\Order\UpdateOrderStatusRequest;
 use App\Models\Order;
+use App\Services\Inventory\InventoryReservationService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 
 class OrderController extends Controller
@@ -102,17 +104,34 @@ class OrderController extends Controller
      */
     public function updateStatus(
         UpdateOrderStatusRequest $request,
-        Order $order
+        Order $order,
+        InventoryReservationService $inventoryReservationService
     ): RedirectResponse {
-        $order->update([
-            'status' => $request->validated('status'),
-        ]);
+        $status = $request->validated('status');
+
+        DB::transaction(function () use (
+            $order,
+            $status,
+            $inventoryReservationService
+        ): void {
+            $lockedOrder = Order::query()
+                ->whereKey($order->id)
+                ->lockForUpdate()
+                ->firstOrFail();
+
+            $lockedOrder->update([
+                'status' => $status,
+            ]);
+
+            if ($status === 'cancelled') {
+                // Paid/committed orders are intentionally not restocked
+                // automatically; a return/refund needs its own decision.
+                $inventoryReservationService->releaseForOrder($lockedOrder);
+            }
+        });
 
         return redirect()
-            ->route(
-                'admin.orders.show',
-                $order
-            )
+            ->route('admin.orders.show', $order)
             ->with(
                 'success',
                 'وضعیت سفارش با موفقیت بروزرسانی شد.'
