@@ -105,7 +105,7 @@
             >
 
             <p class="mt-2 text-xs leading-6 text-[var(--admin-muted)]">
-                فرمت‌های مجاز: JPG، JPEG، PNG، WEBP — حداکثر ۵ مگابایت.
+                فرمت‌های مجاز: JPG، JPEG، PNG، WEBP — حداکثر ۲۰ مگابایت.
             </p>
 
             @error('image')
@@ -249,7 +249,7 @@
                     </span>
 
                     <span class="text-xs font-semibold text-[var(--admin-text-soft)]">
-                        5 MB
+                        20 MB
                     </span>
                 </div>
 
