@@ -182,6 +182,39 @@ class FarzinStorefrontTest extends TestCase
             ->assertDontSee('Archived Hood');
     }
 
+    public function test_shop_in_stock_filter_includes_products_with_variant_level_stock(): void
+    {
+        $category = $this->category(['slug' => 'hoods']);
+        $variantProduct = $this->product($category, [
+            'name' => 'Variant Stock Hood',
+            'slug' => 'variant-stock-hood',
+            'sku' => 'FAR-VARIANT-STOCK',
+            'stock' => 0,
+        ]);
+        ProductVariant::create([
+            'product_id' => $variantProduct->id,
+            'type' => 'color',
+            'name' => 'رنگ',
+            'value' => 'black',
+            'sku' => 'FAR-VARIANT-STOCK-BLACK',
+            'price_adjustment' => 0,
+            'stock' => 3,
+            'is_active' => true,
+        ]);
+
+        $unavailableProduct = $this->product($category, [
+            'name' => 'Out Of Stock Hood',
+            'slug' => 'out-of-stock-hood',
+            'sku' => 'FAR-OUT-OF-STOCK',
+            'stock' => 0,
+        ]);
+
+        $this->get(route('shop.index', ['in_stock' => 1]))
+            ->assertOk()
+            ->assertSee($variantProduct->name)
+            ->assertDontSee($unavailableProduct->name);
+    }
+
     public function test_shop_rejects_invalid_price_ranges_and_sort_options(): void
     {
         $this->from(route('shop.index'))
