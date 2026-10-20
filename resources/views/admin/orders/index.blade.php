@@ -185,6 +185,11 @@
                             >
                                 {{ $order->order_number }}
                             </a>
+                            @if($order->inventory_issue_at)
+                                <span class="mt-2 inline-flex rounded-full border border-amber-300 bg-amber-50 px-2 py-1 text-[9px] font-semibold text-amber-900">
+                                    بررسی موجودی
+                                </span>
+                            @endif
                         </td>
 
 
