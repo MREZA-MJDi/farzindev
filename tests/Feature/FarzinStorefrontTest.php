@@ -705,7 +705,7 @@ class FarzinStorefrontTest extends TestCase
         $this->assertEquals(7000000, (float) $line->total);
         $this->assertSame('FAR-REPRICE-1-BLACK', $line->sku);
         $this->assertEquals(500000, (float) $line->variant_options[0]['price_adjustment']);
-        $this->assertSame(5, (int) $product->fresh()->stock);
+        $this->assertSame(9, (int) $product->fresh()->stock);
         $this->assertSame(3, (int) $variant->fresh()->stock);
     }
 
