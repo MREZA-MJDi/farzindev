@@ -35,6 +35,12 @@ return Application::configure(
             'admin' => AdminMiddleware::class,
             'customer' => CustomerMiddleware::class,
         ]);
+
+        // Payment providers call this public endpoint from outside the browser
+        // session, so exempt only the gateway callback route from CSRF tokens.
+        $middleware->validateCsrfTokens(except: [
+            'checkout/payment/callback/*',
+        ]);
     })
 
     ->withExceptions(function (
