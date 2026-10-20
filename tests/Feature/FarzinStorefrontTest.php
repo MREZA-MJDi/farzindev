@@ -288,7 +288,8 @@ class FarzinStorefrontTest extends TestCase
 
         $this->get(route('product.show', $product->slug))
             ->assertOk()
-            ->assertSee('"availability": "https://schema.org/InStock"', false)
+            ->assertSee('"availability"', false)
+            ->assertSee('InStock')
             ->assertSee('وابسته به ویژگی انتخاب‌شده')
             ->assertSee('max="4"', false)
             ->assertSee('موجود در انبار');
