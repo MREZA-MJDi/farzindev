@@ -54,20 +54,32 @@ jobs:
       - name: Run Laravel tests
         run: php artisan test
 
-      - name: Smoke-test the Farzin product seed without placeholder images
+      - name: Smoke-test the full Farzin database seeder
         run: |
           touch database/catalog-smoke.sqlite
           APP_ENV=local DB_CONNECTION=sqlite DB_DATABASE="$PWD/database/catalog-smoke.sqlite" php artisan migrate:fresh --force
-          APP_ENV=local DB_CONNECTION=sqlite DB_DATABASE="$PWD/database/catalog-smoke.sqlite" php artisan db:seed --class=CategorySeeder --force
-          APP_ENV=local DB_CONNECTION=sqlite DB_DATABASE="$PWD/database/catalog-smoke.sqlite" php artisan db:seed --class=ProductSeeder --force
+          APP_ENV=local DB_CONNECTION=sqlite DB_DATABASE="$PWD/database/catalog-smoke.sqlite" php artisan db:seed --force
           APP_ENV=local DB_CONNECTION=sqlite DB_DATABASE="$PWD/database/catalog-smoke.sqlite" php -r '
           require "vendor/autoload.php";
           $app = require "bootstrap/app.php";
           $app->make(Illuminate\Contracts\Console\Kernel::class)->bootstrap();
           $products = App\Models\Product::where("sku", "like", "FZ-SEED-%")->count();
           $images = App\Models\ProductImage::whereHas("product", fn ($query) => $query->where("sku", "like", "FZ-SEED-%"))->count();
-          if ($products !== 50 || $images !== 0) { throw new RuntimeException("Seed smoke test failed: " . $products . " products, " . $images . " placeholder images."); }
-          echo "Seed smoke test passed: " . $products . " products and no placeholder images.\n";
+          $admins = App\Models\User::where("role", "admin")->count();
+          if ($products !== 50 || $images !== 0 || $admins < 1) { throw new RuntimeException("Seed smoke test failed: " . $products . " products, " . $images . " placeholder images, " . $admins . " admins."); }
+          App\Models\Product::where("sku", "FZ-SEED-HOOD-01")->update(["name" => "Edited by dashboard"]);
+          echo "Full database seed passed: " . $products . " products, no placeholder images, and an admin account.\n";
+          '
+          APP_ENV=local DB_CONNECTION=sqlite DB_DATABASE="$PWD/database/catalog-smoke.sqlite" php artisan db:seed --force
+          APP_ENV=local DB_CONNECTION=sqlite DB_DATABASE="$PWD/database/catalog-smoke.sqlite" php -r '
+          require "vendor/autoload.php";
+          $app = require "bootstrap/app.php";
+          $app->make(Illuminate\Contracts\Console\Kernel::class)->bootstrap();
+          $products = App\Models\Product::where("sku", "like", "FZ-SEED-%")->count();
+          $images = App\Models\ProductImage::whereHas("product", fn ($query) => $query->where("sku", "like", "FZ-SEED-%"))->count();
+          $name = App\Models\Product::where("sku", "FZ-SEED-HOOD-01")->value("name");
+          if ($products !== 50 || $images !== 0 || $name !== "Edited by dashboard") { throw new RuntimeException("Repeat seeding changed or duplicated existing catalogue data."); }
+          echo "Repeat seed passed: existing dashboard edits are preserved.\n";
           '
 
       - name: Install production Composer dependencies
