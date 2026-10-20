@@ -629,6 +629,152 @@ class FarzinStorefrontTest extends TestCase
         $this->assertDatabaseCount('orders', 1);
     }
 
+    public function test_checkout_reprices_stale_cart_rows_from_current_product_and_variant_prices(): void
+    {
+        $customer = $this->customer();
+        $product = $this->product($this->category(['slug' => 'hoods']), [
+            'name' => 'Repriced Checkout Hood',
+            'slug' => 'repriced-checkout-hood',
+            'sku' => 'FAR-REPRICE-1',
+            'price' => 3000000,
+            'stock' => 9,
+        ]);
+        $variant = ProductVariant::create([
+            'product_id' => $product->id,
+            'type' => 'color',
+            'name' => 'رنگ بدنه',
+            'value' => 'black',
+            'sku' => 'FAR-REPRICE-1-BLACK',
+            'price_adjustment' => 500000,
+            'stock' => 5,
+            'is_active' => true,
+        ]);
+        $cart = Cart::create([
+            'user_id' => $customer->id,
+            'session_id' => null,
+            'status' => 'active',
+        ]);
+        CartItem::create([
+            'cart_id' => $cart->id,
+            'product_id' => $product->id,
+            'product_variant_id' => $variant->id,
+            'variant_key' => hash('sha256', $product->id.'|color:'.$variant->id),
+            'variant_options' => [[
+                'id' => $variant->id,
+                'type' => 'color',
+                'name' => 'رنگ بدنه',
+                'value' => 'black',
+                'sku' => $variant->sku,
+                'price_adjustment' => 0,
+                'stock' => 5,
+            ]],
+            'quantity' => 2,
+            // Simulate a cart item added before the product and variant price changed.
+            'unit_price' => 1000000,
+        ]);
+
+        $this->actingAs($customer)
+            ->post(route('checkout.place'), [
+                'first_name' => 'Farzin',
+                'last_name' => 'Buyer',
+                'phone' => '09123456789',
+                'email' => 'buyer@farzin.test',
+                'province' => 'Tehran',
+                'city' => 'Tehran',
+                'address' => 'خیابان نمونه، پلاک ۱',
+                'postal_code' => '1234567890',
+            ])
+            ->assertRedirect();
+
+        $order = Order::query()->where('user_id', $customer->id)->firstOrFail();
+        $line = $order->items()->firstOrFail();
+
+        // Checkout must use the current product price plus the current option adjustment:
+        // (3,000,000 + 500,000) × 2, not the stale cart price of 1,000,000.
+        $this->assertEquals(7000000, (float) $order->total);
+        $this->assertEquals(3500000, (float) $line->unit_price);
+        $this->assertEquals(7000000, (float) $line->total);
+        $this->assertSame('FAR-REPRICE-1-BLACK', $line->sku);
+        $this->assertEquals(500000, (float) $line->variant_options[0]['price_adjustment']);
+        $this->assertSame(5, (int) $product->fresh()->stock);
+        $this->assertSame(3, (int) $variant->fresh()->stock);
+    }
+
+    public function test_checkout_rejects_a_newly_required_variant_type_and_preserves_the_cart(): void
+    {
+        $customer = $this->customer();
+        $product = $this->product($this->category(['slug' => 'hoods']), [
+            'name' => 'Changed Options Hood',
+            'slug' => 'changed-options-hood',
+            'sku' => 'FAR-OPTIONS-1',
+            'stock' => 8,
+        ]);
+        $color = ProductVariant::create([
+            'product_id' => $product->id,
+            'type' => 'color',
+            'name' => 'رنگ بدنه',
+            'value' => 'black',
+            'sku' => 'FAR-OPTIONS-1-BLACK',
+            'price_adjustment' => 0,
+            'stock' => 6,
+            'is_active' => true,
+        ]);
+        $cart = Cart::create([
+            'user_id' => $customer->id,
+            'session_id' => null,
+            'status' => 'active',
+        ]);
+        $item = CartItem::create([
+            'cart_id' => $cart->id,
+            'product_id' => $product->id,
+            'product_variant_id' => $color->id,
+            'variant_key' => hash('sha256', $product->id.'|color:'.$color->id),
+            'variant_options' => [[
+                'id' => $color->id,
+                'type' => 'color',
+                'name' => 'رنگ بدنه',
+                'value' => 'black',
+                'sku' => $color->sku,
+                'price_adjustment' => 0,
+                'stock' => 6,
+            ]],
+            'quantity' => 1,
+            'unit_price' => $product->price,
+        ]);
+
+        // A newly configured option type makes the old cart selection incomplete.
+        ProductVariant::create([
+            'product_id' => $product->id,
+            'type' => 'finish',
+            'name' => 'جنس پوشش',
+            'value' => 'matte',
+            'sku' => 'FAR-OPTIONS-1-MATTE',
+            'price_adjustment' => 0,
+            'stock' => 6,
+            'is_active' => true,
+        ]);
+
+        $this->actingAs($customer)
+            ->from(route('checkout.index'))
+            ->post(route('checkout.place'), [
+                'first_name' => 'Farzin',
+                'last_name' => 'Buyer',
+                'phone' => '09123456789',
+                'email' => 'buyer@farzin.test',
+                'province' => 'Tehran',
+                'city' => 'Tehran',
+                'address' => 'خیابان نمونه، پلاک ۱',
+                'postal_code' => '1234567890',
+            ])
+            ->assertRedirect(route('checkout.index'))
+            ->assertSessionHas('error');
+
+        $this->assertDatabaseCount('orders', 0);
+        $this->assertDatabaseHas('cart_items', ['id' => $item->id, 'cart_id' => $cart->id]);
+        $this->assertSame(8, (int) $product->fresh()->stock);
+        $this->assertSame(6, (int) $color->fresh()->stock);
+    }
+
     public function test_inventory_reservations_are_idempotent_and_released_once(): void
     {
         $customer = $this->customer();
