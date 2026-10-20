@@ -424,6 +424,8 @@ class CheckoutController extends Controller
             return redirect()->away(
                 $result['redirect_url']
             );
+        } catch (\RuntimeException $e) {
+            return back()->with('error', $e->getMessage());
         } catch (Throwable $e) {
             report($e);
 
