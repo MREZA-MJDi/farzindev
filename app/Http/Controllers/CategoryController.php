@@ -31,7 +31,7 @@ class CategoryController extends Controller
             ->active()
             ->with([
                 'category',
-                'images',
+                'images.media',
             ])
             ->latest()
             ->paginate(12)
