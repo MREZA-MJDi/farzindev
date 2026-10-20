@@ -136,6 +136,24 @@
 
         </div>
 
+        @if(($inventoryIssueOrders ?? 0) > 0)
+            <a
+                href="{{ route('admin.orders.index', ['inventory_issue' => 1]) }}"
+                class="flex min-w-0 flex-col gap-3 rounded-2xl border border-amber-300 bg-amber-50 p-4 text-amber-950 transition hover:border-amber-400 sm:flex-row sm:items-center sm:justify-between"
+            >
+                <div class="flex min-w-0 items-start gap-3">
+                    <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-amber-100 text-lg" aria-hidden="true">!</span>
+                    <div class="min-w-0">
+                        <p class="text-sm font-bold">سفارش پرداخت‌شده نیازمند بررسی موجودی است</p>
+                        <p class="mt-1 text-xs leading-6 text-amber-900">پرداخت ثبت شده، اما موجودی کافی برای رزرو خودکار وجود نداشته است. سفارش را بررسی کنید تا تأمین کالا یا بازپرداخت مشخص شود.</p>
+                    </div>
+                </div>
+                <span class="inline-flex shrink-0 items-center gap-2 text-xs font-semibold">
+                    {{ \App\Helpers\PersianNumberHelper::format($inventoryIssueOrders) }} سفارش
+                    <span aria-hidden="true">←</span>
+                </span>
+            </a>
+        @endif
 
         {{-- =========================================================
              KPI CARDS
