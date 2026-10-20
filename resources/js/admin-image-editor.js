@@ -53,6 +53,8 @@ function initImageEditor(input) {
 
     const say = (message) => { if (status) status.textContent = message; };
     const ratio = () => RATIOS[ratioInput.value] || RATIOS['4:3'];
+    const minimumWidth = () => Math.max(1, Number(input.dataset.imageEditorMinWidth) || 800);
+    const minimumHeight = () => Math.max(1, Number(input.dataset.imageEditorMinHeight) || 600);
 
     function rebuildStage() {
         if (!state.image) return;
@@ -117,6 +119,26 @@ function initImageEditor(input) {
             ctx.drawImage(state.stage, state.crop.x, state.crop.y, state.crop.width, state.crop.height, 0, 0, canvas.width, canvas.height);
         }
         if (zoomLabel) zoomLabel.textContent = state.zoom.toLocaleString('fa-IR', { maximumFractionDigits: 2 }) + '×';
+
+        if (state.crop && status) {
+            const outputScale = Math.min(1, MAX_EDGE / Math.max(state.crop.width, state.crop.height));
+            const outputWidth = Math.max(1, Math.round(state.crop.width * outputScale));
+            const outputHeight = Math.max(1, Math.round(state.crop.height * outputScale));
+            const minWidth = minimumWidth();
+            const minHeight = minimumHeight();
+
+            if (outputWidth < minWidth || outputHeight < minHeight) {
+                say(
+                    'وضوح کادر انتخاب‌شده کافی نیست. خروجی فعلی ' +
+                    outputWidth.toLocaleString('fa-IR') + '×' + outputHeight.toLocaleString('fa-IR') +
+                    ' پیکسل است؛ حداقل موردنیاز ' +
+                    minWidth.toLocaleString('fa-IR') + '×' + minHeight.toLocaleString('fa-IR') +
+                    ' پیکسل است. زوم را کمتر کنید یا تصویر بزرگ‌تری انتخاب کنید.'
+                );
+            } else if (status.textContent.includes('حداقل موردنیاز')) {
+                say('وضوح خروجی برش مناسب است؛ می‌توانید تصویر را ذخیره کنید.');
+            }
+        }
     }
 
     function restorePreview() {
@@ -271,6 +293,16 @@ function initImageEditor(input) {
             const output = document.createElement('canvas');
             output.width = Math.max(1, Math.round(crop.width * scale));
             output.height = Math.max(1, Math.round(crop.height * scale));
+
+            if (output.width < minimumWidth() || output.height < minimumHeight()) {
+                throw new Error(
+                    'وضوح تصویر برش‌خورده کافی نیست. حداقل ابعاد موردنیاز ' +
+                    minimumWidth().toLocaleString('fa-IR') + '×' +
+                    minimumHeight().toLocaleString('fa-IR') +
+                    ' پیکسل است؛ تصویر بزرگ‌تری انتخاب کنید یا کادر را تغییر دهید.'
+                );
+            }
+
             const outputContext = output.getContext('2d');
             if (!outputContext) throw new Error('ساخت خروجی برش ممکن نشد.');
             outputContext.drawImage(state.stage, crop.x, crop.y, crop.width, crop.height, 0, 0, output.width, output.height);
