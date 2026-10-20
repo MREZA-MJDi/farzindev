@@ -8,6 +8,8 @@ Before accepting real orders, all of these must be true:
 
 - The release branch's GitHub Actions workflow is green, including tests, asset build, seeder smoke test, and Laravel config/route/view cache commands.
 - The production database has been backed up and pending migrations reviewed.
+- The actual shipping fee and optional free-shipping threshold have been entered in **Admin → Storefront Settings → Shipping**; the default is zero and means shipping is free until configured.
+- The `ADMIN_EMAIL` and `ADMIN_PASSWORD` values are unique, intentional one-time bootstrap credentials. The initial admin must be able to sign in before the password is removed from the environment and the config cache rebuilt.
 - The official Farzin product data, prices, specifications, SKUs, stock and real images have replaced or verified all preview catalogue records. Seeder preview products are not a verified live catalogue.
 - A real sandbox payment has been completed and its server-side callback verified. The DigiPay, SnapPay and TorobPay adapters are configurable generic HTTP adapters; their payload fields, authentication, endpoint paths and amount units must be confirmed against the merchant API contract. They are disabled by default. Do not enable a provider based solely on the CI mocks.
 - SMTP credentials are configured if password-reset or other outgoing mail is enabled. The example environment uses a log mailer and is not a production mail setup.
