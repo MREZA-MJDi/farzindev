@@ -113,26 +113,41 @@ class OrderController extends Controller
     ): RedirectResponse {
         $status = $request->validated('status');
 
-        DB::transaction(function () use (
+        $requiresRefundFirst = DB::transaction(function () use (
             $order,
             $status,
             $inventoryReservationService
-        ): void {
+        ): bool {
             $lockedOrder = Order::query()
                 ->whereKey($order->id)
                 ->lockForUpdate()
                 ->firstOrFail();
+
+            // Cancellation is not a refund. Keep paid orders fulfilment-safe
+            // until a verified refund workflow is completed separately.
+            if ($status === 'cancelled' && $lockedOrder->payment_status === 'paid') {
+                return true;
+            }
 
             $lockedOrder->update([
                 'status' => $status,
             ]);
 
             if ($status === 'cancelled') {
-                // Paid/committed orders are intentionally not restocked
-                // automatically; a return/refund needs its own decision.
                 $inventoryReservationService->releaseForOrder($lockedOrder);
             }
+
+            return false;
         });
+
+        if ($requiresRefundFirst) {
+            return redirect()
+                ->route('admin.orders.show', $order)
+                ->with(
+                    'error',
+                    'این سفارش پرداخت موفق دارد. لغو سفارش بدون تأیید بازپرداخت مجاز نیست؛ ابتدا بازپرداخت را از مسیر رسمی درگاه پیگیری کنید.'
+                );
+        }
 
         return redirect()
             ->route('admin.orders.show', $order)
