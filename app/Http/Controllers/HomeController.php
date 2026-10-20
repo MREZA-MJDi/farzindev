@@ -12,37 +12,60 @@ class HomeController extends Controller
     {
         $categories = Category::query()
             ->active()
-            ->withCount([
-                'products' => fn ($query) => $query->active(),
+            ->select([
+                'id',
+                'name',
+                'slug',
+                'description',
+                'sort_order',
             ])
-            ->with('latestActiveProduct.images')
-            ->orderBy('sort_order')
+            ->withCount([
+                'products' => static fn ($query) => $query->active(),
+            ])
+            ->limit(8)
             ->get();
 
         /*
-         * The homepage is kept in sync with admin CRUD by ordering active
-         * products by updated_at. Creating or editing a product therefore
-         * moves it into the homepage collection without requiring flags.
+         * One bounded collection powers the public homepage.
+         * Keep product images and their optional media fallback eager-loaded,
+         * and load only one ordered image per product for the visual grid.
          */
-        $featuredProducts = Product::query()
+        $products = Product::query()
             ->active()
-            ->with(['category', 'images'])
+            ->whereHas('images')
+            ->with([
+                'category:id,name,slug',
+                'images' => static function ($query) {
+                    $query
+                        ->select([
+                            'id',
+                            'product_id',
+                            'media_id',
+                            'path',
+                            'alt',
+                            'sort_order',
+                            'is_primary',
+                        ])
+                        ->orderByDesc('is_primary')
+                        ->orderBy('sort_order')
+                        ->limit(1);
+                },
+                'images.media',
+            ])
+            ->orderByDesc('is_featured')
             ->orderByDesc('updated_at')
-            ->limit(8)
-            ->get();
-
-        $newProducts = Product::query()
-            ->active()
-            ->new()
-            ->with(['category', 'images'])
-            ->latest()
-            ->limit(8)
-            ->get();
+            ->limit(24)
+            ->get()
+            ->filter(
+                static fn (Product $product) => filled(
+                    $product->images->first()?->url
+                )
+            )
+            ->values();
 
         return view('home.index', [
             'categories' => $categories,
-            'featuredProducts' => $featuredProducts,
-            'newProducts' => $newProducts,
+            'products' => $products,
         ]);
     }
 }

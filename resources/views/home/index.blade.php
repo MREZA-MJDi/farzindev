@@ -1,1304 +1,199 @@
-@extends('layouts.app')
+@extends('layouts.farzin-public-home')
 
-@section('title', 'فرزین فرجی | تولیدکننده هود و سینک آشپزخانه')
+@section('title', 'فرزین فرجی | هود و سینک آشپزخانه')
 
-@section(
-    'description',
-    'فرزین فرجی؛ معرفی مجموعه و تولید هود و سینک آشپزخانه، آشنایی با رویکرد تولید و مشاهده کاتالوگ محصولات فرزین.'
-)
+@section('description', 'محصولات هود و سینک فرزین فرجی را ببینید و با معیارهای انتخاب درست، تناسب ابعاد، کارایی و جزئیات نصب آشنا شوید.')
 
 @section('canonical', url('/'))
 
-@push('seo')
-
-    <meta
-        property="og:type"
-        content="website"
-    >
-
-    <meta
-        property="og:title"
-        content="فرزین فرجی | تولید هود و سینک آشپزخانه"
-    >
-
-    <meta
-        property="og:description"
-        content="با فرزین فرجی و مجموعه هود و سینک فرزین آشنا شوید؛ مسیر تولید، محصولات و اطلاعات فنی."
-    >
-
-    <meta
-        property="og:url"
-        content="{{ url('/') }}"
-    >
-
-    <meta
-        name="twitter:card"
-        content="summary_large_image"
-    >
-
-    <meta
-        name="twitter:title"
-        content="فرزین فرجی | تولید هود و سینک آشپزخانه"
-    >
-
-    <meta
-        name="twitter:description"
-        content="با فرزین فرجی و مجموعه هود و سینک فرزین آشنا شوید؛ مسیر تولید، محصولات و اطلاعات فنی."
-    >
-
-    <script type="application/ld+json">
-    {
-        "@@context": "https://schema.org",
-        "@@type": "WebSite",
-        "name": "فرزین فرجی | هود و سینک آشپزخانه",
-        "url": @json(url('/')),
-        "potentialAction": {
-            "@@type": "SearchAction",
-            "target": @json(url('/shop') . '?search={search_term_string}'),
-            "query-input": "required name=search_term_string"
-        }
-    }
-    </script>
-
-    <script type="application/ld+json">
-    {
-        "@@context": "https://schema.org",
-        "@@type": "Organization",
-        "name": "فرزین فرجی",
-        "url": @json(url('/')),
-        "description": "معرفی فرزین فرجی و محصولات هود و سینک آشپزخانه",
-        "founder": {
-            "@@type": "Person",
-            "name": "فرزین فرجی"
-        },
-        "knowsAbout": ["هود آشپزخانه", "سینک ظرفشویی"]
-    }
-</script>
-
-@endpush
-
-
 @section('content')
-
-    @php
-
-        /*
-        |--------------------------------------------------------------------------
-        | Homepage Data
-        |--------------------------------------------------------------------------
-        */
-
-        $heroProducts = $featuredProducts
-            ->filter(
-                fn ($product) =>
-                    $product->images?->first()?->url
-            )
-            ->values();
-
-        $heroProduct = $heroProducts->first();
-
-        /*
-         * Keep all featured products in the collection section.
-         */
-        $featuredWithoutHero = $featuredProducts;
-
-        $installmentProducts = $featuredProducts
-            ->filter(
-                fn ($product) =>
-                    (bool) $product->installment_enabled
-            )
-            ->take(4);
-
-    @endphp
-
-
-    <div class="sila-home overflow-hidden bg-[var(--livora-cream)]">
-
-
-        {{-- =========================================================
-             HERO
-        ========================================================== --}}
-
-        <section class="sila-home-hero relative">
-
-            <div class="mx-auto max-w-[1600px] px-4 sm:px-6 lg:px-8">
-
-                <div class="sila-home-hero-grid grid grid-cols-1 gap-6 py-4 sm:gap-7 lg:grid-cols-[0.92fr_1.08fr] lg:py-5">
-
-
-                    {{-- =================================================
-                         HERO CONTENT
-                    ================================================== --}}
-
-                    <div class="sila-home-hero-content relative flex flex-col justify-center rounded-[2rem] bg-[var(--livora-surface)] px-6 py-10 sm:px-9 sm:py-11 lg:px-12 lg:py-12">
-
-                        <div class="max-w-xl">
-
-                            <div class="flex items-center gap-3 text-[10px] font-medium uppercase tracking-[0.24em] text-[var(--livora-accent)]">
-
-                                <span class="h-px w-8 bg-[var(--livora-accent)]"></span>
-
-                                FARZIN · MANUFACTURING
-
-                            </div>
-
-
-                            <h1 class="sila-home-hero-title mt-6 font-semibold leading-[1.06] tracking-tight text-[var(--livora-ink)]">
-
-                                فرزین فرجی
-
-                                <span class="block text-[var(--livora-accent)]">
-                                    از نگاه تولید، تا جزئیات آشپزخانه.
-                                </span>
-
-                            </h1>
-
-
-                            <p class="mt-7 max-w-lg text-sm leading-8 text-[var(--livora-stone)] sm:text-base">
-
-                                فرزین در حوزه هود و سینک آشپزخانه فعالیت می‌کند.
-                                اینجا می‌توانید با مجموعه، محصولات و نکاتی که در انتخاب یک محصول کاربردی اهمیت دارند آشنا شوید؛
-                                از شناخت مدل‌ها تا بررسی مشخصات پیش از خرید.
-
-                            </p>
-
-
-                            <div class="mt-9 flex flex-col gap-3 sm:flex-row">
-
-                                {{-- CTA 01 --}}
-
-                                <a
-                                    href="{{ route('about') }}"
-                                    class="inline-flex items-center justify-center rounded-2xl border border-[var(--livora-border)] bg-[var(--livora-white)] px-6 py-4 text-sm font-medium text-[var(--livora-ink)] transition-colors duration-300 hover:border-[var(--livora-ink)]"
-                              >
-                                    آشنایی با مجموعه
-
-
-                                </a>
-
-
-                                {{-- CTA 02 --}}
-
-                                <a
-                                    href="{{ route('categories.index') }}"
-                                    class="inline-flex items-center justify-center rounded-2xl border border-[var(--livora-border)] bg-[var(--livora-white)] px-6 py-4 text-sm font-medium text-[var(--livora-ink)] transition-colors duration-300 hover:border-[var(--livora-ink)]"
-                                >
-                                    مشاهده دسته‌بندی‌ها
-                                </a>
-
-                            </div>
-
-                        </div>
-
-
-                        {{-- Hero Stats --}}
-
-                        <div class="mt-12 grid max-w-xl grid-cols-3 gap-3">
-
-                            <div class="rounded-2xl border border-[var(--livora-border)] bg-[var(--livora-white)] p-4">
-
-                                <p class="text-[10px] uppercase tracking-[0.16em] text-[var(--livora-stone)]">
-                                    OUR WORK
-                                </p>
-
-                                <p class="mt-2 text-sm font-semibold">
-                                    هود و سینک
-                                </p>
-
-                            </div>
-
-
-                            <div class="rounded-2xl border border-[var(--livora-border)] bg-[var(--livora-white)] p-4">
-
-                                <p class="text-[10px] uppercase tracking-[0.16em] text-[var(--livora-stone)]">
-                                    PRODUCT DETAIL
-                                </p>
-
-                                <p class="mt-2 text-sm font-semibold">
-                                    توجه به جزئیات
-                                </p>
-
-                            </div>
-
-
-                            <div class="rounded-2xl border border-[var(--livora-border)] bg-[var(--livora-white)] p-4">
-
-                                <p class="text-[10px] uppercase tracking-[0.16em] text-[var(--livora-stone)]">
-                                    FARZIN
-                                </p>
-
-                                <p class="mt-2 text-sm font-semibold">
-                                    مسیر تولید
-                                </p>
-
-                            </div>
-
-                        </div>
-
-                    </div>
-
-
-                    {{-- =================================================
-                         HERO PRODUCT SLIDER
-                    ================================================== --}}
-
-                    <div
-                        id="livoraHeroSlider"
-                        class="sila-home-hero-slider relative min-h-[430px] overflow-hidden rounded-[2rem] bg-[var(--livora-white)] lg:min-h-0"
-                    >
-
-                        @if($heroProducts->isNotEmpty())
-
-                            <div class="absolute inset-0">
-
-                                @foreach($heroProducts as $index => $product)
-
-                                    @php
-                                        $image = $product->images?->first()?->url;
-                                    @endphp
-
-                                    <div
-                                        class="livora-hero-slide absolute inset-0 transition-all duration-1000 ease-[cubic-bezier(0.22,1,0.36,1)] {{ $index === 0 ? 'opacity-100 scale-100 z-10' : 'opacity-0 scale-105 z-0' }}"
-                                        data-slide="{{ $index }}"
-                                    >
-
-                                        <img
-                                            src="{{ $image }}"
-                                            alt="{{ $product->name }}"
-                                            class="h-full w-full object-cover"
-                                        >
-
-
-                                        <div class="absolute inset-0 bg-gradient-to-t from-black/65 via-black/10 to-transparent"></div>
-
-                                        <div class="absolute inset-0 bg-gradient-to-r from-black/10 via-transparent to-black/10"></div>
-
-
-                                        {{-- Product info --}}
-
-                                        <div class="absolute bottom-5 left-5 right-5 sm:bottom-7 sm:left-7 sm:right-7">
-
-                                            <div
-                                                class="livora-hero-info max-w-md translate-y-3 rounded-3xl border border-white/20 bg-black/20 p-5 text-white opacity-0 backdrop-blur-xl transition-all duration-1000 ease-[cubic-bezier(0.22,1,0.36,1)]"
-                                            >
-
-                                                <div class="flex items-center justify-between gap-4">
-
-                                                    <div class="min-w-0">
-
-                                                        <p class="text-[10px] uppercase tracking-[0.18em] text-white/55">
-                                                            Featured Product
-                                                        </p>
-
-                                                        <h2 class="mt-2 truncate text-lg font-semibold sm:text-xl">
-                                                            {{ $product->name }}
-                                                        </h2>
-
-                                                        <p class="mt-2 text-sm text-white/75">
-                                                            {{ number_format((float) $product->price) }}
-                                                            تومان
-                                                        </p>
-
-                                                    </div>
-
-
-                                                    {{-- Product CTA --}}
-
-                                                    <a
-                                                        href="{{ route('product.show', $product->slug) }}"
-                                                        class="inline-flex shrink-0 items-center rounded-full bg-white px-4 py-2 text-xs font-medium text-[var(--livora-ink)] transition-colors duration-300 hover:bg-[var(--livora-cream)]"
-                                                    >
-                                                        مشاهده
-                                                    </a>
-
-                                                </div>
-
-                                            </div>
-
-                                        </div>
-
-                                    </div>
-
-                                @endforeach
-
-                            </div>
-
-
-                            {{-- Counter --}}
-
-                            <div class="absolute right-5 top-5 z-30 sm:right-7 sm:top-7">
-
-                                <div
-                                    class="rounded-full border border-white/20 bg-black/20 px-4 py-2 text-[10px] font-medium tracking-[0.2em] text-white backdrop-blur-md"
-                                >
-
-                                    <span id="livoraHeroCurrent">
-                                        01
-                                    </span>
-
-                                    <span class="mx-1 text-white/40">
-                                        /
-                                    </span>
-
-                                    <span class="text-white/50">
-                                        {{ str_pad($heroProducts->count(), 2, '0', STR_PAD_LEFT) }}
-                                    </span>
-
-                                </div>
-
-                            </div>
-
-
-                            {{-- Progress --}}
-
-                            <div class="absolute bottom-0 left-0 right-0 z-30 h-[2px] bg-white/15">
-
-                                <div
-                                    id="livoraHeroProgress"
-                                    class="h-full origin-right bg-white"
-                                    style="transform: scaleX(1);"
-                                ></div>
-
-                            </div>
-
-
-                            {{-- Controls --}}
-
-                            @if($heroProducts->count() > 1)
-
-                                <div class="absolute left-5 top-5 z-30 flex gap-2 sm:left-7 sm:top-7">
-
-                                    <button
-                                        type="button"
-                                        id="livoraHeroPrev"
-                                        class="flex h-10 w-10 items-center justify-center rounded-full border border-white/20 bg-black/20 text-white backdrop-blur-md transition-colors duration-300 hover:bg-white hover:text-black"
-                                        aria-label="محصول قبلی"
-                                    >
-                                        →
-                                    </button>
-
-
-                                    <button
-                                        type="button"
-                                        id="livoraHeroNext"
-                                        class="flex h-10 w-10 items-center justify-center rounded-full border border-white/20 bg-black/20 text-white backdrop-blur-md transition-colors duration-300 hover:bg-white hover:text-black"
-                                        aria-label="محصول بعدی"
-                                    >
-                                        ←
-                                    </button>
-
-                                </div>
-
-                            @endif
-
-
-                        @else
-
-                            <div class="flex min-h-[430px] items-center justify-center bg-[var(--livora-surface)]">
-
-                                <span class="text-sm tracking-[0.2em] text-[var(--livora-stone)]">
-                                    فرزین
-                                </span>
-
-                            </div>
-
-                        @endif
-
-                    </div>
-
+<div class="fz-home">
+    <section class="fz-intro" aria-labelledby="fz-home-title">
+        <div class="fz-intro__eyebrow">
+            <span class="fz-intro__eyebrow-line" aria-hidden="true"></span>
+            <span>فرزین فرجی <b>/</b> هود و سینک آشپزخانه</span>
+        </div>
+
+        <h1 id="fz-home-title" class="fz-intro__title">
+            انتخاب خوب، از
+            <span>جزئیات شروع می‌شود.</span>
+        </h1>
+
+        <p class="fz-intro__copy">
+            هود و سینک فقط بخشی از ظاهر آشپزخانه نیستند؛ هر روز با صدای هود، ابعاد سینک،
+            جنس سطوح و راحتی تمیزکاری سروکار داریم. فرزین فرجی در صنعت هود و سینک آشپزخانه
+            فعالیت می‌کند و اینجا محصولات را در کنار نکته‌هایی برای انتخاب متناسب‌تر می‌بینید.
+        </p>
+
+        <div class="fz-intro__actions">
+            <a class="fz-button fz-button--primary" href="{{ route('shop.index') }}">
+                مشاهده فروشگاه
+                <span aria-hidden="true">↙</span>
+            </a>
+            <a class="fz-button fz-button--quiet" href="#fz-story">بیشتر درباره فرزین</a>
+        </div>
+
+        <div class="fz-intro__rule" aria-hidden="true">
+            <span></span><i></i><span></span>
+        </div>
+
+        <div class="fz-intro__facts" aria-label="اطلاعات کاتالوگ">
+            <div>
+                <strong>{{ $products->count() }}</strong>
+                <span>محصول تصویردار در این نمایش</span>
+            </div>
+            <div>
+                <strong>{{ $categories->count() }}</strong>
+                <span>دسته‌بندی فعال</span>
+            </div>
+            <div>
+                <strong>هود <i>+</i> سینک</strong>
+                <span>تمرکز محصولات فرزین</span>
+            </div>
+        </div>
+    </section>
+
+    @if($categories->isNotEmpty())
+        <section class="fz-categories" aria-labelledby="fz-categories-title">
+            <div class="fz-section-heading fz-section-heading--compact">
+                <div>
+                    <span class="fz-kicker">انتخاب مسیر</span>
+                    <h2 id="fz-categories-title">از دسته‌ای شروع کن که نیازت را جواب می‌دهد.</h2>
                 </div>
-
+                <a class="fz-text-link" href="{{ route('categories.index') }}">همه دسته‌بندی‌ها <span aria-hidden="true">←</span></a>
             </div>
 
+            <div class="fz-category-list">
+                @foreach($categories as $category)
+                    <a class="fz-category-chip" href="{{ route('categories.show', ['category' => $category->slug]) }}">
+                        <span>{{ $category->name }}</span>
+                        <small>{{ number_format((int) $category->products_count) }} محصول</small>
+                        <span class="fz-category-chip__arrow" aria-hidden="true">↗</span>
+                    </a>
+                @endforeach
+            </div>
         </section>
+    @endif
 
+    <section class="fz-collection" id="fz-product-grid" aria-labelledby="fz-collection-title">
+        <div class="fz-section-heading">
+            <div>
+                <span class="fz-kicker">کاتالوگ فرزین <b>/</b> مجموعه به‌روز</span>
+                <h2 id="fz-collection-title">محصولات را از نزدیک‌تر ببین.</h2>
+                <p>شبکه‌ای تصویری از محصولات فعال؛ هر کارت به صفحه مشخصات همان محصول می‌رسد.</p>
+            </div>
+            <div class="fz-collection__count" aria-label="تعداد محصولات">
+                <span>{{ str_pad((string) $products->count(), 2, '0', STR_PAD_LEFT) }}</span>
+                <small>کارت محصول</small>
+            </div>
+        </div>
 
-        {{-- =========================================================
-             MAKER STORY
-        ========================================================== --}}
-        <section class="relative overflow-hidden border-t border-[var(--livora-border)] bg-[var(--livora-ink)] text-white">
-            <div aria-hidden="true" class="pointer-events-none absolute -left-28 -top-24 h-80 w-80 rounded-full bg-[var(--livora-accent)]/20 blur-3xl"></div>
-            <x-layout.container>
-                <div class="relative grid gap-10 py-16 sm:py-20 lg:grid-cols-[0.85fr_1.15fr] lg:items-end lg:py-24">
-                    <div>
-                        <p class="text-[10px] font-semibold uppercase tracking-[0.24em] text-[#b7c9cb]">THE MAKER BEHIND FARZIN</p>
-                        <h2 class="mt-5 max-w-xl text-3xl font-semibold leading-tight tracking-tight sm:text-4xl lg:text-5xl">
-                            هر محصول،
-                            <span class="block text-[#b7c9cb]">داستانی از تصمیم‌ها و جزئیات دارد.</span>
-                        </h2>
-                        <p class="mt-6 max-w-lg text-sm leading-8 text-white/65">
-                            فرزین فرجی و مجموعه فرزین در حوزه هود و سینک آشپزخانه فعالیت می‌کنند.
-                            هدف این صفحه، معرفی مجموعه و کمک به شناخت دقیق‌تر محصولات، مشخصات و انتخاب مناسب برای هر فضاست.
-                        </p>
-                        <a href="{{ route('about') }}" class="mt-8 inline-flex items-center gap-3 rounded-xl border border-white/20 px-5 py-3 text-sm font-medium text-white transition hover:border-white/60 hover:bg-white/5">
-                            آشنایی با فرزین فرجی <span aria-hidden="true">←</span>
-                        </a>
-                    </div>
-                    <div class="grid gap-3 sm:grid-cols-2">
-                        <article class="rounded-3xl border border-white/10 bg-white/[0.04] p-6 sm:p-7">
-                            <span class="text-xs font-medium tracking-[0.18em] text-[#b7c9cb]">01 / PRODUCT</span>
-                            <h3 class="mt-6 text-lg font-semibold">شناخت محصول</h3>
-                            <p class="mt-3 text-sm leading-7 text-white/60">ابعاد، امکانات، موجودی و مشخصات هر مدل را در صفحه محصول بررسی کنید.</p>
-                        </article>
-                        <article class="rounded-3xl border border-white/10 bg-white/[0.04] p-6 sm:p-7">
-                            <span class="text-xs font-medium tracking-[0.18em] text-[#b7c9cb]">02 / MAKER</span>
-                            <h3 class="mt-6 text-lg font-semibold">شناخت مجموعه</h3>
-                            <p class="mt-3 text-sm leading-7 text-white/60">با مسیر کاری فرزین و تمرکز مجموعه بر هود و سینک آشپزخانه آشنا شوید.</p>
-                        </article>
-                        <div class="sm:col-span-2 rounded-2xl border border-white/15 bg-white/[0.055] px-5 py-4">
-                            <p class="text-sm font-medium">محصولات واقعی، اطلاعات شفاف، انتخاب آگاهانه</p>
-                        </div>
-                    </div>
-                </div>
-            </x-layout.container>
-        </section>
+        @if($products->isNotEmpty())
+            <div class="fz-product-grid" data-fz-scroll-grid>
+                @foreach($products as $product)
+                    @php
+                        $image = $product->images->first();
+                        $tileVariant = match ($loop->index % 8) {
+                            0 => 'feature',
+                            2, 6 => 'tall',
+                            4 => 'wide',
+                            default => 'regular',
+                        };
+                    @endphp
 
-        {{-- =========================================================
-             CATEGORY DISCOVERY
-        ========================================================== --}}
+                    <article class="fz-product-tile fz-product-tile--{{ $tileVariant }}" data-fz-tile>
+                        <a class="fz-product-tile__link" href="{{ route('product.show', ['slug' => $product->slug]) }}" aria-label="مشاهده {{ $product->name }}">
+                            <div class="fz-product-tile__media" data-fz-image-frame>
+                                <span class="fz-product-tile__fallback" aria-hidden="true">FZ</span>
+                                <img
+                                    class="fz-product-tile__image"
+                                    src="{{ $image->url }}"
+                                    alt="{{ $image->alt ?: $product->name }}"
+                                    loading="{{ $loop->index < 4 ? 'eager' : 'lazy' }}"
+                                    decoding="async"
+                                    fetchpriority="{{ $loop->first ? 'high' : 'auto' }}"
+                                    data-fz-product-image
+                                >
+                                <span class="fz-product-tile__shade" aria-hidden="true"></span>
+                                @if($product->is_new)
+                                    <span class="fz-product-tile__badge">تازه</span>
+                                @elseif($product->is_featured)
+                                    <span class="fz-product-tile__badge">منتخب</span>
+                                @endif
 
-        <section class="border-t border-[var(--livora-border)] bg-[var(--livora-white)]">
-
-            <x-layout.container>
-
-                <div class="py-16 sm:py-20">
-
-                    <div class="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-
-                        <div class="max-w-2xl">
-
-                            <p class="text-[10px] font-medium uppercase tracking-[0.22em] text-[var(--livora-accent)]">
-                                SHOP BY CATEGORY
-                            </p>
-
-                            <h2 class="mt-3 text-3xl font-semibold tracking-tight sm:text-4xl">
-                                برای هر آشپزخانه، انتخابی دقیق.
-                            </h2>
-
-                            <p class="mt-4 max-w-xl text-sm leading-8 text-[var(--livora-stone)]">
-
-                                از هودهای آشپزخانه تا سینک‌های ظرفشویی، مدل‌ها را بر اساس نیاز و فضای نصب بررسی کنید.
-
-                            </p>
-
-                        </div>
-
-
-                        <a
-                            href="{{ route('categories.index') }}"
-                            class="inline-flex items-center text-sm font-medium text-[var(--livora-accent)] transition-colors duration-300 hover:text-[var(--livora-ink)]"
-                        >
-                            همه دسته‌بندی‌ها
-
-                            <span class="mr-2">
-                                ←
-                            </span>
-
-                        </a>
-
-                    </div>
-
-
-                    <div class="mt-9 grid gap-4 sm:grid-cols-2 lg:grid-cols-2">
-
-                        @foreach($categories->take(4) as $category)
-
-                            <x-shop.category-card
-                                :name="$category->name"
-                                :image="$category->homepage_image_url"
-                                :href="route('categories.show', $category->slug)"
-                                :count="$category->products_count"
-                            />
-
-                        @endforeach
-
-                    </div>
-
-                </div>
-
-            </x-layout.container>
-
-        </section>
-
-
-        {{-- =========================================================
-             FEATURED COLLECTION
-        ========================================================== --}}
-
-        <section class="border-t border-[var(--livora-border)]">
-
-            <x-layout.container>
-
-                <div class="py-16 sm:py-20">
-
-                    <div class="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
-
-                        <div>
-
-                            <p class="text-[10px] font-medium uppercase tracking-[0.22em] text-[var(--livora-accent)]">
-                                Curated collection
-                            </p>
-
-                            <h2 class="mt-3 text-3xl font-semibold tracking-tight sm:text-4xl">
-                                محصولات فرزین
-                            </h2>
-
-                            <p class="mt-3 max-w-xl text-sm leading-8 text-[var(--livora-stone)]">
-                                مشخصات، ویژگی‌ها و مدل‌های موجود را کنار هم ببینید و گزینه مناسب آشپزخانه خود را پیدا کنید.
-                            </p>
-
-                        </div>
-
-
-                        <a
-                            href="{{ route('shop.index') }}"
-                            class="inline-flex items-center text-sm font-medium text-[var(--livora-accent)] transition-colors duration-300 hover:text-[var(--livora-ink)]"
-                        >
-                            مشاهده همه محصولات
-
-                            <span class="mr-2">
-                                ←
-                            </span>
-
-                        </a>
-
-                    </div>
-
-
-                    @if($featuredWithoutHero->isNotEmpty())
-
-                        <div class="mt-10 grid grid-cols-2 gap-x-4 gap-y-8 lg:grid-cols-4">
-
-                            @foreach($featuredWithoutHero as $product)
-
-                                <x-product.card
-                                    :product="$product"
-                                />
-
-                            @endforeach
-
-                        </div>
-
-                    @else
-
-                        <div class="mt-10 rounded-3xl border border-[var(--livora-border)] bg-[var(--livora-surface)] p-10 text-center">
-
-                            <p class="text-sm text-[var(--livora-stone)]">
-                                محصولات فرزین پس از ثبت در پنل مدیریت، در این بخش نمایش داده می‌شوند.
-                            </p>
-
-                        </div>
-
-                    @endif
-
-                </div>
-
-            </x-layout.container>
-
-        </section>
-
-
-        {{-- =========================================================
-             FARZIN CHOOSING GUIDE
-        ========================================================== --}}
-
-        <section class="border-t border-[var(--livora-border)] bg-[var(--livora-ink)] text-white">
-            <x-layout.container>
-                <div class="py-16 sm:py-20">
-                    <div class="grid items-center gap-10 lg:grid-cols-[1.1fr_0.9fr]">
-                        <div>
-                            <p class="text-[10px] font-medium uppercase tracking-[0.22em] text-[#b7c9cb]">
-                                FARZIN BUYING GUIDE
-                            </p>
-                            <h2 class="mt-4 max-w-xl text-3xl font-semibold tracking-tight sm:text-4xl lg:text-5xl">
-                                انتخاب بهتر،
-                                <span class="block text-[#b7c9cb]">از شناخت جزئیات شروع می‌شود.</span>
-                            </h2>
-                            <p class="mt-6 max-w-xl text-sm leading-8 text-white/70">
-                                پیش از خرید هود یا سینک، ابعاد محل نصب، نوع استفاده و مشخصات فنی را بررسی کنید.
-                                اگر بین چند مدل مردد هستید، برای انتخاب مناسب‌تر با فرزین تماس بگیرید.
-                            </p>
-                            <a href="{{ route('categories.index') }}"
-                               class="mt-8 inline-flex items-center rounded-2xl bg-[#e4ebec] px-6 py-4 text-sm font-semibold text-[#151a1c] transition hover:bg-white">
-                                بررسی دسته‌بندی‌ها
-                            </a>
-                        </div>
-                        <div class="grid grid-cols-2 gap-3">
-                            <div class="rounded-3xl border border-white/10 bg-white/5 p-5 sm:p-6">
-                                <span class="text-[10px] uppercase tracking-[0.18em] text-white/50">01 / FIT</span>
-                                <p class="mt-4 text-lg font-semibold">ابعاد و نصب</p>
-                                <p class="mt-2 text-xs leading-6 text-white/60">عرض کابینت و فضای نصب را با اندازه‌های محصول تطبیق دهید.</p>
+                                <div class="fz-product-tile__info">
+                                    <span class="fz-product-tile__category">{{ $product->category?->name ?? 'محصول فرزین' }}</span>
+                                    <h3>{{ $product->name }}</h3>
+                                    @if(filled($product->short_description))
+                                        <p>{{ \Illuminate\Support\Str::limit($product->short_description, 92) }}</p>
+                                    @endif
+                                    <div class="fz-product-tile__bottom">
+                                        <strong>{{ number_format((float) $product->price) }} <small>تومان</small></strong>
+                                        <span class="fz-product-tile__open" aria-hidden="true">↗</span>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="rounded-3xl border border-white/10 bg-white/5 p-5 sm:p-6">
-                                <span class="text-[10px] uppercase tracking-[0.18em] text-white/50">02 / USE</span>
-                                <p class="mt-4 text-lg font-semibold">نیاز روزمره</p>
-                                <p class="mt-2 text-xs leading-6 text-white/60">امکانات و روش نگهداری را متناسب با سبک آشپزی انتخاب کنید.</p>
-                            </div>
-                            <div class="col-span-2 rounded-3xl border border-white/15 bg-white/[0.055] p-5 sm:p-6">
-                                <p class="text-sm font-semibold">اطلاعات شفاف، انتخاب مطمئن‌تر</p>
-                                <p class="mt-2 text-xs leading-6 text-white/65">مشخصات و قیمت نهایی هر محصول باید در صفحه همان محصول بررسی شود.</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </x-layout.container>
-        </section>
-
-        {{-- =========================================================
-             NEW ARRIVALS
-        ========================================================== --}}
-
-        <section class="border-t border-[var(--livora-border)]">
-
-            <x-layout.container>
-
-                <div class="py-16 sm:py-20">
-
-                    <div class="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
-
-                        <div>
-
-                            <p class="text-[10px] font-medium uppercase tracking-[0.22em] text-[var(--livora-accent)]">
-                                New arrivals
-                            </p>
-
-                            <h2 class="mt-3 text-3xl font-semibold tracking-tight sm:text-4xl">
-                                تازه‌های فرزین
-                            </h2>
-
-                            <p class="mt-3 max-w-xl text-sm leading-8 text-[var(--livora-stone)]">
-                                مدل‌هایی که به‌تازگی به کاتالوگ فرزین اضافه شده‌اند.
-                            </p>
-
-                        </div>
-
-
-                        <a
-                            href="{{ route('shop.index', ['sort' => 'newest']) }}"
-                            class="text-sm font-medium text-[var(--livora-accent)] transition-colors duration-300 hover:text-[var(--livora-ink)]"
-                        >
-                            محصولات تازه
                         </a>
-
-                    </div>
-
-
-                    @if($newProducts->isNotEmpty())
-
-                        <div class="mt-10 grid grid-cols-2 gap-x-4 gap-y-8 lg:grid-cols-4">
-
-                            @foreach($newProducts as $product)
-
-                                <x-product.card
-                                    :product="$product"
-                                />
-
-                            @endforeach
-
-                        </div>
-
-                    @else
-
-                        <div class="mt-10 rounded-3xl border border-[var(--livora-border)] bg-[var(--livora-surface)] p-10 text-center">
-
-                            <p class="text-sm text-[var(--livora-stone)]">
-                                به‌محض ثبت محصولات جدید در پنل مدیریت، اینجا نمایش داده می‌شوند.
-                            </p>
-
-                        </div>
-
-                    @endif
-
-                </div>
-
-            </x-layout.container>
-
-        </section>
-
-
-        {{-- =========================================================
-             INSPIRATION
-        ========================================================== --}}
-
-        <section class="border-t border-[var(--livora-border)] bg-[var(--livora-surface)]">
-
-            <x-layout.container>
-
-                <div class="py-16 sm:py-20">
-
-                    <div class="grid items-end gap-8 lg:grid-cols-[0.85fr_1.15fr]">
-
-
-                        <div>
-
-                            <p class="text-[10px] font-medium uppercase tracking-[0.22em] text-[var(--livora-accent)]">
-                                Inspiration
-                            </p>
-
-                            <h2 class="mt-4 text-3xl font-semibold tracking-tight sm:text-4xl">
-
-                                فقط یک انتخاب نیست.
-
-                                <span class="block text-[var(--livora-accent)]">
-                                    تفاوتی در کارایی روزمره است.
-                                </span>
-
-                            </h2>
-
-
-                            <p class="mt-5 max-w-lg text-sm leading-8 text-[var(--livora-stone)]">
-
-                                برای انتخاب هود و سینک، ابعاد کابینت، فضای نصب، جنس بدنه و شیوه نظافت را در نظر بگیرید.
-                                راهنمای فرزین کمک می‌کند گزینه‌ها را آگاهانه‌تر مقایسه کنید.
-
-                            </p>
-
-
-                            <a
-                                href="{{ route('about') }}"
-                                class="mt-7 inline-flex items-center text-sm font-medium text-[var(--livora-ink)] transition-colors duration-300 hover:text-[var(--livora-accent)]"
-                            >
-                                درباره فرزین
-
-                                <span class="mr-2">
-                                    ←
-                                </span>
-
-                            </a>
-
-                        </div>
-
-
-                        <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
-
-                            <article class="rounded-3xl border border-[var(--livora-border)] bg-[var(--livora-white)] p-5">
-
-                                <span class="text-[10px] uppercase tracking-[0.18em] text-[var(--livora-accent)]">
-                                    01
-                                </span>
-
-                                <h3 class="mt-8 text-base font-semibold">
-                                    ابعاد و فضای نصب
-                                </h3>
-
-                                <p class="mt-3 text-xs leading-7 text-[var(--livora-stone)]">
-                                    پیش از سفارش، عرض کابینت و ابعاد محل نصب را با مشخصات محصول تطبیق دهید.
-                                </p>
-
-                            </article>
-
-
-                            <article class="rounded-3xl border border-[var(--livora-border)] bg-[var(--livora-white)] p-5">
-
-                                <span class="text-[10px] uppercase tracking-[0.18em] text-[var(--livora-accent)]">
-                                    02
-                                </span>
-
-                                <h3 class="mt-8 text-base font-semibold">
-                                    جنس و نگهداری
-                                </h3>
-
-                                <p class="mt-3 text-xs leading-7 text-[var(--livora-stone)]">
-                                    جنس سینک، نوع سطح و روش نظافت را با میزان استفاده روزانه هماهنگ کنید.
-                                </p>
-
-                            </article>
-
-
-                            <article class="rounded-3xl border border-[var(--livora-border)] bg-[var(--livora-white)] p-5">
-
-                                <span class="text-[10px] uppercase tracking-[0.18em] text-[var(--livora-accent)]">
-                                    03
-                                </span>
-
-                                <h3 class="mt-8 text-base font-semibold">
-                                    مقایسه مشخصات
-                                </h3>
-
-                                <p class="mt-3 text-xs leading-7 text-[var(--livora-stone)]">
-                                    ابعاد، نوع نصب، امکانات، گارانتی و قیمت را کنار هم مقایسه کنید.
-                                </p>
-
-                            </article>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-            </x-layout.container>
-
-        </section>
-
-
-        {{-- =========================================================
-             TRUST
-        ========================================================== --}}
-
-        <section class="border-t border-[var(--livora-border)] bg-[var(--livora-white)]">
-
-            <x-layout.container>
-
-                <div class="grid grid-cols-1 divide-y divide-[var(--livora-border)] py-4 sm:grid-cols-2 sm:divide-x sm:divide-y-0 lg:grid-cols-4">
-
-                    <div class="px-2 py-8 sm:px-8">
-
-                        <p class="text-[10px] uppercase tracking-[0.18em] text-[var(--livora-stone)]">
-                            Selection
-                        </p>
-
-                        <h3 class="mt-3 text-sm font-semibold">
-                            انتخاب با دقت
-                        </h3>
-
-                        <p class="mt-2 text-xs leading-7 text-[var(--livora-stone)]">
-                            محصولات با تمرکز بر فرم، کاربرد و کیفیت انتخاب می‌شوند.
-                        </p>
-
-                    </div>
-
-
-                    <div class="px-2 py-8 sm:px-8">
-
-                        <p class="text-[10px] uppercase tracking-[0.18em] text-[var(--livora-stone)]">
-                            SMART CHOICE
-                        </p>
-
-                        <h3 class="mt-3 text-sm font-semibold">
-                            انتخاب متناسب
-                        </h3>
-
-                        <p class="mt-2 text-xs leading-7 text-[var(--livora-stone)]">
-                            برای برخی محصولات، شرایط خرید انتخاب کاربردی در دسترس است.
-                        </p>
-
-                    </div>
-
-
-                    <div class="px-2 py-8 sm:px-8">
-
-                        <p class="text-[10px] uppercase tracking-[0.18em] text-[var(--livora-stone)]">
-                            Support
-                        </p>
-
-                        <h3 class="mt-3 text-sm font-semibold">
-                            همراهی تا خرید
-                        </h3>
-
-                        <p class="mt-2 text-xs leading-7 text-[var(--livora-stone)]">
-                            اطلاعات محصول و مسیر خرید را شفاف و ساده نگه می‌داریم.
-                        </p>
-
-                    </div>
-
-
-                    <div class="px-2 py-8 sm:px-8">
-
-                        <p class="text-[10px] uppercase tracking-[0.18em] text-[var(--livora-stone)]">
-                            Experience
-                        </p>
-
-                        <h3 class="mt-3 text-sm font-semibold">
-                            تجربه‌ای آرام
-                        </h3>
-
-                        <p class="mt-2 text-xs leading-7 text-[var(--livora-stone)]">
-                            از کشف محصول تا پرداخت، همه‌چیز با کمترین اصطکاک طراحی شده است.
-                        </p>
-
-                    </div>
-
-                </div>
-
-            </x-layout.container>
-
-        </section>
-
-
-        {{-- =========================================================
-             FINAL CTA
-        ========================================================== --}}
-
-        <section class="border-t border-[var(--livora-border)]">
-
-            <x-layout.container>
-
-                <div class="py-20 sm:py-28">
-
-                    <div class="mx-auto max-w-3xl text-center">
-
-                        <p class="text-[10px] font-medium uppercase tracking-[0.24em] text-[var(--livora-accent)]">
-                            فرزین
-                        </p>
-
-                        <h2 class="mt-5 text-4xl font-semibold tracking-tight sm:text-5xl">
-                            انتخابی دقیق برای آشپزخانه‌تان پیدا کنید.
-                        </h2>
-
-                        <p class="mx-auto mt-5 max-w-2xl text-sm leading-8 text-[var(--livora-stone)]">
-                            مجموعه را ببینید، فضای خودتان را تصور کنید
-                            و انتخابی انجام دهید که سال‌ها با شما بماند.
-                        </p>
-
-                        <div class="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
-
-                            {{-- Final CTA 01 --}}
-
-                            <a
-                                href="{{ route('shop.index') }}"
-                                class="inline-flex items-center justify-center rounded-2xl bg-[var(--livora-ink)] px-7 py-4 text-sm font-medium text-white transition-colors duration-300 hover:bg-[var(--livora-accent)]"
-                            >
-                                ورود به فروشگاه
-                            </a>
-
-
-                            {{-- Final CTA 02 --}}
-
-                            <a
-                                href="{{ route('contact') }}"
-                                class="inline-flex items-center justify-center rounded-2xl border border-[var(--livora-border)] bg-[var(--livora-white)] px-7 py-4 text-sm font-medium text-[var(--livora-ink)] transition-colors duration-300 hover:border-[var(--livora-ink)]"
-                            >
-                                تماس با ما
-                            </a>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-            </x-layout.container>
-
-        </section>
-
-    </div>
-
+                    </article>
+                @endforeach
+            </div>
+        @else
+            <div class="fz-empty-state">
+                <span class="fz-empty-state__mark" aria-hidden="true">FZ</span>
+                <h3>محصول تصویردار برای نمایش آماده نیست.</h3>
+                <p>به‌محض فعال‌شدن محصولات و ثبت تصاویرشان در پنل، این بخش به‌صورت خودکار به‌روز می‌شود.</p>
+                <a class="fz-button fz-button--primary" href="{{ route('contact') }}">ارتباط با فرزین</a>
+            </div>
+        @endif
+    </section>
+
+    <section class="fz-story" id="fz-story" aria-labelledby="fz-story-title">
+        <div class="fz-story__inner">
+            <span class="fz-kicker fz-kicker--light">فرزین فرجی <b>/</b> صنعت آشپزخانه</span>
+            <h2 id="fz-story-title">محصولی که هر روز استفاده می‌کنی، باید با زندگی واقعی هماهنگ باشد.</h2>
+            <p>
+                کار فرزین در حوزه هود و سینک آشپزخانه، بخشی از صنعتی است که در آن ظاهر تنها یکی از معیارهاست.
+                برای هود، عرض مناسب، مسیر خروج هوا و میزان صدای قابل‌قبول اهمیت دارد؛ برای سینک، ابعاد کابینت،
+                عمق لگن، جنس سطح و شیوه نصب تعیین‌کننده‌اند. هدف این صفحه کمک به دیدن محصولات در کنار همین
+                جزئیات است تا انتخاب از روی عکس تنها انجام نشود.
+            </p>
+
+            <div class="fz-story__principles">
+                <article>
+                    <span>01</span>
+                    <h3>تناسب با فضا</h3>
+                    <p>ابعاد محصول و فضای نصب را پیش از انتخاب با هم بسنج.</p>
+                </article>
+                <article>
+                    <span>02</span>
+                    <h3>کارایی روزمره</h3>
+                    <p>به نگهداری، شیوه استفاده و نیازهای واقعی آشپزخانه توجه کن.</p>
+                </article>
+                <article>
+                    <span>03</span>
+                    <h3>جزئیات فنی</h3>
+                    <p>مشخصات هر مدل را در صفحه محصول بررسی کن و ابهام‌ها را بپرس.</p>
+                </article>
+            </div>
+
+            <div class="fz-story__actions">
+                <a class="fz-button fz-button--light" href="{{ route('about') }}">آشنایی با مجموعه</a>
+                <a class="fz-story__text-link" href="{{ route('contact') }}">سؤال داری؟ با ما در تماس باش <span aria-hidden="true">↗</span></a>
+            </div>
+        </div>
+        <span class="fz-story__outline" aria-hidden="true">F</span>
+    </section>
+
+    <section class="fz-last-call" aria-labelledby="fz-last-call-title">
+        <div>
+            <span class="fz-kicker">قدم بعدی</span>
+            <h2 id="fz-last-call-title">مدلی را پیدا کن که به آشپزخانه‌ات می‌خورد.</h2>
+            <p>مشخصات را مقایسه کن و اگر برای انتخاب هود یا سینک نیاز به راهنمایی داری، با فرزین در ارتباط باش.</p>
+        </div>
+        <div class="fz-last-call__actions">
+            <a class="fz-button fz-button--primary" href="{{ route('shop.index') }}">رفتن به فروشگاه <span aria-hidden="true">↗</span></a>
+            <a class="fz-button fz-button--quiet" href="{{ route('contact') }}">تماس با ما</a>
+        </div>
+    </section>
+</div>
 @endsection
-
-
-@push('scripts')
-
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-
-            const slider = document.getElementById('livoraHeroSlider');
-
-            if (!slider) {
-                return;
-            }
-
-
-            const slides = Array.from(
-                slider.querySelectorAll('.livora-hero-slide')
-            );
-
-
-            if (slides.length <= 1) {
-                return;
-            }
-
-
-            const currentEl = document.getElementById(
-                'livoraHeroCurrent'
-            );
-
-            const progressEl = document.getElementById(
-                'livoraHeroProgress'
-            );
-
-            const prevButton = document.getElementById(
-                'livoraHeroPrev'
-            );
-
-            const nextButton = document.getElementById(
-                'livoraHeroNext'
-            );
-
-
-            /*
-            |--------------------------------------------------------------------------
-            | Slider timing
-            |--------------------------------------------------------------------------
-            */
-
-            const interval = 7000;
-
-
-            let current = 0;
-            let timer = null;
-
-
-            /*
-            |--------------------------------------------------------------------------
-            | Counter
-            |--------------------------------------------------------------------------
-            */
-
-            const updateCounter = () => {
-
-                if (!currentEl) {
-                    return;
-                }
-
-                currentEl.textContent = String(
-                    current + 1
-                ).padStart(2, '0');
-            };
-
-
-            /*
-            |--------------------------------------------------------------------------
-            | Product info animation
-            |--------------------------------------------------------------------------
-            */
-
-            const animateInfo = (slide) => {
-
-                slides.forEach((item) => {
-
-                    const info = item.querySelector(
-                        '.livora-hero-info'
-                    );
-
-                    if (!info) {
-                        return;
-                    }
-
-                    info.classList.remove(
-                        'translate-y-0',
-                        'opacity-100'
-                    );
-
-                    info.classList.add(
-                        'translate-y-3',
-                        'opacity-0'
-                    );
-
-                });
-
-
-                const activeInfo = slide.querySelector(
-                    '.livora-hero-info'
-                );
-
-
-                if (!activeInfo) {
-                    return;
-                }
-
-
-                setTimeout(() => {
-
-                    activeInfo.classList.remove(
-                        'translate-y-3',
-                        'opacity-0'
-                    );
-
-                    activeInfo.classList.add(
-                        'translate-y-0',
-                        'opacity-100'
-                    );
-
-                }, 180);
-            };
-
-
-            /*
-            |--------------------------------------------------------------------------
-            | Progress
-            |--------------------------------------------------------------------------
-            */
-
-            const resetProgress = () => {
-
-                if (!progressEl) {
-                    return;
-                }
-
-
-                progressEl.style.transition = 'none';
-
-                progressEl.style.transform = 'scaleX(0)';
-
-
-                requestAnimationFrame(() => {
-
-                    requestAnimationFrame(() => {
-
-                        progressEl.style.transition =
-                            `transform ${interval}ms linear`;
-
-                        progressEl.style.transform =
-                            'scaleX(1)';
-
-                    });
-
-                });
-
-            };
-
-
-            /*
-            |--------------------------------------------------------------------------
-            | Show slide
-            |--------------------------------------------------------------------------
-            */
-
-            const showSlide = (index) => {
-
-                slides.forEach(
-                    (slide, slideIndex) => {
-
-                        if (slideIndex === index) {
-
-                            slide.classList.remove(
-                                'opacity-0',
-                                'scale-105',
-                                'z-0'
-                            );
-
-                            slide.classList.add(
-                                'opacity-100',
-                                'scale-100',
-                                'z-10'
-                            );
-
-                        } else {
-
-                            slide.classList.remove(
-                                'opacity-100',
-                                'scale-100',
-                                'z-10'
-                            );
-
-                            slide.classList.add(
-                                'opacity-0',
-                                'scale-105',
-                                'z-0'
-                            );
-
-                        }
-
-                    }
-                );
-
-
-                current = index;
-
-                updateCounter();
-
-                animateInfo(slides[current]);
-
-                resetProgress();
-            };
-
-
-            /*
-            |--------------------------------------------------------------------------
-            | Next
-            |--------------------------------------------------------------------------
-            */
-
-            const nextSlide = () => {
-
-                const next =
-                    (current + 1) % slides.length;
-
-                showSlide(next);
-            };
-
-
-            /*
-            |--------------------------------------------------------------------------
-            | Previous
-            |--------------------------------------------------------------------------
-            */
-
-            const prevSlide = () => {
-
-                const previous =
-                    (current - 1 + slides.length) % slides.length;
-
-                showSlide(previous);
-            };
-
-
-            /*
-            |--------------------------------------------------------------------------
-            | Autoplay
-            |--------------------------------------------------------------------------
-            */
-
-            const stopAutoPlay = () => {
-
-                if (!timer) {
-                    return;
-                }
-
-                clearInterval(timer);
-
-                timer = null;
-            };
-
-
-            const startAutoPlay = () => {
-
-                stopAutoPlay();
-
-                timer = setInterval(() => {
-
-                    nextSlide();
-
-                }, interval);
-            };
-
-
-            /*
-            |--------------------------------------------------------------------------
-            | Controls
-            |--------------------------------------------------------------------------
-            */
-
-            if (nextButton) {
-
-                nextButton.addEventListener('click', () => {
-
-                    nextSlide();
-
-                    startAutoPlay();
-
-                });
-            }
-
-
-            if (prevButton) {
-
-                prevButton.addEventListener('click', () => {
-
-                    prevSlide();
-
-                    startAutoPlay();
-
-                });
-            }
-
-
-            /*
-            |--------------------------------------------------------------------------
-            | Initial state
-            |--------------------------------------------------------------------------
-            */
-
-            updateCounter();
-
-            animateInfo(slides[0]);
-
-            resetProgress();
-
-            startAutoPlay();
-
-        });
-    </script>
-
-@endpush
