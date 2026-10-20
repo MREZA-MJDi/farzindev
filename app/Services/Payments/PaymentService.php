@@ -1390,10 +1390,7 @@ class PaymentService
         |
         */
 
-        if (
-            $payment->metadata['payment_method'] ?? null
-            === 'online'
-        ) {
+        if (($payment->metadata['payment_method'] ?? null) === 'online') {
             $orderAmount =
                 $this->normalizeAmount(
                     $order->total
