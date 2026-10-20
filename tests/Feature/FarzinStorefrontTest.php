@@ -1493,9 +1493,18 @@ class FarzinStorefrontTest extends TestCase
             'stock' => 8,
         ]);
 
-        $this->postJson(route('cart.add', $product), ['quantity' => 2])
-            ->assertOk()
+        $firstAdd = $this->postJson(route('cart.add', $product), ['quantity' => 2]);
+
+        $firstAdd->assertOk()
             ->assertJsonPath('cart_count', 2);
+
+        // Laravel's test client does not automatically replay response cookies
+        // between requests; preserve the guest's browser session explicitly.
+        $sessionCookie = $firstAdd->getCookie(config('session.cookie'));
+        $this->withCookie(
+            config('session.cookie'),
+            $sessionCookie?->getValue() ?? ''
+        );
 
         $cart = Cart::query()
             ->whereNull('user_id')
