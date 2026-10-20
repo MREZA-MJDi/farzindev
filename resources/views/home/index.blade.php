@@ -187,8 +187,8 @@
                     <span class="fz-empty-state__mark" aria-hidden="true">F</span>
                     <div>
                         <p class="fz-eyebrow"><span></span> کاتالوگ فرزین</p>
-                        <h2>{{ $catalogCount > 0 ? 'محصولات فرزین را از کارت‌های بالا ببینید.' : 'محصولات تصویردار هنوز منتشر نشده‌اند.' }}</h2>
-                        <p>{{ $catalogCount > 0 ? 'برای جلوگیری از نمایش تکراری، این محصولات در بخش معرفی یا کارت‌های محصول نمایش داده شده‌اند.' : 'از پنل مدیریت، محصول و تصویر اصلی آن را ثبت و وضعیت محصول را فعال کنید تا در گالری و صفحه‌ی اصلی نمایش داده شود.' }}</p>
+                        <h2>{{ $catalogCount > 0 ? 'گالری تصویری در حال تکمیل است.' : 'محصول فعالی برای نمایش منتشر نشده است.' }}</h2>
+                        <p>{{ $catalogCount > 0 ? 'محصولات فعال در فهرست کارت‌های پایین نمایش داده می‌شوند. برای حضور در گالری موزاییکی، یک تصویر معتبر برای محصول در پنل ثبت کنید.' : 'از پنل مدیریت، یک محصول ایجاد و وضعیت آن را فعال کنید تا در کاتالوگ عمومی نمایش داده شود.' }}</p>
                         <a class="fz-button fz-button--primary" href="{{ route('shop.index') }}">مشاهده فروشگاه <span aria-hidden="true">←</span></a>
                     </div>
                 </div>
@@ -202,7 +202,7 @@
                         <div>
                             <p class="fz-eyebrow"><span></span> کاتالوگ محصولات</p>
                             <h2 id="fz-products-heading">محصولات فرزین</h2>
-                            <p>{{ \App\Helpers\PersianNumberHelper::format($catalogCount) }} محصول تصویردار در کاتالوگ ثبت شده است؛ برای مشخصات کامل، صفحه‌ی همان محصول را باز کنید.</p>
+                            <p>{{ \App\Helpers\PersianNumberHelper::format($catalogCount) }} محصول فعال در کاتالوگ ثبت شده است؛ برای مشخصات کامل، صفحه‌ی همان محصول را باز کنید.</p>
                         </div>
                         <a class="fz-text-link" href="{{ route('shop.index') }}">دیدن همه‌ی محصولات <span aria-hidden="true">←</span></a>
                     </div>
