@@ -1365,7 +1365,27 @@ class PaymentService
         |--------------------------------------------------------------------------
         | External gateway returned amount
         |--------------------------------------------------------------------------
+        |
+        | For online payments, fail closed if the provider's verification
+        | response does not identify the amount it actually verified.
+        | A successful HTTP response alone is not proof of payment value.
+        |
         */
+
+        $isOnlinePayment = ($payment->metadata['payment_method'] ?? null) === 'online';
+
+        if (
+            $isOnlinePayment
+            && (
+                ! array_key_exists('amount', $result)
+                || $result['amount'] === null
+                || $result['amount'] === ''
+            )
+        ) {
+            throw new RuntimeException(
+                'Gateway verification did not return a verified amount.'
+            );
+        }
 
         if (
             array_key_exists(
@@ -1399,7 +1419,7 @@ class PaymentService
         |
         */
 
-        if (($payment->metadata['payment_method'] ?? null) === 'online') {
+        if ($isOnlinePayment) {
             $orderAmount =
                 $this->normalizeAmount(
                     $order->total
