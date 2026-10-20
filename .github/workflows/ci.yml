@@ -55,6 +55,15 @@ jobs:
       - name: Run Laravel tests
         run: php artisan test
 
+      - name: Verify production cache commands
+        run: |
+          php artisan config:cache
+          php artisan config:clear
+          php artisan route:cache
+          php artisan route:clear
+          php artisan view:cache
+          php artisan view:clear
+
       - name: Smoke-test the full Farzin database seeder
         run: |
           touch database/catalog-smoke.sqlite
@@ -86,21 +95,29 @@ jobs:
       - name: Install production Composer dependencies
         run: composer install --no-dev --prefer-dist --no-interaction --no-progress --optimize-autoloader
 
-      - name: Package cPanel release
+      - name: Package VPS release
         run: |
-          zip -qr /tmp/farzin-cpanel-deploy.zip . \
+          test -f vendor/autoload.php
+          test -f public/build/manifest.json
+          test -f .env.example
+          zip -qr /tmp/farzin-vps-release.zip . \
             -x ".git/*" \
+               ".github/*" \
                "node_modules/*" \
                "tests/*" \
                ".env" \
                "storage/logs/*" \
                "database/*.sqlite"
-          mv /tmp/farzin-cpanel-deploy.zip ./farzin-cpanel-deploy.zip
+          if unzip -Z1 /tmp/farzin-vps-release.zip | grep -Eq '(^|/)\.env$|database/.*\.sqlite|storage/logs/'; then
+            echo "Release archive contains environment, SQLite, or log files."
+            exit 1
+          fi
+          mv /tmp/farzin-vps-release.zip ./farzin-vps-release.zip
 
-      - name: Upload cPanel release package
+      - name: Upload VPS release package
         uses: actions/upload-artifact@v4
         with:
-          name: farzin-cpanel-deploy
-          path: farzin-cpanel-deploy.zip
+          name: farzin-vps-release
+          path: farzin-vps-release.zip
           if-no-files-found: error
           retention-days: 7
