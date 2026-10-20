@@ -36,6 +36,10 @@ class OrderController extends Controller
             );
         }
 
+        if ($request->boolean('inventory_issue')) {
+            $query->whereNotNull('inventory_issue_at');
+        }
+
         if ($request->filled('search')) {
             $search = trim(
                 $request->string('search')->toString()
