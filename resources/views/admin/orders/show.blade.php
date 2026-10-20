@@ -167,6 +167,26 @@
     </div>
 
 
+    @if($order->inventory_issue_at)
+        <div role="alert" class="mb-6 rounded-2xl border border-amber-300 bg-amber-50 p-5 text-amber-950">
+            <div class="flex items-start gap-3">
+                <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-amber-100 text-lg" aria-hidden="true">!</span>
+                <div class="min-w-0">
+                    <h3 class="text-sm font-bold">پرداخت موفق است؛ بررسی موجودی لازم است</h3>
+                    <p class="mt-2 text-xs leading-7">
+                        موجودی سفارش در زمان تأیید پرداخت قابل رزرو نبود. لطفاً موجودی واقعی را بررسی کنید و برای تأمین کالا یا هماهنگی بازپرداخت اقدام کنید.
+                    </p>
+                    @if($order->inventory_issue_reason)
+                        <p class="mt-2 break-words text-xs leading-6 text-amber-900">{{ $order->inventory_issue_reason }}</p>
+                    @endif
+                    <p class="mt-2 text-[11px] text-amber-800">
+                        ثبت هشدار: {{ \App\Helpers\JalaliHelper::format($order->inventory_issue_at, 'Y/m/d H:i') }}
+                    </p>
+                </div>
+            </div>
+        </div>
+    @endif
+
     {{-- Main Content --}}
     <div class="grid grid-cols-1 gap-6 xl:grid-cols-3">
 
