@@ -115,7 +115,7 @@
                     <div class="farzin-contact-hero__visual" data-contact-art role="img" aria-label="تصویرسازی متحرک از محصولات و ارتباط با فرزین">
                         <div class="farzin-contact-hero__ring farzin-contact-hero__ring--outer" aria-hidden="true"></div>
                         <div class="farzin-contact-hero__ring farzin-contact-hero__ring--inner" aria-hidden="true"></div>
-                        <div class="farzin-contact-hero__visual-index"><span>FZ</span><i aria-hidden="true"></i><span>SUPPORT / 24</span></div>
+                        <div class="farzin-contact-hero__visual-index"><span>FZ</span><i aria-hidden="true"></i><span>CONTACT / FZ</span></div>
 
                         <svg class="farzin-contact-hero__product" viewBox="0 0 620 420" fill="none" aria-hidden="true">
                             <defs>
