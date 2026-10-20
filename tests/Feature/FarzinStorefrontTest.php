@@ -1877,6 +1877,97 @@ class FarzinStorefrontTest extends TestCase
             ->assertSessionHasErrors('gateway');
     }
 
+    public function test_checkout_applies_configured_flat_shipping_and_free_shipping_threshold(): void
+    {
+        $customer = $this->customer();
+        $category = $this->category(['slug' => 'shipping-test']);
+
+        \App\Models\StorefrontSetting::updateOrCreate(
+            ['key' => 'shipping_flat_rate'],
+            ['value' => '250000']
+        );
+        \App\Models\StorefrontSetting::updateOrCreate(
+            ['key' => 'shipping_free_threshold'],
+            ['value' => '5000000']
+        );
+
+        $cart = Cart::create([
+            'user_id' => $customer->id,
+            'session_id' => null,
+            'status' => 'active',
+        ]);
+
+        $belowThreshold = $this->product($category, [
+            'name' => 'Shipping Rate Hood',
+            'slug' => 'shipping-rate-hood',
+            'sku' => 'FAR-SHIPPING-RATE',
+            'price' => 3000000,
+            'stock' => 8,
+        ]);
+
+        CartItem::create([
+            'cart_id' => $cart->id,
+            'product_id' => $belowThreshold->id,
+            'product_variant_id' => null,
+            'variant_key' => 'base',
+            'variant_options' => null,
+            'quantity' => 1,
+            'unit_price' => 3000000,
+        ]);
+
+        $checkoutData = [
+            'first_name' => 'Farzin',
+            'last_name' => 'Buyer',
+            'phone' => '09123456789',
+            'email' => 'buyer@farzin.test',
+            'province' => 'Tehran',
+            'city' => 'Tehran',
+            'address' => 'خیابان نمونه، پلاک ۱',
+            'postal_code' => '1234567890',
+        ];
+
+        $this->actingAs($customer)
+            ->post(route('checkout.place'), $checkoutData)
+            ->assertRedirect();
+
+        $chargedShippingOrder = Order::query()
+            ->where('user_id', $customer->id)
+            ->latest('id')
+            ->firstOrFail();
+
+        $this->assertEquals(250000, (float) $chargedShippingOrder->shipping_cost);
+        $this->assertEquals(3250000, (float) $chargedShippingOrder->total);
+
+        $freeShippingProduct = $this->product($category, [
+            'name' => 'Free Shipping Hood',
+            'slug' => 'free-shipping-hood',
+            'sku' => 'FAR-FREE-SHIPPING',
+            'price' => 6000000,
+            'stock' => 8,
+        ]);
+
+        CartItem::create([
+            'cart_id' => $cart->id,
+            'product_id' => $freeShippingProduct->id,
+            'product_variant_id' => null,
+            'variant_key' => 'base',
+            'variant_options' => null,
+            'quantity' => 1,
+            'unit_price' => 6000000,
+        ]);
+
+        $this->post(route('checkout.place'), $checkoutData)
+            ->assertRedirect();
+
+        $freeShippingOrder = Order::query()
+            ->where('user_id', $customer->id)
+            ->latest('id')
+            ->firstOrFail();
+
+        $this->assertEquals(0, (float) $freeShippingOrder->shipping_cost);
+        $this->assertEquals(6000000, (float) $freeShippingOrder->total);
+    }
+
     public function test_cart_quantity_update_refreshes_the_current_product_price(): void
     {
         $customer = $this->customer();
