@@ -9,7 +9,9 @@ use App\Models\Category;
 use App\Models\Product;
 use App\Models\ProductImage;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use Throwable;
 use Illuminate\View\View;
 
 class ProductController extends Controller
@@ -45,25 +47,43 @@ class ProductController extends Controller
     public function store(StoreProductRequest $request): RedirectResponse
     {
         $data = $request->validated();
-
         $uploadedImage = $request->file('image');
         unset($data['image']);
 
-        $product = Product::create($data);
+        $newPath = null;
 
         if ($uploadedImage) {
-            $path = $uploadedImage->store(
-                'products/images',
-                'public'
-            );
+            $newPath = $uploadedImage->store('products/images', 'public');
 
-            ProductImage::create([
-                'product_id' => $product->id,
-                'path' => $path,
-                'alt' => $product->name,
-                'sort_order' => 0,
-                'is_primary' => true,
-            ]);
+            if (! $newPath) {
+                return back()
+                    ->withInput()
+                    ->withErrors([
+                        'image' => 'ذخیره تصویر محصول انجام نشد؛ دوباره تلاش کنید.',
+                    ]);
+            }
+        }
+
+        try {
+            DB::transaction(function () use ($data, $newPath): void {
+                $product = Product::create($data);
+
+                if ($newPath !== null) {
+                    ProductImage::create([
+                        'product_id' => $product->id,
+                        'path' => $newPath,
+                        'alt' => $product->name,
+                        'sort_order' => 0,
+                        'is_primary' => true,
+                    ]);
+                }
+            });
+        } catch (Throwable $e) {
+            if ($newPath !== null) {
+                Storage::disk('public')->delete($newPath);
+            }
+
+            throw $e;
         }
 
         return redirect()
@@ -110,54 +130,94 @@ class ProductController extends Controller
         Product $product
     ): RedirectResponse {
         $data = $request->validated();
-
         $uploadedImage = $request->file('image');
         unset($data['image']);
 
-        $product->update($data);
+        $newPath = null;
 
         if ($uploadedImage) {
-            $primaryImage =
-                $product->images
-                    ->firstWhere('is_primary', true)
-                ?? $product->images->first();
+            $newPath = $uploadedImage->store('products/images', 'public');
 
-            $oldPath = $primaryImage?->path;
+            if (! $newPath) {
+                return back()
+                    ->withInput()
+                    ->withErrors([
+                        'image' => 'ذخیره تصویر محصول انجام نشد؛ تصویر قبلی حفظ شد.',
+                    ]);
+            }
+        }
 
-            $newPath = $uploadedImage->store(
-                'products/images',
-                'public'
-            );
+        $oldPath = null;
 
-            if ($primaryImage) {
-                $primaryImage->update([
-                    'path' => $newPath,
-                    'alt' => $product->name,
-                    'is_primary' => true,
-                ]);
+        try {
+            DB::transaction(function () use ($product, $data, $newPath, &$oldPath): void {
+                $lockedProduct = Product::query()
+                    ->whereKey($product->id)
+                    ->lockForUpdate()
+                    ->firstOrFail();
 
-                $product->images()
-                    ->where('id', '!=', $primaryImage->id)
-                    ->update(['is_primary' => false]);
-            } else {
-                ProductImage::create([
-                    'product_id' => $product->id,
-                    'path' => $newPath,
-                    'alt' => $product->name,
-                    'sort_order' => 0,
-                    'is_primary' => true,
-                ]);
+                $lockedProduct->update($data);
+
+                if ($newPath === null) {
+                    return;
+                }
+
+                $primaryImage = ProductImage::query()
+                    ->where('product_id', $lockedProduct->id)
+                    ->where('is_primary', true)
+                    ->orderBy('id')
+                    ->lockForUpdate()
+                    ->first();
+
+                if (! $primaryImage) {
+                    $primaryImage = ProductImage::query()
+                        ->where('product_id', $lockedProduct->id)
+                        ->orderBy('sort_order')
+                        ->orderBy('id')
+                        ->lockForUpdate()
+                        ->first();
+                }
+
+                $oldPath = $primaryImage?->path;
+
+                if ($primaryImage) {
+                    $primaryImage->update([
+                        'path' => $newPath,
+                        'alt' => $lockedProduct->name,
+                        'is_primary' => true,
+                    ]);
+
+                    $lockedProduct->images()
+                        ->where('id', '!=', $primaryImage->id)
+                        ->update(['is_primary' => false]);
+                } else {
+                    ProductImage::create([
+                        'product_id' => $lockedProduct->id,
+                        'path' => $newPath,
+                        'alt' => $lockedProduct->name,
+                        'sort_order' => 0,
+                        'is_primary' => true,
+                    ]);
+                }
+            });
+        } catch (Throwable $e) {
+            if ($newPath !== null) {
+                Storage::disk('public')->delete($newPath);
             }
 
-            if (
-                $oldPath
-                && ! str_starts_with($oldPath, 'http://')
-                && ! str_starts_with($oldPath, 'https://')
-                && ! str_starts_with($oldPath, '//')
-                && $oldPath !== $newPath
-            ) {
-                Storage::disk('public')->delete($oldPath);
-            }
+            throw $e;
+        }
+
+        // Delete the previous image only after the database change commits.
+        if (
+            $newPath !== null
+            && $oldPath
+            && ! str_starts_with($oldPath, 'http://')
+            && ! str_starts_with($oldPath, 'https://')
+            && ! str_starts_with($oldPath, '//')
+            && $oldPath !== $newPath
+        ) {
+            Storage::disk('public')->delete($oldPath);
         }
 
         return redirect()
