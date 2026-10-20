@@ -261,9 +261,22 @@ class ProductVariantController extends Controller
     public function destroy(
         ProductVariant $productVariant
     ): RedirectResponse {
-        $productId = $productVariant->product_id;
+        $productId = (int) $productVariant->product_id;
 
-        $productVariant->delete();
+        DB::transaction(function () use ($productVariant, $productId): void {
+            // Serialize deletion with checkout and variant edits.
+            Product::withTrashed()
+                ->whereKey($productId)
+                ->lockForUpdate()
+                ->firstOrFail();
+
+            $lockedVariant = ProductVariant::query()
+                ->whereKey($productVariant->id)
+                ->lockForUpdate()
+                ->firstOrFail();
+
+            $lockedVariant->delete();
+        });
 
         return redirect()
             ->route(
