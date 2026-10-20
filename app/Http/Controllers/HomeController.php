@@ -27,12 +27,14 @@ class HomeController extends Controller
          * resolvable image. The hero, cards and 3D mosaic have separate,
          * non-overlapping products so visitors do not see repeated items.
          */
+        $catalogCount = Product::query()
+            ->active()
+            ->whereHas('category', fn ($query) => $query->where('is_active', true))
+            ->count();
+
         $catalogProducts = Product::query()
             ->active()
             ->whereHas('category', fn ($query) => $query->where('is_active', true))
-            ->whereHas('images', fn ($query) => $query
-                ->whereNotNull('path')
-                ->where('path', '!=', ''))
             ->with([
                 'category',
                 'images.media',
@@ -42,18 +44,27 @@ class HomeController extends Controller
             ->orderByDesc('updated_at')
             ->limit(150)
             ->get()
-            ->filter(fn (Product $product) => $product->images->contains(
-                fn ($image) => filled($image->url)
-            ))
             ->take(50)
             ->values();
 
-        $heroProduct = $catalogProducts->first();
+        // Prefer a real-image product for the visual hero, but never hide
+        // otherwise-active products from the catalogue when an image is absent.
+        $heroProduct = $catalogProducts->first(
+            fn (Product $product) => $product->images->contains(
+                fn ($image) => filled($image->url)
+            )
+        );
 
         $featuredProducts = $catalogProducts
             ->reject(fn (Product $product) => $product->id === $heroProduct?->id)
             ->take(8)
             ->values();
+
+        // Keep the first product discoverable in both hero and product-card
+        // contexts when it is the only active catalogue item.
+        if ($catalogProducts->count() === 1 && $featuredProducts->isEmpty()) {
+            $featuredProducts = $catalogProducts->take(1)->values();
+        }
 
         $usedProductIds = $featuredProducts
             ->pluck('id')
@@ -73,6 +84,9 @@ class HomeController extends Controller
             ->values();
 
         $galleryProducts = $catalogProducts
+            ->filter(fn (Product $product) => $product->images->contains(
+                fn ($image) => filled($image->url)
+            ))
             ->reject(fn (Product $product) => $usedProductIds->contains($product->id))
             ->values();
 
@@ -104,7 +118,7 @@ class HomeController extends Controller
             'gridGroups' => $demoImages->chunk(9)->values(),
             'featuredProducts' => $featuredProducts,
             'newProducts' => $newProducts,
-            'catalogCount' => $catalogProducts->count(),
+            'catalogCount' => $catalogCount,
             'galleryCount' => $demoImages->count(),
         ]);
     }
