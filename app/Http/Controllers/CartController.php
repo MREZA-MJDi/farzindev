@@ -183,11 +183,42 @@ class CartController extends Controller
             'variant',
         ]);
 
+        $product = $item->product;
+
+        if (
+            ! $product
+            || $product->status !== 'active'
+            || ! $product->category()->where('is_active', true)->exists()
+        ) {
+            return back()->withErrors([
+                'quantity' => 'این محصول یا دسته‌بندی آن دیگر برای خرید فعال نیست؛ آن را از سبد حذف کنید.',
+            ]);
+        }
+
+        $selectedIds = $item->selectedVariantIds();
         $variants = $this->resolveVariantsFromCartItem($item);
+        $currentVariants = $product->variants()
+            ->where('is_active', true)
+            ->orderBy('id')
+            ->get();
+
+        $selectedTypes = $variants->pluck('type')->unique()->values();
+        $currentTypes = $currentVariants->pluck('type')->unique()->values();
+
+        $validVariantSelection = count($selectedIds) === $variants->count()
+            && $variants->pluck('type')->count() === $selectedTypes->count()
+            && $currentTypes->diff($selectedTypes)->isEmpty()
+            && $selectedTypes->diff($currentTypes)->isEmpty();
+
+        if (! $validVariantSelection) {
+            return back()->withErrors([
+                'quantity' => 'گزینه‌های این محصول تغییر کرده‌اند؛ آن را از سبد حذف و با گزینه‌های فعلی دوباره اضافه کنید.',
+            ]);
+        }
 
         $stock = $variants->isNotEmpty()
             ? (int) $variants->min('stock')
-            : (int) $item->product->stock;
+            : (int) $product->stock;
 
         if ((int) $validated['quantity'] > $stock) {
             return back()->withErrors([
@@ -195,8 +226,33 @@ class CartController extends Controller
             ]);
         }
 
+        $unitPrice = max(
+            0,
+            (float) $product->price
+            + (float) $variants->sum(
+                fn (ProductVariant $variant) => (float) $variant->price_adjustment
+            )
+        );
+
+        $variantOptions = $variants
+            ->sortBy('type', SORT_NATURAL | SORT_FLAG_CASE)
+            ->map(fn (ProductVariant $variant) => [
+                'id' => (int) $variant->id,
+                'type' => (string) $variant->type,
+                'name' => (string) $variant->name,
+                'value' => (string) $variant->value,
+                'sku' => $variant->sku,
+                'color_hex' => $variant->color_hex,
+                'price_adjustment' => (float) $variant->price_adjustment,
+                'stock' => (int) $variant->stock,
+            ])
+            ->values()
+            ->all();
+
         $item->update([
             'quantity' => (int) $validated['quantity'],
+            'unit_price' => $unitPrice,
+            'variant_options' => $variantOptions ?: null,
         ]);
 
         $cart = $item->cart->fresh('items');
