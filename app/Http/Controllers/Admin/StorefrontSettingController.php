@@ -21,6 +21,8 @@ class StorefrontSettingController extends Controller
                 'shop_banner_image',
                 'shop_banner_title',
                 'shop_banner_subtitle',
+                'shipping_flat_rate',
+                'shipping_free_threshold',
             ])
             ->pluck('value', 'key');
 
@@ -31,6 +33,8 @@ class StorefrontSettingController extends Controller
             'shopBannerSubtitle' => $settings->get('shop_banner_subtitle') ?: 'هود و سینک آشپزخانه؛ انتخابی دقیق برای فضای شما.',
             'shopBannerPath' => $bannerPath,
             'shopBannerUrl' => $bannerPath ? Storage::disk('public')->url($bannerPath) : null,
+            'shippingFlatRate' => (int) ($settings->get('shipping_flat_rate') ?? 0),
+            'shippingFreeThreshold' => (int) ($settings->get('shipping_free_threshold') ?? 0),
             'contactSetting' => ContactSetting::query()->first(),
         ]);
     }
@@ -47,6 +51,8 @@ class StorefrontSettingController extends Controller
             ],
             'shop_banner_title' => ['required', 'string', 'max:255'],
             'shop_banner_subtitle' => ['nullable', 'string', 'max:500'],
+            'shipping_flat_rate' => ['sometimes', 'nullable', 'integer', 'min:0', 'max:1000000000000'],
+            'shipping_free_threshold' => ['sometimes', 'nullable', 'integer', 'min:0', 'max:1000000000000'],
             'remove_shop_banner' => ['nullable', 'boolean'],
 
             'phone' => ['nullable', 'string', 'max:50'],
@@ -111,6 +117,20 @@ class StorefrontSettingController extends Controller
                     ['key' => 'shop_banner_subtitle'],
                     ['value' => $data['shop_banner_subtitle'] ?? null]
                 );
+
+                if (array_key_exists('shipping_flat_rate', $data)) {
+                    StorefrontSetting::query()->updateOrCreate(
+                        ['key' => 'shipping_flat_rate'],
+                        ['value' => $data['shipping_flat_rate'] ?? 0]
+                    );
+                }
+
+                if (array_key_exists('shipping_free_threshold', $data)) {
+                    StorefrontSetting::query()->updateOrCreate(
+                        ['key' => 'shipping_free_threshold'],
+                        ['value' => $data['shipping_free_threshold'] ?: null]
+                    );
+                }
 
                 $contact = ContactSetting::query()->first() ?? new ContactSetting();
                 $contact->fill([
