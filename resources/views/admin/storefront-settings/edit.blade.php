@@ -119,6 +119,26 @@
 
             <section class="admin-card p-5 sm:p-7">
                 <div class="mb-6">
+                    <h2 class="text-base font-bold text-[var(--admin-text)]">هزینه ارسال</h2>
+                    <p class="mt-2 text-xs leading-6 text-[var(--admin-muted)]">مبالغ به تومان هستند. هزینه ثابت برای سفارش‌هایی که به حد ارسال رایگان نرسند اعمال می‌شود؛ مقدار صفر یعنی ارسال رایگان.</p>
+                </div>
+
+                <div class="grid gap-5 sm:grid-cols-2">
+                    <div>
+                        <label for="shipping_flat_rate" class="admin-label">هزینه ثابت ارسال (تومان)</label>
+                        <input id="shipping_flat_rate" name="shipping_flat_rate" type="number" min="0" max="1000000000000" step="1" required value="{{ old('shipping_flat_rate', $shippingFlatRate) }}" class="admin-input" inputmode="numeric">
+                        @error('shipping_flat_rate')<p class="mt-2 text-xs text-[var(--admin-danger)]">{{ $message }}</p>@enderror
+                    </div>
+                    <div>
+                        <label for="shipping_free_threshold" class="admin-label">حداقل مبلغ برای ارسال رایگان (تومان)</label>
+                        <input id="shipping_free_threshold" name="shipping_free_threshold" type="number" min="0" max="1000000000000" step="1" value="{{ old('shipping_free_threshold', $shippingFreeThreshold ?: '') }}" class="admin-input" inputmode="numeric" placeholder="خالی یا صفر = غیرفعال">
+                        @error('shipping_free_threshold')<p class="mt-2 text-xs text-[var(--admin-danger)]">{{ $message }}</p>@enderror
+                    </div>
+                </div>
+            </section>
+
+            <section class="admin-card p-5 sm:p-7">
+                <div class="mb-6">
                     <h2 class="text-base font-bold text-[var(--admin-text)]">اطلاعات تماس واقعی</h2>
                     <p class="mt-2 text-xs leading-6 text-[var(--admin-muted)]">شماره تماس، ایمیل و آدرس این بخش در صفحه «تماس با ما» استفاده می‌شود. نقشه گوگل از روی آدرس واردشده ساخته می‌شود.</p>
                 </div>
