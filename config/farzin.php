@@ -12,7 +12,7 @@ return [
     */
     'admin' => [
         'name' => env('ADMIN_NAME', 'Farzin Admin'),
-        'email' => env('ADMIN_EMAIL', 'admin@farajihome.com'),
+        'email' => env('ADMIN_EMAIL'),
         'password' => env('ADMIN_PASSWORD'),
     ],
 ];
