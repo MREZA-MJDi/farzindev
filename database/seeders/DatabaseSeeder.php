@@ -8,18 +8,15 @@ class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
-        /*
-         * Seed only the Farzin catalog structure and safe product cleanup.
-         * Real product data, specifications, variants and images are managed
-         * through the admin dashboard instead of fabricated sample records.
-         */
         $this->call([
             CategorySeeder::class,
             ProductSeeder::class,
+            ProductImageSeeder::class,
             UserSeeder::class,
         ]);
 
-        // Fictional carts, orders and payments remain local/testing-only.
+        // Fictional carts, orders and payments are limited to local/testing
+        // work; they are never created as customer history in production.
         if (app()->environment(['local', 'testing'])) {
             $this->call([
                 AddressSeeder::class,
