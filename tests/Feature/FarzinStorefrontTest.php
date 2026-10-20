@@ -1512,6 +1512,9 @@ class FarzinStorefrontTest extends TestCase
             ->firstOrFail();
         $item = $cart->items()->firstOrFail();
 
+        // Use the actual session identifier persisted with the guest cart.
+        $this->withCookie(config('session.cookie'), $cart->session_id);
+
         $this->patchJson(route('cart.update', $item), ['quantity' => 3])
             ->assertOk()
             ->assertJsonPath('cart_count', 3);
