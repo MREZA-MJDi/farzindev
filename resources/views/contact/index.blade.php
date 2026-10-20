@@ -759,6 +759,8 @@
     </section>
 
 
+    @if(count($faqs) > 0)
+
     {{-- =========================================================
          FAQ
          FAQ is intentionally static for the first version.
@@ -840,16 +842,6 @@
 
                         </article>
 
-                    @empty
-
-                        <div class="rounded-3xl border border-[var(--livora-border)] bg-[var(--livora-cream)] p-6">
-
-                            <p class="text-sm leading-7 text-[var(--livora-stone)]">
-                                در حال حاضر پرسش متداولی ثبت نشده است.
-                            </p>
-
-                        </div>
-
                     @endforelse
 
                 </div>
@@ -859,6 +851,7 @@
         </x-layout.container>
 
     </section>
+    @endif
 
 
     {{-- =========================================================
