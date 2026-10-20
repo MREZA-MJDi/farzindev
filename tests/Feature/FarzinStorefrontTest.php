@@ -941,6 +941,44 @@ class FarzinStorefrontTest extends TestCase
         $this->assertSame(5, (int) $product->fresh()->stock);
     }
 
+    public function test_payment_start_rejects_duplicate_active_attempts(): void
+    {
+        $customer = $this->customer();
+        $order = $this->order($customer);
+
+        $order->payments()->create([
+            'user_id' => $customer->id,
+            'gateway' => 'digipay',
+            'amount' => 1000000,
+            'status' => 'initiated',
+            'metadata' => [
+                'payment_method' => 'online',
+                'payment_flow' => 'external_gateway',
+            ],
+        ]);
+
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('پرداخت در حال انجام است');
+
+        app(PaymentService::class)->startInstallmentPayment($order, 'digipay');
+    }
+
+    public function test_payment_start_revalidates_order_state_after_locking_it(): void
+    {
+        $customer = $this->customer();
+        $order = $this->order($customer);
+        $staleOrder = Order::query()->findOrFail($order->id);
+
+        // Simulate a cancellation after the request loaded the order but
+        // before the payment service acquires its transactional lock.
+        $order->update(['status' => 'cancelled']);
+
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('لغو شده');
+
+        app(PaymentService::class)->startInstallmentPayment($staleOrder, 'digipay');
+    }
+
     public function test_customer_cannot_view_another_customers_payment_page(): void
     {
         $owner = $this->customer();
