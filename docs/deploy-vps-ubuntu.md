@@ -119,7 +119,7 @@ The release artifact includes Composer's production dependencies and compiled Vi
 ```bash
 cd /var/www/farzin
 composer install --no-dev --prefer-dist --no-interaction --optimize-autoloader
-php artisan key:generate
+[ -n "$(grep '^APP_KEY=' .env | cut -d '=' -f2-)" ] || php artisan key:generate
 php artisan migrate --force
 php artisan storage:link
 ```
