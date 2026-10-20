@@ -109,9 +109,9 @@
                                     class="fz-product-tile__image"
                                     src="{{ $image->url }}"
                                     alt="{{ $image->alt ?: $product->name }}"
-                                    loading="{{ $loop->index < 4 ? 'eager' : 'lazy' }}"
+                                    loading="lazy"
                                     decoding="async"
-                                    fetchpriority="{{ $loop->first ? 'high' : 'auto' }}"
+                                    fetchpriority="auto"
                                     data-fz-product-image
                                 >
                                 <span class="fz-product-tile__shade" aria-hidden="true"></span>
