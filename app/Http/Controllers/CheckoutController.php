@@ -131,7 +131,7 @@ class CheckoutController extends Controller
 
                 foreach ($lockedCart->items as $item) {
                     if (! $item->product) {
-                        throw new \\RuntimeException(
+                        throw new \RuntimeException(
                             'یکی از محصولات سبد دیگر در دسترس نیست. سبد را بررسی کنید.'
                         );
                     }
@@ -142,7 +142,7 @@ class CheckoutController extends Controller
                         count($item->selectedVariantIds())
                         !== $variants->count()
                     ) {
-                        throw new \\RuntimeException(
+                        throw new \RuntimeException(
                             "یکی از گزینه‌های انتخاب‌شده برای «{$item->product->name}» دیگر در دسترس نیست."
                         );
                     }
@@ -155,7 +155,7 @@ class CheckoutController extends Controller
                         $stock < 1
                         || $item->quantity > $stock
                     ) {
-                        throw new \\RuntimeException(
+                        throw new \RuntimeException(
                             "موجودی محصول «{$item->product->name}» کافی نیست."
                         );
                     }
@@ -230,7 +230,7 @@ class CheckoutController extends Controller
             return redirect()
                 ->route('checkout.payment', $order)
                 ->with('success', 'سفارش شما با موفقیت ثبت شد.');
-        } catch (\\RuntimeException $e) {
+        } catch (\RuntimeException $e) {
             return back()
                 ->withInput()
                 ->with('error', $e->getMessage());
