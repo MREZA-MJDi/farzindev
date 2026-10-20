@@ -47,8 +47,20 @@ class InventoryReservationService
             if (
                 $lockedOrder->inventory_reserved_at === null
                 || $lockedOrder->inventory_committed_at !== null
-                || $lockedOrder->payment_status === 'paid'
             ) {
+                return;
+            }
+
+            // A paid online order or an installment order with any paid
+            // installment is committed inventory, not a refundable hold.
+            if (
+                $lockedOrder->payment_status === 'paid'
+                || $lockedOrder->installments()->where('status', 'paid')->exists()
+            ) {
+                $lockedOrder->forceFill([
+                    'inventory_committed_at' => now(),
+                ])->save();
+
                 return;
             }
 
