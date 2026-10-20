@@ -24,7 +24,7 @@ class UpdateProductImageRequest extends FormRequest
                 'nullable',
                 'image',
                 'mimes:jpg,jpeg,png,webp',
-                'max:5120',
+                'max:20480',
             ],
 
             'alt' => [
@@ -62,7 +62,7 @@ class UpdateProductImageRequest extends FormRequest
 
             'image.image' => 'فایل انتخاب‌شده باید تصویر باشد.',
             'image.mimes' => 'فرمت تصویر باید jpg، jpeg، png یا webp باشد.',
-            'image.max' => 'حجم تصویر نباید بیشتر از ۵ مگابایت باشد.',
+            'image.max' => 'حجم تصویر نباید بیشتر از ۲۰ مگابایت باشد.',
 
             'alt.string' => 'متن جایگزین تصویر باید متنی باشد.',
             'alt.max' => 'متن جایگزین تصویر نباید بیشتر از ۲۵۵ کاراکتر باشد.',

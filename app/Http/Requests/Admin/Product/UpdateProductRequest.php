@@ -154,7 +154,7 @@ class UpdateProductRequest extends FormRequest
                 'nullable',
                 'image',
                 'mimes:jpg,jpeg,png,webp',
-                'max:2048',
+                'max:20480',
             ],
 
             'price' => [
@@ -282,7 +282,7 @@ class UpdateProductRequest extends FormRequest
 
             'image.image' => 'فایل انتخاب‌شده باید تصویر باشد.',
             'image.mimes' => 'فرمت تصویر باید jpg، jpeg، png یا webp باشد.',
-            'image.max' => 'حجم تصویر نباید بیشتر از ۲ مگابایت باشد.',
+            'image.max' => 'حجم تصویر نباید بیشتر از ۲۰ مگابایت باشد.',
 
             'price.required' => 'وارد کردن قیمت محصول الزامی است.',
             'price.numeric' => 'قیمت محصول باید یک عدد معتبر باشد.',

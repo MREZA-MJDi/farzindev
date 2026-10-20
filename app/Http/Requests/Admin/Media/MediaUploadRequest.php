@@ -23,7 +23,7 @@ class MediaUploadRequest extends FormRequest
             'file' => [
                 'required',
                 'file',
-                'max:10240',
+                'max:20480',
                 'mimes:jpg,jpeg,png,webp,gif,pdf,doc,docx,xls,xlsx,zip',
             ],
 
@@ -49,7 +49,7 @@ class MediaUploadRequest extends FormRequest
         return [
             'file.required' => 'انتخاب فایل الزامی است.',
             'file.file' => 'فایل انتخاب‌شده معتبر نیست.',
-            'file.max' => 'حجم فایل نباید بیشتر از ۱۰ مگابایت باشد.',
+            'file.max' => 'حجم فایل نباید بیشتر از ۲۰ مگابایت باشد.',
             'file.mimes' => 'فرمت فایل مجاز نیست؛ SVG در کتابخانه رسانه پذیرفته نمی‌شود.',
 
             'alt.string' => 'متن جایگزین باید یک متن معتبر باشد.',
