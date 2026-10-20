@@ -107,8 +107,14 @@ class ShopController extends Controller
             // configured. Variant-backed products must use option-level stock.
             $query->where(function ($stockQuery): void {
                 $stockQuery
-                    ->where('products.stock', '>', 0)
+                    ->where(function ($baseStock): void {
+                        $baseStock
+                            ->whereDoesntHave('variants', fn ($variantQuery) => $variantQuery
+                                ->where('is_active', true))
+                            ->where('products.stock', '>', 0);
+                    })
                     ->orWhereHas('variants', fn ($variantQuery) => $variantQuery
+                        ->where('is_active', true)
                         ->where('stock', '>', 0));
             });
         }
