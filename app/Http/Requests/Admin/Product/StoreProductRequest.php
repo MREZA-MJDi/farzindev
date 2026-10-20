@@ -154,6 +154,7 @@ class StoreProductRequest extends FormRequest
                 'nullable',
                 'image',
                 'mimes:jpg,jpeg,png,webp',
+                'dimensions:min_width=800,min_height=600',
                 'max:20480',
             ],
 
@@ -283,6 +284,7 @@ class StoreProductRequest extends FormRequest
             'image.image' => 'فایل انتخاب‌شده باید تصویر باشد.',
             'image.mimes' => 'فرمت تصویر باید jpg، jpeg، png یا webp باشد.',
             'image.max' => 'حجم تصویر نباید بیشتر از ۲۰ مگابایت باشد.',
+            'image.dimensions' => 'ابعاد تصویر باید حداقل ۸۰۰ در ۶۰۰ پیکسل باشد.',
 
             'price.required' => 'وارد کردن قیمت محصول الزامی است.',
             'price.numeric' => 'قیمت محصول باید یک عدد معتبر باشد.',
