@@ -1098,6 +1098,45 @@ class FarzinStorefrontTest extends TestCase
             ->assertNotFound();
     }
 
+    public function test_gateway_http_success_without_explicit_verification_flag_is_not_payment_success(): void
+    {
+        $customer = $this->customer();
+        $order = $this->order($customer);
+        $payment = $order->payments()->create([
+            'user_id' => $customer->id,
+            'gateway' => 'digipay',
+            'authority' => 'AUTH-AMBIGUOUS-RESPONSE',
+            'amount' => $order->total,
+            'status' => 'initiated',
+            'metadata' => [
+                'payment_method' => 'online',
+                'payment_flow' => 'external_gateway',
+            ],
+        ]);
+
+        config([
+            'payment.digipay.base_url' => 'https://gateway.test',
+            'payment.digipay.endpoints.verify' => '/verify',
+        ]);
+
+        \Illuminate\Support\Facades\Http::fake([
+            'gateway.test/*' => \Illuminate\Support\Facades\Http::response([
+                'amount' => (float) $payment->amount,
+                'transaction_id' => 'TX-AMBIGUOUS',
+                'status' => 'pending',
+            ], 200),
+        ]);
+
+        $result = app(\App\Services\Payments\Gateways\DigiPayGateway::class)
+            ->verifyPayment($payment);
+
+        $this->assertFalse($result['success']);
+        $this->assertNull($result['amount']);
+        $this->assertStringContainsString('explicitly confirm', $result['message']);
+        $this->assertSame('initiated', $payment->fresh()->status);
+        $this->assertNotSame('paid', $order->fresh()->payment_status);
+    }
+
     public function test_online_payment_callback_rejects_verified_response_without_amount(): void
     {
         $customer = $this->customer();
