@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\Checkout\PlaceOrderRequest;
+use App\Services\Checkout\CheckoutOrderService;
 use App\Models\Cart;
 use App\Models\Order;
 use App\Services\Installments\InstallmentPlanService;
@@ -92,20 +93,11 @@ class CheckoutController extends Controller
         );
     }
     /**
-     * Create order from the active cart.
+     * Create an order from the active cart.
      */
     public function placeOrder(
         PlaceOrderRequest $request,
-        InventoryReservationService $inventoryReservationService
-    ): RedirectResponse {
-        $validated = $request->validated();
-
-        try {
-            $cart = $this->getActiveCart();
-
-    public function placeOrder(
-        PlaceOrderRequest $request,
-        \App\Services\Checkout\CheckoutOrderService $checkoutOrderService
+        CheckoutOrderService $checkoutOrderService
     ): RedirectResponse {
         $validated = $request->validated();
 
@@ -138,29 +130,6 @@ class CheckoutController extends Controller
         }
     }
 
-
-
-            if (! $order) {
-                return redirect()
-                    ->route('cart.index')
-                    ->with('error', 'سبد خرید شما خالی است.');
-            }
-
-            return redirect()
-                ->route('checkout.payment', $order)
-                ->with('success', 'سفارش شما با موفقیت ثبت شد.');
-        } catch (\RuntimeException $e) {
-            return back()
-                ->withInput()
-                ->with('error', $e->getMessage());
-        } catch (Throwable $e) {
-            report($e);
-
-            return back()
-                ->withInput()
-                ->with('error', 'ثبت سفارش انجام نشد. لطفاً دوباره تلاش کنید.');
-        }
-    }
 
     /**
      * Show payment selection page.
