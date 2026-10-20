@@ -20,6 +20,7 @@ Copy `.env.example` to `.env` (Windows CMD: `copy .env.example .env`), configure
 ```bash
 php artisan key:generate
 php artisan migrate
+php artisan db:seed
 npm install
 npm run build
 php artisan storage:link
@@ -30,9 +31,10 @@ Open `http://127.0.0.1:8000`. For Vite hot reload, run `npm run dev` in a separa
 
 ## Catalogue and imagery
 - Create real Farzin products, specifications, stock, images, and variants from the admin dashboard.
-- The catalogue seeders no longer invent sample furniture products or prices.
-- Running the category seeder activates the Farzin hood and sink categories and hides the old demo furniture categories.
-- The product seeder archives the inherited demo products with the `LIV-*` SKU prefix. Existing order records are not deleted.
+- `php artisan db:seed` creates the Farzin categories, the configured admin account, and 50 editable catalogue preview records (25 hoods and 25 sinks) without generated images.
+- New catalogue records use preview names and prices; verify each specification, SKU, price, stock count and product photo in the admin dashboard before publishing. In production, new preview records are drafts with zero stock.
+- The category seeder hides inherited demo furniture categories. The product seeder archives inherited products with the `LIV-*` SKU prefix, preserves existing order history, and does not overwrite already-existing seeded records that staff have edited.
+- To upload product covers and gallery images, the dashboard allows JPG/JPEG/PNG/WEBP up to 20 MB. The PHP runtime must accept requests of at least 26 MB for these limits to work.
 - The `/blog` page contains a starter set of buying guides for hoods, sinks, and installation measurements. Its copy is currently maintained in `resources/views/blog/index.blade.php`, not in an admin CMS.
 
 ## Tests
