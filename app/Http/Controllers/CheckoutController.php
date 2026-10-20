@@ -8,6 +8,7 @@ use App\Models\CartItem;
 use App\Models\ProductVariant;
 use App\Models\Order;
 use App\Services\Installments\InstallmentPlanService;
+use App\Services\Inventory\InventoryReservationService;
 use App\Services\Payments\PaymentService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -99,7 +100,8 @@ class CheckoutController extends Controller
      * Create order from the active cart.
      */
     public function placeOrder(
-        PlaceOrderRequest $request
+        PlaceOrderRequest $request,
+        InventoryReservationService $inventoryReservationService
     ): RedirectResponse {
         $validated = $request->validated();
 
@@ -108,7 +110,8 @@ class CheckoutController extends Controller
 
             $order = DB::transaction(function () use (
                 $cart,
-                $validated
+                $validated,
+                $inventoryReservationService
             ) {
                 // Lock and reload the active cart inside the same transaction
                 // that creates the order, so a duplicate checkout submission
@@ -213,6 +216,11 @@ class CheckoutController extends Controller
                         'total' => (float) $item->unit_price * (int) $item->quantity,
                     ]);
                 }
+
+                // Reserve stock inside the order transaction. Product and
+                // variant rows are locked and quantities aggregated, so two
+                // concurrent checkouts cannot sell the same stock twice.
+                $inventoryReservationService->reserveForOrder($order);
 
                 // Clear the cart before commit; the lock prevents concurrent
                 // submissions from creating multiple orders from the same cart.
