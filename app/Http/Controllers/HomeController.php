@@ -42,10 +42,8 @@ class HomeController extends Controller
             ->orderByDesc('is_featured')
             ->orderByDesc('is_new')
             ->orderByDesc('updated_at')
-            ->limit(150)
-            ->get()
-            ->take(50)
-            ->values();
+            ->limit(50)
+            ->get();
 
         // Prefer a real-image product for the visual hero, but never hide
         // otherwise-active products from the catalogue when an image is absent.
