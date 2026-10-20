@@ -39,16 +39,6 @@ class PaymentService
             $gateway
         );
 
-        $amount = $this->normalizeAmount(
-            $order->total
-        );
-
-        if ($amount <= 0) {
-            throw new RuntimeException(
-                'مبلغ سفارش معتبر نیست.'
-            );
-        }
-
         /*
         |--------------------------------------------------------------------------
         | Create local payment attempt
@@ -57,8 +47,7 @@ class PaymentService
 
         $payment = DB::transaction(function () use (
             $order,
-            $gateway,
-            $amount
+            $gateway
         ) {
             /*
              * Lock the order so two parallel requests cannot
@@ -69,11 +58,31 @@ class PaymentService
                 ->lockForUpdate()
                 ->firstOrFail();
 
-            if (
-                $lockedOrder->payment_status === 'paid'
-            ) {
+            // Revalidate against the current locked order. The model passed
+            // into this method may have been loaded before a cancellation or
+            // another payment attempt completed.
+            $this->validateOrderForPayment($lockedOrder);
+
+            if ($lockedOrder->payments()->where('status', 'paid')->exists()) {
                 throw new RuntimeException(
-                    'این سفارش قبلاً پرداخت شده است.'
+                    'برای این سفارش پرداخت موفق ثبت شده است.'
+                );
+            }
+
+            // Never open two live gateway sessions for one order. Both could
+            // succeed and charge the customer twice. Failed attempts can be
+            // retried; stale attempts are closed by orders:expire-unpaid.
+            if ($lockedOrder->payments()->whereIn('status', ['pending', 'initiated'])->exists()) {
+                throw new RuntimeException(
+                    'برای این سفارش یک پرداخت در حال انجام است. وضعیت همان پرداخت را بررسی کنید.'
+                );
+            }
+
+            $amount = $this->normalizeAmount($lockedOrder->total);
+
+            if ($amount <= 0) {
+                throw new RuntimeException(
+                    'مبلغ سفارش معتبر نیست.'
                 );
             }
 
