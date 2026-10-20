@@ -1877,6 +1877,103 @@ class FarzinStorefrontTest extends TestCase
             ->assertSessionHasErrors('gateway');
     }
 
+    public function test_cart_quantity_update_refreshes_the_current_product_price(): void
+    {
+        $customer = $this->customer();
+        $product = $this->product($this->category(['slug' => 'hoods']), [
+            'name' => 'Cart Reprice Hood',
+            'slug' => 'cart-reprice-hood',
+            'sku' => 'FAR-CART-REPRICE',
+            'price' => 3000000,
+            'stock' => 8,
+        ]);
+        $cart = Cart::create([
+            'user_id' => $customer->id,
+            'session_id' => null,
+            'status' => 'active',
+        ]);
+        $item = CartItem::create([
+            'cart_id' => $cart->id,
+            'product_id' => $product->id,
+            'product_variant_id' => null,
+            'variant_key' => 'base',
+            'variant_options' => null,
+            'quantity' => 1,
+            'unit_price' => 1000000,
+        ]);
+
+        $this->actingAs($customer)
+            ->patchJson(route('cart.update', $item), ['quantity' => 2])
+            ->assertOk()
+            ->assertJsonPath('subtotal', 6000000);
+
+        $item->refresh();
+        $this->assertSame(2, (int) $item->quantity);
+        $this->assertEquals(3000000, (float) $item->unit_price);
+    }
+
+    public function test_cart_update_rejects_old_variant_selection_after_product_options_change(): void
+    {
+        $customer = $this->customer();
+        $product = $this->product($this->category(['slug' => 'hoods']), [
+            'name' => 'Cart Option Change Hood',
+            'slug' => 'cart-option-change-hood',
+            'sku' => 'FAR-CART-OPTIONS',
+            'stock' => 8,
+        ]);
+        $color = ProductVariant::create([
+            'product_id' => $product->id,
+            'type' => 'color',
+            'name' => 'رنگ',
+            'value' => 'black',
+            'sku' => 'FAR-CART-OPTIONS-BLACK',
+            'price_adjustment' => 0,
+            'stock' => 6,
+            'is_active' => true,
+        ]);
+        $cart = Cart::create([
+            'user_id' => $customer->id,
+            'session_id' => null,
+            'status' => 'active',
+        ]);
+        $item = CartItem::create([
+            'cart_id' => $cart->id,
+            'product_id' => $product->id,
+            'product_variant_id' => $color->id,
+            'variant_key' => hash('sha256', $product->id.'|color:'.$color->id),
+            'variant_options' => [[
+                'id' => $color->id,
+                'type' => 'color',
+                'name' => 'رنگ',
+                'value' => 'black',
+                'sku' => $color->sku,
+                'price_adjustment' => 0,
+                'stock' => 6,
+            ]],
+            'quantity' => 1,
+            'unit_price' => $product->price,
+        ]);
+
+        ProductVariant::create([
+            'product_id' => $product->id,
+            'type' => 'finish',
+            'name' => 'پوشش',
+            'value' => 'matte',
+            'sku' => 'FAR-CART-OPTIONS-MATTE',
+            'price_adjustment' => 0,
+            'stock' => 6,
+            'is_active' => true,
+        ]);
+
+        $this->actingAs($customer)
+            ->from(route('cart.index'))
+            ->patch(route('cart.update', $item), ['quantity' => 2])
+            ->assertRedirect(route('cart.index'))
+            ->assertSessionHasErrors('quantity');
+
+        $this->assertSame(1, (int) $item->fresh()->quantity);
+    }
+
     public function test_guest_can_update_remove_and_clear_only_their_session_cart(): void
     {
         $product = $this->product($this->category(['slug' => 'hoods']), [
