@@ -3,11 +3,11 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Helpers\JalaliHelper;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Product;
 use App\Models\User;
-use Carbon\Carbon;
 use Illuminate\Support\Collection;
 
 class DashboardController extends Controller
@@ -68,19 +68,18 @@ class DashboardController extends Controller
             ->where('payment_status', 'paid')
             ->sum('total');
 
+        [$currentMonthStart, $nextMonthStart] = JalaliHelper::monthRange(now());
+        [$previousMonthStart, $currentMonthStartForPrevious] = JalaliHelper::monthRange(now(), 1);
+
         $currentMonthRevenue = Order::query()
             ->where('payment_status', 'paid')
-            ->whereBetween('created_at', [
-                now()->startOfMonth(),
-                now()->endOfMonth(),
-            ])
+            ->where('created_at', '>=', $currentMonthStart)
+            ->where('created_at', '<', $nextMonthStart)
             ->sum('total');
 
         $currentMonthOrders = Order::query()
-            ->whereBetween('created_at', [
-                now()->startOfMonth(),
-                now()->endOfMonth(),
-            ])
+            ->where('created_at', '>=', $currentMonthStart)
+            ->where('created_at', '<', $nextMonthStart)
             ->count();
 
         /*
@@ -91,10 +90,8 @@ class DashboardController extends Controller
 
         $previousMonthRevenue = Order::query()
             ->where('payment_status', 'paid')
-            ->whereBetween('created_at', [
-                now()->subMonth()->startOfMonth(),
-                now()->subMonth()->endOfMonth(),
-            ])
+            ->where('created_at', '>=', $previousMonthStart)
+            ->where('created_at', '<', $currentMonthStartForPrevious)
             ->sum('total');
 
         $revenueGrowthPercent = 0;
@@ -277,31 +274,25 @@ class DashboardController extends Controller
     {
         $months = collect();
 
-        for ($i = 5; $i >= 0; $i--) {
-            $date = now()
-                ->copy()
-                ->subMonths($i);
+        for ($monthsAgo = 5; $monthsAgo >= 0; $monthsAgo--) {
+            [$monthStart, $nextMonthStart] = JalaliHelper::monthRange(now(), $monthsAgo);
 
             $revenue = Order::query()
                 ->where('payment_status', 'paid')
-                ->whereBetween('created_at', [
-                    $date->copy()->startOfMonth(),
-                    $date->copy()->endOfMonth(),
-                ])
+                ->where('created_at', '>=', $monthStart)
+                ->where('created_at', '<', $nextMonthStart)
                 ->sum('total');
 
             $orders = Order::query()
                 ->where('payment_status', 'paid')
-                ->whereBetween('created_at', [
-                    $date->copy()->startOfMonth(),
-                    $date->copy()->endOfMonth(),
-                ])
+                ->where('created_at', '>=', $monthStart)
+                ->where('created_at', '<', $nextMonthStart)
                 ->count();
 
             $months->push([
-                'key' => $date->format('Y-m'),
-                'label' => $date->locale('fa')->translatedFormat('M'),
-                'full_label' => $date->locale('fa')->translatedFormat('F Y'),
+                'key' => JalaliHelper::format($monthStart, 'Y-m'),
+                'label' => JalaliHelper::format($monthStart, 'M'),
+                'full_label' => JalaliHelper::format($monthStart, 'F Y'),
                 'revenue' => (float) $revenue,
                 'orders' => $orders,
             ]);

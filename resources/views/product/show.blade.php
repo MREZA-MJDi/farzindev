@@ -467,7 +467,7 @@
                                         </div>
 
                                         <span class="rounded-full bg-[var(--livora-ink)] px-3 py-1.5 text-[10px] font-medium text-white">
-                                        {{ number_format($cashPercent) }}٪ پیش‌پرداخت
+                                        {{ \App\Helpers\PersianNumberHelper::format($cashPercent) }}٪ پیش‌پرداخت
                                     </span>
 
                                     </div>
@@ -485,7 +485,7 @@
                                             </p>
 
                                             <p class="mt-2 text-base font-semibold">
-                                                {{ number_format($cashAmount) }}
+                                                {{ \App\Helpers\PersianNumberHelper::format($cashAmount) }}
                                             </p>
 
                                             <p class="mt-1 text-[10px] text-[var(--livora-stone)]">
@@ -501,7 +501,7 @@
                                             </p>
 
                                             <p class="mt-2 text-base font-semibold">
-                                                {{ number_format($deferredAmount) }}
+                                                {{ \App\Helpers\PersianNumberHelper::format($deferredAmount) }}
                                             </p>
 
                                             <p class="mt-1 text-[10px] text-[var(--livora-stone)]">
@@ -517,12 +517,12 @@
                                             </p>
 
                                             <p class="mt-2 text-base font-semibold">
-                                                {{ number_format($chequeCount) }}
+                                                {{ \App\Helpers\PersianNumberHelper::format($chequeCount) }}
                                                 چک
                                             </p>
 
                                             <p class="mt-1 text-[10px] text-[var(--livora-stone)]">
-                                                هر {{ number_format($intervalMonths) }} ماه
+                                                هر {{ \App\Helpers\PersianNumberHelper::format($intervalMonths) }} ماه
                                             </p>
 
                                         </div>
@@ -575,18 +575,18 @@
                                                     <div>
 
                                                         <p class="text-xs font-medium">
-                                                            چک {{ number_format($index + 1) }}
+                                                            چک {{ \App\Helpers\PersianNumberHelper::format($index + 1) }}
                                                         </p>
 
                                                         <p class="mt-1 text-[10px] text-[var(--livora-stone)]">
-                                                            {{ number_format(($index + 1) * $intervalMonths) }}
+                                                            {{ \App\Helpers\PersianNumberHelper::format(($index + 1) * $intervalMonths) }}
                                                             ماه بعد
                                                         </p>
 
                                                     </div>
 
                                                     <p class="text-sm font-semibold">
-                                                        {{ number_format($amount) }}
+                                                        {{ \App\Helpers\PersianNumberHelper::format($amount) }}
                                                         تومان
                                                     </p>
 
@@ -691,7 +691,7 @@
 
                                         <p class="mt-1 text-[11px] text-[var(--livora-stone)]">
                                             موجودی:
-                                            {{ number_format($product->stock) }}
+                                            {{ \App\Helpers\PersianNumberHelper::format($product->stock) }}
                                         </p>
 
                                     </div>
@@ -930,14 +930,14 @@
 
                             <p>
                                 این محصول با
-                                {{ number_format($cashPercent) }}٪
+                                {{ \App\Helpers\PersianNumberHelper::format($cashPercent) }}٪
                                 پیش‌پرداخت قابلیت خرید اقساطی دارد.
                                 مبلغ پیش‌پرداخت
-                                {{ number_format($cashAmount) }}
+                                {{ \App\Helpers\PersianNumberHelper::format($cashAmount) }}
                                 تومان است و باقی‌مانده
-                                {{ number_format($deferredAmount) }}
+                                {{ \App\Helpers\PersianNumberHelper::format($deferredAmount) }}
                                 تومان در
-                                {{ number_format($chequeCount) }}
+                                {{ \App\Helpers\PersianNumberHelper::format($chequeCount) }}
                                 فقره چک برنامه‌ریزی می‌شود.
                             </p>
 
@@ -945,7 +945,7 @@
 
                                 <p class="mt-4">
                                     فاصله سررسید چک‌ها
-                                    {{ number_format($intervalMonths) }}
+                                    {{ \App\Helpers\PersianNumberHelper::format($intervalMonths) }}
                                     ماه است و برنامه دقیق پرداخت هنگام Checkout نمایش داده می‌شود.
                                 </p>
 
@@ -1038,7 +1038,7 @@
                         </p>
 
                         <p class="mt-1 text-sm font-semibold">
-                            {{ number_format($productPrice) }}
+                            {{ \App\Helpers\PersianNumberHelper::format($productPrice) }}
                             <span class="text-[10px] font-normal text-[var(--livora-stone)]">
                             تومان
                         </span>

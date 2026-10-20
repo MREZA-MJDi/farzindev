@@ -122,7 +122,7 @@
             <div class="flex flex-wrap items-center gap-3">
 
             <span class="rounded-full border border-[var(--admin-border)] bg-[var(--admin-surface)] px-4 py-2 text-xs text-[var(--admin-muted)]">
-                {{ now()->translatedFormat('l، d F Y') }}
+                {{ \App\Helpers\JalaliHelper::format(now(), 'l، d F Y') }}
             </span>
 
                 <a
@@ -154,11 +154,11 @@
                         </p>
 
                         <p class="mt-2 text-3xl font-bold text-[var(--admin-text)]">
-                            {{ number_format($totalProducts) }}
+                            {{ \App\Helpers\PersianNumberHelper::format($totalProducts) }}
                         </p>
 
                         <p class="mt-2 text-xs text-[var(--admin-muted)]">
-                            {{ number_format($activeProducts) }}
+                            {{ \App\Helpers\PersianNumberHelper::format($activeProducts) }}
                             فعال
                         </p>
 
@@ -188,14 +188,14 @@
                 <div class="mt-4 flex items-center gap-2 text-[11px]">
 
                 <span class="rounded-full bg-emerald-50 px-2.5 py-1 text-emerald-700">
-                    {{ number_format($installmentProductsCount) }}
+                    {{ \App\Helpers\PersianNumberHelper::format($installmentProductsCount) }}
                     اقساطی
                 </span>
 
                     @if($lowStockProducts > 0)
 
                         <span class="rounded-full bg-amber-50 px-2.5 py-1 text-amber-700">
-                        {{ number_format($lowStockProducts) }}
+                        {{ \App\Helpers\PersianNumberHelper::format($lowStockProducts) }}
                         کم‌موجودی
                     </span>
 
@@ -218,7 +218,7 @@
                         </p>
 
                         <p class="mt-2 text-3xl font-bold text-[var(--admin-text)]">
-                            {{ number_format($totalCustomers) }}
+                            {{ \App\Helpers\PersianNumberHelper::format($totalCustomers) }}
                         </p>
 
                         <p class="mt-2 text-xs text-[var(--admin-muted)]">
@@ -268,11 +268,11 @@
                         </p>
 
                         <p class="mt-2 text-3xl font-bold text-[var(--admin-text)]">
-                            {{ number_format($totalOrders) }}
+                            {{ \App\Helpers\PersianNumberHelper::format($totalOrders) }}
                         </p>
 
                         <p class="mt-2 text-xs text-[var(--admin-muted)]">
-                            {{ number_format($pendingOrders) }}
+                            {{ \App\Helpers\PersianNumberHelper::format($pendingOrders) }}
                             در انتظار / پردازش
                         </p>
 
@@ -302,7 +302,7 @@
                 <div class="mt-4 flex items-center gap-2 text-[11px]">
 
                 <span class="rounded-full bg-emerald-50 px-2.5 py-1 text-emerald-700">
-                    {{ number_format($paidOrderPercent) }}٪ پرداخت‌شده
+                    {{ \App\Helpers\PersianNumberHelper::format($paidOrderPercent) }}٪ پرداخت‌شده
                 </span>
 
                 </div>
@@ -322,7 +322,7 @@
                         </p>
 
                         <p class="mt-2 truncate text-2xl font-bold text-[var(--admin-text)]">
-                            {{ number_format($totalRevenue) }}
+                            {{ \App\Helpers\PersianNumberHelper::format($totalRevenue) }}
                         </p>
 
                         <p class="mt-1 text-[11px] text-[var(--admin-muted)]">
@@ -356,7 +356,7 @@
 
                 <span class="text-[11px] text-[var(--admin-muted)]">
                     این ماه:
-                    {{ number_format($currentMonthRevenue) }}
+                    {{ \App\Helpers\PersianNumberHelper::format($currentMonthRevenue) }}
                     تومان
                 </span>
 
@@ -364,7 +364,7 @@
                         class="{{ $revenueGrowthPercent >= 0 ? 'text-emerald-600' : 'text-red-600' }} text-[11px] font-semibold"
                     >
                     {{ $revenueGrowthPercent > 0 ? '+' : '' }}
-                        {{ number_format($revenueGrowthPercent, 1) }}٪
+                        {{ \App\Helpers\PersianNumberHelper::format($revenueGrowthPercent, 1) }}٪
                 </span>
 
                 </div>
@@ -409,7 +409,7 @@
                             </p>
 
                             <p class="mt-1 text-sm font-bold text-[var(--admin-text)]">
-                                {{ number_format($averageOrderValue) }}
+                                {{ \App\Helpers\PersianNumberHelper::format($averageOrderValue) }}
                                 تومان
                             </p>
 
@@ -455,7 +455,7 @@
                                     {{-- Tooltip --}}
                                     <div class="pointer-events-none absolute bottom-[calc({{ $height }}%+12px)] left-1/2 z-20 hidden -translate-x-1/2 whitespace-nowrap rounded-xl bg-[var(--admin-text)] px-3 py-2 text-[10px] text-white shadow-xl group-hover:block">
 
-                                        {{ number_format($month['revenue']) }}
+                                        {{ \App\Helpers\PersianNumberHelper::format($month['revenue']) }}
                                         تومان
 
                                     </div>
@@ -473,7 +473,7 @@
                                         </p>
 
                                         <p class="mt-1 text-[9px] text-[var(--admin-muted)]">
-                                            {{ number_format($month['orders']) }}
+                                            {{ \App\Helpers\PersianNumberHelper::format($month['orders']) }}
                                             سفارش
                                         </p>
 
@@ -597,7 +597,7 @@
                         <div class="absolute inset-0 flex flex-col items-center justify-center">
 
                             <p class="text-3xl font-bold text-[var(--admin-text)]">
-                                {{ number_format($statusTotal) }}
+                                {{ \App\Helpers\PersianNumberHelper::format($statusTotal) }}
                             </p>
 
                             <p class="mt-1 text-[10px] text-[var(--admin-muted)]">
@@ -639,7 +639,7 @@
                             </span>
 
                                 <span class="text-[10px] font-bold {{ $color['text'] }}">
-                                {{ number_format($count) }}
+                                {{ \App\Helpers\PersianNumberHelper::format($count) }}
                             </span>
 
                             </div>
@@ -719,7 +719,7 @@
 
                                         {{-- Rank --}}
                                         <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[var(--admin-surface)] text-xs font-bold text-[var(--admin-text)]">
-                                            {{ number_format($index + 1) }}
+                                            {{ \App\Helpers\PersianNumberHelper::format($index + 1) }}
                                         </div>
 
 
@@ -758,14 +758,14 @@
                                                     </p>
 
                                                     <p class="mt-1 text-[10px] text-[var(--admin-muted)]">
-                                                        {{ number_format($product['quantity']) }}
+                                                        {{ \App\Helpers\PersianNumberHelper::format($product['quantity']) }}
                                                         عدد فروخته شده
                                                     </p>
 
                                                 </div>
 
                                                 <p class="shrink-0 text-xs font-semibold text-[var(--admin-text)]">
-                                                    {{ number_format($product['revenue']) }}
+                                                    {{ \App\Helpers\PersianNumberHelper::format($product['revenue']) }}
                                                     تومان
                                                 </p>
 
@@ -842,7 +842,7 @@
                                 </p>
 
                                 <p class="mt-2 text-lg font-bold text-[var(--admin-text)]">
-                                    {{ number_format($currentMonthRevenue) }}
+                                    {{ \App\Helpers\PersianNumberHelper::format($currentMonthRevenue) }}
                                 </p>
 
                             </div>
@@ -854,7 +854,7 @@
                         </div>
 
                         <p class="mt-3 text-[10px] text-[var(--admin-muted)]">
-                            {{ number_format($currentMonthOrders) }}
+                            {{ \App\Helpers\PersianNumberHelper::format($currentMonthOrders) }}
                             سفارش در این ماه
                         </p>
 
@@ -871,7 +871,7 @@
                         </span>
 
                             <span class="text-sm font-bold text-emerald-700">
-                            {{ number_format($deliveredPercent) }}٪
+                            {{ \App\Helpers\PersianNumberHelper::format($deliveredPercent) }}٪
                         </span>
 
                         </div>
@@ -898,13 +898,13 @@
                         </span>
 
                             <span class="text-sm font-bold text-[var(--admin-accent)]">
-                            {{ number_format($installmentOrders) }}
+                            {{ \App\Helpers\PersianNumberHelper::format($installmentOrders) }}
                         </span>
 
                         </div>
 
                         <p class="mt-2 text-[10px] text-[var(--admin-muted)]">
-                            {{ number_format($installmentPaidPercent) }}٪ از سفارش‌های اقساطی پرداخت شده‌اند.
+                            {{ \App\Helpers\PersianNumberHelper::format($installmentPaidPercent) }}٪ از سفارش‌های اقساطی پرداخت شده‌اند.
                         </p>
 
                     </div>
@@ -920,7 +920,7 @@
                             </p>
 
                             <p class="mt-2 text-xl font-bold text-red-600">
-                                {{ number_format($outOfStockProducts) }}
+                                {{ \App\Helpers\PersianNumberHelper::format($outOfStockProducts) }}
                             </p>
 
                         </div>
@@ -932,7 +932,7 @@
                             </p>
 
                             <p class="mt-2 text-xl font-bold text-[var(--admin-text)]">
-                                {{ number_format($featuredProductsCount) }}
+                                {{ \App\Helpers\PersianNumberHelper::format($featuredProductsCount) }}
                             </p>
 
                         </div>
@@ -1023,7 +1023,7 @@
                             <div class="shrink-0 text-left">
 
                                 <p class="text-xs font-bold text-[var(--admin-text)]">
-                                    {{ number_format($order->total) }}
+                                    {{ \App\Helpers\PersianNumberHelper::format($order->total) }}
                                 </p>
 
                                 <p class="mt-1 text-[9px] text-[var(--admin-muted)]">
@@ -1113,7 +1113,7 @@
                                 </p>
 
                                 <p class="mt-1 text-[10px] text-[var(--admin-text-soft)]">
-                                    {{ optional($customer->created_at)->format('Y/m/d') }}
+                                    {{ $customer->created_at ? \App\Helpers\JalaliHelper::format($customer->created_at, 'Y/m/d') : '—' }}
                                 </p>
 
                             </div>

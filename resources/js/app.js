@@ -1,4 +1,5 @@
 import './bootstrap';
+import './admin-image-editor.js';
 import Alpine from 'alpinejs';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';

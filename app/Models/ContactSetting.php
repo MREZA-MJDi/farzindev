@@ -9,6 +9,8 @@ class ContactSetting extends Model
     protected $fillable = [
         'phone',
         'email',
+        'whatsapp',
+        'instagram_url',
         'address',
         'hours',
         'phone_label',

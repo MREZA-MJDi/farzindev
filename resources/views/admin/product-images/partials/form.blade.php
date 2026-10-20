@@ -84,6 +84,7 @@
                         src="{{ $productImage->url }}"
                         alt="{{ $productImage->alt ?: 'Product image' }}"
                         class="admin-image"
+                        data-image-editor-existing-preview
                     >
 
                 </div>
@@ -99,10 +100,25 @@
                 id="image"
                 name="image"
                 type="file"
+                data-image-editor-input
                 accept="image/jpeg,image/png,image/webp"
                 class="admin-input p-2"
                 {{ $editing ? '' : 'required' }}
             >
+
+            <div data-image-editor-panel hidden class="mt-5 space-y-4 rounded-2xl border border-[var(--admin-border)] bg-[var(--admin-surface-soft)] p-4">
+                <strong class="block text-sm font-semibold text-[var(--admin-text)]">برش و ویرایش تصویر</strong>
+                <canvas data-image-editor-canvas role="img" aria-label="پیش‌نمایش برش تصویر" class="mx-auto block max-w-full rounded-xl bg-[var(--admin-bg)]" style="width:min(100%,640px);height:auto;aspect-ratio:4/3;touch-action:none;cursor:grab;"></canvas>
+                <p class="text-xs leading-6 text-[var(--admin-muted)]">برای تنظیم کادر، تصویر را بکشید؛ نسبت، بزرگ‌نمایی و چرخش را پیش از ذخیره تغییر دهید.</p>
+                <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
+                    <label class="block text-xs text-[var(--admin-text)]">نسبت کادر
+                        <select data-image-editor-ratio class="admin-select mt-2"><option value="1:1">مربع ۱:۱</option><option value="4:3" selected>استاندارد ۴:۳</option><option value="4:5">پرتره ۴:۵</option><option value="16:9">عریض ۱۶:۹</option></select>
+                    </label>
+                    <label class="block text-xs text-[var(--admin-text)]">بزرگ‌نمایی <span data-image-editor-zoom-label>۱×</span><input data-image-editor-zoom type="range" min="1" max="3" step="0.05" value="1" class="mt-3 w-full"></label>
+                    <div class="flex flex-wrap items-end gap-2"><button type="button" data-image-editor-rotate="-90" class="admin-btn admin-btn-secondary">↶ چرخش</button><button type="button" data-image-editor-rotate="90" class="admin-btn admin-btn-secondary">چرخش ↷</button><button type="button" data-image-editor-reset class="admin-btn admin-btn-ghost">بازنشانی</button></div>
+                </div>
+                <p data-image-editor-status class="text-xs text-[var(--admin-muted)]" aria-live="polite">کادر را تنظیم کنید.</p>
+            </div>
 
             <p class="mt-2 text-xs leading-6 text-[var(--admin-muted)]">
                 فرمت‌های مجاز: JPG، JPEG، PNG، WEBP — حداکثر ۲۰ مگابایت.

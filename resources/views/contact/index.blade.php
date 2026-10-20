@@ -329,7 +329,7 @@
 
         <x-layout.container>
 
-            <div class="grid gap-6 py-8 sm:py-10 lg:grid-cols-[0.8fr_1.2fr] lg:py-12">
+            <div class="grid gap-6 py-8 sm:py-10 lg:grid-cols-[minmax(0,0.95fr)_minmax(0,1.05fr)] lg:py-12">
 
                 {{-- INFO --}}
 
@@ -380,6 +380,59 @@
 
                         </div>
 
+
+                        @php
+                            $mapAddress = trim((string) ($contactSetting?->address ?? ''));
+                            $whatsappDigits = preg_replace('/\D+/', '', (string) ($contactSetting?->whatsapp ?? ''));
+                            if ($whatsappDigits !== '') {
+                                if (str_starts_with($whatsappDigits, '0')) {
+                                    $whatsappDigits = '98' . substr($whatsappDigits, 1);
+                                } elseif (! str_starts_with($whatsappDigits, '98')) {
+                                    $whatsappDigits = '98' . $whatsappDigits;
+                                }
+                            }
+                        @endphp
+
+                        {{-- GOOGLE MAP --}}
+
+                        @if($mapAddress !== '')
+                            <div class="overflow-hidden rounded-2xl border border-[var(--livora-border)] bg-[var(--livora-white)]">
+                                <div class="flex items-center justify-between gap-3 p-4">
+                                    <div>
+                                        <p class="text-[10px] uppercase tracking-[0.18em] text-[var(--livora-accent)]">LOCATION</p>
+                                        <h3 class="mt-2 text-sm font-semibold">موقعیت روی نقشه</h3>
+                                        <p class="mt-1 text-xs leading-6 text-[var(--livora-stone)]">{{ $mapAddress }}</p>
+                                    </div>
+                                    <a href="https://www.google.com/maps/search/?api=1&amp;query={{ urlencode($mapAddress) }}" target="_blank" rel="noopener noreferrer" class="shrink-0 text-xs font-medium text-[var(--livora-accent)]">مسیریابی ↗</a>
+                                </div>
+                                <iframe
+                                    title="نقشه آدرس فرزین"
+                                    src="https://www.google.com/maps?q={{ urlencode($mapAddress) }}&amp;output=embed"
+                                    width="100%"
+                                    height="340"
+                                    loading="lazy"
+                                    referrerpolicy="no-referrer-when-downgrade"
+                                    class="block w-full border-0" style="min-height:300px"
+                                ></iframe>
+                            </div>
+                        @endif
+
+                        {{-- SOCIAL / VIRTUAL CONTACT --}}
+
+                        @if($whatsappDigits !== '' || filled($contactSetting?->instagram_url))
+                            <div class="rounded-2xl border border-[var(--livora-border)] bg-[var(--livora-white)] p-4">
+                                <p class="text-[10px] uppercase tracking-[0.18em] text-[var(--livora-accent)]">ONLINE CONTACT</p>
+                                <h3 class="mt-2 text-sm font-semibold">ارتباط در فضای مجازی</h3>
+                                <div class="mt-4 flex flex-wrap gap-2">
+                                    @if($whatsappDigits !== '')
+                                        <a href="https://wa.me/{{ $whatsappDigits }}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center rounded-xl border border-[var(--livora-border)] px-4 py-2.5 text-xs font-medium transition hover:border-[var(--livora-ink)]">واتساپ ↗</a>
+                                    @endif
+                                    @if(filled($contactSetting?->instagram_url))
+                                        <a href="{{ $contactSetting->instagram_url }}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center rounded-xl border border-[var(--livora-border)] px-4 py-2.5 text-xs font-medium transition hover:border-[var(--livora-ink)]">اینستاگرام ↗</a>
+                                    @endif
+                                </div>
+                            </div>
+                        @endif
 
                         {{-- INSTALLMENT --}}
 

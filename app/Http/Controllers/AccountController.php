@@ -38,12 +38,27 @@ class AccountController extends Controller
             'wishlist' => $user
                 ->wishlists()
                 ->count(),
+
+            'paid_orders' => $user->orders()
+                ->where('payment_status', 'paid')
+                ->count(),
+
+            'installment_orders' => $user->orders()
+                ->where('payment_method', 'installment')
+                ->count(),
         ];
 
         return view('account.index', [
             'user' => $user,
             'orders' => $orders,
             'stats' => $stats,
+        ]);
+    }
+
+    public function editProfile(): View
+    {
+        return view('account.profile', [
+            'user' => Auth::user(),
         ]);
     }
 

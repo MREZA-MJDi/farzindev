@@ -56,14 +56,14 @@
 
         @if ($hasDiscount)
             <span class="product-price__compare">
-                {{ number_format($compareAtPrice) }}
+                {{ \App\Helpers\PersianNumberHelper::format($compareAtPrice) }}
                 <span>تومان</span>
             </span>
         @endif
 
         <div class="product-price__current">
             <strong>
-                {{ number_format($price) }}
+                {{ \App\Helpers\PersianNumberHelper::format($price) }}
             </strong>
 
             <span>
@@ -96,7 +96,7 @@
                     </span>
 
                     <strong>
-                        {{ number_format($cashAmount) }}
+                        {{ \App\Helpers\PersianNumberHelper::format($cashAmount) }}
                         تومان
                     </strong>
                 </div>
@@ -109,7 +109,7 @@
 
                         <strong>
                             هر چک
-                            {{ number_format($chequeAmount) }}
+                            {{ \App\Helpers\PersianNumberHelper::format($chequeAmount) }}
                             تومان
                         </strong>
                     </div>

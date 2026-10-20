@@ -28,7 +28,7 @@
             <h3><a href="{{ route('product.show', $product->slug) }}">{{ $product->name }}</a></h3>
             <div class="fz-product-card__bottom">
                 <p class="fz-product-card__price">
-                    <strong>{{ number_format((float) $product->price) }}</strong>
+                    <strong>{{ \App\Helpers\PersianNumberHelper::format((float) $product->price) }}</strong>
                     <span>تومان</span>
                 </p>
                 <a class="fz-product-card__arrow" href="{{ route('product.show', $product->slug) }}" aria-label="مشاهده {{ $product->name }}">←</a>

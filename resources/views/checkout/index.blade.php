@@ -427,11 +427,11 @@
 
                                             <p class="mt-2 text-[10px] text-[var(--livora-stone)]">
                                                 تعداد:
-                                                {{ number_format($item->quantity) }}
+                                                {{ \App\Helpers\PersianNumberHelper::format($item->quantity) }}
                                             </p>
 
                                             <p class="mt-2 text-[11px] font-semibold">
-                                                {{ number_format(
+                                                {{ \App\Helpers\PersianNumberHelper::format(
                                                     (float) $item->unit_price * $item->quantity
                                                 ) }}
                                                 تومان
@@ -456,7 +456,7 @@
                                 </span>
 
                                     <span class="font-semibold">
-                                    {{ number_format($cart->subtotal()) }}
+                                    {{ \App\Helpers\PersianNumberHelper::format($cart->subtotal()) }}
                                     تومان
                                 </span>
 
@@ -494,7 +494,7 @@
                                         <div class="text-left">
 
                                             <p class="text-2xl font-bold tracking-tight">
-                                                {{ number_format($cart->subtotal()) }}
+                                                {{ \App\Helpers\PersianNumberHelper::format($cart->subtotal()) }}
                                             </p>
 
                                             <p class="mt-1 text-[10px] text-[var(--livora-stone)]">

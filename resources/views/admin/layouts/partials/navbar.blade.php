@@ -5,6 +5,7 @@
 
     $pageTitles = [
         'admin.dashboard' => 'داشبورد',
+        'admin.storefront-settings.edit' => 'تنظیمات فروشگاه',
 
         'admin.products.index' => 'محصولات',
         'admin.products.create' => 'افزودن محصول',
@@ -82,10 +83,10 @@
 
 
 <header
-    class="sticky top-0 z-30 flex h-[72px] shrink-0 items-center border-b border-[var(--admin-border)] bg-[var(--admin-white)]/95 backdrop-blur-xl"
+    class="admin-navbar sticky top-0 z-30 flex min-w-0 h-[72px] shrink-0 items-center border-b border-[var(--admin-border)] bg-[var(--admin-white)]/95 backdrop-blur-xl"
 >
 
-    <div class="flex w-full items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
+    <div class="admin-navbar__inner flex min-w-0 w-full items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
 
 
         {{-- =========================================================
@@ -156,7 +157,7 @@
              RIGHT ACTIONS
         ========================================================== --}}
 
-        <div class="flex shrink-0 items-center gap-2 sm:gap-3">
+        <div class="admin-navbar__actions flex shrink-0 items-center gap-2 sm:gap-3">
 
 
             {{-- =====================================================
@@ -210,6 +211,7 @@
                     query: "",
                     pages: [
                         { title: "داشبورد", url: @js(route("admin.dashboard")), terms: "home overview dashboard" },
+                        { title: "تنظیمات فروشگاه", url: @js(route("admin.storefront-settings.edit")), terms: "banner hero contact settings" },
                         { title: "محصولات", url: @js(route("admin.products.index")), terms: "product catalog کالا" },
                         { title: "دسته‌بندی‌ها", url: @js(route("admin.categories.index")), terms: "category دسته ها" },
                         { title: "تصاویر محصولات", url: @js(route("admin.product-images.index")), terms: "images photos media تصویر" },

@@ -1591,6 +1591,76 @@ class FarzinStorefrontTest extends TestCase
         $this->assertSoftDeleted('products', ['id' => $product->id]);
     }
 
+    public function test_customer_profile_and_address_pages_render(): void
+    {
+        $customer = $this->customer();
+
+        $this->actingAs($customer)
+            ->get(route('account.profile.edit'))
+            ->assertOk()
+            ->assertSee('اطلاعات حساب');
+
+        $this->get(route('account.addresses.index'))
+            ->assertOk()
+            ->assertSee('آدرس‌های تحویل')
+            ->assertSee('افزودن آدرس');
+    }
+
+    public function test_admin_can_manage_store_banner_and_contact_channels(): void
+    {
+        Storage::fake('public');
+        $admin = $this->admin();
+
+        $this->actingAs($admin)
+            ->get(route('admin.storefront-settings.edit'))
+            ->assertOk()
+            ->assertSee('بنر صفحه فروشگاه')
+            ->assertSee('اطلاعات تماس واقعی');
+
+        $this->put(route('admin.storefront-settings.update'), [
+            'shop_banner_image' => UploadedFile::fake()->image('shop-banner.jpg', 1600, 900),
+            'shop_banner_title' => 'کالکشن ویژه فرزین',
+            'shop_banner_subtitle' => 'راهنمای انتخاب هود و سینک',
+            'phone' => '09123456789',
+            'email' => 'info@farzin.test',
+            'address' => 'Tehran, Vanak Square, Farzin showroom',
+            'hours' => 'شنبه تا پنجشنبه، ۹ تا ۱۷',
+            'whatsapp' => '09123456789',
+            'instagram_url' => 'https://instagram.com/farzin.test',
+            'phone_label' => 'تماس تلفنی',
+            'email_label' => 'ایمیل',
+            'support_label' => 'پشتیبانی',
+            'support_description' => 'پاسخ‌گویی به پرسش‌های خرید',
+            'online_label' => 'ارتباط آنلاین',
+            'online_description' => 'از طریق واتساپ یا فرم پیام دهید.',
+        ])
+            ->assertRedirect(route('admin.storefront-settings.edit'))
+            ->assertSessionHas('success');
+
+        $this->assertDatabaseHas('storefront_settings', [
+            'key' => 'shop_banner_title',
+            'value' => 'کالکشن ویژه فرزین',
+        ]);
+
+        $this->assertDatabaseHas('contact_settings', [
+            'phone' => '09123456789',
+            'email' => 'info@farzin.test',
+            'address' => 'Tehran, Vanak Square, Farzin showroom',
+            'whatsapp' => '09123456789',
+            'instagram_url' => 'https://instagram.com/farzin.test',
+        ]);
+
+        $this->get(route('shop.index'))
+            ->assertOk()
+            ->assertSee('کالکشن ویژه فرزین');
+
+        $this->get(route('contact'))
+            ->assertOk()
+            ->assertSee('نقشه آدرس فرزین')
+            ->assertSee('https://wa.me/989123456789', false)
+            ->assertSee('https://instagram.com/farzin.test', false);
+    }
+
     private function category(array $attributes = []): Category
     {
         return Category::create(array_merge([

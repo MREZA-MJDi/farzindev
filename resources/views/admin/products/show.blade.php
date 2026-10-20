@@ -237,7 +237,7 @@
                         </dt>
 
                         <dd class="mt-2 text-sm font-semibold text-[var(--admin-text)]">
-                            {{ number_format($product->stock) }}
+                            {{ \App\Helpers\PersianNumberHelper::format($product->stock) }}
                         </dd>
                     </div>
 
@@ -279,7 +279,7 @@
                         </p>
 
                         <p class="mt-2 text-xl font-bold text-[var(--admin-text)]">
-                            {{ number_format((float) $product->price) }}
+                            {{ \App\Helpers\PersianNumberHelper::format((float) $product->price) }}
 
                             <span class="text-xs font-normal text-[var(--admin-muted)]">
                                 تومان
@@ -299,7 +299,7 @@
 
                             @if($product->compare_at_price !== null)
 
-                                {{ number_format((float) $product->compare_at_price) }}
+                                {{ \App\Helpers\PersianNumberHelper::format((float) $product->compare_at_price) }}
 
                                 <span class="text-xs font-normal text-[var(--admin-muted)]">
                                     تومان

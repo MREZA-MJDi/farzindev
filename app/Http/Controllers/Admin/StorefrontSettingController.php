@@ -1,0 +1,129 @@
+<?php
+
+namespace App\Http\Controllers\Admin;
+
+use App\Http\Controllers\Controller;
+use App\Models\ContactSetting;
+use App\Models\StorefrontSetting;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\View\View;
+
+class StorefrontSettingController extends Controller
+{
+    public function edit(): View
+    {
+        $settings = StorefrontSetting::query()
+            ->whereIn('key', [
+                'shop_banner_image',
+                'shop_banner_title',
+                'shop_banner_subtitle',
+            ])
+            ->pluck('value', 'key');
+
+        $bannerPath = $settings->get('shop_banner_image');
+
+        return view('admin.storefront-settings.edit', [
+            'shopBannerTitle' => $settings->get('shop_banner_title') ?: 'فروشگاه فرزین',
+            'shopBannerSubtitle' => $settings->get('shop_banner_subtitle') ?: 'هود و سینک آشپزخانه؛ انتخابی دقیق برای فضای شما.',
+            'shopBannerPath' => $bannerPath,
+            'shopBannerUrl' => $bannerPath ? Storage::disk('public')->url($bannerPath) : null,
+            'contactSetting' => ContactSetting::query()->first(),
+        ]);
+    }
+
+    public function update(Request $request): RedirectResponse
+    {
+        $data = $request->validate([
+            'shop_banner_image' => [
+                'nullable',
+                'image',
+                'mimes:jpg,jpeg,png,webp',
+                'max:20480',
+            ],
+            'shop_banner_title' => ['required', 'string', 'max:255'],
+            'shop_banner_subtitle' => ['nullable', 'string', 'max:500'],
+            'remove_shop_banner' => ['nullable', 'boolean'],
+
+            'phone' => ['nullable', 'string', 'max:50'],
+            'email' => ['nullable', 'email:rfc', 'max:255'],
+            'whatsapp' => ['nullable', 'string', 'max:30', 'regex:/^[+0-9()\-\s]+$/'],
+            'instagram_url' => ['nullable', 'url', 'max:255'],
+            'address' => ['nullable', 'string', 'max:2000'],
+            'hours' => ['nullable', 'string', 'max:255'],
+            'phone_label' => ['nullable', 'string', 'max:100'],
+            'email_label' => ['nullable', 'string', 'max:100'],
+            'support_label' => ['nullable', 'string', 'max:100'],
+            'support_description' => ['nullable', 'string', 'max:500'],
+            'online_label' => ['nullable', 'string', 'max:100'],
+            'online_description' => ['nullable', 'string', 'max:500'],
+        ], [
+            'shop_banner_image.image' => 'فایل بنر باید یک تصویر معتبر باشد.',
+            'shop_banner_image.mimes' => 'فرمت بنر باید JPG، PNG یا WEBP باشد.',
+            'shop_banner_image.max' => 'حجم تصویر بنر نباید بیشتر از ۲۰ مگابایت باشد.',
+            'shop_banner_title.required' => 'عنوان بنر الزامی است.',
+            'email.email' => 'فرمت ایمیل معتبر نیست.',
+            'whatsapp.regex' => 'شماره واتساپ را فقط با رقم و علامت‌های متداول وارد کنید.',
+            'instagram_url.url' => 'لینک اینستاگرام معتبر نیست.',
+        ]);
+
+        $oldPath = StorefrontSetting::query()
+            ->where('key', 'shop_banner_image')
+            ->value('value');
+
+        if ($request->hasFile('shop_banner_image')) {
+            $newPath = $request->file('shop_banner_image')->store('banners', 'public');
+
+            StorefrontSetting::query()->updateOrCreate(
+                ['key' => 'shop_banner_image'],
+                ['value' => $newPath]
+            );
+
+            if ($oldPath && $oldPath !== $newPath) {
+                Storage::disk('public')->delete($oldPath);
+            }
+        } elseif ($request->boolean('remove_shop_banner')) {
+            StorefrontSetting::query()->updateOrCreate(
+                ['key' => 'shop_banner_image'],
+                ['value' => null]
+            );
+
+            if ($oldPath) {
+                Storage::disk('public')->delete($oldPath);
+            }
+        }
+
+        StorefrontSetting::query()->updateOrCreate(
+            ['key' => 'shop_banner_title'],
+            ['value' => $data['shop_banner_title']]
+        );
+
+        StorefrontSetting::query()->updateOrCreate(
+            ['key' => 'shop_banner_subtitle'],
+            ['value' => $data['shop_banner_subtitle'] ?? null]
+        );
+
+        $contact = ContactSetting::query()->first() ?? new ContactSetting();
+        $contact->fill([
+            'phone' => $data['phone'] ?? null,
+            'email' => $data['email'] ?? null,
+            'whatsapp' => $data['whatsapp'] ?? null,
+            'instagram_url' => $data['instagram_url'] ?? null,
+            'address' => $data['address'] ?? null,
+            'hours' => $data['hours'] ?? null,
+            'phone_label' => $data['phone_label'] ?? null,
+            'email_label' => $data['email_label'] ?? null,
+            'support_label' => $data['support_label'] ?? null,
+            'support_description' => $data['support_description'] ?? null,
+            'online_label' => $data['online_label'] ?? null,
+            'online_description' => $data['online_description'] ?? null,
+            'is_active' => true,
+        ]);
+        $contact->save();
+
+        return redirect()
+            ->route('admin.storefront-settings.edit')
+            ->with('success', 'تنظیمات فروشگاه با موفقیت ذخیره شد.');
+    }
+}

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\PersianNumberHelper;
 use App\Models\Category;
 use App\Models\Product;
 use Illuminate\Contracts\View\View;
@@ -87,7 +88,7 @@ class HomeController extends Controller
                     'product_url' => route('product.show', $product->slug),
                     'product_id' => $product->id,
                     'product_name' => $product->name,
-                    'product_price' => number_format((float) $product->price),
+                    'product_price' => PersianNumberHelper::format($product->price),
                     'product_stock' => (int) $product->stock,
                     'cart_url' => route('cart.add', $product),
                     'category_name' => $product->category?->name ?? 'فرزین',

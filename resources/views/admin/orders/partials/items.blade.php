@@ -86,14 +86,14 @@
 
 
                         <td>
-                            {{ number_format((int) $item->quantity) }}
+                            {{ \App\Helpers\PersianNumberHelper::format((int) $item->quantity) }}
                         </td>
 
 
                         <td>
 
                                 <span class="font-semibold text-[var(--admin-text)]">
-                                    {{ number_format((float) $item->unit_price) }}
+                                    {{ \App\Helpers\PersianNumberHelper::format((float) $item->unit_price) }}
                                 </span>
 
                             <span class="text-xs text-[var(--admin-muted)]">
@@ -106,7 +106,7 @@
                         <td>
 
                                 <span class="font-semibold text-[var(--admin-text)]">
-                                    {{ number_format($lineTotal) }}
+                                    {{ \App\Helpers\PersianNumberHelper::format($lineTotal) }}
                                 </span>
 
                             <span class="text-xs text-[var(--admin-muted)]">

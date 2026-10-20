@@ -138,7 +138,7 @@
             </dt>
 
             <dd class="text-sm font-semibold text-[var(--admin-text)]">
-                {{ number_format((float) $order->total) }}
+                {{ \App\Helpers\PersianNumberHelper::format((float) $order->total) }}
 
                 <span class="text-xs font-normal text-[var(--admin-muted)]">
                     تومان
@@ -165,7 +165,7 @@
                     </dt>
 
                     <dd class="text-sm text-[var(--admin-text-soft)]">
-                        {{ number_format((float) $payment->amount) }}
+                        {{ \App\Helpers\PersianNumberHelper::format((float) $payment->amount) }}
 
                         <span class="text-xs text-[var(--admin-muted)]">
                             تومان
@@ -344,7 +344,7 @@
                     </dt>
 
                     <dd class="mt-2 text-sm text-[var(--admin-text-soft)]">
-                        {{ $payment->paid_at->format('Y/m/d H:i') }}
+                        {{ $payment->paid_at ? \App\Helpers\JalaliHelper::format($payment->paid_at, 'Y/m/d H:i') : '—' }}
                     </dd>
 
                 </div>

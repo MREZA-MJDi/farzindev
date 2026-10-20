@@ -205,7 +205,7 @@
                             @if($cartItems->isNotEmpty())
 
                                 <p class="mt-3 text-sm leading-7 text-[var(--livora-stone)]">
-                                    {{ number_format($itemCount) }}
+                                    {{ \App\Helpers\PersianNumberHelper::format($itemCount) }}
                                     کالا در انتخاب شما قرار دارد.
                                 </p>
 
@@ -531,7 +531,7 @@
 
                                                             <p class="mt-2 text-[11px] text-[var(--livora-stone)]">
                                                                 قیمت واحد:
-                                                                {{ number_format((float) $item->unit_price) }}
+                                                                {{ \App\Helpers\PersianNumberHelper::format((float) $item->unit_price) }}
                                                                 تومان
                                                             </p>
 
@@ -643,7 +643,7 @@
                                                             </p>
 
                                                             <p class="mt-2 text-lg font-semibold">
-                                                                {{ number_format($itemTotal) }}
+                                                                {{ \App\Helpers\PersianNumberHelper::format($itemTotal) }}
                                                                 <span class="text-[10px] font-normal text-[var(--livora-stone)]">
                                                                 تومان
                                                             </span>
@@ -680,7 +680,7 @@
                                                                     </p>
 
                                                                     <p class="mt-1 text-sm font-semibold">
-                                                                        {{ number_format($itemCashAmount) }}
+                                                                        {{ \App\Helpers\PersianNumberHelper::format($itemCashAmount) }}
                                                                         تومان
                                                                     </p>
 
@@ -773,11 +773,11 @@
                                                 </p>
 
                                                 <p class="mt-2 text-xl font-semibold">
-                                                    {{ number_format($cashAmount) }}
+                                                    {{ \App\Helpers\PersianNumberHelper::format($cashAmount) }}
                                                 </p>
 
                                                 <p class="mt-1 text-[10px] text-white/40">
-                                                    {{ number_format($cashPercent) }}٪
+                                                    {{ \App\Helpers\PersianNumberHelper::format($cashPercent) }}٪
                                                 </p>
 
                                             </div>
@@ -789,7 +789,7 @@
                                                 </p>
 
                                                 <p class="mt-2 text-xl font-semibold">
-                                                    {{ number_format($deferredAmount) }}
+                                                    {{ \App\Helpers\PersianNumberHelper::format($deferredAmount) }}
                                                 </p>
 
                                                 <p class="mt-1 text-[10px] text-white/40">
@@ -805,12 +805,12 @@
                                                 </p>
 
                                                 <p class="mt-2 text-xl font-semibold">
-                                                    {{ number_format($chequeCount) }}
+                                                    {{ \App\Helpers\PersianNumberHelper::format($chequeCount) }}
                                                     چک
                                                 </p>
 
                                                 <p class="mt-1 text-[10px] text-white/40">
-                                                    هر {{ number_format($intervalMonths) }} ماه
+                                                    هر {{ \App\Helpers\PersianNumberHelper::format($intervalMonths) }} ماه
                                                 </p>
 
                                             </div>
@@ -827,18 +827,18 @@
                                                     <div>
 
                                                         <p class="text-xs font-medium">
-                                                            چک {{ number_format($index + 1) }}
+                                                            چک {{ \App\Helpers\PersianNumberHelper::format($index + 1) }}
                                                         </p>
 
                                                         <p class="mt-1 text-[10px] text-white/45">
-                                                            {{ number_format(($index + 1) * $intervalMonths) }}
+                                                            {{ \App\Helpers\PersianNumberHelper::format(($index + 1) * $intervalMonths) }}
                                                             ماه بعد
                                                         </p>
 
                                                     </div>
 
                                                     <p class="text-sm font-semibold">
-                                                        {{ number_format($amount) }}
+                                                        {{ \App\Helpers\PersianNumberHelper::format($amount) }}
                                                         تومان
                                                     </p>
 
@@ -911,7 +911,7 @@
                                         </span>
 
                                             <span class="text-sm font-medium">
-                                            {{ number_format($itemCount) }}
+                                            {{ \App\Helpers\PersianNumberHelper::format($itemCount) }}
                                         </span>
 
                                         </div>
@@ -923,7 +923,7 @@
                                         </span>
 
                                             <span class="text-sm font-semibold">
-                                            {{ number_format($subtotal) }}
+                                            {{ \App\Helpers\PersianNumberHelper::format($subtotal) }}
                                             تومان
                                         </span>
 
@@ -944,7 +944,7 @@
                                             </p>
 
                                             <p class="mt-2 text-2xl font-semibold tracking-tight">
-                                                {{ number_format($subtotal) }}
+                                                {{ \App\Helpers\PersianNumberHelper::format($subtotal) }}
                                             </p>
 
                                         </div>
@@ -969,14 +969,14 @@
                                             </p>
 
                                             <p class="mt-2 text-xl font-semibold">
-                                                {{ number_format($cashAmount) }}
+                                                {{ \App\Helpers\PersianNumberHelper::format($cashAmount) }}
                                                 تومان
                                             </p>
 
                                             <p class="mt-2 text-[10px] leading-6 text-white/40">
-                                                {{ number_format($cashPercent) }}٪
+                                                {{ \App\Helpers\PersianNumberHelper::format($cashPercent) }}٪
                                                 پیش‌پرداخت +
-                                                {{ number_format($chequeCount) }}
+                                                {{ \App\Helpers\PersianNumberHelper::format($chequeCount) }}
                                                 فقره چک
                                             </p>
 

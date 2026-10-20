@@ -130,7 +130,7 @@
                         <td>
                             <div class="whitespace-nowrap">
                                     <span class="font-semibold text-[var(--admin-text)]">
-                                        {{ number_format((float) $product->price) }}
+                                        {{ \App\Helpers\PersianNumberHelper::format((float) $product->price) }}
                                     </span>
 
                                 <span class="mr-1 text-xs text-[var(--admin-muted)]">
@@ -142,7 +142,7 @@
                                     (float) $product->compare_at_price > (float) $product->price
                                 )
                                     <div class="mt-1 text-xs text-[var(--admin-muted)] line-through">
-                                        {{ number_format((float) $product->compare_at_price) }}
+                                        {{ \App\Helpers\PersianNumberHelper::format((float) $product->compare_at_price) }}
                                     </div>
                                 @endif
                             </div>
@@ -151,7 +151,7 @@
                         <td>
                             @if($product->stock > 0)
                                 <span class="admin-badge admin-badge-success">
-                                        {{ number_format($product->stock) }}
+                                        {{ \App\Helpers\PersianNumberHelper::format($product->stock) }}
                                     </span>
                             @else
                                 <span class="admin-badge admin-badge-danger">

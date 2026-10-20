@@ -1469,3 +1469,149 @@ p {
 .admin-page-header > * { min-width: 0; }
 .admin-table-wrapper { -webkit-overflow-scrolling: touch; }
 @media (max-width: 767px) { .admin-btn { min-height: 2.875rem; padding-inline: .875rem; font-size: .8125rem; } .admin-table { min-width: 680px; } .admin-page-title, .admin-title { font-size: clamp(1.4rem, 5vw, 1.7rem); } }
+
+
+/* Consistent admin canvas and overflow-safe action layout. */
+.admin-shell,
+.admin-main,
+.admin-content {
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+}
+
+.admin-content {
+    max-width: 1600px;
+}
+
+.admin-main {
+    overflow-x: clip;
+}
+
+.admin-main .grid > *,
+.admin-main .admin-card,
+.admin-main .admin-section,
+.admin-main .admin-stat,
+.admin-main .admin-page-header > * {
+    min-width: 0;
+}
+
+.admin-page-header {
+    align-items: flex-end;
+    flex-wrap: wrap;
+    row-gap: 1rem;
+}
+
+.admin-page-header > :first-child {
+    flex: 1 1 18rem;
+}
+
+.admin-page-header > :last-child {
+    display: flex;
+    max-width: 100%;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: .65rem;
+}
+
+.admin-btn {
+    min-width: 0;
+    max-width: 100%;
+    flex: 0 1 auto;
+    white-space: normal;
+    overflow-wrap: anywhere;
+    line-height: 1.5;
+    text-align: center;
+}
+
+.admin-btn svg {
+    flex: 0 0 auto;
+}
+
+.admin-table-wrapper {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: auto;
+    overscroll-behavior-inline: contain;
+}
+
+.admin-table {
+    width: 100%;
+}
+
+.admin-form-actions,
+.admin-action-group {
+    display: flex;
+    max-width: 100%;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: .65rem;
+}
+
+.admin-form-actions > *,
+.admin-action-group > * {
+    min-width: 0;
+    max-width: 100%;
+}
+
+.admin-image-preview {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    overflow: hidden;
+}
+
+.admin-image-preview img,
+.admin-image {
+    max-width: 100%;
+}
+
+@media (max-width: 1023px) {
+    .admin-main {
+        padding-inline: 1rem;
+    }
+
+    .admin-page-header {
+        align-items: flex-start;
+    }
+
+    .admin-page-header > :last-child {
+        width: 100%;
+    }
+}
+
+@media (max-width: 640px) {
+    .admin-main {
+        padding-inline: .75rem;
+        padding-block: 1rem;
+    }
+
+    .admin-content {
+        max-width: 100%;
+    }
+
+    .admin-page-header {
+        gap: .85rem;
+        margin-bottom: 1.25rem;
+    }
+
+    .admin-page-header > :last-child {
+        gap: .5rem;
+    }
+
+    .admin-page-header > :last-child > * {
+        max-width: 100%;
+    }
+
+    .admin-btn {
+        min-height: 2.625rem;
+        padding-inline: .75rem;
+        font-size: .78rem;
+    }
+
+    .admin-card,
+    .admin-stat,
+    .admin-section {
+        max-width: 100%;
+    }
+}

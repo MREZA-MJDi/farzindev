@@ -30,15 +30,9 @@
         $wishlistCount =
             (int) ($stats['wishlist'] ?? 0);
 
-        $paidOrders = $recentOrders->filter(
-            fn ($order) =>
-                $order->payment_status === 'paid'
-        )->count();
+        $paidOrders = (int) ($stats['paid_orders'] ?? 0);
 
-        $installmentOrders = $recentOrders->filter(
-            fn ($order) =>
-                $order->payment_method === 'installment'
-        )->count();
+        $installmentOrders = (int) ($stats['installment_orders'] ?? 0);
 
         $statusLabels = [
             'pending' => 'در انتظار بررسی',
@@ -175,7 +169,7 @@
                                 </p>
 
                                 <p class="mt-3 text-2xl font-semibold">
-                                    {{ number_format($totalOrders) }}
+                                    {{ \App\Helpers\PersianNumberHelper::format($totalOrders) }}
                                 </p>
 
                                 <p class="mt-1 text-[11px] text-[var(--livora-stone)]">
@@ -191,7 +185,7 @@
                                 </p>
 
                                 <p class="mt-3 text-2xl font-semibold">
-                                    {{ number_format($processingOrders) }}
+                                    {{ \App\Helpers\PersianNumberHelper::format($processingOrders) }}
                                 </p>
 
                                 <p class="mt-1 text-[11px] text-[var(--livora-stone)]">
@@ -207,7 +201,7 @@
                                 </p>
 
                                 <p class="mt-3 text-2xl font-semibold">
-                                    {{ number_format($paidOrders) }}
+                                    {{ \App\Helpers\PersianNumberHelper::format($paidOrders) }}
                                 </p>
 
                                 <p class="mt-1 text-[11px] text-[var(--livora-stone)]">
@@ -223,7 +217,7 @@
                                 </p>
 
                                 <p class="mt-3 text-2xl font-semibold">
-                                    {{ number_format($wishlistCount) }}
+                                    {{ \App\Helpers\PersianNumberHelper::format($wishlistCount) }}
                                 </p>
 
                                 <p class="mt-1 text-[11px] text-[var(--livora-stone)]">
@@ -390,7 +384,7 @@
                                             <div class="text-right">
 
                                                 <p class="text-sm font-semibold">
-                                                    {{ number_format((float) $order->total) }}
+                                                    {{ \App\Helpers\PersianNumberHelper::format((float) $order->total) }}
                                                     تومان
                                                 </p>
 
@@ -513,7 +507,7 @@
                                     </p>
 
                                     <p class="mt-2 text-lg font-semibold">
-                                        {{ number_format($totalOrders) }}
+                                        {{ \App\Helpers\PersianNumberHelper::format($totalOrders) }}
                                     </p>
 
                                 </div>
@@ -525,7 +519,7 @@
                                     </p>
 
                                     <p class="mt-2 text-lg font-semibold">
-                                        {{ number_format($installmentOrders) }}
+                                        {{ \App\Helpers\PersianNumberHelper::format($installmentOrders) }}
                                     </p>
 
                                 </div>
@@ -555,7 +549,7 @@
                             </span>
 
                                 <span class="text-[11px] text-[var(--livora-stone)]">
-                                {{ number_format($totalOrders) }}
+                                {{ \App\Helpers\PersianNumberHelper::format($totalOrders) }}
                             </span>
                             </a>
 
@@ -568,7 +562,7 @@
                             </span>
 
                                 <span class="text-[11px] text-[var(--livora-stone)]">
-                                {{ number_format($wishlistCount) }}
+                                {{ \App\Helpers\PersianNumberHelper::format($wishlistCount) }}
                             </span>
                             </a>
 

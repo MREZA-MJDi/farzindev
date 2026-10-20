@@ -21,6 +21,7 @@ use App\Http\Controllers\Admin\OrderController as AdminOrderController;
 use App\Http\Controllers\Admin\ProductController as AdminProductController;
 use App\Http\Controllers\Admin\ProductImageController as AdminProductImageController;
 use App\Http\Controllers\Admin\ProductVariantController as AdminProductVariantController;
+use App\Http\Controllers\Admin\StorefrontSettingController as AdminStorefrontSettingController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -341,6 +342,16 @@ Route::middleware(['auth', 'admin'])
     ->prefix('admin')
     ->name('admin.')
     ->group(function () {
+
+        Route::get(
+            'storefront-settings',
+            [AdminStorefrontSettingController::class, 'edit']
+        )->name('storefront-settings.edit');
+
+        Route::put(
+            'storefront-settings',
+            [AdminStorefrontSettingController::class, 'update']
+        )->name('storefront-settings.update');
 
         /*
         |--------------------------------------------------------------------------

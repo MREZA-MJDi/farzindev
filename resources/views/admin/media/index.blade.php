@@ -172,7 +172,7 @@
                                 </span>
 
                                 <span>
-                                    {{ $item->created_at->format('Y/m/d') }}
+                                    {{ \App\Helpers\JalaliHelper::format($item->created_at, 'Y/m/d') }}
                                 </span>
 
                             </div>

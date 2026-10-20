@@ -199,7 +199,7 @@
 
                                     <p class="text-3xl font-bold">
 
-                                        {{ number_format($cashAmount) }}
+                                        {{ \App\Helpers\PersianNumberHelper::format($cashAmount) }}
 
                                         <span class="text-xs font-normal text-white/45">
                                         تومان
@@ -209,7 +209,7 @@
 
                                     <span class="text-xs text-white/45">
 
-                                    {{ number_format(
+                                    {{ \App\Helpers\PersianNumberHelper::format(
                                         (int) $order->installment_cash_percent
                                     ) }}٪ پیش‌پرداخت
 
@@ -361,7 +361,7 @@
 
                                                         <p class="mt-2 text-xl font-semibold text-[var(--livora-ink)]">
 
-                                                            {{ number_format(
+                                                            {{ \App\Helpers\PersianNumberHelper::format(
                                                                 (float) $installment->amount
                                                             ) }}
 
@@ -375,7 +375,7 @@
 
                                                             سررسید:
 
-                                                            {{ $installment->due_date?->format('Y/m/d') ?? 'تعیین نشده' }}
+                                                            {{ $installment->due_date ? \App\Helpers\JalaliHelper::format($installment->due_date, 'Y/m/d') : 'تعیین نشده' }}
 
                                                         </p>
 
@@ -543,7 +543,7 @@
 
                                 <p class="mt-2 text-xl font-bold">
 
-                                    {{ number_format((float) $order->total) }}
+                                    {{ \App\Helpers\PersianNumberHelper::format((float) $order->total) }}
 
                                     <span class="text-[10px] font-normal">
                                     تومان
@@ -563,7 +563,7 @@
 
                                 <strong class="text-sm">
 
-                                    {{ number_format($cashAmount) }}
+                                    {{ \App\Helpers\PersianNumberHelper::format($cashAmount) }}
 
                                     تومان
 
@@ -581,7 +581,7 @@
 
                                 <strong class="text-sm">
 
-                                    {{ number_format($deferredAmount) }}
+                                    {{ \App\Helpers\PersianNumberHelper::format($deferredAmount) }}
 
                                     تومان
 

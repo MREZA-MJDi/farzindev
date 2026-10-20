@@ -213,7 +213,7 @@
                         <td>
 
                                 <span class="font-semibold text-[var(--admin-text)]">
-                                    {{ number_format((float) $order->total) }}
+                                    {{ \App\Helpers\PersianNumberHelper::format((float) $order->total) }}
                                 </span>
 
                             <span class="mr-1 text-xs text-[var(--admin-muted)]">
@@ -307,7 +307,7 @@
 
                         <td>
                                 <span class="whitespace-nowrap text-xs text-[var(--admin-muted)]">
-                                    {{ $order->created_at?->format('Y/m/d H:i') ?? '—' }}
+                                    {{ $order->created_at ? \App\Helpers\JalaliHelper::format($order->created_at, 'Y/m/d H:i') : '—' }}
                                 </span>
                         </td>
 

@@ -46,7 +46,7 @@
             <span class="hidden h-4 w-px bg-[var(--admin-border)] sm:block"></span>
 
             <span class="text-[9px] text-[var(--admin-muted)]">
-                © {{ date('Y') }} فرزین
+                © {{ \App\Helpers\JalaliHelper::format(now(), 'Y') }} فرزین
             </span>
 
         </div>

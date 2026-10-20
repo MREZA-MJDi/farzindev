@@ -57,7 +57,7 @@
             </p>
 
             <p class="admin-stat-value">
-                {{ number_format((float) $order->total) }}
+                {{ \App\Helpers\PersianNumberHelper::format((float) $order->total) }}
 
                 <span class="text-xs font-normal text-[var(--admin-muted)]">
                     تومان
@@ -208,7 +208,7 @@
                         </dt>
 
                         <dd class="text-sm text-[var(--admin-text-soft)]">
-                            {{ number_format((float) $order->subtotal) }}
+                            {{ \App\Helpers\PersianNumberHelper::format((float) $order->subtotal) }}
                             تومان
                         </dd>
                     </div>
@@ -220,7 +220,7 @@
                         </dt>
 
                         <dd class="text-sm text-[var(--admin-text-soft)]">
-                            {{ number_format((float) $order->shipping_cost) }}
+                            {{ \App\Helpers\PersianNumberHelper::format((float) $order->shipping_cost) }}
                             تومان
                         </dd>
                     </div>
@@ -232,7 +232,7 @@
                         </dt>
 
                         <dd class="text-sm text-[var(--admin-text-soft)]">
-                            {{ number_format((float) $order->discount) }}
+                            {{ \App\Helpers\PersianNumberHelper::format((float) $order->discount) }}
                             تومان
                         </dd>
                     </div>
@@ -247,7 +247,7 @@
                             </dt>
 
                             <dd class="text-base font-bold text-[var(--admin-accent)]">
-                                {{ number_format((float) $order->total) }}
+                                {{ \App\Helpers\PersianNumberHelper::format((float) $order->total) }}
                                 تومان
                             </dd>
 
@@ -275,7 +275,7 @@
                         </dt>
 
                         <dd class="mt-2 text-sm text-[var(--admin-text-soft)]">
-                            {{ $order->created_at?->format('Y/m/d H:i') ?? '—' }}
+                            {{ $order->created_at ? \App\Helpers\JalaliHelper::format($order->created_at, 'Y/m/d H:i') : '—' }}
                         </dd>
 
                     </div>
@@ -288,7 +288,7 @@
                         </dt>
 
                         <dd class="mt-2 text-sm text-[var(--admin-text-soft)]">
-                            {{ $order->updated_at?->format('Y/m/d H:i') ?? '—' }}
+                            {{ $order->updated_at ? \App\Helpers\JalaliHelper::format($order->updated_at, 'Y/m/d H:i') : '—' }}
                         </dd>
 
                     </div>

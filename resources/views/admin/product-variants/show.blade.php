@@ -177,7 +177,7 @@
                         </dt>
 
                         <dd class="mt-2 text-sm font-semibold text-[var(--admin-text)]">
-                            {{ number_format($productVariant->stock) }}
+                            {{ \App\Helpers\PersianNumberHelper::format($productVariant->stock) }}
                         </dd>
                     </div>
 
@@ -207,13 +207,13 @@
                         @if($adjustment > 0)
 
                             <span class="text-[var(--admin-success)]">
-                                +{{ number_format($adjustment) }}
+                                +{{ \App\Helpers\PersianNumberHelper::format($adjustment) }}
                             </span>
 
                         @elseif($adjustment < 0)
 
                             <span class="text-[var(--admin-danger)]">
-                                {{ number_format($adjustment) }}
+                                {{ \App\Helpers\PersianNumberHelper::format($adjustment) }}
                             </span>
 
                         @else
@@ -279,7 +279,7 @@
                         </dt>
 
                         <dd class="mt-2 text-sm font-semibold text-[var(--admin-text)]">
-                            {{ number_format($productVariant->stock) }}
+                            {{ \App\Helpers\PersianNumberHelper::format($productVariant->stock) }}
                         </dd>
                     </div>
 
@@ -290,7 +290,7 @@
                         </dt>
 
                         <dd class="mt-2 text-sm text-[var(--admin-text-soft)]">
-                            {{ $productVariant->created_at?->format('Y/m/d H:i') ?? '—' }}
+                            {{ $productVariant->created_at ? \App\Helpers\JalaliHelper::format($productVariant->created_at, 'Y/m/d H:i') : '—' }}
                         </dd>
                     </div>
 
@@ -301,7 +301,7 @@
                         </dt>
 
                         <dd class="mt-2 text-sm text-[var(--admin-text-soft)]">
-                            {{ $productVariant->updated_at?->format('Y/m/d H:i') ?? '—' }}
+                            {{ $productVariant->updated_at ? \App\Helpers\JalaliHelper::format($productVariant->updated_at, 'Y/m/d H:i') : '—' }}
                         </dd>
                     </div>
 

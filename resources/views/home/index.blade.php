@@ -1,13 +1,11 @@
-<!DOCTYPE html>
-<html lang="fa" dir="rtl" class="no-js">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-    <meta name="csrf-token" content="{{ csrf_token() }}">
-    <meta name="theme-color" content="#f7f8fa">
-    <title>فرزین | تولید هود و سینک آشپزخانه</title>
-    <meta name="description" content="آشنایی با فرزین و تجهیزات آشپزخانه؛ هود و سینک را ببینید، مشخصات محصولات را مقایسه کنید و برای انتخابی متناسب با فضای نصب راهنمایی بگیرید.">
-    <link rel="canonical" href="{{ route('home') }}">
+@extends('layouts.app')
+
+@section('title', 'فرزین | تولید هود و سینک آشپزخانه')
+@section('description', 'آشنایی با فرزین و تجهیزات آشپزخانه؛ هود و سینک را ببینید، مشخصات محصولات را مقایسه کنید و برای انتخابی متناسب با فضای نصب راهنمایی بگیرید.')
+@section('canonical', route('home'))
+@section('body_class', 'home-body min-h-screen antialiased')
+
+@push('seo')
     <meta property="og:type" content="website">
     <meta property="og:title" content="فرزین | تولید هود و سینک آشپزخانه">
     <meta property="og:description" content="هود و سینک فرزین؛ شناخت محصول، مقایسه جزئیات و انتخاب متناسب با آشپزخانه.">
@@ -26,54 +24,20 @@
         ];
     @endphp
     <script type="application/ld+json">{!! json_encode($homeSchema, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT) !!}</script>
-    <script>document.documentElement.classList.replace('no-js', 'js');</script>
-    @vite(['resources/css/home.css', 'resources/js/home.js'])
-</head>
-<body class="home-body">
+@endpush
+
+@push('styles')
+    @vite(['resources/css/home.css'])
+@endpush
+
+@push('scripts')
+    @vite(['resources/js/home.js'])
+@endpush
+
+@section('content')
     <a class="fz-skip-link" href="#main-content">رفتن به محتوای اصلی</a>
 
-    <header class="fz-header">
-        <div class="fz-header__inner">
-            <a class="fz-brand" href="{{ route('home') }}" aria-label="صفحه اصلی فرزین">
-                <span class="fz-brand__symbol" aria-hidden="true">ف</span>
-                <span class="fz-brand__text"><strong>فرزین</strong><small>تجهیزات آشپزخانه</small></span>
-            </a>
-
-            <nav class="fz-desktop-nav" aria-label="ناوبری اصلی">
-                <a class="is-current" href="{{ route('home') }}">خانه</a>
-                <a href="{{ route('shop.index') }}">محصولات</a>
-                <a href="{{ route('categories.index') }}">دسته‌بندی‌ها</a>
-                <a href="{{ route('blog.index') }}">راهنمای انتخاب</a>
-                <a href="{{ route('about') }}">درباره فرزین</a>
-            </nav>
-
-            <div class="fz-header__actions">
-                <a class="fz-header__cart" href="{{ route('cart.index') }}" aria-label="سبد خرید">
-                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 4h2l2 11h10l3-8H6M9 20a1 1 0 1 0 0 .01M17 20a1 1 0 1 0 0 .01"/></svg>
-                    <span>سبد خرید</span>
-                </a>
-                @auth
-                    <a class="fz-header__account" href="{{ auth()->user()->isAdmin() ? route('admin.dashboard') : route('account.index') }}">حساب من</a>
-                @else
-                    <a class="fz-header__account" href="{{ route('login') }}">ورود</a>
-                @endauth
-                <details class="fz-mobile-nav">
-                    <summary aria-label="باز کردن منوی موبایل"><span></span><span></span></summary>
-                    <nav aria-label="ناوبری موبایل">
-                        <a href="{{ route('home') }}">خانه</a>
-                        <a href="{{ route('shop.index') }}">محصولات</a>
-                        <a href="{{ route('categories.index') }}">دسته‌بندی‌ها</a>
-                        <a href="{{ route('blog.index') }}">راهنمای انتخاب</a>
-                        <a href="{{ route('about') }}">درباره فرزین</a>
-                        <a href="{{ route('contact') }}">تماس با ما</a>
-                    </nav>
-                </details>
-            </div>
-        </div>
-    </header>
-
-    <main id="main-content">
-        @php
+@php
             $mosaicTitles = [
                 ['eyebrow' => 'AIR / 01', 'title' => 'هوای بهتر، شروع یک آشپزخانه‌ی دقیق‌تر.', 'text' => 'فرم، اندازه و جای نصب هود را در کنار فضای پخت‌وپز ببینید.'],
                 ['eyebrow' => 'STEEL / 02', 'title' => 'جزئیات کوچک، استفاده‌ی روزمره را می‌سازند.', 'text' => 'در انتخاب سینک، عمق لگن، ابعاد و شیوه‌ی نگهداری را در نظر بگیرید.'],
@@ -163,7 +127,7 @@
                                     @endif
                                     <span class="fz-category-card__arrow" aria-hidden="true">↗</span>
                                 </span>
-                                <span class="fz-category-card__content"><strong>{{ $category->name }}</strong><small>{{ number_format($category->products_count) }} محصول فعال</small></span>
+                                <span class="fz-category-card__content"><strong>{{ $category->name }}</strong><small>{{ \App\Helpers\PersianNumberHelper::format($category->products_count) }} محصول فعال</small></span>
                             </a>
                         @endforeach
                     </div>
@@ -177,7 +141,7 @@
                     <p class="fz-eyebrow"><span></span> نگاه نزدیک / گالری محصول</p>
                     <h2>از نمای کلی تا جزئیات محصول.</h2>
                     <p>تصاویر زیر از محصولات منتشرشده در پنل مدیریت می‌آیند. روی هر تصویر بزنید تا اطلاعات همان محصول را ببینید.</p>
-                    <span class="fz-mosaic-intro__count">{{ number_format($galleryCount) }} <small>تصویر در گالری</small></span>
+                    <span class="fz-mosaic-intro__count">{{ \App\Helpers\PersianNumberHelper::format($galleryCount) }} <small>تصویر در گالری</small></span>
                 </div>
             </section>
 
@@ -238,7 +202,7 @@
                         <div>
                             <p class="fz-eyebrow"><span></span> کاتالوگ محصولات</p>
                             <h2 id="fz-products-heading">محصولات فرزین</h2>
-                            <p>{{ number_format($catalogCount) }} محصول تصویردار در کاتالوگ ثبت شده است؛ برای مشخصات کامل، صفحه‌ی همان محصول را باز کنید.</p>
+                            <p>{{ \App\Helpers\PersianNumberHelper::format($catalogCount) }} محصول تصویردار در کاتالوگ ثبت شده است؛ برای مشخصات کامل، صفحه‌ی همان محصول را باز کنید.</p>
                         </div>
                         <a class="fz-text-link" href="{{ route('shop.index') }}">دیدن همه‌ی محصولات <span aria-hidden="true">←</span></a>
                     </div>
@@ -301,25 +265,6 @@
                 </div>
             </div>
         </section>
-    </main>
-
-    <footer class="fz-footer">
-        <div class="fz-container">
-            <div class="fz-footer__main">
-                <div class="fz-footer__brand">
-                    <a class="fz-brand fz-brand--footer" href="{{ route('home') }}">
-                        <span class="fz-brand__symbol" aria-hidden="true">ف</span>
-                        <span class="fz-brand__text"><strong>فرزین</strong><small>تجهیزات آشپزخانه</small></span>
-                    </a>
-                    <p>هود و سینک آشپزخانه؛ شناخت محصول، انتخاب آگاهانه و توجه به جزئیات.</p>
-                </div>
-                <div class="fz-footer__column"><strong>محصولات</strong><a href="{{ route('shop.index') }}">همه محصولات</a><a href="{{ route('categories.index') }}">دسته‌بندی‌ها</a><a href="{{ route('shop.index', ['sort' => 'newest']) }}">تازه‌های کاتالوگ</a></div>
-                <div class="fz-footer__column"><strong>آشنایی بیشتر</strong><a href="{{ route('about') }}">درباره فرزین</a><a href="{{ route('blog.index') }}">راهنمای انتخاب</a><a href="{{ route('contact') }}">تماس با ما</a></div>
-                <div class="fz-footer__contact"><strong>برای راهنمایی</strong><p>در انتخاب هود یا سینک، جزئیات فنی و شرایط نصب را پیش از خرید بررسی کنید.</p><a class="fz-footer__contact-link" href="{{ route('contact') }}">ارتباط با مجموعه <span aria-hidden="true">↗</span></a></div>
-            </div>
-            <div class="fz-footer__bottom"><span>© {{ date('Y') }} فرزین</span><span>طراحی‌شده برای شناخت بهتر تجهیزات آشپزخانه</span><a href="{{ route('home') }}">بازگشت به بالا ↑</a></div>
-        </div>
-    </footer>
 
     <div id="quick-view-modal" class="qv" aria-hidden="true">
         <button class="qv__backdrop" type="button" data-qv-close aria-label="بستن نمای سریع"></button>
@@ -335,5 +280,4 @@
         </section>
     </div>
     <div id="toast-root" class="toast-root" aria-live="polite" aria-atomic="true"></div>
-</body>
-</html>
+@endsection

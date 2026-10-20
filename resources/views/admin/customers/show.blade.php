@@ -115,7 +115,7 @@
             </p>
 
             <p class="mt-3 text-sm font-semibold text-[var(--admin-text)]">
-                {{ $customer->created_at?->format('Y/m/d') ?? '—' }}
+                {{ $customer->created_at ? \App\Helpers\JalaliHelper::format($customer->created_at, 'Y/m/d') : '—' }}
             </p>
 
         </div>
@@ -190,7 +190,7 @@
                         </dt>
 
                         <dd class="mt-2 text-sm text-[var(--admin-text-soft)]">
-                            {{ $customer->created_at?->format('Y/m/d H:i') ?? '—' }}
+                            {{ $customer->created_at ? \App\Helpers\JalaliHelper::format($customer->created_at, 'Y/m/d H:i') : '—' }}
                         </dd>
 
                     </div>
@@ -307,7 +307,7 @@
                                     </p>
 
                                     <p class="mt-1 text-xs text-[var(--admin-muted)]">
-                                        {{ $order->created_at?->format('Y/m/d H:i') ?? '—' }}
+                                        {{ $order->created_at ? \App\Helpers\JalaliHelper::format($order->created_at, 'Y/m/d H:i') : '—' }}
                                     </p>
 
                                 </div>

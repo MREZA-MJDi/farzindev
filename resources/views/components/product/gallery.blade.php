@@ -417,7 +417,7 @@
 
                 @if($imageCount > 0)
 
-                    {{ number_format($imageCount) }}
+                    {{ \App\Helpers\PersianNumberHelper::format($imageCount) }}
                     تصویر
 
                 @else
