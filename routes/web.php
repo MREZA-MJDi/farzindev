@@ -99,26 +99,22 @@ Route::prefix('cart')
             [CartController::class, 'add']
         )->name('add');
 
+        // Guests can manage only items in the cart bound to their session.
+        // Ownership is enforced in CartController for both guests and customers.
         Route::patch(
             '/item/{item}',
             [CartController::class, 'update']
-        )
-            ->middleware('auth')
-            ->name('update');
+        )->name('update');
 
         Route::delete(
             '/item/{item}',
             [CartController::class, 'remove']
-        )
-            ->middleware('auth')
-            ->name('remove');
+        )->name('remove');
 
         Route::delete(
             '/',
             [CartController::class, 'clear']
-        )
-            ->middleware('auth')
-            ->name('clear');
+        )->name('clear');
     });
 
 
