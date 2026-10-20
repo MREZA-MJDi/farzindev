@@ -59,6 +59,8 @@
                     type="file"
                     data-image-editor-input
                     data-image-editor-default-ratio="16:9"
+                    data-image-editor-min-width="1200"
+                    data-image-editor-min-height="600"
                     accept="image/jpeg,image/png,image/webp"
                     class="admin-input p-2"
                 >
