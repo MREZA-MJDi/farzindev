@@ -102,8 +102,15 @@ class ShopController extends Controller
         |--------------------------------------------------------------------------
         */
 
-        if (!empty($filters['in_stock'])) {
-            $query->inStock();
+        if (! empty($filters['in_stock'])) {
+            // Stock belongs to the parent product only when no variants are
+            // configured. Variant-backed products must use option-level stock.
+            $query->where(function ($stockQuery): void {
+                $stockQuery
+                    ->where('products.stock', '>', 0)
+                    ->orWhereHas('variants', fn ($variantQuery) => $variantQuery
+                        ->where('stock', '>', 0));
+            });
         }
 
         /*
