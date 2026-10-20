@@ -256,6 +256,44 @@ class FarzinStorefrontTest extends TestCase
             ->assertNotFound();
     }
 
+    public function test_variant_product_detail_uses_variant_stock_for_availability_and_quantity(): void
+    {
+        $product = $this->product($this->category(['slug' => 'hoods']), [
+            'name' => 'Variant Availability Hood',
+            'slug' => 'variant-availability-hood',
+            'sku' => 'FAR-VARIANT-AVAILABILITY',
+            'stock' => 0,
+        ]);
+
+        ProductVariant::create([
+            'product_id' => $product->id,
+            'type' => 'color',
+            'name' => 'رنگ',
+            'value' => 'black',
+            'sku' => 'FAR-VARIANT-AVAILABILITY-BLACK',
+            'price_adjustment' => 0,
+            'stock' => 4,
+            'is_active' => true,
+        ]);
+        ProductVariant::create([
+            'product_id' => $product->id,
+            'type' => 'size',
+            'name' => 'اندازه',
+            'value' => '90',
+            'sku' => 'FAR-VARIANT-AVAILABILITY-90',
+            'price_adjustment' => 0,
+            'stock' => 2,
+            'is_active' => true,
+        ]);
+
+        $this->get(route('product.show', $product->slug))
+            ->assertOk()
+            ->assertSee('"availability": "https://schema.org/InStock"', false)
+            ->assertSee('وابسته به ویژگی انتخاب‌شده')
+            ->assertSee('max="4"', false)
+            ->assertSee('موجود در انبار');
+    }
+
     public function test_customer_can_add_product_to_cart_and_repeated_adds_merge(): void
     {
         $customer = $this->customer();
