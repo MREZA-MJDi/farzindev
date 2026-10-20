@@ -104,31 +104,37 @@ class CheckoutController extends Controller
         $validated = $request->validated();
 
         try {
-
             $cart = $this->getActiveCart();
-
-            $cart->load([
-                'items.product',
-                'items.variant',
-            ]);
-
-            if ($cart->items->isEmpty()) {
-                return redirect()
-                    ->route('cart.index')
-                    ->with(
-                        'error',
-                        'سبد خرید شما خالی است.'
-                    );
-            }
 
             $order = DB::transaction(function () use (
                 $cart,
                 $validated
             ) {
+                // Lock and reload the active cart inside the same transaction
+                // that creates the order, so a duplicate checkout submission
+                // cannot snapshot the same cart items twice.
+                $lockedCart = Cart::query()
+                    ->whereKey($cart->getKey())
+                    ->lockForUpdate()
+                    ->firstOrFail();
+
+                $lockedCart->load([
+                    'items.product',
+                    'items.variant',
+                ]);
+
+                if ($lockedCart->items->isEmpty()) {
+                    return null;
+                }
 
                 $subtotal = 0;
 
-                foreach ($cart->items as $item) {
+                foreach ($lockedCart->items as $item) {
+                    if (! $item->product) {
+                        throw new \\RuntimeException(
+                            'یکی از محصولات سبد دیگر در دسترس نیست. سبد را بررسی کنید.'
+                        );
+                    }
 
                     $variants = $this->resolveCartItemVariants($item);
 
@@ -136,7 +142,7 @@ class CheckoutController extends Controller
                         count($item->selectedVariantIds())
                         !== $variants->count()
                     ) {
-                        throw new \RuntimeException(
+                        throw new \\RuntimeException(
                             "یکی از گزینه‌های انتخاب‌شده برای «{$item->product->name}» دیگر در دسترس نیست."
                         );
                     }
@@ -149,7 +155,7 @@ class CheckoutController extends Controller
                         $stock < 1
                         || $item->quantity > $stock
                     ) {
-                        throw new \RuntimeException(
+                        throw new \\RuntimeException(
                             "موجودی محصول «{$item->product->name}» کافی نیست."
                         );
                     }
@@ -161,155 +167,79 @@ class CheckoutController extends Controller
 
                 $shippingCost = 0;
                 $discount = 0;
-
-                $total =
-                    $subtotal
-                    + $shippingCost
-                    - $discount;
+                $total = $subtotal + $shippingCost - $discount;
 
                 $order = Order::create([
                     'user_id' => Auth::id(),
-
-                    'order_number' =>
-                        $this->generateOrderNumber(),
-
+                    'order_number' => $this->generateOrderNumber(),
                     'status' => 'pending',
-
                     'payment_status' => 'pending',
-
                     'payment_method' => 'online',
-
                     'payment_provider' => null,
-
                     'installment_enabled' => false,
-
                     'installment_cash_percent' => null,
-
                     'installment_cash_amount' => null,
-
                     'installment_deferred_amount' => null,
-
                     'installment_remainder_method' => null,
-
                     'installment_cheque_count' => null,
-
                     'installment_interval_months' => null,
-
                     'subtotal' => $subtotal,
-
                     'shipping_cost' => $shippingCost,
-
                     'discount' => $discount,
-
                     'total' => $total,
-
-                    'first_name' =>
-                        $validated['first_name'],
-
-                    'last_name' =>
-                        $validated['last_name'],
-
-                    'phone' =>
-                        $validated['phone'],
-
-                    'email' =>
-                        $validated['email'],
-
-                    'province' =>
-                        $validated['province'],
-
-                    'city' =>
-                        $validated['city'],
-
-                    'address' =>
-                        $validated['address'],
-
-                    'postal_code' =>
-                        $validated['postal_code'],
-
-                    'unit' =>
-                        $validated['unit'] ?? null,
-
-                    'notes' =>
-                        $validated['notes'] ?? null,
+                    'first_name' => $validated['first_name'],
+                    'last_name' => $validated['last_name'],
+                    'phone' => $validated['phone'],
+                    'email' => $validated['email'],
+                    'province' => $validated['province'],
+                    'city' => $validated['city'],
+                    'address' => $validated['address'],
+                    'postal_code' => $validated['postal_code'],
+                    'unit' => $validated['unit'] ?? null,
+                    'notes' => $validated['notes'] ?? null,
                 ]);
 
-                foreach ($cart->items as $item) {
-
+                foreach ($lockedCart->items as $item) {
                     $order->items()->create([
-                        'product_id' =>
-                            $item->product_id,
-
-                        /*
-                         * Keep the existing single-variant relation for
-                         * backwards compatibility; the full selection is
-                         * preserved below in variant_options.
-                         */
-                        'product_variant_id' =>
-                            $item->product_variant_id,
-
-                        'variant_options' =>
-                            $item->variant_options,
-
-                        'product_name' =>
-                            $item->product->name,
-
-                        'sku' =>
-                            $item->variant?->sku
-                            ?? $item->product->sku,
-
-                        'quantity' =>
-                            $item->quantity,
-
-                        'unit_price' =>
-                            $item->unit_price,
-
-                        'total' =>
-                            (float) $item->unit_price
-                            * (int) $item->quantity,
+                        'product_id' => $item->product_id,
+                        // Retain the legacy single-variant field and save the
+                        // full selected-variant snapshot for order history.
+                        'product_variant_id' => $item->product_variant_id,
+                        'variant_options' => $item->variant_options,
+                        'product_name' => $item->product->name,
+                        'sku' => $item->variant?->sku ?? $item->product->sku,
+                        'quantity' => $item->quantity,
+                        'unit_price' => $item->unit_price,
+                        'total' => (float) $item->unit_price * (int) $item->quantity,
                     ]);
                 }
+
+                // Clear the cart before commit; the lock prevents concurrent
+                // submissions from creating multiple orders from the same cart.
+                $lockedCart->items()->delete();
 
                 return $order;
             });
 
-            /*
-            |--------------------------------------------------------------------------
-            | Empty active cart only after successful transaction
-            |--------------------------------------------------------------------------
-            */
-
-            $cart->items()->delete();
+            if (! $order) {
+                return redirect()
+                    ->route('cart.index')
+                    ->with('error', 'سبد خرید شما خالی است.');
+            }
 
             return redirect()
-                ->route(
-                    'checkout.payment',
-                    $order
-                )
-                ->with(
-                    'success',
-                    'سفارش شما با موفقیت ثبت شد.'
-                );
-
-        } catch (\RuntimeException $e) {
-
+                ->route('checkout.payment', $order)
+                ->with('success', 'سفارش شما با موفقیت ثبت شد.');
+        } catch (\\RuntimeException $e) {
             return back()
                 ->withInput()
-                ->with(
-                    'error',
-                    $e->getMessage()
-                );
-
+                ->with('error', $e->getMessage());
         } catch (Throwable $e) {
-
             report($e);
 
             return back()
                 ->withInput()
-                ->with(
-                    'error',
-                    'ثبت سفارش انجام نشد. لطفاً دوباره تلاش کنید.'
-                );
+                ->with('error', 'ثبت سفارش انجام نشد. لطفاً دوباره تلاش کنید.');
         }
     }
 
