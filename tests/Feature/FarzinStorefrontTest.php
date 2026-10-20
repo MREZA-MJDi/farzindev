@@ -134,6 +134,15 @@ class FarzinStorefrontTest extends TestCase
         $this->get(route('sitemap'))
             ->assertOk()
             ->assertDontSee(route('product.show', $product->slug), false);
+
+        // Hiding a category from the storefront must also prevent direct POST
+        // requests from adding its products to a cart.
+        $this->from(route('shop.index'))
+            ->post(route('cart.add', $product), ['quantity' => 1])
+            ->assertRedirect(route('shop.index'))
+            ->assertSessionHasErrors('product');
+
+        $this->assertDatabaseCount('cart_items', 0);
     }
 
     public function test_shop_search_and_price_filters_exclude_unavailable_products(): void
