@@ -101,6 +101,8 @@
                 name="image"
                 type="file"
                 data-image-editor-input
+                data-image-editor-min-width="800"
+                data-image-editor-min-height="600"
                 accept="image/jpeg,image/png,image/webp"
                 class="admin-input p-2"
                 {{ $editing ? '' : 'required' }}
