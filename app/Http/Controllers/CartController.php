@@ -173,7 +173,7 @@ class CartController extends Controller
         UpdateCartRequest $request,
         CartItem $item
     ): RedirectResponse|JsonResponse {
-        $this->authorize('update', $item);
+        $this->authorizeCartItemAccess($request, $item, 'update');
 
         $validated = $request->validated();
 
@@ -219,9 +219,21 @@ class CartController extends Controller
         Request $request,
         CartItem $item
     ): RedirectResponse|JsonResponse {
-        $this->authorize('delete', $item);
+        $this->authorizeCartItemAccess($request, $item, 'delete');
+
+        $cart = $item->cart;
 
         $item->delete();
+
+        if ($request->expectsJson()) {
+            $cart = $cart->fresh('items');
+
+            return response()->json([
+                'message' => 'محصول از سبد حذف شد.',
+                'cart_count' => $cart->itemCount(),
+                'subtotal' => $cart->subtotal(),
+            ]);
+        }
 
         return back()->with(
             'success',
@@ -247,6 +259,36 @@ class CartController extends Controller
         return back()->with(
             'success',
             'سبد خرید خالی شد.'
+        );
+    }
+
+    /**
+     * Customers use the model policy; guests must prove ownership through
+     * the current server-side session and may only edit active guest carts.
+     */
+    private function authorizeCartItemAccess(
+        Request $request,
+        CartItem $item,
+        string $ability
+    ): void {
+        $item->loadMissing('cart');
+
+        if (Auth::check()) {
+            $this->authorize($ability, $item);
+
+            return;
+        }
+
+        $cart = $item->cart;
+        $sessionId = (string) $request->session()->getId();
+
+        abort_unless(
+            $cart !== null
+            && $cart->status === 'active'
+            && $cart->user_id === null
+            && filled($cart->session_id)
+            && hash_equals((string) $cart->session_id, $sessionId),
+            403
         );
     }
 
