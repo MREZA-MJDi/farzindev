@@ -596,6 +596,8 @@ class FarzinStorefrontTest extends TestCase
         $this->assertSame('pending', $order->status);
         $this->assertSame('pending', $order->payment_status);
         $this->assertSame('online', $order->payment_method);
+        $this->assertSame(3, (int) $product->fresh()->stock);
+        $this->assertNotNull($order->fresh()->inventory_reserved_at);
         $this->assertEquals(6000000, (float) $order->total);
         $this->assertDatabaseHas('order_items', [
             'order_id' => $order->id,
@@ -625,6 +627,163 @@ class FarzinStorefrontTest extends TestCase
             ->assertSessionHas('error', 'سبد خرید شما خالی است.');
 
         $this->assertDatabaseCount('orders', 1);
+    }
+
+    public function test_inventory_reservations_are_idempotent_and_released_once(): void
+    {
+        $customer = $this->customer();
+        $product = $this->product($this->category(), [
+            'name' => 'Inventory Lifecycle Hood',
+            'slug' => 'inventory-lifecycle-hood',
+            'sku' => 'FAR-INVENTORY-LIFECYCLE',
+            'stock' => 5,
+        ]);
+        $order = $this->order($customer);
+        $order->items()->create([
+            'product_id' => $product->id,
+            'product_name' => $product->name,
+            'sku' => $product->sku,
+            'quantity' => 2,
+            'unit_price' => 10000000,
+            'total' => 20000000,
+        ]);
+
+        $inventory = app(\App\Services\Inventory\InventoryReservationService::class);
+
+        $inventory->reserveForOrder($order);
+        $this->assertSame(3, (int) $product->fresh()->stock);
+        $this->assertNotNull($order->fresh()->inventory_reserved_at);
+
+        // A duplicate checkout/payment start must not deduct stock again.
+        $inventory->reserveForOrder($order);
+        $this->assertSame(3, (int) $product->fresh()->stock);
+
+        $inventory->releaseForOrder($order);
+        $this->assertSame(5, (int) $product->fresh()->stock);
+        $this->assertNull($order->fresh()->inventory_reserved_at);
+        $this->assertNotNull($order->fresh()->inventory_released_at);
+
+        // Repeated cancellation/release is idempotent too.
+        $inventory->releaseForOrder($order);
+        $this->assertSame(5, (int) $product->fresh()->stock);
+    }
+
+    public function test_inventory_reservation_tracks_selected_variant_stock_separately(): void
+    {
+        $customer = $this->customer();
+        $product = $this->product($this->category(), [
+            'name' => 'Variant Inventory Hood',
+            'slug' => 'variant-inventory-hood',
+            'sku' => 'FAR-VARIANT-INVENTORY',
+            'stock' => 12,
+        ]);
+        $variant = ProductVariant::create([
+            'product_id' => $product->id,
+            'type' => 'color',
+            'name' => 'رنگ بدنه',
+            'value' => 'black',
+            'sku' => 'FAR-VARIANT-INVENTORY-BLACK',
+            'price_adjustment' => 0,
+            'stock' => 6,
+            'is_active' => true,
+        ]);
+        $order = $this->order($customer);
+        $order->items()->create([
+            'product_id' => $product->id,
+            'product_variant_id' => $variant->id,
+            'variant_options' => [[
+                'id' => $variant->id,
+                'type' => 'color',
+                'name' => 'رنگ بدنه',
+                'value' => 'black',
+                'stock' => 6,
+            ]],
+            'product_name' => $product->name,
+            'sku' => $variant->sku,
+            'quantity' => 2,
+            'unit_price' => 10000000,
+            'total' => 20000000,
+        ]);
+
+        $inventory = app(\App\Services\Inventory\InventoryReservationService::class);
+        $inventory->reserveForOrder($order);
+
+        $this->assertSame(12, (int) $product->fresh()->stock);
+        $this->assertSame(4, (int) $variant->fresh()->stock);
+
+        $inventory->releaseForOrder($order);
+
+        $this->assertSame(12, (int) $product->fresh()->stock);
+        $this->assertSame(6, (int) $variant->fresh()->stock);
+    }
+
+    public function test_verified_late_payment_flags_inventory_shortage_without_negative_stock(): void
+    {
+        $customer = $this->customer();
+        $product = $this->product($this->category(), [
+            'name' => 'Late Payment Hood',
+            'slug' => 'late-payment-hood',
+            'sku' => 'FAR-LATE-PAYMENT',
+            'stock' => 1,
+        ]);
+        $order = $this->order($customer, [
+            'payment_status' => 'paid',
+        ]);
+        $order->items()->create([
+            'product_id' => $product->id,
+            'product_name' => $product->name,
+            'sku' => $product->sku,
+            'quantity' => 2,
+            'unit_price' => 10000000,
+            'total' => 20000000,
+        ]);
+
+        app(\App\Services\Inventory\InventoryReservationService::class)
+            ->commitForPaidOrder($order);
+
+        $order->refresh();
+        $this->assertSame(1, (int) $product->fresh()->stock);
+        $this->assertNotNull($order->inventory_issue_at);
+        $this->assertNotNull($order->inventory_committed_at);
+        $this->assertNotEmpty($order->inventory_issue_reason);
+    }
+
+    public function test_expiring_an_unpaid_order_releases_reserved_stock(): void
+    {
+        $customer = $this->customer();
+        $product = $this->product($this->category(), [
+            'name' => 'Stale Reservation Hood',
+            'slug' => 'stale-reservation-hood',
+            'sku' => 'FAR-STALE-RESERVATION',
+            'stock' => 5,
+        ]);
+        $order = $this->order($customer, [
+            'created_at' => now()->subHours(26),
+            'updated_at' => now()->subHours(26),
+        ]);
+        $order->items()->create([
+            'product_id' => $product->id,
+            'product_name' => $product->name,
+            'sku' => $product->sku,
+            'quantity' => 2,
+            'unit_price' => 10000000,
+            'total' => 20000000,
+        ]);
+
+        $inventory = app(\App\Services\Inventory\InventoryReservationService::class);
+        $inventory->reserveForOrder($order);
+        $order->forceFill(['inventory_reserved_at' => now()->subHours(26)])->save();
+        $this->assertSame(3, (int) $product->fresh()->stock);
+
+        $this->artisan('orders:expire-unpaid')
+            ->assertExitCode(0);
+
+        $order->refresh();
+        $this->assertSame('cancelled', $order->status);
+        $this->assertSame('failed', $order->payment_status);
+        $this->assertNull($order->inventory_reserved_at);
+        $this->assertNotNull($order->inventory_released_at);
+        $this->assertSame(5, (int) $product->fresh()->stock);
     }
 
     public function test_customer_cannot_view_another_customers_payment_page(): void
