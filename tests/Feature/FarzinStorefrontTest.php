@@ -256,6 +256,32 @@ class FarzinStorefrontTest extends TestCase
             ->assertNotFound();
     }
 
+    public function test_related_products_exclude_inactive_categories(): void
+    {
+        $activeCategory = $this->category(['slug' => 'hoods']);
+        $currentProduct = $this->product($activeCategory, [
+            'name' => 'Current Active Hood',
+            'slug' => 'current-active-hood',
+            'sku' => 'FAR-RELATED-CURRENT',
+        ]);
+
+        $inactiveCategory = $this->category([
+            'slug' => 'archived-category',
+            'name' => 'Inactive Category',
+            'is_active' => false,
+        ]);
+        $hiddenRelatedProduct = $this->product($inactiveCategory, [
+            'name' => 'Hidden Related Sink',
+            'slug' => 'hidden-related-sink',
+            'sku' => 'FAR-RELATED-HIDDEN',
+        ]);
+
+        $this->get(route('product.show', $currentProduct->slug))
+            ->assertOk()
+            ->assertSee($currentProduct->name)
+            ->assertDontSee($hiddenRelatedProduct->name);
+    }
+
     public function test_variant_product_detail_uses_variant_stock_for_availability_and_quantity(): void
     {
         $product = $this->product($this->category(['slug' => 'hoods']), [
