@@ -29,6 +29,8 @@ class ProductController extends Controller
             ])
             ->where('id', '!=', $product->id)
             ->where('category_id', $product->category_id)
+            ->whereHas('category', fn ($categoryQuery) => $categoryQuery
+                ->where('is_active', true))
             ->latest()
             ->limit(4)
             ->get();
