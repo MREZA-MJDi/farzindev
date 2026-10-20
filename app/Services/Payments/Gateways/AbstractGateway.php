@@ -438,11 +438,8 @@ abstract class AbstractGateway implements InstallmentPaymentGatewayInterface
     protected function isVerificationSuccessful(array $response): bool
     {
         return data_get($response, 'verified') === true
-            || data_get($response, 'success') === true
             || data_get($response, 'data.verified') === true
-            || data_get($response, 'data.success') === true
-            || data_get($response, 'result.verified') === true
-            || data_get($response, 'result.success') === true;
+            || data_get($response, 'result.verified') === true;
     }
 
     /**
