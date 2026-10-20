@@ -5,6 +5,9 @@ on:
     branches:
       - main
       - feature/farzin-storefront-rebrand
+      - fix/farzin-home-production-2026-10-20
+      - fix/farzin-home-final-2026-10-20
+      - fix/farzin-home-release-2026-10-20
   pull_request:
     branches:
       - main
@@ -50,6 +53,23 @@ jobs:
 
       - name: Run Laravel tests
         run: php artisan test
+
+      - name: Smoke-test the Farzin seed catalogue
+        run: |
+          touch database/catalog-smoke.sqlite
+          APP_ENV=local DB_CONNECTION=sqlite DB_DATABASE="$PWD/database/catalog-smoke.sqlite" php artisan migrate:fresh --force
+          APP_ENV=local DB_CONNECTION=sqlite DB_DATABASE="$PWD/database/catalog-smoke.sqlite" php artisan db:seed --class=CategorySeeder --force
+          APP_ENV=local DB_CONNECTION=sqlite DB_DATABASE="$PWD/database/catalog-smoke.sqlite" php artisan db:seed --class=ProductSeeder --force
+          APP_ENV=local DB_CONNECTION=sqlite DB_DATABASE="$PWD/database/catalog-smoke.sqlite" php artisan db:seed --class=ProductImageSeeder --force
+          APP_ENV=local DB_CONNECTION=sqlite DB_DATABASE="$PWD/database/catalog-smoke.sqlite" php -r '
+          require "vendor/autoload.php";
+          $app = require "bootstrap/app.php";
+          $app->make(Illuminate\Contracts\Console\Kernel::class)->bootstrap();
+          $products = App\Models\Product::where("sku", "like", "FZ-SEED-%")->count();
+          $images = App\Models\ProductImage::whereHas("product", fn ($query) => $query->where("sku", "like", "FZ-SEED-%"))->count();
+          if ($products !== 50 || $images !== 50) { throw new RuntimeException("Seed smoke test failed: " . $products . " products, " . $images . " images."); }
+          echo "Seed smoke test passed: " . $products . " products and " . $images . " images.\n";
+          '
 
       - name: Install production Composer dependencies
         run: composer install --no-dev --prefer-dist --no-interaction --no-progress --optimize-autoloader
