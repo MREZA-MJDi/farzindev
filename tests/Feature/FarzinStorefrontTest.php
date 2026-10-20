@@ -49,6 +49,20 @@ class FarzinStorefrontTest extends TestCase
             ->assertSee('چک‌لیست');
     }
 
+    public function test_homepage_lists_active_products_even_without_uploaded_images(): void
+    {
+        $category = $this->category();
+        $product = $this->product($category, [
+            'name' => 'هود فعال بدون تصویر',
+            'slug' => 'active-hood-without-image',
+        ]);
+
+        $this->get(route('home'))
+            ->assertOk()
+            ->assertSee($product->name)
+            ->assertSee('تصویر محصول ثبت نشده');
+    }
+
     public function test_sitemap_lists_public_pages_and_only_active_catalog_items(): void
     {
         $category = $this->category([
