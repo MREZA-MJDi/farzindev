@@ -145,6 +145,12 @@
             ? $variantOptionsAvailable
             : (int) $product->stock > 0;
 
+    // Variant-backed products track stock on each option, not the parent row.
+    // The selector further limits quantity to the minimum stock among selected options.
+    $maxPurchaseQuantity = $variantGroups->isNotEmpty()
+        ? max(1, min(99, (int) $product->variants->max('stock')))
+        : max(1, min(99, (int) $product->stock));
+
     $availability =
         $canPurchase
             ? 'https://schema.org/InStock'
@@ -269,7 +275,7 @@
     <div
         class="bg-[var(--livora-cream)] pb-28 lg:pb-0"
         x-data="{
-        quantity: {{ max(1, min((int) $product->stock, 1)) }},
+        quantity: 1,
         showInstallmentDetails: false
     }"
     >
@@ -410,7 +416,7 @@
                             <span class="h-1 w-1 rounded-full bg-[var(--livora-border)]"></span>
 
                             <span>
-                            {{ $product->stock > 0 ? 'موجود' : 'ناموجود' }}
+                            {{ $canPurchase ? 'موجود' : 'ناموجود' }}
                         </span>
 
                         </div>
@@ -624,6 +630,7 @@
                             id="product-purchase"
                             action="{{ route('cart.add', $product) }}"
                             method="POST"
+                            data-product-cart-form
                             class="mt-8 space-y-7"
                         >
 
@@ -691,7 +698,11 @@
 
                                         <p class="mt-1 text-[11px] text-[var(--livora-stone)]">
                                             موجودی:
-                                            {{ \App\Helpers\PersianNumberHelper::format($product->stock) }}
+                                            @if($variantGroups->isNotEmpty())
+                                                وابسته به ویژگی انتخاب‌شده
+                                            @else
+                                                {{ \App\Helpers\PersianNumberHelper::format($product->stock) }}
+                                            @endif
                                         </p>
 
                                     </div>
@@ -699,7 +710,7 @@
                                     <x-shop.quantity
                                         name="quantity"
                                         min="1"
-                                        :max="max(1, $product->stock)"
+                                        :max="$maxPurchaseQuantity"
                                     />
 
                                 </div>
@@ -877,7 +888,7 @@
                             </p>
 
                             <p class="mt-3 text-sm font-semibold">
-                                {{ $product->stock > 0 ? 'موجود در انبار' : 'ناموجود' }}
+                                {{ $canPurchase ? 'موجود در انبار' : 'ناموجود' }}
                             </p>
 
                         </div>
