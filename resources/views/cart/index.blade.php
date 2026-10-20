@@ -53,7 +53,9 @@
     @php
         $cartItems = $cart->items;
 
-        $subtotal = (float) $cart->subtotal();
+        $subtotal = (float) ($currentSubtotal ?? $cart->subtotal());
+
+        $cartReadyForCheckout = (bool) ($cartReadyForCheckout ?? true);
 
         $itemCount = (int) $cart->itemCount();
 
@@ -73,6 +75,9 @@
                 fn ($item) =>
                     $item->product
                     && (bool) $item->product->installment_enabled
+                    && filled($item->current_unit_price)
+                    && (bool) ($item->is_currently_available ?? false)
+                    && ! (bool) ($item->price_changed ?? false)
             );
 
         $installmentProduct = $cartItems
@@ -149,7 +154,8 @@
 
         $canCheckout =
             $isAuthenticated
-            && auth()->user()->isCustomer();
+            && auth()->user()->isCustomer()
+            && $cartReadyForCheckout;
 
     @endphp
 
@@ -406,20 +412,25 @@
                                                 $item->variant_options ?? []
                                             );
 
-                                            $itemStock = $variantOptions->isNotEmpty()
-                                                ? (int) $variantOptions->min('stock')
-                                                : (
-                                                    $variant?->stock
-                                                    ?? $product?->stock
-                                                    ?? 0
-                                                );
+                                            $itemStock = (int) (
+                                                $item->current_stock
+                                                ?? (
+                                                    $variantOptions->isNotEmpty()
+                                                        ? $variantOptions->min('stock')
+                                                        : ($variant?->stock ?? $product?->stock ?? 0)
+                                                )
+                                            );
 
-                                            $itemTotal =
-                                                (float) $item->unit_price
-                                                * (int) $item->quantity;
+                                            $itemUnitPrice = $item->current_unit_price;
+                                            $itemPriceChanged = (bool) ($item->price_changed ?? false);
+                                            $itemIssueMessage = $item->cart_issue_message;
+                                            $itemTotal = (float) ($item->current_line_total ?? 0);
 
                                             $itemInstallment =
-                                                (bool) ($product?->installment_enabled ?? false);
+                                                (bool) ($product?->installment_enabled ?? false)
+                                                && filled($itemUnitPrice)
+                                                && (bool) ($item->is_currently_available ?? false)
+                                                && ! $itemPriceChanged;
 
                                             $itemCashPercent =
                                                 $itemInstallment
@@ -436,6 +447,23 @@
                                                     : 0;
                                         @endphp
 
+                                        @if(! $product)
+                                            <article class="flex items-center justify-between gap-4 p-5 sm:p-7">
+                                                <div>
+                                                    <h3 class="font-semibold">محصول دیگر در دسترس نیست</h3>
+                                                    <p class="mt-2 text-sm leading-6 text-[var(--livora-stone)]">
+                                                        این کالا حذف شده است و دیگر در مبلغ سبد محاسبه نمی‌شود.
+                                                    </p>
+                                                </div>
+                                                <form action="{{ route('cart.remove', $item) }}" method="POST">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit" class="rounded-xl border border-[var(--livora-border)] px-3 py-2 text-xs font-medium">
+                                                        حذف
+                                                    </button>
+                                                </form>
+                                            </article>
+                                        @else
                                         <article class="p-5 sm:p-7">
 
                                             <div class="flex flex-col gap-5 sm:flex-row">
@@ -524,9 +552,21 @@
 
                                                             <p class="mt-2 text-[11px] text-[var(--livora-stone)]">
                                                                 قیمت واحد:
-                                                                {{ \App\Helpers\PersianNumberHelper::format((float) $item->unit_price) }}
-                                                                تومان
+                                                                @if($itemUnitPrice !== null)
+                                                                    {{ \App\Helpers\PersianNumberHelper::format((float) $itemUnitPrice) }} تومان
+                                                                @else
+                                                                    <span>قیمت در دسترس نیست</span>
+                                                                @endif
                                                             </p>
+
+                                                            @if($itemIssueMessage)
+                                                                <p class="mt-3 rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-xs leading-6 text-amber-900">
+                                                                    {{ $itemIssueMessage }}
+                                                                    @if($itemPriceChanged)
+                                                                        <span class="block mt-1">قیمت قبلی: {{ \App\Helpers\PersianNumberHelper::format((float) $item->unit_price) }} تومان</span>
+                                                                    @endif
+                                                                </p>
+                                                            @endif
 
                                                         </div>
 
@@ -596,7 +636,7 @@
                                                                     type="submit"
                                                                     class="rounded-xl border border-[var(--livora-border)] px-3 py-2 text-[11px] font-medium text-[var(--livora-ink)] transition hover:border-[var(--livora-ink)]"
                                                                 >
-                                                                    بروزرسانی
+                                                                    {{ $itemPriceChanged ? 'تأیید قیمت و تعداد' : 'بروزرسانی' }}
                                                                 </button>
                                                             </form>
                                                         </div>
@@ -610,10 +650,12 @@
                                                             </p>
 
                                                             <p class="mt-2 text-lg font-semibold">
-                                                                {{ \App\Helpers\PersianNumberHelper::format($itemTotal) }}
-                                                                <span class="text-[10px] font-normal text-[var(--livora-stone)]">
-                                                                تومان
-                                                            </span>
+                                                                @if($itemUnitPrice !== null)
+                                                                    {{ \App\Helpers\PersianNumberHelper::format($itemTotal) }}
+                                                                    <span class="text-[10px] font-normal text-[var(--livora-stone)]">تومان</span>
+                                                                @else
+                                                                    <span class="text-sm text-[var(--livora-stone)]">—</span>
+                                                                @endif
                                                             </p>
 
                                                         </div>
@@ -664,6 +706,7 @@
                                             </div>
 
                                         </article>
+                                        @endif
 
                                     @endforeach
 
@@ -961,6 +1004,14 @@
                                             ادامه به تسویه حساب
                                         </a>
 
+                                    @elseif($isAuthenticated && auth()->user()->isCustomer())
+
+                                        <div class="mt-6 rounded-2xl border border-amber-200 bg-amber-50 p-4">
+                                            <p class="text-xs leading-7 text-amber-900">
+                                                قبل از تسویه، هشدارهای سبد را برطرف کنید: قیمت‌های جدید را تأیید کنید، تعداد را با موجودی تطبیق دهید یا کالاهای ناموجود را حذف کنید.
+                                            </p>
+                                        </div>
+
                                     @else
 
                                         <div class="mt-6 rounded-2xl border border-[var(--livora-border)] bg-[var(--livora-surface)] p-4">
@@ -982,7 +1033,7 @@
 
 
                                     <a
-                                        href="{{ route('checkout.index') }}"
+                                        href="{{ route('shop.index') }}"
                                         class="mt-3 flex w-full items-center justify-center rounded-2xl border border-[var(--livora-border)] px-6 py-3.5 text-sm font-medium text-[var(--livora-ink)] transition hover:border-[var(--livora-ink)]"
                                     >
                                         ادامه خرید
