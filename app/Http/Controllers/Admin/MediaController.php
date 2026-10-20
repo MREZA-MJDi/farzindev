@@ -7,7 +7,9 @@ use App\Http\Requests\Admin\Media\MediaUploadRequest;
 use App\Models\Media;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use Throwable;
 use Illuminate\View\View;
 
 class MediaController extends Controller
@@ -43,18 +45,34 @@ class MediaController extends Controller
 
         $path = $file->store('media', $disk);
 
-        Media::create([
-            'user_id' => auth()->id(),
-            'disk' => $disk,
-            'path' => $path,
-            'filename' => basename($path),
-            'original_name' => $file->getClientOriginalName(),
-            'mime_type' => $file->getMimeType(),
-            'extension' => $file->getClientOriginalExtension(),
-            'size' => $file->getSize(),
-            'alt' => $request->input('alt'),
-            'description' => $request->input('description'),
-        ]);
+        if (! $path) {
+            return back()
+                ->withInput()
+                ->withErrors([
+                    'file' => 'ذخیره فایل رسانه انجام نشد؛ دوباره تلاش کنید.',
+                ]);
+        }
+
+        try {
+            DB::transaction(function () use ($file, $disk, $path, $request): void {
+                Media::create([
+                    'user_id' => auth()->id(),
+                    'disk' => $disk,
+                    'path' => $path,
+                    'filename' => basename($path),
+                    'original_name' => $file->getClientOriginalName(),
+                    'mime_type' => $file->getMimeType(),
+                    'extension' => $file->getClientOriginalExtension(),
+                    'size' => $file->getSize(),
+                    'alt' => $request->input('alt'),
+                    'description' => $request->input('description'),
+                ]);
+            });
+        } catch (Throwable $e) {
+            Storage::disk($disk)->delete($path);
+
+            throw $e;
+        }
 
         return redirect()
             ->route('admin.media.index')
@@ -66,11 +84,17 @@ class MediaController extends Controller
      */
     public function destroy(Media $media): RedirectResponse
     {
-        if ($media->disk && $media->path) {
-            Storage::disk($media->disk)->delete($media->path);
-        }
+        $disk = $media->disk;
+        $path = $media->path;
 
-        $media->delete();
+        DB::transaction(function () use ($media): void {
+            $media->delete();
+        });
+
+        // Remove the physical file only after the database delete commits.
+        if ($disk && $path) {
+            Storage::disk($disk)->delete($path);
+        }
 
         return redirect()
             ->route('admin.media.index')
