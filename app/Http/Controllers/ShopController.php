@@ -24,7 +24,7 @@ class ShopController extends Controller
         $query = Product::query()
             ->with([
                 'category',
-                'images',
+                'images.media',
             ])
             ->active()
             ->whereHas('category', fn ($categoryQuery) => $categoryQuery
