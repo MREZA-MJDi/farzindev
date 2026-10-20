@@ -882,6 +882,56 @@ class FarzinStorefrontTest extends TestCase
         $this->assertSame(6, (int) $color->fresh()->stock);
     }
 
+    public function test_admin_dashboard_inventory_metrics_use_variant_stock_when_configured(): void
+    {
+        $admin = $this->admin();
+        $category = $this->category(['slug' => 'dashboard-inventory']);
+
+        $availableVariantProduct = $this->product($category, [
+            'name' => 'Dashboard Available Variant',
+            'slug' => 'dashboard-available-variant',
+            'sku' => 'FAR-DASH-VARIANT-AVAILABLE',
+            'stock' => 0,
+        ]);
+        ProductVariant::create([
+            'product_id' => $availableVariantProduct->id,
+            'type' => 'size',
+            'name' => 'سایز',
+            'value' => 'M',
+            'sku' => 'FAR-DASH-VARIANT-AVAILABLE-M',
+            'stock' => 4,
+            'is_active' => true,
+        ]);
+
+        $emptyVariantProduct = $this->product($category, [
+            'name' => 'Dashboard Empty Variant',
+            'slug' => 'dashboard-empty-variant',
+            'sku' => 'FAR-DASH-VARIANT-EMPTY',
+            'stock' => 9,
+        ]);
+        ProductVariant::create([
+            'product_id' => $emptyVariantProduct->id,
+            'type' => 'size',
+            'name' => 'سایز',
+            'value' => 'S',
+            'sku' => 'FAR-DASH-VARIANT-EMPTY-S',
+            'stock' => 0,
+            'is_active' => true,
+        ]);
+
+        $baseStockProduct = $this->product($category, [
+            'name' => 'Dashboard Low Base Stock',
+            'slug' => 'dashboard-low-base-stock',
+            'sku' => 'FAR-DASH-BASE-LOW',
+            'stock' => 2,
+        ]);
+
+        $response = $this->actingAs($admin)->get(route('admin.dashboard'))->assertOk();
+
+        $response->assertViewHas('lowStockProducts', 2);
+        $response->assertViewHas('outOfStockProducts', 1);
+    }
+
     public function test_inventory_reservations_are_idempotent_and_released_once(): void
     {
         $customer = $this->customer();
