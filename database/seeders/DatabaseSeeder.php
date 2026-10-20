@@ -14,17 +14,8 @@ class DatabaseSeeder extends Seeder
             UserSeeder::class,
         ]);
 
-        // Fictional carts, orders and payments are limited to local/testing
-        // work; they are never created as customer history in production.
-        if (app()->environment(['local', 'testing'])) {
-            $this->call([
-                AddressSeeder::class,
-                CartSeeder::class,
-                WishlistSeeder::class,
-                OrderSeeder::class,
-                OrderItemSeeder::class,
-                PaymentSeeder::class,
-            ]);
-        }
+        // The former demo carts/orders referenced retired furniture records
+        // and an unseeded Livora customer. Keep normal seeding deterministic:
+        // only the Farzin catalogue and the configured admin are created.
     }
 }
