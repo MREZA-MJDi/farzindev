@@ -32,13 +32,42 @@ class DashboardController extends Controller
             ->where('status', 'active')
             ->count();
 
+        // Variant-backed products track inventory on their active options;
+        // the parent product's stock column is only authoritative when there
+        // are no active variants.
         $lowStockProducts = Product::query()
-            ->where('stock', '>', 0)
-            ->where('stock', '<=', 5)
+            ->where(function ($query): void {
+                $query
+                    ->where(function ($baseStock): void {
+                        $baseStock
+                            ->whereDoesntHave('variants', fn ($variantQuery) => $variantQuery
+                                ->where('is_active', true))
+                            ->whereBetween('stock', [1, 5]);
+                    })
+                    ->orWhereHas('variants', fn ($variantQuery) => $variantQuery
+                        ->where('is_active', true)
+                        ->whereBetween('stock', [1, 5]));
+            })
             ->count();
 
         $outOfStockProducts = Product::query()
-            ->where('stock', 0)
+            ->where(function ($query): void {
+                $query
+                    ->where(function ($baseStock): void {
+                        $baseStock
+                            ->whereDoesntHave('variants', fn ($variantQuery) => $variantQuery
+                                ->where('is_active', true))
+                            ->where('stock', '<=', 0);
+                    })
+                    ->orWhere(function ($variantStock): void {
+                        $variantStock
+                            ->whereHas('variants', fn ($variantQuery) => $variantQuery
+                                ->where('is_active', true))
+                            ->whereDoesntHave('variants', fn ($variantQuery) => $variantQuery
+                                ->where('is_active', true)
+                                ->where('stock', '>', 0));
+                    });
+            })
             ->count();
 
         $totalCustomers = User::query()
@@ -317,7 +346,7 @@ class DashboardController extends Controller
     {
         return OrderItem::query()
             ->with([
-                'product.images',
+                'product.images.media',
             ])
             ->whereHas(
                 'order',
