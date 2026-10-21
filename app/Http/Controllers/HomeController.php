@@ -22,10 +22,10 @@ class HomeController extends Controller
             ->get();
 
         /*
-         * The independent homepage is fed from the same catalogue as the
-         * shop. It uses a bounded query and excludes products without a
-         * resolvable image. The hero, cards and 3D mosaic have separate,
-         * non-overlapping products so visitors do not see repeated items.
+         * The hero is a self-contained architectural drawing; it deliberately
+         * does not select or load a featured product image. The catalogue
+         * remains bounded, with one eager-loaded image per product for cards
+         * and the lower product mosaic.
          */
         $catalogCount = Product::query()
             ->active()
@@ -37,9 +37,8 @@ class HomeController extends Controller
             ->whereHas('category', fn ($query) => $query->where('is_active', true))
             ->with([
                 'category',
-                // Homepage cards and the hero only render one image per product.
-                // Limit eager-loaded rows to avoid loading every gallery image
-                // (and resolving each file URL) for up to 50 catalogue products.
+                // Cards and the product mosaic need only one image per product.
+                // Avoid loading full galleries for up to 50 catalogue products.
                 'images' => fn ($query) => $query
                     ->select([
                         'id',
@@ -60,32 +59,15 @@ class HomeController extends Controller
             ->get();
 
         // Prefer a real-image product for the visual hero, but never hide
-        // otherwise-active products from the catalogue when an image is absent.
-        $heroProduct = $catalogProducts->first(
-            fn (Product $product) => $product->images->contains(
-                fn ($image) => filled($image->url)
-            )
-        );
-
-        $featuredProducts = $catalogProducts
-            ->reject(fn (Product $product) => $product->id === $heroProduct?->id)
+        // otherwise-active pr        $featuredProducts = $catalogProducts
             ->take(8)
             ->values();
 
-        // Keep the first product discoverable in both hero and product-card
-        // contexts when it is the only active catalogue item.
-        if ($catalogProducts->count() === 1 && $featuredProducts->isEmpty()) {
-            $featuredProducts = $catalogProducts->take(1)->values();
-        }
-
         $usedProductIds = $featuredProducts
             ->pluck('id')
-            ->push($heroProduct?->id)
-            ->filter()
             ->values();
 
-        $newProducts = $catalogProducts
-            ->filter(fn (Product $product) => (bool) $product->is_new)
+_new)
             ->reject(fn (Product $product) => $usedProductIds->contains($product->id))
             ->take(8)
             ->values();
@@ -125,7 +107,6 @@ class HomeController extends Controller
 
         return view('home.index', [
             'categories' => $categories,
-            'heroProduct' => $heroProduct,
             'demoImages' => $demoImages,
             'gridGroups' => $demoImages->chunk(9)->values(),
             'featuredProducts' => $featuredProducts,
