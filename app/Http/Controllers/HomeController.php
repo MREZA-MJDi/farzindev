@@ -22,9 +22,10 @@ class HomeController extends Controller
 
         /*
          * The independent homepage is fed from the same catalogue as the
-         * shop. It uses a bounded query and excludes products without a
-         * resolvable image. The hero, cards and 3D mosaic have separate,
-         * non-overlapping products so visitors do not see repeated items.
+         * shop. It uses bounded queries and eager-loaded relations to avoid
+         * N+1 lookups. The mosaic prefers products not already used in the hero
+         * or cards, then reuses actual catalogue imagery if the remaining set
+         * is too small to make the 3D gallery worthwhile.
          */
         $catalogCount = Product::query()
             ->active()
