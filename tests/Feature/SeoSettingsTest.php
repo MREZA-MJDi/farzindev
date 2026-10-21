@@ -101,6 +101,6 @@ class SeoSettingsTest extends TestCase
 
         $this->get(route('home'))
             ->assertOk()
-            ->assertSee('name="robots" content="noindex, follow"', false);
+            ->assertSee('name="robots" content="noindex, follow, max-snippet:-1, max-video-preview:-1, max-image-preview:large"', false);
     }
 }
