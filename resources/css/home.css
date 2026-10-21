@@ -736,3 +736,179 @@ body.home-body {
     outline: 3px solid var(--fz-accent);
     outline-offset: 4px;
 }
+
+
+/* Codrops product mosaic: preserve real product proportions at every breakpoint. */
+.home-body .grid-wrap {
+    max-width: 100%;
+    transform-style: preserve-3d;
+}
+.home-body .grid__item {
+    min-width: 0;
+    isolation: isolate;
+    backface-visibility: visible;
+}
+.home-body .grid__item-inner {
+    transform-style: preserve-3d;
+    backface-visibility: visible;
+}
+.home-body .grid__image {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    object-position: center;
+    image-rendering: auto;
+}
+
+/* The card remains a product-detail link; the cart control sits above that hit area. */
+.fz-product-card__cart-form,
+.fz-product-card__cart-action {
+    position: relative;
+    z-index: 30;
+    flex: 0 0 auto;
+}
+.fz-product-card__cart-form {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0;
+}
+.fz-product-card__cart-button,
+.fz-product-card__cart-action {
+    display: inline-grid;
+    place-items: center;
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    border: 1px solid var(--fz-line);
+    border-radius: 999px;
+    color: var(--fz-accent-dark);
+    background: var(--fz-paper-soft);
+    transition: color .2s ease, background .2s ease, border-color .2s ease, transform .2s ease;
+}
+.fz-product-card__cart-button svg,
+.fz-product-card__cart-action svg {
+    width: 17px;
+    height: 17px;
+}
+.fz-product-card__cart-button:hover,
+.fz-product-card__cart-action:hover {
+    color: #fff;
+    border-color: var(--fz-accent);
+    background: var(--fz-accent);
+    transform: translateY(-1px);
+}
+.fz-product-card__cart-button:disabled {
+    cursor: wait;
+    opacity: .55;
+    transform: none;
+}
+.fz-product-card__cart-message {
+    position: absolute;
+    z-index: 40;
+    inset-inline-end: 0;
+    inset-block-end: calc(100% + .45rem);
+    max-width: min(72vw, 14rem);
+    padding: .42rem .6rem;
+    border: 1px solid rgba(255,255,255,.16);
+    border-radius: .65rem;
+    color: #fff;
+    background: var(--fz-ink);
+    box-shadow: 0 8px 24px rgba(0,0,0,.16);
+    font-size: .64rem;
+    line-height: 1.6;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(4px);
+    transition: opacity .18s ease, transform .18s ease;
+}
+.fz-product-card__cart-message.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+.fz-product-card__cart-message[data-state="error"] {
+    background: #8f2f2a;
+}
+.fz-product-card__out-of-stock {
+    display: inline-flex;
+    align-items: center;
+    min-height: 34px;
+    padding: .25rem .6rem;
+    border: 1px solid var(--fz-line);
+    border-radius: 999px;
+    color: var(--fz-muted);
+    font-size: .62rem;
+    white-space: nowrap;
+}
+
+/* Runtime-created badges let both desktop and mobile cart counts update after AJAX add. */
+.fz-cart-count-badge {
+    position: absolute;
+    inset-block-start: .05rem;
+    inset-inline-end: .05rem;
+    display: flex;
+    min-width: 17px;
+    height: 17px;
+    align-items: center;
+    justify-content: center;
+    padding-inline: .25rem;
+    border-radius: 999px;
+    color: #fff;
+    background: var(--fz-accent);
+    font-size: 9px;
+    font-weight: 700;
+    line-height: 1;
+}
+#app nav[aria-label="ناوبری موبایل"] .fz-cart-count-badge {
+    inset-block-start: .2rem;
+    inset-inline-end: .35rem;
+    min-width: 15px;
+    height: 15px;
+    font-size: 8px;
+}
+
+@media (max-width: 760px) {
+    .home-body .grid {
+        --grid-columns: 2 !important;
+        --grid-item-ratio: .9 !important;
+        --grid-gap: clamp(.45rem, 2.2vw, .75rem) !important;
+    }
+    .home-body .content__heading {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: .6rem;
+    }
+    .home-body .grid__item-caption {
+        gap: .1rem;
+        padding: 2rem .55rem .55rem;
+    }
+    .home-body .grid__item-caption small {
+        font-size: .55rem;
+    }
+    .home-body .grid__item-caption strong {
+        font-size: .67rem;
+        line-height: 1.5;
+    }
+    .fz-product-card__cart-button,
+    .fz-product-card__cart-action {
+        width: 32px;
+        height: 32px;
+    }
+}
+@media (max-width: 380px) {
+    .home-body .grid__item-caption {
+        padding-inline: .4rem;
+    }
+    .home-body .grid__item-caption strong {
+        font-size: .62rem;
+    }
+}
+@media (prefers-reduced-motion: reduce) {
+    .fz-product-card__cart-button,
+    .fz-product-card__cart-action,
+    .fz-product-card__cart-message {
+        transition: none;
+    }
+}
