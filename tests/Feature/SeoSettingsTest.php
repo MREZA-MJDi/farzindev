@@ -105,4 +105,11 @@ class SeoSettingsTest extends TestCase
             ->assertOk()
             ->assertSee('name="robots" content="noindex, follow, max-snippet:-1, max-video-preview:-1, max-image-preview:large"', false);
     }
+
+    public function test_error_pages_apply_full_noindex_policy(): void
+    {
+        $this->get('/__seo_nonexistent_path_for_test__')
+            ->assertNotFound()
+            ->assertSee('name="robots" content="noindex, nofollow, noarchive, nosnippet, noimageindex"', false);
+    }
 }
