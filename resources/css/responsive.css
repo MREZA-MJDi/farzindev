@@ -459,3 +459,65 @@ body { min-width: 320px; max-width: 100%; overflow-x: clip; }
     }
 }
 
+/* Shop hero: preserve the editorial banner ratio without forcing desktop scale on phones. */
+.farzin-shop-banner__image {
+    isolation: isolate;
+}
+
+.farzin-shop-banner__content {
+    min-width: 0;
+}
+
+@media (max-width: 767px) {
+    .farzin-shop-banner__image {
+        aspect-ratio: 4 / 3;
+        min-height: 0;
+        border-radius: 1.15rem;
+    }
+
+    .farzin-shop-banner__content {
+        inset-inline: 0;
+        inset-block: 0;
+        max-width: none;
+        justify-content: flex-end;
+        padding: clamp(1rem, 5vw, 1.5rem);
+        background: linear-gradient(0deg, rgba(0,0,0,.78), rgba(0,0,0,.2) 72%, transparent);
+    }
+
+    .farzin-shop-banner__content h1 {
+        max-width: 18ch;
+        font-size: clamp(1.35rem, 6vw, 2rem) !important;
+        line-height: 1.35 !important;
+    }
+
+    .farzin-shop-banner__content p {
+        display: -webkit-box;
+        overflow: hidden;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 3;
+        font-size: .75rem;
+        line-height: 1.75;
+    }
+
+    .farzin-shop-banner__content a {
+        min-height: 2.6rem;
+        margin-top: .85rem;
+        padding: .65rem .9rem;
+        font-size: .75rem;
+    }
+
+    .farzin-shop-banner__content > p:first-child {
+        font-size: .55rem;
+    }
+}
+
+@media (max-width: 420px) {
+    .farzin-shop-banner__image {
+        aspect-ratio: 1 / 1;
+    }
+
+    .farzin-shop-banner__content p:not(:first-child) {
+        -webkit-line-clamp: 2;
+    }
+}
+
