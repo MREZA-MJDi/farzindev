@@ -4,6 +4,7 @@ namespace App\Services\Payments;
 
 use App\Models\Order;
 use App\Models\Payment;
+use App\Services\Inventory\InventoryReservationService;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
 use RuntimeException;
@@ -12,7 +13,8 @@ use Throwable;
 class PaymentService
 {
     public function __construct(
-        protected PaymentManager $paymentManager
+        protected PaymentManager $paymentManager,
+        protected InventoryReservationService $inventoryReservationService
     ) {
     }
 
@@ -37,16 +39,6 @@ class PaymentService
             $gateway
         );
 
-        $amount = $this->normalizeAmount(
-            $order->total
-        );
-
-        if ($amount <= 0) {
-            throw new RuntimeException(
-                'مبلغ سفارش معتبر نیست.'
-            );
-        }
-
         /*
         |--------------------------------------------------------------------------
         | Create local payment attempt
@@ -55,8 +47,7 @@ class PaymentService
 
         $payment = DB::transaction(function () use (
             $order,
-            $gateway,
-            $amount
+            $gateway
         ) {
             /*
              * Lock the order so two parallel requests cannot
@@ -67,13 +58,38 @@ class PaymentService
                 ->lockForUpdate()
                 ->firstOrFail();
 
-            if (
-                $lockedOrder->payment_status === 'paid'
-            ) {
+            // Revalidate against the current locked order. The model passed
+            // into this method may have been loaded before a cancellation or
+            // another payment attempt completed.
+            $this->validateOrderForPayment($lockedOrder);
+
+            if ($lockedOrder->payments()->where('status', 'paid')->exists()) {
                 throw new RuntimeException(
-                    'این سفارش قبلاً پرداخت شده است.'
+                    'برای این سفارش پرداخت موفق ثبت شده است.'
                 );
             }
+
+            // Never open two live gateway sessions for one order. Both could
+            // succeed and charge the customer twice. Failed attempts can be
+            // retried; stale attempts are closed by orders:expire-unpaid.
+            if ($lockedOrder->payments()->whereIn('status', ['pending', 'initiated'])->exists()) {
+                throw new RuntimeException(
+                    'برای این سفارش یک پرداخت در حال انجام است. وضعیت همان پرداخت را بررسی کنید.'
+                );
+            }
+
+            $amount = $this->normalizeAmount($lockedOrder->total);
+
+            if ($amount <= 0) {
+                throw new RuntimeException(
+                    'مبلغ سفارش معتبر نیست.'
+                );
+            }
+
+            // A previous failed/cancelled attempt may have released the
+            // reservation. Re-reserve under row locks before opening a new
+            // gateway attempt; failure prevents sending the customer to pay.
+            $this->inventoryReservationService->reserveForOrder($lockedOrder);
 
             /*
              * External provider = online.
@@ -705,6 +721,9 @@ class PaymentService
                         $this->syncOrderPaymentStatus(
                             $lockedPayment->order
                         );
+                        $this->releaseInventoryIfNoActivePaymentAttempts(
+                            $lockedPayment->order
+                        );
                     }
                 );
             }
@@ -943,26 +962,32 @@ class PaymentService
                         ),
                 ]);
 
-                $order =
-                    $lockedPayment->order;
-
-                if (! $order) {
-                    throw new RuntimeException(
-                        'سفارش مربوط به پرداخت پیدا نشد.'
-                    );
-                }
+                $order = Order::query()
+                    ->whereKey($lockedPayment->order_id)
+                    ->lockForUpdate()
+                    ->firstOrFail();
 
                 /*
                  * External gateways represent an online payment.
+                 * A successful late callback reopens an expired/cancelled
+                 * order, while InventoryReservationService either safely
+                 * commits the held stock or raises an explicit admin issue.
                  */
                 $order->update([
                     'payment_status' => 'paid',
 
                     'payment_method' => 'online',
 
-                    'payment_provider' =>
-                        $lockedPayment->gateway,
+                    'payment_provider' => $lockedPayment->gateway,
+
+                    'status' => $order->status === 'cancelled'
+                        ? 'pending'
+                        : $order->status,
                 ]);
+
+                $this->inventoryReservationService->commitForPaidOrder(
+                    $order->fresh()
+                );
             }
         );
     }
@@ -1032,6 +1057,9 @@ class PaymentService
                 ]);
 
                 $this->syncOrderPaymentStatus(
+                    $lockedPayment->order
+                );
+                $this->releaseInventoryIfNoActivePaymentAttempts(
                     $lockedPayment->order
                 );
             }
@@ -1112,6 +1140,34 @@ class PaymentService
         $order->update([
             'payment_status' => 'failed',
         ]);
+    }
+
+    /**
+     * Release stock only when no successful or in-flight payment attempt
+     * remains. This lets customers retry a failed gateway attempt safely.
+     */
+    protected function releaseInventoryIfNoActivePaymentAttempts(
+        ?Order $order
+    ): void {
+        if (! $order) {
+            return;
+        }
+
+        $order = $order->fresh();
+
+        if (! $order || $order->payment_status === 'paid') {
+            return;
+        }
+
+        if ($order->payments()->where('status', 'paid')->exists()) {
+            return;
+        }
+
+        if ($order->payments()->whereIn('status', ['pending', 'initiated'])->exists()) {
+            return;
+        }
+
+        $this->inventoryReservationService->releaseForOrder($order);
     }
 
     /**
@@ -1279,8 +1335,7 @@ class PaymentService
         Payment $payment,
         array $result
     ): void {
-        $order =
-            $payment->order;
+        $order = $payment->order;
 
         if (! $order) {
             throw new RuntimeException(
@@ -1288,16 +1343,7 @@ class PaymentService
             );
         }
 
-        /*
-        |--------------------------------------------------------------------------
-        | Our local payment amount must be positive.
-        |--------------------------------------------------------------------------
-        */
-
-        $expectedPaymentAmount =
-            $this->normalizeAmount(
-                $payment->amount
-            );
+        $expectedPaymentAmount = $this->normalizeAmount($payment->amount);
 
         if ($expectedPaymentAmount <= 0) {
             throw new RuntimeException(
@@ -1305,61 +1351,36 @@ class PaymentService
             );
         }
 
-        /*
-        |--------------------------------------------------------------------------
-        | External gateway returned amount
-        |--------------------------------------------------------------------------
-        */
-
+        // A gateway callback must carry an amount from the server-side
+        // verification response. Missing metadata on an older payment row
+        // must never turn a partial/ambiguous verification into a paid order.
         if (
-            array_key_exists(
-                'amount',
-                $result
-            )
-            && $result['amount'] !== null
+            ! array_key_exists('amount', $result)
+            || $result['amount'] === null
+            || $result['amount'] === ''
         ) {
-            $receivedAmount =
-                $this->normalizeAmount(
-                    $result['amount']
-                );
-
-            if (
-                $expectedPaymentAmount !==
-                $receivedAmount
-            ) {
-                throw new RuntimeException(
-                    'Payment amount mismatch.'
-                );
-            }
+            throw new RuntimeException(
+                'Gateway verification did not return a verified amount.'
+            );
         }
 
-        /*
-        |--------------------------------------------------------------------------
-        | External online payment must equal current order total.
-        |--------------------------------------------------------------------------
-        |
-        | Internal Livora installment payments should NOT enter this
-        | method because they are a separate flow.
-        |
-        */
+        $receivedAmount = $this->normalizeAmount($result['amount']);
 
-        if (
-            $payment->metadata['payment_method'] ?? null
-            === 'online'
-        ) {
-            $orderAmount =
-                $this->normalizeAmount(
-                    $order->total
-                );
+        if ($expectedPaymentAmount !== $receivedAmount) {
+            throw new RuntimeException(
+                'Payment amount mismatch.'
+            );
+        }
 
-            if (
-                $expectedPaymentAmount !==
-                $orderAmount
-            ) {
-                throw new RuntimeException(
-                    'Payment amount does not match order total.'
-                );
-            }
+        // PaymentService only verifies external gateway attempts. They pay
+        // the full order total; internal cheque/installment plans use their
+        // own service and must not pass through this callback.
+        $orderAmount = $this->normalizeAmount($order->total);
+
+        if ($expectedPaymentAmount !== $orderAmount) {
+            throw new RuntimeException(
+                'Payment amount does not match order total.'
+            );
         }
     }
 

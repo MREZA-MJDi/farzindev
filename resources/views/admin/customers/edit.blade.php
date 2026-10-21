@@ -146,7 +146,7 @@
                             </dt>
 
                             <dd class="mt-2 text-sm text-[var(--admin-text-soft)]">
-                                {{ $customer->created_at?->format('Y/m/d') ?? '—' }}
+                                {{ $customer->created_at ? \App\Helpers\JalaliHelper::format($customer->created_at, 'Y/m/d') : '—' }}
                             </dd>
 
                         </div>
@@ -159,7 +159,7 @@
                             </dt>
 
                             <dd class="mt-2 text-sm text-[var(--admin-text-soft)]">
-                                {{ $customer->updated_at?->format('Y/m/d H:i') ?? '—' }}
+                                {{ $customer->updated_at ? \App\Helpers\JalaliHelper::format($customer->updated_at, 'Y/m/d H:i') : '—' }}
                             </dd>
 
                         </div>

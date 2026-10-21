@@ -53,7 +53,9 @@
     @php
         $cartItems = $cart->items;
 
-        $subtotal = (float) $cart->subtotal();
+        $subtotal = (float) ($currentSubtotal ?? $cart->subtotal());
+
+        $cartReadyForCheckout = (bool) ($cartReadyForCheckout ?? true);
 
         $itemCount = (int) $cart->itemCount();
 
@@ -73,6 +75,9 @@
                 fn ($item) =>
                     $item->product
                     && (bool) $item->product->installment_enabled
+                    && filled($item->current_unit_price)
+                    && (bool) ($item->is_currently_available ?? false)
+                    && ! (bool) ($item->price_changed ?? false)
             );
 
         $installmentProduct = $cartItems
@@ -149,7 +154,8 @@
 
         $canCheckout =
             $isAuthenticated
-            && auth()->user()->isCustomer();
+            && auth()->user()->isCustomer()
+            && $cartReadyForCheckout;
 
     @endphp
 
@@ -205,7 +211,7 @@
                             @if($cartItems->isNotEmpty())
 
                                 <p class="mt-3 text-sm leading-7 text-[var(--livora-stone)]">
-                                    {{ number_format($itemCount) }}
+                                    {{ \App\Helpers\PersianNumberHelper::format($itemCount) }}
                                     کالا در انتخاب شما قرار دارد.
                                 </p>
 
@@ -372,27 +378,20 @@
 
                                         </div>
 
-                                        @auth
-
-                                            <form
-                                                action="{{ route('cart.clear') }}"
-                                                method="POST"
+                                        <form
+                                            action="{{ route('cart.clear') }}"
+                                            method="POST"
+                                        >
+                                            @csrf
+                                            @method('DELETE')
+                                            <button
+                                                type="submit"
+                                                class="text-xs text-[var(--livora-stone)] transition hover:text-red-600"
+                                                onclick="return confirm('آیا از خالی کردن سبد خرید مطمئن هستید؟')"
                                             >
-
-                                                @csrf
-                                                @method('DELETE')
-
-                                                <button
-                                                    type="submit"
-                                                    class="text-xs text-[var(--livora-stone)] transition hover:text-red-600"
-                                                    onclick="return confirm('آیا از خالی کردن سبد خرید مطمئن هستید؟')"
-                                                >
-                                                    پاک کردن سبد
-                                                </button>
-
-                                            </form>
-
-                                        @endauth
+                                                پاک کردن سبد
+                                            </button>
+                                        </form>
 
                                     </div>
 
@@ -413,20 +412,25 @@
                                                 $item->variant_options ?? []
                                             );
 
-                                            $itemStock = $variantOptions->isNotEmpty()
-                                                ? (int) $variantOptions->min('stock')
-                                                : (
-                                                    $variant?->stock
-                                                    ?? $product?->stock
-                                                    ?? 0
-                                                );
+                                            $itemStock = (int) (
+                                                $item->current_stock
+                                                ?? (
+                                                    $variantOptions->isNotEmpty()
+                                                        ? $variantOptions->min('stock')
+                                                        : ($variant?->stock ?? $product?->stock ?? 0)
+                                                )
+                                            );
 
-                                            $itemTotal =
-                                                (float) $item->unit_price
-                                                * (int) $item->quantity;
+                                            $itemUnitPrice = $item->current_unit_price;
+                                            $itemPriceChanged = (bool) ($item->price_changed ?? false);
+                                            $itemIssueMessage = $item->cart_issue_message;
+                                            $itemTotal = (float) ($item->current_line_total ?? 0);
 
                                             $itemInstallment =
-                                                (bool) ($product?->installment_enabled ?? false);
+                                                (bool) ($product?->installment_enabled ?? false)
+                                                && filled($itemUnitPrice)
+                                                && (bool) ($item->is_currently_available ?? false)
+                                                && ! $itemPriceChanged;
 
                                             $itemCashPercent =
                                                 $itemInstallment
@@ -443,6 +447,23 @@
                                                     : 0;
                                         @endphp
 
+                                        @if(! $product)
+                                            <article class="flex items-center justify-between gap-4 p-5 sm:p-7">
+                                                <div>
+                                                    <h3 class="font-semibold">محصول دیگر در دسترس نیست</h3>
+                                                    <p class="mt-2 text-sm leading-6 text-[var(--livora-stone)]">
+                                                        این کالا حذف شده است و دیگر در مبلغ سبد محاسبه نمی‌شود.
+                                                    </p>
+                                                </div>
+                                                <form action="{{ route('cart.remove', $item) }}" method="POST">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit" class="rounded-xl border border-[var(--livora-border)] px-3 py-2 text-xs font-medium">
+                                                        حذف
+                                                    </button>
+                                                </form>
+                                            </article>
+                                        @else
                                         <article class="p-5 sm:p-7">
 
                                             <div class="flex flex-col gap-5 sm:flex-row">
@@ -531,15 +552,26 @@
 
                                                             <p class="mt-2 text-[11px] text-[var(--livora-stone)]">
                                                                 قیمت واحد:
-                                                                {{ number_format((float) $item->unit_price) }}
-                                                                تومان
+                                                                @if($itemUnitPrice !== null)
+                                                                    {{ \App\Helpers\PersianNumberHelper::format((float) $itemUnitPrice) }} تومان
+                                                                @else
+                                                                    <span>قیمت در دسترس نیست</span>
+                                                                @endif
                                                             </p>
+
+                                                            @if($itemIssueMessage)
+                                                                <p class="mt-3 rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-xs leading-6 text-amber-900">
+                                                                    {{ $itemIssueMessage }}
+                                                                    @if($itemPriceChanged)
+                                                                        <span class="block mt-1">قیمت قبلی: {{ \App\Helpers\PersianNumberHelper::format((float) $item->unit_price) }} تومان</span>
+                                                                    @endif
+                                                                </p>
+                                                            @endif
 
                                                         </div>
 
 
                                                         {{-- Remove --}}
-                                                        @auth
 
                                                             <form
                                                                 action="{{ route('cart.remove', $item) }}"
@@ -574,65 +606,40 @@
 
                                                             </form>
 
-                                                        @endauth
+
 
                                                     </div>
 
 
                                                     <div class="mt-6 flex flex-col gap-4 border-t border-[var(--livora-border)] pt-5 sm:flex-row sm:items-center sm:justify-between">
 
-                                                        @if($isAuthenticated)
+                                                        <div>
+                                                            <p class="mb-2 text-[10px] uppercase tracking-[0.16em] text-[var(--livora-stone)]">
+                                                                تعداد
+                                                            </p>
 
-                                                            {{-- Quantity --}}
-                                                            <div>
+                                                            <form
+                                                                action="{{ route('cart.update', $item) }}"
+                                                                method="POST"
+                                                                class="flex items-center gap-3"
+                                                            >
+                                                                @csrf
+                                                                @method('PATCH')
 
-                                                                <p class="mb-2 text-[10px] uppercase tracking-[0.16em] text-[var(--livora-stone)]">
-                                                                    تعداد
-                                                                </p>
+                                                                <x-shop.quantity
+                                                                    name="quantity"
+                                                                    :value="$item->quantity"
+                                                                    :max="max(1, $itemStock)"
+                                                                />
 
-                                                                <form
-                                                                    action="{{ route('cart.update', $item) }}"
-                                                                    method="POST"
-                                                                    class="flex items-center gap-3"
+                                                                <button
+                                                                    type="submit"
+                                                                    class="rounded-xl border border-[var(--livora-border)] px-3 py-2 text-[11px] font-medium text-[var(--livora-ink)] transition hover:border-[var(--livora-ink)]"
                                                                 >
-
-                                                                    @csrf
-                                                                    @method('PATCH')
-
-                                                                    <x-shop.quantity
-                                                                        name="quantity"
-                                                                        :value="$item->quantity"
-                                                                        :max="max(1, $itemStock)"
-                                                                    />
-
-                                                                    <button
-                                                                        type="submit"
-                                                                        class="rounded-xl border border-[var(--livora-border)] px-3 py-2 text-[11px] font-medium text-[var(--livora-ink)] transition hover:border-[var(--livora-ink)]"
-                                                                    >
-                                                                        بروزرسانی
-                                                                    </button>
-
-                                                                </form>
-
-                                                            </div>
-
-                                                        @else
-
-                                                            <div class="rounded-2xl border border-[var(--livora-border)] bg-[var(--livora-surface)] px-4 py-3">
-
-                                                                <p class="text-[11px] leading-6 text-[var(--livora-stone)]">
-                                                                    برای تغییر تعداد یا حذف کالا،
-                                                                    <a
-                                                                        href="{{ route('login') }}"
-                                                                        class="font-medium text-[var(--livora-ink)] underline underline-offset-4"
-                                                                    >
-                                                                        وارد حساب شوید
-                                                                    </a>.
-                                                                </p>
-
-                                                            </div>
-
-                                                        @endif
+                                                                    {{ $itemPriceChanged ? 'تأیید قیمت و تعداد' : 'بروزرسانی' }}
+                                                                </button>
+                                                            </form>
+                                                        </div>
 
 
                                                         {{-- Total --}}
@@ -643,10 +650,12 @@
                                                             </p>
 
                                                             <p class="mt-2 text-lg font-semibold">
-                                                                {{ number_format($itemTotal) }}
-                                                                <span class="text-[10px] font-normal text-[var(--livora-stone)]">
-                                                                تومان
-                                                            </span>
+                                                                @if($itemUnitPrice !== null)
+                                                                    {{ \App\Helpers\PersianNumberHelper::format($itemTotal) }}
+                                                                    <span class="text-[10px] font-normal text-[var(--livora-stone)]">تومان</span>
+                                                                @else
+                                                                    <span class="text-sm text-[var(--livora-stone)]">—</span>
+                                                                @endif
                                                             </p>
 
                                                         </div>
@@ -680,7 +689,7 @@
                                                                     </p>
 
                                                                     <p class="mt-1 text-sm font-semibold">
-                                                                        {{ number_format($itemCashAmount) }}
+                                                                        {{ \App\Helpers\PersianNumberHelper::format($itemCashAmount) }}
                                                                         تومان
                                                                     </p>
 
@@ -697,6 +706,7 @@
                                             </div>
 
                                         </article>
+                                        @endif
 
                                     @endforeach
 
@@ -773,11 +783,11 @@
                                                 </p>
 
                                                 <p class="mt-2 text-xl font-semibold">
-                                                    {{ number_format($cashAmount) }}
+                                                    {{ \App\Helpers\PersianNumberHelper::format($cashAmount) }}
                                                 </p>
 
                                                 <p class="mt-1 text-[10px] text-white/40">
-                                                    {{ number_format($cashPercent) }}٪
+                                                    {{ \App\Helpers\PersianNumberHelper::format($cashPercent) }}٪
                                                 </p>
 
                                             </div>
@@ -789,7 +799,7 @@
                                                 </p>
 
                                                 <p class="mt-2 text-xl font-semibold">
-                                                    {{ number_format($deferredAmount) }}
+                                                    {{ \App\Helpers\PersianNumberHelper::format($deferredAmount) }}
                                                 </p>
 
                                                 <p class="mt-1 text-[10px] text-white/40">
@@ -805,12 +815,12 @@
                                                 </p>
 
                                                 <p class="mt-2 text-xl font-semibold">
-                                                    {{ number_format($chequeCount) }}
+                                                    {{ \App\Helpers\PersianNumberHelper::format($chequeCount) }}
                                                     چک
                                                 </p>
 
                                                 <p class="mt-1 text-[10px] text-white/40">
-                                                    هر {{ number_format($intervalMonths) }} ماه
+                                                    هر {{ \App\Helpers\PersianNumberHelper::format($intervalMonths) }} ماه
                                                 </p>
 
                                             </div>
@@ -827,18 +837,18 @@
                                                     <div>
 
                                                         <p class="text-xs font-medium">
-                                                            چک {{ number_format($index + 1) }}
+                                                            چک {{ \App\Helpers\PersianNumberHelper::format($index + 1) }}
                                                         </p>
 
                                                         <p class="mt-1 text-[10px] text-white/45">
-                                                            {{ number_format(($index + 1) * $intervalMonths) }}
+                                                            {{ \App\Helpers\PersianNumberHelper::format(($index + 1) * $intervalMonths) }}
                                                             ماه بعد
                                                         </p>
 
                                                     </div>
 
                                                     <p class="text-sm font-semibold">
-                                                        {{ number_format($amount) }}
+                                                        {{ \App\Helpers\PersianNumberHelper::format($amount) }}
                                                         تومان
                                                     </p>
 
@@ -911,7 +921,7 @@
                                         </span>
 
                                             <span class="text-sm font-medium">
-                                            {{ number_format($itemCount) }}
+                                            {{ \App\Helpers\PersianNumberHelper::format($itemCount) }}
                                         </span>
 
                                         </div>
@@ -923,7 +933,7 @@
                                         </span>
 
                                             <span class="text-sm font-semibold">
-                                            {{ number_format($subtotal) }}
+                                            {{ \App\Helpers\PersianNumberHelper::format($subtotal) }}
                                             تومان
                                         </span>
 
@@ -944,7 +954,7 @@
                                             </p>
 
                                             <p class="mt-2 text-2xl font-semibold tracking-tight">
-                                                {{ number_format($subtotal) }}
+                                                {{ \App\Helpers\PersianNumberHelper::format($subtotal) }}
                                             </p>
 
                                         </div>
@@ -969,14 +979,14 @@
                                             </p>
 
                                             <p class="mt-2 text-xl font-semibold">
-                                                {{ number_format($cashAmount) }}
+                                                {{ \App\Helpers\PersianNumberHelper::format($cashAmount) }}
                                                 تومان
                                             </p>
 
                                             <p class="mt-2 text-[10px] leading-6 text-white/40">
-                                                {{ number_format($cashPercent) }}٪
+                                                {{ \App\Helpers\PersianNumberHelper::format($cashPercent) }}٪
                                                 پیش‌پرداخت +
-                                                {{ number_format($chequeCount) }}
+                                                {{ \App\Helpers\PersianNumberHelper::format($chequeCount) }}
                                                 فقره چک
                                             </p>
 
@@ -993,6 +1003,14 @@
                                         >
                                             ادامه به تسویه حساب
                                         </a>
+
+                                    @elseif($isAuthenticated && auth()->user()->isCustomer())
+
+                                        <div class="mt-6 rounded-2xl border border-amber-200 bg-amber-50 p-4">
+                                            <p class="text-xs leading-7 text-amber-900">
+                                                قبل از تسویه، هشدارهای سبد را برطرف کنید: قیمت‌های جدید را تأیید کنید، تعداد را با موجودی تطبیق دهید یا کالاهای ناموجود را حذف کنید.
+                                            </p>
+                                        </div>
 
                                     @else
 
@@ -1015,7 +1033,7 @@
 
 
                                     <a
-                                        href="{{ route('checkout.index') }}"
+                                        href="{{ route('shop.index') }}"
                                         class="mt-3 flex w-full items-center justify-center rounded-2xl border border-[var(--livora-border)] px-6 py-3.5 text-sm font-medium text-[var(--livora-ink)] transition hover:border-[var(--livora-ink)]"
                                     >
                                         ادامه خرید

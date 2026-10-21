@@ -3,6 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <meta
         name="viewport"
@@ -42,7 +43,7 @@
     @stack('styles')
 </head>
 
-<body class="min-h-screen antialiased">
+<body class="@yield('body_class', 'min-h-screen antialiased')">
 
 <div
     id="app"
@@ -62,7 +63,7 @@
 
     <x-shop.filter-drawer />
 
-    <main class="storefront-content">
+    <main id="main-content" class="storefront-content">
         @yield('content')
     </main>
 

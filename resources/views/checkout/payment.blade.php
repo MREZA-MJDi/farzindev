@@ -542,7 +542,7 @@
                                         </p>
 
                                         <p class="mt-3 text-2xl font-semibold">
-                                            {{ number_format($cashAmount) }}
+                                            {{ \App\Helpers\PersianNumberHelper::format($cashAmount) }}
                                         </p>
 
                                         <p class="mt-1 text-[10px] text-white/45">
@@ -559,7 +559,7 @@
                                         </p>
 
                                         <p class="mt-3 text-2xl font-semibold">
-                                            {{ number_format($chequeCount) }}
+                                            {{ \App\Helpers\PersianNumberHelper::format($chequeCount) }}
                                         </p>
 
                                         <p class="mt-1 text-[10px] text-white/45">
@@ -576,7 +576,7 @@
                                         </p>
 
                                         <p class="mt-3 text-2xl font-semibold">
-                                            {{ number_format($intervalMonths) }}
+                                            {{ \App\Helpers\PersianNumberHelper::format($intervalMonths) }}
                                         </p>
 
                                         <p class="mt-1 text-[10px] text-white/45">
@@ -610,13 +610,13 @@
                                             <div class="mt-3 flex items-center justify-between gap-3">
 
                                                 <strong class="text-sm">
-                                                    {{ number_format((float) $installment->amount) }}
+                                                    {{ \App\Helpers\PersianNumberHelper::format((float) $installment->amount) }}
                                                     تومان
                                                 </strong>
 
                                                 <span class="rounded-full bg-white/10 px-2.5 py-1 text-[9px] text-white/60">
                                                 {{ $installment->due_date
-                                                    ? \Carbon\Carbon::parse($installment->due_date)->format('Y/m/d')
+                                                    ? \App\Helpers\JalaliHelper::format($installment->due_date, 'Y/m/d')
                                                     : 'بدون تاریخ'
                                                 }}
                                             </span>
@@ -805,11 +805,11 @@
 
                                         <p class="mt-2 text-[10px] text-[var(--livora-stone)]">
                                             تعداد:
-                                            {{ number_format($item->quantity) }}
+                                            {{ \App\Helpers\PersianNumberHelper::format($item->quantity) }}
                                         </p>
 
                                         <p class="mt-2 text-[11px] font-semibold">
-                                            {{ number_format((float) $item->total) }}
+                                            {{ \App\Helpers\PersianNumberHelper::format((float) $item->total) }}
                                             تومان
                                         </p>
 
@@ -832,7 +832,7 @@
                             </span>
 
                                 <span class="font-medium">
-                                {{ number_format((float) $order->subtotal) }}
+                                {{ \App\Helpers\PersianNumberHelper::format((float) $order->subtotal) }}
                                 تومان
                             </span>
 
@@ -846,7 +846,7 @@
                             </span>
 
                                 <span class="font-medium">
-                                {{ number_format((float) $order->shipping_cost) }}
+                                {{ \App\Helpers\PersianNumberHelper::format((float) $order->shipping_cost) }}
                                 تومان
                             </span>
 
@@ -863,7 +863,7 @@
 
                                     <span class="font-medium text-emerald-600">
                                     -
-                                    {{ number_format((float) $order->discount) }}
+                                    {{ \App\Helpers\PersianNumberHelper::format((float) $order->discount) }}
                                     تومان
                                 </span>
 
@@ -881,7 +881,7 @@
                                 <div class="text-left">
 
                                     <p class="text-2xl font-bold tracking-tight">
-                                        {{ number_format($orderTotal) }}
+                                        {{ \App\Helpers\PersianNumberHelper::format($orderTotal) }}
                                     </p>
 
                                     <p class="mt-1 text-[10px] text-[var(--livora-stone)]">
@@ -911,7 +911,7 @@
                                 </span>
 
                                     <strong class="text-sm">
-                                        {{ number_format($cashAmount) }}
+                                        {{ \App\Helpers\PersianNumberHelper::format($cashAmount) }}
                                         تومان
                                     </strong>
 
@@ -924,7 +924,7 @@
                                 </span>
 
                                     <strong class="text-sm">
-                                        {{ number_format($deferredAmount) }}
+                                        {{ \App\Helpers\PersianNumberHelper::format($deferredAmount) }}
                                         تومان
                                     </strong>
 

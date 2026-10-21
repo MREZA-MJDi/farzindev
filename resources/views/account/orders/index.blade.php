@@ -180,7 +180,7 @@
                                                     </div>
 
                                                     <p class="mt-2 text-[11px] text-[var(--livora-stone)]">
-                                                        {{ optional($order->created_at)->format('Y/m/d') }}
+                                                        {{ $order->created_at ? \App\Helpers\JalaliHelper::format($order->created_at, 'Y/m/d') : '—' }}
                                                     </p>
 
                                                 </div>
@@ -188,7 +188,7 @@
                                                 <div class="text-right">
 
                                                     <p class="text-lg font-semibold">
-                                                        {{ number_format((float) $order->total) }}
+                                                        {{ \App\Helpers\PersianNumberHelper::format((float) $order->total) }}
                                                         <span class="text-[10px] font-normal text-[var(--livora-stone)]">
                                                         تومان
                                                     </span>
@@ -211,7 +211,7 @@
                                             <div class="flex flex-wrap gap-2 text-[11px]">
 
                                             <span class="rounded-full border border-[var(--livora-border)] px-3 py-1.5 text-[var(--livora-stone)]">
-                                                {{ number_format($order->items->count()) }}
+                                                {{ \App\Helpers\PersianNumberHelper::format($order->items->count()) }}
                                                 محصول
                                             </span>
 

@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Http\Requests\Shop\ShopFilterRequest;
 use App\Models\Category;
 use App\Models\Product;
+use App\Models\StorefrontSetting;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Contracts\View\View;
 
 class ShopController extends Controller
@@ -22,7 +24,7 @@ class ShopController extends Controller
         $query = Product::query()
             ->with([
                 'category',
-                'images',
+                'images.media',
             ])
             ->active()
             ->whereHas('category', fn ($categoryQuery) => $categoryQuery
@@ -100,8 +102,21 @@ class ShopController extends Controller
         |--------------------------------------------------------------------------
         */
 
-        if (!empty($filters['in_stock'])) {
-            $query->inStock();
+        if (! empty($filters['in_stock'])) {
+            // Stock belongs to the parent product only when no variants are
+            // configured. Variant-backed products must use option-level stock.
+            $query->where(function ($stockQuery): void {
+                $stockQuery
+                    ->where(function ($baseStock): void {
+                        $baseStock
+                            ->whereDoesntHave('variants', fn ($variantQuery) => $variantQuery
+                                ->where('is_active', true))
+                            ->where('products.stock', '>', 0);
+                    })
+                    ->orWhereHas('variants', fn ($variantQuery) => $variantQuery
+                        ->where('is_active', true)
+                        ->where('stock', '>', 0));
+            });
         }
 
         /*
@@ -155,9 +170,24 @@ class ShopController extends Controller
         |--------------------------------------------------------------------------
         */
 
+        $settings = StorefrontSetting::query()
+            ->whereIn('key', [
+                'shop_banner_image',
+                'shop_banner_title',
+                'shop_banner_subtitle',
+            ])
+            ->pluck('value', 'key');
+
+        $bannerPath = $settings->get('shop_banner_image');
+
         return view('shop.index', [
             'products' => $products,
             'categories' => $categories,
+            'shopBanner' => [
+                'image_url' => $bannerPath ? Storage::disk('public')->url($bannerPath) : null,
+                'title' => $settings->get('shop_banner_title') ?: 'فروشگاه فرزین',
+                'subtitle' => $settings->get('shop_banner_subtitle') ?: 'هود و سینک آشپزخانه؛ انتخابی دقیق برای فضای شما.',
+            ],
         ]);
     }
 }

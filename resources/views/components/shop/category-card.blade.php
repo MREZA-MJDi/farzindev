@@ -48,7 +48,7 @@
                         </h3>
                         @if($hasCount)
                             <p class="mt-2 text-xs text-white/65">
-                                {{ number_format($count) }} محصول
+                                {{ \App\Helpers\PersianNumberHelper::format($count) }} محصول
                             </p>
                         @endif
                     </div>

@@ -32,7 +32,10 @@ class CategorySeeder extends Seeder
         ];
 
         foreach ($categories as $category) {
-            Category::updateOrCreate(
+            // Seed only missing baseline rows. Re-running a seeder in production
+            // must not overwrite category text, ordering, or active state that
+            // staff already configured in the admin dashboard.
+            Category::firstOrCreate(
                 ['slug' => $category['slug']],
                 $category
             );

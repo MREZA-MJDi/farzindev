@@ -180,7 +180,7 @@
                         </dt>
 
                         <dd class="mt-2 text-sm text-[var(--admin-text-soft)]">
-                            {{ $productImage->created_at?->format('Y/m/d H:i') ?? '—' }}
+                            {{ $productImage->created_at ? \App\Helpers\JalaliHelper::format($productImage->created_at, 'Y/m/d H:i') : '—' }}
                         </dd>
                     </div>
 

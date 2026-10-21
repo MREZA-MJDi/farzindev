@@ -24,6 +24,7 @@ class StoreProductImageRequest extends FormRequest
                 'required',
                 'image',
                 'mimes:jpg,jpeg,png,webp',
+                'dimensions:min_width=800,min_height=600',
                 'max:20480',
             ],
 
@@ -56,6 +57,7 @@ class StoreProductImageRequest extends FormRequest
             'image.image' => 'فایل انتخاب‌شده باید تصویر باشد.',
             'image.mimes' => 'فرمت تصویر باید jpg، jpeg، png یا webp باشد.',
             'image.max' => 'حجم تصویر نباید بیشتر از ۲۰ مگابایت باشد.',
+            'image.dimensions' => 'ابعاد تصویر باید حداقل ۸۰۰ در ۶۰۰ پیکسل باشد.',
 
             'alt.max' => 'متن جایگزین تصویر نباید بیشتر از ۲۵۵ کاراکتر باشد.',
 

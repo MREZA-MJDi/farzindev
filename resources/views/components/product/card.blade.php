@@ -62,7 +62,7 @@
 
             @if($hasDiscount)
                 <span class="farzin-product-badge farzin-product-badge--accent">
-                    {{ number_format($discountPercent) }}٪ تخفیف
+                    {{ \App\Helpers\PersianNumberHelper::format($discountPercent) }}٪ تخفیف
                 </span>
             @endif
         </div>
@@ -114,15 +114,15 @@
         <div class="mt-3 flex min-h-10 flex-wrap items-center gap-x-2 gap-y-1">
             @if($hasDiscount)
                 <span class="text-base font-bold tracking-tight text-[var(--livora-ink)]">
-                    {{ number_format((float) $product->price) }}
+                    {{ \App\Helpers\PersianNumberHelper::format((float) $product->price) }}
                     <span class="text-[10px] font-normal text-[var(--livora-stone)]">تومان</span>
                 </span>
                 <span class="text-xs text-[var(--livora-stone)] line-through">
-                    {{ number_format((float) $product->compare_at_price) }}
+                    {{ \App\Helpers\PersianNumberHelper::format((float) $product->compare_at_price) }}
                 </span>
             @else
                 <p class="text-base font-bold tracking-tight text-[var(--livora-ink)]">
-                    {{ number_format((float) $product->price) }}
+                    {{ \App\Helpers\PersianNumberHelper::format((float) $product->price) }}
                     <span class="text-[10px] font-normal text-[var(--livora-stone)]">تومان</span>
                 </p>
             @endif
@@ -134,15 +134,15 @@
                     <div>
                         <p class="text-[10px] text-[var(--livora-stone)]">پیش‌پرداخت</p>
                         <p class="mt-1 text-xs font-semibold text-[var(--livora-ink)]">
-                            {{ number_format($cashAmount) }} تومان
+                            {{ \App\Helpers\PersianNumberHelper::format($cashAmount) }} تومان
                         </p>
                     </div>
                     <div class="text-left">
                         <p class="text-[10px] text-[var(--livora-stone)]">شرایط</p>
                         <p class="mt-1 text-xs font-semibold text-[var(--livora-accent)]">
-                            {{ number_format($cashPercent) }}٪
+                            {{ \App\Helpers\PersianNumberHelper::format($cashPercent) }}٪
                             @if($chequeCount)
-                                + {{ number_format($chequeCount) }} چک
+                                + {{ \App\Helpers\PersianNumberHelper::format($chequeCount) }} چک
                             @endif
                         </p>
                     </div>

@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - fix/farzin-runtime-audit-2026-10-21
       - feature/farzin-storefront-rebrand
       - fix/farzin-home-production-2026-10-20
       - fix/farzin-home-final-2026-10-20
@@ -54,6 +55,15 @@ jobs:
       - name: Run Laravel tests
         run: php artisan test
 
+      - name: Verify production cache commands
+        run: |
+          php artisan config:cache
+          php artisan config:clear
+          php artisan route:cache
+          php artisan route:clear
+          php artisan view:cache
+          php artisan view:clear
+
       - name: Smoke-test the full Farzin database seeder
         run: |
           touch database/catalog-smoke.sqlite
@@ -68,7 +78,10 @@ jobs:
           $admins = App\Models\User::where("role", "admin")->count();
           if ($products !== 50 || $images !== 0 || $admins < 1) { throw new RuntimeException("Seed smoke test failed: " . $products . " products, " . $images . " placeholder images, " . $admins . " admins."); }
           App\Models\Product::where("sku", "FZ-SEED-HOOD-01")->update(["name" => "Edited by dashboard"]);
-          echo "Full database seed passed: " . $products . " products, no placeholder images, and an admin account.\n";
+          App\Models\Category::where("slug", "hoods")->update(["name" => "Edited category by dashboard", "is_active" => false, "sort_order" => 8]);
+          $admin = App\Models\User::where("role", "admin")->orderBy("id")->firstOrFail();
+          $admin->update(["password" => Illuminate\Support\Facades\Hash::make("manually-rotated-password")]);
+          echo "Full database seed passed: preview catalogue and admin created.\n";
           '
           APP_ENV=local DB_CONNECTION=sqlite DB_DATABASE="$PWD/database/catalog-smoke.sqlite" php artisan db:seed --force
           APP_ENV=local DB_CONNECTION=sqlite DB_DATABASE="$PWD/database/catalog-smoke.sqlite" php -r '
@@ -78,28 +91,47 @@ jobs:
           $products = App\Models\Product::where("sku", "like", "FZ-SEED-%")->count();
           $images = App\Models\ProductImage::whereHas("product", fn ($query) => $query->where("sku", "like", "FZ-SEED-%"))->count();
           $name = App\Models\Product::where("sku", "FZ-SEED-HOOD-01")->value("name");
-          if ($products !== 50 || $images !== 0 || $name !== "Edited by dashboard") { throw new RuntimeException("Repeat seeding changed or duplicated existing catalogue data."); }
-          echo "Repeat seed passed: existing dashboard edits are preserved.\n";
+          $category = Illuminate\Support\Facades\DB::table("categories")->where("slug", "hoods")->first();
+          $admin = App\Models\User::where("role", "admin")->orderBy("id")->firstOrFail();
+          if (
+              $products !== 50
+              || $images !== 0
+              || $name !== "Edited by dashboard"
+              || ! $category
+              || $category->name !== "Edited category by dashboard"
+              || (int) $category->is_active !== 0
+              || (int) $category->sort_order !== 8
+              || ! Illuminate\Support\Facades\Hash::check("manually-rotated-password", $admin->password)
+          ) { throw new RuntimeException("Repeat seeding changed or duplicated existing catalogue/admin data."); }
+          echo "Repeat seed passed: product/category edits and admin password are preserved.\n";
           '
 
       - name: Install production Composer dependencies
         run: composer install --no-dev --prefer-dist --no-interaction --no-progress --optimize-autoloader
 
-      - name: Package cPanel release
+      - name: Package VPS release
         run: |
-          zip -qr /tmp/farzin-cpanel-deploy.zip . \
+          test -f vendor/autoload.php
+          test -f public/build/manifest.json
+          test -f .env.example
+          zip -qr /tmp/farzin-vps-release.zip . \
             -x ".git/*" \
+               ".github/*" \
                "node_modules/*" \
                "tests/*" \
                ".env" \
                "storage/logs/*" \
                "database/*.sqlite"
-          mv /tmp/farzin-cpanel-deploy.zip ./farzin-cpanel-deploy.zip
+          if unzip -Z1 /tmp/farzin-vps-release.zip | grep -Eq '(^|/)\.env$|database/.*\.sqlite|storage/logs/'; then
+            echo "Release archive contains environment, SQLite, or log files."
+            exit 1
+          fi
+          mv /tmp/farzin-vps-release.zip ./farzin-vps-release.zip
 
-      - name: Upload cPanel release package
+      - name: Upload VPS release package
         uses: actions/upload-artifact@v4
         with:
-          name: farzin-cpanel-deploy
-          path: farzin-cpanel-deploy.zip
+          name: farzin-vps-release
+          path: farzin-vps-release.zip
           if-no-files-found: error
           retention-days: 7

@@ -49,6 +49,20 @@ class FarzinStorefrontTest extends TestCase
             ->assertSee('چک‌لیست');
     }
 
+    public function test_homepage_lists_active_products_even_without_uploaded_images(): void
+    {
+        $category = $this->category();
+        $product = $this->product($category, [
+            'name' => 'هود فعال بدون تصویر',
+            'slug' => 'active-hood-without-image',
+        ]);
+
+        $this->get(route('home'))
+            ->assertOk()
+            ->assertSee($product->name)
+            ->assertSee('تصویر محصول ثبت نشده');
+    }
+
     public function test_sitemap_lists_public_pages_and_only_active_catalog_items(): void
     {
         $category = $this->category([
@@ -120,6 +134,15 @@ class FarzinStorefrontTest extends TestCase
         $this->get(route('sitemap'))
             ->assertOk()
             ->assertDontSee(route('product.show', $product->slug), false);
+
+        // Hiding a category from the storefront must also prevent direct POST
+        // requests from adding its products to a cart.
+        $this->from(route('shop.index'))
+            ->post(route('cart.add', $product), ['quantity' => 1])
+            ->assertRedirect(route('shop.index'))
+            ->assertSessionHasErrors('product');
+
+        $this->assertDatabaseCount('cart_items', 0);
     }
 
     public function test_shop_search_and_price_filters_exclude_unavailable_products(): void
@@ -157,6 +180,50 @@ class FarzinStorefrontTest extends TestCase
             ->assertSee($budget->name)
             ->assertDontSee('Farzin Hood 90')
             ->assertDontSee('Archived Hood');
+    }
+
+    public function test_shop_in_stock_filter_includes_products_with_variant_level_stock(): void
+    {
+        $category = $this->category(['slug' => 'hoods']);
+        $variantProduct = $this->product($category, [
+            'name' => 'Variant Stock Hood',
+            'slug' => 'variant-stock-hood',
+            'sku' => 'FAR-VARIANT-STOCK',
+            'stock' => 0,
+        ]);
+        ProductVariant::create([
+            'product_id' => $variantProduct->id,
+            'type' => 'color',
+            'name' => 'رنگ',
+            'value' => 'black',
+            'sku' => 'FAR-VARIANT-STOCK-BLACK',
+            'price_adjustment' => 0,
+            'stock' => 3,
+            'is_active' => true,
+        ]);
+
+        $unavailableProduct = $this->product($category, [
+            'name' => 'Out Of Stock Hood',
+            'slug' => 'out-of-stock-hood',
+            'sku' => 'FAR-OUT-OF-STOCK',
+            // Parent stock must not override option-level stock when active variants exist.
+            'stock' => 9,
+        ]);
+        ProductVariant::create([
+            'product_id' => $unavailableProduct->id,
+            'type' => 'color',
+            'name' => 'رنگ',
+            'value' => 'white',
+            'sku' => 'FAR-OUT-OF-STOCK-WHITE',
+            'price_adjustment' => 0,
+            'stock' => 0,
+            'is_active' => true,
+        ]);
+
+        $this->get(route('shop.index', ['in_stock' => 1]))
+            ->assertOk()
+            ->assertSee($variantProduct->name)
+            ->assertDontSee($unavailableProduct->name);
     }
 
     public function test_shop_rejects_invalid_price_ranges_and_sort_options(): void
@@ -198,6 +265,71 @@ class FarzinStorefrontTest extends TestCase
 
         $this->get(route('product.show', $archived->slug))
             ->assertNotFound();
+    }
+
+    public function test_related_products_exclude_inactive_categories(): void
+    {
+        $activeCategory = $this->category(['slug' => 'hoods']);
+        $currentProduct = $this->product($activeCategory, [
+            'name' => 'Current Active Hood',
+            'slug' => 'current-active-hood',
+            'sku' => 'FAR-RELATED-CURRENT',
+        ]);
+
+        $inactiveCategory = $this->category([
+            'slug' => 'archived-category',
+            'name' => 'Inactive Category',
+            'is_active' => false,
+        ]);
+        $hiddenRelatedProduct = $this->product($inactiveCategory, [
+            'name' => 'Hidden Related Sink',
+            'slug' => 'hidden-related-sink',
+            'sku' => 'FAR-RELATED-HIDDEN',
+        ]);
+
+        $this->get(route('product.show', $currentProduct->slug))
+            ->assertOk()
+            ->assertSee($currentProduct->name)
+            ->assertDontSee($hiddenRelatedProduct->name);
+    }
+
+    public function test_variant_product_detail_uses_variant_stock_for_availability_and_quantity(): void
+    {
+        $product = $this->product($this->category(['slug' => 'hoods']), [
+            'name' => 'Variant Availability Hood',
+            'slug' => 'variant-availability-hood',
+            'sku' => 'FAR-VARIANT-AVAILABILITY',
+            'stock' => 0,
+        ]);
+
+        ProductVariant::create([
+            'product_id' => $product->id,
+            'type' => 'color',
+            'name' => 'رنگ',
+            'value' => 'black',
+            'sku' => 'FAR-VARIANT-AVAILABILITY-BLACK',
+            'price_adjustment' => 0,
+            'stock' => 4,
+            'is_active' => true,
+        ]);
+        ProductVariant::create([
+            'product_id' => $product->id,
+            'type' => 'size',
+            'name' => 'اندازه',
+            'value' => '90',
+            'sku' => 'FAR-VARIANT-AVAILABILITY-90',
+            'price_adjustment' => 0,
+            'stock' => 2,
+            'is_active' => true,
+        ]);
+
+        $this->get(route('product.show', $product->slug))
+            ->assertOk()
+            ->assertSee('"availability"', false)
+            ->assertSee('InStock')
+            ->assertSee('وابسته به ویژگی انتخاب‌شده')
+            ->assertSee('max="4"', false)
+            ->assertSee('موجود در انبار');
     }
 
     public function test_customer_can_add_product_to_cart_and_repeated_adds_merge(): void
@@ -490,7 +622,7 @@ class FarzinStorefrontTest extends TestCase
                 'status' => 'active',
                 'is_featured' => '1',
                 'is_new' => '1',
-                'image' => UploadedFile::fake()->image('farzin-hood.png', 120, 80),
+                'image' => UploadedFile::fake()->image('farzin-hood.png', 800, 600),
             ])
             ->assertRedirect(route('admin.products.index'))
             ->assertSessionHas('success');
@@ -509,6 +641,33 @@ class FarzinStorefrontTest extends TestCase
         $this->get(route('product.show', $product->slug))
             ->assertOk()
             ->assertSee($product->name);
+    }
+
+    public function test_admin_cannot_upload_a_low_resolution_product_image(): void
+    {
+        $admin = $this->admin();
+        $category = $this->category(['slug' => 'low-resolution-hoods']);
+
+        $this->actingAs($admin)
+            ->from(route('admin.products.create'))
+            ->post(route('admin.products.store'), [
+                'category_id' => $category->id,
+                'name' => 'Low Resolution Hood',
+                'slug' => 'low-resolution-hood',
+                'sku' => 'FAR-LOW-RESOLUTION',
+                'short_description' => 'تصویر آزمایشی با وضوح پایین',
+                'description' => 'این محصول باید به دلیل ابعاد کم تصویر رد شود.',
+                'price' => '24500000',
+                'stock' => 5,
+                'status' => 'active',
+                'image' => UploadedFile::fake()->image('too-small.jpg', 320, 240),
+            ])
+            ->assertRedirect(route('admin.products.create'))
+            ->assertSessionHasErrors('image');
+
+        $this->assertDatabaseMissing('products', [
+            'slug' => 'low-resolution-hood',
+        ]);
     }
 
     public function test_customer_can_place_order_and_cart_is_cleared_after_order_snapshot_is_saved(): void
@@ -555,6 +714,8 @@ class FarzinStorefrontTest extends TestCase
         $this->assertSame('pending', $order->status);
         $this->assertSame('pending', $order->payment_status);
         $this->assertSame('online', $order->payment_method);
+        $this->assertSame(3, (int) $product->fresh()->stock);
+        $this->assertNotNull($order->fresh()->inventory_reserved_at);
         $this->assertEquals(6000000, (float) $order->total);
         $this->assertDatabaseHas('order_items', [
             'order_id' => $order->id,
@@ -586,6 +747,397 @@ class FarzinStorefrontTest extends TestCase
         $this->assertDatabaseCount('orders', 1);
     }
 
+    public function test_checkout_reprices_stale_cart_rows_from_current_product_and_variant_prices(): void
+    {
+        $customer = $this->customer();
+        $product = $this->product($this->category(['slug' => 'hoods']), [
+            'name' => 'Repriced Checkout Hood',
+            'slug' => 'repriced-checkout-hood',
+            'sku' => 'FAR-REPRICE-1',
+            'price' => 3000000,
+            'stock' => 9,
+        ]);
+        $variant = ProductVariant::create([
+            'product_id' => $product->id,
+            'type' => 'color',
+            'name' => 'رنگ بدنه',
+            'value' => 'black',
+            'sku' => 'FAR-REPRICE-1-BLACK',
+            'price_adjustment' => 500000,
+            'stock' => 5,
+            'is_active' => true,
+        ]);
+        $cart = Cart::create([
+            'user_id' => $customer->id,
+            'session_id' => null,
+            'status' => 'active',
+        ]);
+        CartItem::create([
+            'cart_id' => $cart->id,
+            'product_id' => $product->id,
+            'product_variant_id' => $variant->id,
+            'variant_key' => hash('sha256', $product->id.'|color:'.$variant->id),
+            'variant_options' => [[
+                'id' => $variant->id,
+                'type' => 'color',
+                'name' => 'رنگ بدنه',
+                'value' => 'black',
+                'sku' => $variant->sku,
+                'price_adjustment' => 0,
+                'stock' => 5,
+            ]],
+            'quantity' => 2,
+            // Simulate a cart item added before the product and variant price changed.
+            'unit_price' => 1000000,
+        ]);
+
+        $this->actingAs($customer)
+            ->post(route('checkout.place'), [
+                'first_name' => 'Farzin',
+                'last_name' => 'Buyer',
+                'phone' => '09123456789',
+                'email' => 'buyer@farzin.test',
+                'province' => 'Tehran',
+                'city' => 'Tehran',
+                'address' => 'خیابان نمونه، پلاک ۱',
+                'postal_code' => '1234567890',
+            ])
+            ->assertRedirect();
+
+        $order = Order::query()->where('user_id', $customer->id)->firstOrFail();
+        $line = $order->items()->firstOrFail();
+
+        // Checkout must use the current product price plus the current option adjustment:
+        // (3,000,000 + 500,000) × 2, not the stale cart price of 1,000,000.
+        $this->assertEquals(7000000, (float) $order->total);
+        $this->assertEquals(3500000, (float) $line->unit_price);
+        $this->assertEquals(7000000, (float) $line->total);
+        $this->assertSame('FAR-REPRICE-1-BLACK', $line->sku);
+        $this->assertEquals(500000, (float) $line->variant_options[0]['price_adjustment']);
+        $this->assertSame(9, (int) $product->fresh()->stock);
+        $this->assertSame(3, (int) $variant->fresh()->stock);
+    }
+
+    public function test_checkout_rejects_a_newly_required_variant_type_and_preserves_the_cart(): void
+    {
+        $customer = $this->customer();
+        $product = $this->product($this->category(['slug' => 'hoods']), [
+            'name' => 'Changed Options Hood',
+            'slug' => 'changed-options-hood',
+            'sku' => 'FAR-OPTIONS-1',
+            'stock' => 8,
+        ]);
+        $color = ProductVariant::create([
+            'product_id' => $product->id,
+            'type' => 'color',
+            'name' => 'رنگ بدنه',
+            'value' => 'black',
+            'sku' => 'FAR-OPTIONS-1-BLACK',
+            'price_adjustment' => 0,
+            'stock' => 6,
+            'is_active' => true,
+        ]);
+        $cart = Cart::create([
+            'user_id' => $customer->id,
+            'session_id' => null,
+            'status' => 'active',
+        ]);
+        $item = CartItem::create([
+            'cart_id' => $cart->id,
+            'product_id' => $product->id,
+            'product_variant_id' => $color->id,
+            'variant_key' => hash('sha256', $product->id.'|color:'.$color->id),
+            'variant_options' => [[
+                'id' => $color->id,
+                'type' => 'color',
+                'name' => 'رنگ بدنه',
+                'value' => 'black',
+                'sku' => $color->sku,
+                'price_adjustment' => 0,
+                'stock' => 6,
+            ]],
+            'quantity' => 1,
+            'unit_price' => $product->price,
+        ]);
+
+        // A newly configured option type makes the old cart selection incomplete.
+        ProductVariant::create([
+            'product_id' => $product->id,
+            'type' => 'finish',
+            'name' => 'جنس پوشش',
+            'value' => 'matte',
+            'sku' => 'FAR-OPTIONS-1-MATTE',
+            'price_adjustment' => 0,
+            'stock' => 6,
+            'is_active' => true,
+        ]);
+
+        $this->actingAs($customer)
+            ->from(route('checkout.index'))
+            ->post(route('checkout.place'), [
+                'first_name' => 'Farzin',
+                'last_name' => 'Buyer',
+                'phone' => '09123456789',
+                'email' => 'buyer@farzin.test',
+                'province' => 'Tehran',
+                'city' => 'Tehran',
+                'address' => 'خیابان نمونه، پلاک ۱',
+                'postal_code' => '1234567890',
+            ])
+            ->assertRedirect(route('checkout.index'))
+            ->assertSessionHas('error');
+
+        $this->assertDatabaseCount('orders', 0);
+        $this->assertDatabaseHas('cart_items', ['id' => $item->id, 'cart_id' => $cart->id]);
+        $this->assertSame(8, (int) $product->fresh()->stock);
+        $this->assertSame(6, (int) $color->fresh()->stock);
+    }
+
+    public function test_admin_dashboard_inventory_metrics_use_variant_stock_when_configured(): void
+    {
+        $admin = $this->admin();
+        $category = $this->category(['slug' => 'dashboard-inventory']);
+
+        $availableVariantProduct = $this->product($category, [
+            'name' => 'Dashboard Available Variant',
+            'slug' => 'dashboard-available-variant',
+            'sku' => 'FAR-DASH-VARIANT-AVAILABLE',
+            'stock' => 0,
+        ]);
+        ProductVariant::create([
+            'product_id' => $availableVariantProduct->id,
+            'type' => 'size',
+            'name' => 'سایز',
+            'value' => 'M',
+            'sku' => 'FAR-DASH-VARIANT-AVAILABLE-M',
+            'stock' => 4,
+            'is_active' => true,
+        ]);
+
+        $emptyVariantProduct = $this->product($category, [
+            'name' => 'Dashboard Empty Variant',
+            'slug' => 'dashboard-empty-variant',
+            'sku' => 'FAR-DASH-VARIANT-EMPTY',
+            'stock' => 9,
+        ]);
+        ProductVariant::create([
+            'product_id' => $emptyVariantProduct->id,
+            'type' => 'size',
+            'name' => 'سایز',
+            'value' => 'S',
+            'sku' => 'FAR-DASH-VARIANT-EMPTY-S',
+            'stock' => 0,
+            'is_active' => true,
+        ]);
+
+        $baseStockProduct = $this->product($category, [
+            'name' => 'Dashboard Low Base Stock',
+            'slug' => 'dashboard-low-base-stock',
+            'sku' => 'FAR-DASH-BASE-LOW',
+            'stock' => 2,
+        ]);
+
+        $response = $this->actingAs($admin)->get(route('admin.dashboard'))->assertOk();
+
+        $response->assertViewHas('lowStockProducts', 2);
+        $response->assertViewHas('outOfStockProducts', 1);
+    }
+
+    public function test_inventory_reservations_are_idempotent_and_released_once(): void
+    {
+        $customer = $this->customer();
+        $product = $this->product($this->category(), [
+            'name' => 'Inventory Lifecycle Hood',
+            'slug' => 'inventory-lifecycle-hood',
+            'sku' => 'FAR-INVENTORY-LIFECYCLE',
+            'stock' => 5,
+        ]);
+        $order = $this->order($customer);
+        $order->items()->create([
+            'product_id' => $product->id,
+            'product_name' => $product->name,
+            'sku' => $product->sku,
+            'quantity' => 2,
+            'unit_price' => 10000000,
+            'total' => 20000000,
+        ]);
+
+        $inventory = app(\App\Services\Inventory\InventoryReservationService::class);
+
+        $inventory->reserveForOrder($order);
+        $this->assertSame(3, (int) $product->fresh()->stock);
+        $this->assertNotNull($order->fresh()->inventory_reserved_at);
+
+        // A duplicate checkout/payment start must not deduct stock again.
+        $inventory->reserveForOrder($order);
+        $this->assertSame(3, (int) $product->fresh()->stock);
+
+        $inventory->releaseForOrder($order);
+        $this->assertSame(5, (int) $product->fresh()->stock);
+        $this->assertNull($order->fresh()->inventory_reserved_at);
+        $this->assertNotNull($order->fresh()->inventory_released_at);
+
+        // Repeated cancellation/release is idempotent too.
+        $inventory->releaseForOrder($order);
+        $this->assertSame(5, (int) $product->fresh()->stock);
+    }
+
+    public function test_inventory_reservation_tracks_selected_variant_stock_separately(): void
+    {
+        $customer = $this->customer();
+        $product = $this->product($this->category(), [
+            'name' => 'Variant Inventory Hood',
+            'slug' => 'variant-inventory-hood',
+            'sku' => 'FAR-VARIANT-INVENTORY',
+            'stock' => 12,
+        ]);
+        $variant = ProductVariant::create([
+            'product_id' => $product->id,
+            'type' => 'color',
+            'name' => 'رنگ بدنه',
+            'value' => 'black',
+            'sku' => 'FAR-VARIANT-INVENTORY-BLACK',
+            'price_adjustment' => 0,
+            'stock' => 6,
+            'is_active' => true,
+        ]);
+        $order = $this->order($customer);
+        $order->items()->create([
+            'product_id' => $product->id,
+            'product_variant_id' => $variant->id,
+            'variant_options' => [[
+                'id' => $variant->id,
+                'type' => 'color',
+                'name' => 'رنگ بدنه',
+                'value' => 'black',
+                'stock' => 6,
+            ]],
+            'product_name' => $product->name,
+            'sku' => $variant->sku,
+            'quantity' => 2,
+            'unit_price' => 10000000,
+            'total' => 20000000,
+        ]);
+
+        $inventory = app(\App\Services\Inventory\InventoryReservationService::class);
+        $inventory->reserveForOrder($order);
+
+        $this->assertSame(12, (int) $product->fresh()->stock);
+        $this->assertSame(4, (int) $variant->fresh()->stock);
+
+        $inventory->releaseForOrder($order);
+
+        $this->assertSame(12, (int) $product->fresh()->stock);
+        $this->assertSame(6, (int) $variant->fresh()->stock);
+    }
+
+    public function test_verified_late_payment_flags_inventory_shortage_without_negative_stock(): void
+    {
+        $customer = $this->customer();
+        $product = $this->product($this->category(), [
+            'name' => 'Late Payment Hood',
+            'slug' => 'late-payment-hood',
+            'sku' => 'FAR-LATE-PAYMENT',
+            'stock' => 1,
+        ]);
+        $order = $this->order($customer, [
+            'payment_status' => 'paid',
+        ]);
+        $order->items()->create([
+            'product_id' => $product->id,
+            'product_name' => $product->name,
+            'sku' => $product->sku,
+            'quantity' => 2,
+            'unit_price' => 10000000,
+            'total' => 20000000,
+        ]);
+
+        app(\App\Services\Inventory\InventoryReservationService::class)
+            ->commitForPaidOrder($order);
+
+        $order->refresh();
+        $this->assertSame(1, (int) $product->fresh()->stock);
+        $this->assertNotNull($order->inventory_issue_at);
+        $this->assertNotNull($order->inventory_committed_at);
+        $this->assertNotEmpty($order->inventory_issue_reason);
+    }
+
+    public function test_expiring_an_unpaid_order_releases_reserved_stock(): void
+    {
+        $customer = $this->customer();
+        $product = $this->product($this->category(), [
+            'name' => 'Stale Reservation Hood',
+            'slug' => 'stale-reservation-hood',
+            'sku' => 'FAR-STALE-RESERVATION',
+            'stock' => 5,
+        ]);
+        $order = $this->order($customer, [
+            'created_at' => now()->subHours(26),
+            'updated_at' => now()->subHours(26),
+        ]);
+        $order->items()->create([
+            'product_id' => $product->id,
+            'product_name' => $product->name,
+            'sku' => $product->sku,
+            'quantity' => 2,
+            'unit_price' => 10000000,
+            'total' => 20000000,
+        ]);
+
+        $inventory = app(\App\Services\Inventory\InventoryReservationService::class);
+        $inventory->reserveForOrder($order);
+        $order->forceFill(['inventory_reserved_at' => now()->subHours(26)])->save();
+        $this->assertSame(3, (int) $product->fresh()->stock);
+
+        $this->artisan('orders:expire-unpaid')
+            ->assertExitCode(0);
+
+        $order->refresh();
+        $this->assertSame('cancelled', $order->status);
+        $this->assertSame('failed', $order->payment_status);
+        $this->assertNull($order->inventory_reserved_at);
+        $this->assertNotNull($order->inventory_released_at);
+        $this->assertSame(5, (int) $product->fresh()->stock);
+    }
+
+    public function test_payment_start_rejects_duplicate_active_attempts(): void
+    {
+        $customer = $this->customer();
+        $order = $this->order($customer);
+
+        $order->payments()->create([
+            'user_id' => $customer->id,
+            'gateway' => 'digipay',
+            'amount' => 1000000,
+            'status' => 'initiated',
+            'metadata' => [
+                'payment_method' => 'online',
+                'payment_flow' => 'external_gateway',
+            ],
+        ]);
+
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('پرداخت در حال انجام است');
+
+        app(PaymentService::class)->startInstallmentPayment($order, 'digipay');
+    }
+
+    public function test_payment_start_revalidates_order_state_after_locking_it(): void
+    {
+        $customer = $this->customer();
+        $order = $this->order($customer);
+        $staleOrder = Order::query()->findOrFail($order->id);
+
+        // Simulate a cancellation after the request loaded the order but
+        // before the payment service acquires its transactional lock.
+        $order->update(['status' => 'cancelled']);
+
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('لغو شده');
+
+        app(PaymentService::class)->startInstallmentPayment($staleOrder, 'digipay');
+    }
+
     public function test_customer_cannot_view_another_customers_payment_page(): void
     {
         $owner = $this->customer();
@@ -605,6 +1157,98 @@ class FarzinStorefrontTest extends TestCase
     {
         $this->post('/checkout/payment/callback/unknown-gateway', [])
             ->assertNotFound();
+    }
+
+    public function test_gateway_http_success_without_explicit_verification_flag_is_not_payment_success(): void
+    {
+        $customer = $this->customer();
+        $order = $this->order($customer);
+        $payment = $order->payments()->create([
+            'user_id' => $customer->id,
+            'gateway' => 'digipay',
+            'authority' => 'AUTH-AMBIGUOUS-RESPONSE',
+            'amount' => $order->total,
+            'status' => 'initiated',
+            'metadata' => [
+                'payment_method' => 'online',
+                'payment_flow' => 'external_gateway',
+            ],
+        ]);
+
+        config([
+            'payment.digipay.base_url' => 'https://gateway.test',
+            'payment.digipay.endpoints.verify' => '/verify',
+        ]);
+
+        \Illuminate\Support\Facades\Http::fake([
+            'gateway.test/*' => \Illuminate\Support\Facades\Http::response([
+                'success' => true,
+                'amount' => (float) $payment->amount,
+                'transaction_id' => 'TX-AMBIGUOUS',
+                'status' => 'pending',
+            ], 200),
+        ]);
+
+        $result = app(\App\Services\Payments\Gateways\DigiPayGateway::class)
+            ->verifyPayment($payment);
+
+        $this->assertFalse($result['success']);
+        $this->assertNull($result['amount']);
+        $this->assertStringContainsString('explicitly confirm', $result['message']);
+        $this->assertSame('initiated', $payment->fresh()->status);
+        $this->assertNotSame('paid', $order->fresh()->payment_status);
+    }
+
+    public function test_online_payment_callback_rejects_verified_response_without_amount(): void
+    {
+        $customer = $this->customer();
+        $order = $this->order($customer, [
+            'payment_status' => 'pending',
+        ]);
+        $payment = $order->payments()->create([
+            'user_id' => $customer->id,
+            'gateway' => 'digipay',
+            'authority' => 'AUTH-MISSING-AMOUNT',
+            'amount' => $order->total,
+            'status' => 'initiated',
+            'metadata' => [
+                'payment_method' => 'online',
+                'payment_flow' => 'external_gateway',
+            ],
+        ]);
+
+        $gateway = \Mockery::mock(
+            \App\Services\Payments\Contracts\InstallmentPaymentGatewayInterface::class
+        );
+        $gateway->shouldReceive('verifyPayment')
+            ->once()
+            ->andReturn([
+                'success' => true,
+                'amount' => null,
+                'transaction_id' => 'TX-MISSING-AMOUNT',
+                'message' => 'Verified',
+                'data' => ['status' => 'success'],
+            ]);
+
+        $manager = \Mockery::mock(\App\Services\Payments\PaymentManager::class);
+        $manager->shouldReceive('driver')
+            ->once()
+            ->with('digipay')
+            ->andReturn($gateway);
+        $this->app->instance(\App\Services\Payments\PaymentManager::class, $manager);
+
+        $result = app(PaymentService::class)->handleCallback(
+            'digipay',
+            ['authority' => 'AUTH-MISSING-AMOUNT']
+        );
+
+        $this->assertFalse($result['success']);
+        $this->assertSame('failed', $payment->fresh()->status);
+        $this->assertNotSame('paid', $order->fresh()->payment_status);
+        $this->assertDatabaseMissing('payments', [
+            'id' => $payment->id,
+            'status' => 'paid',
+        ]);
     }
 
     public function test_payment_callback_is_public_but_failed_gateway_response_never_marks_an_order_paid(): void
@@ -815,7 +1459,7 @@ class FarzinStorefrontTest extends TestCase
         $this->actingAs($admin)
             ->post(route('admin.product-images.store'), [
                 'product_id' => $product->id,
-                'image' => UploadedFile::fake()->image('hood-angle.png', 100, 80),
+                'image' => UploadedFile::fake()->image('hood-angle.png', 800, 600),
                 'alt' => 'تصویر جدید هود',
                 'sort_order' => 1,
                 'is_primary' => '1',
@@ -894,6 +1538,29 @@ class FarzinStorefrontTest extends TestCase
         $this->assertDatabaseHas('orders', [
             'id' => $order->id,
             'status' => 'processing',
+        ]);
+    }
+
+    public function test_admin_cannot_cancel_a_paid_order_without_verified_refund(): void
+    {
+        $admin = $this->admin();
+        $order = $this->order($this->customer(), [
+            'status' => 'processing',
+            'payment_status' => 'paid',
+        ]);
+
+        $this->actingAs($admin)
+            ->from(route('admin.orders.show', $order))
+            ->patch(route('admin.orders.status', $order), [
+                'status' => 'cancelled',
+            ])
+            ->assertRedirect(route('admin.orders.show', $order))
+            ->assertSessionHas('error');
+
+        $this->assertDatabaseHas('orders', [
+            'id' => $order->id,
+            'status' => 'processing',
+            'payment_status' => 'paid',
         ]);
     }
 
@@ -1411,7 +2078,7 @@ class FarzinStorefrontTest extends TestCase
         $this->actingAs($admin)
             ->put(route('admin.product-images.update', $secondary), [
                 'product_id' => $product->id,
-                'image' => UploadedFile::fake()->image('hood-updated.webp', 120, 80),
+                'image' => UploadedFile::fake()->image('hood-updated.webp', 800, 600),
                 'alt' => 'تصویر جدید محصول',
                 'sort_order' => 0,
                 'is_primary' => '1',
@@ -1482,6 +2149,268 @@ class FarzinStorefrontTest extends TestCase
             ])
             ->assertRedirect(route('checkout.payment', $order))
             ->assertSessionHasErrors('gateway');
+    }
+
+    public function test_checkout_applies_configured_flat_shipping_and_free_shipping_threshold(): void
+    {
+        $customer = $this->customer();
+        $category = $this->category(['slug' => 'shipping-test']);
+
+        \App\Models\StorefrontSetting::updateOrCreate(
+            ['key' => 'shipping_flat_rate'],
+            ['value' => '250000']
+        );
+        \App\Models\StorefrontSetting::updateOrCreate(
+            ['key' => 'shipping_free_threshold'],
+            ['value' => '5000000']
+        );
+
+        $cart = Cart::create([
+            'user_id' => $customer->id,
+            'session_id' => null,
+            'status' => 'active',
+        ]);
+
+        $belowThreshold = $this->product($category, [
+            'name' => 'Shipping Rate Hood',
+            'slug' => 'shipping-rate-hood',
+            'sku' => 'FAR-SHIPPING-RATE',
+            'price' => 3000000,
+            'stock' => 8,
+        ]);
+
+        CartItem::create([
+            'cart_id' => $cart->id,
+            'product_id' => $belowThreshold->id,
+            'product_variant_id' => null,
+            'variant_key' => 'base',
+            'variant_options' => null,
+            'quantity' => 1,
+            'unit_price' => 3000000,
+        ]);
+
+        $checkoutData = [
+            'first_name' => 'Farzin',
+            'last_name' => 'Buyer',
+            'phone' => '09123456789',
+            'email' => 'buyer@farzin.test',
+            'province' => 'Tehran',
+            'city' => 'Tehran',
+            'address' => 'خیابان نمونه، پلاک ۱',
+            'postal_code' => '1234567890',
+        ];
+
+        $this->actingAs($customer)
+            ->post(route('checkout.place'), $checkoutData)
+            ->assertRedirect();
+
+        $chargedShippingOrder = Order::query()
+            ->where('user_id', $customer->id)
+            ->latest('id')
+            ->firstOrFail();
+
+        $this->assertEquals(250000, (float) $chargedShippingOrder->shipping_cost);
+        $this->assertEquals(3250000, (float) $chargedShippingOrder->total);
+
+        $freeShippingProduct = $this->product($category, [
+            'name' => 'Free Shipping Hood',
+            'slug' => 'free-shipping-hood',
+            'sku' => 'FAR-FREE-SHIPPING',
+            'price' => 6000000,
+            'stock' => 8,
+        ]);
+
+        CartItem::create([
+            'cart_id' => $cart->id,
+            'product_id' => $freeShippingProduct->id,
+            'product_variant_id' => null,
+            'variant_key' => 'base',
+            'variant_options' => null,
+            'quantity' => 1,
+            'unit_price' => 6000000,
+        ]);
+
+        $this->post(route('checkout.place'), $checkoutData)
+            ->assertRedirect();
+
+        $freeShippingOrder = Order::query()
+            ->where('user_id', $customer->id)
+            ->latest('id')
+            ->firstOrFail();
+
+        $this->assertEquals(0, (float) $freeShippingOrder->shipping_cost);
+        $this->assertEquals(6000000, (float) $freeShippingOrder->total);
+    }
+
+    public function test_cart_page_shows_current_price_and_requires_acknowledgement_after_a_price_change(): void
+    {
+        $customer = $this->customer();
+        $product = $this->product($this->category(['slug' => 'cart-current-price']), [
+            'name' => 'Current Cart Price Product',
+            'slug' => 'current-cart-price-product',
+            'sku' => 'FAR-CURRENT-CART-PRICE',
+            'price' => 3000000,
+            'stock' => 5,
+        ]);
+        $cart = Cart::create([
+            'user_id' => $customer->id,
+            'session_id' => null,
+            'status' => 'active',
+        ]);
+        $item = CartItem::create([
+            'cart_id' => $cart->id,
+            'product_id' => $product->id,
+            'product_variant_id' => null,
+            'variant_key' => 'base',
+            'variant_options' => null,
+            'quantity' => 1,
+            'unit_price' => 1000000,
+        ]);
+
+        $this->actingAs($customer)
+            ->get(route('cart.index'))
+            ->assertOk()
+            ->assertSee(\App\Helpers\PersianNumberHelper::format(3000000))
+            ->assertSee('قیمت این کالا تغییر کرده است')
+            ->assertSee('تأیید قیمت و تعداد')
+            ->assertDontSee(route('checkout.index'), false);
+
+        $this->patch(route('cart.update', $item), ['quantity' => 1])
+            ->assertRedirect();
+
+        $this->get(route('cart.index'))
+            ->assertOk()
+            ->assertSee(\App\Helpers\PersianNumberHelper::format(3000000))
+            ->assertDontSee('قیمت این کالا تغییر کرده است')
+            ->assertSee(route('checkout.index'), false);
+    }
+
+    public function test_cart_quantity_update_refreshes_the_current_product_price(): void
+    {
+        $customer = $this->customer();
+        $product = $this->product($this->category(['slug' => 'hoods']), [
+            'name' => 'Cart Reprice Hood',
+            'slug' => 'cart-reprice-hood',
+            'sku' => 'FAR-CART-REPRICE',
+            'price' => 3000000,
+            'stock' => 8,
+        ]);
+        $cart = Cart::create([
+            'user_id' => $customer->id,
+            'session_id' => null,
+            'status' => 'active',
+        ]);
+        $item = CartItem::create([
+            'cart_id' => $cart->id,
+            'product_id' => $product->id,
+            'product_variant_id' => null,
+            'variant_key' => 'base',
+            'variant_options' => null,
+            'quantity' => 1,
+            'unit_price' => 1000000,
+        ]);
+
+        $this->actingAs($customer)
+            ->patchJson(route('cart.update', $item), ['quantity' => 2])
+            ->assertOk()
+            ->assertJsonPath('subtotal', 6000000);
+
+        $item->refresh();
+        $this->assertSame(2, (int) $item->quantity);
+        $this->assertEquals(3000000, (float) $item->unit_price);
+    }
+
+    public function test_cart_update_rejects_old_variant_selection_after_product_options_change(): void
+    {
+        $customer = $this->customer();
+        $product = $this->product($this->category(['slug' => 'hoods']), [
+            'name' => 'Cart Option Change Hood',
+            'slug' => 'cart-option-change-hood',
+            'sku' => 'FAR-CART-OPTIONS',
+            'stock' => 8,
+        ]);
+        $color = ProductVariant::create([
+            'product_id' => $product->id,
+            'type' => 'color',
+            'name' => 'رنگ',
+            'value' => 'black',
+            'sku' => 'FAR-CART-OPTIONS-BLACK',
+            'price_adjustment' => 0,
+            'stock' => 6,
+            'is_active' => true,
+        ]);
+        $cart = Cart::create([
+            'user_id' => $customer->id,
+            'session_id' => null,
+            'status' => 'active',
+        ]);
+        $item = CartItem::create([
+            'cart_id' => $cart->id,
+            'product_id' => $product->id,
+            'product_variant_id' => $color->id,
+            'variant_key' => hash('sha256', $product->id.'|color:'.$color->id),
+            'variant_options' => [[
+                'id' => $color->id,
+                'type' => 'color',
+                'name' => 'رنگ',
+                'value' => 'black',
+                'sku' => $color->sku,
+                'price_adjustment' => 0,
+                'stock' => 6,
+            ]],
+            'quantity' => 1,
+            'unit_price' => $product->price,
+        ]);
+
+        ProductVariant::create([
+            'product_id' => $product->id,
+            'type' => 'finish',
+            'name' => 'پوشش',
+            'value' => 'matte',
+            'sku' => 'FAR-CART-OPTIONS-MATTE',
+            'price_adjustment' => 0,
+            'stock' => 6,
+            'is_active' => true,
+        ]);
+
+        $this->actingAs($customer)
+            ->from(route('cart.index'))
+            ->patch(route('cart.update', $item), ['quantity' => 2])
+            ->assertRedirect(route('cart.index'))
+            ->assertSessionHasErrors('quantity');
+
+        $this->assertSame(1, (int) $item->fresh()->quantity);
+    }
+
+    public function test_guest_cart_page_exposes_session_owned_edit_remove_and_clear_controls(): void
+    {
+        $product = $this->product($this->category(['slug' => 'guest-cart-controls']), [
+            'name' => 'Guest Cart Controls Product',
+            'slug' => 'guest-cart-controls-product',
+            'sku' => 'FAR-GUEST-CART-CONTROLS',
+            'stock' => 6,
+        ]);
+
+        $firstAdd = $this->postJson(route('cart.add', $product), ['quantity' => 2])
+            ->assertOk()
+            ->assertJsonPath('cart_count', 2);
+
+        $cart = Cart::query()
+            ->whereNull('user_id')
+            ->where('status', 'active')
+            ->firstOrFail();
+        $item = $cart->items()->firstOrFail();
+
+        // Laravel's test client does not automatically replay response cookies
+        // between requests; preserve the exact session that owns this cart.
+        $this->withCookie(config('session.cookie'), $cart->session_id)
+            ->withSession(['guest_cart_id' => $cart->id])
+            ->get(route('cart.index'))
+            ->assertOk()
+            ->assertSee(route('cart.update', $item), false)
+            ->assertSee(route('cart.remove', $item), false)
+            ->assertSee(route('cart.clear'), false)
+            ->assertDontSee('برای تغییر تعداد یا حذف کالا');
     }
 
     public function test_guest_can_update_remove_and_clear_only_their_session_cart(): void
@@ -1589,6 +2518,76 @@ class FarzinStorefrontTest extends TestCase
 
         $this->assertDatabaseHas('categories', ['id' => $category->id]);
         $this->assertSoftDeleted('products', ['id' => $product->id]);
+    }
+
+    public function test_customer_profile_and_address_pages_render(): void
+    {
+        $customer = $this->customer();
+
+        $this->actingAs($customer)
+            ->get(route('account.profile.edit'))
+            ->assertOk()
+            ->assertSee('اطلاعات حساب');
+
+        $this->get(route('account.addresses.index'))
+            ->assertOk()
+            ->assertSee('آدرس‌های تحویل')
+            ->assertSee('افزودن آدرس');
+    }
+
+    public function test_admin_can_manage_store_banner_and_contact_channels(): void
+    {
+        Storage::fake('public');
+        $admin = $this->admin();
+
+        $this->actingAs($admin)
+            ->get(route('admin.storefront-settings.edit'))
+            ->assertOk()
+            ->assertSee('بنر صفحه فروشگاه')
+            ->assertSee('اطلاعات تماس واقعی');
+
+        $this->put(route('admin.storefront-settings.update'), [
+            'shop_banner_image' => UploadedFile::fake()->image('shop-banner.jpg', 1600, 900),
+            'shop_banner_title' => 'کالکشن ویژه فرزین',
+            'shop_banner_subtitle' => 'راهنمای انتخاب هود و سینک',
+            'phone' => '09123456789',
+            'email' => 'info@farzin.test',
+            'address' => 'Tehran, Vanak Square, Farzin showroom',
+            'hours' => 'شنبه تا پنجشنبه، ۹ تا ۱۷',
+            'whatsapp' => '09123456789',
+            'instagram_url' => 'https://instagram.com/farzin.test',
+            'phone_label' => 'تماس تلفنی',
+            'email_label' => 'ایمیل',
+            'support_label' => 'پشتیبانی',
+            'support_description' => 'پاسخ‌گویی به پرسش‌های خرید',
+            'online_label' => 'ارتباط آنلاین',
+            'online_description' => 'از طریق واتساپ یا فرم پیام دهید.',
+        ])
+            ->assertRedirect(route('admin.storefront-settings.edit'))
+            ->assertSessionHas('success');
+
+        $this->assertDatabaseHas('storefront_settings', [
+            'key' => 'shop_banner_title',
+            'value' => 'کالکشن ویژه فرزین',
+        ]);
+
+        $this->assertDatabaseHas('contact_settings', [
+            'phone' => '09123456789',
+            'email' => 'info@farzin.test',
+            'address' => 'Tehran, Vanak Square, Farzin showroom',
+            'whatsapp' => '09123456789',
+            'instagram_url' => 'https://instagram.com/farzin.test',
+        ]);
+
+        $this->get(route('shop.index'))
+            ->assertOk()
+            ->assertSee('کالکشن ویژه فرزین');
+
+        $this->get(route('contact'))
+            ->assertOk()
+            ->assertSee('نقشه آدرس فرزین')
+            ->assertSee('https://wa.me/989123456789', false)
+            ->assertSee('https://instagram.com/farzin.test', false);
     }
 
     private function category(array $attributes = []): Category

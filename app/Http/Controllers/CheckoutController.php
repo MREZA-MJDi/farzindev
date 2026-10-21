@@ -4,16 +4,13 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\Checkout\PlaceOrderRequest;
 use App\Models\Cart;
-use App\Models\CartItem;
-use App\Models\ProductVariant;
+use App\Services\Checkout\CheckoutOrderService;
 use App\Models\Order;
 use App\Services\Installments\InstallmentPlanService;
 use App\Services\Payments\PaymentService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Str;
 use Illuminate\View\View;
 use Throwable;
 
@@ -96,130 +93,20 @@ class CheckoutController extends Controller
         );
     }
     /**
-     * Create order from the active cart.
+     * Create an order from the active cart.
      */
     public function placeOrder(
-        PlaceOrderRequest $request
+        PlaceOrderRequest $request,
+        CheckoutOrderService $checkoutOrderService
     ): RedirectResponse {
         $validated = $request->validated();
 
         try {
-            $cart = $this->getActiveCart();
-
-            $order = DB::transaction(function () use (
-                $cart,
+            $order = $checkoutOrderService->placeOrder(
+                $this->getActiveCart(),
+                (int) Auth::id(),
                 $validated
-            ) {
-                // Lock and reload the active cart inside the same transaction
-                // that creates the order, so a duplicate checkout submission
-                // cannot snapshot the same cart items twice.
-                $lockedCart = Cart::query()
-                    ->whereKey($cart->getKey())
-                    ->lockForUpdate()
-                    ->firstOrFail();
-
-                $lockedCart->load([
-                    'items.product',
-                    'items.variant',
-                ]);
-
-                if ($lockedCart->items->isEmpty()) {
-                    return null;
-                }
-
-                $subtotal = 0;
-
-                foreach ($lockedCart->items as $item) {
-                    if (! $item->product) {
-                        throw new \RuntimeException(
-                            'یکی از محصولات سبد دیگر در دسترس نیست. سبد را بررسی کنید.'
-                        );
-                    }
-
-                    $variants = $this->resolveCartItemVariants($item);
-
-                    if (
-                        count($item->selectedVariantIds())
-                        !== $variants->count()
-                    ) {
-                        throw new \RuntimeException(
-                            "یکی از گزینه‌های انتخاب‌شده برای «{$item->product->name}» دیگر در دسترس نیست."
-                        );
-                    }
-
-                    $stock = $variants->isNotEmpty()
-                        ? (int) $variants->min('stock')
-                        : (int) $item->product->stock;
-
-                    if (
-                        $stock < 1
-                        || $item->quantity > $stock
-                    ) {
-                        throw new \RuntimeException(
-                            "موجودی محصول «{$item->product->name}» کافی نیست."
-                        );
-                    }
-
-                    $subtotal +=
-                        (float) $item->unit_price
-                        * (int) $item->quantity;
-                }
-
-                $shippingCost = 0;
-                $discount = 0;
-                $total = $subtotal + $shippingCost - $discount;
-
-                $order = Order::create([
-                    'user_id' => Auth::id(),
-                    'order_number' => $this->generateOrderNumber(),
-                    'status' => 'pending',
-                    'payment_status' => 'pending',
-                    'payment_method' => 'online',
-                    'payment_provider' => null,
-                    'installment_enabled' => false,
-                    'installment_cash_percent' => null,
-                    'installment_cash_amount' => null,
-                    'installment_deferred_amount' => null,
-                    'installment_remainder_method' => null,
-                    'installment_cheque_count' => null,
-                    'installment_interval_months' => null,
-                    'subtotal' => $subtotal,
-                    'shipping_cost' => $shippingCost,
-                    'discount' => $discount,
-                    'total' => $total,
-                    'first_name' => $validated['first_name'],
-                    'last_name' => $validated['last_name'],
-                    'phone' => $validated['phone'],
-                    'email' => $validated['email'],
-                    'province' => $validated['province'],
-                    'city' => $validated['city'],
-                    'address' => $validated['address'],
-                    'postal_code' => $validated['postal_code'],
-                    'unit' => $validated['unit'] ?? null,
-                    'notes' => $validated['notes'] ?? null,
-                ]);
-
-                foreach ($lockedCart->items as $item) {
-                    $order->items()->create([
-                        'product_id' => $item->product_id,
-                        // Retain the legacy single-variant field and save the
-                        // full selected-variant snapshot for order history.
-                        'product_variant_id' => $item->product_variant_id,
-                        'variant_options' => $item->variant_options,
-                        'product_name' => $item->product->name,
-                        'sku' => $item->variant?->sku ?? $item->product->sku,
-                        'quantity' => $item->quantity,
-                        'unit_price' => $item->unit_price,
-                        'total' => (float) $item->unit_price * (int) $item->quantity,
-                    ]);
-                }
-
-                // Clear the cart before commit; the lock prevents concurrent
-                // submissions from creating multiple orders from the same cart.
-                $lockedCart->items()->delete();
-
-                return $order;
-            });
+            );
 
             if (! $order) {
                 return redirect()
@@ -242,6 +129,7 @@ class CheckoutController extends Controller
                 ->with('error', 'ثبت سفارش انجام نشد. لطفاً دوباره تلاش کنید.');
         }
     }
+
 
     /**
      * Show payment selection page.
@@ -315,6 +203,8 @@ class CheckoutController extends Controller
             return redirect()->away(
                 $result['redirect_url']
             );
+        } catch (\RuntimeException $e) {
+            return back()->with('error', $e->getMessage());
         } catch (Throwable $e) {
             report($e);
 
@@ -469,28 +359,6 @@ class CheckoutController extends Controller
     }
 
     /**
-     * Resolve all active variants represented by a cart item.
-     *
-     * The JSON snapshot keeps the historical selection even if a variant
-     * is later deleted, while this lookup validates live availability.
-     */
-    protected function resolveCartItemVariants(
-        CartItem $item
-    ) {
-        $ids = $item->selectedVariantIds();
-
-        if (empty($ids)) {
-            return collect();
-        }
-
-        return ProductVariant::query()
-            ->where('product_id', $item->product_id)
-            ->where('is_active', true)
-            ->whereIn('id', $ids)
-            ->get();
-    }
-
-    /**
      * Get active customer cart.
      */
     protected function getActiveCart(): Cart
@@ -519,28 +387,4 @@ class CheckoutController extends Controller
             );
     }
 
-    /**
-     * Generate unique order number.
-     */
-    protected function generateOrderNumber(): string
-    {
-        do {
-            $number =
-                'FZ-'
-                . now()->format('ymd')
-                . '-'
-                . strtoupper(
-                    Str::random(6)
-                );
-        } while (
-            Order::query()
-                ->where(
-                    'order_number',
-                    $number
-                )
-                ->exists()
-        );
-
-        return $number;
-    }
 }

@@ -185,6 +185,11 @@
                             >
                                 {{ $order->order_number }}
                             </a>
+                            @if($order->inventory_issue_at)
+                                <span class="mt-2 inline-flex rounded-full border border-amber-300 bg-amber-50 px-2 py-1 text-[9px] font-semibold text-amber-900">
+                                    بررسی موجودی
+                                </span>
+                            @endif
                         </td>
 
 
@@ -213,7 +218,7 @@
                         <td>
 
                                 <span class="font-semibold text-[var(--admin-text)]">
-                                    {{ number_format((float) $order->total) }}
+                                    {{ \App\Helpers\PersianNumberHelper::format((float) $order->total) }}
                                 </span>
 
                             <span class="mr-1 text-xs text-[var(--admin-muted)]">
@@ -307,7 +312,7 @@
 
                         <td>
                                 <span class="whitespace-nowrap text-xs text-[var(--admin-muted)]">
-                                    {{ $order->created_at?->format('Y/m/d H:i') ?? '—' }}
+                                    {{ $order->created_at ? \App\Helpers\JalaliHelper::format($order->created_at, 'Y/m/d H:i') : '—' }}
                                 </span>
                         </td>
 

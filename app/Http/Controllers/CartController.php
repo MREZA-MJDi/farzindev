@@ -23,12 +23,128 @@ class CartController extends Controller
 
         $cart->load([
             'items.product.category',
-            'items.product.images',
+            'items.product.images.media',
+            'items.product.variants',
             'items.variant',
         ]);
 
+        $currentSubtotal = 0.0;
+        $cartReadyForCheckout = $cart->items->isNotEmpty();
+
+        foreach ($cart->items as $item) {
+            $item->setAttribute('current_unit_price', null);
+            $item->setAttribute('current_line_total', 0.0);
+            $item->setAttribute('current_stock', 0);
+            $item->setAttribute('price_changed', false);
+            $item->setAttribute('is_currently_available', false);
+            $item->setAttribute('cart_issue_message', null);
+
+            $product = $item->product;
+
+            if (! $product) {
+                $item->setAttribute(
+                    'cart_issue_message',
+                    'این محصول دیگر در فروشگاه در دسترس نیست؛ آن را از سبد حذف کنید.'
+                );
+                $cartReadyForCheckout = false;
+
+                continue;
+            }
+
+            if (
+                $product->status !== 'active'
+                || ! $product->category
+                || ! $product->category->is_active
+            ) {
+                $item->setAttribute(
+                    'cart_issue_message',
+                    'این محصول یا دسته‌بندی آن غیرفعال شده است؛ آن را از سبد حذف کنید.'
+                );
+                $cartReadyForCheckout = false;
+
+                continue;
+            }
+
+            $activeVariants = $product->variants;
+            $selectedIds = $item->selectedVariantIds();
+            $selectedVariants = $activeVariants
+                ->whereIn('id', $selectedIds)
+                ->values();
+
+            $activeTypes = $activeVariants->pluck('type')->unique()->values();
+            $selectedTypes = $selectedVariants->pluck('type')->unique()->values();
+
+            $selectionIsValid = $activeVariants->isEmpty()
+                ? $selectedIds === []
+                : count($selectedIds) === $selectedVariants->count()
+                    && $selectedVariants->pluck('type')->unique()->count() === $selectedVariants->count()
+                    && $activeTypes->diff($selectedTypes)->isEmpty()
+                    && $selectedTypes->diff($activeTypes)->isEmpty();
+
+            if (! $selectionIsValid) {
+                $item->setAttribute(
+                    'cart_issue_message',
+                    'ویژگی‌های این محصول تغییر کرده است؛ آن را حذف کنید و با گزینه‌های فعلی دوباره اضافه کنید.'
+                );
+                $cartReadyForCheckout = false;
+
+                continue;
+            }
+
+            $stock = $selectedVariants->isNotEmpty()
+                ? (int) $selectedVariants->min('stock')
+                : (int) $product->stock;
+
+            $currentUnitPrice = max(
+                0,
+                round(
+                    (float) $product->price
+                    + (float) $selectedVariants->sum(
+                        fn (ProductVariant $variant) => (float) $variant->price_adjustment
+                    ),
+                    2
+                )
+            );
+
+            $currentLineTotal = $currentUnitPrice * (int) $item->quantity;
+            $priceChanged = abs($currentUnitPrice - (float) $item->unit_price) >= 0.01;
+
+            $item->setAttribute('current_unit_price', $currentUnitPrice);
+            $item->setAttribute('current_line_total', $currentLineTotal);
+            $item->setAttribute('current_stock', $stock);
+            $item->setAttribute('price_changed', $priceChanged);
+            $item->setAttribute(
+                'is_currently_available',
+                $stock > 0 && (int) $item->quantity <= $stock
+            );
+
+            if ($priceChanged) {
+                $item->setAttribute(
+                    'cart_issue_message',
+                    'قیمت این کالا تغییر کرده است؛ قیمت فعلی را بررسی و با «تأیید قیمت و تعداد» ثبت کنید.'
+                );
+                $cartReadyForCheckout = false;
+            } elseif ($stock < 1) {
+                $item->setAttribute(
+                    'cart_issue_message',
+                    'این کالا فعلاً موجود نیست؛ برای ادامه آن را حذف کنید.'
+                );
+                $cartReadyForCheckout = false;
+            } elseif ((int) $item->quantity > $stock) {
+                $item->setAttribute(
+                    'cart_issue_message',
+                    'تعداد انتخاب‌شده بیشتر از موجودی فعلی است؛ تعداد را کاهش دهید.'
+                );
+                $cartReadyForCheckout = false;
+            }
+
+            $currentSubtotal += $currentLineTotal;
+        }
+
         return view('cart.index', [
             'cart' => $cart,
+            'currentSubtotal' => $currentSubtotal,
+            'cartReadyForCheckout' => $cartReadyForCheckout,
         ]);
     }
 
@@ -183,11 +299,42 @@ class CartController extends Controller
             'variant',
         ]);
 
+        $product = $item->product;
+
+        if (
+            ! $product
+            || $product->status !== 'active'
+            || ! $product->category()->where('is_active', true)->exists()
+        ) {
+            return back()->withErrors([
+                'quantity' => 'این محصول یا دسته‌بندی آن دیگر برای خرید فعال نیست؛ آن را از سبد حذف کنید.',
+            ]);
+        }
+
+        $selectedIds = $item->selectedVariantIds();
         $variants = $this->resolveVariantsFromCartItem($item);
+        $currentVariants = $product->variants()
+            ->where('is_active', true)
+            ->orderBy('id')
+            ->get();
+
+        $selectedTypes = $variants->pluck('type')->unique()->values();
+        $currentTypes = $currentVariants->pluck('type')->unique()->values();
+
+        $validVariantSelection = count($selectedIds) === $variants->count()
+            && $variants->pluck('type')->count() === $selectedTypes->count()
+            && $currentTypes->diff($selectedTypes)->isEmpty()
+            && $selectedTypes->diff($currentTypes)->isEmpty();
+
+        if (! $validVariantSelection) {
+            return back()->withErrors([
+                'quantity' => 'گزینه‌های این محصول تغییر کرده‌اند؛ آن را از سبد حذف و با گزینه‌های فعلی دوباره اضافه کنید.',
+            ]);
+        }
 
         $stock = $variants->isNotEmpty()
             ? (int) $variants->min('stock')
-            : (int) $item->product->stock;
+            : (int) $product->stock;
 
         if ((int) $validated['quantity'] > $stock) {
             return back()->withErrors([
@@ -195,8 +342,33 @@ class CartController extends Controller
             ]);
         }
 
+        $unitPrice = max(
+            0,
+            (float) $product->price
+            + (float) $variants->sum(
+                fn (ProductVariant $variant) => (float) $variant->price_adjustment
+            )
+        );
+
+        $variantOptions = $variants
+            ->sortBy('type', SORT_NATURAL | SORT_FLAG_CASE)
+            ->map(fn (ProductVariant $variant) => [
+                'id' => (int) $variant->id,
+                'type' => (string) $variant->type,
+                'name' => (string) $variant->name,
+                'value' => (string) $variant->value,
+                'sku' => $variant->sku,
+                'color_hex' => $variant->color_hex,
+                'price_adjustment' => (float) $variant->price_adjustment,
+                'stock' => (int) $variant->stock,
+            ])
+            ->values()
+            ->all();
+
         $item->update([
             'quantity' => (int) $validated['quantity'],
+            'unit_price' => $unitPrice,
+            'variant_options' => $variantOptions ?: null,
         ]);
 
         $cart = $item->cart->fresh('items');

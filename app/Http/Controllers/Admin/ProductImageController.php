@@ -12,6 +12,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use Throwable;
 use Illuminate\View\View;
 
 class ProductImageController extends Controller
@@ -57,28 +58,41 @@ class ProductImageController extends Controller
     {
         $data = $request->validated();
         $file = $request->file('image');
-
         unset($data['image']);
 
         $path = $file->store('products/images', 'public');
+
+        if (! $path) {
+            return back()
+                ->withInput()
+                ->withErrors([
+                    'image' => 'ذخیره تصویر محصول انجام نشد؛ دوباره تلاش کنید.',
+                ]);
+        }
+
         $data['path'] = $path;
 
-        DB::transaction(function () use (&$data) {
-            $hasExistingImage = ProductImage::query()
-                ->where('product_id', $data['product_id'])
-                ->exists();
-
-            $data['is_primary'] =
-                $data['is_primary'] || ! $hasExistingImage;
-
-            if ($data['is_primary']) {
-                ProductImage::query()
+        try {
+            DB::transaction(function () use (&$data): void {
+                $hasExistingImage = ProductImage::query()
                     ->where('product_id', $data['product_id'])
-                    ->update(['is_primary' => false]);
-            }
+                    ->exists();
 
-            ProductImage::create($data);
-        });
+                $data['is_primary'] = $data['is_primary'] || ! $hasExistingImage;
+
+                if ($data['is_primary']) {
+                    ProductImage::query()
+                        ->where('product_id', $data['product_id'])
+                        ->update(['is_primary' => false]);
+                }
+
+                ProductImage::create($data);
+            });
+        } catch (Throwable $e) {
+            Storage::disk('public')->delete($path);
+
+            throw $e;
+        }
 
         return redirect()
             ->route('admin.product-images.index', [
@@ -124,9 +138,18 @@ class ProductImageController extends Controller
                 'public'
             );
 
+            if (! $newPath) {
+                return back()
+                    ->withInput()
+                    ->withErrors([
+                        'image' => 'ذخیره تصویر محصول انجام نشد؛ تصویر قبلی حفظ شد.',
+                    ]);
+            }
+
             $data['path'] = $newPath;
         }
 
+        try {
         DB::transaction(function () use (
             &$data,
             $productImage,
@@ -171,7 +194,14 @@ class ProductImageController extends Controller
             ) {
                 $productImage->update(['is_primary' => true]);
             }
-        });
+            });
+        } catch (Throwable $e) {
+            if ($newPath !== null) {
+                Storage::disk('public')->delete($newPath);
+            }
+
+            throw $e;
+        }
 
         if (
             $newPath !== null

@@ -5,8 +5,10 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\Order\UpdateOrderStatusRequest;
 use App\Models\Order;
+use App\Services\Inventory\InventoryReservationService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 
 class OrderController extends Controller
@@ -32,6 +34,10 @@ class OrderController extends Controller
                 'payment_status',
                 $request->string('payment_status')
             );
+        }
+
+        if ($request->boolean('inventory_issue')) {
+            $query->whereNotNull('inventory_issue_at');
         }
 
         if ($request->filled('search')) {
@@ -102,17 +108,49 @@ class OrderController extends Controller
      */
     public function updateStatus(
         UpdateOrderStatusRequest $request,
-        Order $order
+        Order $order,
+        InventoryReservationService $inventoryReservationService
     ): RedirectResponse {
-        $order->update([
-            'status' => $request->validated('status'),
-        ]);
+        $status = $request->validated('status');
+
+        $requiresRefundFirst = DB::transaction(function () use (
+            $order,
+            $status,
+            $inventoryReservationService
+        ): bool {
+            $lockedOrder = Order::query()
+                ->whereKey($order->id)
+                ->lockForUpdate()
+                ->firstOrFail();
+
+            // Cancellation is not a refund. Keep paid orders fulfilment-safe
+            // until a verified refund workflow is completed separately.
+            if ($status === 'cancelled' && $lockedOrder->payment_status === 'paid') {
+                return true;
+            }
+
+            $lockedOrder->update([
+                'status' => $status,
+            ]);
+
+            if ($status === 'cancelled') {
+                $inventoryReservationService->releaseForOrder($lockedOrder);
+            }
+
+            return false;
+        });
+
+        if ($requiresRefundFirst) {
+            return redirect()
+                ->route('admin.orders.show', $order)
+                ->with(
+                    'error',
+                    'این سفارش پرداخت موفق دارد. لغو سفارش بدون تأیید بازپرداخت مجاز نیست؛ ابتدا بازپرداخت را از مسیر رسمی درگاه پیگیری کنید.'
+                );
+        }
 
         return redirect()
-            ->route(
-                'admin.orders.show',
-                $order
-            )
+            ->route('admin.orders.show', $order)
             ->with(
                 'success',
                 'وضعیت سفارش با موفقیت بروزرسانی شد.'

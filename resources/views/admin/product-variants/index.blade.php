@@ -253,7 +253,7 @@
                             @if($adjustment > 0)
 
                                 <span class="text-sm font-semibold text-[var(--admin-success)]">
-                                        +{{ number_format($adjustment) }}
+                                        +{{ \App\Helpers\PersianNumberHelper::format($adjustment) }}
                                     </span>
 
                                 <span class="text-xs text-[var(--admin-muted)]">
@@ -263,7 +263,7 @@
                             @elseif($adjustment < 0)
 
                                 <span class="text-sm font-semibold text-[var(--admin-danger)]">
-                                        {{ number_format($adjustment) }}
+                                        {{ \App\Helpers\PersianNumberHelper::format($adjustment) }}
                                     </span>
 
                                 <span class="text-xs text-[var(--admin-muted)]">
@@ -286,7 +286,7 @@
                             @if($variant->stock > 0)
 
                                 <span class="admin-badge admin-badge-success">
-                                        {{ number_format($variant->stock) }}
+                                        {{ \App\Helpers\PersianNumberHelper::format($variant->stock) }}
                                     </span>
 
                             @else

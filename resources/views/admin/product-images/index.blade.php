@@ -207,7 +207,7 @@
 
                         <td>
                                 <span class="whitespace-nowrap text-xs text-[var(--admin-muted)]">
-                                    {{ $image->created_at?->format('Y/m/d') ?? '—' }}
+                                    {{ $image->created_at ? \App\Helpers\JalaliHelper::format($image->created_at, 'Y/m/d') : '—' }}
                                 </span>
                         </td>
 

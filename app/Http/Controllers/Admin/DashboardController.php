@@ -3,11 +3,11 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Helpers\JalaliHelper;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Product;
 use App\Models\User;
-use Carbon\Carbon;
 use Illuminate\Support\Collection;
 
 class DashboardController extends Controller
@@ -17,6 +17,9 @@ class DashboardController extends Controller
      */
     public function index()
     {
+        // Keep every calendar period in this report anchored to one timestamp.
+        $reportingDate = now();
+
         /*
         |--------------------------------------------------------------------------
         | Global Statistics
@@ -29,13 +32,42 @@ class DashboardController extends Controller
             ->where('status', 'active')
             ->count();
 
+        // Variant-backed products track inventory on their active options;
+        // the parent product's stock column is only authoritative when there
+        // are no active variants.
         $lowStockProducts = Product::query()
-            ->where('stock', '>', 0)
-            ->where('stock', '<=', 5)
+            ->where(function ($query): void {
+                $query
+                    ->where(function ($baseStock): void {
+                        $baseStock
+                            ->whereDoesntHave('variants', fn ($variantQuery) => $variantQuery
+                                ->where('is_active', true))
+                            ->whereBetween('stock', [1, 5]);
+                    })
+                    ->orWhereHas('variants', fn ($variantQuery) => $variantQuery
+                        ->where('is_active', true)
+                        ->whereBetween('stock', [1, 5]));
+            })
             ->count();
 
         $outOfStockProducts = Product::query()
-            ->where('stock', 0)
+            ->where(function ($query): void {
+                $query
+                    ->where(function ($baseStock): void {
+                        $baseStock
+                            ->whereDoesntHave('variants', fn ($variantQuery) => $variantQuery
+                                ->where('is_active', true))
+                            ->where('stock', '<=', 0);
+                    })
+                    ->orWhere(function ($variantStock): void {
+                        $variantStock
+                            ->whereHas('variants', fn ($variantQuery) => $variantQuery
+                                ->where('is_active', true))
+                            ->whereDoesntHave('variants', fn ($variantQuery) => $variantQuery
+                                ->where('is_active', true)
+                                ->where('stock', '>', 0));
+                    });
+            })
             ->count();
 
         $totalCustomers = User::query()
@@ -49,6 +81,11 @@ class DashboardController extends Controller
                 'pending',
                 'processing',
             ])
+            ->count();
+
+        $inventoryIssueOrders = Order::query()
+            ->whereNotNull('inventory_issue_at')
+            ->where('payment_status', 'paid')
             ->count();
 
         $paidOrders = Order::query()
@@ -68,19 +105,18 @@ class DashboardController extends Controller
             ->where('payment_status', 'paid')
             ->sum('total');
 
+        [$currentMonthStart, $nextMonthStart] = JalaliHelper::monthRange($reportingDate);
+        [$previousMonthStart, $currentMonthStartForPrevious] = JalaliHelper::monthRange($reportingDate, 1);
+
         $currentMonthRevenue = Order::query()
             ->where('payment_status', 'paid')
-            ->whereBetween('created_at', [
-                now()->startOfMonth(),
-                now()->endOfMonth(),
-            ])
+            ->where('created_at', '>=', $currentMonthStart)
+            ->where('created_at', '<', $nextMonthStart)
             ->sum('total');
 
         $currentMonthOrders = Order::query()
-            ->whereBetween('created_at', [
-                now()->startOfMonth(),
-                now()->endOfMonth(),
-            ])
+            ->where('created_at', '>=', $currentMonthStart)
+            ->where('created_at', '<', $nextMonthStart)
             ->count();
 
         /*
@@ -91,10 +127,8 @@ class DashboardController extends Controller
 
         $previousMonthRevenue = Order::query()
             ->where('payment_status', 'paid')
-            ->whereBetween('created_at', [
-                now()->subMonth()->startOfMonth(),
-                now()->subMonth()->endOfMonth(),
-            ])
+            ->where('created_at', '>=', $previousMonthStart)
+            ->where('created_at', '<', $currentMonthStartForPrevious)
             ->sum('total');
 
         $revenueGrowthPercent = 0;
@@ -120,7 +154,7 @@ class DashboardController extends Controller
         |--------------------------------------------------------------------------
         */
 
-        $monthlyRevenue = $this->getMonthlyRevenue();
+        $monthlyRevenue = $this->getMonthlyRevenue($reportingDate);
 
         /*
         |--------------------------------------------------------------------------
@@ -244,6 +278,7 @@ class DashboardController extends Controller
             'totalOrders' => $totalOrders,
             'pendingOrders' => $pendingOrders,
             'paidOrders' => $paidOrders,
+            'inventoryIssueOrders' => $inventoryIssueOrders,
 
             'totalRevenue' => $totalRevenue,
             'currentMonthRevenue' => $currentMonthRevenue,
@@ -273,35 +308,29 @@ class DashboardController extends Controller
     /**
      * Get revenue for the latest six months.
      */
-    protected function getMonthlyRevenue(): Collection
+    protected function getMonthlyRevenue(\DateTimeInterface $reportingDate): Collection
     {
         $months = collect();
 
-        for ($i = 5; $i >= 0; $i--) {
-            $date = now()
-                ->copy()
-                ->subMonths($i);
+        for ($monthsAgo = 5; $monthsAgo >= 0; $monthsAgo--) {
+            [$monthStart, $nextMonthStart] = JalaliHelper::monthRange($reportingDate, $monthsAgo);
 
             $revenue = Order::query()
                 ->where('payment_status', 'paid')
-                ->whereBetween('created_at', [
-                    $date->copy()->startOfMonth(),
-                    $date->copy()->endOfMonth(),
-                ])
+                ->where('created_at', '>=', $monthStart)
+                ->where('created_at', '<', $nextMonthStart)
                 ->sum('total');
 
             $orders = Order::query()
                 ->where('payment_status', 'paid')
-                ->whereBetween('created_at', [
-                    $date->copy()->startOfMonth(),
-                    $date->copy()->endOfMonth(),
-                ])
+                ->where('created_at', '>=', $monthStart)
+                ->where('created_at', '<', $nextMonthStart)
                 ->count();
 
             $months->push([
-                'key' => $date->format('Y-m'),
-                'label' => $date->locale('fa')->translatedFormat('M'),
-                'full_label' => $date->locale('fa')->translatedFormat('F Y'),
+                'key' => JalaliHelper::format($monthStart, 'Y-m'),
+                'label' => JalaliHelper::format($monthStart, 'M'),
+                'full_label' => JalaliHelper::format($monthStart, 'F Y'),
                 'revenue' => (float) $revenue,
                 'orders' => $orders,
             ]);
@@ -317,7 +346,7 @@ class DashboardController extends Controller
     {
         return OrderItem::query()
             ->with([
-                'product.images',
+                'product.images.media',
             ])
             ->whereHas(
                 'order',

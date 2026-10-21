@@ -7,7 +7,9 @@ use App\Http\Requests\Admin\Category\StoreCategoryRequest;
 use App\Http\Requests\Admin\Category\UpdateCategoryRequest;
 use App\Models\Category;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use Throwable;
 use Illuminate\View\View;
 
 class CategoryController extends Controller
@@ -39,14 +41,40 @@ class CategoryController extends Controller
     public function store(StoreCategoryRequest $request): RedirectResponse
     {
         $data = $request->validated();
+        $uploadedImage = $request->file('image');
+        unset($data['image']);
 
-        if ($request->hasFile('image')) {
-            $data['image'] = $request
-                ->file('image')
-                ->store('categories', 'public');
+        $newImage = null;
+
+        if ($uploadedImage) {
+            $newImage = $uploadedImage->store('categories', 'public');
+
+            if (! $newImage) {
+                return back()
+                    ->withInput()
+                    ->withErrors([
+                        'image' => 'ذخیره تصویر دسته‌بندی انجام نشد؛ دوباره تلاش کنید.',
+                    ]);
+            }
         }
 
-        Category::create($data);
+        try {
+            DB::transaction(function () use ($data, $newImage): void {
+                $payload = $data;
+
+                if ($newImage !== null) {
+                    $payload['image'] = $newImage;
+                }
+
+                Category::create($payload);
+            });
+        } catch (Throwable $e) {
+            if ($newImage !== null) {
+                Storage::disk('public')->delete($newImage);
+            }
+
+            throw $e;
+        }
 
         return redirect()
             ->route('admin.categories.index')
@@ -77,22 +105,51 @@ class CategoryController extends Controller
         Category $category
     ): RedirectResponse {
         $data = $request->validated();
+        $uploadedImage = $request->file('image');
+        unset($data['image']);
 
-        $oldImage = $category->image;
         $newImage = null;
 
-        if ($request->hasFile('image')) {
-            $newImage = $request
-                ->file('image')
-                ->store('categories', 'public');
+        if ($uploadedImage) {
+            $newImage = $uploadedImage->store('categories', 'public');
 
-            $data['image'] = $newImage;
+            if (! $newImage) {
+                return back()
+                    ->withInput()
+                    ->withErrors([
+                        'image' => 'ذخیره تصویر دسته‌بندی انجام نشد؛ تصویر قبلی حفظ شد.',
+                    ]);
+            }
         }
 
-        $category->update($data);
+        $oldImage = null;
+
+        try {
+            DB::transaction(function () use ($category, $data, $newImage, &$oldImage): void {
+                $lockedCategory = Category::query()
+                    ->whereKey($category->id)
+                    ->lockForUpdate()
+                    ->firstOrFail();
+
+                $oldImage = $lockedCategory->image;
+                $payload = $data;
+
+                if ($newImage !== null) {
+                    $payload['image'] = $newImage;
+                }
+
+                $lockedCategory->update($payload);
+            });
+        } catch (Throwable $e) {
+            if ($newImage !== null) {
+                Storage::disk('public')->delete($newImage);
+            }
+
+            throw $e;
+        }
 
         if (
-            $newImage
+            $newImage !== null
             && $oldImage
             && ! str_starts_with($oldImage, 'http://')
             && ! str_starts_with($oldImage, 'https://')

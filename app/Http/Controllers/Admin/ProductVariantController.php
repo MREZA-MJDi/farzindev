@@ -10,6 +10,7 @@ use App\Models\ProductImage;
 use App\Models\ProductVariant;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 
 class ProductVariantController extends Controller
@@ -118,15 +119,24 @@ class ProductVariantController extends Controller
         $imageIds = $data['image_ids'] ?? [];
         unset($data['image_ids']);
 
-        $productVariant = ProductVariant::create($data);
+        $productId = (int) $data['product_id'];
 
-        $productVariant->images()->sync($imageIds);
+        DB::transaction(function () use ($data, $imageIds, $productId): void {
+            // Serialize variant changes with checkout's product/stock locks.
+            Product::query()
+                ->whereKey($productId)
+                ->lockForUpdate()
+                ->firstOrFail();
+
+            $productVariant = ProductVariant::create($data);
+            $productVariant->images()->sync($imageIds);
+        });
 
         return redirect()
             ->route(
                 'admin.product-variants.index',
                 [
-                    'product_id' => $data['product_id'],
+                    'product_id' => $productId,
                 ]
             )
             ->with(
@@ -198,16 +208,45 @@ class ProductVariantController extends Controller
         $imageIds = $data['image_ids'] ?? [];
         unset($data['image_ids']);
 
-        $productVariant->update($data);
+        $oldProductId = (int) $productVariant->product_id;
+        $newProductId = (int) $data['product_id'];
 
-        $productVariant->images()->sync($imageIds);
+        DB::transaction(function () use (
+            $productVariant,
+            $data,
+            $imageIds,
+            $oldProductId,
+            $newProductId
+        ): void {
+            // Lock product rows in a deterministic order to reduce deadlocks.
+            $lockedProducts = Product::query()
+                ->whereIn('id', array_values(array_unique([
+                    $oldProductId,
+                    $newProductId,
+                ])))
+                ->orderBy('id')
+                ->lockForUpdate()
+                ->get()
+                ->keyBy('id');
+
+            if (! $lockedProducts->has($newProductId)) {
+                abort(404);
+            }
+
+            $lockedVariant = ProductVariant::query()
+                ->whereKey($productVariant->id)
+                ->lockForUpdate()
+                ->firstOrFail();
+
+            $lockedVariant->update($data);
+            $lockedVariant->images()->sync($imageIds);
+        });
 
         return redirect()
             ->route(
                 'admin.product-variants.index',
                 [
-                    'product_id' =>
-                        $productVariant->product_id,
+                    'product_id' => $newProductId,
                 ]
             )
             ->with(
@@ -222,9 +261,22 @@ class ProductVariantController extends Controller
     public function destroy(
         ProductVariant $productVariant
     ): RedirectResponse {
-        $productId = $productVariant->product_id;
+        $productId = (int) $productVariant->product_id;
 
-        $productVariant->delete();
+        DB::transaction(function () use ($productVariant, $productId): void {
+            // Serialize deletion with checkout and variant edits.
+            Product::withTrashed()
+                ->whereKey($productId)
+                ->lockForUpdate()
+                ->firstOrFail();
+
+            $lockedVariant = ProductVariant::query()
+                ->whereKey($productVariant->id)
+                ->lockForUpdate()
+                ->firstOrFail();
+
+            $lockedVariant->delete();
+        });
 
         return redirect()
             ->route(

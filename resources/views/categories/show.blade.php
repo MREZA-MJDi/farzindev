@@ -165,12 +165,12 @@
                             <div class="mt-7 flex flex-wrap items-center gap-3">
 
                             <span class="rounded-full border border-[var(--livora-border)] px-4 py-2 text-[11px] text-[var(--livora-stone)]">
-                                {{ number_format($products->total()) }}
+                                {{ \App\Helpers\PersianNumberHelper::format($products->total()) }}
                                 محصول
                             </span>
 
                                 <a
-                                    href="{{ route('shop.index', ['category' => $category->id]) }}"
+                                    href="{{ route('shop.index', ['category' => $category->slug]) }}"
                                     class="rounded-full bg-[var(--livora-ink)] px-4 py-2 text-[11px] font-medium text-white transition hover:bg-[var(--livora-accent)]"
                                 >
                                     مشاهده همه محصولات
@@ -181,7 +181,7 @@
                         </div>
 
                         {{-- Category image --}}
-                        <div class="overflow-hidden rounded-[2rem] bg-[var(--livora-surface)]">
+                        <div class="overflow-hidden rounded-[2rem] bg-[var(--livora-surface)]" data-farzin-reveal>
 
                             @if($category->image)
 

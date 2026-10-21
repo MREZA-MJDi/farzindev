@@ -265,7 +265,7 @@
             <div>
 
                 <p class="text-xs text-white/40">
-                    © {{ date('Y') }} فرزین.
+                    © {{ \App\Helpers\JalaliHelper::format(now(), 'Y') }} فرزین.
                     تمامی حقوق محفوظ است.
                 </p>
 

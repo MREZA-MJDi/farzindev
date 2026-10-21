@@ -151,7 +151,7 @@
 
                         <td>
                                 <span class="whitespace-nowrap text-xs text-[var(--admin-muted)]">
-                                    {{ $customer->created_at?->format('Y/m/d') ?? '—' }}
+                                    {{ $customer->created_at ? \App\Helpers\JalaliHelper::format($customer->created_at, 'Y/m/d') : '—' }}
                                 </span>
                         </td>
 

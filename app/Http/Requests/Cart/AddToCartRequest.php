@@ -68,6 +68,15 @@ class AddToCartRequest extends FormRequest
                 return;
             }
 
+            if (! $product->category()->where('is_active', true)->exists()) {
+                $validator->errors()->add(
+                    'product',
+                    'دسته‌بندی این محصول در حال حاضر فعال نیست.'
+                );
+
+                return;
+            }
+
             $availableVariants = $product->variants()
                 ->get()
                 ->groupBy('type');

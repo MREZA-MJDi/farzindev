@@ -1,4 +1,5 @@
 import './bootstrap';
+import './admin-image-editor.js';
 import Alpine from 'alpinejs';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
@@ -9,6 +10,40 @@ window.gsap = gsap;
 window.ScrollTrigger = ScrollTrigger;
 
 Alpine.start();
+
+/**
+ * Variant-backed products own stock at option level. Once one option from
+ * every required type is selected, cap the quantity to the lowest selected
+ * option stock instead of the unrelated parent product stock.
+ */
+window.addEventListener('product-variant-selected', () => {
+    const form = document.querySelector('[data-product-cart-form]');
+
+    if (!form) {
+        return;
+    }
+
+    const options = [...form.querySelectorAll('input[name^="variants["]')];
+    const requiredTypes = new Set(options.map((input) => input.dataset.variantType));
+    const selectedByType = new Map();
+
+    options.filter((input) => input.checked).forEach((input) => {
+        selectedByType.set(
+            input.dataset.variantType,
+            Number(input.dataset.stock || 0),
+        );
+    });
+
+    if (requiredTypes.size === 0 || selectedByType.size !== requiredTypes.size) {
+        return;
+    }
+
+    const max = Math.min(...selectedByType.values());
+
+    window.dispatchEvent(new CustomEvent('product-variant-availability-changed', {
+        detail: { max },
+    }));
+});
 
 /**
  * Farzin storefront motion system.

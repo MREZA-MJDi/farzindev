@@ -1810,3 +1810,51 @@ button[class*="bg-[var(--livora-ink)]"][class*="text-white"]:focus-visible {
         transform: none !important;
     }
 }
+
+
+/* Shop product cards: keep price and primary action within their own card on narrow screens. */
+.farzin-product-card,
+.farzin-product-card__media,
+.farzin-product-card__body {
+    min-width: 0;
+    max-width: 100%;
+}
+
+.farzin-product-card__cta {
+    display: flex;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: .55rem;
+    box-sizing: border-box;
+    overflow-wrap: anywhere;
+}
+
+.farzin-product-card__cta > span:first-child {
+    min-width: 0;
+    max-width: 100%;
+    overflow-wrap: anywhere;
+}
+
+.farzin-product-card__arrow {
+    flex: 0 0 2rem;
+}
+
+@media (max-width: 420px) {
+    .farzin-product-card__cta {
+        padding-top: .7rem;
+        font-size: .7rem;
+    }
+
+    .farzin-product-card__installment {
+        padding: .55rem;
+    }
+
+    .farzin-product-card__installment > div {
+        flex-wrap: wrap;
+        gap: .4rem;
+    }
+}

@@ -145,6 +145,12 @@
             ? $variantOptionsAvailable
             : (int) $product->stock > 0;
 
+    // Variant-backed products track stock on each option, not the parent row.
+    // The selector further limits quantity to the minimum stock among selected options.
+    $maxPurchaseQuantity = $variantGroups->isNotEmpty()
+        ? max(1, min(99, (int) $product->variants->max('stock')))
+        : max(1, min(99, (int) $product->stock));
+
     $availability =
         $canPurchase
             ? 'https://schema.org/InStock'
@@ -269,7 +275,7 @@
     <div
         class="bg-[var(--livora-cream)] pb-28 lg:pb-0"
         x-data="{
-        quantity: {{ max(1, min((int) $product->stock, 1)) }},
+        quantity: 1,
         showInstallmentDetails: false
     }"
     >
@@ -410,7 +416,7 @@
                             <span class="h-1 w-1 rounded-full bg-[var(--livora-border)]"></span>
 
                             <span>
-                            {{ $product->stock > 0 ? 'موجود' : 'ناموجود' }}
+                            {{ $canPurchase ? 'موجود' : 'ناموجود' }}
                         </span>
 
                         </div>
@@ -467,7 +473,7 @@
                                         </div>
 
                                         <span class="rounded-full bg-[var(--livora-ink)] px-3 py-1.5 text-[10px] font-medium text-white">
-                                        {{ number_format($cashPercent) }}٪ پیش‌پرداخت
+                                        {{ \App\Helpers\PersianNumberHelper::format($cashPercent) }}٪ پیش‌پرداخت
                                     </span>
 
                                     </div>
@@ -485,7 +491,7 @@
                                             </p>
 
                                             <p class="mt-2 text-base font-semibold">
-                                                {{ number_format($cashAmount) }}
+                                                {{ \App\Helpers\PersianNumberHelper::format($cashAmount) }}
                                             </p>
 
                                             <p class="mt-1 text-[10px] text-[var(--livora-stone)]">
@@ -501,7 +507,7 @@
                                             </p>
 
                                             <p class="mt-2 text-base font-semibold">
-                                                {{ number_format($deferredAmount) }}
+                                                {{ \App\Helpers\PersianNumberHelper::format($deferredAmount) }}
                                             </p>
 
                                             <p class="mt-1 text-[10px] text-[var(--livora-stone)]">
@@ -517,12 +523,12 @@
                                             </p>
 
                                             <p class="mt-2 text-base font-semibold">
-                                                {{ number_format($chequeCount) }}
+                                                {{ \App\Helpers\PersianNumberHelper::format($chequeCount) }}
                                                 چک
                                             </p>
 
                                             <p class="mt-1 text-[10px] text-[var(--livora-stone)]">
-                                                هر {{ number_format($intervalMonths) }} ماه
+                                                هر {{ \App\Helpers\PersianNumberHelper::format($intervalMonths) }} ماه
                                             </p>
 
                                         </div>
@@ -575,18 +581,18 @@
                                                     <div>
 
                                                         <p class="text-xs font-medium">
-                                                            چک {{ number_format($index + 1) }}
+                                                            چک {{ \App\Helpers\PersianNumberHelper::format($index + 1) }}
                                                         </p>
 
                                                         <p class="mt-1 text-[10px] text-[var(--livora-stone)]">
-                                                            {{ number_format(($index + 1) * $intervalMonths) }}
+                                                            {{ \App\Helpers\PersianNumberHelper::format(($index + 1) * $intervalMonths) }}
                                                             ماه بعد
                                                         </p>
 
                                                     </div>
 
                                                     <p class="text-sm font-semibold">
-                                                        {{ number_format($amount) }}
+                                                        {{ \App\Helpers\PersianNumberHelper::format($amount) }}
                                                         تومان
                                                     </p>
 
@@ -624,6 +630,7 @@
                             id="product-purchase"
                             action="{{ route('cart.add', $product) }}"
                             method="POST"
+                            data-product-cart-form
                             class="mt-8 space-y-7"
                         >
 
@@ -691,7 +698,11 @@
 
                                         <p class="mt-1 text-[11px] text-[var(--livora-stone)]">
                                             موجودی:
-                                            {{ number_format($product->stock) }}
+                                            @if($variantGroups->isNotEmpty())
+                                                وابسته به ویژگی انتخاب‌شده
+                                            @else
+                                                {{ \App\Helpers\PersianNumberHelper::format($product->stock) }}
+                                            @endif
                                         </p>
 
                                     </div>
@@ -699,7 +710,7 @@
                                     <x-shop.quantity
                                         name="quantity"
                                         min="1"
-                                        :max="max(1, $product->stock)"
+                                        :max="$maxPurchaseQuantity"
                                     />
 
                                 </div>
@@ -877,7 +888,7 @@
                             </p>
 
                             <p class="mt-3 text-sm font-semibold">
-                                {{ $product->stock > 0 ? 'موجود در انبار' : 'ناموجود' }}
+                                {{ $canPurchase ? 'موجود در انبار' : 'ناموجود' }}
                             </p>
 
                         </div>
@@ -930,14 +941,14 @@
 
                             <p>
                                 این محصول با
-                                {{ number_format($cashPercent) }}٪
+                                {{ \App\Helpers\PersianNumberHelper::format($cashPercent) }}٪
                                 پیش‌پرداخت قابلیت خرید اقساطی دارد.
                                 مبلغ پیش‌پرداخت
-                                {{ number_format($cashAmount) }}
+                                {{ \App\Helpers\PersianNumberHelper::format($cashAmount) }}
                                 تومان است و باقی‌مانده
-                                {{ number_format($deferredAmount) }}
+                                {{ \App\Helpers\PersianNumberHelper::format($deferredAmount) }}
                                 تومان در
-                                {{ number_format($chequeCount) }}
+                                {{ \App\Helpers\PersianNumberHelper::format($chequeCount) }}
                                 فقره چک برنامه‌ریزی می‌شود.
                             </p>
 
@@ -945,7 +956,7 @@
 
                                 <p class="mt-4">
                                     فاصله سررسید چک‌ها
-                                    {{ number_format($intervalMonths) }}
+                                    {{ \App\Helpers\PersianNumberHelper::format($intervalMonths) }}
                                     ماه است و برنامه دقیق پرداخت هنگام Checkout نمایش داده می‌شود.
                                 </p>
 
@@ -1038,7 +1049,7 @@
                         </p>
 
                         <p class="mt-1 text-sm font-semibold">
-                            {{ number_format($productPrice) }}
+                            {{ \App\Helpers\PersianNumberHelper::format($productPrice) }}
                             <span class="text-[10px] font-normal text-[var(--livora-stone)]">
                             تومان
                         </span>

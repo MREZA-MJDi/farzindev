@@ -6,6 +6,7 @@ use App\Http\Requests\Account\StoreAddressRequest;
 use App\Http\Requests\Account\UpdateAddressRequest;
 use App\Http\Requests\Account\UpdateProfileRequest;
 use App\Models\Address;
+use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -38,12 +39,27 @@ class AccountController extends Controller
             'wishlist' => $user
                 ->wishlists()
                 ->count(),
+
+            'paid_orders' => $user->orders()
+                ->where('payment_status', 'paid')
+                ->count(),
+
+            'installment_orders' => $user->orders()
+                ->where('payment_method', 'installment')
+                ->count(),
         ];
 
         return view('account.index', [
             'user' => $user,
             'orders' => $orders,
             'stats' => $stats,
+        ]);
+    }
+
+    public function editProfile(): View
+    {
+        return view('account.profile', [
+            'user' => Auth::user(),
         ]);
     }
 
@@ -81,18 +97,20 @@ class AccountController extends Controller
 
         $data = $request->validated();
 
-        DB::transaction(function () use (
-            $user,
-            &$data
-        ) {
+        DB::transaction(function () use ($user, $data): void {
+            // Serialize changes to a user's default-address invariant.
+            $lockedUser = User::query()
+                ->whereKey($user->id)
+                ->lockForUpdate()
+                ->firstOrFail();
+
             if ($data['is_default'] ?? false) {
-                $user->addresses()
-                    ->update([
-                        'is_default' => false,
-                    ]);
+                $lockedUser->addresses()->update([
+                    'is_default' => false,
+                ]);
             }
 
-            $user->addresses()->create($data);
+            $lockedUser->addresses()->create($data);
         });
 
         return back()->with(
@@ -109,20 +127,24 @@ class AccountController extends Controller
 
         $data = $request->validated();
 
-        DB::transaction(function () use (
-            $address,
-            &$data
-        ) {
+        DB::transaction(function () use ($address, $data): void {
+            $lockedUser = User::query()
+                ->whereKey($address->user_id)
+                ->lockForUpdate()
+                ->firstOrFail();
+
+            $lockedAddress = $lockedUser->addresses()
+                ->whereKey($address->id)
+                ->lockForUpdate()
+                ->firstOrFail();
+
             if ($data['is_default'] ?? false) {
-                $address->user
-                    ->addresses()
-                    ->whereKeyNot($address->id)
-                    ->update([
-                        'is_default' => false,
-                    ]);
+                $lockedUser->addresses()
+                    ->whereKeyNot($lockedAddress->id)
+                    ->update(['is_default' => false]);
             }
 
-            $address->update($data);
+            $lockedAddress->update($data);
         });
 
         return back()->with(
@@ -136,20 +158,29 @@ class AccountController extends Controller
     ): RedirectResponse {
         $this->authorize('delete', $address);
 
-        $wasDefault = $address->is_default;
+        DB::transaction(function () use ($address): void {
+            $lockedUser = User::query()
+                ->whereKey($address->user_id)
+                ->lockForUpdate()
+                ->firstOrFail();
 
-        $user = $address->user;
+            $lockedAddress = $lockedUser->addresses()
+                ->whereKey($address->id)
+                ->lockForUpdate()
+                ->firstOrFail();
 
-        $address->delete();
+            $wasDefault = (bool) $lockedAddress->is_default;
+            $lockedAddress->delete();
 
-        if ($wasDefault) {
-            $user->addresses()
-                ->latest('id')
-                ->first()
-                ?->update([
-                    'is_default' => true,
-                ]);
-        }
+            if ($wasDefault) {
+                $replacement = $lockedUser->addresses()
+                    ->orderByDesc('id')
+                    ->lockForUpdate()
+                    ->first();
+
+                $replacement?->update(['is_default' => true]);
+            }
+        });
 
         return back()->with(
             'success',
@@ -162,17 +193,19 @@ class AccountController extends Controller
     ): RedirectResponse {
         $this->authorize('update', $address);
 
-        DB::transaction(function () use ($address) {
+        DB::transaction(function () use ($address): void {
+            $lockedUser = User::query()
+                ->whereKey($address->user_id)
+                ->lockForUpdate()
+                ->firstOrFail();
 
-            $address->user
-                ->addresses()
-                ->update([
-                    'is_default' => false,
-                ]);
+            $lockedAddress = $lockedUser->addresses()
+                ->whereKey($address->id)
+                ->lockForUpdate()
+                ->firstOrFail();
 
-            $address->update([
-                'is_default' => true,
-            ]);
+            $lockedUser->addresses()->update(['is_default' => false]);
+            $lockedAddress->update(['is_default' => true]);
         });
 
         return back()->with(

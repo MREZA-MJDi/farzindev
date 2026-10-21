@@ -58,7 +58,7 @@
                             @if(isset($category->products_count))
 
                                 <span class="shrink-0 text-[10px] text-[var(--livora-stone)]">
-                                    {{ number_format($category->products_count) }}
+                                    {{ \App\Helpers\PersianNumberHelper::format($category->products_count) }}
                                 </span>
 
                             @endif

@@ -77,12 +77,12 @@
                                 @endphp
 
                                 @if($priceAdjustment > 0)
-                                    +{{ number_format($priceAdjustment) }}
+                                    +{{ \App\Helpers\PersianNumberHelper::format($priceAdjustment) }}
                                     <span class="text-xs text-[var(--admin-muted)]">
                                         تومان
                                     </span>
                                 @elseif($priceAdjustment < 0)
-                                    {{ number_format($priceAdjustment) }}
+                                    {{ \App\Helpers\PersianNumberHelper::format($priceAdjustment) }}
                                     <span class="text-xs text-[var(--admin-muted)]">
                                         تومان
                                     </span>
@@ -92,7 +92,7 @@
                             </td>
 
                             <td>
-                                {{ number_format((int) ($variant->stock ?? 0)) }}
+                                {{ \App\Helpers\PersianNumberHelper::format((int) ($variant->stock ?? 0)) }}
                             </td>
 
                             <td>

@@ -267,7 +267,7 @@
                                 <div>
 
                                     <p class="text-[10px] font-medium text-[var(--admin-text-soft)]">
-                                        {{ $message->created_at->format('Y/m/d') }}
+                                        {{ \App\Helpers\JalaliHelper::format($message->created_at, 'Y/m/d') }}
                                     </p>
 
                                     <p class="mt-1 text-[9px] text-[var(--admin-muted)]">
