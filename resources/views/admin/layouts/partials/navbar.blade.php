@@ -44,6 +44,19 @@
     $pageTitle = $pageTitles[$currentRouteName]
         ?? 'مدیریت فروشگاه';
 
+    $quickSearchPages = [
+        ['title' => 'داشبورد', 'url' => route('admin.dashboard'), 'terms' => 'home overview dashboard'],
+        ['title' => 'تنظیمات فروشگاه', 'url' => route('admin.storefront-settings.edit'), 'terms' => 'banner hero contact settings'],
+        ['title' => 'محصولات', 'url' => route('admin.products.index'), 'terms' => 'product catalog کالا'],
+        ['title' => 'دسته‌بندی‌ها', 'url' => route('admin.categories.index'), 'terms' => 'category دسته ها'],
+        ['title' => 'تصاویر محصولات', 'url' => route('admin.product-images.index'), 'terms' => 'images photos media تصویر'],
+        ['title' => 'تنوع‌های محصول', 'url' => route('admin.product-variants.index'), 'terms' => 'variants options ویژگی'],
+        ['title' => 'سفارش‌ها', 'url' => route('admin.orders.index'), 'terms' => 'orders sales'],
+        ['title' => 'مشتریان', 'url' => route('admin.customers.index'), 'terms' => 'customers users'],
+        ['title' => 'رسانه', 'url' => route('admin.media.index'), 'terms' => 'media uploads فایل آپلود'],
+        ['title' => 'پیام‌های کاربران', 'url' => route('admin.contact-messages.index'), 'terms' => 'contact messages support'],
+    ];
+
 
     /*
     |--------------------------------------------------------------------------
@@ -207,31 +220,8 @@
 
             <div
                 class="relative hidden md:block"
-                x-data='{
-                    query: "",
-                    pages: [
-                        { title: "داشبورد", url: @js(route("admin.dashboard")), terms: "home overview dashboard" },
-                        { title: "تنظیمات فروشگاه", url: @js(route("admin.storefront-settings.edit")), terms: "banner hero contact settings" },
-                        { title: "محصولات", url: @js(route("admin.products.index")), terms: "product catalog کالا" },
-                        { title: "دسته‌بندی‌ها", url: @js(route("admin.categories.index")), terms: "category دسته ها" },
-                        { title: "تصاویر محصولات", url: @js(route("admin.product-images.index")), terms: "images photos media تصویر" },
-                        { title: "تنوع‌های محصول", url: @js(route("admin.product-variants.index")), terms: "variants options ویژگی" },
-                        { title: "سفارش‌ها", url: @js(route("admin.orders.index")), terms: "orders sales" },
-                        { title: "مشتریان", url: @js(route("admin.customers.index")), terms: "customers users" },
-                        { title: "رسانه", url: @js(route("admin.media.index")), terms: "media uploads فایل آپلود" },
-                        { title: "پیام‌های کاربران", url: @js(route("admin.contact-messages.index")), terms: "contact messages support" }
-                    ],
-                    get matches() {
-                        const term = this.query.trim().toLocaleLowerCase();
-                        if (!term) return [];
-                        return this.pages.filter((page) =>
-                            (page.title + " " + page.terms).toLocaleLowerCase().includes(term)
-                        ).slice(0, 6);
-                    },
-                    goToFirst() {
-                        if (this.matches.length) window.location.assign(this.matches[0].url);
-                    }
-                }'
+                x-data="adminQuickSearch"
+                data-pages='@json($quickSearchPages)'
                 @click.outside="query = ''"
             >
                 <form role="search" @submit.prevent="goToFirst()">
