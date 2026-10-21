@@ -58,8 +58,8 @@ class HomeController extends Controller
             ->limit(50)
             ->get();
 
-        // Prefer a real-image product for the visual hero, but never hide
-        // otherwise-active pr        $featuredProducts = $catalogProducts
+        // The architecture hero does not consume a catalogue product.
+        $featuredProducts = $catalogProducts
             ->take(8)
             ->values();
 
@@ -67,10 +67,13 @@ class HomeController extends Controller
             ->pluck('id')
             ->values();
 
-_new)
+        $newProducts = $catalogProducts
+            ->filter(fn (Product $product) => (bool) $product->is_new)
             ->reject(fn (Product $product) => $usedProductIds->contains($product->id))
             ->take(8)
             ->values();
+
+
 
         $usedProductIds = $usedProductIds
             ->merge($newProducts->pluck('id'))
