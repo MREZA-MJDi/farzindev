@@ -8,8 +8,8 @@
     --livora-chocolate-dark: #11110F;
     --livora-chocolate-soft: #302D27;
 
-    /* Cream is also used for footer copy, so keep it warm and readable. */
-    --livora-cream: #E6DED1;
+    /* Dark canvas token; text contrast is explicitly set in storefront styles. */
+    --livora-cream: #141310;
     --livora-white: #211F1B;
     --livora-surface: #292720;
 
