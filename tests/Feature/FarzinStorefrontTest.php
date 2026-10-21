@@ -66,7 +66,8 @@ class FarzinStorefrontTest extends TestCase
             ->assertSee('data-fz-scroll-hero', false)
             ->assertSee('data-hero-drawing', false)
             ->assertSee('SCROLL TO REVEAL')
-            ->assertDontSee('fz-hero-product', false);
+            ->assertDontSee('fz-hero-product', false)
+            ->assertDontSee('PREVIEW · 5 SEC');
     }
 
     public function test_homepage_lists_active_products_even_without_uploaded_images(): void
@@ -245,7 +246,9 @@ class FarzinStorefrontTest extends TestCase
             ->assertSee('navbar-product-search', false)
             ->assertSee('action="'.route('shop.index').'"', false)
             ->assertSee('name="search"', false)
-            ->assertSee('id="global-search"', false);
+            ->assertSee('id="global-search"', false)
+            ->assertSee('role="dialog"', false)
+            ->assertSee('aria-modal="true"', false);
     }
 
     public function test_shop_in_stock_filter_includes_products_with_variant_level_stock(): void
