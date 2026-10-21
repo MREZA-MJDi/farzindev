@@ -176,7 +176,6 @@
                                     @endif
                                     @if($category->hoverMedia?->is_video)
                                         <img data-farzin-category-gif data-farzin-gif-src="{{ $category->hoverMedia->url }}" class="fz-category-card__gif" alt="" aria-hidden="true" loading="lazy" decoding="async">
-                                        <span class="fz-category-card__preview-label" aria-hidden="true">PREVIEW · 5 SEC</span>
                                     @endif
                                     <span class="fz-category-card__arrow" aria-hidden="true">↗</span>
                                 </span>
