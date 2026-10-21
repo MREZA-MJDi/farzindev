@@ -10,43 +10,7 @@
 @section('canonical', route('about'))
 
 @push('seo')
-
-    <meta
-        property="og:type"
-        content="website"
-    >
-
-    <meta
-        property="og:title"
-        content="درباره فرزین فرجی | تولید هود و سینک آشپزخانه"
-    >
-
-    <meta
-        property="og:description"
-        content="آشنایی با فرزین فرجی و مجموعه تولید هود و سینک آشپزخانه؛ معرفی محصولات و رویکرد مجموعه."
-    >
-
-    <meta
-        property="og:url"
-        content="{{ route('about') }}"
-    >
-
-    <meta
-        name="twitter:card"
-        content="summary_large_image"
-    >
-
-    <meta
-        name="twitter:title"
-        content="درباره فرزین فرجی"
-    >
-
-    <meta
-        name="twitter:description"
-        content="آشنایی با فرزین فرجی، تولید هود و سینک آشپزخانه و محصولات مجموعه."
-    >
-
-    <script type="application/ld+json">
+<script type="application/ld+json">
 {
     "@@context": "https://schema.org",
     "@@type": "AboutPage",
@@ -59,22 +23,6 @@
     }
 }
 </script>
-
-    <script type="application/ld+json">
-{
-    "@@context": "https://schema.org",
-    "@@type": "Organization",
-    "name": "فرزین فرجی",
-    "url": @json(url('/')),
-    "description": "معرفی مجموعه فرزین فرجی در حوزه هود و سینک آشپزخانه",
-    "founder": {
-        "@@type": "Person",
-        "name": "فرزین فرجی"
-    },
-    "knowsAbout": ["هود آشپزخانه", "سینک ظرفشویی"]
-}
-</script>
-
 @endpush
 
 @section('content')
