@@ -949,7 +949,7 @@ button[class*="bg-[var(--livora-ink)]"][class*="text-white"]:focus-visible {
 
 .farzin-product-card__installment {
     border: 1px solid var(--livora-border);
-    background: linear-gradient(135deg, rgba( 235, 235, 235, .7), rgba( 253, 253, 253, .96));
+    background: linear-gradient(135deg, var(--livora-surface), var(--livora-white));
 }
 
 .farzin-product-card__cta {
@@ -1002,7 +1002,8 @@ button[class*="bg-[var(--livora-ink)]"][class*="text-white"]:focus-visible {
 .farzin-product-card__wishlist:hover,
 .farzin-product-card__wishlist:focus-visible {
     transform: translateY(-2px);
-    background: #fff;
+    border-color: var(--livora-border-dark);
+    background: var(--livora-surface);
     color: var(--livora-text);
 }
 
@@ -1020,8 +1021,8 @@ button[class*="bg-[var(--livora-ink)]"][class*="text-white"]:focus-visible {
 }
 
 .farzin-product-badge--light {
-    border: 1px solid rgba(255,255,255,.65);
-    background: rgba( 253, 253, 253, .93);
+    border: 1px solid rgba(230, 232, 236, .18);
+    background: rgba(17, 18, 22, .9);
     color: var(--livora-text);
 }
 
@@ -1040,8 +1041,8 @@ button[class*="bg-[var(--livora-ink)]"][class*="text-white"]:focus-visible {
     position: relative;
     overflow: hidden;
     background:
-        radial-gradient(circle at 50% 40%, rgba( 184, 184, 184, .16), transparent 38%),
-        linear-gradient(140deg, #eeeeee, #eeeeee);
+        radial-gradient(circle at 50% 40%, rgba(230, 232, 236, .08), transparent 38%),
+        linear-gradient(140deg, #17181D, #222329);
 }
 
 .farzin-product-fallback::before,
@@ -1050,14 +1051,14 @@ button[class*="bg-[var(--livora-ink)]"][class*="text-white"]:focus-visible {
     position: absolute;
     width: 68%;
     aspect-ratio: 1;
-    border: 1px solid rgba( 20, 20, 20, .08);
+    border: 1px solid rgba(230, 232, 236, .08);
     border-radius: 50%;
     pointer-events: none;
 }
 
 .farzin-product-fallback::after {
     width: 47%;
-    border-color: rgba( 87, 87, 87, .16);
+    border-color: rgba(230, 232, 236, .16);
 }
 
 .farzin-product-fallback__monogram {
@@ -1067,14 +1068,14 @@ button[class*="bg-[var(--livora-ink)]"][class*="text-white"]:focus-visible {
     width: 3.6rem;
     aspect-ratio: 1;
     place-items: center;
-    border: 1px solid rgba( 20, 20, 20, .14);
+    border: 1px solid rgba(230, 232, 236, .16);
     border-radius: 1.2rem;
-    background: rgba( 253, 253, 253, .7);
+    background: rgba(243, 244, 246, .05);
     color: var(--livora-text);
     font-size: 1rem;
     font-weight: 850;
     letter-spacing: -.08em;
-    box-shadow: 0 10px 30px rgba( 20, 20, 20, .06);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, .22);
 }
 
 .farzin-product-fallback__label {
@@ -1154,8 +1155,8 @@ a[data-farzin-gif-card].is-gif-previewing .farzin-category-card__gif { opacity: 
 .farzin-category-card:hover .farzin-category-card__arrow,
 .farzin-category-card:focus-within .farzin-category-card__arrow {
     transform: translateX(-3px);
-    background: #fafafa;
-    color: var(--livora-text);
+    background: var(--livora-accent-dark);
+    color: #fff;
 }
 
 .farzin-category-fallback {
@@ -2260,7 +2261,7 @@ footer a:hover { color: var(--livora-sage) !important; }
     background: linear-gradient(90deg,transparent,#8c8c8c,#bcbcbc,transparent);
     box-shadow: 0 0 18px rgba( 140, 140, 140, .55);
 }
-.fz-category-list { background: linear-gradient(180deg,#eeeeee,#f6f6f6); }
+.fz-category-list { background: var(--livora-cream); }
 .fz-category-list > * { min-width: 0; }
 @media (max-width: 900px) {
     .fz-category-hero__layout { grid-template-columns: minmax(0,1fr) minmax(270px,.8fr); gap: 1.2rem; }
