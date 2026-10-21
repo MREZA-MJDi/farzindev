@@ -56,7 +56,7 @@
             'name' => $seoValues['seo_site_name'],
             'url' => $seoBaseUrl,
             'inLanguage' => 'fa-IR',
-            'description' => $seoDescription,
+            'description' => $seoValues['seo_default_description'],
             'potentialAction' => [
                 '@type' => 'SearchAction',
                 'target' => rtrim($seoBaseUrl, '/') . '/shop?search={search_term_string}',
