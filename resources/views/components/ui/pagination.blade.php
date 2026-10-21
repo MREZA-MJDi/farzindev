@@ -207,7 +207,7 @@
                                 aria-label="صفحه {{ $page }}"
                                 @class([
                                     'farzin-pagination__page flex h-10 min-w-10 shrink-0 items-center justify-center rounded-xl border border-transparent px-3 text-xs font-medium text-[var(--livora-stone)] transition hover:border-[var(--livora-border)] hover:bg-[var(--livora-white)] hover:text-[var(--livora-ink)]',
-                                    'farzin-pagination__page--mobile-hide' => $page !== 1 && $page !== $lastPage && abs($page - $currentPage) > 1,
+                                    'farzin-pagination__page--mobile-hide' => abs($page - $currentPage) > 1,
                                 ])
                             >
                                 {{ number_format($page) }}
@@ -218,6 +218,12 @@
                     @endforeach
 
                 </div>
+
+                <span class="farzin-pagination__mobile-status hidden px-1 text-[10px] text-[var(--livora-stone)]">
+                    صفحه {{ \\App\\Helpers\\PersianNumberHelper::format($currentPage) }}
+                    از
+                    {{ \\App\\Helpers\\PersianNumberHelper::format($lastPage) }}
+                </span>
 
 
                 {{-- Next --}}
