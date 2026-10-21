@@ -846,3 +846,17 @@ body.home-body { background: #141310; }
 .home-body .fz-product-card__open { color: #E6DED1; background: #211F1B; border-color: #39362F; }
 .home-body .fz-product-card__open:hover { color: #E6DED1; background: #302D27; }
 .home-body .fz-category-card__art { background: #292720; }
+
+
+/* Quiet the final light utility details and one-off accent variants. */
+.home-body .fz-hero__facts>div:nth-child(2) .fz-hero__fact-icon,
+.home-body .fz-hero__facts>div:nth-child(3) .fz-hero__fact-icon {
+    color: #C4A481;
+    border-color: #494033;
+    background: #29231D;
+}
+.home-body .grid__item-inner { background: #211F1B; }
+.home-body .fz-hero-product__index { background: rgba(20,19,16,.72); border-color: rgba(230,222,209,.22); }
+.home-body .fz-product-card__open { background: #211F1B; border: 1px solid #39362F; }
+.home-body .fz-category-card__arrow { color: #D4C5B1; background: rgba(31,29,25,.92); border: 1px solid rgba(230,222,209,.16); }
+.home-body .fz-category-card:hover .fz-category-card__arrow { color: #F7F0E7; background: #805B3D; }

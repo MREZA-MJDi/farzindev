@@ -2524,3 +2524,40 @@ a[data-farzin-gif-card].is-gif-previewing .farzin-category-card__gif { opacity: 
 .storefront-content .fz-contact-field select:focus,
 .storefront-content .fz-contact-field textarea:focus { background: #191815; border-color: #805B3D; box-shadow: 0 0 0 3px rgba(164,119,82,.12); }
 .storefront-content .fz-contact-alert--error { color: #E0ADA5; background: #2B1E1B; border-color: #57362F; }
+
+
+/* Explicit foreground colors for components that historically hard-coded ink on cream. */
+html, body { background: #141310; color: #E6DED1; }
+.storefront-content .livora-heading,
+.storefront-content .product-price__current strong,
+.storefront-content .product-price__installment-row strong,
+.storefront-content .farzin-wordmark,
+.storefront-content .farzin-wordmark__main,
+.storefront-content .farzin-product-card__fallback-label,
+.storefront-content .farzin-product-fallback__label { color: #E6DED1 !important; }
+.storefront-content .livora-button-secondary {
+    color: #E6DED1 !important;
+    background: #211F1B !important;
+    border-color: #39362F !important;
+}
+.storefront-content .livora-button-secondary:hover { background: #302D27 !important; border-color: #585044 !important; }
+.storefront-content .farzin-product-card__wishlist:hover,
+.storefront-content .farzin-product-card__wishlist:focus-visible { color: #F7F0E7 !important; background: #805B3D; }
+.storefront-content .farzin-product-badge--light { color: #D7C8B5; background: #302D27; border-color: #494237; }
+.storefront-content .farzin-product-fallback__monogram { color: #C29A72; }
+.storefront-content .farzin-category-card__arrow {
+    color: #D4C5B1;
+    background: rgba(31,29,25,.92);
+    border: 1px solid rgba(230,222,209,.16);
+}
+.storefront-content .farzin-category-card:hover .farzin-category-card__arrow,
+.storefront-content .farzin-category-card:focus-within .farzin-category-card__arrow { color: #F7F0E7; background: #805B3D; border-color: #805B3D; }
+
+/* Finish contact copy contrast where legacy selectors set ink explicitly. */
+.storefront-content .fz-contact-page { color: #E6DED1 !important; }
+.storefront-content .fz-contact-panel__header h2,
+.storefront-content .fz-contact-address p,
+.storefront-content .fz-contact-hours p,
+.storefront-content .fz-contact-channel__copy strong { color: #E6DED1 !important; }
+.storefront-content .fz-contact-social__link { color: #D3C7B6 !important; }
+.storefront-content .fz-contact-social__link:hover { color: #F7F0E7 !important; background: #302D27 !important; }
