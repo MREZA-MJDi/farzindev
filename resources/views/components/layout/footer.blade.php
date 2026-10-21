@@ -26,15 +26,15 @@
 
                 <div class="mt-7 flex flex-wrap gap-2">
 
-                    <span class="rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-[11px] text-white/70">
+                    <span class="rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-xs text-white/75">
                         HOODS
                     </span>
 
-                    <span class="rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-[11px] text-white/70">
+                    <span class="rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-xs text-white/75">
                         Living
                     </span>
 
-                    <span class="rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-[11px] text-white/70">
+                    <span class="rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-xs text-white/75">
                         SINKS
                     </span>
 
@@ -46,7 +46,7 @@
             {{-- Shop --}}
             <div>
 
-                <p class="text-[11px] font-semibold uppercase tracking-[0.16em] text-white/65">
+                <p class="text-xs font-semibold uppercase tracking-[0.14em] text-white/65">
                     SHOP
                 </p>
 
@@ -105,7 +105,7 @@
             {{-- Customer --}}
             <div>
 
-                <p class="text-[11px] font-semibold uppercase tracking-[0.16em] text-white/65">
+                <p class="text-xs font-semibold uppercase tracking-[0.14em] text-white/65">
                     CUSTOMER
                 </p>
 
@@ -190,7 +190,7 @@
             {{-- Contact / Newsletter --}}
             <div>
 
-                <p class="text-[11px] font-semibold uppercase tracking-[0.16em] text-white/65">
+                <p class="text-xs font-semibold uppercase tracking-[0.14em] text-white/65">
                     CONTACT
                 </p>
 
@@ -220,11 +220,11 @@
 
             <div class="border-b border-white/10 py-5 md:border-b-0 md:border-l md:px-6 md:py-6">
 
-                <p class="text-[11px] font-medium uppercase tracking-[0.14em] text-white/60">
+                <p class="text-xs font-medium uppercase tracking-[0.12em] text-white/60">
                     PAYMENT
                 </p>
 
-                <p class="mt-2 text-[13px] leading-6 text-white/70">
+                <p class="mt-2 text-sm leading-6 text-white/70">
                     مسیر پرداخت متناسب با سفارش و روش انتخابی مدیریت می‌شود.
                 </p>
 
@@ -232,11 +232,11 @@
 
             <div class="border-b border-white/10 py-5 md:border-b-0 md:px-6 md:py-6">
 
-                <p class="text-[11px] font-medium uppercase tracking-[0.14em] text-white/60">
+                <p class="text-xs font-medium uppercase tracking-[0.12em] text-white/60">
                     SINKS
                 </p>
 
-                <p class="mt-2 text-[13px] leading-6 text-white/70">
+                <p class="mt-2 text-sm leading-6 text-white/70">
                     مشخصات، ابعاد و نوع نصب هر محصول را پیش از ثبت سفارش بررسی کنید.
                 </p>
 
@@ -244,11 +244,11 @@
 
             <div class="py-5 md:px-6 md:py-6">
 
-                <p class="text-[11px] font-medium uppercase tracking-[0.14em] text-white/60">
+                <p class="text-xs font-medium uppercase tracking-[0.12em] text-white/60">
                     SUPPORT
                 </p>
 
-                <p class="mt-2 text-[13px] leading-6 text-white/70">
+                <p class="mt-2 text-sm leading-6 text-white/70">
                     برای راهنمایی انتخاب محصول یا پیگیری سفارش با تیم فرزین در تماس باشید.
                 </p>
 
@@ -264,7 +264,7 @@
 
             <div>
 
-                <p class="text-[13px] text-white/65">
+                <p class="text-xs text-white/70">
                     © {{ \App\Helpers\JalaliHelper::format(now(), 'Y') }} فرزین.
                     تمامی حقوق محفوظ است.
                 </p>
@@ -276,14 +276,14 @@
 
                 <a
                     href="{{ route('about') }}"
-                    class="text-[13px] text-white/65 transition hover:text-white"
+                    class="text-xs text-white/70 transition hover:text-white"
                 >
                     درباره ما
                 </a>
 
                 <a
                     href="{{ route('contact') }}"
-                    class="text-[13px] text-white/65 transition hover:text-white"
+                    class="text-xs text-white/70 transition hover:text-white"
                 >
                     تماس
                 </a>
@@ -294,7 +294,7 @@
 
                         <a
                             href="{{ route('account.index') }}"
-                            class="text-[13px] text-white/65 transition hover:text-white"
+                            class="text-xs text-white/70 transition hover:text-white"
                         >
                             حساب من
                         </a>
@@ -307,7 +307,7 @@
                 <a
                     href="#"
                     aria-label="Instagram"
-                    class="text-[13px] text-white/65 transition hover:text-white"
+                    class="text-xs text-white/70 transition hover:text-white"
                 >
                     Instagram
                 </a>
@@ -315,7 +315,7 @@
                 <a
                     href="#"
                     aria-label="Telegram"
-                    class="text-[13px] text-white/65 transition hover:text-white"
+                    class="text-xs text-white/70 transition hover:text-white"
                 >
                     Telegram
                 </a>

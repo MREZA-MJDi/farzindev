@@ -27,62 +27,73 @@
             ];
         @endphp
 
-        <section class="fz-hero" aria-labelledby="fz-hero-title">
-            <div class="fz-container fz-hero__layout">
-                <div class="fz-hero__copy fz-reveal">
-                    <p class="fz-eyebrow"><span></span> فرزین / تولید و تجهیزات آشپزخانه</p>
-                    <h1 id="fz-hero-title">کارایی از جزئیات شروع می‌شود؛ <span>هود و سینک فرزین.</span></h1>
-                    <p class="fz-hero__lead">محصول را فقط از روی ظاهر انتخاب نکنید. فرم، فضای نصب و شیوه‌ی استفاده را کنار هم ببینید تا انتخاب نهایی با آشپزخانه‌ی شما هماهنگ باشد.</p>
-                    <div class="fz-hero__actions">
-                        <a class="fz-button fz-button--primary" href="{{ route('shop.index') }}">دیدن محصولات <span aria-hidden="true">←</span></a>
-                        <a class="fz-button fz-button--secondary" href="{{ route('about') }}">آشنایی با فرزین</a>
-                    </div>
-                    <div class="fz-hero__facts">
-                        <div><span class="fz-hero__fact-icon">01</span><span><strong>هود آشپزخانه</strong><small>فرم و تهویه</small></span></div>
-                        <div><span class="fz-hero__fact-icon">02</span><span><strong>سینک ظرفشویی</strong><small>کاربری و تناسب</small></span></div>
-                        <div><span class="fz-hero__fact-icon">03</span><span><strong>انتخاب دقیق</strong><small>جزئیات قابل بررسی</small></span></div>
-                    </div>
-                </div>
-
-                <div class="fz-hero__visual fz-reveal fz-reveal--delay">
-                    @if($heroProduct && $heroProduct->images->first(fn ($image) => filled($image->url)))
-                        @php($heroImage = $heroProduct->images->first(fn ($image) => filled($image->url)))
-                        <a class="fz-hero-product" href="{{ route('product.show', $heroProduct->slug) }}" aria-label="مشاهده {{ $heroProduct->name }}">
-                            <img src="{{ $heroImage->url }}" alt="{{ $heroImage->alt ?: $heroProduct->name }}" width="1200" height="1000" loading="eager" fetchpriority="high" decoding="async">
-                            <span class="fz-hero-product__veil" aria-hidden="true"></span>
-                            <span class="fz-hero-product__index">FZ / PRODUCT {{ str_pad((string) $heroProduct->id, 3, '0', STR_PAD_LEFT) }}</span>
-                            <span class="fz-hero-product__meta">
-                                <span>در کاتالوگ فرزین</span>
-                                <strong>{{ $heroProduct->name }}</strong>
-                                <span class="fz-hero-product__link">مشاهده مشخصات <b aria-hidden="true">↗</b></span>
-                            </span>
-                        </a>
-                    @else
-                        <div class="fz-hero-empty" role="img" aria-label="تصویر محصول پس از ثبت تصویر معتبر در پنل مدیریت نمایش داده می‌شود">
-                            <span class="fz-hero-empty__label">FARZIN / KITCHEN SYSTEMS</span>
-                            <div class="fz-hero-empty__orb fz-hero-empty__orb--one"></div>
-                            <div class="fz-hero-empty__orb fz-hero-empty__orb--two"></div>
-                            <svg class="fz-hero-empty__drawing" viewBox="0 0 420 300" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                                <path d="M65 104L210 45L355 104" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
-                                <path d="M98 106H322L296 151H124L98 106Z" fill="rgba(255,255,255,.72)" stroke="currentColor" stroke-width="3" stroke-linejoin="round"/>
-                                <path d="M147 151V177H273V151" stroke="currentColor" stroke-width="3" stroke-linejoin="round"/>
-                                <path d="M76 205H344V256H76V205Z" fill="rgba(255,255,255,.4)" stroke="currentColor" stroke-width="3"/>
-                                <path d="M100 220H320M100 233H320M100 246H320" stroke="currentColor" stroke-width="1.5" opacity=".5"/>
-                                <path d="M154 205V189H266V205" stroke="currentColor" stroke-width="3"/>
-                                <path d="M190 189V178C190 168 199 160 209 160H211C221 160 230 168 230 178V189" stroke="currentColor" stroke-width="3"/>
-                                <circle cx="210" cy="83" r="4" fill="currentColor"/>
-                                <circle cx="194" cy="83" r="2.5" fill="currentColor" opacity=".5"/>
-                                <circle cx="226" cy="83" r="2.5" fill="currentColor" opacity=".5"/>
-                            </svg>
-                            <strong>تجهیزات آشپزخانه، با نگاه دقیق</strong>
-                            <span>تصویر اصلی را از پنل مدیریت ثبت کنید.</span>
-                        </div>
-                    @endif
-                    <span class="fz-hero__edge-note" aria-hidden="true">FORM FOLLOWS FUNCTION · 2026</span>
-                </div>
+<section class="fz-hero fz-hero--immersive" aria-labelledby="fz-hero-title">
+    <div class="fz-hero__backdrop" aria-hidden="true">
+        <span class="fz-hero__rotating-art"></span>
+        <span class="fz-hero__backdrop-shade"></span>
+    </div>
+    <div class="fz-container fz-hero__layout">
+        <div class="fz-hero__copy">
+            <p class="fz-eyebrow fz-hero__eyebrow"><span></span> DESIGNED · ENGINEERED · MADE BY FARZIN</p>
+            <h1 id="fz-hero-title">
+                <span class="fz-hero__brand-name">فرزین</span>
+                <span class="fz-hero__brand-claim">تولید تخصصی هود و سینک آشپزخانه</span>
+            </h1>
+            <p class="fz-hero__lead">از طراحی تا تولید؛ تجهیزاتی برای آشپزخانه‌های امروزی، با تمرکز بر فرم، کارکرد و جزئیات ساخت.</p>
+            <div class="fz-hero__actions">
+                <a class="fz-button fz-button--primary" href="{{ route('shop.index') }}">مشاهده محصولات <span aria-hidden="true">←</span></a>
+                <a class="fz-button fz-button--secondary" href="{{ route('about') }}">آشنایی با تولید فرزین</a>
             </div>
-            <div class="fz-hero__bottom"><span>FARZIN</span><span>HOODS / SINKS / KITCHEN</span><span>01 — 06</span></div>
-        </section>
+            <div class="fz-hero__facts" aria-label="زمینه فعالیت فرزین">
+                <div><span class="fz-hero__fact-icon" aria-hidden="true">01</span><span><strong>هود آشپزخانه</strong><small>طراحی و تهویه</small></span></div>
+                <div><span class="fz-hero__fact-icon" aria-hidden="true">02</span><span><strong>سینک ظرفشویی</strong><small>فرم و کاربری</small></span></div>
+                <div><span class="fz-hero__fact-icon" aria-hidden="true">03</span><span><strong>تولید تخصصی</strong><small>از کارخانه تا خانه</small></span></div>
+            </div>
+        </div>
+        <div class="fz-hero__visual">
+            <span class="fz-hero__visual-orbit" aria-hidden="true"></span>
+            @if($heroProduct && $heroProduct->images->first(fn ($image) => filled($image->url)))
+                @php($heroImage = $heroProduct->images->first(fn ($image) => filled($image->url)))
+                <a class="fz-hero-product" href="{{ route('product.show', $heroProduct->slug) }}" aria-label="مشاهده {{ $heroProduct->name }}">
+                    <img class="fz-hero-product__image" src="{{ $heroImage->url }}" alt="{{ $heroImage->alt ?: $heroProduct->name }}" width="1200" height="1000" loading="eager" fetchpriority="high" decoding="async">
+                    <span class="fz-hero-product__veil" aria-hidden="true"></span>
+                    <span class="fz-hero-product__index">FZ / PRODUCT {{ str_pad((string) $heroProduct->id, 3, '0', STR_PAD_LEFT) }}</span>
+                    <span class="fz-hero-product__meta">
+                        <span>در مجموعه محصولات فرزین</span>
+                        <strong>{{ $heroProduct->name }}</strong>
+                        <span class="fz-hero-product__link">مشاهده مشخصات <b aria-hidden="true">↗</b></span>
+                    </span>
+                </a>
+            @else
+                <div class="fz-hero-empty" role="img" aria-label="نمای گرافیکی تجهیزات آشپزخانه فرزین">
+                    <span class="fz-hero-empty__label">FARZIN / KITCHEN SYSTEMS</span>
+                    <div class="fz-hero-empty__orb fz-hero-empty__orb--one"></div>
+                    <div class="fz-hero-empty__orb fz-hero-empty__orb--two"></div>
+                    <svg class="fz-hero-empty__drawing" viewBox="0 0 420 300" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                        <path d="M65 104L210 45L355 104" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M98 106H322L296 151H124L98 106Z" fill="rgba(255,255,255,.08)" stroke="currentColor" stroke-width="3" stroke-linejoin="round"/>
+                        <path d="M147 151V177H273V151" stroke="currentColor" stroke-width="3" stroke-linejoin="round"/>
+                        <path d="M76 205H344V256H76V205Z" fill="rgba(255,255,255,.04)" stroke="currentColor" stroke-width="3"/>
+                        <path d="M100 220H320M100 233H320M100 246H320" stroke="currentColor" stroke-width="1.5" opacity=".5"/>
+                        <path d="M154 205V189H266V205" stroke="currentColor" stroke-width="3"/>
+                        <path d="M190 189V178C190 168 199 160 209 160H211C221 160 230 168 230 178V189" stroke="currentColor" stroke-width="3"/>
+                        <circle cx="210" cy="83" r="4" fill="currentColor"/>
+                        <circle cx="194" cy="83" r="2.5" fill="currentColor" opacity=".5"/>
+                        <circle cx="226" cy="83" r="2.5" fill="currentColor" opacity=".5"/>
+                    </svg>
+                    <strong>تجهیزات آشپزخانه، با نگاه دقیق</strong>
+                    <span>هود و سینک؛ طراحی‌شده برای استفاده‌ی روزمره</span>
+                </div>
+            @endif
+            <span class="fz-hero__edge-note" aria-hidden="true">FORM / FUNCTION / FARZIN</span>
+        </div>
+    </div>
+    <div class="fz-hero__bottom">
+        <span>FARZIN / MANUFACTURING</span>
+        <span>HOODS · SINKS · KITCHEN SYSTEMS</span>
+        <span>DESIGN TO PRODUCTION</span>
+    </div>
+</section>
 
         @if($categories->isNotEmpty())
             <section class="fz-section fz-category-section" aria-labelledby="fz-category-heading">
