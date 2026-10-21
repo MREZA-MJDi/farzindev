@@ -25,7 +25,11 @@ class FarzinStorefrontTest extends TestCase
     public function test_public_pages_render_successfully(): void
     {
         foreach (['/', '/shop', '/categories', '/about', '/contact', '/blog'] as $uri) {
-            $this->get($uri)->assertOk();
+            $this->get($uri)
+                ->assertOk()
+                ->assertSee('farzin-site-header', false)
+                ->assertSee('aria-label="ناوبری اصلی فرزین"', false)
+                ->assertSee('farzin-site-footer', false);
         }
     }
 
