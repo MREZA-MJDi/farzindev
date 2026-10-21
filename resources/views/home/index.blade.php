@@ -163,13 +163,6 @@
                                             class="grid__item-inner"
                                             href="{{ $item['product_url'] }}"
                                             aria-label="مشاهده {{ $item['product_name'] }}"
-                                            data-product-id="{{ $item['product_id'] }}"
-                                            data-product-name="{{ $item['product_name'] }}"
-                                            data-product-price="{{ $item['product_price'] }}"
-                                            data-product-image="{{ $item['url'] }}"
-                                            data-product-category="{{ $item['category_name'] }}"
-                                            data-product-stock="{{ $item['product_stock'] }}"
-                                            data-cart-url="{{ $item['cart_url'] }}"
                                         >
                                             <img class="grid__image" src="{{ $item['url'] }}" alt="{{ $item['alt'] }}" width="720" height="900" loading="lazy" decoding="async">
                                             <span class="grid__item-caption"><small>{{ $item['category_name'] }}</small><strong>{{ $item['product_name'] }}</strong></span>
@@ -266,18 +259,4 @@
             </div>
         </section>
 
-    <div id="quick-view-modal" class="qv" aria-hidden="true">
-        <button class="qv__backdrop" type="button" data-qv-close aria-label="بستن نمای سریع"></button>
-        <section class="qv__panel" role="dialog" aria-modal="true" aria-labelledby="qv-name">
-            <button class="qv__close unbutton" data-qv-close type="button" aria-label="بستن">×</button>
-            <div class="qv__image" data-qv-image></div>
-            <div class="qv__body">
-                <p class="qv__category" data-qv-category></p>
-                <h2 class="qv__name" id="qv-name" data-qv-name></h2>
-                <p class="qv__price"><span data-qv-price></span> <small>تومان</small></p>
-                <div class="qv__actions"><a class="qv__btn qv__btn--primary" data-qv-link href="#">جزئیات کامل محصول <span aria-hidden="true">↗</span></a><button class="qv__btn qv__btn--ghost" data-qv-add type="button">افزودن به سبد خرید</button></div>
-            </div>
-        </section>
-    </div>
-    <div id="toast-root" class="toast-root" aria-live="polite" aria-atomic="true"></div>
 @endsection
