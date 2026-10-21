@@ -73,7 +73,7 @@
     >
 
         {{-- Shop banner is configured in Admin > Storefront Settings. No looping product animation. --}}
-        <section class="border-b border-[var(--livora-border)] bg-[var(--livora-white)]">
+        <section class="farzin-shop-banner border-b border-[var(--livora-border)] bg-[var(--livora-white)]">
             <x-layout.container>
                 <div class="py-7 sm:py-9">
                     <nav aria-label="مسیر صفحه" class="flex flex-wrap items-center gap-2 text-[11px] text-[var(--livora-stone)]">
@@ -83,7 +83,7 @@
                     </nav>
 
                     @if (!empty($shopBanner['image_url']))
-                        <div class="relative mt-6 aspect-[16/5] min-h-[220px] overflow-hidden rounded-[2rem] bg-[var(--livora-ink)]" data-farzin-reveal>
+                        <div class="farzin-shop-banner__image relative mt-6 aspect-[16/5] min-h-[220px] overflow-hidden rounded-[2rem] bg-[var(--livora-ink)]" data-farzin-reveal>
                             <img
                                 src="{{ $shopBanner['image_url'] }}"
                                 alt="{{ $shopBanner['title'] }}"
@@ -94,7 +94,7 @@
                                 decoding="async"
                             >
                             <div class="absolute inset-0 bg-gradient-to-l from-black/75 via-black/25 to-transparent"></div>
-                            <div class="absolute inset-y-0 right-0 flex max-w-2xl flex-col justify-center p-6 text-white sm:p-10 lg:p-14">
+                            <div class="farzin-shop-banner__content absolute inset-y-0 right-0 flex max-w-2xl flex-col justify-center p-6 text-white sm:p-10 lg:p-14">
                                 <p class="text-[10px] font-medium uppercase tracking-[0.22em] text-white/70">FARZIN / CATALOG</p>
                                 <h1 class="mt-3 text-3xl font-semibold leading-tight sm:text-4xl lg:text-5xl">{{ $shopBanner['title'] }}</h1>
                                 @if (filled($shopBanner['subtitle']))
@@ -395,14 +395,7 @@
 
                             @if($products->hasPages())
 
-                                <nav
-                                    class="mt-14"
-                                    aria-label="صفحه‌بندی محصولات"
-                                >
-
-                                    {{ $products->withQueryString()->links() }}
-
-                                </nav>
+                                <x-ui.pagination :paginator="$products" />
 
                             @endif
 

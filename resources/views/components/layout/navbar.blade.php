@@ -125,7 +125,41 @@
             {{-- =========================================================
                 RIGHT ACTIONS
             ========================================================== --}}
-            <div class="flex items-center gap-1">
+            <div class="flex min-w-0 items-center gap-1">
+
+                {{-- Compact desktop search for the real Farzin catalogue --}}
+                <form
+                    action="{{ route('shop.index') }}"
+                    method="GET"
+                    role="search"
+                    aria-label="جستجوی محصولات فرزین"
+                    class="hidden xl:block xl:w-[clamp(13rem,18vw,17rem)]"
+                >
+                    <label for="navbar-product-search" class="sr-only">جستجوی هود یا سینک</label>
+                    <div class="relative">
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke-width="1.6"
+                            stroke="currentColor"
+                            aria-hidden="true"
+                            class="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--livora-stone)]"
+                        >
+                            <circle cx="11" cy="11" r="6.5"/>
+                            <path stroke-linecap="round" stroke-linejoin="round" d="m16 16 4.2 4.2"/>
+                        </svg>
+                        <input
+                            id="navbar-product-search"
+                            name="search"
+                            type="search"
+                            value="{{ request('search', '') }}"
+                            autocomplete="off"
+                            placeholder="جستجوی هود یا سینک..."
+                            class="w-full min-w-0 rounded-full border border-[var(--livora-border)] bg-[var(--livora-white)] py-2.5 pl-4 pr-10 text-xs text-[var(--livora-ink)] placeholder:text-[var(--livora-stone)] transition focus:border-[var(--livora-ink)] focus:outline-none"
+                        >
+                    </div>
+                </form>
 
                 {{-- Mobile menu --}}
                 <button
@@ -153,7 +187,7 @@
                             $refs.searchInput?.focus();
                         });
                     "
-                    class="group hidden h-10 w-10 items-center justify-center rounded-full text-[var(--livora-ink)] transition duration-300 hover:bg-[var(--livora-white)] lg:flex"
+                    class="group hidden h-10 w-10 items-center justify-center rounded-full text-[var(--livora-ink)] transition duration-300 hover:bg-[var(--livora-white)] lg:flex xl:hidden"
                 >
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
