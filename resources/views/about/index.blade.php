@@ -492,15 +492,15 @@ OUR FOCUS
                         <div class="rounded-3xl border border-white/10 bg-white/5 p-5 sm:p-6">
 
                             <p class="text-[10px] uppercase tracking-[0.18em] text-white/40">
-                                TODAY
+                                PAYMENT
                             </p>
 
-                            <p class="mt-4 text-3xl font-semibold">
-                                50٪
+                            <p class="mt-4 text-2xl font-semibold">
+                                طبق محصول
                             </p>
 
                             <p class="mt-2 text-xs leading-6 text-white/40">
-                                نمونه پیش‌پرداخت
+                                مبلغ پیش‌پرداخت در صفحه محصول
                             </p>
 
                         </div>
