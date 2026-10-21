@@ -6,6 +6,14 @@
     aria-label="جستجوی محصولات فرزین"
     tabindex="-1"
     @keydown.escape.window="if (searchOpen) closeSearch()"
+    @keydown.tab="
+        const focusables = Array.from($el.querySelectorAll('a[href],button:not([disabled]),input:not([disabled]),select:not([disabled]),textarea:not([disabled]),[tabindex]')).filter((element) => element.tabIndex >= 0 && element.getClientRects().length > 0);
+        if (!focusables.length) { $event.preventDefault(); return; }
+        const first = focusables[0];
+        const last = focusables[focusables.length - 1];
+        if ($event.shiftKey && document.activeElement === first) { $event.preventDefault(); last.focus(); }
+        else if (!$event.shiftKey && document.activeElement === last) { $event.preventDefault(); first.focus(); }
+    "
     x-transition:enter="transition ease-out duration-300"
     x-transition:enter-start="opacity-0"
     x-transition:enter-end="opacity-100"
@@ -20,6 +28,7 @@
         type="button"
         aria-label="بستن جستجو"
         @click="closeSearch()"
+        tabindex="-1"
         class="absolute inset-0 bg-black/40 backdrop-blur-md"
     ></button>
 
@@ -94,6 +103,8 @@
                 <form
                     action="{{ route('shop.index') }}"
                     method="GET"
+                    role="search"
+                    aria-label="جستجوی کاتالوگ فرزین"
                     class="relative"
                     x-data="{ searchValue: @js((string) request('search', '')) }"
                 >
