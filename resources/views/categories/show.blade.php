@@ -16,41 +16,9 @@
     route('categories.show', $category->slug)
 )
 
-@push('seo')
-name }} | فرزین"
-    >
-
-    
-meta_description ?? ('محصولات ' . $category->name . ' در فرزین') }}"
-    >
-
-    
-slug) }}"
-    >
-
-    @if($category->image)
-        
-image_url }}"
-        >
-    @endif
-
-    
+@section('og_image', $category->image_url ?? '')
 
 
-    
-name }} | فرزین"
-    >
-
-    
-meta_description ?? ('محصولات ' . $category->name . ' در فرزین') }}"
-    >
-
-    @if($category->image)
-        
-image_url }}"
-        >
-    @endif
-@endpush
 
 @section('content')
 
