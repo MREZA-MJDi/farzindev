@@ -219,7 +219,7 @@
 
                 </div>
 
-                <span class="farzin-pagination__mobile-status hidden px-1 text-[10px] text-[var(--livora-stone)]">
+                <span class="farzin-pagination__mobile-status px-1 text-[10px] text-[var(--livora-stone)]">
                     صفحه {{ \\App\\Helpers\\PersianNumberHelper::format($currentPage) }}
                     از
                     {{ \\App\\Helpers\\PersianNumberHelper::format($lastPage) }}
