@@ -154,6 +154,34 @@ const initFarzinMotion = () => {
         }
     }
 
+    // Shared page motion for the unified non-home layouts. Content remains visible
+    // when JavaScript is unavailable, and reduced-motion preferences are respected.
+    if (!document.body.classList.contains('home-body')) {
+        gsap.utils.toArray('.storefront-content section:not(.fz-contact-hero), .storefront-content [data-fz-reveal]').forEach((element) => {
+            if (element.dataset.fzMotionReady === 'true') {
+                return;
+            }
+
+            element.dataset.fzMotionReady = 'true';
+            gsap.fromTo(element,
+                { autoAlpha: 0, y: 18 },
+                {
+                    autoAlpha: 1,
+                    y: 0,
+                    duration: 0.72,
+                    ease: 'power3.out',
+                    clearProps: 'transform',
+                    scrollTrigger: {
+                        trigger: element,
+                        start: 'top 92%',
+                        toggleActions: 'play none none none',
+                        once: true,
+                    },
+                },
+            );
+        });
+    }
+
     gsap.utils.toArray('[data-farzin-reveal]').forEach((card) => {
         if (card.dataset.farzinMotionReady === 'true') {
             return;
