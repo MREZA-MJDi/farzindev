@@ -9,44 +9,7 @@
 
 @section('canonical', route('cart.index'))
 
-@push('seo')
 
-    <meta
-        property="og:type"
-        content="website"
-    >
-
-    <meta
-        property="og:title"
-        content="سبد خرید | فرزین"
-    >
-
-    <meta
-        property="og:description"
-        content="محصولات انتخاب‌شده خود را در سبد خرید فرزین بررسی و برای پرداخت آماده کنید."
-    >
-
-    <meta
-        property="og:url"
-        content="{{ route('cart.index') }}"
-    >
-
-    <meta
-        name="twitter:card"
-        content="summary"
-    >
-
-    <meta
-        name="twitter:title"
-        content="سبد خرید | فرزین"
-    >
-
-    <meta
-        name="twitter:description"
-        content="بررسی سبد خرید و آماده‌سازی سفارش در فرزین."
-    >
-
-@endpush
 
 @section('content')
 
