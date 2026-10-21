@@ -301,9 +301,177 @@ function initGridAnimations() {
     ScrollTrigger.refresh();
 }
 
+function findVisibleCartTarget() {
+    const links = [...document.querySelectorAll('#app a[aria-label="سبد خرید"]')];
+    return links.find((link) => link.getClientRects().length > 0
+        && window.getComputedStyle(link).visibility !== 'hidden') || links[0] || null;
+}
+
+function updateCartCounters(count) {
+    const total = Math.max(0, Number(count) || 0);
+    const links = [...document.querySelectorAll('#app a[aria-label="سبد خرید"]')];
+
+    links.forEach((link) => {
+        let badge = link.querySelector('[data-cart-count-badge]');
+
+        if (total < 1) {
+            badge?.remove();
+            return;
+        }
+
+        if (!badge) {
+            badge = document.createElement('span');
+            badge.dataset.cartCountBadge = '';
+            badge.className = 'fz-cart-count-badge';
+            badge.setAttribute('aria-label', `${new Intl.NumberFormat('fa-IR').format(total)} کالا در سبد`);
+            link.appendChild(badge);
+        }
+
+        badge.textContent = new Intl.NumberFormat('fa-IR').format(total);
+        badge.setAttribute('aria-label', `${new Intl.NumberFormat('fa-IR').format(total)} کالا در سبد`);
+    });
+}
+
+function showCartMessage(form, text, isError = false) {
+    const message = form.querySelector('[data-cart-message]');
+    if (!message) return;
+
+    message.textContent = text;
+    message.dataset.state = isError ? 'error' : 'success';
+    message.classList.add('is-visible');
+}
+
+function animateProductToCart(sourceImage, cartTarget) {
+    if (!cartTarget) return;
+
+    // Reduced-motion users still get the cart update, without the flying clone.
+    if (reduceMotion || !sourceImage) {
+        gsap.fromTo(cartTarget, { scale: 1 }, {
+            scale: 1.08,
+            duration: 0.14,
+            repeat: 1,
+            yoyo: true,
+            ease: 'power1.inOut',
+            clearProps: 'scale',
+        });
+        return;
+    }
+
+    const sourceRect = sourceImage.getBoundingClientRect();
+    const targetRect = cartTarget.getBoundingClientRect();
+
+    if (sourceRect.width < 1 || sourceRect.height < 1 || targetRect.width < 1) return;
+
+    const flyer = sourceImage.cloneNode(true);
+    Object.assign(flyer.style, {
+        position: 'fixed',
+        left: `${sourceRect.left}px`,
+        top: `${sourceRect.top}px`,
+        width: `${sourceRect.width}px`,
+        height: `${sourceRect.height}px`,
+        maxWidth: 'none',
+        margin: '0',
+        padding: '0',
+        objectFit: 'contain',
+        objectPosition: 'center',
+        borderRadius: '1rem',
+        background: '#fff',
+        boxShadow: '0 14px 45px rgba(17, 19, 22, .2)',
+        pointerEvents: 'none',
+        zIndex: '4000',
+        transformOrigin: 'center center',
+    });
+    flyer.setAttribute('aria-hidden', 'true');
+    document.body.appendChild(flyer);
+
+    const deltaX = targetRect.left + targetRect.width / 2 - (sourceRect.left + sourceRect.width / 2);
+    const deltaY = targetRect.top + targetRect.height / 2 - (sourceRect.top + sourceRect.height / 2);
+    const lift = Math.min(76, Math.max(28, sourceRect.height * 0.18));
+
+    gsap.timeline({
+        onComplete: () => flyer.remove(),
+    })
+        .to(flyer, {
+            x: deltaX * 0.46,
+            y: deltaY * 0.38 - lift,
+            scale: 0.7,
+            rotation: -5,
+            duration: 0.28,
+            ease: 'power2.out',
+        })
+        .to(flyer, {
+            x: deltaX,
+            y: deltaY,
+            scale: 0.08,
+            rotation: 8,
+            opacity: 0.08,
+            duration: 0.42,
+            ease: 'power3.in',
+        }, '-=0.02');
+
+    gsap.fromTo(cartTarget, { scale: 1 }, {
+        scale: 1.1,
+        duration: 0.14,
+        repeat: 1,
+        yoyo: true,
+        ease: 'power1.inOut',
+        clearProps: 'scale',
+    });
+}
+
+function initCartFlyActions() {
+    document.querySelectorAll('[data-cart-add-form]').forEach((form) => {
+        if (form.dataset.cartFlyBound === 'true') return;
+        form.dataset.cartFlyBound = 'true';
+
+        form.addEventListener('submit', async (event) => {
+            event.preventDefault();
+
+            if (form.dataset.pending === 'true') return;
+
+            const button = form.querySelector('[data-cart-fly-button]');
+            const card = form.closest('[data-product-card]');
+            const sourceImage = card?.querySelector('.fz-product-card__image img');
+            const cartTarget = findVisibleCartTarget();
+
+            form.dataset.pending = 'true';
+            if (button) button.disabled = true;
+
+            try {
+                const response = await fetch(form.action, {
+                    method: 'POST',
+                    body: new FormData(form),
+                    credentials: 'same-origin',
+                    headers: {
+                        Accept: 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest',
+                    },
+                });
+
+                const payload = await response.json().catch(() => ({}));
+                const errorDetail = Object.values(payload.errors || {}).flat()[0];
+
+                if (!response.ok || !response.headers.get('content-type')?.includes('application/json')) {
+                    throw new Error(errorDetail || payload.message || 'افزودن محصول به سبد انجام نشد؛ دوباره تلاش کنید.');
+                }
+
+                updateCartCounters(payload.cart_count);
+                showCartMessage(form, payload.message || 'محصول به سبد خرید اضافه شد.');
+                animateProductToCart(sourceImage, cartTarget);
+            } catch (error) {
+                showCartMessage(form, error instanceof Error ? error.message : 'خطا در افزودن محصول به سبد.', true);
+            } finally {
+                form.dataset.pending = 'false';
+                if (button) button.disabled = false;
+            }
+        });
+    });
+}
+
 function bootHomeMotion() {
     initRevealAnimations();
     initGridAnimations();
+    initCartFlyActions();
 }
 
 if (document.readyState === 'loading') {
@@ -344,6 +512,19 @@ window.addEventListener('pagehide', () => {
     gridMotionContext = null;
     ScrollTrigger.getAll().forEach((trigger) => trigger.kill());
 }, { once: true });
+
+const gridBreakpointQuery = window.matchMedia('(max-width: 760px)');
+gridBreakpointQuery.addEventListener?.('change', () => {
+    initGridAnimations();
+    ScrollTrigger.refresh();
+});
+
+window.addEventListener('pageshow', (event) => {
+    if (event.persisted) {
+        bootHomeMotion();
+        ScrollTrigger.refresh();
+    }
+});
 
 reduceMotionQuery.addEventListener?.('change', (event) => {
     reduceMotion = event.matches;
