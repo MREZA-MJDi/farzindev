@@ -19,7 +19,7 @@
         </a>
 
         <button type="button"
-            @click="searchOpen = true; mobileOpen = false; $nextTick(() => document.getElementById('global-search')?.focus())"
+            @click="openSearch($event.currentTarget)"
             class="flex min-w-0 flex-col items-center justify-center gap-1 rounded-xl px-1 py-2.5 text-[var(--livora-stone)] transition hover:text-[var(--livora-text)]"
             aria-label="جستجو"
             :aria-expanded="searchOpen.toString()"
