@@ -53,7 +53,7 @@
                 <div class="fz-hero__copy fz-reveal">
                     <p class="fz-eyebrow"><span></span> فرزین / تولید و تجهیزات آشپزخانه</p>
                     <h1 id="fz-hero-title">کارایی از جزئیات شروع می‌شود؛ <span>هود و سینک فرزین.</span></h1>
-                    <p class="fz-hero__lead">محصول را فقط از روی ظاهر انتخاب نکنید. فرم، فضای نصب و شیوه‌ی استفاده را کنار هم ببینید تا انتخاب نهایی با آشپزخانه‌ی شما هماهنگ باشد.</p>
+                    <p class="fz-hero__lead">برای انتخاب هود یا سینک، ظاهر را کنار ابعاد، محل نصب و شیوهٔ استفاده بسنجید؛ مشخصات هر مدل را در صفحهٔ اختصاصی آن بررسی کنید.</p>
                     <div class="fz-hero__actions">
                         <a class="fz-button fz-button--primary" href="{{ route('shop.index') }}">دیدن محصولات <span aria-hidden="true">←</span></a>
                         <a class="fz-button fz-button--secondary" href="{{ route('about') }}">آشنایی با فرزین</a>
@@ -135,12 +135,12 @@
             </section>
         @endif
 
-        @if($demoImages->isNotEmpty())
+        @if($galleryItems->isNotEmpty())
             <section class="fz-mosaic-intro">
                 <div class="fz-container fz-mosaic-intro__inner fz-reveal">
                     <p class="fz-eyebrow"><span></span> نگاه نزدیک / گالری محصول</p>
-                    <h2>از نمای کلی تا جزئیات محصول.</h2>
-                    <p>تصاویر زیر از محصولات منتشرشده در پنل مدیریت می‌آیند. روی هر تصویر بزنید تا اطلاعات همان محصول را ببینید.</p>
+                    <h2>محصول را با جزئیات خودش بشناسید.</h2>
+                    <p>این گالری مستقیماً از تصاویر محصولات فعال کاتالوگ ساخته می‌شود. هر کارت به صفحهٔ همان محصول می‌رود تا تصاویر و مشخصات کامل را بررسی کنید.</p>
                     <span class="fz-mosaic-intro__count">{{ \App\Helpers\PersianNumberHelper::format($galleryCount) }} <small>تصویر در گالری</small></span>
                 </div>
             </section>
@@ -232,8 +232,8 @@
             <div class="fz-container fz-maker__layout">
                 <div class="fz-maker__copy fz-reveal">
                     <p class="fz-eyebrow fz-eyebrow--light"><span></span> فرزین / تجهیزات آشپزخانه</p>
-                    <h2 id="fz-maker-heading">محصول کاربردی، از تصمیم‌های دقیق ساخته می‌شود.</h2>
-                    <p>انتخاب هود و سینک فقط به رنگ و فرم محدود نیست. هماهنگی با کابینت، فضای نصب، نظافت و نیاز روزانه بخشی از تجربه‌ی بهتر آشپزخانه‌اند.</p>
+                    <h2 id="fz-maker-heading">انتخاب درست، با شناخت جزئیات شروع می‌شود.</h2>
+                    <p>در انتخاب هود و سینک، ابعاد نصب، تناسب با کابینت و نیاز روزانه را در کنار طراحی در نظر بگیرید. کاتالوگ فرزین برای بررسی مدل‌ها و مشخصات در دسترس شماست.</p>
                     <a class="fz-button fz-button--light" href="{{ route('about') }}">درباره مجموعه <span aria-hidden="true">←</span></a>
                 </div>
                 <div class="fz-maker__specs">
