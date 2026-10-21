@@ -8,8 +8,8 @@
     --livora-chocolate-dark: #11110F;
     --livora-chocolate-soft: #302D27;
 
-    /* Dark canvas token; text contrast is explicitly set in storefront styles. */
-    --livora-cream: #141310;
+    /* Warm ivory for copy; backgrounds using this legacy token are overridden in the dark theme. */
+    --livora-cream: #E6DED1;
     --livora-white: #211F1B;
     --livora-surface: #292720;
 
