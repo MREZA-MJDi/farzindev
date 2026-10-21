@@ -372,6 +372,33 @@ class FarzinStorefrontTest extends TestCase
         ]);
     }
 
+    public function test_ajax_cart_add_rejects_exceeding_stock_with_json_without_mutating_cart(): void
+    {
+        $customer = $this->customer();
+        $product = $this->product($this->category(['slug' => 'hoods']), [
+            'name' => 'هود دارای موجودی محدود برای AJAX',
+            'slug' => 'limited-stock-hood-ajax',
+            'sku' => 'FAR-STOCK-AJAX-1',
+            'stock' => 1,
+        ]);
+
+        $this->actingAs($customer)
+            ->postJson(route('cart.add', $product), ['quantity' => 1])
+            ->assertOk()
+            ->assertJsonPath('cart_count', 1);
+
+        $this->postJson(route('cart.add', $product), ['quantity' => 1])
+            ->assertUnprocessable()
+            ->assertJsonPath('success', false)
+            ->assertJsonPath('message', 'موجودی کافی نیست؛ تعداد فعلی سبد خرید را بررسی کنید.');
+
+        $this->assertDatabaseCount('cart_items', 1);
+        $this->assertDatabaseHas('cart_items', [
+            'product_id' => $product->id,
+            'quantity' => 1,
+        ]);
+    }
+
     public function test_cart_rejects_quantities_above_available_stock(): void
     {
         $product = $this->product($this->category(['slug' => 'hoods']), [
