@@ -29,7 +29,7 @@ html { scroll-behavior: smooth; scroll-padding-top: 100px; background: var(--fz-
 body.home-body {
     margin: 0; min-width: 320px; color: var(--fz-ink);
     background: radial-gradient(ellipse at 10% 0%, rgba(229, 120, 82,.035), transparent 38rem), var(--fz-page);
-    font-family: "IRANYekanX FaNum", "IRANYekanX", "Vazirmatn", system-ui, sans-serif;
+    font-family: var(--livora-font-family, "IRANYekanX FaNum", "IRANYekanX", "Vazirmatn", system-ui, sans-serif);
     font-weight: 400; line-height: 1.7; -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale; overflow-x: clip;
 }
@@ -720,3 +720,19 @@ body.home-body {
 .home-body .fz-hero-empty { background-image: radial-gradient(circle at 78% 10%, rgba(240, 181, 104,.28), transparent 48%), linear-gradient(145deg,#FFFFFF,#E2E2E3 60%,#F4F6F8); }
 .home-body .fz-eyebrow,
 .home-body .fz-text-link { color: var(--fz-accent-dark) !important; }
+
+
+/* One semantic hit area makes the entire home product card open its slug. */
+.fz-product-card { position: relative; }
+.fz-product-card__hit-area {
+    position: absolute;
+    z-index: 20;
+    inset: 0;
+    display: block;
+    border-radius: inherit;
+    background: transparent;
+}
+.fz-product-card__hit-area:focus-visible {
+    outline: 3px solid var(--fz-accent);
+    outline-offset: 4px;
+}
