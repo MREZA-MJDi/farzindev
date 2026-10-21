@@ -146,14 +146,14 @@
 
                         <a
                             href="{{ route('home') }}"
-                            class="transition hover:text-[var(--livora-ink)]"
+                            class="transition hover:text-[var(--livora-text)]"
                         >
                             خانه
                         </a>
 
                         <span>/</span>
 
-                        <span class="text-[var(--livora-ink)]">
+                        <span class="text-[var(--livora-text)]">
                         سبد خرید
                     </span>
 
@@ -492,7 +492,7 @@
                                                                         <span class="rounded-full border border-[var(--livora-border)] bg-[var(--livora-surface)] px-2.5 py-1 text-[10px] text-[var(--livora-stone)]">
 
                                                                             {{ $option['name'] ?? $option['type'] ?? 'ویژگی' }}:
-                                                                            <span class="font-medium text-[var(--livora-ink)]">
+                                                                            <span class="font-medium text-[var(--livora-text)]">
                                                                                 {{ $option['value'] ?? '—' }}
                                                                             </span>
 
@@ -597,7 +597,7 @@
 
                                                                 <button
                                                                     type="submit"
-                                                                    class="rounded-xl border border-[var(--livora-border)] px-3 py-2 text-[11px] font-medium text-[var(--livora-ink)] transition hover:border-[var(--livora-ink)]"
+                                                                    class="rounded-xl border border-[var(--livora-border)] px-3 py-2 text-[11px] font-medium text-[var(--livora-text)] transition hover:border-[var(--livora-ink)]"
                                                                 >
                                                                     {{ $itemPriceChanged ? 'تأیید قیمت و تعداد' : 'بروزرسانی' }}
                                                                 </button>
@@ -985,7 +985,7 @@
 
                                             <a
                                                 href="{{ route('login') }}"
-                                                class="mt-3 inline-flex text-xs font-medium text-[var(--livora-ink)] underline underline-offset-4"
+                                                class="mt-3 inline-flex text-xs font-medium text-[var(--livora-text)] underline underline-offset-4"
                                             >
                                                 ورود به حساب
                                             </a>
@@ -997,7 +997,7 @@
 
                                     <a
                                         href="{{ route('shop.index') }}"
-                                        class="mt-3 flex w-full items-center justify-center rounded-2xl border border-[var(--livora-border)] px-6 py-3.5 text-sm font-medium text-[var(--livora-ink)] transition hover:border-[var(--livora-ink)]"
+                                        class="mt-3 flex w-full items-center justify-center rounded-2xl border border-[var(--livora-border)] px-6 py-3.5 text-sm font-medium text-[var(--livora-text)] transition hover:border-[var(--livora-ink)]"
                                     >
                                         ادامه خرید
                                     </a>

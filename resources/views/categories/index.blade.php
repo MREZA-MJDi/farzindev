@@ -28,14 +28,14 @@
                     >
                         <a
                             href="{{ route('home') }}"
-                            class="transition hover:text-[var(--livora-ink)]"
+                            class="transition hover:text-[var(--livora-text)]"
                         >
                             خانه
                         </a>
 
                         <span>/</span>
 
-                        <span class="text-[var(--livora-ink)]">
+                        <span class="text-[var(--livora-text)]">
                         دسته‌بندی‌ها
                     </span>
                     </nav>
