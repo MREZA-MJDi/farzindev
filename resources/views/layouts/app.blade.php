@@ -41,6 +41,7 @@
     ])
 
     @stack('styles')
+    @vite(['resources/css/responsive.css'])
 </head>
 
 <body class="@yield('body_class', 'min-h-screen antialiased')">

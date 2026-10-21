@@ -1,0 +1,115 @@
+/* Farzin storefront responsive contract.
+ * Loaded last by layouts/app.blade.php so shared rules cannot be silently
+ * overridden by page CSS. Breakpoints: 1023 / 767 / 480.
+ */
+:root { --fz-responsive-gutter: clamp(1rem, 4vw, 2rem); }
+html { max-width: 100%; text-size-adjust: 100%; -webkit-text-size-adjust: 100%; }
+body { min-width: 320px; max-width: 100%; overflow-x: clip; }
+#app, .storefront-content, .storefront-content > * { min-width: 0; max-width: 100%; }
+.storefront-content :where(section, article, aside, main, form, nav, figure, picture, div) { min-width: 0; }
+.storefront-content :where(img, video, iframe, svg, canvas) { max-width: 100%; }
+.storefront-content iframe { width: 100%; }
+.storefront-content :where(h1, h2, h3, h4, p, li, label, a, button, small, strong) { overflow-wrap: break-word; }
+.storefront-content :where(h1, h2, h3) { text-wrap: pretty; }
+.storefront-content form :where(input, textarea, select) { max-width: 100%; min-width: 0; }
+.storefront-content button, .storefront-content a { -webkit-tap-highlight-color: transparent; }
+.storefront-content .livora-container { width: 100%; max-width: var(--livora-container, 1440px); }
+.storefront-content .product-detail-container { max-width: 1320px; }
+.storefront-content .product-detail-grid,
+.storefront-content .product-gallery-shell,
+.storefront-content .product-gallery-stage,
+.storefront-content .fz-contact-grid,
+.storefront-content .fz-contact-hero__layout,
+.storefront-content .fz-category-hero__layout { min-width: 0; }
+.storefront-content .product-detail-grid > *,
+.storefront-content .fz-contact-grid > *,
+.storefront-content .fz-contact-hero__layout > *,
+.storefront-content .fz-category-hero__layout > * { min-width: 0; }
+
+
+/* Real product photos should remain fully visible instead of being cropped. */
+.storefront-content .product-gallery-stage > img { object-fit: contain !important; object-position: center; }
+.storefront-content .product-gallery-stage { background: var(--livora-surface, #EBEEF2); }
+
+/* The shared navigation is visible at every breakpoint. */
+#app > nav.sticky { width: 100%; max-width: 100%; }
+#app > nav.sticky > * { min-width: 0; }
+#app > nav.sticky a, #app > nav.sticky button { flex-shrink: 0; }
+
+@media (max-width: 1023px) {
+    .storefront-content .livora-container,
+    .storefront-content .product-detail-container { max-width: 100%; }
+    .storefront-content .product-detail-grid { grid-template-columns: minmax(0, 1fr) !important; gap: 1.75rem; }
+    .storefront-content .product-detail-grid > :first-child { width: 100%; max-width: 760px; margin-inline: auto; }
+    .storefront-content .fz-contact-map-column { position: static; }
+    .storefront-content .fz-contact-grid { grid-template-columns: minmax(0, 1fr) !important; }
+    .storefront-content .fz-contact-left-column { grid-row: auto; }
+    .storefront-content .farzin-shop-catalog .livora-container > .grid { grid-template-columns: minmax(0, 1fr); }
+    .storefront-content .farzin-shop-catalog aside { display: none; }
+    .storefront-content .farzin-shop-catalog main,
+    .storefront-content .farzin-shop-catalog > .grid > * { min-width: 0; }
+    .storefront-content .fz-contact-map-frame iframe { min-height: 300px; }
+}
+
+@media (max-width: 800px) {
+    .storefront-content .fz-category-hero__layout { grid-template-columns: minmax(0, 1fr) !important; gap: 1.35rem; }
+    .storefront-content .fz-category-hero__content { max-width: 100%; }
+    .storefront-content .fz-category-hero__visual { width: 100%; min-height: clamp(250px, 65vw, 320px); }
+    .storefront-content .fz-category-hero__product { width: min(78%, 330px); }
+    .storefront-content .fz-contact-hero__layout { grid-template-columns: minmax(0, 1fr) !important; gap: 1rem; }
+    .storefront-content .fz-contact-copy { max-width: 100%; }
+    .storefront-content .fz-contact-art { width: min(100%, 430px); margin-inline: auto; }
+}
+
+@media (max-width: 767px) {
+    #app { padding-bottom: max(6rem, env(safe-area-inset-bottom)); }
+    #app > nav.sticky > * { padding-inline: 1rem; }
+    .storefront-content .livora-container,
+    .storefront-content .product-detail-container { padding-inline: 1rem; }
+    .storefront-content [class~="py-24"],
+    .storefront-content [class~="py-20"],
+    .storefront-content [class~="py-16"] { padding-block: clamp(2.25rem, 7vw, 3.25rem) !important; }
+    .storefront-content [class~="p-8"],
+    .storefront-content [class~="p-7"] { padding: 1.15rem !important; }
+    .storefront-content :where(h1) { font-size: clamp(1.85rem, 7.5vw, 2.75rem) !important; line-height: 1.35 !important; letter-spacing: -.025em !important; }
+    .storefront-content :where(h2) { font-size: clamp(1.35rem, 5.3vw, 2rem) !important; line-height: 1.5 !important; }
+    .storefront-content :where(p, li) { line-height: 1.9; }
+    .storefront-content .fz-contact-title { font-size: clamp(2rem, 8vw, 3rem) !important; }
+    .storefront-content .fz-contact-actions,
+    .storefront-content .fz-hero__actions { flex-wrap: wrap; }
+    .storefront-content .fz-contact-button,
+    .storefront-content .fz-button,
+    .storefront-content .livora-button { max-width: 100%; min-height: 44px; white-space: normal; flex-shrink: 1; }
+    .storefront-content .fz-contact-form { grid-template-columns: minmax(0, 1fr) !important; }
+    .storefront-content .fz-contact-form > * { grid-column: 1 / -1; min-width: 0; }
+    .storefront-content .product-detail-grid { padding-block: 1.25rem; gap: 1.5rem; }
+    .storefront-content .product-gallery-stage { max-height: none; min-height: 0; }
+    .storefront-content .product-detail-grid [class*="sticky"] { position: static; }
+    .storefront-content .fz-contact-panel { border-radius: 1.15rem; }
+    .storefront-content .fz-contact-map-frame iframe { min-height: 260px; }
+    .storefront-content .fz-category-hero__title { font-size: clamp(1.9rem, 8vw, 2.7rem) !important; line-height: 1.4 !important; }
+    .storefront-content .fz-category-hero__actions { flex-wrap: wrap; }
+    .storefront-content .fz-category-hero__action { max-width: 100%; }
+}
+
+@media (max-width: 480px) {
+    #app > nav.sticky > * { padding-inline: .75rem; }
+    .storefront-content .livora-container,
+    .storefront-content .product-detail-container { padding-inline: .75rem; }
+    .storefront-content :where(h1) { font-size: clamp(1.7rem, 7.8vw, 2.25rem) !important; }
+    .storefront-content :where(h2) { font-size: clamp(1.25rem, 5.4vw, 1.65rem) !important; }
+    .storefront-content [class~="text-7xl"],
+    .storefront-content [class~="text-6xl"],
+    .storefront-content [class~="text-5xl"],
+    .storefront-content [class~="text-4xl"] { font-size: clamp(1.7rem, 7.5vw, 2.25rem) !important; line-height: 1.38 !important; }
+    .storefront-content [class*="rounded-[2rem]"] { border-radius: 1.1rem; }
+    .storefront-content .fz-contact-art { min-height: 255px; }
+    .storefront-content .fz-contact-art__floating--message { inset-inline-end: 0; }
+    .storefront-content .fz-contact-art__floating--pin { inset-inline-start: 0; }
+    .storefront-content .fz-contact-map-empty { min-height: 235px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    .storefront-content *, .storefront-content *::before, .storefront-content *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+}

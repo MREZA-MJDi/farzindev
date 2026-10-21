@@ -1,10 +1,10 @@
 <nav
     x-data
-    class="sticky top-0 z-50 hidden w-full border-b border-[var(--livora-border)] bg-[var(--livora-cream)]/90 backdrop-blur-xl lg:block"
+    class="sticky top-0 z-50 w-full border-b border-[var(--livora-border)] bg-[var(--livora-cream)]/90 backdrop-blur-xl"
 >
     <x-layout.container>
 
-        <div class="flex h-[76px] items-center justify-between gap-6">
+        <div class="flex min-h-[68px] items-center justify-between gap-3 py-3 lg:h-[76px] lg:gap-6 lg:py-0">
 
             {{-- =========================================================
                 BRAND
@@ -127,6 +127,19 @@
             ========================================================== --}}
             <div class="flex items-center gap-1">
 
+                {{-- Mobile menu --}}
+                <button
+                    type="button"
+                    aria-label="باز کردن منو"
+                    :aria-expanded="mobileOpen.toString()"
+                    @click="searchOpen = false; mobileOpen = true"
+                    class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-[var(--livora-ink)] transition hover:bg-[var(--livora-white)] lg:hidden"
+                >
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.7" stroke="currentColor" class="h-5 w-5" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+                    </svg>
+                </button>
+
                 {{-- Search --}}
                 <button
                     type="button"
@@ -140,7 +153,7 @@
                             $refs.searchInput?.focus();
                         });
                     "
-                    class="group flex h-10 w-10 items-center justify-center rounded-full text-[var(--livora-ink)] transition duration-300 hover:bg-[var(--livora-white)]"
+                    class="group hidden h-10 w-10 items-center justify-center rounded-full text-[var(--livora-ink)] transition duration-300 hover:bg-[var(--livora-white)] lg:flex"
                 >
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -168,7 +181,7 @@
                             href="{{ route('account.wishlist.index') }}"
                             aria-label="علاقه‌مندی‌ها"
                             @class([
-                                'group hidden h-10 w-10 items-center justify-center rounded-full transition duration-300 sm:flex',
+                                'group hidden h-10 w-10 items-center justify-center rounded-full transition duration-300 lg:flex',
                                 'bg-[var(--livora-white)] text-[var(--livora-accent)]' => request()->routeIs('account.wishlist.*'),
                                 'text-[var(--livora-ink)] hover:bg-[var(--livora-white)]' => !request()->routeIs('account.wishlist.*'),
                             ])
@@ -194,7 +207,7 @@
                         <a
                             href="{{ route('login') }}"
                             aria-label="ورود برای مشاهده علاقه‌مندی‌ها"
-                            class="group hidden h-10 w-10 items-center justify-center rounded-full text-[var(--livora-ink)] transition duration-300 hover:bg-[var(--livora-white)] sm:flex"
+                            class="group hidden h-10 w-10 items-center justify-center rounded-full text-[var(--livora-ink)] transition duration-300 hover:bg-[var(--livora-white)] lg:flex"
                         >
                             <svg
                                 xmlns="http://www.w3.org/2000/svg"
@@ -219,7 +232,7 @@
                     <a
                         href="{{ route('login') }}"
                         aria-label="ورود برای مشاهده علاقه‌مندی‌ها"
-                        class="group hidden h-10 w-10 items-center justify-center rounded-full text-[var(--livora-ink)] transition duration-300 hover:bg-[var(--livora-white)] sm:flex"
+                        class="group hidden h-10 w-10 items-center justify-center rounded-full text-[var(--livora-ink)] transition duration-300 hover:bg-[var(--livora-white)] lg:flex"
                     >
                         <svg
                             xmlns="http://www.w3.org/2000/svg"
@@ -261,7 +274,7 @@
                 <a
                     href="{{ route('cart.index') }}"
                     aria-label="سبد خرید"
-                    class="group relative flex h-10 w-10 items-center justify-center rounded-full text-[var(--livora-ink)] transition duration-300 hover:bg-[var(--livora-white)]"
+                    class="group relative hidden h-10 w-10 items-center justify-center rounded-full text-[var(--livora-ink)] transition duration-300 hover:bg-[var(--livora-white)] lg:flex"
                 >
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -301,7 +314,7 @@
                         <a
                             href="{{ route('admin.dashboard') }}"
                             aria-label="پنل مدیریت"
-                            class="group hidden h-10 w-10 items-center justify-center rounded-full text-[var(--livora-ink)] transition duration-300 hover:bg-[var(--livora-white)] sm:flex"
+                            class="group hidden h-10 w-10 items-center justify-center rounded-full text-[var(--livora-ink)] transition duration-300 hover:bg-[var(--livora-white)] lg:flex"
                         >
                             <svg
                                 xmlns="http://www.w3.org/2000/svg"
@@ -325,7 +338,7 @@
                             href="{{ route('account.index') }}"
                             aria-label="حساب کاربری"
                             @class([
-                                'group hidden h-10 w-10 items-center justify-center rounded-full transition duration-300 sm:flex',
+                                'group hidden h-10 w-10 items-center justify-center rounded-full transition duration-300 lg:flex',
                                 'bg-[var(--livora-white)] text-[var(--livora-accent)]' => request()->routeIs('account.*'),
                                 'text-[var(--livora-ink)] hover:bg-[var(--livora-white)]' => !request()->routeIs('account.*'),
                             ])
@@ -353,7 +366,7 @@
                     <a
                         href="{{ route('login') }}"
                         aria-label="ورود"
-                        class="group hidden h-10 w-10 items-center justify-center rounded-full text-[var(--livora-ink)] transition duration-300 hover:bg-[var(--livora-white)] sm:flex"
+                        class="group hidden h-10 w-10 items-center justify-center rounded-full text-[var(--livora-ink)] transition duration-300 hover:bg-[var(--livora-white)] lg:flex"
                     >
                         <svg
                             xmlns="http://www.w3.org/2000/svg"
