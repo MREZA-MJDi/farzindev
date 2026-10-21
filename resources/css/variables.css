@@ -1,18 +1,18 @@
 :root {
-    /* Farzin signature palette: matte black, graphite, pearly white, one cool accent. */
+    /* Farzin signature palette: matte black, graphite, neutral pearl-silver and sunset accents. */
     --livora-ink: #111316;
     --livora-charcoal: #292D32;
 
-    /* Legacy token names retained so existing storefront components stay compatible. */
+    /* Legacy token names retained for compatibility; surfaces use neutral pearl-silver. */
     --livora-chocolate: #202328;
     --livora-chocolate-dark: #111316;
     --livora-chocolate-soft: #E6E7E9;
 
-    --livora-cream: #F5F3EF;
-    --livora-white: #FCFBF8;
-    --livora-surface: #ECEBED;
+    --livora-cream: #F4F6F8;
+    --livora-white: #FFFFFF;
+    --livora-surface: #EBEEF2;
 
-    --livora-sand: #D8DCE0;
+    --livora-sand: #D8DEE4;
     --livora-stone: #6F747B;
 
     /* One brand accent, used with restraint. */
@@ -25,8 +25,8 @@
     --livora-sage-dark: #B94F39;
     --livora-sage-soft: #FBE9E1;
 
-    --livora-border: #DAD8D3;
-    --livora-border-dark: #B8BDC4;
+    --livora-border: #D8DEE4;
+    --livora-border-dark: #AEB6C0;
 
     --livora-success: #15803D;
     --livora-success-soft: #DCFCE7;
@@ -37,9 +37,9 @@
     --livora-info: #0369A1;
     --livora-info-soft: #E0F2FE;
 
-    --livora-shadow-sm: 0 5px 18px rgba(10, 32, 26, 0.055);
-    --livora-shadow-md: 0 16px 42px rgba(10, 32, 26, 0.10);
-    --livora-shadow-lg: 0 30px 80px rgba(10, 32, 26, 0.16);
+    --livora-shadow-sm: 0 5px 18px rgba(17, 19, 22, 0.045);
+    --livora-shadow-md: 0 16px 42px rgba(17, 19, 22, 0.075);
+    --livora-shadow-lg: 0 30px 80px rgba(17, 19, 22, 0.11);
 
     --livora-radius-sm: 0.75rem;
     --livora-radius-md: 1rem;

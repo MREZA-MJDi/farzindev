@@ -13,9 +13,9 @@
     --admin-muted: #70757D;
 
     /* Background */
-    --admin-bg: #F5F3EF;
-    --admin-surface: #ECEBED;
-    --admin-white: #FCFBF8;
+    --admin-bg: #F4F6F8;
+    --admin-surface: #EBEEF2;
+    --admin-white: #FFFFFF;
 
     /* Brand Accent */
     --admin-accent: #E57852;
@@ -25,8 +25,8 @@
     --admin-sunset-amber: #F0B568;
 
     /* Borders */
-    --admin-border: #DAD8D3;
-    --admin-border-dark: #B8BDC4;
+    --admin-border: #D8DEE4;
+    --admin-border-dark: #AEB6C0;
 
     /* States */
     --admin-success: #15803d;
@@ -43,13 +43,13 @@
 
     /* Shadows */
     --admin-shadow-sm:
-        0 2px 10px rgba(28, 27, 25, 0.04);
+        0 2px 10px rgba(17, 19, 22, 0.045);
 
     --admin-shadow-md:
-        0 10px 30px rgba(28, 27, 25, 0.07);
+        0 10px 30px rgba(17, 19, 22, 0.075);
 
     --admin-shadow-lg:
-        0 20px 60px rgba(28, 27, 25, 0.10);
+        0 20px 60px rgba(17, 19, 22, 0.11);
 
     /* Radius */
     --admin-radius-sm: 0.75rem;
@@ -629,7 +629,7 @@ p {
 }
 
 .admin-table tbody tr:hover {
-    background: rgba(236, 233, 227, 0.55);
+    background: rgba(216, 222, 228, 0.38);
 }
 
 /* Product list: fixed column geometry, contained horizontal scroll, and
