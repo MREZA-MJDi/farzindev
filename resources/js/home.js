@@ -1,16 +1,6 @@
-import { gsap } from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
-
-gsap.registerPlugin(ScrollTrigger);
-
 const reduceMotionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
 let reduceMotion = reduceMotionQuery.matches;
 document.documentElement.classList.add('js');
-let gridMotionContext = null;
-const lowPower = window.matchMedia('(max-width: 760px)').matches
-    || (navigator.connection?.saveData ?? false)
-    || (navigator.hardwareConcurrency > 0 && navigator.hardwareConcurrency <= 4);
-
 const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content || '';
 const modalRoot = document.getElementById('quick-view-modal');
 const toastRoot = document.getElementById('toast-root');
@@ -219,20 +209,8 @@ function initRevealAnimations() {
     elements.forEach((element) => observer.observe(element));
 }
 
-function initGridAnimations() {
-    gridMotionContext?.revert();
-    gridMotionContext = null;
-
+function initGridLayouts() {
     const grids = [...document.querySelectorAll('.grid')];
-    if (!grids.length) return;
-
-    if (reduceMotion || lowPower) {
-        grids.forEach((grid) => grid.classList.add('grid--static'));
-        return;
-    }
-
-    grids.forEach((grid) => grid.classList.remove('grid--static'));
-
     const layouts = [
         { columns: 3, ratio: 1.13, perspective: 1250 },
         { columns: 4, ratio: .92, perspective: 1450 },
@@ -242,64 +220,13 @@ function initGridAnimations() {
         { columns: 3, ratio: 1.0, perspective: 1400 },
     ];
 
-    gridMotionContext = gsap.context(() => {
-        grids.forEach((grid, index) => {
-            const wrap = grid.querySelector('.grid-wrap');
-            const items = [...grid.querySelectorAll('.grid__item')];
-            if (!wrap || !items.length) return;
-
-            const layout = layouts[index % layouts.length];
-            grid.style.setProperty('--grid-columns', String(layout.columns));
-            grid.style.setProperty('--grid-item-ratio', String(layout.ratio));
-            grid.style.setProperty('--perspective', String(layout.perspective) + 'px');
-
-            const timeline = gsap.timeline({
-                defaults: { ease: 'power2.out' },
-                scrollTrigger: {
-                    trigger: grid,
-                    start: 'top 88%',
-                    end: 'top 44%',
-                    scrub: 0.75,
-                    invalidateOnRefresh: true,
-                },
-            });
-
-            // Restrained 3D transforms; layout and native scrolling remain intact.
-            timeline.fromTo(items, {
-                y: 18,
-                z: -55,
-                rotateX: index % 2 === 0 ? 3 : -3,
-                rotateY: index % 2 === 0 ? -2.5 : 2.5,
-                scale: .965,
-                opacity: .82,
-                transformOrigin: '50% 50%',
-                force3D: true,
-            }, {
-                y: 0,
-                z: 0,
-                rotateX: 0,
-                rotateY: 0,
-                scale: 1,
-                opacity: 1,
-                stagger: { each: .025, from: index % 2 === 0 ? 'start' : 'end' },
-                duration: 1,
-                immediateRender: false,
-                clearProps: 'transform',
-            });
-
-            timeline.fromTo(wrap, {
-                rotationX: index % 2 === 0 ? 1.4 : -1.4,
-                transformOrigin: '50% 50%',
-            }, {
-                rotationX: 0,
-                duration: 1,
-                immediateRender: false,
-                clearProps: 'transform',
-            }, 0);
-        });
-    }, document.body);
-
-    ScrollTrigger.refresh();
+    grids.forEach((grid, index) => {
+        const layout = layouts[index % layouts.length];
+        grid.style.setProperty('--grid-columns', String(layout.columns));
+        grid.style.setProperty('--grid-item-ratio', String(layout.ratio));
+        grid.style.setProperty('--perspective', layout.perspective + 'px');
+        grid.classList.add('grid--static');
+    });
 }
 
 /**
@@ -398,7 +325,7 @@ function initHeroScrollDrawing() {
 function bootHomeMotion() {
     initHeroScrollDrawing();
     initRevealAnimations();
-    initGridAnimations();
+    initGridLayouts();
 }
 
 if (document.readyState === 'loading') {
@@ -417,35 +344,12 @@ document.querySelectorAll('.grid__image, .fz-product-card__image img').forEach((
 });
 
 
-// Layouts can settle after fonts and lazy images are ready. Refresh triggers once,
-// not on every animation frame, and sleep while the tab is in the background.
-window.addEventListener('load', () => ScrollTrigger.refresh(), { once: true });
-if (document.fonts?.ready) {
-    document.fonts.ready.then(() => ScrollTrigger.refresh()).catch(() => {});
-}
-
-document.addEventListener('visibilitychange', () => {
-    if (document.hidden) {
-        gsap.ticker.sleep();
-        return;
-    }
-
-    gsap.ticker.wake();
-    if (!reduceMotion) ScrollTrigger.refresh();
-});
-
-window.addEventListener('pagehide', () => {
-    gridMotionContext?.revert();
-    gridMotionContext = null;
-    ScrollTrigger.getAll().forEach((trigger) => trigger.kill());
-}, { once: true });
-
+// Keep the gallery layout static and responsive. Hero progress itself is driven
+// by one passive scroll listener and a single coalesced animation frame.
 reduceMotionQuery.addEventListener?.('change', (event) => {
     reduceMotion = event.matches;
 
     if (reduceMotion) {
-        gridMotionContext?.revert();
-        gridMotionContext = null;
         document.querySelectorAll('.grid').forEach((grid) => grid.classList.add('grid--static'));
         document.querySelectorAll('.fz-reveal.is-entering').forEach((element) => {
             element.classList.remove('is-entering');
@@ -453,6 +357,5 @@ reduceMotionQuery.addEventListener?.('change', (event) => {
         return;
     }
 
-    initGridAnimations();
-    ScrollTrigger.refresh();
+    initGridLayouts();
 });
