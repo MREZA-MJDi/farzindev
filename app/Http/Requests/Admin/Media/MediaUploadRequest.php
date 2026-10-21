@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Admin\Media;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Http\UploadedFile;
 
 class MediaUploadRequest extends FormRequest
 {
@@ -25,6 +26,13 @@ class MediaUploadRequest extends FormRequest
                 'file',
                 'max:20480',
                 'mimes:jpg,jpeg,png,webp,gif,pdf,doc,docx,xls,xlsx,zip',
+                function ($attribute, $value, $fail): void {
+                    if ($value instanceof UploadedFile
+                        && strtolower($value->getClientOriginalExtension()) === 'gif'
+                        && $value->getSize() > 10 * 1024 * 1024) {
+                        $fail('حجم GIF نباید بیشتر از ۱۰ مگابایت باشد.');
+                    }
+                },
             ],
 
             'alt' => [

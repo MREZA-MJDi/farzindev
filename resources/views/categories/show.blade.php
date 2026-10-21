@@ -73,7 +73,7 @@ image_url }}"
 
                         <a
                             href="{{ route('home') }}"
-                            class="transition hover:text-[var(--livora-ink)]"
+                            class="transition hover:text-[var(--livora-text)]"
                         >
                             خانه
                         </a>
@@ -82,14 +82,14 @@ image_url }}"
 
                         <a
                             href="{{ route('categories.index') }}"
-                            class="transition hover:text-[var(--livora-ink)]"
+                            class="transition hover:text-[var(--livora-text)]"
                         >
                             دسته‌بندی‌ها
                         </a>
 
                         <span>/</span>
 
-                        <span class="text-[var(--livora-ink)]">
+                        <span class="text-[var(--livora-text)]">
                         {{ $category->name }}
                     </span>
 

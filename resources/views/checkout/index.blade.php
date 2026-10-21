@@ -26,7 +26,7 @@
                     >
                         <a
                             href="{{ route('home') }}"
-                            class="transition hover:text-[var(--livora-ink)]"
+                            class="transition hover:text-[var(--livora-text)]"
                         >
                             خانه
                         </a>
@@ -35,14 +35,14 @@
 
                         <a
                             href="{{ route('cart.index') }}"
-                            class="transition hover:text-[var(--livora-ink)]"
+                            class="transition hover:text-[var(--livora-text)]"
                         >
                             سبد خرید
                         </a>
 
                         <span>/</span>
 
-                        <span class="text-[var(--livora-ink)]">
+                        <span class="text-[var(--livora-text)]">
                         تسویه حساب
                     </span>
                     </nav>
@@ -303,7 +303,7 @@
 
                                     <label
                                         for="notes"
-                                        class="mb-2 block text-xs font-medium text-[var(--livora-ink)]"
+                                        class="mb-2 block text-xs font-medium text-[var(--livora-text)]"
                                     >
                                         توضیحات سفارش
                                     </label>
@@ -313,7 +313,7 @@
                                         name="notes"
                                         rows="4"
                                         placeholder="توضیحات مربوط به ارسال، ساختمان، هماهنگی و..."
-                                        class="w-full rounded-2xl border border-[var(--livora-border)] bg-[var(--livora-white)] px-4 py-3.5 text-sm text-[var(--livora-ink)] outline-none transition placeholder:text-[var(--livora-stone)] focus:border-[var(--livora-ink)]"
+                                        class="w-full rounded-2xl border border-[var(--livora-border)] bg-[var(--livora-white)] px-4 py-3.5 text-sm text-[var(--livora-text)] outline-none transition placeholder:text-[var(--livora-stone)] focus:border-[var(--livora-ink)]"
                                     >{{ old('notes') }}</textarea>
 
                                     @error('notes')
@@ -413,7 +413,7 @@
                                                         <span class="rounded-full border border-[var(--livora-border)] px-2 py-1 text-[9px] text-[var(--livora-stone)]">
 
                                                             {{ $option['name'] ?? $option['type'] ?? 'ویژگی' }}:
-                                                            <span class="font-medium text-[var(--livora-ink)]">
+                                                            <span class="font-medium text-[var(--livora-text)]">
                                                                 {{ $option['value'] ?? '—' }}
                                                             </span>
 

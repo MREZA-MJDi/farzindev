@@ -18,7 +18,7 @@
         'px-4',
         'py-3.5',
         'text-sm',
-        'text-[var(--livora-ink)]',
+        'text-[var(--livora-text)]',
         'outline-none',
         'transition-all',
         'duration-300',
@@ -43,7 +43,7 @@
             @if($attributes->has('id'))
             for="{{ $attributes->get('id') }}"
             @endif
-            class="mb-2 block text-xs font-medium text-[var(--livora-ink)]"
+            class="mb-2 block text-xs font-medium text-[var(--livora-text)]"
         >
             {{ $label }}
         </label>

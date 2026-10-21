@@ -11,11 +11,11 @@
     <section class="bg-[var(--livora-cream)] py-10 sm:py-14">
         <x-layout.container>
             <nav aria-label="مسیر صفحه" class="mb-6 flex flex-wrap items-center gap-2 text-xs text-[var(--livora-stone)]">
-                <a href="{{ route('home') }}" class="hover:text-[var(--livora-ink)]">خانه</a>
+                <a href="{{ route('home') }}" class="hover:text-[var(--livora-text)]">خانه</a>
                 <span aria-hidden="true">/</span>
-                <a href="{{ route('account.index') }}" class="hover:text-[var(--livora-ink)]">حساب کاربری</a>
+                <a href="{{ route('account.index') }}" class="hover:text-[var(--livora-text)]">حساب کاربری</a>
                 <span aria-hidden="true">/</span>
-                <span aria-current="page" class="text-[var(--livora-ink)]">آدرس‌ها</span>
+                <span aria-current="page" class="text-[var(--livora-text)]">آدرس‌ها</span>
             </nav>
 
             <div class="mb-8 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">

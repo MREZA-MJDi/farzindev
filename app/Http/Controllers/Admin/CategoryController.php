@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\Category\StoreCategoryRequest;
 use App\Http\Requests\Admin\Category\UpdateCategoryRequest;
 use App\Models\Category;
+use App\Models\Media;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
@@ -32,7 +33,13 @@ class CategoryController extends Controller
      */
     public function create(): View
     {
-        return view('admin.categories.create');
+        $gifMedia = Media::query()
+            ->where('mime_type', 'image/gif')
+            ->where('size', '<=', 10 * 1024 * 1024)
+            ->latest()
+            ->get(['id', 'original_name', 'mime_type', 'size']);
+
+        return view('admin.categories.create', compact('gifMedia'));
     }
 
     /**
@@ -94,7 +101,13 @@ class CategoryController extends Controller
      */
     public function edit(Category $category): View
     {
-        return view('admin.categories.edit', compact('category'));
+        $gifMedia = Media::query()
+            ->where('mime_type', 'image/gif')
+            ->where('size', '<=', 10 * 1024 * 1024)
+            ->latest()
+            ->get(['id', 'original_name', 'mime_type', 'size']);
+
+        return view('admin.categories.edit', compact('category', 'gifMedia'));
     }
 
     /**

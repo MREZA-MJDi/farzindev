@@ -26,9 +26,9 @@
             <x-layout.container>
                 <div class="py-7 sm:py-9">
                     <nav aria-label="مسیر صفحه" class="flex flex-wrap items-center gap-2 text-[11px] text-[var(--livora-stone)]">
-                        <a href="{{ route('home') }}" class="transition hover:text-[var(--livora-ink)]">خانه</a>
+                        <a href="{{ route('home') }}" class="transition hover:text-[var(--livora-text)]">خانه</a>
                         <span aria-hidden="true">/</span>
-                        <span aria-current="page" class="text-[var(--livora-ink)]">فروشگاه</span>
+                        <span aria-current="page" class="text-[var(--livora-text)]">فروشگاه</span>
                     </nav>
 
                     @if (!empty($shopBanner['image_url']))
@@ -178,7 +178,7 @@
                             <button
                                 type="button"
                                 @click="filterOpen = true"
-                                class="inline-flex items-center gap-2 rounded-2xl border border-[var(--livora-border)] bg-[var(--livora-white)] px-4 py-3 text-sm font-medium text-[var(--livora-ink)] transition hover:border-[var(--livora-ink)]"
+                                class="inline-flex items-center gap-2 rounded-2xl border border-[var(--livora-border)] bg-[var(--livora-white)] px-4 py-3 text-sm font-medium text-[var(--livora-text)] transition hover:border-[var(--livora-ink)]"
                             >
 
                                 <svg
@@ -203,7 +203,7 @@
 
                             <span class="text-xs text-[var(--livora-stone)]">
 
-                                <span class="font-medium text-[var(--livora-ink)]">
+                                <span class="font-medium text-[var(--livora-text)]">
                                     {{ \App\Helpers\PersianNumberHelper::format($products->total()) }}
                                 </span>
 
@@ -228,7 +228,7 @@
                                         CURATED PRODUCTS
                                     </p>
 
-                                    <p class="mt-2 text-sm font-medium text-[var(--livora-ink)]">
+                                    <p class="mt-2 text-sm font-medium text-[var(--livora-text)]">
                                         مجموعه فرزین
                                     </p>
 
@@ -268,13 +268,13 @@
                                     فیلتر فعال:
                                 </span>
 
-                                <span class="inline-flex items-center rounded-full border border-[var(--livora-border)] bg-[var(--livora-white)] px-3 py-1.5 text-[11px] text-[var(--livora-ink)]">
+                                <span class="inline-flex items-center rounded-full border border-[var(--livora-border)] bg-[var(--livora-white)] px-3 py-1.5 text-[11px] text-[var(--livora-text)]">
                                     {{ $activeCategory?->name ?? request('category') }}
                                 </span>
 
                                 <a
                                     href="{{ route('shop.index') }}"
-                                    class="inline-flex items-center rounded-full border border-[var(--livora-border)] px-3 py-1.5 text-[11px] text-[var(--livora-stone)] transition hover:border-[var(--livora-ink)] hover:text-[var(--livora-ink)]"
+                                    class="inline-flex items-center rounded-full border border-[var(--livora-border)] px-3 py-1.5 text-[11px] text-[var(--livora-stone)] transition hover:border-[var(--livora-ink)] hover:text-[var(--livora-text)]"
                                 >
                                     حذف
                                 </a>
@@ -296,19 +296,19 @@
 
                                     نمایش
 
-                                    <span class="font-medium text-[var(--livora-ink)]">
+                                    <span class="font-medium text-[var(--livora-text)]">
                                         {{ \App\Helpers\PersianNumberHelper::format($products->firstItem()) }}
                                     </span>
 
                                     تا
 
-                                    <span class="font-medium text-[var(--livora-ink)]">
+                                    <span class="font-medium text-[var(--livora-text)]">
                                         {{ \App\Helpers\PersianNumberHelper::format($products->lastItem()) }}
                                     </span>
 
                                     از
 
-                                    <span class="font-medium text-[var(--livora-ink)]">
+                                    <span class="font-medium text-[var(--livora-text)]">
                                         {{ \App\Helpers\PersianNumberHelper::format($products->total()) }}
                                     </span>
 
@@ -362,7 +362,7 @@
                                 </span>
 
 
-                                <h2 class="mt-6 text-2xl font-semibold text-[var(--livora-ink)]">
+                                <h2 class="mt-6 text-2xl font-semibold text-[var(--livora-text)]">
                                     محصولی پیدا نشد
                                 </h2>
 

@@ -35,7 +35,7 @@
             <a
                 href="{{ route('home') }}"
                 @click="mobileOpen = false"
-                class="text-xl font-semibold tracking-[0.22em] text-[var(--livora-ink)]"
+                class="text-xl font-semibold tracking-[0.22em] text-[var(--livora-text)]"
             >
                 فرزین
             </a>
@@ -44,7 +44,7 @@
                 type="button"
                 aria-label="بستن منو"
                 @click="mobileOpen = false"
-                class="flex h-10 w-10 items-center justify-center rounded-full text-[var(--livora-ink)] transition hover:bg-[var(--livora-surface)]"
+                class="flex h-10 w-10 items-center justify-center rounded-full text-[var(--livora-text)] transition hover:bg-[var(--livora-surface)]"
             >
                 <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -264,7 +264,7 @@
                 <a
                     href="{{ route('shop.index') }}"
                     @click="mobileOpen = false"
-                    class="mt-5 inline-flex rounded-2xl bg-white px-5 py-3 text-xs font-medium text-[var(--livora-ink)]"
+                    class="mt-5 inline-flex rounded-2xl bg-[var(--livora-white)] px-5 py-3 text-xs font-medium text-[var(--livora-text)]"
                 >
                     مشاهده محصولات
                 </a>
@@ -294,7 +294,7 @@
                 <a
                     href="{{ route('contact') }}"
                     @click="mobileOpen = false"
-                    class="text-xs font-medium text-[var(--livora-ink)]"
+                    class="text-xs font-medium text-[var(--livora-text)]"
                 >
                     تماس با ما
                 </a>

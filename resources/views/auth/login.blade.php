@@ -20,7 +20,7 @@
                             WELCOME BACK
                         </p>
 
-                        <h1 class="mt-3 text-3xl font-semibold text-[var(--livora-ink)]">
+                        <h1 class="mt-3 text-3xl font-semibold text-[var(--livora-text)]">
                             ورود به حساب
                         </h1>
 
@@ -73,7 +73,7 @@
 
                                     <label
                                         for="password"
-                                        class="text-sm font-medium text-[var(--livora-ink)]"
+                                        class="text-sm font-medium text-[var(--livora-text)]"
                                     >
                                         رمز عبور
                                     </label>
@@ -93,7 +93,7 @@
                                     name="password"
                                     placeholder="رمز عبور"
                                     required
-                                    class="w-full rounded-xl border border-[var(--livora-border)] bg-[var(--livora-white)] px-4 py-3 text-sm text-[var(--livora-ink)] outline-none transition-all duration-300 placeholder:text-[var(--livora-stone)] focus:border-[var(--livora-accent)] focus:ring-1 focus:ring-[var(--livora-accent)] @error('password') border-red-300 focus:border-red-500 focus:ring-red-500/10 @enderror"
+                                    class="w-full rounded-xl border border-[var(--livora-border)] bg-[var(--livora-white)] px-4 py-3 text-sm text-[var(--livora-text)] outline-none transition-all duration-300 placeholder:text-[var(--livora-stone)] focus:border-[var(--livora-accent)] focus:ring-1 focus:ring-[var(--livora-accent)] @error('password') border-red-300 focus:border-red-500 focus:ring-red-500/10 @enderror"
                                     aria-invalid="{{ $errors->has('password') ? 'true' : 'false' }}"
                                 >
 

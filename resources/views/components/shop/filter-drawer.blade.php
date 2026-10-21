@@ -67,7 +67,7 @@
                 type="button"
                 aria-label="بستن"
                 @click="filterOpen = false"
-                class="flex h-10 w-10 items-center justify-center rounded-full text-[var(--livora-ink)] transition hover:bg-[var(--livora-surface)]"
+                class="flex h-10 w-10 items-center justify-center rounded-full text-[var(--livora-text)] transition hover:bg-[var(--livora-surface)]"
             >
 
                 <svg
@@ -130,7 +130,7 @@
                     <a
                         href="{{ route('shop.index') }}"
                         @click="filterOpen = false"
-                        class="flex items-center justify-center rounded-2xl border border-[var(--livora-border)] px-4 py-3.5 text-xs font-medium text-[var(--livora-ink)] transition hover:border-[var(--livora-ink)]"
+                        class="flex items-center justify-center rounded-2xl border border-[var(--livora-border)] px-4 py-3.5 text-xs font-medium text-[var(--livora-text)] transition hover:border-[var(--livora-ink)]"
                     >
                         پاک کردن
                     </a>

@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Admin\Category;
 
+use App\Models\Media;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
@@ -54,6 +55,19 @@ class UpdateCategoryRequest extends FormRequest
                 'max:20480',
             ],
 
+            'hover_media_id' => [
+                'nullable',
+                'integer',
+                'exists:media,id',
+                function ($attribute, $value, $fail): void {
+                    if ($value === null || $value === '') return;
+                    $media = Media::query()->find($value);
+                    if (! $media || $media->mime_type !== 'image/gif' || $media->size > 10 * 1024 * 1024) {
+                        $fail('فقط GIF موجود در کتابخانه رسانه با حجم حداکثر ۱۰ مگابایت قابل انتخاب است.');
+                    }
+                },
+            ],
+
             'is_active' => [
                 'boolean',
             ],
@@ -79,6 +93,8 @@ class UpdateCategoryRequest extends FormRequest
             'image.image' => 'فایل انتخاب‌شده باید تصویر باشد.',
             'image.mimes' => 'فرمت تصویر باید jpg، jpeg، png یا webp باشد.',
             'image.max' => 'حجم تصویر نباید بیشتر از ۲۰ مگابایت باشد.',
+            'hover_media_id.integer' => 'رسانه انتخاب‌شده معتبر نیست.',
+            'hover_media_id.exists' => 'GIF انتخاب‌شده در کتابخانه رسانه پیدا نشد.',
 
             'sort_order.integer' => 'ترتیب نمایش باید عدد باشد.',
             'sort_order.min' => 'ترتیب نمایش نمی‌تواند منفی باشد.',

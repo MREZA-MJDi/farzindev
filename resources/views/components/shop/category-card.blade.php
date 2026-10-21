@@ -1,6 +1,7 @@
 @props([
     'name',
     'image' => null,
+    'motionGif' => null,
     'href' => '#',
     'count' => null,
 ])
@@ -10,7 +11,7 @@
 @endphp
 
 <article class="farzin-category-card group relative min-w-0" data-farzin-reveal>
-    <a href="{{ $href }}" class="block" aria-label="مشاهده دسته‌بندی {{ $name }}">
+    <a href="{{ $href }}" class="block" aria-label="مشاهده دسته‌بندی {{ $name }}" @if($motionGif) data-farzin-gif-card @endif>
         <div class="farzin-category-card__surface relative overflow-hidden rounded-[1.65rem]">
             <div class="farzin-category-card__media relative aspect-[5/4] overflow-hidden">
                 @if($image)
@@ -28,6 +29,9 @@
                             <i></i>
                         </div>
                     </div>
+                @endif
+                @if($motionGif)
+                    <img data-farzin-category-gif data-farzin-gif-src="{{ $motionGif }}" class="farzin-category-card__gif" alt="" aria-hidden="true" loading="lazy" decoding="async">
                 @endif
             </div>
 

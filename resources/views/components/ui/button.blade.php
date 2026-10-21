@@ -32,10 +32,10 @@
         'secondary' => [
             'base' => '
                 !bg-[var(--livora-white)]
-                !text-[var(--livora-ink)]
+                !text-[var(--livora-text)]
                 !border-[var(--livora-border)]
                 hover:!bg-[var(--livora-surface)]
-                hover:!text-[var(--livora-ink)]
+                hover:!text-[var(--livora-text)]
                 hover:!border-[var(--livora-ink)]
             ',
             'hover' => 'hover:-translate-y-0.5 hover:shadow-sm',
@@ -44,10 +44,10 @@
         'ghost' => [
             'base' => '
                 !bg-transparent
-                !text-[var(--livora-ink)]
+                !text-[var(--livora-text)]
                 !border-transparent
                 hover:!bg-[var(--livora-surface)]
-                hover:!text-[var(--livora-ink)]
+                hover:!text-[var(--livora-text)]
             ',
             'hover' => 'hover:-translate-y-0.5',
         ],
@@ -93,7 +93,7 @@
                 !border-transparent
                 !bg-transparent
                 !text-[var(--livora-accent)]
-                hover:!text-[var(--livora-ink)]
+                hover:!text-[var(--livora-text)]
             ',
             'hover' => 'hover:underline underline-offset-4',
         ],

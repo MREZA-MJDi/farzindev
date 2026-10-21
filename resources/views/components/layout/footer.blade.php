@@ -1,4 +1,4 @@
-<footer class="farzin-site-footer border-t border-white/10 bg-[var(--livora-ink)] text-[var(--livora-cream)]">
+<footer class="farzin-site-footer border-t border-white/10 bg-[var(--livora-ink)] text-[var(--livora-text)]">
 
     <x-layout.container>
 
@@ -15,7 +15,7 @@
                     aria-label="فرزین"
                     class="inline-flex items-center"
                 >
-                    <span class="text-2xl font-semibold tracking-[0.24em] text-white transition hover:text-[var(--livora-cream)]">
+                    <span class="text-2xl font-semibold tracking-[0.24em] text-white transition hover:text-[var(--livora-text)]">
                         فرزین
                     </span>
                 </a>

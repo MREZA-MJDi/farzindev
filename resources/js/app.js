@@ -86,6 +86,12 @@ if (document.querySelector('[data-image-editor-input]')) {
     });
 }
 
+if (document.querySelector('[data-farzin-gif-card]')) {
+    import('./category-gif-preview.js').catch((error) => {
+        console.error('Unable to initialize category GIF previews.', error);
+    });
+}
+
 if (
     !document.body.classList.contains('home-body')
     && document.querySelector('.storefront-content')

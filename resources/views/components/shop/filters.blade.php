@@ -45,10 +45,10 @@
                                     value="{{ $category->slug }}"
                                     @checked((string) $selectedCategory === (string) $category->slug)
                                     @change="$el.form.submit()"
-                                    class="h-4 w-4 border-[var(--livora-border)] text-[var(--livora-ink)] focus:ring-[var(--livora-ink)]"
+                                    class="h-4 w-4 border-[var(--livora-border)] text-[var(--livora-text)] focus:ring-[var(--livora-ink)]"
                                 >
 
-                                <span class="truncate text-xs text-[var(--livora-ink)]">
+                                <span class="truncate text-xs text-[var(--livora-text)]">
                                     {{ $category->name }}
                                 </span>
 
@@ -148,7 +148,7 @@
                     value="1"
                     @checked(request()->boolean('installment'))
                 @change="$el.form.submit()"
-                class="h-4 w-4 rounded border-[var(--livora-border)] text-[var(--livora-ink)] focus:ring-[var(--livora-ink)]"
+                class="h-4 w-4 rounded border-[var(--livora-border)] text-[var(--livora-text)] focus:ring-[var(--livora-ink)]"
                 >
 
                 <span class="text-xs">
@@ -266,7 +266,7 @@
                     value="1"
                     @checked(request()->boolean('featured'))
                 @change="$el.form.submit()"
-                class="h-4 w-4 rounded border-[var(--livora-border)] text-[var(--livora-ink)] focus:ring-[var(--livora-ink)]"
+                class="h-4 w-4 rounded border-[var(--livora-border)] text-[var(--livora-text)] focus:ring-[var(--livora-ink)]"
                 >
 
                 <span class="text-xs">
@@ -288,7 +288,7 @@
                     value="1"
                     @checked(request()->boolean('new'))
                 @change="$el.form.submit()"
-                class="h-4 w-4 rounded border-[var(--livora-border)] text-[var(--livora-ink)] focus:ring-[var(--livora-ink)]"
+                class="h-4 w-4 rounded border-[var(--livora-border)] text-[var(--livora-text)] focus:ring-[var(--livora-ink)]"
                 >
 
                 <span class="text-xs">

@@ -45,14 +45,14 @@
 
                         <a
                             href="{{ route('home') }}"
-                            class="transition hover:text-[var(--livora-ink)]"
+                            class="transition hover:text-[var(--livora-text)]"
                         >
                             خانه
                         </a>
 
                         <span>/</span>
 
-                        <span class="text-[var(--livora-ink)]">
+                        <span class="text-[var(--livora-text)]">
                         درباره ما
                     </span>
 
@@ -123,7 +123,7 @@
 
                     <div class="max-w-3xl">
 
-                        <p class="text-lg leading-9 text-[var(--livora-ink)] sm:text-xl">
+                        <p class="text-lg leading-9 text-[var(--livora-text)] sm:text-xl">
                             محصول برای ما فقط یک تصویر یا نام در کاتالوگ نیست؛
                             ابعاد، کاربرد و مشخصات آن باید برای خریدار قابل بررسی باشد.
                             معرفی روشن محصول کمک می‌کند انتخاب بر پایه‌ی نیاز واقعی آشپزخانه انجام شود.
@@ -166,7 +166,7 @@
                             اطلاعات اختصاصی هر مدل باید با مشخصات فنی تأییدشده همان محصول همراه باشد؛
                             به همین دلیل ویژگی‌ها و جزئیات قابل‌بررسی در صفحه محصول ارائه می‌شوند.
                         </p>
-                        <a href="{{ route('shop.index') }}" class="mt-7 inline-flex items-center gap-3 rounded-xl bg-[var(--livora-accent)] px-5 py-3.5 text-sm font-semibold text-white transition hover:bg-white hover:text-[var(--livora-ink)]">
+                        <a href="{{ route('shop.index') }}" class="mt-7 inline-flex items-center gap-3 rounded-xl bg-[var(--livora-accent)] px-5 py-3.5 text-sm font-semibold text-white transition hover:bg-[var(--livora-white)] hover:text-[var(--livora-text)]">
                             دیدن کاتالوگ محصولات <span aria-hidden="true">←</span>
                         </a>
                     </div>
@@ -429,7 +429,7 @@ OUR FOCUS
 
                         <a
                             href="{{ route('shop.index') }}"
-                            class="mt-8 inline-flex items-center rounded-2xl bg-white px-6 py-4 text-sm font-medium text-[var(--livora-ink)] transition hover:bg-[var(--livora-cream)]"
+                            class="mt-8 inline-flex items-center rounded-2xl bg-[var(--livora-white)] px-6 py-4 text-sm font-medium text-[var(--livora-text)] transition hover:bg-[var(--livora-cream)]"
                         >
                             مشاهده محصولات
                         </a>
@@ -526,7 +526,7 @@ OUR FOCUS
 
                             <a
                                 href="{{ route('contact') }}"
-                                class="inline-flex items-center justify-center rounded-2xl border border-[var(--livora-border)] bg-[var(--livora-white)] px-7 py-4 text-sm font-medium text-[var(--livora-ink)] transition hover:border-[var(--livora-ink)]"
+                                class="inline-flex items-center justify-center rounded-2xl border border-[var(--livora-border)] bg-[var(--livora-white)] px-7 py-4 text-sm font-medium text-[var(--livora-text)] transition hover:border-[var(--livora-ink)]"
                             >
                                 تماس با ما
                             </a>

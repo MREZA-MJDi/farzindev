@@ -42,7 +42,7 @@
                     alt="{{ $product->name }}"
                     loading="lazy"
                     decoding="async"
-                    class="farzin-product-card__image h-full w-full object-contain"
+                    class="farzin-product-card__image h-full w-full object-cover"
                 >
             @else
                 <div class="farzin-product-fallback flex h-full min-h-[210px] w-full flex-col items-center justify-center gap-3">
@@ -53,7 +53,7 @@
             @endif
         </a>
 
-        <div class="farzin-product-card__image-shine pointer-events-none absolute inset-0"></div>
+        <div 
 
         <div class="absolute left-3 top-3 z-10 flex flex-col items-start gap-2">
             @if($product->is_new)
@@ -113,7 +113,7 @@
 
         <div class="mt-3 flex min-h-10 flex-wrap items-center gap-x-2 gap-y-1">
             @if($hasDiscount)
-                <span class="text-base font-bold tracking-tight text-[var(--livora-ink)]">
+                <span class="text-base font-bold tracking-tight text-[var(--livora-text)]">
                     {{ \App\Helpers\PersianNumberHelper::format((float) $product->price) }}
                     <span class="text-[10px] font-normal text-[var(--livora-stone)]">تومان</span>
                 </span>
@@ -121,7 +121,7 @@
                     {{ \App\Helpers\PersianNumberHelper::format((float) $product->compare_at_price) }}
                 </span>
             @else
-                <p class="text-base font-bold tracking-tight text-[var(--livora-ink)]">
+                <p class="text-base font-bold tracking-tight text-[var(--livora-text)]">
                     {{ \App\Helpers\PersianNumberHelper::format((float) $product->price) }}
                     <span class="text-[10px] font-normal text-[var(--livora-stone)]">تومان</span>
                 </p>
@@ -133,7 +133,7 @@
                 <div class="flex items-center justify-between gap-3">
                     <div>
                         <p class="text-[10px] text-[var(--livora-stone)]">پیش‌پرداخت</p>
-                        <p class="mt-1 text-xs font-semibold text-[var(--livora-ink)]">
+                        <p class="mt-1 text-xs font-semibold text-[var(--livora-text)]">
                             {{ \App\Helpers\PersianNumberHelper::format($cashAmount) }} تومان
                         </p>
                     </div>

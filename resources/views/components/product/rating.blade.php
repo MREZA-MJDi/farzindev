@@ -87,7 +87,7 @@
 
         {{-- Rating Number --}}
         <span
-            class="text-sm font-semibold text-[var(--livora-ink)]"
+            class="text-sm font-semibold text-[var(--livora-text)]"
             @if($hasRating)
             itemprop="ratingValue"
             @endif

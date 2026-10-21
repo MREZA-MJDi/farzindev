@@ -105,7 +105,7 @@
 
                                     <h2
                                         id="{{ $name }}-title"
-                                        class="text-lg font-semibold tracking-tight text-[var(--livora-ink)]"
+                                        class="text-lg font-semibold tracking-tight text-[var(--livora-text)]"
                                     >
                                         {{ $title }}
                                     </h2>
@@ -129,7 +129,7 @@
                                     type="button"
                                     aria-label="بستن"
                                     @click="closeModal()"
-                                    class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-[var(--livora-stone)] transition hover:bg-[var(--livora-surface)] hover:text-[var(--livora-ink)]"
+                                    class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-[var(--livora-stone)] transition hover:bg-[var(--livora-surface)] hover:text-[var(--livora-text)]"
                                 >
 
                                     <svg

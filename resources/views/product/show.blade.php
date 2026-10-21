@@ -251,7 +251,7 @@ slug) }}"
 
                     <a
                         href="{{ route('home') }}"
-                        class="transition hover:text-[var(--livora-ink)]"
+                        class="transition hover:text-[var(--livora-text)]"
                     >
                         خانه
                     </a>
@@ -260,7 +260,7 @@ slug) }}"
 
                     <a
                         href="{{ route('shop.index') }}"
-                        class="transition hover:text-[var(--livora-ink)]"
+                        class="transition hover:text-[var(--livora-text)]"
                     >
                         فروشگاه
                     </a>
@@ -271,7 +271,7 @@ slug) }}"
 
                         <a
                             href="{{ route('categories.show', $product->category->slug) }}"
-                            class="transition hover:text-[var(--livora-ink)]"
+                            class="transition hover:text-[var(--livora-text)]"
                         >
                             {{ $product->category->name }}
                         </a>
@@ -280,7 +280,7 @@ slug) }}"
 
                     <span>/</span>
 
-                    <span class="text-[var(--livora-ink)]">
+                    <span class="text-[var(--livora-text)]">
                     {{ $product->name }}
                 </span>
 
@@ -329,7 +329,7 @@ slug) }}"
 
                             @if($product->is_featured)
 
-                                <span class="rounded-full border border-[var(--livora-border)] bg-[var(--livora-white)] px-3 py-1.5 text-[10px] font-medium text-[var(--livora-ink)]">
+                                <span class="rounded-full border border-[var(--livora-border)] bg-[var(--livora-white)] px-3 py-1.5 text-[10px] font-medium text-[var(--livora-text)]">
                                 منتخب فرزین
                             </span>
 
@@ -357,7 +357,7 @@ slug) }}"
 
 
                         {{-- Title --}}
-                        <h1 class="mt-3 text-3xl font-semibold leading-tight tracking-tight text-[var(--livora-ink)] sm:text-4xl xl:text-5xl">
+                        <h1 class="mt-3 text-3xl font-semibold leading-tight tracking-tight text-[var(--livora-text)] sm:text-4xl xl:text-5xl">
                             {{ $product->name }}
                         </h1>
 

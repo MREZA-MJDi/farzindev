@@ -37,7 +37,7 @@
                 {{ strtoupper($typeLabel) }}
             </p>
 
-            <h3 class="mt-1 text-sm font-semibold text-[var(--livora-ink)]">
+            <h3 class="mt-1 text-sm font-semibold text-[var(--livora-text)]">
                 {{ $title }}
             </h3>
         </div>
@@ -54,7 +54,7 @@
                     .find(input => input.value == selected)
                     ?.dataset.label || ''
                 "
-                class="font-medium text-[var(--livora-ink)]"
+                class="font-medium text-[var(--livora-text)]"
             ></span>
         </div>
 
@@ -150,7 +150,7 @@
                         :class="
                             selected == {{ $optionId }}
                             ? 'border-[var(--livora-ink)] bg-[var(--livora-ink)] text-white shadow-sm'
-                            : 'border-[var(--livora-border)] bg-[var(--livora-white)] text-[var(--livora-ink)] hover:border-[var(--livora-accent)] hover:-translate-y-0.5'
+                            : 'border-[var(--livora-border)] bg-[var(--livora-white)] text-[var(--livora-text)] hover:border-[var(--livora-accent)] hover:-translate-y-0.5'
 "
                     >
 

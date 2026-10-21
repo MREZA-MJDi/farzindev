@@ -11,11 +11,11 @@
     <section class="min-h-[60vh] bg-[var(--livora-cream)] py-10 sm:py-14">
         <x-layout.container>
             <nav aria-label="مسیر صفحه" class="mb-6 flex flex-wrap items-center gap-2 text-xs text-[var(--livora-stone)]">
-                <a href="{{ route('home') }}" class="hover:text-[var(--livora-ink)]">خانه</a>
+                <a href="{{ route('home') }}" class="hover:text-[var(--livora-text)]">خانه</a>
                 <span aria-hidden="true">/</span>
-                <a href="{{ route('account.index') }}" class="hover:text-[var(--livora-ink)]">حساب کاربری</a>
+                <a href="{{ route('account.index') }}" class="hover:text-[var(--livora-text)]">حساب کاربری</a>
                 <span aria-hidden="true">/</span>
-                <span aria-current="page" class="text-[var(--livora-ink)]">پروفایل</span>
+                <span aria-current="page" class="text-[var(--livora-text)]">پروفایل</span>
             </nav>
 
             <div class="mx-auto max-w-2xl overflow-hidden rounded-[2rem] border border-[var(--livora-border)] bg-[var(--livora-white)]">
@@ -62,7 +62,7 @@
                         />
 
                         <div class="flex flex-col-reverse gap-3 border-t border-[var(--livora-border)] pt-5 sm:flex-row sm:justify-between">
-                            <a href="{{ route('account.index') }}" class="inline-flex items-center justify-center rounded-2xl border border-[var(--livora-border)] px-5 py-3 text-sm font-medium text-[var(--livora-ink)] transition hover:bg-[var(--livora-surface)]">بازگشت به حساب</a>
+                            <a href="{{ route('account.index') }}" class="inline-flex items-center justify-center rounded-2xl border border-[var(--livora-border)] px-5 py-3 text-sm font-medium text-[var(--livora-text)] transition hover:bg-[var(--livora-surface)]">بازگشت به حساب</a>
                             <x-ui.button type="submit" size="lg">ذخیره تغییرات</x-ui.button>
                         </div>
                     </form>
