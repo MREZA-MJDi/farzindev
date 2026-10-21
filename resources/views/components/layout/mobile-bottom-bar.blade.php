@@ -8,14 +8,14 @@
             <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
                 <path stroke-linecap="round" stroke-linejoin="round" d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/>
             </svg>
-            <span class="whitespace-nowrap text-[9px] font-medium">خانه</span>
+            <span class="whitespace-nowrap text-[10px] font-medium">خانه</span>
         </a>
 
         <a href="{{ route('shop.index') }}" class="flex min-w-0 flex-col items-center justify-center gap-1 rounded-xl px-1 py-2.5 text-[var(--livora-stone)] transition hover:text-[var(--livora-text)]" aria-label="فروشگاه">
             <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M6 8h12l1.5 12h-15zM8 8a4 4 0 0 1 8 0"/>
             </svg>
-            <span class="whitespace-nowrap text-[9px] font-medium">فروشگاه</span>
+            <span class="whitespace-nowrap text-[10px] font-medium">فروشگاه</span>
         </a>
 
         <button type="button"
@@ -28,7 +28,7 @@
                 <circle cx="11" cy="11" r="6.5"/>
                 <path stroke-linecap="round" stroke-linejoin="round" d="m16 16 4.2 4.2"/>
             </svg>
-            <span class="whitespace-nowrap text-[9px] font-medium">جستجو</span>
+            <span class="whitespace-nowrap text-[10px] font-medium">جستجو</span>
         </button>
 
         <a href="{{ route('cart.index') }}" class="relative flex min-w-0 flex-col items-center justify-center gap-1 rounded-xl px-1 py-2.5 text-[var(--livora-stone)] transition hover:text-[var(--livora-text)]" aria-label="سبد خرید">
@@ -47,7 +47,7 @@
             @if($cartCount > 0)
                 <span class="absolute right-2 top-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-[var(--livora-accent)] px-1 text-[8px] font-semibold text-white">{{ $cartCount }}</span>
             @endif
-            <span class="whitespace-nowrap text-[9px] font-medium">سبد</span>
+            <span class="whitespace-nowrap text-[10px] font-medium">سبد</span>
         </a>
 
         @auth
@@ -57,7 +57,7 @@
                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 3 20 7v5c0 4.5-3.3 7.4-8 9-4.7-1.6-8-4.5-8-9V7z"/>
                         <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6M12 9v6"/>
                     </svg>
-                    <span class="whitespace-nowrap text-[9px] font-medium">مدیریت</span>
+                    <span class="whitespace-nowrap text-[10px] font-medium">مدیریت</span>
                 </a>
             @elseif(auth()->user()->isCustomer())
                 <a href="{{ route('account.index') }}" class="flex min-w-0 flex-col items-center justify-center gap-1 rounded-xl px-1 py-2.5 text-[var(--livora-stone)] transition hover:text-[var(--livora-text)]" aria-label="حساب کاربری">
@@ -65,7 +65,7 @@
                         <circle cx="12" cy="8" r="3.5"/>
                         <path stroke-linecap="round" stroke-linejoin="round" d="M5 20a7 7 0 0 1 14 0"/>
                     </svg>
-                    <span class="whitespace-nowrap text-[9px] font-medium">حساب</span>
+                    <span class="whitespace-nowrap text-[10px] font-medium">حساب</span>
                 </a>
             @else
                 <a href="{{ route('login') }}" class="flex min-w-0 flex-col items-center justify-center gap-1 rounded-xl px-1 py-2.5 text-[var(--livora-stone)] transition hover:text-[var(--livora-text)]" aria-label="ورود">
@@ -73,7 +73,7 @@
                         <circle cx="12" cy="8" r="3.5"/>
                         <path stroke-linecap="round" stroke-linejoin="round" d="M5 20a7 7 0 0 1 14 0"/>
                     </svg>
-                    <span class="whitespace-nowrap text-[9px] font-medium">ورود</span>
+                    <span class="whitespace-nowrap text-[10px] font-medium">ورود</span>
                 </a>
             @endif
         @else
@@ -82,7 +82,7 @@
                     <circle cx="12" cy="8" r="3.5"/>
                     <path stroke-linecap="round" stroke-linejoin="round" d="M5 20a7 7 0 0 1 14 0"/>
                 </svg>
-                <span class="whitespace-nowrap text-[9px] font-medium">ورود</span>
+                <span class="whitespace-nowrap text-[10px] font-medium">ورود</span>
             </a>
         @endauth
 
