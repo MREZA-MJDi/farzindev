@@ -112,10 +112,12 @@ const initFarzinMotion = async () => {
     let ScrollTrigger;
 
     try {
-        [{ gsap }, { ScrollTrigger }] = await Promise.all([
+        const [gsapModule, scrollTriggerModule] = await Promise.all([
             import('gsap'),
             import('gsap/ScrollTrigger'),
         ]);
+        gsap = gsapModule.gsap;
+        ScrollTrigger = scrollTriggerModule.ScrollTrigger;
     } catch (error) {
         console.error('Unable to load Farzin motion dependencies.', error);
         return;
