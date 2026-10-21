@@ -1,7 +1,6 @@
-import { gsap } from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
-
-gsap.registerPlugin(ScrollTrigger);
+let gsap = null;
+let ScrollTrigger = null;
+let motionRuntimePromise = null;
 
 const reduceMotionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
 let reduceMotion = reduceMotionQuery.matches;
@@ -10,6 +9,29 @@ let gridMotionContext = null;
 const lowPower = window.matchMedia('(max-width: 760px)').matches
     || (navigator.connection?.saveData ?? false)
     || (navigator.hardwareConcurrency > 0 && navigator.hardwareConcurrency <= 4);
+
+async function ensureMotionRuntime() {
+    if (lowPower) return false;
+    if (gsap && ScrollTrigger) return true;
+
+    if (!motionRuntimePromise) {
+        motionRuntimePromise = Promise.all([
+            import('gsap'),
+            import('gsap/ScrollTrigger'),
+        ]).then(([gsapModule, scrollTriggerModule]) => {
+            gsap = gsapModule.gsap;
+            ScrollTrigger = scrollTriggerModule.ScrollTrigger;
+            gsap.registerPlugin(ScrollTrigger);
+            return true;
+        }).catch((error) => {
+            motionRuntimePromise = null;
+            console.error('Unable to load homepage motion modules.', error);
+            return false;
+        });
+    }
+
+    return motionRuntimePromise;
+}
 
 const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content || '';
 const modalRoot = document.getElementById('quick-view-modal');
@@ -226,7 +248,7 @@ function initGridAnimations() {
     const grids = [...document.querySelectorAll('.grid')];
     if (!grids.length) return;
 
-    if (reduceMotion || lowPower) {
+    if (reduceMotion || lowPower || !gsap || !ScrollTrigger) {
         grids.forEach((grid) => grid.classList.add('grid--static'));
         return;
     }
@@ -302,8 +324,15 @@ function initGridAnimations() {
     ScrollTrigger.refresh();
 }
 
-function bootHomeMotion() {
+async function bootHomeMotion() {
     initRevealAnimations();
+
+    // GSAP/ScrollTrigger are only needed for the desktop 3D product mosaic.
+    // Don't download or parse them on mobile, save-data, or low-CPU devices.
+    if (!reduceMotion && !lowPower && document.querySelector('.grid')) {
+        await ensureMotionRuntime();
+    }
+
     initGridAnimations();
 }
 
@@ -325,25 +354,25 @@ document.querySelectorAll('.grid__image, .fz-product-card__image img, .fz-hero-p
 
 // Layouts can settle after fonts and lazy images are ready. Refresh triggers once,
 // not on every animation frame, and sleep while the tab is in the background.
-window.addEventListener('load', () => ScrollTrigger.refresh(), { once: true });
+window.addEventListener('load', () => ScrollTrigger?.refresh(), { once: true });
 if (document.fonts?.ready) {
-    document.fonts.ready.then(() => ScrollTrigger.refresh()).catch(() => {});
+    document.fonts.ready.then(() => ScrollTrigger?.refresh()).catch(() => {});
 }
 
 document.addEventListener('visibilitychange', () => {
     if (document.hidden) {
-        gsap.ticker.sleep();
+        gsap?.ticker.sleep();
         return;
     }
 
-    gsap.ticker.wake();
-    if (!reduceMotion) ScrollTrigger.refresh();
+    gsap?.ticker.wake();
+    if (!reduceMotion) ScrollTrigger?.refresh();
 });
 
 window.addEventListener('pagehide', () => {
     gridMotionContext?.revert();
     gridMotionContext = null;
-    ScrollTrigger.getAll().forEach((trigger) => trigger.kill());
+    ScrollTrigger?.getAll().forEach((trigger) => trigger.kill());
 }, { once: true });
 
 reduceMotionQuery.addEventListener?.('change', (event) => {
@@ -359,6 +388,8 @@ reduceMotionQuery.addEventListener?.('change', (event) => {
         return;
     }
 
-    initGridAnimations();
-    ScrollTrigger.refresh();
+    void ensureMotionRuntime().then(() => {
+        initGridAnimations();
+        ScrollTrigger?.refresh();
+    });
 });
