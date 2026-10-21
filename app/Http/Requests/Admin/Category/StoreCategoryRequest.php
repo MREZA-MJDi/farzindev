@@ -58,10 +58,20 @@ class StoreCategoryRequest extends FormRequest
                 'integer',
                 'exists:media,id',
                 function ($attribute, $value, $fail): void {
-                    if ($value === null || $value === '') return;
+                    if ($value === null || $value === '') {
+                        return;
+                    }
+
                     $media = Media::query()->find($value);
-                    if (! $media || $media->mime_type !== 'image/gif' || $media->size > 10 * 1024 * 1024) {
-                        $fail('فقط GIF موجود در کتابخانه رسانه با حجم حداکثر ۱۰ مگابایت قابل انتخاب است.');
+                    $validGif = $media
+                        && $media->mime_type === 'image/gif'
+                        && $media->size <= 10 * 1024 * 1024;
+                    $validVideo = $media
+                        && in_array($media->mime_type, ['video/mp4', 'video/webm'], true)
+                        && $media->size <= 30 * 1024 * 1024;
+
+                    if (! $validGif && ! $validVideo) {
+                        $fail('فقط GIF حداکثر ۱۰ مگابایت یا ویدیوی MP4/WEBM حداکثر ۳۰ مگابایت از کتابخانه رسانه قابل انتخاب است.');
                     }
                 },
             ],
@@ -92,7 +102,7 @@ class StoreCategoryRequest extends FormRequest
             'image.mimes' => 'فرمت تصویر باید jpg، jpeg، png یا webp باشد.',
             'image.max' => 'حجم تصویر نباید بیشتر از ۲۰ مگابایت باشد.',
             'hover_media_id.integer' => 'رسانه انتخاب‌شده معتبر نیست.',
-            'hover_media_id.exists' => 'GIF انتخاب‌شده در کتابخانه رسانه پیدا نشد.',
+            'hover_media_id.exists' => 'رسانه انتخاب‌شده در کتابخانه رسانه پیدا نشد.',
 
             'sort_order.integer' => 'ترتیب نمایش باید عدد باشد.',
             'sort_order.min' => 'ترتیب نمایش نمی‌تواند منفی باشد.',

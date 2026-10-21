@@ -74,7 +74,17 @@ class Media extends Model
      */
     public function getIsImageAttribute(): bool
     {
-        return str_starts_with($this->mime_type, 'image/');
+        return str_starts_with((string) $this->mime_type, 'image/');
+    }
+
+    public function getIsVideoAttribute(): bool
+    {
+        return in_array($this->mime_type, ['video/mp4', 'video/webm'], true);
+    }
+
+    public function getIsAnimatedPreviewAttribute(): bool
+    {
+        return $this->mime_type === 'image/gif' || $this->is_video;
     }
 
     /**
