@@ -88,7 +88,7 @@ class HomeController extends Controller
             ->reject(fn (Product $product) => $usedProductIds->contains($product->id))
             ->values();
 
-        $demoImages = $galleryProducts
+        $galleryItems = $galleryProducts
             ->map(function (Product $product, int $index): array {
                 $image = $product->images->first(
                     fn ($candidate) => filled($candidate->url)
@@ -100,9 +100,6 @@ class HomeController extends Controller
                     'product_url' => route('product.show', $product->slug),
                     'product_id' => $product->id,
                     'product_name' => $product->name,
-                    'product_price' => PersianNumberHelper::format($product->price),
-                    'product_stock' => (int) $product->stock,
-                    'cart_url' => route('cart.add', $product),
                     'category_name' => $product->category?->name ?? 'فرزین',
                     'index' => $index,
                 ];
@@ -112,12 +109,12 @@ class HomeController extends Controller
         return view('home.index', [
             'categories' => $categories,
             'heroProduct' => $heroProduct,
-            'demoImages' => $demoImages,
-            'gridGroups' => $demoImages->chunk(9)->values(),
+            'galleryItems' => $galleryItems,
+            'gridGroups' => $galleryItems->chunk(9)->values(),
             'featuredProducts' => $featuredProducts,
             'newProducts' => $newProducts,
             'catalogCount' => $catalogCount,
-            'galleryCount' => $demoImages->count(),
+            'galleryCount' => $galleryItems->count(),
         ]);
     }
 }
