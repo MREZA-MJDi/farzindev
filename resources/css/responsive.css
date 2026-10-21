@@ -439,3 +439,23 @@ body { min-width: 320px; max-width: 100%; overflow-x: clip; }
     }
 }
 
+/* Overlay selectors are keyed by their component class, not Tailwind's escaped z-index class. */
+#app .farzin-search-overlay {
+    overflow-y: auto;
+    overscroll-behavior: contain;
+}
+
+#app .farzin-search-overlay__panel {
+    max-height: min(100dvh, 58rem);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+}
+
+@media (max-width: 767px) {
+    #app .farzin-search-overlay__panel {
+        max-height: 100dvh;
+        max-height: 100svh;
+        border-radius: 0 0 1.25rem 1.25rem;
+    }
+}
+
