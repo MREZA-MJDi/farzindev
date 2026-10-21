@@ -36,12 +36,12 @@
 
             <x-layout.container>
 
-                <div class="flex h-[76px] items-center justify-between gap-4">
+                <div class="flex min-h-[76px] items-center justify-between gap-4 py-3">
 
                     <div>
 
                         <p class="text-[10px] font-medium uppercase tracking-[0.22em] text-[var(--livora-accent)]">
-                            LIVORA SEARCH
+                            FARZIN SEARCH
                         </p>
 
                         <p class="mt-1 text-xs text-[var(--livora-stone)]">
