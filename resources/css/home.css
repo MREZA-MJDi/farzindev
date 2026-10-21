@@ -50,10 +50,19 @@ body.home-body {
     background: rgba(5,5,5,.97) !important;
     border-color: rgba(255,255,255,.13) !important;
 }
+.home-body #app > nav a {
+    color: #F5F5F2 !important;
+}
 .home-body #app > nav .farzin-wordmark__main {
     color: #F5F5F2 !important;
     -webkit-text-fill-color: #F5F5F2;
     background: none !important;
+}
+/* The shared mobile menu and search sit on dark surfaces; text inherits pearl,
+   while explicit muted/accent utility classes continue to work as intended. */
+.home-body [data-farzin-mobile-menu-panel],
+.home-body [data-farzin-search-panel] {
+    color: var(--livora-text);
 }
 
 /* Scroll-bound architectural hero: native scroll drives drawing progress. */
