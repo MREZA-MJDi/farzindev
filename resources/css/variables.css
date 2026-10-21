@@ -1,32 +1,32 @@
 :root {
     /* Farzin signature palette: matte black, graphite, pearly white, one cool accent. */
-    --livora-ink: #101817;
-    --livora-charcoal: #14201D;
+    --livora-ink: #111316;
+    --livora-charcoal: #292D32;
 
     /* Legacy token names retained so existing storefront components stay compatible. */
-    --livora-chocolate: #22302C;
-    --livora-chocolate-dark: #0B1512;
-    --livora-chocolate-soft: #DDE9E2;
+    --livora-chocolate: #202328;
+    --livora-chocolate-dark: #111316;
+    --livora-chocolate-soft: #E6E7E9;
 
-    --livora-cream: #F3F7F4;
-    --livora-white: #FCFEFD;
-    --livora-surface: #E8F0EB;
+    --livora-cream: #F5F3EF;
+    --livora-white: #FCFBF8;
+    --livora-surface: #ECEBED;
 
-    --livora-sand: #D0DED6;
-    --livora-stone: #657570;
+    --livora-sand: #D8DCE0;
+    --livora-stone: #6F747B;
 
     /* One brand accent, used with restraint. */
-    --livora-accent: #087F72;
-    --livora-accent-dark: #065B54;
-    --livora-accent-soft: #DFF3EB;
+    --livora-accent: #E57852;
+    --livora-accent-dark: #B94F39;
+    --livora-accent-soft: #FBE9E1;
 
     /* Same accent family, softened for contrast on dark surfaces. */
-    --livora-sage: #9ED9C8;
-    --livora-sage-dark: #087F72;
-    --livora-sage-soft: #DFF3EB;
+    --livora-sage: #F0B568;
+    --livora-sage-dark: #B94F39;
+    --livora-sage-soft: #FBE9E1;
 
-    --livora-border: #D3E1D9;
-    --livora-border-dark: #9DB9AD;
+    --livora-border: #DAD8D3;
+    --livora-border-dark: #B8BDC4;
 
     --livora-success: #15803D;
     --livora-success-soft: #DCFCE7;
@@ -51,8 +51,12 @@
     --livora-duration-slow: 720ms;
 
     --livora-container: 1440px;
-    --livora-metal: #D5B86F;
-    --livora-glow: rgba(8, 127, 114, 0.20);
+    --livora-metal: #C7CBD0;
+    --livora-sunset-burnt: #B94F39;
+    --livora-sunset-coral: #E57852;
+    --livora-sunset-amber: #F0B568;
+    --livora-silver: #C7CBD0;
+    --livora-glow: rgba(229, 120, 82, 0.20);
 }
 
 /* Shared responsive container */

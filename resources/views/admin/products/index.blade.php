@@ -43,9 +43,19 @@
         </a>
     </div>
 
-    <div class="admin-table-wrap">
-        <div class="overflow-x-auto">
-            <table class="admin-table">
+    <div class="admin-table-wrapper admin-products-table-wrap">
+        <table class="admin-table admin-products-table">
+            <colgroup>
+                <col style="width: 5%">
+                <col style="width: 27%">
+                <col style="width: 11%">
+                <col style="width: 9%">
+                <col style="width: 11%">
+                <col style="width: 7%">
+                <col style="width: 8%">
+                <col style="width: 8%">
+                <col style="width: 14%">
+            </colgroup>
 
                 <thead>
                 <tr>
@@ -212,7 +222,7 @@
                         </td>
 
                         <td>
-                            <div class="flex items-center justify-end gap-2">
+                            <div class="admin-action-group admin-products-actions">
 
                                 <a
                                     href="{{ route('admin.products.show', $product) }}"
@@ -292,8 +302,7 @@
                 @endforelse
                 </tbody>
 
-            </table>
-        </div>
+        </table>
     </div>
 
     @if($products->hasPages())

@@ -8,23 +8,25 @@
 
 :root {
     /* Brand */
-    --admin-text: #111416;
-    --admin-text-soft: #394347;
-    --admin-muted: #707B7F;
+    --admin-text: #111316;
+    --admin-text-soft: #35383E;
+    --admin-muted: #70757D;
 
     /* Background */
-    --admin-bg: #F2F4F4;
-    --admin-surface: #E8ECEE;
-    --admin-white: #FCFDFD;
+    --admin-bg: #F5F3EF;
+    --admin-surface: #ECEBED;
+    --admin-white: #FCFBF8;
 
     /* Brand Accent */
-    --admin-accent: #355F65;
-    --admin-accent-dark: #284B50;
-    --admin-accent-soft: #E3ECEE;
+    --admin-accent: #E57852;
+    --admin-accent-dark: #B94F39;
+    --admin-accent-soft: #FBE9E1;
+    --admin-metal: #C7CBD0;
+    --admin-sunset-amber: #F0B568;
 
     /* Borders */
-    --admin-border: #D8DEE0;
-    --admin-border-dark: #AAB5B9;
+    --admin-border: #DAD8D3;
+    --admin-border-dark: #B8BDC4;
 
     /* States */
     --admin-success: #15803d;
@@ -629,6 +631,82 @@ p {
 .admin-table tbody tr:hover {
     background: rgba(236, 233, 227, 0.55);
 }
+
+/* Product list: fixed column geometry, contained horizontal scroll, and
+   unbroken action labels. Keep this rule beside the base table system. */
+.admin-products-table-wrap {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    overflow-x: auto;
+    overflow-y: hidden;
+    overscroll-behavior-inline: contain;
+    -webkit-overflow-scrolling: touch;
+    contain: inline-size;
+}
+
+.admin-products-table {
+    width: 100%;
+    min-width: 1180px;
+    table-layout: fixed;
+}
+
+.admin-products-table th,
+.admin-products-table td {
+    overflow-wrap: anywhere;
+}
+
+.admin-products-table td:first-child {
+    text-align: center;
+    white-space: nowrap;
+}
+
+.admin-products-table td:nth-child(4) {
+    word-break: break-word;
+}
+
+.admin-products-table td:nth-child(5),
+.admin-products-table td:nth-child(6),
+.admin-products-table td:nth-child(7),
+.admin-products-table td:nth-child(8) {
+    text-align: center;
+}
+
+.admin-products-table tbody td:last-child {
+    padding-inline: .55rem;
+}
+
+.admin-products-actions {
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center;
+    justify-content: flex-end;
+    gap: .35rem;
+    min-width: 0;
+    white-space: nowrap;
+}
+
+.admin-products-actions form {
+    flex: 0 0 auto;
+}
+
+.admin-products-actions .admin-btn {
+    min-width: 0;
+    min-height: 2.35rem;
+    max-width: none;
+    flex: 0 0 auto;
+    padding-inline: .5rem;
+    font-size: .65rem;
+    white-space: nowrap;
+    overflow-wrap: normal;
+}
+
+@media (max-width: 767px) {
+    .admin-products-table {
+        min-width: 1120px;
+    }
+}
+
 
 
 /* =========================================================
@@ -1243,7 +1321,7 @@ p {
         linear-gradient(
             to top,
             var(--admin-accent-dark),
-            #A4BDC0
+            #C7CBD0
         );
 
     transition:

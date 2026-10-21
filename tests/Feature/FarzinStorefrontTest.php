@@ -29,6 +29,16 @@ class FarzinStorefrontTest extends TestCase
         }
     }
 
+    public function test_categories_page_uses_a_compact_animated_showcase_before_the_category_grid(): void
+    {
+        $this->get(route('categories.index'))
+            ->assertOk()
+            ->assertSee('fz-category-hero__visual', false)
+            ->assertSee('data-category-hero', false)
+            ->assertSee('id="category-list"', false)
+            ->assertSee('انتخاب دسته‌بندی');
+    }
+
     public function test_homepage_and_blog_use_farzin_kitchen_product_content(): void
     {
         $this->get(route('home'))
@@ -591,7 +601,9 @@ class FarzinStorefrontTest extends TestCase
 
         $this->actingAs($admin)
             ->get(route('admin.products.index'))
-            ->assertOk();
+            ->assertOk()
+            ->assertSee('admin-products-table-wrap', false)
+            ->assertSee('admin-products-table', false);
     }
 
     public function test_public_contact_form_persists_a_new_unread_message(): void
