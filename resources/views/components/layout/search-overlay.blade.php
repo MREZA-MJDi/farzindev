@@ -7,7 +7,7 @@
     x-transition:leave="transition ease-in duration-200"
     x-transition:leave-start="opacity-100"
     x-transition:leave-end="opacity-0"
-    class="fixed inset-0 z-[110] overflow-y-auto overscroll-contain"
+    class="farzin-search-overlay fixed inset-0 z-[110] overflow-y-auto overscroll-contain"
 >
 
     {{-- Backdrop --}}
@@ -28,7 +28,7 @@
         x-transition:leave="transition ease-in duration-200"
         x-transition:leave-start="translate-y-0 opacity-100"
         x-transition:leave-end="-translate-y-4 opacity-0"
-        class="relative mx-auto max-h-[100dvh] w-full max-w-4xl overflow-y-auto overscroll-contain rounded-b-[2rem] bg-[var(--livora-cream)] shadow-2xl"
+        class="farzin-search-overlay__panel relative mx-auto max-h-[100dvh] w-full max-w-4xl overflow-y-auto overscroll-contain rounded-b-[2rem] bg-[var(--livora-cream)] shadow-2xl"
     >
 
         {{-- Header --}}
