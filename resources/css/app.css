@@ -1837,11 +1837,54 @@ footer {
 }
 footer a { transition: color .2s ease, transform .2s ease; }
 footer a:hover { color: var(--livora-sage) !important; }
-.farzin-wordmark__main {
-    background: linear-gradient(115deg, var(--livora-ink), var(--livora-accent) 56%, #646464);
+/* Shared storefront header: one readable monochrome treatment on every public route. */
+.farzin-site-header {
+    position: sticky;
+    inset-block-start: 0;
+    z-index: 80;
+    width: 100%;
+    color: var(--livora-text);
+    background: rgba(8, 9, 11, .96);
+    border-bottom: 1px solid rgba(255, 255, 255, .12);
+    -webkit-backdrop-filter: blur(16px);
+    backdrop-filter: blur(16px);
+}
+.farzin-site-header .farzin-wordmark,
+.farzin-site-header .farzin-wordmark__main {
+    color: var(--livora-text);
+}
+.farzin-site-header .farzin-wordmark__main {
+    background: linear-gradient(115deg, #FFFFFF 0%, var(--livora-text-soft) 58%, var(--livora-stone) 100%);
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
+    -webkit-text-fill-color: transparent;
+}
+.farzin-site-header :where(a, button):focus-visible {
+    outline: 2px solid var(--livora-accent);
+    outline-offset: 3px;
+}
+
+/* Shared footer: stable full-width surface, readable contrast and a single token source. */
+.farzin-site-footer {
+    position: relative;
+    isolation: isolate;
+    width: 100%;
+    color: var(--livora-text);
+    background-color: var(--livora-ink);
+    border-top: 1px solid rgba(255, 255, 255, .12);
+}
+.farzin-site-footer a {
+    text-decoration: none;
+}
+.farzin-site-footer :where(a, button):focus-visible {
+    outline: 2px solid var(--livora-accent);
+    outline-offset: 3px;
+}
+.farzin-mobile-nav__inner {
+    color: var(--livora-text);
+    background-color: rgba(25, 26, 31, .97);
+    border-color: var(--livora-border);
 }
 @media (prefers-reduced-motion: reduce) {
     html { scroll-behavior: auto !important; }
