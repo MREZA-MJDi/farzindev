@@ -113,3 +113,273 @@ body { min-width: 320px; max-width: 100%; overflow-x: clip; }
     html { scroll-behavior: auto; }
     .storefront-content *, .storefront-content *::before, .storefront-content *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
 }
+
+/* =========================================================
+   SHARED STOREFRONT RESPONSIVE REFINEMENT
+   Keep mobile, tablet and desktop geometry on the same contract.
+   ========================================================= */
+
+#app {
+    isolation: isolate;
+}
+
+#app > footer {
+    overflow: hidden;
+}
+
+#app > footer .livora-container,
+#app > footer .max-w-md,
+#app > footer .max-w-sm,
+#app > footer .max-w-xs {
+    min-width: 0;
+    max-width: 100%;
+}
+
+#app > footer nav a,
+#app > footer > * a {
+    overflow-wrap: anywhere;
+}
+
+#app > footer .grid {
+    min-width: 0;
+}
+
+#app > nav[aria-label="ناوبری موبایل"] {
+    position: fixed;
+    inset-inline: max(.75rem, env(safe-area-inset-left)) max(.75rem, env(safe-area-inset-right));
+    bottom: max(.75rem, env(safe-area-inset-bottom));
+    width: auto;
+    max-width: none;
+}
+
+#app > nav[aria-label="ناوبری موبایل"] > div {
+    width: min(100%, 27rem);
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: .15rem;
+    padding: .4rem;
+}
+
+#app > nav[aria-label="ناوبری موبایل"] a,
+#app > nav[aria-label="ناوبری موبایل"] button {
+    min-width: 0;
+    min-height: 3.25rem;
+    padding-inline: .2rem;
+}
+
+#app > nav[aria-label="ناوبری موبایل"] span {
+    max-width: 100%;
+    white-space: nowrap;
+}
+
+#app > nav[aria-label="ناوبری موبایل"] svg {
+    width: 1.2rem;
+    height: 1.2rem;
+    flex: 0 0 auto;
+}
+
+#app [x-show="searchOpen"] {
+    overscroll-behavior: contain;
+}
+
+#app > div.fixed.z-\\[110\\] {
+    overflow-y: auto;
+    overscroll-behavior: contain;
+}
+
+#app > div.fixed.z-\\[110\\] > div.relative {
+    max-height: min(100dvh, 58rem);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+}
+
+#app > div.fixed.z-\\[110\\] input[type="search"] {
+    width: 100%;
+    min-width: 0;
+    font-size: 16px;
+}
+
+#app > div.fixed.z-\\[110\\] form > div.absolute {
+    max-width: calc(100% - .5rem);
+}
+
+@media (max-width: 1023px) {
+    #app > footer {
+        padding-bottom: 1rem;
+    }
+
+    #app > footer .grid.gap-12 {
+        gap: 2rem;
+    }
+
+    .storefront-content .product-gallery-shell {
+        border-radius: clamp(1rem, 4vw, 1.5rem);
+    }
+
+    .storefront-content .product-gallery-stage {
+        height: auto;
+        aspect-ratio: 4 / 4.2;
+        max-height: min(112vw, 620px);
+    }
+
+    .storefront-content .product-gallery-stage > img {
+        object-fit: contain !important;
+        padding: clamp(.5rem, 2vw, 1.25rem);
+    }
+}
+
+@media (max-width: 767px) {
+    #app {
+        padding-bottom: calc(5.75rem + env(safe-area-inset-bottom));
+    }
+
+    #app > footer .grid.gap-12 {
+        padding-block: 2.5rem;
+        gap: 2rem;
+    }
+
+    #app > footer .grid.border-t {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    #app > footer .grid.border-t > div {
+        border-inline: 0;
+        padding-inline: 0;
+    }
+
+    #app > footer .flex.flex-col.gap-5.border-t {
+        align-items: flex-start;
+        gap: 1rem;
+    }
+
+    #app > footer .flex.flex-wrap.items-center.gap-4 {
+        gap: .85rem 1rem;
+    }
+
+    #app > nav[aria-label="ناوبری موبایل"] {
+        z-index: 90;
+    }
+
+    #app > div.fixed.z-\\[110\\] > div.relative {
+        width: 100%;
+        max-height: 100dvh;
+        max-height: 100svh;
+        border-radius: 0 0 1.25rem 1.25rem;
+    }
+
+    #app > div.fixed.z-\\[110\\] .py-7 {
+        padding-block: 1.25rem;
+    }
+
+    #app > div.fixed.z-\\[110\\] form input[type="search"] {
+        min-height: 3.25rem;
+        padding-inline: 3rem 3rem;
+    }
+
+    #app > div.fixed.z-\\[110\\] form > div.absolute {
+        position: static;
+        transform: none;
+        display: flex;
+        justify-content: flex-start;
+        margin-top: .65rem;
+        max-width: 100%;
+    }
+
+    #app > div.fixed.z-\\[110\\] form > div.absolute button[type="submit"] {
+        min-height: 2.75rem;
+    }
+
+    #app > div.fixed.z-\\[110\\] .mt-8 {
+        margin-top: 1.5rem;
+    }
+
+    .storefront-content .product-detail-grid {
+        padding-top: .75rem;
+    }
+
+    .storefront-content .product-detail-grid > :first-child {
+        max-width: 100%;
+    }
+
+    .storefront-content .product-gallery-stage {
+        aspect-ratio: 1 / 1;
+        max-height: none;
+    }
+
+    .storefront-content .product-gallery-stage > img {
+        padding: .85rem;
+        object-fit: contain !important;
+    }
+
+    .storefront-content .product-gallery-shell [class*="bottom-4"] {
+        bottom: .65rem;
+        right: .65rem;
+    }
+
+    .storefront-content .product-gallery-shell [class*="top-1/2"] {
+        width: 2.25rem;
+        height: 2.25rem;
+    }
+
+    .storefront-content .product-gallery-shell + .mt-4 {
+        gap: .6rem;
+    }
+
+    .storefront-content .product-detail-grid h1 {
+        overflow-wrap: anywhere;
+    }
+
+    .storefront-content .product-detail-grid :where(button, a) {
+        touch-action: manipulation;
+    }
+
+    .storefront-content .farzin-shop-catalog .grid {
+        min-width: 0;
+    }
+}
+
+@media (max-width: 480px) {
+    #app > nav[aria-label="ناوبری موبایل"] {
+        inset-inline: .5rem;
+        bottom: max(.5rem, env(safe-area-inset-bottom));
+    }
+
+    #app > nav[aria-label="ناوبری موبایل"] > div {
+        border-radius: 1.15rem;
+        padding: .3rem;
+        box-shadow: 0 10px 30px rgba(24, 23, 21, .18);
+    }
+
+    #app > nav[aria-label="ناوبری موبایل"] a,
+    #app > nav[aria-label="ناوبری موبایل"] button {
+        min-height: 3rem;
+        gap: .35rem;
+        border-radius: .8rem;
+    }
+
+    #app > nav[aria-label="ناوبری موبایل"] span {
+        font-size: .58rem;
+    }
+
+    #app > footer .grid.gap-12 {
+        gap: 1.65rem;
+    }
+
+    .storefront-content .product-gallery-stage {
+        aspect-ratio: 1 / 1;
+    }
+
+    .storefront-content .product-gallery-shell .h-20 {
+        height: 3.75rem;
+    }
+
+    .storefront-content .product-detail-grid {
+        gap: 1.25rem;
+    }
+}
+
+@media (min-width: 1024px) {
+    #app > nav[aria-label="ناوبری موبایل"] {
+        display: none;
+    }
+}
+
