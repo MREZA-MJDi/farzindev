@@ -140,7 +140,7 @@
             });
         }
     }"
-    class="min-h-screen pb-24 lg:pb-0"
+    class="min-h-screen flex flex-col pb-24 lg:pb-0"
 >
 
     <x-layout.navbar />
@@ -151,7 +151,7 @@
 
     <x-shop.filter-drawer />
 
-    <main id="main-content" class="storefront-content">
+    <main id="main-content" class="storefront-content flex-1">
         @yield('content')
     </main>
 
