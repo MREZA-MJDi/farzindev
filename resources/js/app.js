@@ -94,6 +94,53 @@ const initFarzinMotion = () => {
         return;
     }
 
+    const categoryHero = document.querySelector('[data-category-hero]');
+
+    if (categoryHero) {
+        const showcaseCards = gsap.utils.toArray('[data-category-float]', categoryHero);
+
+        gsap.fromTo(categoryHero,
+            { autoAlpha: 0, y: 18 },
+            {
+                autoAlpha: 1,
+                y: 0,
+                duration: 0.8,
+                ease: 'power3.out',
+                clearProps: 'transform',
+                scrollTrigger: {
+                    trigger: categoryHero,
+                    start: 'top 88%',
+                    toggleActions: 'play none none none',
+                    once: true,
+                },
+            },
+        );
+
+        showcaseCards.forEach((card, index) => {
+            gsap.to(card, {
+                y: index === 0 ? -7 : 7,
+                rotation: index === 0 ? -0.6 : 1.4,
+                duration: index === 0 ? 3.6 : 4.2,
+                delay: index === 0 ? 0 : -1.8,
+                repeat: -1,
+                yoyo: true,
+                ease: 'sine.inOut',
+            });
+        });
+
+        const orbit = categoryHero.querySelector('.fz-category-hero__orbit--outer');
+
+        if (orbit) {
+            gsap.to(orbit, {
+                rotation: 360,
+                duration: 42,
+                repeat: -1,
+                ease: 'none',
+                transformOrigin: '50% 50%',
+            });
+        }
+    }
+
     const shopHero = document.querySelector('[data-farzin-shop-hero]');
 
     if (shopHero) {
