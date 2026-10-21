@@ -29,6 +29,8 @@ class SeoSettingsTest extends TestCase
             ->assertSee('rel="canonical" href="' . app(SeoSettings::class)->canonicalUrl('/', false) . '"', false)
             ->assertSee('property="og:title"', false)
             ->assertSee('application/ld+json', false);
+
+        $this->assertSame(1, substr_count((string) $response->getContent(), '"@type":"WebSite"'));
     }
 
     public function test_robots_txt_is_generated_from_settings_and_keeps_crawling_allowed_for_meta_noindex(): void
