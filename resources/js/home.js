@@ -241,11 +241,16 @@ function initRevealAnimations() {
     elements.forEach((element) => observer.observe(element));
 }
 
+function getMotionGrids() {
+    return [...document.querySelectorAll('.home-body .grid')]
+        .filter((grid) => grid.querySelector('.grid-wrap .grid__item'));
+}
+
 function initGridAnimations() {
     gridMotionContext?.revert();
     gridMotionContext = null;
 
-    const grids = [...document.querySelectorAll('.grid')];
+    const grids = getMotionGrids();
     if (!grids.length) return;
 
     if (reduceMotion || lowPower || !gsap || !ScrollTrigger) {
@@ -329,7 +334,7 @@ async function bootHomeMotion() {
 
     // GSAP/ScrollTrigger are only needed for the desktop 3D product mosaic.
     // Don't download or parse them on mobile, save-data, or low-CPU devices.
-    if (!reduceMotion && !lowPower && document.querySelector('.grid')) {
+    if (!reduceMotion && !lowPower && getMotionGrids().length > 0) {
         await ensureMotionRuntime();
     }
 
@@ -381,7 +386,7 @@ reduceMotionQuery.addEventListener?.('change', (event) => {
     if (reduceMotion) {
         gridMotionContext?.revert();
         gridMotionContext = null;
-        document.querySelectorAll('.grid').forEach((grid) => grid.classList.add('grid--static'));
+        getMotionGrids().forEach((grid) => grid.classList.add('grid--static'));
         document.querySelectorAll('.fz-reveal.is-entering').forEach((element) => {
             element.classList.remove('is-entering');
         });
