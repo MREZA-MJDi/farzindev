@@ -165,6 +165,22 @@ class FarzinStorefrontTest extends TestCase
         $this->assertDatabaseCount('cart_items', 0);
     }
 
+    public function test_category_page_does_not_render_raw_seo_template_fragments(): void
+    {
+        $category = $this->category([
+            'name' => 'دسته تست SEO',
+            'slug' => 'seo-test-category',
+        ]);
+
+        $this->get(route('categories.show', $category->slug))
+            ->assertOk()
+            ->assertSee('<meta property="og:title"', false)
+            ->assertSee(route('categories.show', $category->slug), false)
+            ->assertDontSee('name }} | فرزین')
+            ->assertDontSee("meta_description ?? ('محصولات")
+            ->assertDontSee('image_url }}');
+    }
+
     public function test_shop_search_and_price_filters_exclude_unavailable_products(): void
     {
         $category = $this->category(['slug' => 'hoods']);
