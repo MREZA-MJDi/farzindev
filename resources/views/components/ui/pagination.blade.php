@@ -15,7 +15,7 @@
     |
     */
 
-    $pagination = $paginator ?? ($paginator ?? null);
+    $pagination = $paginator;
 
     if (! $pagination) {
         return;
@@ -79,18 +79,18 @@
 
     <nav
         aria-label="صفحه‌بندی محصولات"
-        class="mt-10"
+        class="farzin-pagination mt-8 sm:mt-10"
         dir="rtl"
     >
 
-        <div class="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
+        <div class="farzin-pagination__layout flex min-w-0 flex-col gap-4 md:flex-row md:items-center md:justify-between md:gap-6">
 
             {{-- =====================================================
                  Result Summary
             ====================================================== --}}
             @if($from && $to)
 
-                <p class="text-[11px] text-[var(--livora-stone)]">
+                <p class="farzin-pagination__summary text-[11px] text-[var(--livora-stone)]">
 
                     نمایش
                     <span class="font-medium text-[var(--livora-ink)]">
@@ -119,7 +119,7 @@
             {{-- =====================================================
                  Pagination
             ====================================================== --}}
-            <div class="flex items-center gap-2">
+            <div class="farzin-pagination__controls flex w-full min-w-0 flex-wrap items-center justify-center gap-1.5 md:w-auto md:justify-start md:gap-2">
 
                 {{-- Previous --}}
                 @if($pagination->onFirstPage())
@@ -127,7 +127,7 @@
                     <span
                         aria-disabled="true"
                         aria-label="صفحه قبلی"
-                        class="flex h-10 w-10 cursor-not-allowed items-center justify-center rounded-xl border border-[var(--livora-border)] bg-[var(--livora-surface)] text-[var(--livora-stone)] opacity-40"
+                        class="farzin-pagination__step flex h-10 w-10 shrink-0 cursor-not-allowed items-center justify-center rounded-xl border border-[var(--livora-border)] bg-[var(--livora-surface)] text-[var(--livora-stone)] opacity-40"
                     >
 
                         <svg
@@ -153,7 +153,7 @@
                         href="{{ $pagination->previousPageUrl() }}"
                         rel="prev"
                         aria-label="صفحه قبلی"
-                        class="flex h-10 w-10 items-center justify-center rounded-xl border border-[var(--livora-border)] bg-[var(--livora-white)] text-[var(--livora-ink)] transition hover:border-[var(--livora-ink)] hover:bg-[var(--livora-surface)]"
+                        class="farzin-pagination__step flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-[var(--livora-border)] bg-[var(--livora-white)] text-[var(--livora-ink)] transition hover:border-[var(--livora-ink)] hover:bg-[var(--livora-surface)]"
                     >
 
                         <svg
@@ -177,7 +177,7 @@
 
 
                 {{-- Pages --}}
-                <div class="flex items-center gap-1">
+                <div class="farzin-pagination__pages flex min-w-0 items-center gap-1">
 
                     @foreach($pages as $page)
 
@@ -185,7 +185,7 @@
 
                             <span
                                 aria-hidden="true"
-                                class="flex h-10 min-w-10 items-center justify-center rounded-xl px-2 text-xs text-[var(--livora-stone)]"
+                                class="farzin-pagination__ellipsis hidden h-10 min-w-10 items-center justify-center rounded-xl px-2 text-xs text-[var(--livora-stone)] md:flex"
                             >
                                 …
                             </span>
@@ -195,7 +195,7 @@
                             <span
                                 aria-current="page"
                                 aria-label="صفحه {{ $page }}"
-                                class="flex h-10 min-w-10 items-center justify-center rounded-xl bg-[var(--livora-ink)] px-3 text-xs font-semibold text-white"
+                                class="farzin-pagination__page flex h-10 min-w-10 shrink-0 items-center justify-center rounded-xl bg-[var(--livora-ink)] px-3 text-xs font-semibold text-white"
                             >
                                 {{ number_format($page) }}
                             </span>
@@ -205,7 +205,10 @@
                             <a
                                 href="{{ $pagination->url($page) }}"
                                 aria-label="صفحه {{ $page }}"
-                                class="flex h-10 min-w-10 items-center justify-center rounded-xl border border-transparent px-3 text-xs font-medium text-[var(--livora-stone)] transition hover:border-[var(--livora-border)] hover:bg-[var(--livora-white)] hover:text-[var(--livora-ink)]"
+                                @class([
+                                    'farzin-pagination__page flex h-10 min-w-10 shrink-0 items-center justify-center rounded-xl border border-transparent px-3 text-xs font-medium text-[var(--livora-stone)] transition hover:border-[var(--livora-border)] hover:bg-[var(--livora-white)] hover:text-[var(--livora-ink)]',
+                                    'farzin-pagination__page--mobile-hide' => $page !== 1 && $page !== $lastPage && abs($page - $currentPage) > 1,
+                                ])
                             >
                                 {{ number_format($page) }}
                             </a>
