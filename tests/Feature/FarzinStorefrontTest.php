@@ -77,6 +77,38 @@ class FarzinStorefrontTest extends TestCase
             ->assertSee('data-cart-fly-button', false);
     }
 
+    public function test_homepage_codrops_mosaic_uses_real_product_images_and_product_links(): void
+    {
+        $category = $this->category(['slug' => 'hoods']);
+        $products = [];
+
+        for ($index = 1; $index <= 7; $index++) {
+            $product = $this->product($category, [
+                'name' => 'تصویر واقعی محصول '.$index,
+                'slug' => 'real-image-product-'.$index,
+                'sku' => 'FAR-REAL-IMG-'.$index,
+            ]);
+
+            ProductImage::create([
+                'product_id' => $product->id,
+                'path' => 'https://cdn.example.test/products/hood-'.$index.'.webp',
+                'alt' => 'تصویر محصول '.$index,
+                'sort_order' => 0,
+                'is_primary' => true,
+            ]);
+
+            $products[] = $product;
+        }
+
+        $this->get(route('home'))
+            ->assertOk()
+            ->assertSee('grid__image', false)
+            ->assertSee('data-grid-index="0"', false)
+            ->assertSee('data-grid-index="1"', false)
+            ->assertSee('https://cdn.example.test/products/hood-1.webp', false)
+            ->assertSee(route('product.show', $products[0]->slug), false);
+    }
+
     public function test_sitemap_lists_public_pages_and_only_active_catalog_items(): void
     {
         $category = $this->category([
