@@ -2585,7 +2585,10 @@ class FarzinStorefrontTest extends TestCase
 
         $this->get(route('contact'))
             ->assertOk()
-            ->assertSee('نقشه آدرس فرزین')
+            ->assertSee('نقشه موقعیت مجموعه فرزین')
+            ->assertSee('fz-contact-map-column', false)
+            ->assertSee('fz-contact-left-column', false)
+            ->assertSee('name="message"', false)
             ->assertSee('https://wa.me/989123456789', false)
             ->assertSee('https://instagram.com/farzin.test', false);
     }
