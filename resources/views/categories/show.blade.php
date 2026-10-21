@@ -17,79 +17,39 @@
 )
 
 @push('seo')
-
-    <meta
-        property="og:type"
-        content="website"
+name }} | فرزین"
     >
 
-    <meta
-        property="og:title"
-        content="{{ $category->name }} | فرزین"
+    
+meta_description ?? ('محصولات ' . $category->name . ' در فرزین') }}"
     >
 
-    <meta
-        property="og:description"
-        content="{{ $category->meta_description ?? ('محصولات ' . $category->name . ' در فرزین') }}"
-    >
-
-    <meta
-        property="og:url"
-        content="{{ route('categories.show', $category->slug) }}"
+    
+slug) }}"
     >
 
     @if($category->image)
-        <meta
-            property="og:image"
-            content="{{ $category->image_url }}"
+        
+image_url }}"
         >
     @endif
 
-    <meta
-        name="twitter:card"
-        content="summary_large_image"
+    
+
+
+    
+name }} | فرزین"
     >
 
-    <meta
-        name="twitter:title"
-        content="{{ $category->name }} | فرزین"
-    >
-
-    <meta
-        name="twitter:description"
-        content="{{ $category->meta_description ?? ('محصولات ' . $category->name . ' در فرزین') }}"
+    
+meta_description ?? ('محصولات ' . $category->name . ' در فرزین') }}"
     >
 
     @if($category->image)
-        <meta
-            name="twitter:image"
-            content="{{ $category->image_url }}"
+        
+image_url }}"
         >
     @endif
-
-    <script type="application/ld+json">
-{
-    "@@context": "https://schema.org",
-    "@@type": "WebSite",
-    "name": "فرزین",
-    "url": @json(url('/')),
-    "potentialAction": {
-        "@@type": "SearchAction",
-        "target": @json(url('/shop') . '?search={search_term_string}'),
-        "query-input": "required name=search_term_string"
-    }
-}
-</script>
-
-    <script type="application/ld+json">
-{
-    "@@context": "https://schema.org",
-    "@@type": "Organization",
-    "name": "فرزین",
-    "url": @json(url('/'))
-        }
-</script>
-
 @endpush
 
 @section('content')

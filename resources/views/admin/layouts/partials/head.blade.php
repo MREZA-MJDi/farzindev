@@ -36,6 +36,8 @@
     )"
 />
 
+<meta name="robots" content="noindex, nofollow, noarchive, nosnippet, noimageindex" />
+
 
 {{-- =========================================================
      VITE

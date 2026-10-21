@@ -166,80 +166,38 @@
     route('product.show', $product->slug)
 )
 
+@section('og_type', 'product')
+@section('og_image', $mainImage ?? '')
+
 @push('seo')
-
-    <meta
-        property="og:type"
-        content="product"
-    >
-
-    <meta
-        property="og:title"
-        content="{{ $pageTitle }}"
-    >
-
-    <meta
-        property="og:description"
-        content="{{ $pageDescription }}"
-    >
-
-    <meta
-        property="og:url"
-        content="{{ route('product.show', $product->slug) }}"
+slug) }}"
     >
 
     @if($mainImage)
-        <meta
-            property="og:image"
-            content="{{ $mainImage }}"
-        >
+        
+
     @endif
 
-    <meta
-        name="twitter:card"
-        content="summary_large_image"
-    >
+    
 
-    <meta
-        name="twitter:title"
-        content="{{ $pageTitle }}"
-    >
 
-    <meta
-        name="twitter:description"
-        content="{{ $pageDescription }}"
-    >
+    
+
+
+    
+
 
     @if($mainImage)
-        <meta
-            name="twitter:image"
-            content="{{ $mainImage }}"
-        >
+        
+
     @endif
 
     {{-- Product Schema --}}
-    <script type="application/ld+json">
-{
-    "@@context": "https://schema.org",
-    "@@type": "WebSite",
-    "name": "فرزین",
-    "url": @json(url('/')),
-    "potentialAction": {
-        "@@type": "SearchAction",
-        "target": @json(url('/shop') . '?search={search_term_string}'),
-        "query-input": "required name=search_term_string"
-    }
-}
-</script>
+    
 
-    <script type="application/ld+json">
-{
-    "@@context": "https://schema.org",
-    "@@type": "Organization",
-    "name": "فرزین",
-    "url": @json(url('/'))
-        }
-</script>
+
+    
+
 
     {{-- Product entity data for search engines --}}
     <script type="application/ld+json">
@@ -267,7 +225,6 @@
         }@endif
     }
     </script>
-
 @endpush
 
 @section('content')

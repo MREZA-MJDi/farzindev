@@ -9,58 +9,7 @@
 
 @section('canonical', route('contact'))
 
-@push('seo')
 
-    <meta
-        property="og:type"
-        content="website"
-    >
-
-    <meta
-        property="og:title"
-        content="تماس با فرزین | ارتباط با ما"
-    >
-
-    <meta
-        property="og:description"
-        content="برای مشاوره خرید، پیگیری سفارش و دریافت اطلاعات بیشتر با فرزین در ارتباط باشید."
-    >
-
-    <meta
-        property="og:url"
-        content="{{ route('contact') }}"
-    >
-
-    <meta
-        name="twitter:card"
-        content="summary"
-    >
-
-    <meta
-        name="twitter:title"
-        content="تماس با فرزین"
-    >
-
-    <meta
-        name="twitter:description"
-        content="راه‌های ارتباطی و راهنمای خرید فرزین."
-    >
-
-    <script type="application/ld+json">
-    {
-        "@@context": "https://schema.org",
-        "@@type": "WebSite",
-        "name": "فرزین",
-        "url": @json(url('/')),
-        "potentialAction": {
-            "@@type": "SearchAction",
-            "target": @json(url('/shop') . '?search={search_term_string}'),
-            "query-input": "required name=search_term_string"
-        }
-    }
-    </script>
-
-@endpush
 
 
 @section('body_class', 'contact-body min-h-screen antialiased')
