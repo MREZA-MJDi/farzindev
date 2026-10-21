@@ -1,24 +1,29 @@
 :root {
-    --livora-ink: #141310;
-    --livora-text: #E6DED1;
-    --livora-text-soft: #C1B7A7;
-    --livora-charcoal: #24221E;
-    --livora-chocolate: #24221E;
-    --livora-chocolate-dark: #11110F;
-    --livora-chocolate-soft: #302D27;
-    --livora-cream: #141310;
-    --livora-white: #211F1B;
-    --livora-surface: #292720;
-    --livora-sand: #39362F;
-    --livora-stone: #A59A89;
-    --livora-accent: #A47752;
-    --livora-accent-dark: #805B3D;
-    --livora-accent-soft: #352B22;
-    --livora-sage: #B5A083;
-    --livora-sage-dark: #8F7A60;
-    --livora-sage-soft: #302B23;
-    --livora-border: #39362F;
-    --livora-border-dark: #585044;
+    /* Ink / pearl monochrome design system */
+    --livora-ink: #08090B;
+    --livora-text: #F3F4F6;
+    --livora-text-soft: #C4C7CE;
+    --livora-charcoal: #17181D;
+    --livora-chocolate: #1B1C21;
+    --livora-chocolate-dark: #08090B;
+    --livora-chocolate-soft: #25272D;
+
+    --livora-cream: #0D0E12;
+    --livora-white: #191A1F;
+    --livora-surface: #222329;
+    --livora-sand: #303239;
+    --livora-stone: #A2A5AD;
+
+    --livora-accent: #C4C7CE;
+    --livora-accent-dark: #747881;
+    --livora-accent-soft: #292B31;
+    --livora-sage: #D7D9DE;
+    --livora-sage-dark: #9DA1AA;
+    --livora-sage-soft: #24262C;
+
+    --livora-border: #35373F;
+    --livora-border-dark: #555962;
+
     --livora-success: #65A879;
     --livora-success-soft: #203326;
     --livora-warning: #D6A45A;
@@ -27,23 +32,27 @@
     --livora-danger-soft: #351F1C;
     --livora-info: #78AFC4;
     --livora-info-soft: #1C2A32;
-    --livora-shadow-sm: 0 3px 12px rgba(0,0,0,.16);
-    --livora-shadow-md: 0 10px 28px rgba(0,0,0,.22);
-    --livora-shadow-lg: 0 20px 50px rgba(0,0,0,.28);
+
+    --livora-shadow-sm: 0 3px 12px rgba(0, 0, 0, .22);
+    --livora-shadow-md: 0 10px 28px rgba(0, 0, 0, .30);
+    --livora-shadow-lg: 0 20px 50px rgba(0, 0, 0, .38);
+
     --livora-radius-sm: .55rem;
     --livora-radius-md: .8rem;
     --livora-radius-lg: 1.1rem;
     --livora-radius-xl: 1.35rem;
+
     --livora-duration-fast: 160ms;
     --livora-duration: 260ms;
     --livora-duration-slow: 480ms;
     --livora-container: 1440px;
-    --livora-metal: #71695D;
-    --livora-sunset-burnt: #805B3D;
-    --livora-sunset-coral: #A47752;
-    --livora-sunset-amber: #B5A083;
-    --livora-silver: #777064;
-    --livora-glow: rgba(164,119,82,.06);
+
+    --livora-metal: #8A8E97;
+    --livora-sunset-burnt: #747881;
+    --livora-sunset-coral: #C4C7CE;
+    --livora-sunset-amber: #E4E6EB;
+    --livora-silver: #A2A6AE;
+    --livora-glow: rgba(236, 238, 242, .06);
 }
 
 /* Shared responsive container */

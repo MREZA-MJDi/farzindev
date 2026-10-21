@@ -33,13 +33,9 @@ class CategoryController extends Controller
      */
     public function create(): View
     {
-        $gifMedia = Media::query()
-            ->where('mime_type', 'image/gif')
-            ->where('size', '<=', 10 * 1024 * 1024)
-            ->latest()
-            ->get(['id', 'original_name', 'mime_type', 'size']);
+        $motionMedia = $this->selectableMotionMedia();
 
-        return view('admin.categories.create', compact('gifMedia'));
+        return view('admin.categories.create', compact('motionMedia'));
     }
 
     /**
@@ -101,13 +97,9 @@ class CategoryController extends Controller
      */
     public function edit(Category $category): View
     {
-        $gifMedia = Media::query()
-            ->where('mime_type', 'image/gif')
-            ->where('size', '<=', 10 * 1024 * 1024)
-            ->latest()
-            ->get(['id', 'original_name', 'mime_type', 'size']);
+        $motionMedia = $this->selectableMotionMedia();
 
-        return view('admin.categories.edit', compact('category', 'gifMedia'));
+        return view('admin.categories.edit', compact('category', 'motionMedia'));
     }
 
     /**
@@ -177,8 +169,28 @@ class CategoryController extends Controller
     }
 
     /**
-     * Remove the specified category.
+     * Media suitable for short category previews.
+     * GIFs are capped at 10 MiB and MP4/WebM clips at 30 MiB.
      */
+    private function selectableMotionMedia()
+    {
+        return Media::query()
+            ->where(function ($query): void {
+                $query->where(function ($gif): void {
+                    $gif->where('mime_type', 'image/gif')
+                        ->where('size', '<=', 10 * 1024 * 1024);
+                })->orWhere(function ($video): void {
+                    $video->whereIn('mime_type', ['video/mp4', 'video/webm'])
+                        ->where('size', '<=', 30 * 1024 * 1024);
+                });
+            })
+            ->latest()
+            ->get(['id', 'original_name', 'mime_type', 'extension', 'size']);
+    }
+
+    /**
+     * Remove the specified category.
+    
     public function destroy(Category $category): RedirectResponse
     {
         // Soft-deleted products still reference this category through
