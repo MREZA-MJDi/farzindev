@@ -363,6 +363,7 @@ function animateProductToCart(sourceImage, cartTarget) {
     if (sourceRect.width < 1 || sourceRect.height < 1 || targetRect.width < 1) return;
 
     const flyer = sourceImage.cloneNode(true);
+    const imageStyle = window.getComputedStyle(sourceImage);
     Object.assign(flyer.style, {
         position: 'fixed',
         left: `${sourceRect.left}px`,
@@ -371,9 +372,9 @@ function animateProductToCart(sourceImage, cartTarget) {
         height: `${sourceRect.height}px`,
         maxWidth: 'none',
         margin: '0',
-        padding: '0',
-        objectFit: 'contain',
-        objectPosition: 'center',
+        padding: imageStyle.padding,
+        objectFit: imageStyle.objectFit,
+        objectPosition: imageStyle.objectPosition,
         borderRadius: '1rem',
         background: '#fff',
         boxShadow: '0 14px 45px rgba(17, 19, 22, .2)',
