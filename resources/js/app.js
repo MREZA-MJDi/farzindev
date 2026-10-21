@@ -1,12 +1,6 @@
 import './bootstrap';
 import Alpine from 'alpinejs';
-import { gsap } from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
-
 window.Alpine = Alpine;
-gsap.registerPlugin(ScrollTrigger);
-window.gsap = gsap;
-window.ScrollTrigger = ScrollTrigger;
 
 // Admin navbar quick search is registered here instead of embedding a large
 // JavaScript object in a Blade attribute. This avoids quote/HTML parser leaks
@@ -93,12 +87,43 @@ window.addEventListener('product-variant-selected', () => {
  * Motion is progressive enhancement: content remains visible if JS is disabled,
  * and reduced-motion preferences disable scroll and ambient animations.
  */
-const initFarzinMotion = () => {
+const initFarzinMotion = async () => {
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
     if (reduceMotion) {
         return;
     }
+
+    // Avoid shipping the animation runtime to admin pages and the homepage:
+    // the homepage has its own smaller, page-specific motion module.
+    const hasDedicatedMotionTarget = document.querySelector(
+        '[data-category-hero], [data-farzin-shop-hero], [data-farzin-reveal]',
+    );
+    const hasSharedStorefrontMotionTarget = !document.body.classList.contains('home-body')
+        && document.querySelector(
+            '.storefront-content section:not(.fz-contact-hero), .storefront-content [data-fz-reveal]',
+        );
+
+    if (!hasDedicatedMotionTarget && !hasSharedStorefrontMotionTarget) {
+        return;
+    }
+
+    let gsap;
+    let ScrollTrigger;
+
+    try {
+        [{ gsap }, { ScrollTrigger }] = await Promise.all([
+            import('gsap'),
+            import('gsap/ScrollTrigger'),
+        ]);
+    } catch (error) {
+        console.error('Unable to load Farzin motion dependencies.', error);
+        return;
+    }
+
+    gsap.registerPlugin(ScrollTrigger);
+    window.gsap = gsap;
+    window.ScrollTrigger = ScrollTrigger;
 
     const categoryHero = document.querySelector('[data-category-hero]');
 
@@ -301,8 +326,14 @@ const initFarzinMotion = () => {
     ScrollTrigger.refresh();
 };
 
+const startFarzinMotion = () => {
+    initFarzinMotion().catch((error) => {
+        console.error('Farzin motion initialization failed.', error);
+    });
+};
+
 if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initFarzinMotion, { once: true });
+    document.addEventListener('DOMContentLoaded', startFarzinMotion, { once: true });
 } else {
-    initFarzinMotion();
+    startFarzinMotion();
 }
