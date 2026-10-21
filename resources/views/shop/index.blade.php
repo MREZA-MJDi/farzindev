@@ -395,14 +395,7 @@
 
                             @if($products->hasPages())
 
-                                <nav
-                                    class="mt-14"
-                                    aria-label="صفحه‌بندی محصولات"
-                                >
-
-                                    {{ $products->withQueryString()->links() }}
-
-                                </nav>
+                                <x-ui.pagination :paginator="$products" />
 
                             @endif
 
