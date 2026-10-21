@@ -9,58 +9,7 @@
 
 @section('canonical', route('shop.index'))
 
-@push('seo')
 
-    <meta
-        property="og:type"
-        content="website"
-    >
-
-    <meta
-        property="og:title"
-        content="فروشگاه هود و سینک | فرزین"
-    >
-
-    <meta
-        property="og:description"
-        content="مدل‌های هود و سینک فرزین را ببینید و گزینه متناسب با فضای نصب خود را پیدا کنید."
-    >
-
-    <meta
-        property="og:url"
-        content="{{ route('shop.index') }}"
-    >
-
-    <meta
-        name="twitter:card"
-        content="summary_large_image"
-    >
-
-    <meta
-        name="twitter:title"
-        content="فروشگاه هود و سینک | فرزین"
-    >
-
-    <meta
-        name="twitter:description"
-        content="کاتالوگ هود و سینک فرزین برای انتخابی متناسب با نیاز آشپزخانه."
-    >
-
-    <script type="application/ld+json">
-    {
-        "@@context": "https://schema.org",
-        "@@type": "WebSite",
-        "name": "فرزین",
-        "url": @json(url('/')),
-        "potentialAction": {
-            "@@type": "SearchAction",
-            "target": @json(url('/shop') . '?search={search_term_string}'),
-            "query-input": "required name=search_term_string"
-        }
-    }
-    </script>
-
-@endpush
 
 
 @section('content')
