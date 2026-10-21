@@ -9,6 +9,7 @@ use App\Models\OrderItem;
 use App\Models\Product;
 use App\Models\User;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Cache;
 
 class DashboardController extends Controller
 {
@@ -310,7 +311,11 @@ class DashboardController extends Controller
      */
     protected function getMonthlyRevenue(\DateTimeInterface $reportingDate): Collection
     {
-        $months = collect();
+        return Cache::remember(
+            'admin.dashboard.monthly-revenue.' . $reportingDate->format('Y-m'),
+            now()->addMinute(),
+            function () use ($reportingDate): Collection {
+                $months = collect();
 
         for ($monthsAgo = 5; $monthsAgo >= 0; $monthsAgo--) {
             [$monthStart, $nextMonthStart] = JalaliHelper::monthRange($reportingDate, $monthsAgo);
@@ -336,7 +341,9 @@ class DashboardController extends Controller
             ]);
         }
 
-        return $months;
+                return $months;
+            }
+        );
     }
 
     /**
@@ -344,7 +351,10 @@ class DashboardController extends Controller
      */
     protected function getTopProducts(): Collection
     {
-        return OrderItem::query()
+        return Cache::remember(
+            'admin.dashboard.top-products.v1',
+            now()->addMinute(),
+            fn (): Collection => OrderItem::query()
             ->with([
                 'product.images.media',
             ])
@@ -376,6 +386,7 @@ class DashboardController extends Controller
                     'revenue' => (float) $item->revenue,
                     'image' => $item->product?->images?->first()?->url,
                 ];
-            });
+            })
+        );
     }
 }
