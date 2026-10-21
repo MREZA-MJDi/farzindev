@@ -111,6 +111,10 @@ class SeoSettingsController extends Controller
                 ]);
             }
             $validated['seo_default_og_image'] = $newImagePath;
+        } elseif (blank($validated['seo_default_og_image'] ?? null) && filled($oldImageValue)) {
+            // A path-backed upload is intentionally not echoed into the URL field.
+            // Preserve the existing image when other SEO settings are saved.
+            $validated['seo_default_og_image'] = $oldImageValue;
         }
 
         unset($validated['seo_default_og_image_upload']);
@@ -133,7 +137,7 @@ class SeoSettingsController extends Controller
 
         if (
             $oldImageValue
-            && $oldImageValue !== $validated['seo_default_og_image']
+            && $oldImageValue !== ($validated['seo_default_og_image'] ?? null)
             && ! filter_var($oldImageValue, FILTER_VALIDATE_URL)
             && ! str_starts_with($oldImageValue, '/')
         ) {
