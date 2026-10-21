@@ -169,6 +169,13 @@ class CartController extends Controller
         $quantity = (int) $validated['quantity'];
 
         if ($quantity > $availableStock) {
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'موجودی کافی نیست؛ تعداد فعلی سبد خرید را بررسی کنید.',
+                ], 422);
+            }
+
             return back()->withErrors([
                 'quantity' => 'موجودی کافی نیست.',
             ]);
@@ -248,6 +255,13 @@ class CartController extends Controller
         }
 
         if ($quantity > $availableStock) {
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'موجودی کافی نیست؛ تعداد فعلی سبد خرید را بررسی کنید.',
+                ], 422);
+            }
+
             return back()->withErrors([
                 'quantity' => 'موجودی کافی نیست.',
             ]);
