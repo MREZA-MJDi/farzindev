@@ -294,6 +294,7 @@
                     @if($cartCount > 0)
 
                         <span
+                            data-cart-count-badge
                             class="absolute -right-0.5 -top-0.5 flex h-[17px] min-w-[17px] items-center justify-center rounded-full bg-[var(--livora-accent)] px-1 text-[9px] font-semibold leading-none text-white"
                         >
                             {{ $cartCount }}
