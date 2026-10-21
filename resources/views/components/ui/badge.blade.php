@@ -7,7 +7,7 @@
 @php
     $variants = [
         'default' => [
-            'wrapper' => 'border-[var(--livora-border)] bg-[var(--livora-white)] text-[var(--livora-ink)]',
+            'wrapper' => 'border-[var(--livora-border)] bg-[var(--livora-white)] text-[var(--livora-text)]',
             'dot' => 'bg-[var(--livora-stone)]',
         ],
 

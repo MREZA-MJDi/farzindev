@@ -192,7 +192,7 @@
                         type="button"
                         aria-label="تصویر قبلی"
                         @click.stop="previous()"
-                        class="absolute right-4 top-1/2 z-10 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-white/20 bg-black/30 text-white shadow-sm backdrop-blur-xl transition hover:bg-white hover:text-[var(--livora-ink)] focus-visible:bg-white focus-visible:text-[var(--livora-ink)] sm:opacity-85"
+                        class="absolute right-4 top-1/2 z-10 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-white/20 bg-black/30 text-white shadow-sm backdrop-blur-xl transition hover:bg-[var(--livora-white)] hover:text-[var(--livora-text)] focus-visible:bg-white focus-visible:text-[var(--livora-text)] sm:opacity-85"
                     >
 
                         <svg
@@ -220,7 +220,7 @@
                         type="button"
                         aria-label="تصویر بعدی"
                         @click.stop="next()"
-                        class="absolute left-4 top-1/2 z-10 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-white/20 bg-black/30 text-white shadow-sm backdrop-blur-xl transition hover:bg-white hover:text-[var(--livora-ink)] focus-visible:bg-white focus-visible:text-[var(--livora-ink)] sm:opacity-85"
+                        class="absolute left-4 top-1/2 z-10 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-white/20 bg-black/30 text-white shadow-sm backdrop-blur-xl transition hover:bg-[var(--livora-white)] hover:text-[var(--livora-text)] focus-visible:bg-white focus-visible:text-[var(--livora-text)] sm:opacity-85"
                     >
 
                         <svg
@@ -461,7 +461,7 @@
                 type="button"
                 aria-label="بستن تصویر"
                 @click="zoom = false"
-                class="absolute right-4 top-4 z-20 flex h-11 w-11 items-center justify-center rounded-full border border-white/20 bg-white/10 text-white backdrop-blur-xl transition hover:bg-white hover:text-[var(--livora-ink)] sm:right-7 sm:top-7"
+                class="absolute right-4 top-4 z-20 flex h-11 w-11 items-center justify-center rounded-full border border-white/20 bg-white/10 text-white backdrop-blur-xl transition hover:bg-[var(--livora-white)] hover:text-[var(--livora-text)] sm:right-7 sm:top-7"
             >
 
                 <svg
@@ -511,7 +511,7 @@
                             type="button"
                             aria-label="تصویر قبلی"
                             @click="previous()"
-                            class="absolute right-3 top-1/2 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-white/20 bg-black/30 text-white backdrop-blur-xl transition hover:bg-white hover:text-[var(--livora-ink)] sm:right-5"
+                            class="absolute right-3 top-1/2 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-white/20 bg-black/30 text-white backdrop-blur-xl transition hover:bg-[var(--livora-white)] hover:text-[var(--livora-text)] sm:right-5"
                         >
 
                             <svg
@@ -538,7 +538,7 @@
                             type="button"
                             aria-label="تصویر بعدی"
                             @click="next()"
-                            class="absolute left-3 top-1/2 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-white/20 bg-black/30 text-white backdrop-blur-xl transition hover:bg-white hover:text-[var(--livora-ink)] sm:left-5"
+                            class="absolute left-3 top-1/2 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-white/20 bg-black/30 text-white backdrop-blur-xl transition hover:bg-[var(--livora-white)] hover:text-[var(--livora-text)] sm:left-5"
                         >
 
                             <svg
