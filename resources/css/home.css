@@ -718,7 +718,7 @@ body.home-body {
 .home-body .fz-category-card:hover { border-color: #765A40; }
 .home-body .fz-mosaic-intro,
 .home-body .fz-bottom-cta { background-image: radial-gradient(ellipse at 6% 0%, rgba(229, 120, 82,.15), transparent 34rem); }
-.home-body .fz-bottom-cta__inner { background: radial-gradient(ellipse at 9% 0%, rgba(229, 120, 82,.24), transparent 36%), linear-gradient(115deg,#181B20,#292D32); }
+.home-body .fz-bottom-cta__inner { background:var(--fz-paper); }
 .home-body .fz-category-card__art,
 .home-body .fz-product-card__media,
 .home-body .fz-hero-empty { background-image: radial-gradient(circle at 78% 10%, rgba(240, 181, 104,.28), transparent 48%), linear-gradient(145deg,#FFFFFF,#E2E2E3 60%,#F4F6F8); }
