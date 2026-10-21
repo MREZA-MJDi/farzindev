@@ -2444,8 +2444,10 @@ footer a:hover { color: var(--livora-sage) !important; }
 .storefront-content .farzin-product-card__title { color: #E6DED1; }
 .storefront-content .farzin-product-card:hover .farzin-product-card__title,
 .storefront-content .farzin-product-card:focus-within .farzin-product-card__title { color: #C29A72; }
-.storefront-content .farzin-site-footer { background: #11110F !important; color: #E6DED1 !important; border-color: #39362F !important; }
-.storefront-content .farzin-site-footer a:hover { color: #D0B08B !important; }
+/* Footer lives beside main in layouts.app, so scope it from #app, not main. */
+#app .farzin-site-footer { background: #11110F !important; color: #E6DED1 !important; border-color: #39362F !important; }
+#app .farzin-site-footer [class~="text-[var(--livora-cream)]"] { color: #E6DED1 !important; }
+#app .farzin-site-footer a:hover { color: #D0B08B !important; }
 #app > nav.sticky { background: rgba(20,19,16,.96) !important; color: #E6DED1; border-color: #39362F !important; backdrop-filter: blur(12px); }
 #app > nav.sticky a, #app > nav.sticky button { color: inherit; }
 
