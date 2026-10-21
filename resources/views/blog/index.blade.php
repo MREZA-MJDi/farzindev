@@ -42,14 +42,14 @@
                     </p>
                 </div>
                 <div class="mt-12 flex flex-wrap gap-3">
-                    <a href="#articles" class="inline-flex items-center rounded-2xl bg-white px-5 py-3.5 text-sm font-semibold text-[var(--livora-ink)] transition hover:bg-[#d6dfe0]">خواندن راهنماها <span class="mr-2">↓</span></a>
+                    <a href="#articles" class="inline-flex items-center rounded-2xl bg-[var(--livora-white)] px-5 py-3.5 text-sm font-semibold text-[var(--livora-text)] transition hover:bg-[#d6dfe0]">خواندن راهنماها <span class="mr-2">↓</span></a>
                     <a href="{{ route('categories.index') }}" class="inline-flex items-center rounded-2xl border border-white/20 px-5 py-3.5 text-sm font-medium text-white transition hover:border-white/60 hover:text-white">مشاهده محصولات</a>
                 </div>
             </div>
         </x-layout.container>
     </section>
 
-    <section id="articles" class="border-b border-[var(--livora-border)] bg-white">
+    <section id="articles" class="border-b border-[var(--livora-border)] bg-[var(--livora-white)]">
         <x-layout.container>
             <div class="flex flex-col gap-4 py-12 sm:flex-row sm:items-end sm:justify-between sm:py-16">
                 <div>
@@ -62,7 +62,7 @@
             <div class="grid gap-5 pb-14 sm:grid-cols-2 lg:grid-cols-3 lg:pb-20">
                 <a href="#hood-guide" class="group flex flex-col rounded-[1.75rem] border border-[var(--livora-border)] bg-[var(--livora-cream)] p-6 transition duration-300 hover:-translate-y-1 hover:border-[var(--livora-accent)] hover:shadow-[var(--livora-shadow-md)] sm:p-7">
                     <div class="flex items-center justify-between">
-                        <span class="rounded-full bg-[var(--livora-surface)] px-3 py-1.5 text-[10px] font-semibold text-[var(--livora-ink)]">هود آشپزخانه</span>
+                        <span class="rounded-full bg-[var(--livora-surface)] px-3 py-1.5 text-[10px] font-semibold text-[var(--livora-text)]">هود آشپزخانه</span>
                         <span class="text-xs text-[var(--livora-stone)]">راهنمای ۰۱</span>
                     </div>
                     <div class="mt-8 flex h-28 items-end overflow-hidden rounded-2xl bg-gradient-to-br from-[#111416] via-[#354247] to-[#8b9b9f] p-5">
@@ -75,7 +75,7 @@
 
                 <a href="#sink-guide" class="group flex flex-col rounded-[1.75rem] border border-[var(--livora-border)] bg-[var(--livora-cream)] p-6 transition duration-300 hover:-translate-y-1 hover:border-[var(--livora-accent)] hover:shadow-[var(--livora-shadow-md)] sm:p-7">
                     <div class="flex items-center justify-between">
-                        <span class="rounded-full bg-[var(--livora-surface)] px-3 py-1.5 text-[10px] font-semibold text-[var(--livora-ink)]">سینک ظرفشویی</span>
+                        <span class="rounded-full bg-[var(--livora-surface)] px-3 py-1.5 text-[10px] font-semibold text-[var(--livora-text)]">سینک ظرفشویی</span>
                         <span class="text-xs text-[var(--livora-stone)]">راهنمای ۰۲</span>
                     </div>
                     <div class="mt-8 flex h-28 items-end overflow-hidden rounded-2xl bg-gradient-to-br from-[#202629] via-[#59666a] to-[#a9bdc0] p-5">
@@ -88,7 +88,7 @@
 
                 <a href="#measure-guide" class="group flex flex-col rounded-[1.75rem] border border-[var(--livora-border)] bg-[var(--livora-cream)] p-6 transition duration-300 hover:-translate-y-1 hover:border-[var(--livora-accent)] hover:shadow-[var(--livora-shadow-md)] sm:p-7">
                     <div class="flex items-center justify-between">
-                        <span class="rounded-full bg-[var(--livora-surface)] px-3 py-1.5 text-[10px] font-semibold text-[var(--livora-ink)]">قبل از سفارش</span>
+                        <span class="rounded-full bg-[var(--livora-surface)] px-3 py-1.5 text-[10px] font-semibold text-[var(--livora-text)]">قبل از سفارش</span>
                         <span class="text-xs text-[var(--livora-stone)]">راهنمای ۰۳</span>
                     </div>
                     <div class="mt-8 flex h-28 items-end overflow-hidden rounded-2xl bg-gradient-to-br from-[#111416] via-[#38474b] to-[#a9bdc0] p-5">
@@ -105,7 +105,7 @@
     <section class="py-14 sm:py-20">
         <x-layout.container>
             <div class="mx-auto max-w-4xl space-y-6">
-                <article id="hood-guide" class="scroll-mt-28 rounded-[1.75rem] border border-[var(--livora-border)] bg-white p-6 sm:p-9">
+                <article id="hood-guide" class="scroll-mt-28 rounded-[1.75rem] border border-[var(--livora-border)] bg-[var(--livora-white)] p-6 sm:p-9">
                     <p class="text-[10px] font-semibold uppercase tracking-[0.2em] text-[var(--livora-accent)]">GUIDE 01 / HOODS</p>
                     <h2 class="mt-3 text-2xl font-semibold sm:text-3xl">قبل از خرید هود آشپزخانه چه چیزهایی را بررسی کنیم؟</h2>
                     <div class="mt-5 space-y-4 text-sm leading-8 text-[var(--livora-stone)]">
@@ -113,10 +113,10 @@
                         <p>سپس نوع نصب و مسیر خروج هوا را بررسی کنید. بسته به مدل، امکان نصب، نیاز به کانال و شرایط کابینت متفاوت است. اگر آشپزخانه آماده است یا مسیر خروج هوا محدودیت دارد، قبل از سفارش با نصاب مشورت کنید.</p>
                         <p>میزان صدا، نوع فیلتر، روش نظافت، امکانات کنترلی، گارانتی و خدمات پس از فروش هم در استفاده روزمره مهم‌اند. اعداد و ادعاهای عملکردی را از مشخصات رسمی همان محصول بررسی کنید.</p>
                     </div>
-                    <a href="{{ route('categories.show', 'hoods') }}" class="mt-6 inline-flex text-sm font-semibold text-[var(--livora-accent)] hover:text-[var(--livora-ink)]">دیدن هودهای آشپزخانه <span class="mr-2">←</span></a>
+                    <a href="{{ route('categories.show', 'hoods') }}" class="mt-6 inline-flex text-sm font-semibold text-[var(--livora-accent)] hover:text-[var(--livora-text)]">دیدن هودهای آشپزخانه <span class="mr-2">←</span></a>
                 </article>
 
-                <article id="sink-guide" class="scroll-mt-28 rounded-[1.75rem] border border-[var(--livora-border)] bg-white p-6 sm:p-9">
+                <article id="sink-guide" class="scroll-mt-28 rounded-[1.75rem] border border-[var(--livora-border)] bg-[var(--livora-white)] p-6 sm:p-9">
                     <p class="text-[10px] font-semibold uppercase tracking-[0.2em] text-[var(--livora-accent)]">GUIDE 02 / SINKS</p>
                     <h2 class="mt-3 text-2xl font-semibold sm:text-3xl">چطور سینک ظرفشویی مناسب انتخاب کنیم؟</h2>
                     <div class="mt-5 space-y-4 text-sm leading-8 text-[var(--livora-stone)]">
@@ -124,10 +124,10 @@
                         <p>جنس و پرداخت سطح، تعداد و عمق لگن‌ها، محل سینی، جهت نصب، سازگاری با شیرآلات و فضای موردنیاز برای اتصالات را با عادت‌های روزانه خود بسنجید. در آشپزخانه کوچک، فضای کاری و مسیر حرکت نیز اهمیت دارد.</p>
                         <p>روش نظافت پیشنهادی سازنده و شرایط گارانتی را بخوانید. برای جلوگیری از اشتباه در نصب، ابعاد دقیق و اقلام همراه را از صفحه محصول یا راهنمای رسمی آن کنترل کنید.</p>
                     </div>
-                    <a href="{{ route('categories.show', 'sinks') }}" class="mt-6 inline-flex text-sm font-semibold text-[var(--livora-accent)] hover:text-[var(--livora-ink)]">دیدن سینک‌های ظرفشویی <span class="mr-2">←</span></a>
+                    <a href="{{ route('categories.show', 'sinks') }}" class="mt-6 inline-flex text-sm font-semibold text-[var(--livora-accent)] hover:text-[var(--livora-text)]">دیدن سینک‌های ظرفشویی <span class="mr-2">←</span></a>
                 </article>
 
-                <article id="measure-guide" class="scroll-mt-28 rounded-[1.75rem] border border-[var(--livora-border)] bg-white p-6 sm:p-9">
+                <article id="measure-guide" class="scroll-mt-28 rounded-[1.75rem] border border-[var(--livora-border)] bg-[var(--livora-white)] p-6 sm:p-9">
                     <p class="text-[10px] font-semibold uppercase tracking-[0.2em] text-[var(--livora-accent)]">GUIDE 03 / CHECKLIST</p>
                     <h2 class="mt-3 text-2xl font-semibold sm:text-3xl">چک‌لیست ساده پیش از ثبت سفارش</h2>
                     <ul class="mt-5 space-y-3 text-sm leading-8 text-[var(--livora-stone)]">
@@ -153,7 +153,7 @@
                 </div>
                 <div class="flex flex-wrap gap-3">
                     <a href="{{ route('categories.index') }}" class="inline-flex items-center rounded-2xl bg-[var(--livora-accent)] px-5 py-3.5 text-sm font-semibold text-white transition hover:bg-[var(--livora-accent-dark)]">مشاهده دسته‌بندی‌ها</a>
-                    <a href="{{ route('contact') }}" class="inline-flex items-center rounded-2xl border border-[var(--livora-border-dark)] bg-white px-5 py-3.5 text-sm font-semibold text-[var(--livora-ink)] transition hover:border-[var(--livora-accent)]">مشاوره و تماس</a>
+                    <a href="{{ route('contact') }}" class="inline-flex items-center rounded-2xl border border-[var(--livora-border-dark)] bg-[var(--livora-white)] px-5 py-3.5 text-sm font-semibold text-[var(--livora-text)] transition hover:border-[var(--livora-accent)]">مشاوره و تماس</a>
                 </div>
             </div>
         </x-layout.container>

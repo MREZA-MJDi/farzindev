@@ -20,7 +20,7 @@
                             عضویت در فرزین
                         </p>
 
-                        <h1 class="mt-3 text-3xl font-semibold text-[var(--livora-ink)]">
+                        <h1 class="mt-3 text-3xl font-semibold text-[var(--livora-text)]">
                             ایجاد حساب
                         </h1>
 
