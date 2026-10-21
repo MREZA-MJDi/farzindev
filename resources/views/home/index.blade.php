@@ -97,12 +97,16 @@
                     </div>
                     <div class="fz-category-grid">
                         @foreach($categories as $category)
-                            <a class="fz-category-card fz-reveal" href="{{ route('categories.show', $category) }}">
+                            <a class="fz-category-card fz-reveal" href="{{ route('categories.show', $category) }}" @if($category->hoverMedia?->url) data-farzin-gif-card @endif>
                                 <span class="fz-category-card__art">
                                     @if($category->homepage_image_url)
-                                        <img src="{{ $category->homepage_image_url }}" alt="" width="640" height="480" loading="lazy" decoding="async">
+                                        <img class="fz-category-card__image" src="{{ $category->homepage_image_url }}" alt="" width="640" height="480" loading="lazy" decoding="async">
                                     @else
                                         <span class="fz-category-card__monogram">{{ $category->slug === 'sinks' ? 'S' : 'H' }}</span>
+                                    @endif
+                                    @if($category->hoverMedia?->url)
+                                        <img data-farzin-category-gif data-farzin-gif-src="{{ $category->hoverMedia->url }}" class="fz-category-card__gif" alt="" aria-hidden="true" loading="lazy" decoding="async">
+                                        <span class="fz-category-card__preview-label" aria-hidden="true">PREVIEW · 5 SEC</span>
                                     @endif
                                     <span class="fz-category-card__arrow" aria-hidden="true">↗</span>
                                 </span>
