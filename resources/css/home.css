@@ -364,6 +364,33 @@ body.home-body {
 .fz-category-card__monogram { position:absolute; inset:0; display:grid; place-items:center; color:rgba( 162, 162, 162, .5); font-size:clamp(4rem,10vw,8rem); font-weight:900; }
 .fz-category-card__arrow { position:absolute; top:.9rem; left:.9rem; display:grid; place-items:center; width:36px; height:36px; color:#FFFFFF; background:rgba( 21, 21, 21, .9); border:1px solid rgba( 223, 223, 223, .14); border-radius:50%; font-size:1rem; }
 .fz-category-card__content { display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:.7rem; padding:1.05rem 1.15rem 1.2rem; }
+.fz-category-card__preview-label {
+    position: absolute;
+    z-index: 3;
+    inset-inline-start: 1rem;
+    inset-block-end: 1rem;
+    padding: .4rem .62rem;
+    border: 1px solid rgba(255,255,255,.22);
+    border-radius: 999px;
+    color: rgba(255,255,255,.94);
+    background: rgba(8,9,11,.72);
+    font-size: .55rem;
+    font-weight: 700;
+    letter-spacing: .1em;
+    line-height: 1.4;
+    opacity: 0;
+    transform: translateY(4px);
+    pointer-events: none;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    transition: opacity .2s ease, transform .2s ease;
+}
+.fz-category-card:hover .fz-category-card__preview-label,
+.fz-category-card:focus-visible .fz-category-card__preview-label,
+.fz-category-card.is-gif-previewing .fz-category-card__preview-label {
+    opacity: 1;
+    transform: translateY(0);
+}
 .fz-category-card__content strong { font-size:.95rem; font-weight:850; }
 .fz-category-card__content small { color:var(--fz-muted); font-size:.68rem; }
 
@@ -557,10 +584,13 @@ body.home-body {
     .qv__body { padding:1.1rem; }
 }
 @media (max-width: 479px) {
-    .fz-category-grid { grid-template-columns:1fr; }
-    .fz-category-card { display:grid; grid-template-columns:.9fr 1fr; align-items:stretch; }
-    .fz-category-card__art { height:150px; }
-    .fz-category-card__content { justify-content:center; padding:.9rem; }
+    .fz-category-grid { grid-template-columns:1fr; gap: .9rem; }
+    .fz-category-card { display:block; }
+    .fz-category-card__art { height:clamp(220px, 62vw, 330px); }
+    .fz-category-card__content { align-items:center; flex-direction:row; justify-content:space-between; gap:.8rem; padding:1rem 1.05rem 1.1rem; }
+    .fz-category-card__content strong { font-size:.95rem; }
+    .fz-category-card__content small { font-size:.68rem; }
+    .fz-category-card__preview-label { opacity:1; transform:none; }
     .fz-footer__main { gap:1.5rem 1rem; }
 }
 
