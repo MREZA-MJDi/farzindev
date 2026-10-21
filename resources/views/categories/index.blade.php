@@ -9,32 +9,7 @@
 
 @section('canonical', route('categories.index'))
 
-@push('seo')
-    <meta
-        name="robots"
-        content="index,follow"
-    >
 
-    <meta
-        property="og:type"
-        content="website"
-    >
-
-    <meta
-        property="og:title"
-        content="دسته‌بندی هود و سینک | فرزین"
-    >
-
-    <meta
-        property="og:description"
-        content="دسته‌بندی‌های هود آشپزخانه و سینک ظرفشویی فرزین."
-    >
-
-    <meta
-        property="og:url"
-        content="{{ route('categories.index') }}"
-    >
-@endpush
 
 @section('content')
 
