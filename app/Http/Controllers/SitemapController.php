@@ -1,12 +1,12 @@
 <?php
 
-namespace App\\Http\\Controllers;
+namespace App\Http\Controllers;
 
-use App\\Models\\Category;
-use App\\Models\\Product;
-use App\\Services\\Seo\\SeoSettings;
-use Illuminate\\Http\\Response;
-use Illuminate\\Support\\Facades\\Cache;
+use App\Models\Category;
+use App\Models\Product;
+use App\Services\Seo\SeoSettings;
+use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Cache;
 
 class SitemapController extends Controller
 {
