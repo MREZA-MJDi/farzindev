@@ -7,7 +7,7 @@
     x-transition:leave="transition ease-in duration-200"
     x-transition:leave-start="opacity-100"
     x-transition:leave-end="opacity-0"
-    class="fixed inset-0 z-[110]"
+    class="fixed inset-0 z-[110] overflow-y-auto overscroll-contain"
 >
 
     {{-- Backdrop --}}
@@ -28,7 +28,7 @@
         x-transition:leave="transition ease-in duration-200"
         x-transition:leave-start="translate-y-0 opacity-100"
         x-transition:leave-end="-translate-y-4 opacity-0"
-        class="relative mx-auto w-full max-w-4xl overflow-hidden rounded-b-[2rem] bg-[var(--livora-cream)] shadow-2xl"
+        class="relative mx-auto max-h-[100dvh] w-full max-w-4xl overflow-y-auto overscroll-contain rounded-b-[2rem] bg-[var(--livora-cream)] shadow-2xl"
     >
 
         {{-- Header --}}
@@ -36,7 +36,7 @@
 
             <x-layout.container>
 
-                <div class="flex h-[76px] items-center justify-between gap-4">
+                <div class="flex min-h-[76px] items-center justify-between gap-4 py-3">
 
                     <div>
 
@@ -84,7 +84,7 @@
         {{-- Search Form --}}
         <x-layout.container>
 
-            <div class="py-7 sm:py-9">
+            <div class="px-0 py-5 sm:py-9">
 
                 @php
                     $searchResetQuery = request()->except(['search', 'page']);
@@ -132,7 +132,7 @@
                         x-model="searchValue"
                         autocomplete="off"
                         placeholder="مثلاً: مبل راحتی، میز ناهارخوری، مبل چستر..."
-                        class="w-full rounded-[1.5rem] border border-[var(--livora-border)] bg-[var(--livora-white)] px-14 py-5 text-sm text-[var(--livora-ink)] outline-none transition placeholder:text-[var(--livora-stone)] focus:border-[var(--livora-ink)]"
+                        class="w-full min-w-0 rounded-[1.25rem] border border-[var(--livora-border)] bg-[var(--livora-white)] px-12 py-4 text-base text-[var(--livora-ink)] outline-none transition placeholder:text-[var(--livora-stone)] focus:border-[var(--livora-ink)] sm:rounded-[1.5rem] sm:py-5 sm:text-sm"
                     >
 
                     <svg
@@ -150,7 +150,7 @@
                         />
                     </svg>
 
-                    <div class="absolute left-2 top-1/2 flex -translate-y-1/2 items-center gap-2">
+                    <div class="absolute left-2 top-1/2 flex -translate-y-1/2 items-center gap-1.5 sm:gap-2">
                         <a
                             href="{{ $searchResetUrl }}"
                             x-show="searchValue.length > 0"
@@ -178,7 +178,7 @@
 
                         <button
                             type="submit"
-                            class="rounded-2xl bg-[var(--livora-ink)] px-5 py-3 text-xs font-medium text-white transition hover:bg-[var(--livora-accent)]"
+                            class="min-h-10 rounded-xl bg-[var(--livora-ink)] px-4 py-2.5 text-xs font-medium text-white transition hover:bg-[var(--livora-accent)] sm:rounded-2xl sm:px-5 sm:py-3"
                         >
                             جستجو
                         </button>
