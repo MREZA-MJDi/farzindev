@@ -179,14 +179,7 @@
                     type="button"
                     aria-label="جستجو"
                     :aria-expanded="searchOpen.toString()"
-                    @click="
-                        mobileOpen = false;
-                        searchOpen = true;
-
-                        $nextTick(() => {
-                            document.getElementById('global-search')?.focus();
-                        });
-                    "
+                    @click="openSearch($event.currentTarget)"
                     class="group hidden h-10 w-10 items-center justify-center rounded-full text-[var(--livora-text)] transition duration-300 hover:bg-[var(--livora-white)] lg:flex xl:hidden"
                 >
                     <svg
