@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - 'feat/*'
       - fix/farzin-runtime-audit-2026-10-21
       - feature/farzin-storefront-rebrand
       - fix/farzin-home-production-2026-10-20
@@ -12,6 +13,7 @@ on:
   pull_request:
     branches:
       - main
+      - 'feat/*'
 
 permissions:
   contents: read
