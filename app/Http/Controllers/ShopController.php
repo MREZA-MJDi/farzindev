@@ -24,7 +24,11 @@ class ShopController extends Controller
         $query = Product::query()
             ->with([
                 'category',
-                'images.media',
+                // Product cards only render the first image; avoid loading full galleries for 12 rows.
+                'images' => fn ($query) => $query
+                    ->select(['id', 'product_id', 'media_id', 'path', 'alt', 'sort_order', 'is_primary'])
+                    ->limit(1),
+                'images.media:id,path',
             ])
             ->active()
             ->whereHas('category', fn ($categoryQuery) => $categoryQuery

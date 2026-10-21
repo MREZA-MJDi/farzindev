@@ -25,7 +25,11 @@ class ProductController extends Controller
             ->active()
             ->with([
                 'category',
-                'images.media',
+                // Related-product cards only render one image; keep the main product gallery complete.
+                'images' => fn ($query) => $query
+                    ->select(['id', 'product_id', 'media_id', 'path', 'alt', 'sort_order', 'is_primary'])
+                    ->limit(1),
+                'images.media:id,path',
             ])
             ->where('id', '!=', $product->id)
             ->where('category_id', $product->category_id)
