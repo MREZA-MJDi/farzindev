@@ -54,7 +54,7 @@
                         type="button"
                         aria-label="بستن جستجو"
                         @click="searchOpen = false"
-                        class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-[var(--livora-ink)] transition hover:bg-[var(--livora-surface)]"
+                        class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-[var(--livora-text)] transition hover:bg-[var(--livora-surface)]"
                     >
 
                         <svg
@@ -132,7 +132,7 @@
                         x-model="searchValue"
                         autocomplete="off"
                         placeholder="مثلاً: هود مخفی، هود مورب، سینک گرانیتی..."
-                        class="w-full rounded-[1.5rem] border border-[var(--livora-border)] bg-[var(--livora-white)] px-14 py-5 text-sm text-[var(--livora-ink)] outline-none transition placeholder:text-[var(--livora-stone)] focus:border-[var(--livora-ink)]"
+                        class="w-full rounded-[1.5rem] border border-[var(--livora-border)] bg-[var(--livora-white)] px-14 py-5 text-sm text-[var(--livora-text)] outline-none transition placeholder:text-[var(--livora-stone)] focus:border-[var(--livora-ink)]"
                     >
 
                     <svg
@@ -157,7 +157,7 @@
                             x-cloak
                             aria-label="پاک کردن جستجو"
                             title="پاک کردن جستجو"
-                            class="flex h-10 w-10 items-center justify-center rounded-xl text-[var(--livora-stone)] transition hover:bg-[var(--livora-surface)] hover:text-[var(--livora-ink)]"
+                            class="flex h-10 w-10 items-center justify-center rounded-xl text-[var(--livora-stone)] transition hover:bg-[var(--livora-surface)] hover:text-[var(--livora-text)]"
                             @click="searchValue = ''"
                         >
                             <svg
@@ -313,7 +313,7 @@
                         <a
                             href="{{ route('shop.index') }}"
                             @click="searchOpen = false"
-                            class="inline-flex w-fit shrink-0 rounded-2xl bg-white px-5 py-3 text-xs font-medium text-[var(--livora-ink)] transition hover:bg-[var(--livora-cream)]"
+                            class="inline-flex w-fit shrink-0 rounded-2xl bg-[var(--livora-white)] px-5 py-3 text-xs font-medium text-[var(--livora-text)] transition hover:bg-[var(--livora-cream)]"
                         >
                             مشاهده فروشگاه
                         </a>
