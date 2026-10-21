@@ -344,8 +344,10 @@ function showCartMessage(form, text, isError = false) {
 function animateProductToCart(sourceImage, cartTarget) {
     if (!cartTarget) return;
 
-    // Reduced-motion users still get the cart update, without the flying clone.
-    if (reduceMotion || !sourceImage) {
+    // The cart count and status update without decorative motion when requested.
+    if (reduceMotion) return;
+
+    if (!sourceImage) {
         gsap.fromTo(cartTarget, { scale: 1 }, {
             scale: 1.08,
             duration: 0.14,
