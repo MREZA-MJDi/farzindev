@@ -190,7 +190,7 @@ class CategoryController extends Controller
 
     /**
      * Remove the specified category.
-    
+     */
     public function destroy(Category $category): RedirectResponse
     {
         // Soft-deleted products still reference this category through
