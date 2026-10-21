@@ -416,3 +416,22 @@ body { min-width: 320px; max-width: 100%; overflow-x: clip; }
     }
 }
 
+
+
+/* Shop catalog product images should use the available card area more fully.
+   Keep contain so hoods and sinks remain uncropped; only reduce inset and scale up. */
+.farzin-shop-catalog .farzin-product-card__image {
+    padding: .1rem;
+    transform: scale(1.06);
+}
+
+.farzin-shop-catalog .farzin-product-card:hover .farzin-product-card__image,
+.farzin-shop-catalog .farzin-product-card:focus-within .farzin-product-card__image {
+    transform: scale(1.1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .farzin-shop-catalog .farzin-product-card__image {
+        transform: none;
+    }
+}
