@@ -44,26 +44,7 @@ body.home-body {
 .fz-skip-link { position: fixed; z-index: 3000; inset-block-start: 10px; inset-inline-start: 10px; padding: .75rem 1rem; color:#fff!important; background:var(--fz-accent-dark); border-radius:.75rem; transform:translateY(-150%); }
 .fz-skip-link:focus { transform: translateY(0); }
 
-/* Shared site navbar is styled to meet the architectural hero below. */
-/* Home uses the shared navbar, tuned to meet the black architectural hero. */
-.home-body #app > nav {
-    background: rgba(5,5,5,.97) !important;
-    border-color: rgba(255,255,255,.13) !important;
-}
-.home-body #app > nav a {
-    color: #F5F5F2 !important;
-}
-.home-body #app > nav .farzin-wordmark__main {
-    color: #F5F5F2 !important;
-    -webkit-text-fill-color: #F5F5F2;
-    background: none !important;
-}
-/* The shared mobile menu and search sit on dark surfaces; text inherits pearl,
-   while explicit muted/accent utility classes continue to work as intended. */
-.home-body [data-farzin-mobile-menu-panel],
-.home-body [data-farzin-search-panel] {
-    color: var(--livora-text);
-}
+/* Navbar and footer visuals are owned by the shared layout components in app.css. */
 
 /* Scroll-bound architectural hero: native scroll drives drawing progress. */
 .fz-hero {
@@ -456,21 +437,6 @@ body.home-body {
 .fz-bottom-cta__inner { display:flex; align-items:center; justify-content:space-between; gap:2rem; padding:clamp(1.5rem,4vw,3.2rem); border:1px solid var(--fz-line); border-radius:1rem; background:#FFFFFF; box-shadow:0 10px 34px rgba(35,32,27,.035); }
 .fz-bottom-cta__inner h2 { max-width:680px; font-size:clamp(1.55rem,2.7vw,2.55rem); }
 .fz-bottom-cta__inner .fz-hero__actions { margin-top:0; flex:0 0 auto; }
-.fz-footer { color:#272722; background:#EEECE6; border-top:1px solid #DEDAD2; }
-.fz-footer__main { display:grid; grid-template-columns:1.15fr .7fr .7fr 1fr; gap:clamp(1.5rem,4vw,4rem); padding-block:clamp(2.75rem,5vw,4.5rem); }
-.fz-brand--footer .fz-brand__text strong { color:#24241F; }
-.fz-brand--footer .fz-brand__text small { color:#77756F; }
-.fz-footer__brand p { max-width:320px; margin:1rem 0 0; color:#77756F; font-size:.75rem; line-height:2; }
-.fz-footer__column, .fz-footer__contact { display:flex; flex-direction:column; align-items:flex-start; gap:.65rem; }
-.fz-footer__column>strong, .fz-footer__contact>strong { margin-bottom:.3rem; color:#55534D; font-size:.75rem; font-weight:700; }
-.fz-footer__column a { color:#66645E; font-size:.74rem; transition:color .2s ease,transform .2s ease; }
-.fz-footer__column a:hover { color:#111111; transform:translateX(-2px); }
-.fz-footer__contact p { margin:0; color:#77756F; font-size:.73rem; line-height:1.95; }
-.fz-footer__contact-link { display:flex; align-items:center; gap:.6rem; margin-top:.2rem; color:#20201D!important; font-size:.76rem; font-weight:750; }
-.fz-footer__contact-link span { color:#77756F; }
-.fz-footer__bottom { display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:.8rem 1.5rem; min-height:58px; border-top:1px solid rgba(70, 65, 57, .12); color:#88857D; font-size:.65rem; }
-.fz-footer__bottom a { color:#55534D!important; }
-
 /* Quick view dialog and concise feedback */
 .unbutton { padding:0; border:0; background:none; }
 .qv { position:fixed; z-index:2000; inset:0; display:grid; place-items:center; padding:1rem; visibility:hidden; opacity:0; transition:opacity .22s ease,visibility .22s ease; }
