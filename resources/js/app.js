@@ -1,5 +1,4 @@
 import './bootstrap';
-import './admin-image-editor.js';
 import Alpine from 'alpinejs';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
@@ -47,6 +46,13 @@ Alpine.data('adminQuickSearch', () => ({
 }));
 
 Alpine.start();
+
+// Load the crop editor only on admin forms that actually render it.
+if (document.querySelector('[data-image-editor-input]')) {
+    import('./admin-image-editor.js').catch((error) => {
+        console.error('Unable to load the admin image editor.', error);
+    });
+}
 
 /**
  * Variant-backed products own stock at option level. Once one option from
