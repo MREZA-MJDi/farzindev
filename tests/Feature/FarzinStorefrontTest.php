@@ -70,6 +70,50 @@ class FarzinStorefrontTest extends TestCase
             ->assertDontSee('PREVIEW · 5 SEC');
     }
 
+    public function test_homepage_renders_category_video_and_gif_with_the_correct_media_elements(): void
+    {
+        $videoCategory = $this->category([
+            'name' => 'هود با پیش‌نمایش ویدیویی',
+            'slug' => 'video-preview-hoods',
+            'sort_order' => 1,
+        ]);
+        $video = \App\Models\Media::create([
+            'disk' => 'public',
+            'path' => 'media/hood-preview.mp4',
+            'filename' => 'hood-preview.mp4',
+            'original_name' => 'hood-preview.mp4',
+            'mime_type' => 'video/mp4',
+            'extension' => 'mp4',
+            'size' => 1024,
+        ]);
+        $videoCategory->update(['hover_media_id' => $video->id]);
+
+        $gifCategory = $this->category([
+            'name' => 'سینک با پیش‌نمایش GIF',
+            'slug' => 'gif-preview-sinks',
+            'sort_order' => 2,
+        ]);
+        $gif = \App\Models\Media::create([
+            'disk' => 'public',
+            'path' => 'media/sink-preview.gif',
+            'filename' => 'sink-preview.gif',
+            'original_name' => 'sink-preview.gif',
+            'mime_type' => 'image/gif',
+            'extension' => 'gif',
+            'size' => 1024,
+        ]);
+        $gifCategory->update(['hover_media_id' => $gif->id]);
+
+        $this->get(route('home'))
+            ->assertOk()
+            ->assertSee('data-farzin-gif-card', false)
+            ->assertSee('data-farzin-category-video', false)
+            ->assertSee('data-farzin-video-src=', false)
+            ->assertSee('playsinline', false)
+            ->assertSee('data-farzin-category-gif', false)
+            ->assertDontSee('PREVIEW · 5 SEC');
+    }
+
     public function test_homepage_lists_active_products_even_without_uploaded_images(): void
     {
         $category = $this->category();
