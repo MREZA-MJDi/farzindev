@@ -15,7 +15,7 @@
                 </h1>
 
                 <p class="mt-1 text-sm text-[var(--admin-text-soft)]">
-                    تصاویر و فایل‌های عمومی سایت را مدیریت کنید.
+                    تصاویر، GIFها، ویدیوهای کوتاه و فایل‌های عمومی سایت را مدیریت کنید.
                 </p>
             </div>
 
@@ -96,7 +96,16 @@
                         {{-- Preview --}}
                         <div class="aspect-square overflow-hidden bg-[var(--admin-bg)]">
 
-                            @if($item->is_image)
+                            @if($item->is_video)
+
+                                <video
+                                    src="{{ $item->url }}"
+                                    class="h-full w-full bg-[var(--admin-surface)] object-contain"
+                                    controls muted playsinline preload="metadata"
+                                    aria-label="پیش‌نمایش {{ $item->original_name }}"
+                                ></video>
+
+                            @elseif($item->is_image)
 
                                 <img
                                     src="{{ $item->url }}"
@@ -275,7 +284,7 @@
                 </h3>
 
                 <p class="mt-1 text-xs text-[var(--admin-text-soft)]">
-                    اولین تصویر یا فایل خود را به کتابخانه رسانه اضافه کنید.
+                    اولین تصویر، ویدیو یا فایل خود را به کتابخانه رسانه اضافه کنید.
                 </p>
 
                 <a

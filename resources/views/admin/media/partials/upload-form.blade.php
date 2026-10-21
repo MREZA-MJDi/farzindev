@@ -47,11 +47,11 @@
             </h3>
 
             <p class="mt-1 text-xs text-[var(--admin-text-soft)]">
-                JPG، JPEG، PNG، WEBP، GIF و فایل‌های سند مجاز
+                JPG، PNG، WEBP، GIF، MP4، WEBM و فایل‌های سند منتخب
             </p>
 
             <p class="mt-1 text-[10px] text-[var(--admin-muted)]">
-                حداکثر ۲۰ مگابایت؛ GIF حداکثر ۱۰ مگابایت
+                تصاویر و اسناد: ۲۰MB · GIF: ۱۰MB · ویدیو: ۳۰MB
             </p>
 
 
@@ -68,7 +68,7 @@
                 name="file"
                 type="file"
                 class="hidden"
-                accept=".jpg,.jpeg,.png,.webp,.gif,.pdf,.doc,.docx,.xls,.xlsx,.zip"
+                accept=".jpg,.jpeg,.png,.webp,.gif,.mp4,.webm,.pdf,.doc,.docx,.xls,.xlsx,.zip"
                 required
             >
 

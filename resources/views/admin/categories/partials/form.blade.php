@@ -269,22 +269,22 @@
         <div class="admin-card p-6">
             <div class="mb-5">
                 <h3 class="text-base font-bold text-[var(--admin-text)]">پیش‌نمایش متحرک</h3>
-                <p class="mt-1 text-xs leading-6 text-[var(--admin-muted)]">GIF را از کتابخانه رسانه انتخاب کن. هنگام hover یا لمس، فقط ۵ ثانیه نمایش داده می‌شود.</p>
+                <p class="mt-1 text-xs leading-6 text-[var(--admin-muted)]">یک GIF سبک یا کلیپ MP4/WEBM را از کتابخانه انتخاب کن. فقط هنگام hover یا لمس بارگذاری و حداکثر ۵ ثانیه پخش می‌شود.</p>
             </div>
-            <label for="hover_media_id" class="admin-label">GIF دسته‌بندی</label>
+            <label for="hover_media_id" class="admin-label">GIF یا ویدیوی کوتاه</label>
             <select id="hover_media_id" name="hover_media_id" class="admin-input">
                 <option value="">بدون پیش‌نمایش متحرک</option>
-                @foreach(($gifMedia ?? collect()) as $gif)
-                    <option value="{{ $gif->id }}" @selected((string) old('hover_media_id', $category->hover_media_id ?? '') === (string) $gif->id)>
-                        {{ $gif->original_name }} ({{ number_format($gif->size / 1024 / 1024, 1) }} MB)
+                @foreach(($motionMedia ?? collect()) as $media)
+                    <option value="{{ $media->id }}" @selected((string) old('hover_media_id', $category->hover_media_id ?? '') === (string) $media->id)>
+                        {{ $media->is_video ? 'ویدیو' : 'GIF' }} · {{ $media->original_name }} ({{ number_format($media->size / 1024 / 1024, 1) }} MB)
                     </option>
                 @endforeach
             </select>
             @error('hover_media_id')
                 <p class="mt-2 text-xs text-[var(--admin-danger)]">{{ $message }}</p>
             @enderror
-            @if(($gifMedia ?? collect())->isEmpty())
-                <p class="mt-2 text-xs leading-6 text-[var(--admin-muted)]">هنوز GIF مناسب ثبت نشده؛ از <a class="font-semibold underline" href="{{ route('admin.media.create') }}">افزودن رسانه</a> یک GIF زیر ۱۰ مگابایت آپلود کن.</p>
+            @if(($motionMedia ?? collect())->isEmpty())
+                <p class="mt-2 text-xs leading-6 text-[var(--admin-muted)]">هنوز GIF یا ویدیوی مناسب ثبت نشده؛ از <a class="font-semibold underline" href="{{ route('admin.media.create') }}">افزودن رسانه</a> یک GIF حداکثر ۱۰ یا ویدیوی MP4/WEBM حداکثر ۳۰ مگابایت آپلود کن.</p>
             @endif
         </div>
 

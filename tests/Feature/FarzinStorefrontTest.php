@@ -1561,6 +1561,28 @@ class FarzinStorefrontTest extends TestCase
         $this->assertDatabaseMissing('media', ['id' => $media->id]);
     }
 
+    public function test_admin_can_upload_mp4_video_for_a_category_preview(): void
+    {
+        Storage::fake('public');
+        $admin = $this->admin();
+
+        $this->actingAs($admin)
+            ->post(route('admin.media.store'), [
+                'file' => UploadedFile::fake()->create('hood-preview.mp4', 1024, 'video/mp4'),
+                'alt' => 'پیش‌نمایش هود',
+                'description' => 'کلیپ کوتاه برای پیش‌نمایش دسته‌بندی',
+            ])
+            ->assertRedirect(route('admin.media.index'))
+            ->assertSessionHas('success');
+
+        $media = \\App\\Models\\Media::query()->firstOrFail();
+
+        Storage::disk('public')->assertExists($media->path);
+        $this->assertSame('video/mp4', $media->mime_type);
+        $this->assertTrue($media->is_video);
+        $this->assertTrue($media->is_animated_preview);
+    }
+
     public function test_admin_can_update_order_status_and_invalid_status_is_rejected(): void
     {
         $admin = $this->admin();
