@@ -312,34 +312,34 @@ class DashboardController extends Controller
     protected function getMonthlyRevenue(\DateTimeInterface $reportingDate): Collection
     {
         return Cache::remember(
-            'admin.dashboard.monthly-revenue.' . $reportingDate->format('Y-m'),
+            'admin.dashboard.monthly-revenue.' . JalaliHelper::format($reportingDate, 'Y-m'),
             now()->addMinute(),
             function () use ($reportingDate): Collection {
                 $months = collect();
 
-        for ($monthsAgo = 5; $monthsAgo >= 0; $monthsAgo--) {
-            [$monthStart, $nextMonthStart] = JalaliHelper::monthRange($reportingDate, $monthsAgo);
+                for ($monthsAgo = 5; $monthsAgo >= 0; $monthsAgo--) {
+                    [$monthStart, $nextMonthStart] = JalaliHelper::monthRange($reportingDate, $monthsAgo);
 
-            $revenue = Order::query()
-                ->where('payment_status', 'paid')
-                ->where('created_at', '>=', $monthStart)
-                ->where('created_at', '<', $nextMonthStart)
-                ->sum('total');
+                    $revenue = Order::query()
+                        ->where('payment_status', 'paid')
+                        ->where('created_at', '>=', $monthStart)
+                        ->where('created_at', '<', $nextMonthStart)
+                        ->sum('total');
 
-            $orders = Order::query()
-                ->where('payment_status', 'paid')
-                ->where('created_at', '>=', $monthStart)
-                ->where('created_at', '<', $nextMonthStart)
-                ->count();
+                    $orders = Order::query()
+                        ->where('payment_status', 'paid')
+                        ->where('created_at', '>=', $monthStart)
+                        ->where('created_at', '<', $nextMonthStart)
+                        ->count();
 
-            $months->push([
-                'key' => JalaliHelper::format($monthStart, 'Y-m'),
-                'label' => JalaliHelper::format($monthStart, 'M'),
-                'full_label' => JalaliHelper::format($monthStart, 'F Y'),
-                'revenue' => (float) $revenue,
-                'orders' => $orders,
-            ]);
-        }
+                    $months->push([
+                        'key' => JalaliHelper::format($monthStart, 'Y-m'),
+                        'label' => JalaliHelper::format($monthStart, 'M'),
+                        'full_label' => JalaliHelper::format($monthStart, 'F Y'),
+                        'revenue' => (float) $revenue,
+                        'orders' => $orders,
+                    ]);
+                }
 
                 return $months;
             }
@@ -355,38 +355,38 @@ class DashboardController extends Controller
             'admin.dashboard.top-products.v1',
             now()->addMinute(),
             fn (): Collection => OrderItem::query()
-            ->with([
-                'product.images.media',
-            ])
-            ->whereHas(
-                'order',
-                fn ($query) => $query->where(
-                    'payment_status',
-                    'paid'
+                ->with([
+                    'product.images.media',
+                ])
+                ->whereHas(
+                    'order',
+                    fn ($query) => $query->where(
+                        'payment_status',
+                        'paid'
+                    )
                 )
-            )
-            ->selectRaw(
-                'product_id,
-                 product_name,
-                 SUM(quantity) as sold_quantity,
-                 SUM(total) as revenue'
-            )
-            ->groupBy(
-                'product_id',
-                'product_name'
-            )
-            ->orderByDesc('sold_quantity')
-            ->limit(5)
-            ->get()
-            ->map(function ($item) {
-                return [
-                    'product_id' => $item->product_id,
-                    'name' => $item->product_name,
-                    'quantity' => (int) $item->sold_quantity,
-                    'revenue' => (float) $item->revenue,
-                    'image' => $item->product?->images?->first()?->url,
-                ];
-            })
+                ->selectRaw(
+                    'product_id,
+                     product_name,
+                     SUM(quantity) as sold_quantity,
+                     SUM(total) as revenue'
+                )
+                ->groupBy(
+                    'product_id',
+                    'product_name'
+                )
+                ->orderByDesc('sold_quantity')
+                ->limit(5)
+                ->get()
+                ->map(function ($item) {
+                    return [
+                        'product_id' => $item->product_id,
+                        'name' => $item->product_name,
+                        'quantity' => (int) $item->sold_quantity,
+                        'revenue' => (float) $item->revenue,
+                        'image' => $item->product?->images?->first()?->url,
+                    ];
+                })
         );
     }
 }
