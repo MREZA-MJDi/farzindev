@@ -130,7 +130,7 @@ class SeoSettings
             'seo_default_description' => 'خرید هود و سینک آشپزخانه از فرزین؛ مشخصات محصولات، مدل‌ها و گزینه‌های موجود را بررسی و مقایسه کنید.',
             'seo_default_keywords' => 'خرید هود آشپزخانه، خرید سینک ظرفشویی، هود فرزین، سینک فرزین، تجهیزات آشپزخانه',
             'seo_default_og_image' => null,
-            'seo_development_mode' => '0',
+            'seo_development_mode' => '1',
             'seo_robots_noindex' => '0',
             'seo_robots_nofollow' => '0',
             'seo_robots_noarchive' => '0',
