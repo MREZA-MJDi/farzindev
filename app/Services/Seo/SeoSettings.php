@@ -87,6 +87,18 @@ class SeoSettings
             $directives[] = 'noimageindex';
         }
 
+        if (! $developmentMode) {
+            if (($settings['seo_robots_nosnippet'] ?? '0') !== '1') {
+                $directives[] = 'max-snippet:-1';
+            }
+
+            $directives[] = 'max-video-preview:-1';
+
+            if (($settings['seo_robots_noimageindex'] ?? '0') !== '1') {
+                $directives[] = 'max-image-preview:large';
+            }
+        }
+
         return implode(', ', $directives);
     }
 
