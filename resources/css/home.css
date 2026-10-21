@@ -44,34 +44,7 @@ body.home-body {
 .fz-skip-link { position: fixed; z-index: 3000; inset-block-start: 10px; inset-inline-start: 10px; padding: .75rem 1rem; color:#fff!important; background:var(--fz-accent-dark); border-radius:.75rem; transform:translateY(-150%); }
 .fz-skip-link:focus { transform: translateY(0); }
 
-/* Dedicated home navigation (not layouts.app). */
-.fz-header { position:sticky; inset-block-start:0; z-index:1000; background:rgba(244, 242, 237, .94); border-bottom:1px solid var(--fz-line); backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px); }
-.fz-header__inner { width:min(1440px,calc(100% - clamp(24px,5vw,72px))); min-height:78px; margin-inline:auto; display:flex; align-items:center; justify-content:space-between; gap:clamp(1rem,2vw,2rem); }
-.fz-brand { display:inline-flex; flex:0 0 auto; align-items:center; gap:.75rem; min-width:max-content; }
-.fz-brand__symbol { display:grid; place-items:center; width:44px; height:44px; border-radius:10px; color:#f1f1f1; background:var(--fz-accent-dark); box-shadow:none; font-size:1.3rem; font-weight:750; }
-.fz-brand__text { display:grid; line-height:1.35; }
-.fz-brand__text strong { font-size:1.15rem; font-weight:800; letter-spacing:-.04em; }
-.fz-brand__text small { margin-top:.12rem; color:var(--fz-muted); font-size:.66rem; }
-.fz-desktop-nav { display:flex; align-items:center; gap:clamp(.75rem,1.65vw,1.6rem); white-space:nowrap; }
-.fz-desktop-nav a { position:relative; padding-block:.7rem; color:var(--fz-muted); font-size:.82rem; transition:color .2s ease; }
-.fz-desktop-nav a::after { content:""; position:absolute; inset-inline:50%; inset-block-end:.15rem; height:2px; background:var(--fz-accent); border-radius:2px; transition:inset-inline .25s var(--fz-motion); }
-.fz-desktop-nav a:hover, .fz-desktop-nav a.is-current { color:var(--fz-text); }
-.fz-desktop-nav a:hover::after, .fz-desktop-nav a.is-current::after { inset-inline:0; }
-.fz-header__actions { display:flex; align-items:center; gap:.65rem; }
-.fz-header__cart, .fz-header__account { border-color:var(--fz-accent-dark); color:#f1f1f1!important; background:var(--fz-accent-dark); }
-.fz-header__cart { color:var(--fz-text)!important; background:var(--fz-paper); border-color:var(--fz-line); }
-.fz-header__cart:hover, .fz-header__account:hover { border-color:#d8d8d8; transform:translateY(-1px); }
-.fz-header__cart svg { width:18px; height:18px; fill:none; stroke:currentColor; stroke-width:1.6; stroke-linecap:round; stroke-linejoin:round; }
-.fz-header__account { border-color:var(--fz-line); color:#fff!important; background:var(--fz-ink); }
-.fz-header__account:hover { background:var(--fz-accent-dark); }
-.fz-mobile-nav { display:none; position:relative; }
-.fz-mobile-nav summary { list-style:none; display:flex; flex-direction:column; justify-content:center; gap:5px; width:42px; height:42px; padding:0 11px; border:1px solid var(--fz-line); border-radius:50%; }
-.fz-mobile-nav summary::-webkit-details-marker { display:none; }
-.fz-mobile-nav summary span { height:2px; border-radius:10px; background:var(--fz-ink); }
-.fz-mobile-nav nav { position:absolute; inset-block-start:calc(100% + 14px); inset-inline-end:0; width:min(280px,calc(100vw - 28px)); padding:.65rem; display:grid; gap:.15rem; background:var(--fz-paper); border:1px solid var(--fz-line); border-radius:.9rem; box-shadow:var(--fz-shadow); }
-.fz-mobile-nav nav a { padding:.8rem .9rem; border-radius:.65rem; font-size:.85rem; }
-.fz-mobile-nav nav a:hover { background:var(--fz-paper-soft); }
-
+/* Shared site navbar is styled to meet the architectural hero below. */
 /* Home uses the shared navbar, tuned to meet the black architectural hero. */
 .home-body #app > nav {
     background: rgba(5,5,5,.97) !important;
@@ -589,11 +562,10 @@ body.home-body {
 @media (max-width: 479px) {
     .fz-category-grid { grid-template-columns:1fr; gap: .9rem; }
     .fz-category-card { display:block; }
-    .fz-category-card__art { height:clamp(220px, 62vw, 330px); }
+    .fz-category-card__art { height:auto; }
     .fz-category-card__content { align-items:center; flex-direction:row; justify-content:space-between; gap:.8rem; padding:1rem 1.05rem 1.1rem; }
     .fz-category-card__content strong { font-size:.95rem; }
     .fz-category-card__content small { font-size:.68rem; }
-    .fz-category-card__preview-label { opacity:1; transform:none; }
     .fz-footer__main { gap:1.5rem 1rem; }
 }
 
