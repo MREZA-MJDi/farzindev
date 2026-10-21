@@ -5,20 +5,6 @@
 @section('canonical', route('home'))
 @section('body_class', 'home-body min-h-screen antialiased')
 
-@push('seo')
-@php
-        $homeSchema = [
-            '@context' => 'https://schema.org',
-            '@type' => 'WebSite',
-            'name' => 'فرزین | هود و سینک آشپزخانه',
-            'url' => route('home'),
-            'inLanguage' => 'fa-IR',
-            'description' => 'معرفی محصولات هود و سینک آشپزخانه فرزین.',
-        ];
-    @endphp
-    <script type="application/ld+json">{!! json_encode($homeSchema, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT) !!}</script>
-@endpush
-
 @push('styles')
     @vite(['resources/css/home.css'])
 @endpush
@@ -128,7 +114,7 @@
             </section>
         @endif
 
-        @if($demoImages->isNotEmpty())
+        @if($galleryItems->isNotEmpty())
             <section class="fz-mosaic-intro">
                 <div class="fz-container fz-mosaic-intro__inner fz-reveal">
                     <p class="fz-eyebrow"><span></span> نگاه نزدیک / گالری محصول</p>
@@ -138,7 +124,7 @@
                 </div>
             </section>
 
-            @foreach($gridGroups as $index => $group)
+            @foreach($galleryGroups as $index => $group)
                 @if($group->isNotEmpty())
                     <section class="content {{ $index % 2 ? 'content--spacing' : '' }}" aria-label="تصاویر محصولات فرزین، بخش {{ $index + 1 }}">
                         <div class="fz-container content__heading">
