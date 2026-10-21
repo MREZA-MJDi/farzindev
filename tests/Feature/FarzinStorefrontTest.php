@@ -585,8 +585,9 @@ class FarzinStorefrontTest extends TestCase
             ->assertOk()
             ->assertSee('x-data="adminQuickSearch"', false)
             ->assertSee('data-pages=', false)
-            ->assertDontSee('goToFirst()', false)
-            ->assertDontSee('(page.title + &quot;', false);
+            ->assertDontSee('this.matches.length', false)
+            ->assertDontSee('page.title +', false)
+            ->assertDontSee('window.location.assign', false);
 
         $this->actingAs($admin)
             ->get(route('admin.products.index'))
