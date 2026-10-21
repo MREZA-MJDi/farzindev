@@ -574,11 +574,22 @@ class FarzinStorefrontTest extends TestCase
             ->get(route('admin.dashboard'))
             ->assertForbidden();
 
-        $this->actingAs($this->admin())
+        $admin = $this->admin();
+
+        $this->actingAs($admin)
             ->get(route('account.index'))
             ->assertForbidden();
 
-        $this->actingAs($this->admin())
+        $this->actingAs($admin)
+            ->get(route('admin.dashboard'))
+            ->assertOk()
+            ->assertSee('x-data="adminQuickSearch"', false)
+            ->assertSee('data-pages=', false)
+            ->assertDontSee('this.matches.length', false)
+            ->assertDontSee('page.title +', false)
+            ->assertDontSee('window.location.assign', false);
+
+        $this->actingAs($admin)
             ->get(route('admin.products.index'))
             ->assertOk();
     }
