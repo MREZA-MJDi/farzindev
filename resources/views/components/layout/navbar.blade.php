@@ -1,6 +1,6 @@
 <nav
     x-data
-    class="sticky top-0 z-50 hidden w-full border-b border-[var(--livora-border)] bg-[var(--livora-cream)]/90 backdrop-blur-xl lg:block"
+    class="sticky top-0 z-50 w-full border-b border-[var(--livora-border)] bg-[var(--livora-cream)]/90 backdrop-blur-xl"
 >
     <x-layout.container>
 
@@ -126,6 +126,19 @@
                 RIGHT ACTIONS
             ========================================================== --}}
             <div class="flex items-center gap-1">
+
+                {{-- Mobile navigation trigger; desktop keeps the full inline navigation. --}}
+                <button
+                    type="button"
+                    aria-label="باز کردن منو"
+                    :aria-expanded="mobileOpen.toString()"
+                    @click="searchOpen = false; mobileOpen = true"
+                    class="flex h-10 w-10 items-center justify-center rounded-full text-[var(--livora-ink)] transition hover:bg-[var(--livora-white)] lg:hidden"
+                >
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.6" stroke="currentColor" class="h-5 w-5" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M4 7h16M4 12h16M4 17h16"/>
+                    </svg>
+                </button>
 
                 {{-- Search --}}
                 <button
