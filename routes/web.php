@@ -34,6 +34,9 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', [HomeController::class, 'index'])
     ->name('home');
 
+Route::get('/robots.txt', RobotsController::class)
+    ->name('robots');
+
 Route::get('/sitemap.xml', SitemapController::class)
     ->name('sitemap');
 
@@ -352,6 +355,16 @@ Route::middleware(['auth', 'admin'])
             'storefront-settings',
             [AdminStorefrontSettingController::class, 'update']
         )->name('storefront-settings.update');
+
+        Route::get(
+            'seo-settings',
+            [AdminSeoSettingsController::class, 'edit']
+        )->name('seo-settings.edit');
+
+        Route::put(
+            'seo-settings',
+            [AdminSeoSettingsController::class, 'update']
+        )->name('seo-settings.update');
 
         /*
         |--------------------------------------------------------------------------
