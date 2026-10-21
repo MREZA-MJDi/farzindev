@@ -301,7 +301,13 @@ function initHeroScrollDrawing() {
     }
 
     function onVisibilityChange() {
-        if (!document.hidden) schedulePaint();
+        if (document.hidden) {
+            if (rafId) window.cancelAnimationFrame(rafId);
+            rafId = 0;
+            return;
+        }
+
+        schedulePaint();
     }
 
     function dispose() {
