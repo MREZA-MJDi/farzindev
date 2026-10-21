@@ -13,7 +13,15 @@ class HomeController extends Controller
     {
         $categories = Category::query()
             ->active()
-            ->with('hoverMedia')
+            ->with([
+                'hoverMedia:id,path,mime_type,original_name,extension,size',
+                // The category image fallback reads the latest product's first image.
+                // Eager-load it for the bounded category set to avoid N+1 queries.
+                'latestActiveProduct.images' => fn ($query) => $query
+                    ->select(['id', 'product_id', 'media_id', 'path', 'alt', 'sort_order', 'is_primary'])
+                    ->limit(1),
+                'latestActiveProduct.images.media:id,path',
+            ])
             ->withCount([
                 'products' => fn ($query) => $query->active(),
             ])
