@@ -123,7 +123,22 @@
     x-data="{
         mobileOpen: false,
         searchOpen: false,
-        filterOpen: false
+        searchReturnFocus: null,
+        filterOpen: false,
+        openSearch(trigger) {
+            this.searchReturnFocus = trigger || null;
+            this.mobileOpen = false;
+            this.searchOpen = true;
+            this.$nextTick(() => {
+                document.getElementById('global-search')?.focus({ preventScroll: true });
+            });
+        },
+        closeSearch() {
+            this.searchOpen = false;
+            this.$nextTick(() => {
+                this.searchReturnFocus?.focus?.({ preventScroll: true });
+            });
+        }
     }"
     class="min-h-screen pb-24 lg:pb-0"
 >
