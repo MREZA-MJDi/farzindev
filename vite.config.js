@@ -11,6 +11,7 @@ export default defineConfig({
                 'resources/js/app.js',
                 'resources/css/home.css',
                 'resources/js/home.js',
+                'resources/css/responsive.css',
             ],
             refresh: true,
         }),
