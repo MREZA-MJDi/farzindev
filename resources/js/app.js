@@ -76,13 +76,6 @@ window.addEventListener('product-variant-selected', () => {
     }));
 });
 
-/**
- * Farzin storefront motion system.
- * Motion is progressive enhancement: content remains visible if JS is disabled,
- * and reduced-motion preferences disable scroll and ambient animations.
- */
-const initF
-
 /*
  * Load optional code only on pages that use it. Admin list pages no longer
  * download the image editor or GSAP animation runtime.
