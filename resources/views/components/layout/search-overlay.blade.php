@@ -1,6 +1,11 @@
 <div
     x-show="searchOpen"
     x-cloak
+    role="dialog"
+    aria-modal="true"
+    aria-label="جستجوی محصولات فرزین"
+    tabindex="-1"
+    @keydown.escape.window="if (searchOpen) closeSearch()"
     x-transition:enter="transition ease-out duration-300"
     x-transition:enter-start="opacity-0"
     x-transition:enter-end="opacity-100"
@@ -14,7 +19,7 @@
     <button
         type="button"
         aria-label="بستن جستجو"
-        @click="searchOpen = false"
+        @click="closeSearch()"
         class="absolute inset-0 bg-black/40 backdrop-blur-md"
     ></button>
 
@@ -53,7 +58,7 @@
                     <button
                         type="button"
                         aria-label="بستن جستجو"
-                        @click="searchOpen = false"
+                        @click="closeSearch()"
                         class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-[var(--livora-text)] transition hover:bg-[var(--livora-surface)]"
                     >
 
@@ -183,7 +188,7 @@
 
                         <a
                             href="{{ route('categories.index') }}"
-                            @click="searchOpen = false"
+                            @click="closeSearch()"
                             class="text-xs font-medium text-[var(--livora-accent)]"
                         >
                             همه دسته‌بندی‌ها
@@ -196,7 +201,7 @@
 
                         <a
                             href="{{ route('shop.index', ['category' => 'hoods']) }}"
-                            @click="searchOpen = false"
+                            @click="closeSearch()"
                             class="rounded-2xl border border-[var(--livora-border)] bg-[var(--livora-white)] p-4 transition hover:border-[var(--livora-ink)]"
                         >
 
@@ -213,7 +218,7 @@
 
                         <a
                             href="{{ route('shop.index', ['category' => 'sinks']) }}"
-                            @click="searchOpen = false"
+                            @click="closeSearch()"
                             class="rounded-2xl border border-[var(--livora-border)] bg-[var(--livora-white)] p-4 transition hover:border-[var(--livora-ink)]"
                         >
 
@@ -230,7 +235,7 @@
 
                         <a
                             href="{{ route('shop.index', ['search' => 'هود مخفی']) }}"
-                            @click="searchOpen = false"
+                            @click="closeSearch()"
                             class="rounded-2xl border border-[var(--livora-border)] bg-[var(--livora-white)] p-4 transition hover:border-[var(--livora-ink)]"
                         >
 
@@ -247,7 +252,7 @@
 
                         <a
                             href="{{ route('shop.index', ['search' => 'سینک گرانیتی']) }}"
-                            @click="searchOpen = false"
+                            @click="closeSearch()"
                             class="rounded-2xl border border-[var(--livora-border)] bg-[var(--livora-white)] p-4 transition hover:border-[var(--livora-ink)]"
                         >
 
@@ -289,7 +294,7 @@
 
                         <a
                             href="{{ route('shop.index') }}"
-                            @click="searchOpen = false"
+                            @click="closeSearch()"
                             class="inline-flex w-fit shrink-0 rounded-2xl bg-[var(--livora-white)] px-5 py-3 text-xs font-medium text-[var(--livora-text)] transition hover:bg-[var(--livora-cream)]"
                         >
                             مشاهده فروشگاه
