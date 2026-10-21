@@ -4,11 +4,6 @@ on:
   push:
     branches:
       - main
-      - fix/farzin-runtime-audit-2026-10-21
-      - feature/farzin-storefront-rebrand
-      - fix/farzin-home-production-2026-10-20
-      - fix/farzin-home-final-2026-10-20
-      - fix/farzin-home-release-2026-10-20
   pull_request:
     branches:
       - main
