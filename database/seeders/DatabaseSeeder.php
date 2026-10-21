@@ -15,7 +15,7 @@ class DatabaseSeeder extends Seeder
             $adminEmail = config('farzin.admin.email');
 
             if (blank($adminEmail)) {
-                throw new \RuntimeException(
+                throw new \\RuntimeException(
                     'Set ADMIN_EMAIL before seeding the production database.'
                 );
             }
@@ -25,7 +25,7 @@ class DatabaseSeeder extends Seeder
                 ->first();
 
             if ($existingAdmin && $existingAdmin->role !== 'admin') {
-                throw new \RuntimeException(
+                throw new \\RuntimeException(
                     'ADMIN_EMAIL belongs to a non-admin account. Choose a dedicated administrator email before seeding.'
                 );
             }
@@ -34,7 +34,7 @@ class DatabaseSeeder extends Seeder
             // Existing administrators can safely re-run idempotent catalogue seeds
             // after ADMIN_PASSWORD has been removed from the environment.
             if (! $existingAdmin && blank(config('farzin.admin.password'))) {
-                throw new \RuntimeException(
+                throw new \\RuntimeException(
                     'Set ADMIN_PASSWORD before creating the initial production administrator.'
                 );
             }
@@ -42,7 +42,16 @@ class DatabaseSeeder extends Seeder
 
         $this->call([
             CategorySeeder::class,
-            ProductSeeder::class,
+        ]);
+
+        // ProductSeeder creates preview catalogue records whose specifications
+        // and prices still require staff verification. Never create them in
+        // the production database; publish verified products through the admin.
+        if (! app()->environment('production')) {
+            $this->call(ProductSeeder::class);
+        }
+
+        $this->call([
             UserSeeder::class,
         ]);
 
