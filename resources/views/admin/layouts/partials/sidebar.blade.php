@@ -419,6 +419,19 @@
                     <span class="min-w-0 flex-1 truncate">تنظیمات فروشگاه</span>
                 </a>
 
+                {{-- SEO / Search visibility --}}
+                <a
+                    href="{{ route('admin.seo-settings.edit') }}"
+                    @class([
+                        'group flex items-center gap-3 rounded-xl px-3 py-3 text-xs font-medium transition duration-200',
+                        'bg-[var(--admin-accent-soft)] text-[var(--admin-accent-dark)]' => request()->routeIs('admin.seo-settings.*'),
+                        'text-[var(--admin-text-soft)] hover:bg-[var(--admin-surface)] hover:text-[var(--admin-text)]' => !request()->routeIs('admin.seo-settings.*'),
+                    ])
+                >
+                    <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-white/70 text-sm" aria-hidden="true">⌕</span>
+                    <span class="min-w-0 flex-1 truncate">سئو و ایندکس</span>
+                </a>
+
                 {{-- Contact Messages --}}
                 <a
                     href="{{ route('admin.contact-messages.index') }}"
