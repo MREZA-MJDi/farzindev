@@ -135,7 +135,7 @@
             </section>
         @endif
 
-        @if($demoImages->isNotEmpty())
+        @if($galleryItems->isNotEmpty())
             <section class="fz-mosaic-intro">
                 <div class="fz-container fz-mosaic-intro__inner fz-reveal">
                     <p class="fz-eyebrow"><span></span> نگاه نزدیک / گالری محصول</p>
@@ -145,7 +145,7 @@
                 </div>
             </section>
 
-            @foreach($gridGroups as $index => $group)
+            @foreach($galleryGroups as $index => $group)
                 @if($group->isNotEmpty())
                     <section class="content {{ $index % 2 ? 'content--spacing' : '' }}" aria-label="تصاویر محصولات فرزین، بخش {{ $index + 1 }}">
                         <div class="fz-container content__heading">
