@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
@@ -18,6 +19,7 @@ class Category extends Model
         'slug',
         'description',
         'image',
+        'hover_media_id',
         'is_active',
         'sort_order',
     ];
@@ -51,6 +53,12 @@ class Category extends Model
         }
 
         return Storage::disk('public')->url($path);
+    }
+
+    /** Animated category preview selected from the existing media library. */
+    public function hoverMedia(): BelongsTo
+    {
+        return $this->belongsTo(Media::class, 'hover_media_id');
     }
 
     public function products(): HasMany

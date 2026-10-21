@@ -11,6 +11,7 @@ class CategoryController extends Controller
     {
         $categories = Category::query()
             ->active()
+            ->with('hoverMedia')
             ->withCount([
                 'products' => fn ($query) => $query->active(),
             ])
