@@ -7,20 +7,12 @@
     |--------------------------------------------------------------------------
     */
 
-    $pageTitle = str_ireplace(
-        'فرزین',
-        'فرزین',
-        $product->meta_title
-            ?: ($product->name . ' | فرزین')
-    );
+    $pageTitle = $product->meta_title
+        ?: ($product->name . ' | فرزین');
 
-    $pageDescription = str_ireplace(
-        'فرزین',
-        'فرزین',
-        $product->meta_description
-            ?: ($product->short_description
-                ?: ('خرید ' . $product->name . ' با مشاهده قیمت، مشخصات و شرایط خرید در فرزین.'))
-    );
+    $pageDescription = $product->meta_description
+        ?: ($product->short_description
+            ?: ('خرید ' . $product->name . ' با مشاهده قیمت، مشخصات و شرایط خرید در فرزین.'));
 
     /*
     |--------------------------------------------------------------------------
