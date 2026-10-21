@@ -302,7 +302,101 @@ function initGridAnimations() {
     ScrollTrigger.refresh();
 }
 
+/**
+ * Draw the architectural hero from native scroll progress.
+ * No ticker runs between scroll events; SVG pathLength=1 keeps dash offsets normalized.
+ */
+function initHeroScrollDrawing() {
+    const hero = document.querySelector('[data-fz-scroll-hero]');
+    const stage = hero?.querySelector('[data-hero-stage]');
+    const drawing = hero?.querySelector('[data-hero-drawing]');
+
+    if (!hero || !stage || !drawing) return;
+
+    const groups = [...drawing.querySelectorAll('[data-hero-draw]')].map((group) => ({
+        phase: Number(group.dataset.heroPhase || 0),
+        paths: [...group.querySelectorAll('path')],
+    }));
+    const progressLabel = hero.querySelector('[data-hero-progress]');
+    const motionPreference = window.matchMedia('(prefers-reduced-motion: reduce)');
+    let motionReduced = motionPreference.matches;
+    let rafId = 0;
+    let disposed = false;
+
+    const clamp = (value, min, max) => Math.min(max, Math.max(min, value));
+
+    function paint() {
+        rafId = 0;
+        if (disposed) return;
+
+        if (motionReduced) {
+            groups.forEach(({ paths }) => {
+                paths.forEach((path) => {
+                    path.style.strokeDashoffset = '0';
+                });
+            });
+            if (progressLabel) progressLabel.textContent = '100 / 100';
+            drawing.style.transform = '';
+            return;
+        }
+
+        const sectionTop = hero.getBoundingClientRect().top + window.scrollY;
+        const scrollDistance = Math.max(1, hero.offsetHeight - stage.clientHeight);
+        const progress = clamp((window.scrollY - sectionTop) / scrollDistance, 0, 1);
+
+        groups.forEach(({ phase, paths }) => {
+            const start = phase * 0.165;
+            const phaseProgress = clamp((progress - start) / 0.235, 0, 1);
+            const offset = String(1 - phaseProgress);
+
+            paths.forEach((path) => {
+                path.style.strokeDashoffset = offset;
+            });
+        });
+
+        if (progressLabel) {
+            progressLabel.textContent = String(Math.round(progress * 100)).padStart(2, '0') + ' / 100';
+        }
+
+        const scale = 0.985 + progress * 0.015;
+        const lift = (1 - progress) * 5;
+        drawing.style.transform = 'translate3d(0, ' + lift + 'px, 0) scale(' + scale + ')';
+    }
+
+    function schedulePaint() {
+        if (disposed || rafId) return;
+        rafId = window.requestAnimationFrame(paint);
+    }
+
+    function onMotionPreferenceChange(event) {
+        motionReduced = event.matches;
+        schedulePaint();
+    }
+
+    function onVisibilityChange() {
+        if (!document.hidden) schedulePaint();
+    }
+
+    function dispose() {
+        disposed = true;
+        if (rafId) window.cancelAnimationFrame(rafId);
+        window.removeEventListener('scroll', schedulePaint);
+        window.removeEventListener('resize', schedulePaint);
+        document.removeEventListener('visibilitychange', onVisibilityChange);
+        motionPreference.removeEventListener?.('change', onMotionPreferenceChange);
+    }
+
+    window.addEventListener('scroll', schedulePaint, { passive: true });
+    window.addEventListener('resize', schedulePaint, { passive: true });
+    document.addEventListener('visibilitychange', onVisibilityChange);
+    motionPreference.addEventListener?.('change', onMotionPreferenceChange);
+    window.addEventListener('pagehide', dispose, { once: true });
+
+    schedulePaint();
+}
+
 function bootHomeMotion() {
+    initHeroScrollDrawing();
     initRevealAnimations();
     initGridAnimations();
 }
@@ -314,7 +408,7 @@ if (document.readyState === 'loading') {
 }
 
 // If images fail, keep their card surface and visible product name intact.
-document.querySelectorAll('.grid__image, .fz-product-card__image img, .fz-hero-product img').forEach((image) => {
+document.querySelectorAll('.grid__image, .fz-product-card__image img').forEach((image) => {
     image.addEventListener('error', () => {
         image.classList.add('image-unavailable');
         image.removeAttribute('src');
