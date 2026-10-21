@@ -1583,6 +1583,53 @@ class FarzinStorefrontTest extends TestCase
         $this->assertTrue($media->is_animated_preview);
     }
 
+    public function test_admin_can_attach_uploaded_video_media_to_a_category(): void
+    {
+        Storage::fake('public');
+        $admin = $this->admin();
+
+        $this->actingAs($admin)
+            ->post(route('admin.media.store'), [
+                'file' => UploadedFile::fake()->create('category-motion.mp4', 1024, 'video/mp4'),
+                'alt' => 'پیش‌نمایش دسته‌بندی',
+                'description' => 'ویدیوی کوتاه برای تست دسته‌بندی',
+            ])
+            ->assertRedirect(route('admin.media.index'))
+            ->assertSessionHas('success');
+
+        $media = \App\Models\Media::query()->firstOrFail();
+        Storage::disk('public')->assertExists($media->path);
+
+        $this->actingAs($admin)
+            ->get(route('admin.categories.create'))
+            ->assertOk()
+            ->assertSee('category-motion.mp4')
+            ->assertSee('hover_media_id', false);
+
+        $this->actingAs($admin)
+            ->post(route('admin.categories.store'), [
+                'name' => 'دسته‌بندی با پیش‌نمایش',
+                'slug' => 'category-motion-preview',
+                'description' => 'تست اتصال رسانه به دسته‌بندی',
+                'is_active' => '1',
+                'sort_order' => 4,
+                'hover_media_id' => $media->id,
+            ])
+            ->assertRedirect(route('admin.categories.index'))
+            ->assertSessionHas('success');
+
+        $category = Category::query()
+            ->where('slug', 'category-motion-preview')
+            ->firstOrFail();
+
+        $this->assertSame($media->id, $category->hover_media_id);
+
+        $this->actingAs($admin)
+            ->get(route('admin.categories.edit', $category))
+            ->assertOk()
+            ->assertSee('category-motion.mp4');
+    }
+
     public function test_admin_can_update_order_status_and_invalid_status_is_rejected(): void
     {
         $admin = $this->admin();
