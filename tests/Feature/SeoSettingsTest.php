@@ -1,13 +1,13 @@
 <?php
 
-namespace Tests\\Feature;
+namespace Tests\Feature;
 
-use App\\Models\\StorefrontSetting;
-use App\\Models\\User;
-use App\\Services\\Seo\\SeoSettings;
-use Illuminate\\Foundation\\Testing\\RefreshDatabase;
-use Illuminate\\Support\\Facades\\Cache;
-use Tests\\TestCase;
+use App\Models\StorefrontSetting;
+use App\Models\User;
+use App\Services\Seo\SeoSettings;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Cache;
+use Tests\TestCase;
 
 class SeoSettingsTest extends TestCase
 {
