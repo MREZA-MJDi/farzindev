@@ -1,11 +1,11 @@
-<footer class="border-t border-white/10 bg-[var(--livora-ink)] text-[var(--livora-cream)]">
+<footer class="farzin-site-footer border-t border-white/10 bg-[var(--livora-ink)] text-[var(--livora-cream)]">
 
     <x-layout.container>
 
         {{-- =========================================================
              MAIN FOOTER
         ========================================================== --}}
-        <div class="grid gap-12 py-14 sm:py-16 lg:grid-cols-[1.25fr_0.75fr_0.75fr_1fr] lg:py-20">
+        <div class="farzin-site-footer__main grid gap-8 py-10 sm:gap-10 sm:py-14 lg:grid-cols-[1.25fr_0.75fr_0.75fr_1fr] lg:gap-12 lg:py-20">
 
             {{-- Brand --}}
             <div class="max-w-md">
@@ -216,7 +216,7 @@
         {{-- =========================================================
              TRUST STRIP
         ========================================================== --}}
-        <div class="grid border-t border-white/10 sm:grid-cols-3">
+        <div class="farzin-site-footer__trust grid border-t border-white/10 sm:grid-cols-3">
 
             <div class="border-b border-white/10 py-5 sm:border-b-0 sm:border-l sm:px-6 sm:py-6">
 
@@ -260,7 +260,7 @@
         {{-- =========================================================
              BOTTOM
         ========================================================== --}}
-        <div class="flex flex-col gap-5 border-t border-white/10 py-6 sm:flex-row sm:items-center sm:justify-between">
+        <div class="farzin-site-footer__bottom flex flex-col gap-4 border-t border-white/10 py-5 sm:flex-row sm:items-center sm:justify-between sm:gap-5 sm:py-6">
 
             <div>
 
