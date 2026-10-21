@@ -135,29 +135,29 @@
                     aria-label="جستجوی محصولات فرزین"
                     class="hidden xl:block xl:w-[clamp(13rem,18vw,17rem)]"
                 >
-                    <label for="navbar-product-search" class="sr-only">جستجوی هود یا سینک</label>
+                    <label for="navbar-product-search" class="sr-only">جستجوی هود، سینک یا دسته‌بندی</label>
                     <div class="relative">
-                        <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke-width="1.6"
-                            stroke="currentColor"
-                            aria-hidden="true"
-                            class="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--livora-stone)]"
-                        >
-                            <circle cx="11" cy="11" r="6.5"/>
-                            <path stroke-linecap="round" stroke-linejoin="round" d="m16 16 4.2 4.2"/>
-                        </svg>
                         <input
                             id="navbar-product-search"
                             name="search"
                             type="search"
                             value="{{ request('search', '') }}"
                             autocomplete="off"
-                            placeholder="جستجوی هود یا سینک..."
-                            class="w-full min-w-0 rounded-full border border-[var(--livora-border)] bg-[var(--livora-white)] py-2.5 pl-4 pr-10 text-xs text-[var(--livora-text)] placeholder:text-[var(--livora-stone)] transition focus:border-[var(--livora-ink)] focus:outline-none"
+                            enterkeyhint="search"
+                            placeholder="جستجوی محصول یا دسته..."
+                            class="w-full min-w-0 rounded-full border border-[var(--livora-border)] bg-[var(--livora-white)] py-2.5 pl-10 pr-4 text-xs text-[var(--livora-text)] placeholder:text-[var(--livora-stone)] transition focus:border-[var(--livora-accent)] focus:outline-none focus:ring-2 focus:ring-[var(--livora-accent)]/20"
                         >
+                        <button
+                            type="submit"
+                            aria-label="جستجو"
+                            title="جستجو"
+                            class="absolute left-1 top-1/2 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full text-[var(--livora-stone)] transition hover:bg-[var(--livora-surface)] hover:text-[var(--livora-text)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[var(--livora-accent)]"
+                        >
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.7" stroke="currentColor" class="h-4 w-4" aria-hidden="true">
+                                <circle cx="11" cy="11" r="6.5"/>
+                                <path stroke-linecap="round" stroke-linejoin="round" d="m16 16 4.2 4.2"/>
+                            </svg>
+                        </button>
                     </div>
                 </form>
 
@@ -184,7 +184,7 @@
                         searchOpen = true;
 
                         $nextTick(() => {
-                            $refs.searchInput?.focus();
+                            document.getElementById('global-search')?.focus();
                         });
                     "
                     class="group hidden h-10 w-10 items-center justify-center rounded-full text-[var(--livora-text)] transition duration-300 hover:bg-[var(--livora-white)] lg:flex xl:hidden"
