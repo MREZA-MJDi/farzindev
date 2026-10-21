@@ -1,13 +1,7 @@
 import './bootstrap';
-import './admin-image-editor.js';
 import Alpine from 'alpinejs';
-import { gsap } from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 window.Alpine = Alpine;
-gsap.registerPlugin(ScrollTrigger);
-window.gsap = gsap;
-window.ScrollTrigger = ScrollTrigger;
 
 // Admin navbar quick search is registered here instead of embedding a large
 // JavaScript object in a Blade attribute. This avoids quote/HTML parser leaks
@@ -48,6 +42,13 @@ Alpine.data('adminQuickSearch', () => ({
 
 Alpine.start();
 
+// The image editor is needed only by admin media/product forms.
+if (document.querySelector('[data-image-editor-input]')) {
+    import('./admin-image-editor.js').catch((error) => {
+        console.error('Farzin image editor could not be initialized.', error);
+    });
+}
+
 /**
  * Variant-backed products own stock at option level. Once one option from
  * every required type is selected, cap the quantity to the lowest selected
@@ -87,10 +88,41 @@ window.addEventListener('product-variant-selected', () => {
  * Motion is progressive enhancement: content remains visible if JS is disabled,
  * and reduced-motion preferences disable scroll and ambient animations.
  */
-const initFarzinMotion = () => {
+const initFarzinMotion = async () => {
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
     if (reduceMotion) {
+        return;
+    }
+
+    // Keep GSAP and ScrollTrigger out of routes that have no motion targets.
+    // The content remains visible while the optional animation modules load.
+    const hasMotionTargets = document.querySelector(
+        '[data-category-hero], [data-farzin-shop-hero], [data-farzin-reveal]',
+    );
+
+    if (!hasMotionTargets) {
+        return;
+    }
+
+    let gsap;
+    let ScrollTrigger;
+
+    try {
+        const [gsapModule, scrollTriggerModule] = await Promise.all([
+            import('gsap'),
+            import('gsap/ScrollTrigger'),
+        ]);
+
+        gsap = gsapModule.gsap;
+        ScrollTrigger = scrollTriggerModule.ScrollTrigger;
+        gsap.registerPlugin(ScrollTrigger);
+
+        // Preserve the existing optional global API on pages that use motion.
+        window.gsap = gsap;
+        window.ScrollTrigger = ScrollTrigger;
+    } catch (error) {
+        console.error('Farzin motion could not be initialized.', error);
         return;
     }
 

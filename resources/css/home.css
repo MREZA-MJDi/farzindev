@@ -1,5 +1,3 @@
-@import './font.css';
-
 :root {
     color-scheme: light;
     --fz-page: #F4F6F8;
@@ -29,7 +27,7 @@ html { scroll-behavior: smooth; scroll-padding-top: 100px; background: var(--fz-
 body.home-body {
     margin: 0; min-width: 320px; color: var(--fz-ink);
     background: radial-gradient(ellipse at 10% 0%, rgba(229, 120, 82,.035), transparent 38rem), var(--fz-page);
-    font-family: "IRANYekanX FaNum", "IRANYekanX", "Vazirmatn", system-ui, sans-serif;
+    font-family: var(--livora-font-family, "IRANYekanX FaNum"), system-ui, sans-serif;
     font-weight: 400; line-height: 1.7; -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale; overflow-x: clip;
 }

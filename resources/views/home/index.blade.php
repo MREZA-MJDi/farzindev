@@ -135,7 +135,7 @@
             </section>
         @endif
 
-        @if($demoImages->isNotEmpty())
+        @if($galleryImages->isNotEmpty())
             <section class="fz-mosaic-intro">
                 <div class="fz-container fz-mosaic-intro__inner fz-reveal">
                     <p class="fz-eyebrow"><span></span> نگاه نزدیک / گالری محصول</p>
