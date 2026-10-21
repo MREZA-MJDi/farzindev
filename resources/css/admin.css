@@ -1864,3 +1864,34 @@ p {
         transition: none;
     }
 }
+
+
+/* FARZIN / Dark Architectural admin surface overrides */
+:root {
+    color-scheme: dark;
+    --admin-text: #E6DED1;
+    --admin-text-soft: #C1B7A7;
+    --admin-muted: #9B9182;
+    --admin-bg: #141310;
+    --admin-surface: #211F1B;
+    --admin-white: #292720;
+    --admin-accent: #A47752;
+    --admin-accent-dark: #805B3D;
+    --admin-accent-soft: #352B22;
+    --admin-metal: #777064;
+    --admin-sunset-amber: #B5A083;
+    --admin-border: #39362F;
+    --admin-border-dark: #585044;
+    --admin-shadow-sm: 0 3px 12px rgba(0,0,0,.18);
+    --admin-shadow-md: 0 10px 28px rgba(0,0,0,.24);
+    --admin-shadow-lg: 0 20px 50px rgba(0,0,0,.3);
+}
+html, body, .admin-shell { background: var(--admin-bg); color: var(--admin-text); }
+.admin-card, .admin-section, .admin-stat { background: var(--admin-white); border-color: var(--admin-border); box-shadow: var(--admin-shadow-sm); }
+.admin-btn-primary { background: var(--admin-accent-dark); color: #F4EEE5; }
+.admin-btn-primary:hover { background: var(--admin-accent); }
+.admin-btn-secondary { background: var(--admin-surface); border-color: var(--admin-border); color: var(--admin-text); }
+.admin-btn-secondary:hover, .admin-btn-ghost:hover { background: #302D27; border-color: var(--admin-border-dark); }
+.admin-stat-icon { background: var(--admin-accent-soft); color: #D5B99A; }
+.admin-input, .admin-select, .admin-textarea { background: #191815; border-color: var(--admin-border); color: var(--admin-text); }
+::selection { background: #805B3D; color: #FFF8EF; }

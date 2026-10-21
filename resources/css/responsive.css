@@ -606,3 +606,17 @@ body { min-width: 320px; max-width: 100%; overflow-x: clip; }
         transition: none;
     }
 }
+
+
+/* Image-fit and common-footer contract across desktop and mobile storefront pages */
+.storefront-content .farzin-product-card__image-link { display: block; width: 100%; aspect-ratio: 4 / 5; overflow: hidden; }
+.storefront-content .farzin-product-card__media { width: 100%; overflow: hidden; }
+.storefront-content .farzin-product-card__image { object-fit: cover !important; padding: 0 !important; }
+.storefront-content .farzin-product-card__image-shine { display: none !important; }
+.farzin-site-footer { margin-top: 0; width: 100%; }
+#app > main { min-width: 0; }
+@media (max-width: 767px) {
+    .storefront-content .farzin-product-card__media { border-radius: 1rem; }
+    .storefront-content .farzin-product-card__image-link { aspect-ratio: 4 / 5; }
+    .farzin-site-footer { padding-bottom: max(.5rem, env(safe-area-inset-bottom)); }
+}
