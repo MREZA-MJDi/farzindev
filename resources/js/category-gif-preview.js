@@ -31,7 +31,11 @@ if (!reduceMotion) {
         if (!gif && !video) return;
 
         cards.forEach((other) => {
-            if (other !== card) stopPreview(other);
+            if (other === card) return;
+
+            stopPreview(other);
+            // A different card starts a fresh touch interaction next time.
+            delete other.dataset.farzinPreviewTapped;
         });
 
         const existing = timers.get(card);
