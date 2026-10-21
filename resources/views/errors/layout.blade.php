@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="robots" content="noindex, nofollow">
+    <meta name="robots" content="noindex, nofollow, noarchive, nosnippet, noimageindex">
     <title>@yield('title', 'خطا | فرزین')</title>
     <style>
         :root { color-scheme: light; font-family: Tahoma, Arial, sans-serif; background: #f5f4f0; color: #243140; }
