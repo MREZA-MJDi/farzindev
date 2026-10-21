@@ -70,7 +70,8 @@ class FarzinStorefrontTest extends TestCase
         $this->get(route('home'))
             ->assertOk()
             ->assertSee($product->name)
-            ->assertSee('تصویر محصول ثبت نشده');
+            ->assertSee('تصویر محصول ثبت نشده')
+            ->assertSee(route('product.show', $product->slug), false);
     }
 
     public function test_sitemap_lists_public_pages_and_only_active_catalog_items(): void
