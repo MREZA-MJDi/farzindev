@@ -1,5 +1,3 @@
-@import './font.css';
-
 :root {
     color-scheme: dark;
     --fz-page: #0c0c0c;
@@ -94,6 +92,13 @@ body.home-body {
     mask-image: radial-gradient(ellipse at center, #000 17%, rgba(0,0,0,.78) 47%, transparent 75%);
 }
 .fz-hero__backdrop-shade { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(8,9,11,.06), transparent 30%, rgba(8,9,11,.42)); }
+
+@media (max-width: 760px), (prefers-reduced-motion: reduce) {
+    .fz-hero__rotating-art {
+        animation: none;
+        will-change: auto;
+    }
+}
 .fz-hero__layout {
     position: relative; z-index: 1; display: grid; grid-template-columns: minmax(0,.95fr) minmax(0,1.05fr);
     gap: clamp(1.5rem,4.8vw,5rem); align-items: center; align-self: stretch;
