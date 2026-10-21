@@ -73,7 +73,7 @@
 
                         <a
                             href="{{ route('home') }}"
-                            class="transition hover:text-[var(--livora-ink)]"
+                            class="transition hover:text-[var(--livora-text)]"
                         >
                             خانه
                         </a>
@@ -82,14 +82,14 @@
 
                         <a
                             href="{{ route('checkout.payment', $order) }}"
-                            class="transition hover:text-[var(--livora-ink)]"
+                            class="transition hover:text-[var(--livora-text)]"
                         >
                             روش پرداخت
                         </a>
 
                         <span>/</span>
 
-                        <span class="text-[var(--livora-ink)]">
+                        <span class="text-[var(--livora-text)]">
                         خرید اقساطی
                     </span>
 
@@ -110,7 +110,7 @@
 
                             سفارش
 
-                            <span class="font-semibold text-[var(--livora-ink)]">
+                            <span class="font-semibold text-[var(--livora-text)]">
                             {{ $order->order_number }}
                         </span>
 
@@ -259,7 +259,7 @@
 
                                 <a
                                     href="{{ route('checkout.payment', $order) }}"
-                                    class="mt-4 flex w-full items-center justify-center rounded-2xl bg-white px-6 py-4 text-sm font-medium text-[var(--livora-ink)] transition hover:bg-[var(--livora-cream)]"
+                                    class="mt-4 flex w-full items-center justify-center rounded-2xl bg-[var(--livora-white)] px-6 py-4 text-sm font-medium text-[var(--livora-text)] transition hover:bg-[var(--livora-cream)]"
                                 >
                                     انتخاب درگاه پیش‌پرداخت
                                 </a>
@@ -290,7 +290,7 @@
                                     STEP 02
                                 </p>
 
-                                <h2 class="mt-2 text-xl font-semibold text-[var(--livora-ink)]">
+                                <h2 class="mt-2 text-xl font-semibold text-[var(--livora-text)]">
                                     اطلاعات چک‌ها
                                 </h2>
 
@@ -302,7 +302,7 @@
 
 
                             <span
-                                class="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-[var(--livora-border)] bg-[var(--livora-surface)] text-[var(--livora-ink)] transition-transform duration-300 ease-out"
+                                class="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-[var(--livora-border)] bg-[var(--livora-surface)] text-[var(--livora-text)] transition-transform duration-300 ease-out"
                                 :class="showCheques ? 'rotate-180' : 'rotate-0'"
                             >
 
@@ -359,7 +359,7 @@
                                                             CHEQUE {{ $index + 1 }}
                                                         </p>
 
-                                                        <p class="mt-2 text-xl font-semibold text-[var(--livora-ink)]">
+                                                        <p class="mt-2 text-xl font-semibold text-[var(--livora-text)]">
 
                                                             {{ \App\Helpers\PersianNumberHelper::format(
                                                                 (float) $installment->amount
@@ -382,7 +382,7 @@
                                                     </div>
 
 
-                                                    <span class="w-fit rounded-full bg-white px-3 py-1.5 text-[10px] text-[var(--livora-stone)]">
+                                                    <span class="w-fit rounded-full bg-[var(--livora-white)] px-3 py-1.5 text-[10px] text-[var(--livora-stone)]">
                                                     در انتظار ثبت
                                                 </span>
 
@@ -392,39 +392,39 @@
                                                 {{-- Future cheque data --}}
                                                 <div class="mt-6 grid gap-4 sm:grid-cols-3">
 
-                                                    <div class="rounded-2xl border border-[var(--livora-border)] bg-white p-4">
+                                                    <div class="rounded-2xl border border-[var(--livora-border)] bg-[var(--livora-white)] p-4">
 
                                                         <p class="text-[10px] text-[var(--livora-stone)]">
                                                             شماره چک
                                                         </p>
 
-                                                        <p class="mt-2 text-xs font-medium text-[var(--livora-ink)]">
+                                                        <p class="mt-2 text-xs font-medium text-[var(--livora-text)]">
                                                             بعداً ثبت می‌شود
                                                         </p>
 
                                                     </div>
 
 
-                                                    <div class="rounded-2xl border border-[var(--livora-border)] bg-white p-4">
+                                                    <div class="rounded-2xl border border-[var(--livora-border)] bg-[var(--livora-white)] p-4">
 
                                                         <p class="text-[10px] text-[var(--livora-stone)]">
                                                             بانک
                                                         </p>
 
-                                                        <p class="mt-2 text-xs font-medium text-[var(--livora-ink)]">
+                                                        <p class="mt-2 text-xs font-medium text-[var(--livora-text)]">
                                                             بعداً ثبت می‌شود
                                                         </p>
 
                                                     </div>
 
 
-                                                    <div class="rounded-2xl border border-dashed border-[var(--livora-border)] bg-white p-4">
+                                                    <div class="rounded-2xl border border-dashed border-[var(--livora-border)] bg-[var(--livora-white)] p-4">
 
                                                         <p class="text-[10px] text-[var(--livora-stone)]">
                                                             تصویر چک
                                                         </p>
 
-                                                        <p class="mt-2 text-xs font-medium text-[var(--livora-ink)]">
+                                                        <p class="mt-2 text-xs font-medium text-[var(--livora-text)]">
                                                             بعداً فعال می‌شود
                                                         </p>
 
@@ -453,7 +453,7 @@
 
                                     <div class="rounded-3xl border border-[var(--livora-border)] bg-[var(--livora-surface)] p-6 text-center">
 
-                                        <p class="text-sm font-medium text-[var(--livora-ink)]">
+                                        <p class="text-sm font-medium text-[var(--livora-text)]">
                                             قسط چکی برای این طرح وجود ندارد.
                                         </p>
 
@@ -476,7 +476,7 @@
 
                         <div class="flex items-start gap-4">
 
-                            <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[var(--livora-surface)] text-[var(--livora-ink)]">
+                            <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[var(--livora-surface)] text-[var(--livora-text)]">
                                 i
                             </div>
 

@@ -93,7 +93,7 @@
 
                         <a
                             href="{{ route('home') }}"
-                            class="transition hover:text-[var(--livora-ink)]"
+                            class="transition hover:text-[var(--livora-text)]"
                         >
                             خانه
                         </a>
@@ -102,7 +102,7 @@
 
                         <a
                             href="{{ route('account.index') }}"
-                            class="transition hover:text-[var(--livora-ink)]"
+                            class="transition hover:text-[var(--livora-text)]"
                         >
                             حساب کاربری
                         </a>
@@ -111,14 +111,14 @@
 
                         <a
                             href="{{ route('account.orders.index') }}"
-                            class="transition hover:text-[var(--livora-ink)]"
+                            class="transition hover:text-[var(--livora-text)]"
                         >
                             سفارش‌ها
                         </a>
 
                         <span>/</span>
 
-                        <span class="text-[var(--livora-ink)]">
+                        <span class="text-[var(--livora-text)]">
                         {{ $order->order_number }}
                     </span>
 
@@ -230,7 +230,7 @@
                                             {{ $stepNumber }}
                                         </div>
 
-                                        <p class="mt-2 text-[10px] leading-5 {{ $done ? 'font-medium text-[var(--livora-ink)]' : 'text-[var(--livora-stone)]' }}">
+                                        <p class="mt-2 text-[10px] leading-5 {{ $done ? 'font-medium text-[var(--livora-text)]' : 'text-[var(--livora-stone)]' }}">
                                             {{ $label }}
                                         </p>
 
@@ -317,7 +317,7 @@
                                                                 <span class="rounded-full border border-[var(--livora-border)] bg-[var(--livora-surface)] px-2.5 py-1 text-[9px] text-[var(--livora-stone)]">
 
                                                                     {{ $option['name'] ?? $option['type'] ?? 'ویژگی' }}:
-                                                                    <span class="font-medium text-[var(--livora-ink)]">
+                                                                    <span class="font-medium text-[var(--livora-text)]">
                                                                         {{ $option['value'] ?? '—' }}
                                                                     </span>
 

@@ -80,14 +80,14 @@
 
                         <a
                             href="{{ route('home') }}"
-                            class="transition hover:text-[var(--livora-ink)]"
+                            class="transition hover:text-[var(--livora-text)]"
                         >
                             خانه
                         </a>
 
                         <span>/</span>
 
-                        <span class="text-[var(--livora-ink)]">
+                        <span class="text-[var(--livora-text)]">
                         حساب کاربری
                     </span>
 
@@ -603,7 +603,7 @@
 
                                 <a
                                     href="{{ route('account.orders.index') }}"
-                                    class="mt-4 inline-flex text-xs font-medium text-[var(--livora-ink)] underline underline-offset-4"
+                                    class="mt-4 inline-flex text-xs font-medium text-[var(--livora-text)] underline underline-offset-4"
                                 >
                                     مشاهده سفارش‌ها
                                 </a>
@@ -630,7 +630,7 @@
 
                             <a
                                 href="{{ route('contact') }}"
-                                class="mt-4 inline-flex text-xs font-medium text-[var(--livora-ink)] underline underline-offset-4"
+                                class="mt-4 inline-flex text-xs font-medium text-[var(--livora-text)] underline underline-offset-4"
                             >
                                 تماس با فرزین
                             </a>

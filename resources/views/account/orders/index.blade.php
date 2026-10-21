@@ -55,7 +55,7 @@
                     <nav class="flex flex-wrap items-center gap-2 text-[11px] text-[var(--livora-stone)]">
                         <a
                             href="{{ route('home') }}"
-                            class="transition hover:text-[var(--livora-ink)]"
+                            class="transition hover:text-[var(--livora-text)]"
                         >
                             خانه
                         </a>
@@ -64,14 +64,14 @@
 
                         <a
                             href="{{ route('account.index') }}"
-                            class="transition hover:text-[var(--livora-ink)]"
+                            class="transition hover:text-[var(--livora-text)]"
                         >
                             حساب کاربری
                         </a>
 
                         <span>/</span>
 
-                        <span class="text-[var(--livora-ink)]">
+                        <span class="text-[var(--livora-text)]">
                         سفارش‌ها
                     </span>
                     </nav>
@@ -276,7 +276,7 @@
                                                 مشاهده جزئیات سفارش
                                             </span>
 
-                                                <span class="text-[var(--livora-ink)] transition-transform group-hover:-translate-x-1">
+                                                <span class="text-[var(--livora-text)] transition-transform group-hover:-translate-x-1">
                                                 ←
                                             </span>
 

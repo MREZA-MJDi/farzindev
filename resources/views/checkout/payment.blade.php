@@ -184,7 +184,7 @@
 
                         <a
                             href="{{ route('home') }}"
-                            class="transition hover:text-[var(--livora-ink)]"
+                            class="transition hover:text-[var(--livora-text)]"
                         >
                             خانه
                         </a>
@@ -193,14 +193,14 @@
 
                         <a
                             href="{{ route('cart.index') }}"
-                            class="transition hover:text-[var(--livora-ink)]"
+                            class="transition hover:text-[var(--livora-text)]"
                         >
                             سبد خرید
                         </a>
 
                         <span>/</span>
 
-                        <span class="text-[var(--livora-ink)]">
+                        <span class="text-[var(--livora-text)]">
                         پرداخت
                     </span>
 
@@ -219,7 +219,7 @@
 
                         <p class="mt-4 text-sm leading-8 text-[var(--livora-stone)]">
                             سفارش
-                            <span class="font-medium text-[var(--livora-ink)]">
+                            <span class="font-medium text-[var(--livora-text)]">
                             {{ $order->order_number }}
                         </span>
                             برای پرداخت آماده است.
@@ -381,7 +381,7 @@
                                         >
                                         <span
                                             x-show="selected === '{{ $gateway['key'] }}'"
-                                            class="h-2 w-2 rounded-full bg-white"
+                                            class="h-2 w-2 rounded-full bg-[var(--livora-white)]"
                                         ></span>
                                         </div>
 
@@ -642,7 +642,7 @@
 
                                         <button
                                             type="submit"
-                                            class="inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-white px-6 py-4 text-sm font-medium text-[var(--livora-ink)] transition hover:bg-[var(--livora-cream)]"
+                                            class="inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-[var(--livora-white)] px-6 py-4 text-sm font-medium text-[var(--livora-text)] transition hover:bg-[var(--livora-cream)]"
                                         >
                                         <span>
                                             ادامه فرآیند خرید اقساطی
@@ -791,7 +791,7 @@
                                                     <span class="rounded-full border border-[var(--livora-border)] px-2 py-1 text-[9px] text-[var(--livora-stone)]">
 
                                                         {{ $option['name'] ?? $option['type'] ?? 'ویژگی' }}:
-                                                        <span class="font-medium text-[var(--livora-ink)]">
+                                                        <span class="font-medium text-[var(--livora-text)]">
                                                             {{ $option['value'] ?? '—' }}
                                                         </span>
 
