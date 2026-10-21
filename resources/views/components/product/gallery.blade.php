@@ -142,7 +142,7 @@
         @if($imageCount > 0)
 
             <div
-                class="product-gallery-stage relative aspect-[4/5] w-full cursor-zoom-in overflow-hidden lg:aspect-auto lg:h-[clamp(500px,calc(100svh-220px),720px)]"
+                class="product-gallery-stage relative aspect-square w-full cursor-zoom-in overflow-hidden lg:aspect-auto lg:h-[clamp(500px,calc(100svh-220px),720px)]"
                 @click="zoom = true"
             >
 
@@ -159,7 +159,7 @@
                         @if($index !== 0)
                         loading="lazy"
                         @endif
-                        class="absolute inset-0 h-full w-full object-cover"
+                        class="absolute inset-0 h-full w-full object-contain p-3 sm:p-5"
                     >
 
                 @endforeach
@@ -278,7 +278,7 @@
         @else
 
             {{-- No image --}}
-            <div class="flex aspect-[4/5] w-full items-center justify-center lg:aspect-auto lg:h-[clamp(500px,calc(100svh-220px),720px)]">
+            <div class="flex aspect-square w-full items-center justify-center lg:aspect-auto lg:h-[clamp(500px,calc(100svh-220px),720px)]">
 
                 <div class="text-center">
 
