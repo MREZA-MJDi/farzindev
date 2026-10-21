@@ -59,6 +59,16 @@ class FarzinStorefrontTest extends TestCase
             ->assertSee('چک‌لیست');
     }
 
+    public function test_homepage_uses_scroll_drawn_architecture_instead_of_a_product_hero_card(): void
+    {
+        $this->get(route('home'))
+            ->assertOk()
+            ->assertSee('data-fz-scroll-hero', false)
+            ->assertSee('data-hero-drawing', false)
+            ->assertSee('SCROLL TO REVEAL')
+            ->assertDontSee('fz-hero-product', false);
+    }
+
     public function test_homepage_lists_active_products_even_without_uploaded_images(): void
     {
         $category = $this->category();
