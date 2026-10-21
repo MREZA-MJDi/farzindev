@@ -9,6 +9,43 @@ gsap.registerPlugin(ScrollTrigger);
 window.gsap = gsap;
 window.ScrollTrigger = ScrollTrigger;
 
+// Admin navbar quick search is registered here instead of embedding a large
+// JavaScript object in a Blade attribute. This avoids quote/HTML parser leaks
+// and keeps the Blade template readable.
+Alpine.data('adminQuickSearch', () => ({
+    query: '',
+    pages: [],
+
+    init() {
+        try {
+            this.pages = JSON.parse(this.$el.dataset.pages || '[]');
+        } catch (error) {
+            console.error('Unable to initialize admin quick search.', error);
+            this.pages = [];
+        }
+    },
+
+    get matches() {
+        const term = this.query.trim().toLocaleLowerCase();
+
+        if (!term) {
+            return [];
+        }
+
+        return this.pages
+            .filter((page) => (
+                (page.title + ' ' + page.terms).toLocaleLowerCase().includes(term)
+            ))
+            .slice(0, 6);
+    },
+
+    goToFirst() {
+        if (this.matches.length > 0) {
+            window.location.assign(this.matches[0].url);
+        }
+    },
+}));
+
 Alpine.start();
 
 /**
