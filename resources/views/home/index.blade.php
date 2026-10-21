@@ -6,14 +6,7 @@
 @section('body_class', 'home-body min-h-screen antialiased')
 
 @push('seo')
-    <meta property="og:type" content="website">
-    <meta property="og:title" content="فرزین | تولید هود و سینک آشپزخانه">
-    <meta property="og:description" content="هود و سینک فرزین؛ شناخت محصول، مقایسه جزئیات و انتخاب متناسب با آشپزخانه.">
-    <meta property="og:url" content="{{ route('home') }}">
-    <meta name="twitter:card" content="summary">
-    <meta name="twitter:title" content="فرزین | هود و سینک آشپزخانه">
-    <meta name="twitter:description" content="کاتالوگ محصولات و راهنمای انتخاب فرزین.">
-    @php
+@php
         $homeSchema = [
             '@context' => 'https://schema.org',
             '@type' => 'WebSite',
