@@ -33,8 +33,8 @@
                     href="{{ route('home') }}"
                     @class([
                         'relative py-2 text-sm font-medium transition duration-300',
-                        'text-[var(--livora-ink)]' => request()->routeIs('home'),
-                        'text-[var(--livora-stone)] hover:text-[var(--livora-ink)]' => !request()->routeIs('home'),
+                        'text-[var(--livora-text)]' => request()->routeIs('home'),
+                        'text-[var(--livora-stone)] hover:text-[var(--livora-text)]' => !request()->routeIs('home'),
                     ])
                 >
                     خانه
@@ -48,8 +48,8 @@
                     href="{{ route('shop.index') }}"
                     @class([
                         'relative py-2 text-sm font-medium transition duration-300',
-                        'text-[var(--livora-ink)]' => request()->routeIs('shop.index', 'product.show'),
-                        'text-[var(--livora-stone)] hover:text-[var(--livora-ink)]' => !request()->routeIs('shop.index', 'product.show'),
+                        'text-[var(--livora-text)]' => request()->routeIs('shop.index', 'product.show'),
+                        'text-[var(--livora-stone)] hover:text-[var(--livora-text)]' => !request()->routeIs('shop.index', 'product.show'),
                     ])
                 >
                     فروشگاه
@@ -63,8 +63,8 @@
                     href="{{ route('categories.index') }}"
                     @class([
                         'relative py-2 text-sm font-medium transition duration-300',
-                        'text-[var(--livora-ink)]' => request()->routeIs('categories.*'),
-                        'text-[var(--livora-stone)] hover:text-[var(--livora-ink)]' => !request()->routeIs('categories.*'),
+                        'text-[var(--livora-text)]' => request()->routeIs('categories.*'),
+                        'text-[var(--livora-stone)] hover:text-[var(--livora-text)]' => !request()->routeIs('categories.*'),
                     ])
                 >
                     دسته‌بندی‌ها
@@ -78,8 +78,8 @@
                     href="{{ route('blog.index') }}"
                     @class([
                         'relative py-2 text-sm font-medium transition duration-300',
-                        'text-[var(--livora-ink)]' => request()->routeIs('blog.*'),
-                        'text-[var(--livora-stone)] hover:text-[var(--livora-ink)]' => !request()->routeIs('blog.*'),
+                        'text-[var(--livora-text)]' => request()->routeIs('blog.*'),
+                        'text-[var(--livora-stone)] hover:text-[var(--livora-text)]' => !request()->routeIs('blog.*'),
                     ])
                 >
                     بلاگ
@@ -93,8 +93,8 @@
                     href="{{ route('about') }}"
                     @class([
                         'relative py-2 text-sm font-medium transition duration-300',
-                        'text-[var(--livora-ink)]' => request()->routeIs('about'),
-                        'text-[var(--livora-stone)] hover:text-[var(--livora-ink)]' => !request()->routeIs('about'),
+                        'text-[var(--livora-text)]' => request()->routeIs('about'),
+                        'text-[var(--livora-stone)] hover:text-[var(--livora-text)]' => !request()->routeIs('about'),
                     ])
                 >
                     درباره ما
@@ -108,8 +108,8 @@
                     href="{{ route('contact') }}"
                     @class([
                         'relative py-2 text-sm font-medium transition duration-300',
-                        'text-[var(--livora-ink)]' => request()->routeIs('contact'),
-                        'text-[var(--livora-stone)] hover:text-[var(--livora-ink)]' => !request()->routeIs('contact'),
+                        'text-[var(--livora-text)]' => request()->routeIs('contact'),
+                        'text-[var(--livora-stone)] hover:text-[var(--livora-text)]' => !request()->routeIs('contact'),
                     ])
                 >
                     تماس
@@ -156,7 +156,7 @@
                             value="{{ request('search', '') }}"
                             autocomplete="off"
                             placeholder="جستجوی هود یا سینک..."
-                            class="w-full min-w-0 rounded-full border border-[var(--livora-border)] bg-[var(--livora-white)] py-2.5 pl-4 pr-10 text-xs text-[var(--livora-ink)] placeholder:text-[var(--livora-stone)] transition focus:border-[var(--livora-ink)] focus:outline-none"
+                            class="w-full min-w-0 rounded-full border border-[var(--livora-border)] bg-[var(--livora-white)] py-2.5 pl-4 pr-10 text-xs text-[var(--livora-text)] placeholder:text-[var(--livora-stone)] transition focus:border-[var(--livora-ink)] focus:outline-none"
                         >
                     </div>
                 </form>
@@ -167,7 +167,7 @@
                     aria-label="باز کردن منو"
                     :aria-expanded="mobileOpen.toString()"
                     @click="searchOpen = false; mobileOpen = true"
-                    class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-[var(--livora-ink)] transition hover:bg-[var(--livora-white)] lg:hidden"
+                    class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-[var(--livora-text)] transition hover:bg-[var(--livora-white)] lg:hidden"
                 >
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.7" stroke="currentColor" class="h-5 w-5" aria-hidden="true">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
@@ -187,7 +187,7 @@
                             $refs.searchInput?.focus();
                         });
                     "
-                    class="group hidden h-10 w-10 items-center justify-center rounded-full text-[var(--livora-ink)] transition duration-300 hover:bg-[var(--livora-white)] lg:flex xl:hidden"
+                    class="group hidden h-10 w-10 items-center justify-center rounded-full text-[var(--livora-text)] transition duration-300 hover:bg-[var(--livora-white)] lg:flex xl:hidden"
                 >
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -217,7 +217,7 @@
                             @class([
                                 'group hidden h-10 w-10 items-center justify-center rounded-full transition duration-300 lg:flex',
                                 'bg-[var(--livora-white)] text-[var(--livora-accent)]' => request()->routeIs('account.wishlist.*'),
-                                'text-[var(--livora-ink)] hover:bg-[var(--livora-white)]' => !request()->routeIs('account.wishlist.*'),
+                                'text-[var(--livora-text)] hover:bg-[var(--livora-white)]' => !request()->routeIs('account.wishlist.*'),
                             ])
                         >
                             <svg
@@ -241,7 +241,7 @@
                         <a
                             href="{{ route('login') }}"
                             aria-label="ورود برای مشاهده علاقه‌مندی‌ها"
-                            class="group hidden h-10 w-10 items-center justify-center rounded-full text-[var(--livora-ink)] transition duration-300 hover:bg-[var(--livora-white)] lg:flex"
+                            class="group hidden h-10 w-10 items-center justify-center rounded-full text-[var(--livora-text)] transition duration-300 hover:bg-[var(--livora-white)] lg:flex"
                         >
                             <svg
                                 xmlns="http://www.w3.org/2000/svg"
@@ -266,7 +266,7 @@
                     <a
                         href="{{ route('login') }}"
                         aria-label="ورود برای مشاهده علاقه‌مندی‌ها"
-                        class="group hidden h-10 w-10 items-center justify-center rounded-full text-[var(--livora-ink)] transition duration-300 hover:bg-[var(--livora-white)] lg:flex"
+                        class="group hidden h-10 w-10 items-center justify-center rounded-full text-[var(--livora-text)] transition duration-300 hover:bg-[var(--livora-white)] lg:flex"
                     >
                         <svg
                             xmlns="http://www.w3.org/2000/svg"
@@ -308,7 +308,7 @@
                 <a
                     href="{{ route('cart.index') }}"
                     aria-label="سبد خرید"
-                    class="group relative hidden h-10 w-10 items-center justify-center rounded-full text-[var(--livora-ink)] transition duration-300 hover:bg-[var(--livora-white)] lg:flex"
+                    class="group relative hidden h-10 w-10 items-center justify-center rounded-full text-[var(--livora-text)] transition duration-300 hover:bg-[var(--livora-white)] lg:flex"
                 >
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -348,7 +348,7 @@
                         <a
                             href="{{ route('admin.dashboard') }}"
                             aria-label="پنل مدیریت"
-                            class="group hidden h-10 w-10 items-center justify-center rounded-full text-[var(--livora-ink)] transition duration-300 hover:bg-[var(--livora-white)] lg:flex"
+                            class="group hidden h-10 w-10 items-center justify-center rounded-full text-[var(--livora-text)] transition duration-300 hover:bg-[var(--livora-white)] lg:flex"
                         >
                             <svg
                                 xmlns="http://www.w3.org/2000/svg"
@@ -374,7 +374,7 @@
                             @class([
                                 'group hidden h-10 w-10 items-center justify-center rounded-full transition duration-300 lg:flex',
                                 'bg-[var(--livora-white)] text-[var(--livora-accent)]' => request()->routeIs('account.*'),
-                                'text-[var(--livora-ink)] hover:bg-[var(--livora-white)]' => !request()->routeIs('account.*'),
+                                'text-[var(--livora-text)] hover:bg-[var(--livora-white)]' => !request()->routeIs('account.*'),
                             ])
                         >
                             <svg
@@ -400,7 +400,7 @@
                     <a
                         href="{{ route('login') }}"
                         aria-label="ورود"
-                        class="group hidden h-10 w-10 items-center justify-center rounded-full text-[var(--livora-ink)] transition duration-300 hover:bg-[var(--livora-white)] lg:flex"
+                        class="group hidden h-10 w-10 items-center justify-center rounded-full text-[var(--livora-text)] transition duration-300 hover:bg-[var(--livora-white)] lg:flex"
                     >
                         <svg
                             xmlns="http://www.w3.org/2000/svg"

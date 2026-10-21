@@ -18,6 +18,7 @@
                 height="900"
                 loading="lazy"
                 decoding="async"
+                class="h-full w-full object-cover"
             >
         @else
             <span class="fz-product-card__fallback-mark" aria-hidden="true">FZ</span>
