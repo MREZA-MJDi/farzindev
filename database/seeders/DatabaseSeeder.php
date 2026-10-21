@@ -42,7 +42,15 @@ class DatabaseSeeder extends Seeder
 
         $this->call([
             CategorySeeder::class,
-            ProductSeeder::class,
+        ]);
+
+        // The product seeder creates clearly labelled preview records. Never
+        // insert synthetic catalogue data into a production database.
+        if (! app()->environment('production')) {
+            $this->call(ProductSeeder::class);
+        }
+
+        $this->call([
             UserSeeder::class,
         ]);
 
