@@ -98,10 +98,8 @@ class HomeController extends Controller
                     'url' => $image->url,
                     'alt' => $image->alt ?: $product->name,
                     'product_url' => route('product.show', $product->slug),
-                    'product_id' => $product->id,
                     'product_name' => $product->name,
                     'category_name' => $product->category?->name ?? 'فرزین',
-                    'index' => $index,
                 ];
             })
             ->values();
