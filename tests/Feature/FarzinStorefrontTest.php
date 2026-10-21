@@ -218,6 +218,36 @@ class FarzinStorefrontTest extends TestCase
             ->assertDontSee('Archived Hood');
     }
 
+    public function test_shop_search_matches_category_names_and_slugs(): void
+    {
+        $category = $this->category([
+            'name' => 'Granite Kitchen Sinks',
+            'slug' => 'granite-sinks',
+        ]);
+        $product = $this->product($category, [
+            'name' => 'Generic Kitchen Model',
+            'slug' => 'generic-kitchen-model',
+        ]);
+
+        $this->get(route('shop.index', ['search' => 'Granite Kitchen Sinks']))
+            ->assertOk()
+            ->assertSee($product->name);
+
+        $this->get(route('shop.index', ['search' => 'granite-sinks']))
+            ->assertOk()
+            ->assertSee($product->name);
+    }
+
+    public function test_global_search_controls_use_the_storefront_search_route(): void
+    {
+        $this->get(route('home'))
+            ->assertOk()
+            ->assertSee('navbar-product-search', false)
+            ->assertSee('action="'.route('shop.index').'"', false)
+            ->assertSee('name="search"', false)
+            ->assertSee('id="global-search"', false);
+    }
+
     public function test_shop_in_stock_filter_includes_products_with_variant_level_stock(): void
     {
         $category = $this->category(['slug' => 'hoods']);
