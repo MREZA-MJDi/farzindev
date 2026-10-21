@@ -37,6 +37,7 @@ class HomeController extends Controller
             ->with([
                 'category',
                 'images.media',
+                'variants',
             ])
             ->orderByDesc('is_featured')
             ->orderByDesc('is_new')
@@ -80,12 +81,22 @@ class HomeController extends Controller
             ->unique()
             ->values();
 
-        $galleryProducts = $catalogProducts
+        $imageProducts = $catalogProducts
             ->filter(fn (Product $product) => $product->images->contains(
                 fn ($image) => filled($image->url)
             ))
+            ->values();
+
+        $galleryProducts = $imageProducts
             ->reject(fn (Product $product) => $usedProductIds->contains($product->id))
             ->values();
+
+        // Keep the 3D product gallery visible on small catalogues too. Prefer
+        // non-repeated products, but reuse real catalogue photos when fewer
+        // than six unique gallery items remain after the hero/card selections.
+        if ($galleryProducts->count() < 6) {
+            $galleryProducts = $imageProducts;
+        }
 
         $galleryItems = $galleryProducts
             ->map(function (Product $product): array {
@@ -107,7 +118,7 @@ class HomeController extends Controller
             'categories' => $categories,
             'heroProduct' => $heroProduct,
             'galleryItems' => $galleryItems,
-            'gridGroups' => $galleryItems->chunk(9)->values(),
+            'gridGroups' => $galleryItems->chunk(6)->values(),
             'featuredProducts' => $featuredProducts,
             'newProducts' => $newProducts,
             'catalogCount' => $catalogCount,
