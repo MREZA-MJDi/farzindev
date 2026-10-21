@@ -45,7 +45,7 @@
                 }
             @endphp
             @if($cartCount > 0)
-                <span class="absolute right-2 top-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-[var(--livora-accent)] px-1 text-[8px] font-semibold text-white">{{ $cartCount }}</span>
+                <span data-cart-count-badge class="absolute right-2 top-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-[var(--livora-accent)] px-1 text-[8px] font-semibold text-white">{{ $cartCount }}</span>
             @endif
             <span class="text-[9px] font-medium">سبد</span>
         </a>
