@@ -7,7 +7,7 @@
     x-transition:leave="transition ease-in duration-200"
     x-transition:leave-start="opacity-100"
     x-transition:leave-end="opacity-0"
-    class="fixed inset-0 z-[60] lg:hidden"
+    class="fixed inset-0 z-[100] lg:hidden"
 >
     {{-- Backdrop --}}
     <button
@@ -67,42 +67,6 @@
 
         {{-- Content --}}
         <div class="flex-1 overflow-y-auto px-5 py-6">
-
-            {{-- Search --}}
-            <button
-                type="button"
-                @click="
-                    mobileOpen = false;
-                    searchOpen = true;
-
-                    $nextTick(() => {
-                        $refs.searchInput?.focus();
-                    });
-                "
-                class="flex w-full items-center gap-3 rounded-2xl border border-[var(--livora-border)] bg-[var(--livora-white)] px-4 py-4 text-right"
-            >
-
-                <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke-width="1.5"
-                    stroke="currentColor"
-                    class="h-5 w-5 shrink-0 text-[var(--livora-stone)]"
-                >
-                    <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        d="m21 21-4.35-4.35m1.35-5.4a6.75 6.75 0 1 1-13.5 0 6.75 6.75 0 0 1 13.5 0Z"
-                    />
-                </svg>
-
-                <span class="text-sm text-[var(--livora-stone)]">
-                    جستجوی محصول، دسته‌بندی...
-                </span>
-
-            </button>
-
 
             {{-- Main Navigation --}}
             <nav
