@@ -27,71 +27,130 @@
             ];
         @endphp
 
-<section class="fz-hero fz-hero--immersive" aria-labelledby="fz-hero-title">
-    <div class="fz-hero__backdrop" aria-hidden="true">
-        <span class="fz-hero__rotating-art"></span>
-        <span class="fz-hero__backdrop-shade"></span>
-    </div>
-    <div class="fz-container fz-hero__layout">
-        <div class="fz-hero__copy">
-            <p class="fz-eyebrow fz-hero__eyebrow"><span></span> DESIGNED · ENGINEERED · MADE BY FARZIN</p>
-            <h1 id="fz-hero-title">
-                <span class="fz-hero__brand-name">فرزین</span>
-                <span class="fz-hero__brand-claim">تولید تخصصی هود و سینک آشپزخانه</span>
-            </h1>
-            <p class="fz-hero__lead">از طراحی تا تولید؛ تجهیزاتی برای آشپزخانه‌های امروزی، با تمرکز بر فرم، کارکرد و جزئیات ساخت.</p>
-            <div class="fz-hero__actions">
-                <a class="fz-button fz-button--primary" href="{{ route('shop.index') }}">مشاهده محصولات <span aria-hidden="true">←</span></a>
-                <a class="fz-button fz-button--secondary" href="{{ route('about') }}">آشنایی با تولید فرزین</a>
-            </div>
-            <div class="fz-hero__facts" aria-label="زمینه فعالیت فرزین">
-                <div><span class="fz-hero__fact-icon" aria-hidden="true">01</span><span><strong>هود آشپزخانه</strong><small>طراحی و تهویه</small></span></div>
-                <div><span class="fz-hero__fact-icon" aria-hidden="true">02</span><span><strong>سینک ظرفشویی</strong><small>فرم و کاربری</small></span></div>
-                <div><span class="fz-hero__fact-icon" aria-hidden="true">03</span><span><strong>تولید تخصصی</strong><small>از کارخانه تا خانه</small></span></div>
-            </div>
+<section class="fz-hero fz-hero--scroll" data-fz-scroll-hero aria-labelledby="fz-hero-title">
+    <div class="fz-hero__stage" data-hero-stage>
+        <div class="fz-hero__backdrop" aria-hidden="true">
+            <span class="fz-hero__blueprint-grid"></span>
+            <span class="fz-hero__backdrop-shade"></span>
         </div>
-        <div class="fz-hero__visual">
-            <span class="fz-hero__visual-orbit" aria-hidden="true"></span>
-            @if($heroProduct && $heroProduct->images->first(fn ($image) => filled($image->url)))
-                @php($heroImage = $heroProduct->images->first(fn ($image) => filled($image->url)))
-                <a class="fz-hero-product" href="{{ route('product.show', $heroProduct->slug) }}" aria-label="مشاهده {{ $heroProduct->name }}">
-                    <img class="fz-hero-product__image" src="{{ $heroImage->url }}" alt="{{ $heroImage->alt ?: $heroProduct->name }}" width="1200" height="1000" loading="eager" fetchpriority="high" decoding="async">
-                    <span class="fz-hero-product__veil" aria-hidden="true"></span>
-                    <span class="fz-hero-product__index">FZ / PRODUCT {{ str_pad((string) $heroProduct->id, 3, '0', STR_PAD_LEFT) }}</span>
-                    <span class="fz-hero-product__meta">
-                        <span>در مجموعه محصولات فرزین</span>
-                        <strong>{{ $heroProduct->name }}</strong>
-                        <span class="fz-hero-product__link">مشاهده مشخصات <b aria-hidden="true">↗</b></span>
-                    </span>
-                </a>
-            @else
-                <div class="fz-hero-empty" role="img" aria-label="نمای گرافیکی تجهیزات آشپزخانه فرزین">
-                    <span class="fz-hero-empty__label">FARZIN / KITCHEN SYSTEMS</span>
-                    <div class="fz-hero-empty__orb fz-hero-empty__orb--one"></div>
-                    <div class="fz-hero-empty__orb fz-hero-empty__orb--two"></div>
-                    <svg class="fz-hero-empty__drawing" viewBox="0 0 420 300" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                        <path d="M65 104L210 45L355 104" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
-                        <path d="M98 106H322L296 151H124L98 106Z" fill="rgba(255,255,255,.08)" stroke="currentColor" stroke-width="3" stroke-linejoin="round"/>
-                        <path d="M147 151V177H273V151" stroke="currentColor" stroke-width="3" stroke-linejoin="round"/>
-                        <path d="M76 205H344V256H76V205Z" fill="rgba(255,255,255,.04)" stroke="currentColor" stroke-width="3"/>
-                        <path d="M100 220H320M100 233H320M100 246H320" stroke="currentColor" stroke-width="1.5" opacity=".5"/>
-                        <path d="M154 205V189H266V205" stroke="currentColor" stroke-width="3"/>
-                        <path d="M190 189V178C190 168 199 160 209 160H211C221 160 230 168 230 178V189" stroke="currentColor" stroke-width="3"/>
-                        <circle cx="210" cy="83" r="4" fill="currentColor"/>
-                        <circle cx="194" cy="83" r="2.5" fill="currentColor" opacity=".5"/>
-                        <circle cx="226" cy="83" r="2.5" fill="currentColor" opacity=".5"/>
-                    </svg>
-                    <strong>تجهیزات آشپزخانه، با نگاه دقیق</strong>
-                    <span>هود و سینک؛ طراحی‌شده برای استفاده‌ی روزمره</span>
+
+        <div class="fz-container fz-hero__layout">
+            <div class="fz-hero__copy">
+                <p class="fz-eyebrow fz-hero__eyebrow"><span></span> FARZIN / ARCHITECTURAL ENGINEERING</p>
+                <h1 id="fz-hero-title">
+                    <span class="fz-hero__brand-name">فرزین</span>
+                    <span class="fz-hero__brand-claim">تولید تخصصی هود و سینک آشپزخانه</span>
+                </h1>
+                <p class="fz-hero__lead">از طراحی تا تولید؛ تجهیزاتی برای آشپزخانه‌های امروزی، با تمرکز بر فرم، کارکرد و جزئیات ساخت.</p>
+                <div class="fz-hero__actions">
+                    <a class="fz-button fz-button--primary" href="{{ route('shop.index') }}">مشاهده محصولات <span aria-hidden="true">←</span></a>
+                    <a class="fz-button fz-button--secondary" href="{{ route('about') }}">آشنایی با تولید فرزین</a>
                 </div>
-            @endif
-            <span class="fz-hero__edge-note" aria-hidden="true">FORM / FUNCTION / FARZIN</span>
+                <div class="fz-hero__facts" aria-label="زمینه فعالیت فرزین">
+                    <div><span class="fz-hero__fact-icon" aria-hidden="true">01</span><span><strong>هود آشپزخانه</strong><small>طراحی و تهویه</small></span></div>
+                    <div><span class="fz-hero__fact-icon" aria-hidden="true">02</span><span><strong>سینک ظرفشویی</strong><small>فرم و کاربری</small></span></div>
+                    <div><span class="fz-hero__fact-icon" aria-hidden="true">03</span><span><strong>تولید تخصصی</strong><small>از کارخانه تا خانه</small></span></div>
+                </div>
+            </div>
+
+            <div class="fz-hero__visual" aria-hidden="true">
+                <div class="fz-hero__art-meta">
+                    <span>FZ / TECHNICAL STUDY 01</span>
+                    <span data-hero-progress>00 / 100</span>
+                </div>
+                <span class="fz-hero__visual-orbit"></span>
+                <svg class="fz-hero__architecture" data-hero-drawing viewBox="0 0 860 620" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <pattern id="fz-hero-grid-pattern" width="28" height="28" patternUnits="userSpaceOnUse">
+                            <path d="M28 0H0V28" stroke="#FFFFFF" stroke-width=".55" opacity=".16"/>
+                        </pattern>
+                        <linearGradient id="fz-hero-metal" x1="120" y1="130" x2="740" y2="500" gradientUnits="userSpaceOnUse">
+                            <stop stop-color="#FFFFFF" stop-opacity=".9"/>
+                            <stop offset=".52" stop-color="#BFC3C8" stop-opacity=".35"/>
+                            <stop offset="1" stop-color="#FFFFFF" stop-opacity=".8"/>
+                        </linearGradient>
+                    </defs>
+                    <path d="M20 90H840V600H20Z" fill="url(#fz-hero-grid-pattern)" opacity=".48"/>
+                    <g class="fz-hero__blueprint-base" fill="none" stroke="#E5E7EB" stroke-width="1.15" stroke-linejoin="round" stroke-linecap="round">
+                        <path d="M58 171 399 68 819 173 473 291Z"/>
+                        <path d="M58 171V402L473 568V291"/>
+                        <path d="M473 291V568L819 431V173"/>
+                        <path d="M82 181 398 86 793 184"/>
+                        <path d="M100 201 394 112 769 205"/>
+                        <path d="M100 201V274L394 187V112"/>
+                        <path d="M414 114 748 207V274L414 197Z"/>
+                        <path d="M119 208 193 186V249L119 271Z M207 181 279 160V223L207 244Z M293 155 365 134V198L293 219Z"/>
+                        <path d="M431 128 495 146V205L431 188Z M508 150 572 168V225L508 208Z M585 171 649 189V246L585 229Z M662 193 724 210V266L662 248Z"/>
+                        <path d="M101 294 402 204 769 291 470 394Z"/>
+                        <path d="M101 294V329L470 430V394"/>
+                        <path d="M470 394 769 291V326L470 430"/>
+                        <path d="M112 339 212 366V463L112 423Z M225 370 312 394V505L225 471Z M325 398 411 421V544L325 510Z"/>
+                        <path d="M493 421 577 393V491L493 523Z M591 388 678 358V460L591 493Z M691 354 758 331V412L691 436Z"/>
+                        <path d="M243 391 464 325 688 383 438 463Z"/>
+                        <path d="M243 391V487L438 569V463"/>
+                        <path d="M438 463 688 383V476L438 569"/>
+                        <path d="M272 403 439 350 654 391"/>
+                        <path d="M272 430 420 479V541 M292 437 292 511 M317 446 317 522 M344 453 344 533"/>
+                        <path d="M474 466 650 409V457L474 516Z"/>
+                        <path d="M490 477 490 510 M508 472 508 504 M526 466 526 498"/>
+                        <path d="M110 451 205 488 M100 475 193 512 M88 500 179 536 M77 525 164 558 M67 551 150 582"/>
+                        <path d="M520 555 790 448 M540 579 813 470 M569 599 835 494"/>
+                    </g>
+                    <g fill="none" stroke="url(#fz-hero-metal)" stroke-width="1.45" stroke-linecap="round" stroke-linejoin="round">
+                        <g data-hero-draw data-hero-phase="0">
+                            <path pathLength="1" d="M58 171 399 68 819 173 473 291Z"/>
+                            <path pathLength="1" d="M58 171V402L473 568V291"/>
+                            <path pathLength="1" d="M473 291V568L819 431V173"/>
+                            <path pathLength="1" d="M82 181 398 86 793 184"/>
+                            <path pathLength="1" d="M100 201 394 112 769 205"/>
+                        </g>
+                        <g data-hero-draw data-hero-phase="1">
+                            <path pathLength="1" d="M100 201V274L394 187V112"/>
+                            <path pathLength="1" d="M414 114 748 207V274L414 197Z"/>
+                            <path pathLength="1" d="M119 208 193 186V249L119 271Z M207 181 279 160V223L207 244Z M293 155 365 134V198L293 219Z"/>
+                            <path pathLength="1" d="M431 128 495 146V205L431 188Z M508 150 572 168V225L508 208Z M585 171 649 189V246L585 229Z M662 193 724 210V266L662 248Z"/>
+                            <path pathLength="1" d="M312 229 397 204 489 229 404 255Z M335 235 398 216 466 235 403 253Z M360 238V267L403 279V253 M446 229V258L403 279"/>
+                        </g>
+                        <g data-hero-draw data-hero-phase="2">
+                            <path pathLength="1" d="M101 294 402 204 769 291 470 394Z"/>
+                            <path pathLength="1" d="M101 294V329L470 430V394 M470 394 769 291V326L470 430"/>
+                            <path pathLength="1" d="M153 286 193 274 M176 293 216 281 M199 300 239 288 M222 307 262 295 M245 314 285 302 M268 321 308 309 M291 328 331 316 M314 335 354 323 M337 342 377 330 M360 349 400 337 M383 356 423 344 M406 363 446 351 M429 370 469 358"/>
+                            <path pathLength="1" d="M531 309 620 331 672 316 583 293Z M545 310 590 322 M611 314 652 323"/>
+                            <path pathLength="1" d="M144 308 198 323 234 312 179 297Z M160 307V322 M181 304V328 M202 299V334"/>
+                        </g>
+                        <g data-hero-draw data-hero-phase="3">
+                            <path pathLength="1" d="M112 339 212 366V463L112 423Z M225 370 312 394V505L225 471Z M325 398 411 421V544L325 510Z"/>
+                            <path pathLength="1" d="M493 421 577 393V491L493 523Z M591 388 678 358V460L591 493Z M691 354 758 331V412L691 436Z"/>
+                            <path pathLength="1" d="M243 391 464 325 688 383 438 463Z M243 391V487L438 569V463 M438 463 688 383V476L438 569"/>
+                            <path pathLength="1" d="M272 403 439 350 654 391 M272 430 420 479V541 M292 437 292 511 M317 446 317 522 M344 453 344 533"/>
+                            <path pathLength="1" d="M474 466 650 409V457L474 516Z M490 477 490 510 M508 472 508 504 M526 466 526 498"/>
+                        </g>
+                        <g data-hero-draw data-hero-phase="4">
+                            <path pathLength="1" d="M58 143 400 41 821 146 M58 139V160 M400 37V57 M821 142V164"/>
+                            <path pathLength="1" d="M835 174V431 M827 174H842 M827 431H842"/>
+                            <path pathLength="1" d="M244 377 464 311 700 373 M239 372 239 389 M465 306V326 M700 368V386"/>
+                            <path pathLength="1" d="M385 95l12 -4 12 4 M397 91V111 M390 111H404"/>
+                            <path pathLength="1" d="M116 278 91 286 M119 284 94 292 M752 282 782 273 M752 289 782 280"/>
+                            <path pathLength="1" d="M131 430h21 M131 438h21 M131 446h21 M247 399h20 M247 407h20 M247 415h20 M607 414h25 M607 422h25"/>
+                        </g>
+                    </g>
+                    <g fill="#F7F7F4" opacity=".8">
+                        <circle cx="58" cy="171" r="2.5"/><circle cx="399" cy="68" r="2.5"/><circle cx="819" cy="173" r="2.5"/>
+                        <circle cx="473" cy="291" r="2.5"/><circle cx="438" cy="569" r="2.5"/>
+                    </g>
+                </svg>
+                <div class="fz-hero__art-caption">
+                    <span>FORM / 01</span>
+                    <span>HOOD · SINK · SPATIAL DETAIL</span>
+                </div>
+            </div>
         </div>
-    </div>
-    <div class="fz-hero__bottom">
-        <span>FARZIN / MANUFACTURING</span>
-        <span>HOODS · SINKS · KITCHEN SYSTEMS</span>
-        <span>DESIGN TO PRODUCTION</span>
+
+        <div class="fz-hero__bottom">
+            <span>FARZIN / MANUFACTURING</span>
+            <span>HOODS · SINKS · KITCHEN SYSTEMS</span>
+            <span class="fz-hero__scroll-cue"><span>SCROLL TO REVEAL</span><b aria-hidden="true">↓</b></span>
+        </div>
     </div>
 </section>
 
