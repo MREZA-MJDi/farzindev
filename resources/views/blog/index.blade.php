@@ -5,12 +5,7 @@
 @section('canonical', route('blog.index'))
 
 @push('seo')
-    <meta property="og:type" content="website">
-    <meta property="og:title" content="بلاگ فرزین | راهنمای انتخاب هود و سینک">
-    <meta property="og:description" content="پیش از خرید هود و سینک، مشخصات و نکته‌های کاربردی انتخاب را در راهنمای فرزین بخوانید.">
-    <meta property="og:url" content="{{ route('blog.index') }}">
-    <meta name="twitter:card" content="summary">
-    <script type="application/ld+json">
+<script type="application/ld+json">
     {
         "@@context": "https://schema.org",
         "@@type": "Blog",
