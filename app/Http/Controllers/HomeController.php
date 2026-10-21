@@ -16,7 +16,6 @@ class HomeController extends Controller
             ->withCount([
                 'products' => fn ($query) => $query->active(),
             ])
-            ->with(['latestActiveProduct.images.media'])
             ->orderBy('sort_order')
             ->limit(8)
             ->get();
@@ -37,7 +36,21 @@ class HomeController extends Controller
             ->whereHas('category', fn ($query) => $query->where('is_active', true))
             ->with([
                 'category',
-                'images.media',
+                // Homepage cards and the hero only render one image per product.
+                // Limit eager-loaded rows to avoid loading every gallery image
+                // (and resolving each file URL) for up to 50 catalogue products.
+                'images' => fn ($query) => $query
+                    ->select([
+                        'id',
+                        'product_id',
+                        'media_id',
+                        'path',
+                        'alt',
+                        'sort_order',
+                        'is_primary',
+                    ])
+                    ->limit(1),
+                'images.media:id,path',
             ])
             ->orderByDesc('is_featured')
             ->orderByDesc('is_new')
