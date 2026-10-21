@@ -1,6 +1,7 @@
 <nav
     x-data
-    class="sticky top-0 z-50 w-full border-b border-[var(--livora-border)] bg-[var(--livora-cream)]/90 backdrop-blur-xl"
+    aria-label="ناوبری اصلی فرزین"
+    class="farzin-site-header sticky top-0 z-50 w-full border-b border-[var(--livora-border)] bg-[var(--livora-ink)]/95 text-[var(--livora-text)] backdrop-blur-xl"
 >
     <x-layout.container>
 
