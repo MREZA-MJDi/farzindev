@@ -404,3 +404,15 @@ body { min-width: 320px; max-width: 100%; overflow-x: clip; }
     }
 }
 
+.farzin-pagination__mobile-status {
+    display: none;
+}
+
+@media (max-width: 767px) {
+    .farzin-pagination__mobile-status {
+        display: inline-flex;
+        align-items: center;
+        white-space: nowrap;
+    }
+}
+
