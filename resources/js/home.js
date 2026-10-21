@@ -137,24 +137,8 @@ function closeQuickView() {
     }
 }
 
-document.querySelectorAll('.grid__item-inner[data-product-id]').forEach((link) => {
-    link.addEventListener('click', (event) => {
-        // Keep native new-tab / open-in-new-window behavior.
-        if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || event.button === 1) return;
-        event.preventDefault();
-
-        openQuickView({
-            id: link.dataset.productId,
-            name: link.dataset.productName,
-            price: link.dataset.productPrice,
-            image: link.dataset.productImage,
-            category: link.dataset.productCategory,
-            stock: link.dataset.productStock,
-            url: link.getAttribute('href'),
-            cartUrl: link.dataset.cartUrl,
-        }, link);
-    });
-});
+// Product mosaic cards keep their native anchor behavior and navigate directly
+// to the canonical Laravel product slug. Quick view is not allowed to hijack clicks.
 
 modalRoot?.addEventListener('click', (event) => {
     if (event.target.closest('[data-qv-close]')) closeQuickView();
@@ -233,13 +217,15 @@ function initGridAnimations() {
 
     grids.forEach((grid) => grid.classList.remove('grid--static'));
 
+    // Six deterministic motion systems adapted from the supplied reference.
+    // No runtime randomness: the same grid index always receives the same motion.
     const layouts = [
-        { columns: 3, ratio: 1.13, perspective: 1250 },
-        { columns: 4, ratio: .92, perspective: 1450 },
-        { columns: 3, ratio: 1.0, perspective: 1350 },
-        { columns: 4, ratio: .88, perspective: 1550 },
-        { columns: 3, ratio: 1.06, perspective: 1250 },
-        { columns: 3, ratio: 1.0, perspective: 1400 },
+        { columns: 3, ratio: 1.08, perspective: 1500 },
+        { columns: 4, ratio: .9, perspective: 1650 },
+        { columns: 3, ratio: 1.0, perspective: 1450 },
+        { columns: 4, ratio: .86, perspective: 1750 },
+        { columns: 3, ratio: 1.04, perspective: 1500 },
+        { columns: 3, ratio: .98, perspective: 1600 },
     ];
 
     gridMotionContext = gsap.context(() => {
@@ -248,56 +234,125 @@ function initGridAnimations() {
             const items = [...grid.querySelectorAll('.grid__item')];
             if (!wrap || !items.length) return;
 
-            const layout = layouts[index % layouts.length];
+            const type = index % layouts.length;
+            const layout = layouts[type];
+            grid.dataset.motionType = String(type + 1);
             grid.style.setProperty('--grid-columns', String(layout.columns));
             grid.style.setProperty('--grid-item-ratio', String(layout.ratio));
-            grid.style.setProperty('--perspective', String(layout.perspective) + 'px');
+            grid.style.setProperty('--perspective', `${layout.perspective}px`);
 
-            const timeline = gsap.timeline({
-                defaults: { ease: 'power2.out' },
-                scrollTrigger: {
-                    trigger: grid,
-                    start: 'top 88%',
-                    end: 'top 44%',
-                    scrub: 0.75,
-                    invalidateOnRefresh: true,
-                },
-            });
+            const trigger = {
+                trigger: grid,
+                start: 'top 92%',
+                end: 'bottom 28%',
+                scrub: true,
+                invalidateOnRefresh: true,
+                fastScrollEnd: true,
+            };
 
-            // Restrained 3D transforms; layout and native scrolling remain intact.
-            timeline.fromTo(items, {
-                y: 18,
-                z: -55,
-                rotateX: index % 2 === 0 ? 3 : -3,
-                rotateY: index % 2 === 0 ? -2.5 : 2.5,
-                scale: .965,
-                opacity: .82,
-                transformOrigin: '50% 50%',
-                force3D: true,
-            }, {
-                y: 0,
-                z: 0,
-                rotateX: 0,
-                rotateY: 0,
-                scale: 1,
-                opacity: 1,
-                stagger: { each: .025, from: index % 2 === 0 ? 'start' : 'end' },
-                duration: 1,
-                immediateRender: false,
-                clearProps: 'transform',
-            });
+            const timeline = gsap.timeline({ scrollTrigger: trigger });
+            const odd = index % 2 === 1;
+            const direction = odd ? -1 : 1;
+            const itemIndex = (element) => items.indexOf(element);
+            const rowIndex = (element) => Math.floor(itemIndex(element) / layout.columns);
+            const columnIndex = (element) => itemIndex(element) % layout.columns;
 
-            timeline.fromTo(wrap, {
-                rotationX: index % 2 === 0 ? 1.4 : -1.4,
-                transformOrigin: '50% 50%',
-            }, {
-                rotationX: 0,
-                duration: 1,
-                immediateRender: false,
-                clearProps: 'transform',
-            }, 0);
+            if (type === 0) {
+                // Type 1: deep staggered entrance with alternating lateral offsets.
+                timeline.fromTo(items, {
+                    x: (i) => (i % 2 ? 1 : -1) * (150 + (i % 3) * 55),
+                    y: (i) => (i % 3 - 1) * 95,
+                    z: -950,
+                    rotateX: (i) => (i % 2 ? -1 : 1) * 22,
+                    rotateY: (i) => (i % 2 ? 1 : -1) * 28,
+                    scale: .58,
+                    opacity: .15,
+                    transformOrigin: '50% 50%',
+                    force3D: true,
+                }, {
+                    x: 0, y: 0, z: 0, rotateX: 0, rotateY: 0, scale: 1, opacity: 1,
+                    stagger: { each: .035, from: 'center' },
+                    ease: 'none',
+                });
+                timeline.fromTo(wrap, { rotationY: direction * 7 }, { rotationY: 0, ease: 'none' }, 0);
+            } else if (type === 1) {
+                // Type 2: columns travel horizontally through a deep perspective.
+                timeline.fromTo(items, {
+                    xPercent: (i) => (columnIndex(items[i]) % 2 ? 1 : -1) * (280 + columnIndex(items[i]) * 90),
+                    z: -700,
+                    rotateY: (i) => (columnIndex(items[i]) % 2 ? -1 : 1) * 35,
+                    rotateX: (i) => (rowIndex(items[i]) % 2 ? -12 : 12),
+                    scale: .72,
+                    opacity: .2,
+                }, {
+                    xPercent: 0, z: 0, rotateY: 0, rotateX: 0, scale: 1, opacity: 1,
+                    stagger: { each: .025, from: odd ? 'end' : 'start' },
+                    ease: 'none',
+                });
+                timeline.fromTo(wrap, { rotationX: odd ? -8 : 8 }, { rotationX: 0, ease: 'none' }, 0);
+            } else if (type === 2) {
+                // Type 3: vertical rise from below, with a controlled depth shift.
+                timeline.fromTo(items, {
+                    yPercent: (i) => 170 + rowIndex(items[i]) * 65,
+                    z: -520,
+                    rotateX: 48,
+                    rotateY: (i) => (columnIndex(items[i]) - 1) * 12,
+                    scale: .68,
+                    opacity: .1,
+                }, {
+                    yPercent: 0, z: 0, rotateX: 0, rotateY: 0, scale: 1, opacity: 1,
+                    stagger: { each: .03, from: 'end' },
+                    ease: 'none',
+                });
+                timeline.fromTo(wrap, { rotationX: 10 }, { rotationX: 0, ease: 'none' }, 0);
+            } else if (type === 3) {
+                // Type 4: each tile turns into view from a deterministic angle.
+                timeline.fromTo(items, {
+                    rotationZ: (i) => (i % 2 ? 1 : -1) * (32 + (i % 3) * 12),
+                    rotationY: (i) => (i % 2 ? -1 : 1) * 42,
+                    z: -650,
+                    scale: .62,
+                    opacity: .12,
+                    transformOrigin: '50% 50%',
+                }, {
+                    rotationZ: 0, rotationY: 0, z: 0, scale: 1, opacity: 1,
+                    stagger: { each: .04, from: 'center' },
+                    ease: 'none',
+                });
+                timeline.fromTo(wrap, { rotationY: -9 }, { rotationY: 0, ease: 'none' }, 0);
+            } else if (type === 4) {
+                // Type 5: alternating rows slide in opposite directions.
+                timeline.fromTo(items, {
+                    xPercent: (i) => (rowIndex(items[i]) % 2 ? 1 : -1) * (170 + columnIndex(items[i]) * 35),
+                    y: (i) => (rowIndex(items[i]) % 2 ? 45 : -45),
+                    z: -420,
+                    rotateY: (i) => (rowIndex(items[i]) % 2 ? -1 : 1) * 24,
+                    scale: .78,
+                    opacity: .18,
+                }, {
+                    xPercent: 0, y: 0, z: 0, rotateY: 0, scale: 1, opacity: 1,
+                    stagger: { each: .02, from: 'edges' },
+                    ease: 'none',
+                });
+                timeline.fromTo(wrap, { rotationX: odd ? 5 : -5 }, { rotationX: 0, ease: 'none' }, 0);
+            } else {
+                // Type 6: square-like tiles rotate upward out of the lower depth.
+                timeline.fromTo(items, {
+                    y: (i) => 230 + rowIndex(items[i]) * 45,
+                    z: -900,
+                    rotateX: 68,
+                    rotateY: (i) => (columnIndex(items[i]) - 1) * 18,
+                    scale: .45,
+                    opacity: .08,
+                }, {
+                    y: 0, z: 0, rotateX: 0, rotateY: 0, scale: 1, opacity: 1,
+                    stagger: { each: .035, from: 'start' },
+                    ease: 'none',
+                });
+                timeline.fromTo(wrap, { rotationX: 12 }, { rotationX: 0, ease: 'none' }, 0);
+            }
         });
-    }, document.body);
+    }, document.querySelector('.home-body') || document);
 
     ScrollTrigger.refresh();
 }
