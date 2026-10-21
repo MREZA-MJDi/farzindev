@@ -1575,7 +1575,7 @@ class FarzinStorefrontTest extends TestCase
             ->assertRedirect(route('admin.media.index'))
             ->assertSessionHas('success');
 
-        $media = \\App\\Models\\Media::query()->firstOrFail();
+        $media = \App\Models\Media::query()->firstOrFail();
 
         Storage::disk('public')->assertExists($media->path);
         $this->assertSame('video/mp4', $media->mime_type);
