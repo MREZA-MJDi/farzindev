@@ -86,14 +86,6 @@
 
             <div class="py-7 sm:py-9">
 
-                @php
-                    $searchResetQuery = request()->except(['search', 'page']);
-                    $searchResetUrl = route('shop.index')
-                        . ($searchResetQuery
-                            ? '?' . http_build_query($searchResetQuery)
-                            : '');
-                @endphp
-
                 <form
                     action="{{ route('shop.index') }}"
                     method="GET"
