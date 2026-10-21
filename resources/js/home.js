@@ -42,11 +42,39 @@ function initRevealAnimations() {
     elements.forEach((element) => observer.observe(element));
 }
 
+function groupGridItems(items, axis) {
+    const groups = [];
+
+    items.forEach((element) => {
+        const rect = element.getBoundingClientRect();
+        const center = axis === 'y'
+            ? rect.top + rect.height / 2
+            : rect.left + rect.width / 2;
+        const tolerance = Math.max(8, (axis === 'y' ? rect.height : rect.width) * 0.22);
+        let group = groups.find((candidate) => Math.abs(candidate.center - center) < tolerance);
+
+        if (!group) {
+            group = { center, items: [] };
+            groups.push(group);
+        }
+
+        group.items.push(element);
+        group.center = group.items.reduce((sum, item) => {
+            const itemRect = item.getBoundingClientRect();
+            return sum + (axis === 'y'
+                ? itemRect.top + itemRect.height / 2
+                : itemRect.left + itemRect.width / 2);
+        }, 0) / group.items.length;
+    });
+
+    return groups.sort((a, b) => a.center - b.center);
+}
+
 function initGridAnimations() {
     gridMotionContext?.revert();
     gridMotionContext = null;
 
-    const grids = [...document.querySelectorAll('.grid')];
+    const grids = [...document.querySelectorAll('.home-body .grid')];
     if (!grids.length) return;
 
     if (reduceMotion || lowPower) {
@@ -56,21 +84,24 @@ function initGridAnimations() {
 
     grids.forEach((grid) => grid.classList.remove('grid--static'));
 
-    // Six deterministic motion systems adapted from the supplied reference.
-    // No runtime randomness: the same grid index always receives the same motion.
+    // Six scroll-driven 3D patterns adapted from the supplied Codrops demo.
+    // The movement is deterministic, so a refresh or resize never randomizes
+    // product positions. Product photos themselves remain ordinary <img> tags.
     const layouts = [
-        { columns: 3, ratio: 1.08, perspective: 1500 },
-        { columns: 4, ratio: .9, perspective: 1650 },
-        { columns: 3, ratio: 1.0, perspective: 1450 },
-        { columns: 4, ratio: .86, perspective: 1750 },
-        { columns: 3, ratio: 1.04, perspective: 1500 },
-        { columns: 3, ratio: .98, perspective: 1600 },
+        { columns: 3, ratio: 1.08, perspective: 1450 },
+        { columns: 4, ratio: 0.88, perspective: 1750 },
+        { columns: 3, ratio: 1.00, perspective: 1550 },
+        { columns: 4, ratio: 0.86, perspective: 1800 },
+        { columns: 3, ratio: 1.04, perspective: 1550 },
+        { columns: 3, ratio: 1.00, perspective: 1650 },
     ];
 
     gridMotionContext = gsap.context(() => {
         grids.forEach((grid, index) => {
             const wrap = grid.querySelector('.grid-wrap');
             const items = [...grid.querySelectorAll('.grid__item')];
+            const inners = items.map((item) => item.querySelector('.grid__item-inner')).filter(Boolean);
+
             if (!wrap || !items.length) return;
 
             const type = index % layouts.length;
@@ -80,115 +111,189 @@ function initGridAnimations() {
             grid.style.setProperty('--grid-item-ratio', String(layout.ratio));
             grid.style.setProperty('--perspective', `${layout.perspective}px`);
 
-            const trigger = {
-                trigger: grid,
-                start: 'top 92%',
-                end: 'bottom 28%',
-                scrub: true,
-                invalidateOnRefresh: true,
-                fastScrollEnd: true,
-            };
+            // Measure the rendered grid rather than assuming a fixed row/column
+            // arrangement; mobile CSS can change the number of columns.
+            const rows = groupGridItems(items, 'y');
+            const columns = groupGridItems(items, 'x');
+            const rowMap = new Map();
+            const columnMap = new Map();
+            rows.forEach((row, rowIndex) => row.items.forEach((item) => rowMap.set(item, rowIndex)));
+            columns.forEach((column, columnIndex) => column.items.forEach((item) => columnMap.set(item, columnIndex)));
 
-            const timeline = gsap.timeline({ scrollTrigger: trigger });
-            const odd = index % 2 === 1;
-            const direction = odd ? -1 : 1;
-            const itemIndex = (element) => items.indexOf(element);
-            const rowIndex = (element) => Math.floor(itemIndex(element) / layout.columns);
-            const columnIndex = (element) => itemIndex(element) % layout.columns;
+            const rowOf = (item) => rowMap.get(item) ?? 0;
+            const columnOf = (item) => columnMap.get(item) ?? 0;
+            const timeline = gsap.timeline({
+                scrollTrigger: {
+                    trigger: wrap,
+                    start: 'top bottom+=5%',
+                    end: 'bottom top-=5%',
+                    scrub: true,
+                    invalidateOnRefresh: true,
+                    fastScrollEnd: true,
+                },
+            });
 
             if (type === 0) {
-                // Type 1: deep staggered entrance with alternating lateral offsets.
-                timeline.fromTo(items, {
-                    x: (i) => (i % 2 ? 1 : -1) * (150 + (i % 3) * 55),
-                    y: (i) => (i % 3 - 1) * 95,
-                    z: -950,
-                    rotateX: (i) => (i % 2 ? -1 : 1) * 22,
-                    rotateY: (i) => (i % 2 ? 1 : -1) * 28,
-                    scale: .58,
-                    opacity: .15,
-                    transformOrigin: '50% 50%',
-                    force3D: true,
+                // Pattern 1 — tiles cross the viewport from opposing sides in depth.
+                timeline.fromTo(wrap, {
+                    rotationY: 16,
+                    rotationZ: -2,
                 }, {
-                    x: 0, y: 0, z: 0, rotateX: 0, rotateY: 0, scale: 1, opacity: 1,
-                    stagger: { each: .035, from: 'center' },
+                    rotationY: 0,
+                    rotationZ: 0,
                     ease: 'none',
-                });
-                timeline.fromTo(wrap, { rotationY: direction * 7 }, { rotationY: 0, ease: 'none' }, 0);
+                }, 0);
+                timeline.fromTo(items, {
+                    xPercent: (i) => -145 - (i % 3) * 22,
+                    z: (i) => -650 - (i % 4) * 110,
+                    rotateY: (i) => (i % 2 ? -1 : 1) * 24,
+                    scale: 0.76,
+                    opacity: 0.14,
+                }, {
+                    xPercent: (i) => 120 + (i % 3) * 18,
+                    z: 0,
+                    rotateY: 0,
+                    scale: 1,
+                    opacity: 1,
+                    stagger: { each: 0.035, from: 'center' },
+                    ease: 'none',
+                }, 0);
+                timeline.fromTo(inners, { scale: 1.14 }, { scale: 1, ease: 'none' }, 0);
             } else if (type === 1) {
-                // Type 2: columns travel horizontally through a deep perspective.
-                timeline.fromTo(items, {
-                    xPercent: (i) => (columnIndex(items[i]) % 2 ? 1 : -1) * (280 + columnIndex(items[i]) * 90),
-                    z: -700,
-                    rotateY: (i) => (columnIndex(items[i]) % 2 ? -1 : 1) * 35,
-                    rotateX: (i) => (rowIndex(items[i]) % 2 ? -12 : 12),
-                    scale: .72,
-                    opacity: .2,
+                // Pattern 2 — vertical travel with a tilted six-dimensional panel.
+                timeline.fromTo(wrap, {
+                    rotationX: 15,
+                    rotationZ: -5,
                 }, {
-                    xPercent: 0, z: 0, rotateY: 0, rotateX: 0, scale: 1, opacity: 1,
-                    stagger: { each: .025, from: odd ? 'end' : 'start' },
+                    rotationX: -12,
+                    rotationZ: 4,
                     ease: 'none',
-                });
-                timeline.fromTo(wrap, { rotationX: odd ? -8 : 8 }, { rotationX: 0, ease: 'none' }, 0);
-            } else if (type === 2) {
-                // Type 3: vertical rise from below, with a controlled depth shift.
+                }, 0);
                 timeline.fromTo(items, {
-                    yPercent: (i) => 170 + rowIndex(items[i]) * 65,
-                    z: -520,
-                    rotateX: 48,
-                    rotateY: (i) => (columnIndex(items[i]) - 1) * 12,
-                    scale: .68,
-                    opacity: .1,
+                    yPercent: (i) => 155 + rowOf(items[i]) * 42,
+                    z: (i) => -550 - (i % 4) * 95,
+                    rotationY: (i) => (columnOf(items[i]) % 2 ? -1 : 1) * 34,
+                    rotationX: (i) => (rowOf(items[i]) % 2 ? -1 : 1) * 12,
+                    scale: 0.78,
+                    opacity: 0.12,
+                    filter: 'brightness(1.35)',
                 }, {
-                    yPercent: 0, z: 0, rotateX: 0, rotateY: 0, scale: 1, opacity: 1,
-                    stagger: { each: .03, from: 'end' },
+                    yPercent: (i) => -95 - rowOf(items[i]) * 30,
+                    z: 0,
+                    rotationY: 0,
+                    rotationX: 0,
+                    scale: 1,
+                    opacity: 1,
+                    filter: 'brightness(1)',
+                    stagger: { each: 0.025, from: 'end' },
+                    ease: 'none',
+                }, 0);
+                timeline.fromTo(inners, { scale: 1.12 }, { scale: 1, ease: 'none' }, 0);
+            } else if (type === 2) {
+                // Pattern 3 — tiles rise from a remote depth and resolve into a clean grid.
+                timeline.fromTo(wrap, {
+                    z: -120,
+                    rotationX: 9,
+                }, {
+                    z: 90,
+                    rotationX: 0,
+                    ease: 'none',
+                }, 0);
+                timeline.fromTo(items, {
+                    z: (i) => -1150 - (i % 5) * 115,
+                    rotationX: (i) => -42 + (i % 3) * 8,
+                    xPercent: (i) => (columnOf(items[i]) - 1) * 48,
+                    yPercent: (i) => 95 + rowOf(items[i]) * 55,
+                    scale: 0.66,
+                    opacity: 0.06,
+                    filter: 'brightness(0.35)',
+                }, {
+                    z: 0,
+                    rotationX: 0,
+                    xPercent: 0,
+                    yPercent: 0,
+                    scale: 1,
+                    opacity: 1,
+                    filter: 'brightness(1)',
+                    stagger: { each: 0.03, from: 'edges' },
+                    ease: 'none',
+                }, 0);
+                timeline.fromTo(inners, { scale: 1.18 }, { scale: 1, ease: 'none' }, 0);
+            } else if (type === 3) {
+                // Pattern 4 — rotating tiles fold into view from a diagonal angle.
+                timeline.fromTo(wrap, {
+                    rotationY: 12,
+                    rotationX: 5,
+                }, {
+                    rotationY: 0,
+                    rotationX: 0,
+                    ease: 'none',
+                }, 0);
+                timeline.fromTo(items, {
+                    transformOrigin: '50% 0%',
+                    rotationX: -62,
+                    rotationY: (i) => (i % 2 ? 1 : -1) * 38,
+                    rotationZ: (i) => (i % 2 ? -1 : 1) * 12,
+                    z: -620,
+                    scale: 0.7,
+                    opacity: 0.08,
+                    filter: 'brightness(1.3)',
+                }, {
+                    rotationX: 0,
+                    rotationY: 0,
+                    rotationZ: 0,
+                    z: 0,
+                    scale: 1,
+                    opacity: 1,
+                    filter: 'brightness(1)',
+                    stagger: { each: 0.04, from: 'center' },
+                    ease: 'none',
+                }, 0);
+                timeline.fromTo(inners, { scale: 1.16 }, { scale: 1, ease: 'none' }, 0);
+            } else if (type === 4) {
+                // Pattern 5 — alternate rows slide in opposite directions.
+                timeline.fromTo(wrap, { rotationX: 17 }, { rotationX: 5, ease: 'none' }, 0);
+                timeline.fromTo(items, {
+                    xPercent: (i) => (rowOf(items[i]) % 2 ? 1 : -1) * 105,
+                    yPercent: (i) => (rowOf(items[i]) % 2 ? 1 : -1) * 26,
+                    z: -390,
+                    rotationY: (i) => (rowOf(items[i]) % 2 ? -1 : 1) * 24,
+                    scale: 0.8,
+                    opacity: 0.16,
+                    filter: 'brightness(0.55)',
+                }, {
+                    xPercent: 0,
+                    yPercent: 0,
+                    z: 0,
+                    rotationY: 0,
+                    scale: 1,
+                    opacity: 1,
+                    filter: 'brightness(1)',
+                    stagger: { each: 0.025, from: 'edges' },
+                    ease: 'none',
+                }, 0);
+            } else {
+                // Pattern 6 — cards rotate upward into the viewer like a product deck.
+                timeline.fromTo(items, {
+                    transformOrigin: '50% 200%',
+                    rotationX: 58,
+                    rotationY: (i) => (columnOf(items[i]) - 1) * 14,
+                    yPercent: (i) => 190 + rowOf(items[i]) * 50,
+                    z: -850,
+                    scale: 0.55,
+                    opacity: 0.06,
+                }, {
+                    rotationX: 0,
+                    rotationY: 360,
+                    yPercent: 0,
+                    z: 0,
+                    scale: 1,
+                    opacity: 1,
+                    stagger: { each: 0.035, from: 'start' },
                     ease: 'none',
                 });
                 timeline.fromTo(wrap, { rotationX: 10 }, { rotationX: 0, ease: 'none' }, 0);
-            } else if (type === 3) {
-                // Type 4: each tile turns into view from a deterministic angle.
-                timeline.fromTo(items, {
-                    rotationZ: (i) => (i % 2 ? 1 : -1) * (32 + (i % 3) * 12),
-                    rotationY: (i) => (i % 2 ? -1 : 1) * 42,
-                    z: -650,
-                    scale: .62,
-                    opacity: .12,
-                    transformOrigin: '50% 50%',
-                }, {
-                    rotationZ: 0, rotationY: 0, z: 0, scale: 1, opacity: 1,
-                    stagger: { each: .04, from: 'center' },
-                    ease: 'none',
-                });
-                timeline.fromTo(wrap, { rotationY: -9 }, { rotationY: 0, ease: 'none' }, 0);
-            } else if (type === 4) {
-                // Type 5: alternating rows slide in opposite directions.
-                timeline.fromTo(items, {
-                    xPercent: (i) => (rowIndex(items[i]) % 2 ? 1 : -1) * (170 + columnIndex(items[i]) * 35),
-                    y: (i) => (rowIndex(items[i]) % 2 ? 45 : -45),
-                    z: -420,
-                    rotateY: (i) => (rowIndex(items[i]) % 2 ? -1 : 1) * 24,
-                    scale: .78,
-                    opacity: .18,
-                }, {
-                    xPercent: 0, y: 0, z: 0, rotateY: 0, scale: 1, opacity: 1,
-                    stagger: { each: .02, from: 'edges' },
-                    ease: 'none',
-                });
-                timeline.fromTo(wrap, { rotationX: odd ? 5 : -5 }, { rotationX: 0, ease: 'none' }, 0);
-            } else {
-                // Type 6: square-like tiles rotate upward out of the lower depth.
-                timeline.fromTo(items, {
-                    y: (i) => 230 + rowIndex(items[i]) * 45,
-                    z: -900,
-                    rotateX: 68,
-                    rotateY: (i) => (columnIndex(items[i]) - 1) * 18,
-                    scale: .45,
-                    opacity: .08,
-                }, {
-                    y: 0, z: 0, rotateX: 0, rotateY: 0, scale: 1, opacity: 1,
-                    stagger: { each: .035, from: 'start' },
-                    ease: 'none',
-                });
-                timeline.fromTo(wrap, { rotationX: 12 }, { rotationX: 0, ease: 'none' }, 0);
+                timeline.fromTo(inners, { scale: 1.18 }, { scale: 1, ease: 'none' }, 0);
             }
         });
     }, document.querySelector('.home-body') || document);
