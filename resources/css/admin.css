@@ -1895,3 +1895,23 @@ html, body, .admin-shell { background: var(--admin-bg); color: var(--admin-text)
 .admin-stat-icon { background: var(--admin-accent-soft); color: #D5B99A; }
 .admin-input, .admin-select, .admin-textarea { background: #191815; border-color: var(--admin-border); color: var(--admin-text); }
 ::selection { background: #805B3D; color: #FFF8EF; }
+
+
+/* Neutral utility surfaces in the dashboard follow the same dark design tokens. */
+.admin-shell [class~="bg-white"],
+.admin-shell [class~="bg-gray-50"],
+.admin-shell [class~="bg-gray-100"],
+.admin-shell [class~="bg-slate-50"],
+.admin-shell [class~="bg-slate-100"],
+.admin-shell [class~="bg-zinc-50"] { background-color: #292720 !important; }
+.admin-shell [class~="text-gray-950"],
+.admin-shell [class~="text-gray-900"],
+.admin-shell [class~="text-gray-800"],
+.admin-shell [class~="text-slate-900"] { color: #E6DED1 !important; }
+.admin-shell [class~="text-gray-700"],
+.admin-shell [class~="text-gray-600"],
+.admin-shell [class~="text-gray-500"],
+.admin-shell [class~="text-slate-600"] { color: #B5AA9A !important; }
+.admin-shell [class~="border-gray-100"],
+.admin-shell [class~="border-gray-200"],
+.admin-shell [class~="border-slate-200"] { border-color: #39362F !important; }

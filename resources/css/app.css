@@ -2479,3 +2479,48 @@ a[data-farzin-gif-card].is-gif-previewing .farzin-category-card__gif { opacity: 
 #app [class*="bg-[var(--livora-cream)]"],
 #app [class*="bg-[color:var(--livora-cream)]"] { background-color: #141310 !important; }
 .farzin-mobile-nav__inner [class~="text-[var(--livora-ink)]"] { color: #E6DED1 !important; }
+
+
+/* Remaining bespoke sections share the same architectural dark surfaces. */
+.storefront-content [class~="bg-gray-50"],
+.storefront-content [class~="bg-gray-100"],
+.storefront-content [class~="bg-slate-50"],
+.storefront-content [class~="bg-slate-100"],
+.storefront-content [class~="bg-zinc-50"],
+.storefront-content [class~="bg-neutral-50"],
+.storefront-content [class~="bg-stone-50"] { background-color: #211F1B !important; }
+.storefront-content [class~="text-gray-950"],
+.storefront-content [class~="text-gray-900"],
+.storefront-content [class~="text-gray-800"],
+.storefront-content [class~="text-slate-900"] { color: #E6DED1 !important; }
+.storefront-content [class~="text-gray-700"],
+.storefront-content [class~="text-gray-600"],
+.storefront-content [class~="text-slate-600"] { color: #B5AA9A !important; }
+.storefront-content [class~="border-gray-100"],
+.storefront-content [class~="border-gray-200"],
+.storefront-content [class~="border-slate-200"] { border-color: #39362F !important; }
+
+/* Contact page: replace the leftover light panels and bright gradient accents. */
+.storefront-content .fz-contact-workspace,
+.storefront-content .fz-contact-bottom { background: #141310 !important; }
+.storefront-content .fz-contact-panel,
+.storefront-content .fz-contact-form-panel { color: #E6DED1; background: #211F1B; border-color: #39362F; box-shadow: 0 8px 24px rgba(0,0,0,.18); }
+.storefront-content .fz-contact-address,
+.storefront-content .fz-contact-hours,
+.storefront-content .fz-contact-channel,
+.storefront-content .fz-contact-social__link { color: #E6DED1 !important; background: #211F1B !important; border-color: #39362F !important; box-shadow: none !important; }
+.storefront-content .fz-contact-map-frame { background: #211F1B; border-color: #39362F; box-shadow: none; }
+.storefront-content .fz-contact-map-empty { color: #B5AA9A; background: #211F1B; border-color: #585044; }
+.storefront-content .fz-contact-address__icon,
+.storefront-content .fz-contact-channel__icon,
+.storefront-content .fz-contact-form-panel__number,
+.storefront-content .fz-contact-live { color: #C4A481; background: #302820; border-color: #4B3C2D; }
+.storefront-content .fz-contact-directions,
+.storefront-content .fz-contact-submit { color: #F7F0E7 !important; background: #805B3D !important; box-shadow: none !important; }
+.storefront-content .fz-contact-field input,
+.storefront-content .fz-contact-field select,
+.storefront-content .fz-contact-field textarea { color: #E6DED1; background: #191815; border-color: #39362F; }
+.storefront-content .fz-contact-field input:focus,
+.storefront-content .fz-contact-field select:focus,
+.storefront-content .fz-contact-field textarea:focus { background: #191815; border-color: #805B3D; box-shadow: 0 0 0 3px rgba(164,119,82,.12); }
+.storefront-content .fz-contact-alert--error { color: #E0ADA5; background: #2B1E1B; border-color: #57362F; }
