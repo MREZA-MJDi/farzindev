@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Helpers\PersianNumberHelper;
 use App\Models\Category;
 use App\Models\Product;
 use Illuminate\Contracts\View\View;
@@ -89,7 +88,7 @@ class HomeController extends Controller
             ->values();
 
         $galleryItems = $galleryProducts
-            ->map(function (Product $product, int $index): array {
+            ->map(function (Product $product): array {
                 $image = $product->images->first(
                     fn ($candidate) => filled($candidate->url)
                 );
