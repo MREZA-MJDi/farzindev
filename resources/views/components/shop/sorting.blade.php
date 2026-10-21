@@ -54,7 +54,7 @@
 
             <span
                 x-text="label"
-                class="mt-1 block text-xs font-medium text-[var(--livora-ink)]"
+                class="mt-1 block text-xs font-medium text-[var(--livora-text)]"
             >
                 {{ $currentLabel }}
             </span>
@@ -125,9 +125,9 @@
                     "
                     @class([
                         'flex items-center justify-between rounded-xl px-3 py-3 text-xs transition',
-                        'bg-[var(--livora-surface)] font-semibold text-[var(--livora-ink)]'
+                        'bg-[var(--livora-surface)] font-semibold text-[var(--livora-text)]'
                             => $currentSort === $value,
-                        'text-[var(--livora-stone)] hover:bg-[var(--livora-surface)] hover:text-[var(--livora-ink)]'
+                        'text-[var(--livora-stone)] hover:bg-[var(--livora-surface)] hover:text-[var(--livora-text)]'
                             => $currentSort !== $value,
                     ])
                 >
