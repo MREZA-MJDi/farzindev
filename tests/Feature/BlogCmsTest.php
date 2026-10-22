@@ -16,7 +16,7 @@ class BlogCmsTest extends TestCase
     {
         $published = BlogPost::create([
             'title' => 'راهنمای انتخاب هود',
-            'slug' => 'choosing-kitchen-hood',
+            'slug' => 'published-article-test',
             'excerpt' => 'راهنمای بررسی ابعاد و صدای هود',
             'body' => 'متن کامل مقاله منتشرشده.',
             'meta_title' => 'خرید و انتخاب هود | فرزین',
