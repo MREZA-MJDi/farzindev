@@ -41,7 +41,7 @@
                 'name' => 'DigiPay',
                 'fa_name' => 'دیجی‌پی',
                 'description' => 'پرداخت از طریق درگاه دیجی‌پی',
-                'enabled' => app(\\App\\Services\\Payments\\PaymentManager::class)->isReady('digipay'),
+                'enabled' => app(\App\Services\Payments\PaymentManager::class)->isReady('digipay'),
                 'badge' => 'DIGIPAY',
             ],
 
@@ -50,7 +50,7 @@
                 'name' => 'SnappPay',
                 'fa_name' => 'اسنپ‌پی',
                 'description' => 'پرداخت از طریق درگاه اسنپ‌پی',
-                'enabled' => app(\\App\\Services\\Payments\\PaymentManager::class)->isReady('snappay'),
+                'enabled' => app(\App\Services\Payments\PaymentManager::class)->isReady('snappay'),
                 'badge' => 'SNAPPAY',
             ],
 
@@ -59,7 +59,7 @@
                 'name' => 'TorobPay',
                 'fa_name' => 'ترب‌پی',
                 'description' => 'پرداخت از طریق درگاه ترب‌پی',
-                'enabled' => app(\\App\\Services\\Payments\\PaymentManager::class)->isReady('torobpay'),
+                'enabled' => app(\App\Services\Payments\PaymentManager::class)->isReady('torobpay'),
                 'badge' => 'TOROBPAY',
             ],
             [
