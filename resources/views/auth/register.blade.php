@@ -110,6 +110,7 @@
                                     hint="حداقل ۸ کاراکتر، شامل حرف بزرگ و کوچک انگلیسی و عدد؛ مثال: FarzinPass123"
                                     required
                                 />
+                                <p id="password-live-error" class="mt-2 text-[11px] leading-6 text-red-600" aria-live="polite"></p>
 
                                 <x-ui.input
                                     type="password"
@@ -121,13 +122,12 @@
                                     autocomplete="new-password"
                                     required
                                 />
+                                <p id="password-confirmation-live-error" class="mt-2 text-[11px] leading-6 text-red-600" aria-live="polite"></p>
 
                             </div>
 
 
                             <p id="password-requirements" class="sr-only">حداقل ۸ کاراکتر، حداقل یک حرف بزرگ انگلیسی، یک حرف کوچک انگلیسی و یک عدد.</p>
-                            <p id="password-live-error" class="text-[11px] leading-6 text-red-600" aria-live="polite"></p>
-                            <p id="password-confirmation-live-error" class="text-[11px] leading-6 text-red-600" aria-live="polite"></p>
 
                             <label class="flex cursor-pointer items-start gap-3">
 
