@@ -188,6 +188,15 @@ class ProductImageController extends Controller
         UpdateProductImageRequest $request,
         ProductImage $productImage
     ): RedirectResponse {
+        // Variant-linked images are shared catalogue records. Mutating their
+        // path/product or deleting them from the legacy endpoint would silently
+        // alter every color using the image, so keep changes in the product editor.
+        if ($productImage->variants()->exists()) {
+            return redirect()
+                ->route('admin.products.edit', $productImage->product_id)
+                ->with('error', 'این تصویر به یک یا چند تنوع متصل است؛ مدیریت آن را از ویرایش همان محصول انجام دهید.');
+        }
+
         $data = $request->validated();
 
         $oldProductId = $productImage->product_id;
@@ -285,6 +294,13 @@ class ProductImageController extends Controller
 
     public function destroy(ProductImage $productImage): RedirectResponse
     {
+        // Prevent legacy routes from deleting a file still used by a color variant.
+        if ($productImage->variants()->exists()) {
+            return redirect()
+                ->route('admin.products.edit', $productImage->product_id)
+                ->with('error', 'این تصویر به یک یا چند تنوع متصل است؛ ابتدا اتصال آن را از ویرایش محصول مدیریت کنید.');
+        }
+
         $productId = $productImage->product_id;
         $path = $productImage->path;
         $wasPrimary = (bool) $productImage->is_primary;
