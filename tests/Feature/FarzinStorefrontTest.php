@@ -2517,6 +2517,61 @@ class FarzinStorefrontTest extends TestCase
         $this->assertDatabaseHas('addresses', ['id' => $foreign->id]);
     }
 
+    public function test_legacy_image_routes_cannot_mutate_or_delete_a_variant_attached_photo(): void
+    {
+        Storage::fake('public');
+        $admin = $this->admin();
+        $product = $this->product($this->category(['slug' => 'protect-variant-image']), [
+            'name' => 'Shared Variant Image Hood',
+            'slug' => 'shared-variant-image-hood',
+            'sku' => 'FAR-SHARED-VARIANT-IMAGE',
+        ]);
+
+        Storage::disk('public')->put('products/images/shared-variant-photo.webp', 'shared photo bytes');
+        $image = ProductImage::create([
+            'product_id' => $product->id,
+            'path' => 'products/images/shared-variant-photo.webp',
+            'alt' => 'هود مشکی',
+            'sort_order' => 0,
+            'is_primary' => true,
+        ]);
+        $variant = ProductVariant::create([
+            'product_id' => $product->id,
+            'type' => 'color',
+            'name' => 'رنگ',
+            'value' => 'مشکی',
+            'sku' => 'FAR-SHARED-VARIANT-IMAGE-BLACK',
+            'price_adjustment' => 0,
+            'stock' => 2,
+            'is_active' => true,
+        ]);
+        $variant->images()->attach($image->id, ['sort_order' => 0]);
+
+        $this->actingAs($admin)
+            ->put(route('admin.product-images.update', $image), [
+                'product_id' => $product->id,
+                'alt' => 'عنوان نباید تغییر کند',
+                'sort_order' => 0,
+                'is_primary' => '1',
+            ])
+            ->assertRedirect(route('admin.products.edit', $product))
+            ->assertSessionHas('error');
+
+        $this->actingAs($admin)
+            ->delete(route('admin.product-images.destroy', $image))
+            ->assertRedirect(route('admin.products.edit', $product))
+            ->assertSessionHas('error');
+
+        $image->refresh();
+        $this->assertSame('هود مشکی', $image->alt);
+        $this->assertSame('products/images/shared-variant-photo.webp', $image->path);
+        $this->assertDatabaseHas('product_variant_images', [
+            'product_image_id' => $image->id,
+            'product_variant_id' => $variant->id,
+        ]);
+        Storage::disk('public')->assertExists($image->path);
+    }
+
     public function test_admin_can_update_product_image_and_replace_the_old_file_safely(): void
     {
         Storage::fake('public');
