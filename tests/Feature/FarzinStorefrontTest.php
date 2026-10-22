@@ -660,6 +660,60 @@ class FarzinStorefrontTest extends TestCase
         $this->assertAuthenticatedAs($user);
     }
 
+    public function test_registration_validation_returns_field_errors_instead_of_creating_an_account(): void
+    {
+        $this->from(route('register'))
+            ->post(route('register.store'), [
+                'first_name' => 'Ali',
+                'last_name' => 'Test',
+                'phone' => '09123456789',
+                'password' => 'weak',
+                'password_confirmation' => 'different',
+                'terms' => '1',
+            ])
+            ->assertRedirect(route('register'))
+            ->assertSessionHasErrors(['password']);
+
+        $this->assertDatabaseMissing('users', ['phone' => '09123456789']);
+    }
+
+    public function test_guest_cart_prominently_offers_login_and_registration_with_checkout_intended(): void
+    {
+        $product = $this->product($this->category(['slug' => 'guest-checkout-cta']), [
+            'name' => 'Guest Checkout CTA Product',
+            'slug' => 'guest-checkout-cta-product',
+            'sku' => 'FAR-GUEST-CHECKOUT-CTA',
+            'stock' => 5,
+        ]);
+
+        $this->postJson(route('cart.add', $product), ['quantity' => 1])
+            ->assertOk();
+
+        $this->get(route('cart.index'))
+            ->assertOk()
+            ->assertSee('ورود و ادامه پرداخت')
+            ->assertSee('ساخت حساب جدید')
+            ->assertSee(route('login', ['intended' => '/checkout']), false)
+            ->assertSee(route('register', ['intended' => '/checkout']), false);
+    }
+
+    public function test_registration_preserves_checkout_destination_from_safe_intended_parameter(): void
+    {
+        $this->get(route('register', ['intended' => '/checkout']))
+            ->assertOk();
+
+        $this->post(route('register.store'), [
+            'first_name' => 'Farzin',
+            'last_name' => 'Buyer',
+            'phone' => '09123456789',
+            'password' => 'FarzinPass123',
+            'password_confirmation' => 'FarzinPass123',
+            'terms' => '1',
+        ])->assertRedirect(route('checkout.index'));
+
+        $this->assertAuthenticated();
+    }
+
     public function test_customer_can_login_with_persian_mobile_digits(): void
     {
         $customer = $this->customer([
