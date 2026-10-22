@@ -221,6 +221,11 @@ Route::middleware(['auth', 'customer'])->group(function () {
                 [CheckoutController::class, 'payment']
             )->name('payment');
 
+            Route::get(
+                '/payment/{order}/provider/{gateway}',
+                [CheckoutController::class, 'providerStatus']
+            )->name('provider-status');
+
             Route::post(
                 '/payment/{order}/installment',
                 [CheckoutController::class, 'startInstallmentPayment']
