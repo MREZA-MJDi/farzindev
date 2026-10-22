@@ -6,8 +6,6 @@
 
 @section('content')
 
-
-
     <section class="min-h-[calc(100vh-80px)]">
 
         <x-layout.container>
@@ -34,8 +32,9 @@
 
 
                     @if($errors->any())
-                        <div class="mt-6 rounded-2xl border border-red-200 bg-red-50 p-4">
-                            <ul class="space-y-1 text-xs leading-6 text-red-700">
+                        <div class="mt-6 rounded-2xl border border-red-200 bg-red-50 p-4" role="alert" aria-live="polite">
+                            <p class="text-xs font-semibold text-red-800">لطفاً موارد زیر را اصلاح کنید:</p>
+                            <ul class="mt-2 space-y-1 text-xs leading-6 text-red-700">
                                 @foreach($errors->all() as $error)
                                     <li>{{ $error }}</li>
                                 @endforeach
