@@ -63,7 +63,7 @@
             $resolvedImages->map(function ($image) use ($productName) {
                 return [
                     'url' => $image->url,
-                    'alt' => ($image->alt ?: ($image->alt_text ?? $productName)),
+                    'alt' => ($image->alt ?: $productName),
                 ];
             })->values()
         ),
@@ -155,7 +155,7 @@
                         x-transition:enter-start="opacity-0 scale-[1.02]"
                         x-transition:enter-end="opacity-100 scale-100"
                         src="{{ $image->url }}"
-                        alt="{{ ($image->alt ?: ($image->alt_text ?? $productName)) }}"
+                        alt="{{ ($image->alt ?: $productName) }}"
                         @if($index !== 0)
                         loading="lazy"
                         @endif
@@ -328,7 +328,7 @@
 
                     <img
                         src="{{ $image->url }}"
-                        alt="{{ ($image->alt ?: ($image->alt_text ?? $productName)) }}"
+                        alt="{{ ($image->alt ?: $productName) }}"
                         loading="lazy"
                         class="h-full w-full object-cover transition duration-500 group-hover:scale-105"
                     >
