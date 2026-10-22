@@ -1587,6 +1587,87 @@ class FarzinStorefrontTest extends TestCase
         ]);
     }
 
+    public function test_product_editor_can_create_and_update_a_color_variant_with_its_own_images(): void
+    {
+        Storage::fake('public');
+        $admin = $this->admin();
+        $product = $this->product($this->category(['slug' => 'inline-variant-images']), [
+            'name' => 'Inline Color Hood',
+            'slug' => 'inline-color-hood',
+            'sku' => 'FAR-INLINE-COLOR-HOOD',
+            'stock' => 10,
+        ]);
+        $primaryImage = ProductImage::create([
+            'product_id' => $product->id,
+            'path' => 'https://cdn.example.test/inline-hood-main.webp',
+            'alt' => 'تصویر اصلی هود',
+            'sort_order' => 0,
+            'is_primary' => true,
+        ]);
+
+        $this->actingAs($admin)
+            ->post(route('admin.product-variants.store'), [
+                'product_id' => $product->id,
+                'type' => 'color',
+                'name' => 'رنگ',
+                'value' => 'مشکی',
+                'color_hex' => '#202020',
+                'sku' => 'FAR-INLINE-COLOR-BLACK',
+                'price_adjustment' => 0,
+                'stock' => 4,
+                'is_active' => '1',
+                'image_ids' => [$primaryImage->id],
+                'images' => [UploadedFile::fake()->image('hood-black.jpg', 800, 600)],
+                'return_to_product' => '1',
+            ])
+            ->assertRedirect(route('admin.products.edit', $product))
+            ->assertSessionHas('success');
+
+        $variant = ProductVariant::query()
+            ->where('product_id', $product->id)
+            ->where('type', 'color')
+            ->where('value', 'مشکی')
+            ->firstOrFail();
+
+        $this->assertSame(2, $variant->images()->count());
+        $this->assertDatabaseHas('product_variant_images', [
+            'product_variant_id' => $variant->id,
+            'product_image_id' => $primaryImage->id,
+        ]);
+
+        $uploadedImage = $variant->images()
+            ->where('product_images.path', 'like', 'products/images/%')
+            ->firstOrFail();
+        Storage::disk('public')->assertExists($uploadedImage->path);
+
+        $this->actingAs($admin)
+            ->get(route('admin.products.edit', $product))
+            ->assertOk()
+            ->assertSee('رنگ‌ها و تنوع‌های محصول')
+            ->assertSee('تصاویر اختصاصی این رنگ', false)
+            ->assertSee('مشکی');
+
+        $this->actingAs($admin)
+            ->put(route('admin.product-variants.update', $variant), [
+                'product_id' => $product->id,
+                'type' => 'color',
+                'name' => 'رنگ',
+                'value' => 'مشکی',
+                'color_hex' => '#202020',
+                'sku' => 'FAR-INLINE-COLOR-BLACK',
+                'price_adjustment' => 100000,
+                'stock' => 3,
+                'is_active' => '1',
+                'image_ids' => [$primaryImage->id, $uploadedImage->id],
+                'return_to_product' => '1',
+            ])
+            ->assertRedirect(route('admin.products.edit', $product))
+            ->assertSessionHas('success');
+
+        $this->assertEquals(100000, (float) $variant->fresh()->price_adjustment);
+        $this->assertSame(2, $variant->fresh()->images()->count());
+    }
+
     public function test_admin_can_create_product_variant_and_cart_requires_a_valid_selection(): void
     {
         $admin = $this->admin();
