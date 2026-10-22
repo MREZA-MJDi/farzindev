@@ -15,7 +15,7 @@ class AdminAuthorizationTest extends TestCase
     public function test_guest_cannot_enter_admin_dashboard(): void
     {
         $this->get('/admin')
-            ->assertRedirect('/login');
+            ->assertRedirect(route('login'));
     }
 
     public function test_valid_admin_can_open_the_dashboard(): void
@@ -51,6 +51,14 @@ class AdminAuthorizationTest extends TestCase
         ] as $path) {
             $this->get($path)->assertForbidden();
         }
+
+        // Mutating endpoints must be blocked by role middleware before validation
+        // or controller code can change anything.
+        $this->post('/admin/products', [])->assertForbidden();
+        $this->post('/admin/categories', [])->assertForbidden();
+        $this->post('/admin/blog-posts', [])->assertForbidden();
+        $this->put('/admin/seo-settings', [])->assertForbidden();
+        $this->put('/admin/storefront-settings', [])->assertForbidden();
     }
 
     public function test_user_cannot_register_themselves_as_an_admin(): void
@@ -90,6 +98,24 @@ class AdminAuthorizationTest extends TestCase
         $this->assertNotEmpty($first);
         $this->assertNotSame('attacker-controlled-id', $first);
         $this->assertNotSame($first, $second);
+    }
+
+    public function test_html_server_errors_show_a_reference_without_exception_details(): void
+    {
+        config(['app.debug' => false]);
+
+        Route::get('/__tests/server-error-html', function () {
+            throw new RuntimeException('sensitive filesystem path');
+        });
+
+        $response = $this->get('/__tests/server-error-html');
+
+        $response
+            ->assertStatus(500)
+            ->assertSee('کد پیگیری')
+            ->assertDontSee('sensitive filesystem path');
+
+        $this->assertNotEmpty($response->headers->get('X-Request-ID'));
     }
 
     public function test_json_server_errors_hide_internal_details_and_return_request_id(): void
