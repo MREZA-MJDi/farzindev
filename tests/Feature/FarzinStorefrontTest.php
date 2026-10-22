@@ -1644,7 +1644,7 @@ class FarzinStorefrontTest extends TestCase
             ->get(route('admin.products.edit', $product))
             ->assertOk()
             ->assertSee('رنگ‌ها و تنوع‌های محصول')
-            ->assertSee('تصاویر اختصاصی این رنگ', false)
+            ->assertSee('افزودن عکس‌های جدید برای همین تنوع', false)
             ->assertSee('مشکی');
 
         $this->actingAs($admin)
