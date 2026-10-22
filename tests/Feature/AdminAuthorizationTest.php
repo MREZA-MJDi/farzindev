@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Route;
 use RuntimeException;
 use Tests\TestCase;
@@ -28,6 +29,26 @@ class AdminAuthorizationTest extends TestCase
         $this->actingAs($admin)
             ->get('/admin')
             ->assertOk();
+    }
+
+    public function test_admin_can_log_in_even_when_customer_cart_tables_are_unavailable(): void
+    {
+        $admin = User::factory()->create([
+            'role' => 'admin',
+            'email' => 'admin-login@example.test',
+            'password' => Hash::make('StrongPass123'),
+        ]);
+
+        // Admin authentication must not depend on customer cart storage.
+        Schema::dropIfExists('cart_items');
+        Schema::dropIfExists('carts');
+
+        $this->post('/login', [
+            'phone' => 'admin-login@example.test',
+            'password' => 'StrongPass123',
+        ])->assertRedirect(route('admin.dashboard'));
+
+        $this->assertAuthenticatedAs($admin);
     }
 
     public function test_admin_can_log_in_and_is_redirected_to_dashboard(): void
