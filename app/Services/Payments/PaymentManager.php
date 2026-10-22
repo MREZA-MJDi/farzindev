@@ -38,8 +38,12 @@ class PaymentManager
         $base = parse_url($baseUrl);
         $callback = parse_url($callbackUrl);
         $endpoints = $config['endpoints'] ?? [];
+        $directCredentialsReady = filled($config['api_key'] ?? null)
+            || filled($config['access_token'] ?? null);
+        $clientCredentialsReady = filled($config['client_id'] ?? null)
+            && filled($config['client_secret'] ?? null);
         $credentialsReady = filled($config['merchant_id'] ?? null)
-            && (filled($config['api_key'] ?? null) || filled($config['access_token'] ?? null));
+            && ($directCredentialsReady || $clientCredentialsReady);
 
         return ($config['enabled'] ?? false) === true
             && ($config['api_contract_confirmed'] ?? false) === true
