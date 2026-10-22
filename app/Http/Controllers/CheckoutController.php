@@ -160,7 +160,7 @@ class CheckoutController extends Controller
     public function providerStatus(
         Order $order,
         string $gateway,
-        \\App\\Services\\Payments\\PaymentManager $paymentManager
+        \App\Services\Payments\PaymentManager $paymentManager
     ): View {
         abort_unless($order->user_id === Auth::id(), 403);
 
