@@ -679,15 +679,6 @@ class FarzinStorefrontTest extends TestCase
 
     public function test_guest_cart_prominently_offers_login_and_registration_with_checkout_intended(): void
     {
-        $product = $this->product($this->category(['slug' => 'guest-checkout-cta']), [
-            'name' => 'Guest Checkout CTA Product',
-            'slug' => 'guest-checkout-cta-product',
-            'sku' => 'FAR-GUEST-CHECKOUT-CTA',
-            'stock' => 5,
-        ]);
-
-        $this->withSession(['guest_cart_id' => 0]);
-
         $this->get(route('cart.index'))
             ->assertOk()
             ->assertSee('ورود و ادامه پرداخت')
