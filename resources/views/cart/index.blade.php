@@ -979,15 +979,24 @@
 
                                         <div class="mt-6 rounded-2xl border border-[var(--livora-border)] bg-[var(--livora-surface)] p-4">
 
-                                            <p class="text-xs leading-7 text-[var(--livora-stone)]">
-                                                برای ادامه به تسویه حساب، ابتدا وارد حساب مشتری شوید.
+                                            <p class="text-sm font-semibold text-[var(--livora-text)]">
+                                                یک قدم تا ثبت سفارش مانده
+                                            </p>
+                                            <p class="mt-2 text-xs leading-7 text-[var(--livora-stone)]">
+                                                برای حفظ سبد خرید و ادامه پرداخت، وارد حساب شوید یا حساب جدید بسازید. بعد از ورود به همین مرحله برمی‌گردید.
                                             </p>
 
                                             <a
-                                                href="{{ route('login') }}"
-                                                class="mt-3 inline-flex text-xs font-medium text-[var(--livora-text)] underline underline-offset-4"
+                                                href="{{ route('login', ['intended' => '/checkout']) }}"
+                                                class="mt-4 flex w-full items-center justify-center rounded-2xl bg-[var(--livora-ink)] px-5 py-3.5 text-sm font-semibold text-white transition hover:bg-[var(--livora-accent)]"
                                             >
-                                                ورود به حساب
+                                                ورود و ادامه پرداخت
+                                            </a>
+                                            <a
+                                                href="{{ route('register', ['intended' => '/checkout']) }}"
+                                                class="mt-2 flex w-full items-center justify-center rounded-2xl border border-[var(--livora-border)] bg-[var(--livora-white)] px-5 py-3 text-sm font-medium text-[var(--livora-text)] transition hover:border-[var(--livora-ink)]"
+                                            >
+                                                ساخت حساب جدید
                                             </a>
 
                                         </div>
