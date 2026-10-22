@@ -29,4 +29,12 @@
         @include('admin.products.partials.form')
     </form>
 
+    @if(session('success'))
+        <div role="status" class="mt-6 rounded-2xl border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-800">{{ session('success') }}</div>
+    @endif
+
+    <div class="mt-8">
+        @include('admin.products.partials.variants', ['product' => $product])
+    </div>
+
 @endsection
