@@ -83,8 +83,6 @@ class AuthController extends Controller
 
         $request->session()->regenerate();
 
-        $this->mergeGuestCartIntoUserCart($request, $guestCartSessionId);
-
         /*
         |--------------------------------------------------------------------------
         | Role Based Redirect
@@ -99,6 +97,9 @@ class AuthController extends Controller
                     'به پنل مدیریت خوش آمدید.'
                 );
         }
+
+        // Customer cart migration is unrelated to admin access; keep admin login independent of it.
+        $this->mergeGuestCartIntoUserCart($request, $guestCartSessionId);
 
         return redirect()
             ->intended(route('account.index'))
