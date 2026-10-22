@@ -278,11 +278,6 @@ class PaymentService
             $gateway
         );
 
-        $gatewayService =
-            $this->paymentManager->driver(
-                $gateway
-            );
-
         $payment =
             $this->findPaymentFromCallback(
                 $gateway,
@@ -333,6 +328,22 @@ class PaymentService
                 ],
             ];
         }
+
+        // Never ask a placeholder adapter to verify a real/pending transaction.
+        // Keep its state untouched for manual reconciliation; a failed API
+        // integration must not incorrectly mark a possibly charged order failed.
+        if (! $this->paymentManager->isReady($gateway)) {
+            return [
+                'success' => false,
+                'order_id' => $payment->order_id,
+                'payment_id' => $payment->id,
+                'transaction_id' => $payment->transaction_id,
+                'message' => 'اتصال رسمی این درگاه تأیید نشده است؛ وضعیت پرداخت تغییر نکرده و نیاز به بررسی دارد.',
+                'data' => ['verification_skipped' => true],
+            ];
+        }
+
+        $gatewayService = $this->paymentManager->driver($gateway);
 
         try {
             $result =
@@ -504,6 +515,15 @@ class PaymentService
                 $payment->gateway
             );
 
+        if (! $this->paymentManager->isReady($gateway)) {
+            return [
+                'success' => false,
+                'payment' => $payment,
+                'order' => $payment->order,
+                'message' => 'اتصال رسمی این درگاه تأیید نشده است؛ وضعیت پرداخت تغییر نکرد.',
+            ];
+        }
+
         try {
             $gatewayService =
                 $this->paymentManager->driver(
@@ -622,6 +642,15 @@ class PaymentService
                 $payment->gateway
             );
 
+        if (! $this->paymentManager->isReady($gateway)) {
+            return [
+                'success' => false,
+                'status' => 'unknown',
+                'message' => 'اتصال رسمی این درگاه تأیید نشده است؛ وضعیت از ارائه‌دهنده استعلام نشد.',
+                'data' => ['status_check_skipped' => true],
+            ];
+        }
+
         try {
             $gatewayService =
                 $this->paymentManager->driver(
@@ -677,6 +706,13 @@ class PaymentService
             $this->normalizeGateway(
                 $payment->gateway
             );
+
+        if (! $this->paymentManager->isReady($gateway)) {
+            return [
+                'success' => false,
+                'message' => 'اتصال رسمی این درگاه تأیید نشده است؛ لغو پرداخت از راه دور انجام نشد.',
+            ];
+        }
 
         try {
             $gatewayService =
@@ -770,6 +806,13 @@ class PaymentService
             $this->normalizeGateway(
                 $payment->gateway
             );
+
+        if (! $this->paymentManager->isReady($gateway)) {
+            return [
+                'success' => false,
+                'message' => 'اتصال رسمی این درگاه تأیید نشده است؛ استرداد خودکار انجام نشد و باید دستی بررسی شود.',
+            ];
+        }
 
         try {
             $gatewayService =

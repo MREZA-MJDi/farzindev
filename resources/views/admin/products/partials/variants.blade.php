@@ -44,6 +44,26 @@
 
     <section class="admin-card p-5 sm:p-7">
         <div class="mb-5">
+            <h3 class="text-base font-bold text-[var(--admin-text)]">تصاویر عمومی گالری محصول</h3>
+            <p class="mt-2 text-xs leading-7 text-[var(--admin-muted)]">برای نماهای کلی محصول که به رنگ خاصی وابسته نیستند، تصاویر را همین‌جا اضافه کنید. عکس‌های هر رنگ را در فرم همان تنوع بارگذاری کنید.</p>
+        </div>
+        <form method="POST" action="{{ route('admin.products.images.store', $product) }}" enctype="multipart/form-data" class="space-y-4">
+            @csrf
+            <label class="block text-xs text-[var(--admin-text)]">انتخاب چند تصویر
+                <input type="file" name="images[]" accept="image/jpeg,image/png,image/webp" multiple required class="admin-input mt-2 w-full p-2">
+            </label>
+            <label class="block text-xs text-[var(--admin-text)]">متن جایگزین مشترک (اختیاری)
+                <input name="alt" maxlength="255" value="{{ old('alt') }}" class="admin-input mt-2 w-full" placeholder="{{ $product->name }} - نمای محصول">
+            </label>
+            <p class="text-[11px] leading-6 text-[var(--admin-muted)]">JPG، PNG یا WEBP؛ حداقل ۸۰۰×۶۰۰ پیکسل؛ حداکثر ۲۰ مگابایت برای هر فایل و ۱۰ تصویر در هر بار.</p>
+            @error('images')<p class="text-xs text-red-600">{{ $message }}</p>@enderror
+            @error('images.*')<p class="text-xs text-red-600">{{ $message }}</p>@enderror
+            <button type="submit" class="admin-btn admin-btn-secondary">افزودن تصاویر به گالری</button>
+        </form>
+    </section>
+
+    <section class="admin-card p-5 sm:p-7">
+        <div class="mb-5">
             <h3 class="text-base font-bold text-[var(--admin-text)]">افزودن رنگ یا تنوع</h3>
             <p class="mt-1 text-xs leading-6 text-[var(--admin-muted)]">مثلاً نوع «color»، نام «رنگ»، مقدار «مشکی» و کد رنگ اختیاری #202020.</p>
         </div>

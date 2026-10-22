@@ -7,6 +7,7 @@ use App\Models\CartItem;
 use App\Models\Category;
 use App\Models\ContactMessage;
 use App\Models\Order;
+use App\Models\Media;
 use App\Models\Product;
 use App\Models\ProductImage;
 use App\Models\ProductVariant;
@@ -1428,6 +1429,10 @@ class FarzinStorefrontTest extends TestCase
             ]);
 
         $manager = \Mockery::mock(\App\Services\Payments\PaymentManager::class);
+        $manager->shouldReceive('isReady')
+            ->once()
+            ->with('digipay')
+            ->andReturn(true);
         $manager->shouldReceive('driver')
             ->once()
             ->with('digipay')
@@ -1586,6 +1591,51 @@ class FarzinStorefrontTest extends TestCase
             'id' => $category->id,
             'slug' => 'island-hoods',
         ]);
+    }
+
+    public function test_product_editor_can_upload_general_gallery_images_without_a_separate_images_page(): void
+    {
+        Storage::fake('public');
+        $admin = $this->admin();
+        $product = $this->product($this->category(['slug' => 'inline-gallery-images']), [
+            'name' => 'Inline Gallery Product',
+            'slug' => 'inline-gallery-product',
+            'sku' => 'FAR-INLINE-GALLERY',
+            'stock' => 4,
+        ]);
+
+        $this->actingAs($admin)
+            ->get(route('admin.products.edit', $product))
+            ->assertOk()
+            ->assertSee('تصاویر عمومی گالری محصول')
+            ->assertSee(route('admin.products.images.store', $product), false);
+
+        $this->actingAs($admin)
+            ->get(route('admin.product-images.index', ['product_id' => $product->id]))
+            ->assertRedirect(route('admin.products.edit', $product));
+
+        $this->actingAs($admin)
+            ->get(route('admin.product-variants.index', ['product_id' => $product->id]))
+            ->assertRedirect(route('admin.products.edit', $product));
+
+        $this->actingAs($admin)
+            ->post(route('admin.products.images.store', $product), [
+                'alt' => 'نمای عمومی محصول',
+                'images' => [
+                    UploadedFile::fake()->image('gallery-front.jpg', 800, 600),
+                    UploadedFile::fake()->image('gallery-side.webp', 900, 700),
+                ],
+            ])
+            ->assertRedirect(route('admin.products.edit', $product))
+            ->assertSessionHas('success');
+
+        $images = ProductImage::query()->where('product_id', $product->id)->orderBy('sort_order')->get();
+        $this->assertCount(2, $images);
+        $this->assertTrue((bool) $images->first()->is_primary);
+        $this->assertFalse((bool) $images->last()->is_primary);
+        $this->assertSame('نمای عمومی محصول', $images->first()->alt);
+        Storage::disk('public')->assertExists($images->first()->path);
+        Storage::disk('public')->assertExists($images->last()->path);
     }
 
     public function test_product_editor_can_create_and_update_a_color_variant_with_its_own_images(): void
@@ -1783,7 +1833,7 @@ class FarzinStorefrontTest extends TestCase
             ->assertRedirect(route('admin.media.index'))
             ->assertSessionHas('success');
 
-        $media = \App\Models\Media::query()->firstOrFail();
+        $media = Media::query()->firstOrFail();
         Storage::disk('public')->assertExists($media->path);
         $this->assertSame($admin->id, $media->user_id);
 
@@ -1809,7 +1859,7 @@ class FarzinStorefrontTest extends TestCase
             ->assertRedirect(route('admin.media.index'))
             ->assertSessionHas('success');
 
-        $media = \App\Models\Media::query()->firstOrFail();
+        $media = Media::query()->firstOrFail();
 
         Storage::disk('public')->assertExists($media->path);
         $this->assertSame('video/mp4', $media->mime_type);
@@ -1831,7 +1881,7 @@ class FarzinStorefrontTest extends TestCase
             ->assertRedirect(route('admin.media.index'))
             ->assertSessionHas('success');
 
-        $media = \App\Models\Media::query()->firstOrFail();
+        $media = Media::query()->firstOrFail();
         Storage::disk('public')->assertExists($media->path);
 
         $this->actingAs($admin)
@@ -1990,6 +2040,77 @@ class FarzinStorefrontTest extends TestCase
             'cart_id' => $cart->id,
             'quantity' => 3,
         ]);
+    }
+
+    public function test_replacing_main_product_image_preserves_variant_specific_image_relations(): void
+    {
+        Storage::fake('public');
+        $admin = $this->admin();
+        $category = $this->category(['slug' => 'variant-main-image-preservation']);
+        $product = $this->product($category, [
+            'name' => 'Variant Main Image Hood',
+            'slug' => 'variant-main-image-hood',
+            'sku' => 'FAR-VARIANT-MAIN-IMG',
+            'price' => 10000000,
+            'stock' => 4,
+        ]);
+
+        Storage::disk('public')->put('products/images/black-color.webp', 'black color image');
+        $blackImage = ProductImage::create([
+            'product_id' => $product->id,
+            'path' => 'products/images/black-color.webp',
+            'alt' => 'هود مشکی',
+            'sort_order' => 0,
+            'is_primary' => true,
+        ]);
+        $blackVariant = ProductVariant::create([
+            'product_id' => $product->id,
+            'type' => 'color',
+            'name' => 'رنگ',
+            'value' => 'مشکی',
+            'sku' => 'FAR-VARIANT-MAIN-IMG-BLACK',
+            'price_adjustment' => 0,
+            'stock' => 2,
+            'is_active' => true,
+        ]);
+        $blackVariant->images()->attach($blackImage->id, ['sort_order' => 0]);
+
+        $this->actingAs($admin)
+            ->put(route('admin.products.update', $product), [
+                'category_id' => $category->id,
+                'name' => 'Variant Main Image Hood',
+                'slug' => 'variant-main-image-hood',
+                'sku' => 'FAR-VARIANT-MAIN-IMG',
+                'short_description' => 'هود با چند رنگ',
+                'description' => 'توضیحات محصول',
+                'price' => '10000000',
+                'compare_at_price' => '12000000',
+                'stock' => '4',
+                'status' => 'active',
+                'is_featured' => '0',
+                'is_new' => '0',
+                'installment_enabled' => '0',
+                'image' => UploadedFile::fake()->image('new-main.webp', 800, 600),
+            ])
+            ->assertRedirect(route('admin.products.edit', $product))
+            ->assertSessionHas('success');
+
+        $blackImage->refresh();
+        $this->assertSame('products/images/black-color.webp', $blackImage->path);
+        $this->assertFalse($blackImage->is_primary);
+        $this->assertDatabaseHas('product_variant_images', [
+            'product_image_id' => $blackImage->id,
+            'product_variant_id' => $blackVariant->id,
+        ]);
+        Storage::disk('public')->assertExists('products/images/black-color.webp');
+
+        $newPrimary = ProductImage::query()
+            ->where('product_id', $product->id)
+            ->where('is_primary', true)
+            ->firstOrFail();
+        $this->assertNotSame($blackImage->id, $newPrimary->id);
+        $this->assertSame('Variant Main Image Hood', $newPrimary->alt);
+        Storage::disk('public')->assertExists($newPrimary->path);
     }
 
     public function test_admin_can_update_and_soft_delete_a_product_without_exposing_it_publicly(): void
@@ -2398,6 +2519,61 @@ class FarzinStorefrontTest extends TestCase
 
         $this->assertDatabaseMissing('addresses', ['id' => $first->id]);
         $this->assertDatabaseHas('addresses', ['id' => $foreign->id]);
+    }
+
+    public function test_legacy_image_routes_cannot_mutate_or_delete_a_variant_attached_photo(): void
+    {
+        Storage::fake('public');
+        $admin = $this->admin();
+        $product = $this->product($this->category(['slug' => 'protect-variant-image']), [
+            'name' => 'Shared Variant Image Hood',
+            'slug' => 'shared-variant-image-hood',
+            'sku' => 'FAR-SHARED-VARIANT-IMAGE',
+        ]);
+
+        Storage::disk('public')->put('products/images/shared-variant-photo.webp', 'shared photo bytes');
+        $image = ProductImage::create([
+            'product_id' => $product->id,
+            'path' => 'products/images/shared-variant-photo.webp',
+            'alt' => 'هود مشکی',
+            'sort_order' => 0,
+            'is_primary' => true,
+        ]);
+        $variant = ProductVariant::create([
+            'product_id' => $product->id,
+            'type' => 'color',
+            'name' => 'رنگ',
+            'value' => 'مشکی',
+            'sku' => 'FAR-SHARED-VARIANT-IMAGE-BLACK',
+            'price_adjustment' => 0,
+            'stock' => 2,
+            'is_active' => true,
+        ]);
+        $variant->images()->attach($image->id, ['sort_order' => 0]);
+
+        $this->actingAs($admin)
+            ->put(route('admin.product-images.update', $image), [
+                'product_id' => $product->id,
+                'alt' => 'عنوان نباید تغییر کند',
+                'sort_order' => 0,
+                'is_primary' => '1',
+            ])
+            ->assertRedirect(route('admin.products.edit', $product))
+            ->assertSessionHas('error');
+
+        $this->actingAs($admin)
+            ->delete(route('admin.product-images.destroy', $image))
+            ->assertRedirect(route('admin.products.edit', $product))
+            ->assertSessionHas('error');
+
+        $image->refresh();
+        $this->assertSame('هود مشکی', $image->alt);
+        $this->assertSame('products/images/shared-variant-photo.webp', $image->path);
+        $this->assertDatabaseHas('product_variant_images', [
+            'product_image_id' => $image->id,
+            'product_variant_id' => $variant->id,
+        ]);
+        Storage::disk('public')->assertExists($image->path);
     }
 
     public function test_admin_can_update_product_image_and_replace_the_old_file_safely(): void

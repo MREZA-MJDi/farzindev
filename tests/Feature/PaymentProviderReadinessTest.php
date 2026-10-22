@@ -40,32 +40,107 @@ class PaymentProviderReadinessTest extends TestCase
         ]);
     }
 
-    public function test_provider_is_ready_only_with_confirmed_contract_secure_urls_credentials_and_core_endpoints(): void
+    public function test_placeholder_adapters_never_become_live_from_environment_flags_alone(): void
     {
+        $manager = app(PaymentManager::class);
+
+        foreach (['digipay', 'snappay', 'torobpay'] as $gateway) {
+            config([
+                "payment.{$gateway}.enabled" => true,
+                "payment.{$gateway}.api_contract_confirmed" => true,
+                "payment.{$gateway}.merchant_id" => 'merchant-test',
+                "payment.{$gateway}.api_key" => 'api-key-test',
+                "payment.{$gateway}.base_url" => 'https://gateway.example.test',
+                "payment.{$gateway}.callback_url" => 'https://store.example.test/checkout/payment/callback/' . $gateway,
+                "payment.{$gateway}.endpoints.create" => '/v1/payment',
+                "payment.{$gateway}.endpoints.verify" => '/v1/verify',
+            ]);
+
+            $this->assertFalse(
+                $manager->isReady($gateway),
+                "{$gateway} must remain unavailable until its real merchant adapter is implemented."
+            );
+        }
+    }
+
+    public function test_fully_configured_placeholder_gateway_still_cannot_start_payment(): void
+    {
+        $customer = User::factory()->create(['role' => 'customer']);
+        $order = $this->makeOrder($customer);
+
         config([
             'payment.digipay.enabled' => true,
             'payment.digipay.api_contract_confirmed' => true,
             'payment.digipay.merchant_id' => 'merchant-test',
-            'payment.digipay.api_key' => 'api-key-test',
+            'payment.digipay.client_id' => 'client-test',
+            'payment.digipay.client_secret' => 'secret-test',
             'payment.digipay.base_url' => 'https://gateway.example.test',
             'payment.digipay.callback_url' => 'https://store.example.test/checkout/payment/callback/digipay',
             'payment.digipay.endpoints.create' => '/v1/payment',
             'payment.digipay.endpoints.verify' => '/v1/verify',
         ]);
 
-        $manager = app(PaymentManager::class);
-        $this->assertTrue($manager->isReady('digipay'));
+        try {
+            app(PaymentService::class)->startInstallmentPayment($order, 'digipay');
+            $this->fail('Placeholder adapter must never initiate a payment.');
+        } catch (RuntimeException $exception) {
+            $this->assertStringContainsString('پرداختی آغاز نشده', $exception->getMessage());
+        }
 
-        config(['payment.digipay.base_url' => 'http://gateway.example.test']);
-        $this->assertFalse($manager->isReady('digipay'));
+        $this->assertDatabaseMissing('payments', ['order_id' => $order->id]);
+        $this->assertDatabaseHas('orders', [
+            'id' => $order->id,
+            'payment_status' => 'pending',
+            'payment_provider' => null,
+        ]);
+    }
 
-        config(['payment.digipay.base_url' => 'https://gateway.example.test']);
-        config(['payment.digipay.endpoints.verify' => '']);
-        $this->assertFalse($manager->isReady('digipay'));
+    public function test_callback_and_manual_verification_leave_pending_payment_untouched_when_adapter_is_not_ready(): void
+    {
+        $customer = User::factory()->create(['role' => 'customer']);
+        $order = $this->makeOrder($customer);
+        $payment = Payment::create([
+            'order_id' => $order->id,
+            'user_id' => $customer->id,
+            'gateway' => 'digipay',
+            'amount' => $order->total,
+            'status' => 'pending',
+            'metadata' => ['test' => true],
+        ]);
 
-        config(['payment.digipay.endpoints.verify' => '/v1/verify']);
-        config(['payment.digipay.api_contract_confirmed' => false]);
-        $this->assertFalse($manager->isReady('digipay'));
+        $service = app(PaymentService::class);
+
+        $callback = $service->handleCallback('digipay', [
+            'payment_id' => $payment->id,
+            'verified' => true,
+            'amount' => $order->total,
+            'transaction_id' => 'UNTRUSTED-CALLBACK-ID',
+        ]);
+
+        $this->assertFalse($callback['success']);
+        $this->assertTrue($callback['data']['verification_skipped']);
+        $this->assertSame('pending', $payment->fresh()->status);
+        $this->assertNull($payment->fresh()->transaction_id);
+        $this->assertSame('pending', $order->fresh()->payment_status);
+
+        $verified = $service->verifyPayment($payment->fresh());
+        $this->assertFalse($verified['success']);
+        $this->assertSame('pending', $payment->fresh()->status);
+
+        $status = $service->getStatus($payment->fresh());
+        $this->assertFalse($status['success']);
+        $this->assertSame('unknown', $status['status']);
+        $this->assertSame('pending', $payment->fresh()->status);
+
+        $cancel = $service->cancelPayment($payment->fresh());
+        $this->assertFalse($cancel['success']);
+        $this->assertSame('pending', $payment->fresh()->status);
+
+        $this->assertDatabaseHas('orders', [
+            'id' => $order->id,
+            'payment_status' => 'pending',
+            'payment_provider' => null,
+        ]);
     }
 
     public function test_shaparak_status_page_explains_pending_integration_without_claiming_payment(): void

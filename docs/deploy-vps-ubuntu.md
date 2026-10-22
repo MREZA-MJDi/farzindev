@@ -10,8 +10,9 @@ Before accepting real orders, all of these must be true:
 - The production database has been backed up and pending migrations reviewed.
 - The actual shipping fee and optional free-shipping threshold have been entered in **Admin → Storefront Settings → Shipping**; the default is zero and means shipping is free until configured.
 - The `ADMIN_EMAIL` and `ADMIN_PASSWORD` values are unique, intentional one-time bootstrap credentials. The initial admin must be able to sign in before the password is removed from the environment and the config cache rebuilt.
-- The official Farzin product data, prices, specifications, SKUs, stock and real images have replaced or verified all preview catalogue records. Seeder preview products are not a verified live catalogue.
-- A real sandbox payment has been completed and its server-side callback verified. The DigiPay, SnapPay and TorobPay adapters are configurable generic HTTP adapters; their payload fields, authentication, endpoint paths, success codes, callback signatures and amount units must be confirmed against the official merchant API contract. They are disabled by default. Each concrete adapter must override `isVerificationSuccessful()` to map the provider's documented success response. The generic base class deliberately rejects HTTP 2xx responses without an explicit positive verification flag and rejects payment redirect URLs that are not HTTPS. Do not enable a provider based solely on the CI mocks.
+- Only verified Farzin product data, prices, specifications, SKUs, stock and real images are published. `DatabaseSeeder` deliberately skips `ProductSeeder` in production; local/staging preview records are not a verified live catalogue.
+- **External online payment is intentionally unavailable in this code state.** `PaymentManager::LIVE_API_ADAPTERS` is empty because the current DigiPay, SnapPay and TorobPay classes still contain generic placeholder payloads. The three providers and Shaparak status page must remain in the "integration preparing" state until provider-specific authentication, create/verify payloads, signature rules, response success codes, amount units and redirect hosts have been implemented and reviewed. Setting environment flags alone cannot activate them. When the official merchant documents arrive, complete a sandbox transaction and verify its server callback before allowing real customer payments.
+- SEO development protection defaults to `noindex,nofollow`. Before public launch, confirm the production canonical domain and TLS, then turn **Development mode** off in **Admin → SEO Settings** and verify `/robots.txt`, `/sitemap.xml` and the rendered page's canonical/robots tags.
 - SMTP credentials are configured if password-reset or other outgoing mail is enabled. The example environment uses a log mailer and is not a production mail setup.
 
 ## 1. Prepare the VPS
@@ -128,7 +129,7 @@ php artisan storage:link
 
 Run `php artisan key:generate` only when `APP_KEY` is blank for a new installation. For a database that already has real data, back it up first and run migrations only after reviewing them.
 
-On a **new, empty** database only, run `php artisan db:seed --force` after setting `ADMIN_PASSWORD`. The seeder creates the initial administrator and draft/zero-stock preview records; it is not a replacement for importing the verified commercial catalogue. Do not repeatedly seed a live catalogue without reviewing the seeder behavior. After the initial admin has been created, remove `ADMIN_PASSWORD` from `.env` and rerun `php artisan config:cache` so the one-time credential is also removed from the cached configuration.
+On a **new, empty** production database only, run `php artisan db:seed --force` after setting `ADMIN_EMAIL` and a unique `ADMIN_PASSWORD`. In production the seeder creates the configured administrator and core categories; it intentionally does **not** run `ProductSeeder` or create preview products. Add verified commercial products through the admin or an approved import. After the initial admin has been created, remove `ADMIN_PASSWORD` from `.env` and rerun `php artisan config:cache` so the one-time credential is also removed from cached configuration.
 
 Set upload limits in the PHP-FPM configuration to at least `upload_max_filesize=26M` and `post_max_size=28M` to support the application's 20 MB image limit. Reload PHP-FPM after changing these settings.
 
@@ -177,6 +178,8 @@ sudo systemctl reload nginx
 
 After DNS points to the VPS, issue a TLS certificate using your chosen ACME client (for example, Certbot with its Nginx integration). Then ensure `APP_URL` is the HTTPS canonical domain and `SESSION_SECURE_COOKIE=true`.
 
+After the first admin signs in, review **Admin → SEO Settings**: set the canonical base URL to the exact HTTPS production origin, turn **Development mode** off only when the site is ready for indexing, keep the sitemap enabled, and inspect the generated `robots.txt` and `sitemap.xml`. Development mode is enabled by default as a pre-launch safeguard and will keep pages out of search results until disabled.
+
 ## 6. Cache and scheduler
 
 After environment values, migrations and the initial seeding are complete:
@@ -192,7 +195,7 @@ php artisan about
 
 Verify that PHP-FPM can write to `storage/` and `bootstrap/cache/`. If a cache command fails, do not continue to live traffic until the error is resolved. The CI workflow checks these cache commands, but server permissions and environment values still need verification.
 
-The unpaid-inventory reservation expiry task must run every minute. Add this cron entry under the deployment/service account that can read the app and write its storage directories:
+Invoke Laravel's scheduler every minute with this cron entry under the deployment/service account that can read the app and write its storage directories. The scheduler currently runs `orders:expire-unpaid --minutes=1440` hourly, so stale reservations can remain until the next hourly run; the cron itself must still invoke `schedule:run` every minute:
 
 ```cron
 * * * * * cd /var/www/farzin && /usr/bin/php artisan schedule:run >> /dev/null 2>&1

@@ -231,7 +231,7 @@
                             <span class="font-medium text-[var(--livora-text)]">
                             {{ $order->order_number }}
                         </span>
-                            برای پرداخت آماده است.
+                            سفارش ثبت شده است. درگاه‌هایی که هنوز اتصال رسمی‌شان تکمیل نشده، تا زمان تأیید API قابل استفاده نیستند.
                         </p>
 
                     </div>
@@ -334,7 +334,7 @@
                                 </h2>
 
                                 <p class="mt-2 text-xs leading-7 text-[var(--livora-stone)]">
-                                    یکی از درگاه‌های فعال را انتخاب کنید.
+                                    وضعیت اتصال هر روش مشخص است؛ فقط درگاه‌هایی که اتصال واقعی و تأییدشده دارند قابل انتخاب خواهند بود.
                                 </p>
 
                             </div>
@@ -415,7 +415,7 @@
                                     @else
 
                                         <span class="mt-4 inline-flex rounded-full bg-[var(--livora-surface)] px-2.5 py-1 text-[9px] text-[var(--livora-stone)]">
-                                        به‌زودی
+                                        در حال آماده‌سازی
                                     </span>
 
                                     @endif
