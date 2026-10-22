@@ -1642,6 +1642,11 @@ class FarzinStorefrontTest extends TestCase
         Storage::disk('public')->assertExists($uploadedImage->path);
         $this->assertSame($uploadedImage->id, $variant->images()->firstOrFail()->id);
 
+        $this->get(route('product.show', $product->slug))
+            ->assertOk()
+            ->assertSee($uploadedImage->url, false)
+            ->assertSee('مشکی');
+
         $this->actingAs($admin)
             ->get(route('admin.products.edit', $product))
             ->assertOk()
