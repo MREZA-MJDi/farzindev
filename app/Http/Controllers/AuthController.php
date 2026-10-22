@@ -153,7 +153,7 @@ class AuthController extends Controller
                     'role' => 'customer',
                 ]);
             });
-        } catch (\\Illuminate\\Database\\QueryException $exception) {
+        } catch (\Illuminate\Database\QueryException $exception) {
             report($exception);
 
             // A concurrent duplicate signup or a storage constraint must never
