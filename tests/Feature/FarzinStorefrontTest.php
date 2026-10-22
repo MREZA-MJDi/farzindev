@@ -7,6 +7,7 @@ use App\Models\CartItem;
 use App\Models\Category;
 use App\Models\ContactMessage;
 use App\Models\Order;
+use App\Models\Media;
 use App\Models\Product;
 use App\Models\ProductImage;
 use App\Models\ProductVariant;
@@ -1783,7 +1784,7 @@ class FarzinStorefrontTest extends TestCase
             ->assertRedirect(route('admin.media.index'))
             ->assertSessionHas('success');
 
-        $media = \App\Models\Media::query()->firstOrFail();
+        $media = Media::query()->firstOrFail();
         Storage::disk('public')->assertExists($media->path);
         $this->assertSame($admin->id, $media->user_id);
 
@@ -1809,7 +1810,7 @@ class FarzinStorefrontTest extends TestCase
             ->assertRedirect(route('admin.media.index'))
             ->assertSessionHas('success');
 
-        $media = \App\Models\Media::query()->firstOrFail();
+        $media = Media::query()->firstOrFail();
 
         Storage::disk('public')->assertExists($media->path);
         $this->assertSame('video/mp4', $media->mime_type);
@@ -1831,7 +1832,7 @@ class FarzinStorefrontTest extends TestCase
             ->assertRedirect(route('admin.media.index'))
             ->assertSessionHas('success');
 
-        $media = \App\Models\Media::query()->firstOrFail();
+        $media = Media::query()->firstOrFail();
         Storage::disk('public')->assertExists($media->path);
 
         $this->actingAs($admin)
