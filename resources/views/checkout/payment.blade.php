@@ -41,7 +41,7 @@
                 'name' => 'DigiPay',
                 'fa_name' => 'دیجی‌پی',
                 'description' => 'پرداخت از طریق درگاه دیجی‌پی',
-                'enabled' => (bool) config('payment.digipay.enabled', false),
+                'enabled' => app(\\App\\Services\\Payments\\PaymentManager::class)->isReady('digipay'),
                 'badge' => 'DIGIPAY',
             ],
 
@@ -50,7 +50,7 @@
                 'name' => 'SnappPay',
                 'fa_name' => 'اسنپ‌پی',
                 'description' => 'پرداخت از طریق درگاه اسنپ‌پی',
-                'enabled' => (bool) config('payment.snappay.enabled', false),
+                'enabled' => app(\\App\\Services\\Payments\\PaymentManager::class)->isReady('snappay'),
                 'badge' => 'SNAPPAY',
             ],
 
@@ -59,9 +59,18 @@
                 'name' => 'TorobPay',
                 'fa_name' => 'ترب‌پی',
                 'description' => 'پرداخت از طریق درگاه ترب‌پی',
-                'enabled' => (bool) config('payment.torobpay.enabled', false),
+                'enabled' => app(\\App\\Services\\Payments\\PaymentManager::class)->isReady('torobpay'),
                 'badge' => 'TOROBPAY',
             ],
+            [
+                'key' => 'shaparak',
+                'name' => 'Bank Gateway',
+                'fa_name' => 'پرداخت آنلاین بانکی',
+                'description' => 'اتصال از مسیر PSP یا پرداخت‌یار عضو شبکه شاپرک؛ ارائه‌دهندهٔ فنی هنوز مشخص نشده است.',
+                'enabled' => false,
+                'badge' => 'BANK',
+            ],
+
         ];
 
         $enabledGateways = collect($gateways)
@@ -337,7 +346,7 @@
                         </div>
 
 
-                        <div class="mt-7 grid gap-3 md:grid-cols-3">
+                        <div class="mt-7 grid gap-3 md:grid-cols-2 xl:grid-cols-4">
 
                             @foreach($gateways as $gateway)
 
@@ -347,7 +356,7 @@
                                     @class([
                                         'relative rounded-3xl border p-5 transition duration-300',
                                         'cursor-pointer' => $gateway['enabled'],
-                                        'cursor-not-allowed opacity-50' => ! $gateway['enabled'],
+                                        'cursor-default' => ! $gateway['enabled'],
                                         'border-[var(--livora-ink)] bg-[var(--livora-surface)] shadow-sm'
                                             => $gateway['enabled'],
                                         'border-[var(--livora-border)] bg-[var(--livora-white)]'
@@ -411,6 +420,16 @@
 
                                     @endif
 
+                                    @unless($gateway['enabled'])
+                                        <a
+                                            href="{{ route('checkout.provider-status', ['order' => $order, 'gateway' => $gateway['key']]) }}"
+                                            class="mt-4 inline-flex items-center gap-2 text-[10px] font-semibold text-[var(--livora-accent)] underline underline-offset-4"
+                                        >
+                                            مشاهده وضعیت اتصال
+                                            <span aria-hidden="true">←</span>
+                                        </a>
+                                    @endunless
+
                                 </div>
 
                             @endforeach
@@ -469,7 +488,7 @@
                             <div class="mt-6 rounded-2xl bg-[var(--livora-surface)] p-4">
 
                                 <p class="text-xs leading-7 text-[var(--livora-stone)]">
-                                    در حال حاضر هیچ درگاه آنلاینی فعال نیست.
+                                    درگاه‌های آنلاین تا زمان تکمیل اتصال رسمی API و تأیید تنظیمات، در حالت آماده‌سازی باقی می‌مانند. از لینک «مشاهده وضعیت اتصال» می‌توانید وضعیت هر مسیر را ببینید.
                                 </p>
 
                             </div>
