@@ -1607,6 +1607,14 @@ class FarzinStorefrontTest extends TestCase
             ->assertSee(route('admin.products.images.store', $product), false);
 
         $this->actingAs($admin)
+            ->get(route('admin.product-images.index', ['product_id' => $product->id]))
+            ->assertRedirect(route('admin.products.edit', $product));
+
+        $this->actingAs($admin)
+            ->get(route('admin.product-variants.index', ['product_id' => $product->id]))
+            ->assertRedirect(route('admin.products.edit', $product));
+
+        $this->actingAs($admin)
             ->post(route('admin.products.images.store', $product), [
                 'alt' => 'نمای عمومی محصول',
                 'images' => [
