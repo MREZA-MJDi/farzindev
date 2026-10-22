@@ -13,45 +13,27 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Throwable;
-use Illuminate\View\View;
 
 class ProductImageController extends Controller
 {
-    public function index(Request $request): View
+    public function index(Request $request): RedirectResponse
     {
-        $query = ProductImage::query()
-            ->with('product')
-            ->orderBy('product_id')
-            ->orderBy('sort_order')
-            ->orderByDesc('created_at');
-
-        if ($request->filled('product_id')) {
-            $query->where('product_id', $request->integer('product_id'));
+        $productId = $request->integer('product_id');
+        if ($productId > 0 && Product::query()->whereKey($productId)->exists()) {
+            return redirect()->route('admin.products.edit', $productId);
         }
 
-        $images = $query->paginate(20)->withQueryString();
-
-        $products = Product::query()
-            ->orderBy('name')
-            ->get(['id', 'name']);
-
-        return view('admin.product-images.index', compact('images', 'products'));
+        return redirect()->route('admin.products.index');
     }
 
-    public function create(Request $request): View
+    public function create(Request $request): RedirectResponse
     {
-        $products = Product::query()
-            ->orderBy('name')
-            ->get(['id', 'name']);
+        $productId = $request->integer('product_id');
+        if ($productId > 0 && Product::query()->whereKey($productId)->exists()) {
+            return redirect()->route('admin.products.edit', $productId);
+        }
 
-        $selectedProductId = $request->filled('product_id')
-            ? $request->integer('product_id')
-            : null;
-
-        return view(
-            'admin.product-images.create',
-            compact('products', 'selectedProductId')
-        );
+        return redirect()->route('admin.products.index');
     }
 
     /**
@@ -184,23 +166,22 @@ class ProductImageController extends Controller
             ->with('success', 'تصویر محصول با موفقیت اضافه شد.');
     }
 
-    public function show(ProductImage $productImage): View
+    public function show(ProductImage $productImage): RedirectResponse
     {
-        $productImage->load('product');
+        if (Product::query()->whereKey($productImage->product_id)->exists()) {
+            return redirect()->route('admin.products.edit', $productImage->product_id);
+        }
 
-        return view('admin.product-images.show', compact('productImage'));
+        return redirect()->route('admin.products.index');
     }
 
-    public function edit(ProductImage $productImage): View
+    public function edit(ProductImage $productImage): RedirectResponse
     {
-        $products = Product::query()
-            ->orderBy('name')
-            ->get(['id', 'name']);
+        if (Product::query()->whereKey($productImage->product_id)->exists()) {
+            return redirect()->route('admin.products.edit', $productImage->product_id);
+        }
 
-        return view(
-            'admin.product-images.edit',
-            compact('productImage', 'products')
-        );
+        return redirect()->route('admin.products.index');
     }
 
     public function update(
