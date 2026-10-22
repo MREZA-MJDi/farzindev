@@ -204,6 +204,15 @@
 
     </section>
 
+
+
+
+
+
+
+
+
+
 @push('scripts')
 <script>
     document.addEventListener('DOMContentLoaded', () => {
@@ -236,12 +245,5 @@
     });
 </script>
 @endpush
-
-
-
-
-
-
-
 
 @endsection
