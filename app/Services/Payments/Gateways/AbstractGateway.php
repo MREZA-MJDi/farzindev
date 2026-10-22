@@ -92,6 +92,10 @@ abstract class AbstractGateway implements InstallmentPaymentGatewayInterface
     {
         $config = $this->config();
 
+        if (($config['api_contract_confirmed'] ?? false) !== true) {
+            throw new RuntimeException("{$this->gateway} official API contract is not confirmed.");
+        }
+
         $baseUrl = rtrim(
             (string) ($config['base_url'] ?? ''),
             '/'
@@ -230,7 +234,7 @@ abstract class AbstractGateway implements InstallmentPaymentGatewayInterface
     ): array {
         $config = $this->config();
 
-        if (($config['enabled'] ?? false) !== true) {
+        if (($config['enabled'] ?? false) !== true || ($config['api_contract_confirmed'] ?? false) !== true) {
             return [
                 'success' => false,
                 'payment_url' => null,
