@@ -11,6 +11,8 @@ use App\Models\ProductVariant;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
+use Throwable;
 use Illuminate\View\View;
 
 class ProductVariantController extends Controller
@@ -117,32 +119,72 @@ class ProductVariantController extends Controller
         $data = $request->validated();
 
         $imageIds = $data['image_ids'] ?? [];
-        unset($data['image_ids']);
+        $uploads = $request->file('images', []);
+        unset($data['image_ids'], $data['images']);
 
         $productId = (int) $data['product_id'];
+        $storedPaths = [];
+        $newImageIds = [];
 
-        DB::transaction(function () use ($data, $imageIds, $productId): void {
-            // Serialize variant changes with checkout's product/stock locks.
-            Product::query()
-                ->whereKey($productId)
-                ->lockForUpdate()
-                ->firstOrFail();
+        foreach ($uploads as $upload) {
+            $path = $upload->store('products/images', 'public');
+            if (! $path) {
+                foreach ($storedPaths as $storedPath) {
+                    Storage::disk('public')->delete($storedPath);
+                }
 
-            $productVariant = ProductVariant::create($data);
-            $productVariant->images()->sync($imageIds);
-        });
+                return back()->withInput()->withErrors([
+                    'images' => 'ذخیره یکی از تصاویر تنوع انجام نشد.',
+                ]);
+            }
+            $storedPaths[] = $path;
+        }
+
+        try {
+            DB::transaction(function () use ($data, $imageIds, $productId, $storedPaths, &$newImageIds): void {
+                // Serialize variant changes with checkout's product/stock locks.
+                $product = Product::query()
+                    ->whereKey($productId)
+                    ->lockForUpdate()
+                    ->firstOrFail();
+
+                $productVariant = ProductVariant::create($data);
+                $nextSort = ((int) ProductImage::query()
+                    ->where('product_id', $productId)
+                    ->max('sort_order')) + 1;
+
+                foreach ($storedPaths as $offset => $path) {
+                    $image = ProductImage::create([
+                        'product_id' => $productId,
+                        'path' => $path,
+                        'alt' => trim($data['name'] . ' ' . $data['value']),
+                        'sort_order' => $nextSort + $offset,
+                        'is_primary' => false,
+                    ]);
+                    $newImageIds[] = $image->id;
+                }
+
+                $productVariant->images()->sync(array_values(array_unique(array_merge(
+                    $imageIds,
+                    $newImageIds
+                ))));
+            });
+        } catch (Throwable $exception) {
+            foreach ($storedPaths as $storedPath) {
+                Storage::disk('public')->delete($storedPath);
+            }
+            throw $exception;
+        }
+
+        if ($request->boolean('return_to_product')) {
+            return redirect()
+                ->route('admin.products.edit', $productId)
+                ->with('success', 'تنوع و تصاویر وابسته به آن ذخیره شدند.');
+        }
 
         return redirect()
-            ->route(
-                'admin.product-variants.index',
-                [
-                    'product_id' => $productId,
-                ]
-            )
-            ->with(
-                'success',
-                'تنوع محصول با موفقیت ایجاد شد.'
-            );
+            ->route('admin.product-variants.index', ['product_id' => $productId])
+            ->with('success', 'تنوع محصول با موفقیت ایجاد شد.');
     }
 
     /**
@@ -206,59 +248,102 @@ class ProductVariantController extends Controller
         $data = $request->validated();
 
         $imageIds = $data['image_ids'] ?? [];
-        unset($data['image_ids']);
+        $uploads = $request->file('images', []);
+        unset($data['image_ids'], $data['images']);
 
         $oldProductId = (int) $productVariant->product_id;
         $newProductId = (int) $data['product_id'];
+        $storedPaths = [];
+        $newImageIds = [];
 
-        DB::transaction(function () use (
-            $productVariant,
-            $data,
-            $imageIds,
-            $oldProductId,
-            $newProductId
-        ): void {
-            // Lock product rows in a deterministic order to reduce deadlocks.
-            $lockedProducts = Product::query()
-                ->whereIn('id', array_values(array_unique([
-                    $oldProductId,
-                    $newProductId,
-                ])))
-                ->orderBy('id')
-                ->lockForUpdate()
-                ->get()
-                ->keyBy('id');
+        foreach ($uploads as $upload) {
+            $path = $upload->store('products/images', 'public');
+            if (! $path) {
+                foreach ($storedPaths as $storedPath) {
+                    Storage::disk('public')->delete($storedPath);
+                }
 
-            if (! $lockedProducts->has($newProductId)) {
-                abort(404);
+                return back()->withInput()->withErrors([
+                    'images' => 'ذخیره یکی از تصاویر تنوع انجام نشد؛ تصاویر قبلی حفظ شدند.',
+                ]);
             }
+            $storedPaths[] = $path;
+        }
 
-            $lockedVariant = ProductVariant::query()
-                ->whereKey($productVariant->id)
-                ->lockForUpdate()
-                ->firstOrFail();
+        try {
+            DB::transaction(function () use (
+                $productVariant,
+                $data,
+                $imageIds,
+                $oldProductId,
+                $newProductId,
+                $storedPaths,
+                &$newImageIds
+            ): void {
+                // Lock product rows in a deterministic order to reduce deadlocks.
+                $lockedProducts = Product::query()
+                    ->whereIn('id', array_values(array_unique([
+                        $oldProductId,
+                        $newProductId,
+                    ])))
+                    ->orderBy('id')
+                    ->lockForUpdate()
+                    ->get()
+                    ->keyBy('id');
 
-            $lockedVariant->update($data);
-            $lockedVariant->images()->sync($imageIds);
-        });
+                if (! $lockedProducts->has($newProductId)) {
+                    abort(404);
+                }
+
+                $lockedVariant = ProductVariant::query()
+                    ->whereKey($productVariant->id)
+                    ->lockForUpdate()
+                    ->firstOrFail();
+
+                $lockedVariant->update($data);
+                $nextSort = ((int) ProductImage::query()
+                    ->where('product_id', $newProductId)
+                    ->max('sort_order')) + 1;
+
+                foreach ($storedPaths as $offset => $path) {
+                    $image = ProductImage::create([
+                        'product_id' => $newProductId,
+                        'path' => $path,
+                        'alt' => trim($data['name'] . ' ' . $data['value']),
+                        'sort_order' => $nextSort + $offset,
+                        'is_primary' => false,
+                    ]);
+                    $newImageIds[] = $image->id;
+                }
+
+                $lockedVariant->images()->sync(array_values(array_unique(array_merge(
+                    $imageIds,
+                    $newImageIds
+                ))));
+            });
+        } catch (Throwable $exception) {
+            foreach ($storedPaths as $storedPath) {
+                Storage::disk('public')->delete($storedPath);
+            }
+            throw $exception;
+        }
+
+        if ($request->boolean('return_to_product')) {
+            return redirect()
+                ->route('admin.products.edit', $newProductId)
+                ->with('success', 'تغییرات تنوع و تصاویر ذخیره شدند.');
+        }
 
         return redirect()
-            ->route(
-                'admin.product-variants.index',
-                [
-                    'product_id' => $newProductId,
-                ]
-            )
-            ->with(
-                'success',
-                'تنوع محصول با موفقیت بروزرسانی شد.'
-            );
+            ->route('admin.product-variants.index', ['product_id' => $newProductId])
+            ->with('success', 'تنوع محصول با موفقیت بروزرسانی شد.');
     }
 
     /**
      * Remove the specified product variant.
      */
     public function destroy(
+        Request $request,
         ProductVariant $productVariant
     ): RedirectResponse {
         $productId = (int) $productVariant->product_id;
@@ -278,16 +363,14 @@ class ProductVariantController extends Controller
             $lockedVariant->delete();
         });
 
+        if ($request->boolean('return_to_product')) {
+            return redirect()
+                ->route('admin.products.edit', $productId)
+                ->with('success', 'تنوع حذف شد.');
+        }
+
         return redirect()
-            ->route(
-                'admin.product-variants.index',
-                [
-                    'product_id' => $productId,
-                ]
-            )
-            ->with(
-                'success',
-                'تنوع محصول با موفقیت حذف شد.'
-            );
+            ->route('admin.product-variants.index', ['product_id' => $productId])
+            ->with('success', 'تنوع محصول با موفقیت حذف شد.');
     }
 }
