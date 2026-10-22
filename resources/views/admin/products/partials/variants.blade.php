@@ -65,8 +65,8 @@
                 </label>
                 <label class="block text-xs text-[var(--admin-text)]">کد رنگ (اختیاری)
                     <div class="mt-2 flex gap-2">
-                        <input name="color_hex" value="{{ old('color_hex') }}" maxlength="20" class="admin-input w-full" dir="ltr" placeholder="#202020">
-                        <input type="color" aria-label="انتخاب رنگ" value="{{ old('color_hex', '#202020') }}" class="h-11 w-12 shrink-0 rounded-lg border border-[var(--admin-border)] bg-white p-1" data-variant-color-picker>
+                        <input id="new-variant-color-hex" name="color_hex" value="{{ old('color_hex') }}" maxlength="20" class="admin-input w-full" dir="ltr" placeholder="#202020">
+                        <input type="color" aria-label="انتخاب رنگ" value="{{ old('color_hex', '#202020') }}" oninput="document.getElementById('new-variant-color-hex').value = this.value" class="h-11 w-12 shrink-0 rounded-lg border border-[var(--admin-border)] bg-white p-1">
                     </div>
                 </label>
             </div>
