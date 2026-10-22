@@ -12,10 +12,17 @@ class AdminMiddleware
         Request $request,
         Closure $next
     ): Response {
-        abort_unless(
-            $request->user()?->isAdmin(),
-            403
-        );
+        if (! $request->user()?->isAdmin()) {
+            Log::warning('Blocked access to an admin-only route', [
+                'request_id' => $request->attributes->get('request_id'),
+                'user_id' => $request->user()?->getAuthIdentifier(),
+                'request_method' => $request->method(),
+                'request_route' => $request->route()?->getName()
+                    ?? $request->route()?->uri(),
+            ]);
+
+            abort(403);
+        }
 
         return $next($request);
     }
