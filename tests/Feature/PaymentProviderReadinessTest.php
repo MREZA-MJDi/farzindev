@@ -40,32 +40,27 @@ class PaymentProviderReadinessTest extends TestCase
         ]);
     }
 
-    public function test_provider_is_ready_only_with_confirmed_contract_secure_urls_credentials_and_core_endpoints(): void
+    public function test_placeholder_adapters_never_become_live_from_environment_flags_alone(): void
     {
-        config([
-            'payment.digipay.enabled' => true,
-            'payment.digipay.api_contract_confirmed' => true,
-            'payment.digipay.merchant_id' => 'merchant-test',
-            'payment.digipay.api_key' => 'api-key-test',
-            'payment.digipay.base_url' => 'https://gateway.example.test',
-            'payment.digipay.callback_url' => 'https://store.example.test/checkout/payment/callback/digipay',
-            'payment.digipay.endpoints.create' => '/v1/payment',
-            'payment.digipay.endpoints.verify' => '/v1/verify',
-        ]);
-
         $manager = app(PaymentManager::class);
-        $this->assertTrue($manager->isReady('digipay'));
 
-        config(['payment.digipay.base_url' => 'http://gateway.example.test']);
-        $this->assertFalse($manager->isReady('digipay'));
+        foreach (['digipay', 'snappay', 'torobpay'] as $gateway) {
+            config([
+                "payment.{$gateway}.enabled" => true,
+                "payment.{$gateway}.api_contract_confirmed" => true,
+                "payment.{$gateway}.merchant_id" => 'merchant-test',
+                "payment.{$gateway}.api_key" => 'api-key-test',
+                "payment.{$gateway}.base_url" => 'https://gateway.example.test',
+                "payment.{$gateway}.callback_url" => 'https://store.example.test/checkout/payment/callback/' . $gateway,
+                "payment.{$gateway}.endpoints.create" => '/v1/payment',
+                "payment.{$gateway}.endpoints.verify" => '/v1/verify',
+            ]);
 
-        config(['payment.digipay.base_url' => 'https://gateway.example.test']);
-        config(['payment.digipay.endpoints.verify' => '']);
-        $this->assertFalse($manager->isReady('digipay'));
-
-        config(['payment.digipay.endpoints.verify' => '/v1/verify']);
-        config(['payment.digipay.api_contract_confirmed' => false]);
-        $this->assertFalse($manager->isReady('digipay'));
+            $this->assertFalse(
+                $manager->isReady($gateway),
+                "{$gateway} must remain unavailable until its real merchant adapter is implemented."
+            );
+        }
     }
 
     public function test_shaparak_status_page_explains_pending_integration_without_claiming_payment(): void
