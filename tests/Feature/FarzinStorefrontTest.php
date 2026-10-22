@@ -59,7 +59,8 @@ class FarzinStorefrontTest extends TestCase
             ->assertOk()
             ->assertSee('بلاگ فرزین')
             ->assertSee('راهنماهای فرزین')
-            ->assertSee('مقاله‌های جدید به‌زودی منتشر می‌شوند.');
+            ->assertSee('قبل از خرید هود آشپزخانه چه چیزهایی را بررسی کنیم؟')
+            ->assertSee('چک‌لیست ساده پیش از ثبت سفارش');
     }
 
     public function test_homepage_uses_scroll_drawn_architecture_instead_of_a_product_hero_card(): void
