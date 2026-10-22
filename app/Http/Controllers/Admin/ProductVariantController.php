@@ -164,10 +164,7 @@ class ProductVariantController extends Controller
                     $newImageIds[] = $image->id;
                 }
 
-                $productVariant->images()->sync(array_values(array_unique(array_merge(
-                    $imageIds,
-                    $newImageIds
-                ))));
+                $this->syncVariantImages($productVariant, $imageIds, $newImageIds);
             });
         } catch (Throwable $exception) {
             foreach ($storedPaths as $storedPath) {
@@ -316,10 +313,7 @@ class ProductVariantController extends Controller
                     $newImageIds[] = $image->id;
                 }
 
-                $lockedVariant->images()->sync(array_values(array_unique(array_merge(
-                    $imageIds,
-                    $newImageIds
-                ))));
+                $this->syncVariantImages($lockedVariant, $imageIds, $newImageIds);
             });
         } catch (Throwable $exception) {
             foreach ($storedPaths as $storedPath) {
@@ -337,6 +331,34 @@ class ProductVariantController extends Controller
         return redirect()
             ->route('admin.product-variants.index', ['product_id' => $newProductId])
             ->with('success', 'تنوع محصول با موفقیت بروزرسانی شد.');
+    }
+
+    /**
+     * Prefer freshly uploaded, color-specific photos in the variant gallery.
+     * Product images are shared records; unchecking a photo only removes this
+     * pivot relation and never deletes the file or the product's main image.
+     *
+     * @param array<int, int|string> $selectedImageIds
+     * @param array<int, int|string> $uploadedImageIds
+     */
+    private function syncVariantImages(
+        ProductVariant $variant,
+        array $selectedImageIds,
+        array $uploadedImageIds
+    ): void {
+        $syncData = [];
+
+        foreach (array_values(array_unique(array_map('intval', $uploadedImageIds))) as $index => $imageId) {
+            $syncData[$imageId] = ['sort_order' => $index];
+        }
+
+        foreach (array_values(array_unique(array_map('intval', $selectedImageIds))) as $index => $imageId) {
+            if (! array_key_exists($imageId, $syncData)) {
+                $syncData[$imageId] = ['sort_order' => 100 + $index];
+            }
+        }
+
+        $variant->images()->sync($syncData);
     }
 
     /**
