@@ -64,10 +64,14 @@ class AdminAuthorizationTest extends TestCase
 
     public function test_each_response_has_a_server_generated_request_id(): void
     {
-        $this->withHeader('X-Request-ID', 'attacker-controlled-id')
+        $spoofedResponse = $this->withHeader('X-Request-ID', 'attacker-controlled-id')
             ->get('/login')
-            ->assertOk()
-            ->assertHeaderMissing('X-Request-ID', 'attacker-controlled-id');
+            ->assertOk();
+
+        $this->assertNotSame(
+            'attacker-controlled-id',
+            $spoofedResponse->headers->get('X-Request-ID')
+        );
 
         $first = $this->get('/login')->headers->get('X-Request-ID');
         $second = $this->get('/login')->headers->get('X-Request-ID');
