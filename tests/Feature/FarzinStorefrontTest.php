@@ -1640,6 +1640,7 @@ class FarzinStorefrontTest extends TestCase
             ->where('product_images.path', 'like', 'products/images/%')
             ->firstOrFail();
         Storage::disk('public')->assertExists($uploadedImage->path);
+        $this->assertSame($uploadedImage->id, $variant->images()->firstOrFail()->id);
 
         $this->actingAs($admin)
             ->get(route('admin.products.edit', $product))
