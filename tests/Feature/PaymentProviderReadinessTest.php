@@ -95,6 +95,54 @@ class PaymentProviderReadinessTest extends TestCase
         ]);
     }
 
+    public function test_callback_and_manual_verification_leave_pending_payment_untouched_when_adapter_is_not_ready(): void
+    {
+        $customer = User::factory()->create(['role' => 'customer']);
+        $order = $this->makeOrder($customer);
+        $payment = Payment::create([
+            'order_id' => $order->id,
+            'user_id' => $customer->id,
+            'gateway' => 'digipay',
+            'amount' => $order->total,
+            'status' => 'pending',
+            'metadata' => ['test' => true],
+        ]);
+
+        $service = app(PaymentService::class);
+
+        $callback = $service->handleCallback('digipay', [
+            'payment_id' => $payment->id,
+            'verified' => true,
+            'amount' => $order->total,
+            'transaction_id' => 'UNTRUSTED-CALLBACK-ID',
+        ]);
+
+        $this->assertFalse($callback['success']);
+        $this->assertTrue($callback['data']['verification_skipped']);
+        $this->assertSame('pending', $payment->fresh()->status);
+        $this->assertNull($payment->fresh()->transaction_id);
+        $this->assertSame('pending', $order->fresh()->payment_status);
+
+        $verified = $service->verifyPayment($payment->fresh());
+        $this->assertFalse($verified['success']);
+        $this->assertSame('pending', $payment->fresh()->status);
+
+        $status = $service->getStatus($payment->fresh());
+        $this->assertFalse($status['success']);
+        $this->assertSame('unknown', $status['status']);
+        $this->assertSame('pending', $payment->fresh()->status);
+
+        $cancel = $service->cancelPayment($payment->fresh());
+        $this->assertFalse($cancel['success']);
+        $this->assertSame('pending', $payment->fresh()->status);
+
+        $this->assertDatabaseHas('orders', [
+            'id' => $order->id,
+            'payment_status' => 'pending',
+            'payment_provider' => null,
+        ]);
+    }
+
     public function test_shaparak_status_page_explains_pending_integration_without_claiming_payment(): void
     {
         $customer = User::factory()->create(['role' => 'customer']);
