@@ -58,9 +58,8 @@ class FarzinStorefrontTest extends TestCase
         $this->get(route('blog.index'))
             ->assertOk()
             ->assertSee('بلاگ فرزین')
-            ->assertSee('انتخاب هود')
-            ->assertSee('شناخت سینک')
-            ->assertSee('چک‌لیست');
+            ->assertSee('راهنماهای فرزین')
+            ->assertSee('مقاله‌های جدید به‌زودی منتشر می‌شوند.');
     }
 
     public function test_homepage_uses_scroll_drawn_architecture_instead_of_a_product_hero_card(): void
