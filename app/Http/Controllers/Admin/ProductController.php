@@ -149,10 +149,10 @@ class ProductController extends Controller
             }
         }
 
-        $oldPath = null;
+        $oldPathToDelete = null;
 
         try {
-            DB::transaction(function () use ($product, $data, $newPath, &$oldPath): void {
+            DB::transaction(function () use ($product, $data, $newPath, &$oldPathToDelete): void {
                 $lockedProduct = Product::query()
                     ->whereKey($product->id)
                     ->lockForUpdate()
@@ -180,24 +180,32 @@ class ProductController extends Controller
                         ->first();
                 }
 
-                $oldPath = $primaryImage?->path;
+                // A primary image may also be attached to a color variant.
+                // Never rewrite/delete that shared record when the product's
+                // default image changes, or the variant gallery silently changes too.
+                $isPrimaryAttachedToVariant = $primaryImage
+                    ? $primaryImage->variants()->exists()
+                    : false;
 
-                if ($primaryImage) {
+                $lockedProduct->images()->update(['is_primary' => false]);
+
+                if ($primaryImage && ! $isPrimaryAttachedToVariant) {
+                    $oldPathToDelete = $primaryImage->path;
                     $primaryImage->update([
                         'path' => $newPath,
                         'alt' => $lockedProduct->name,
                         'is_primary' => true,
                     ]);
-
-                    $lockedProduct->images()
-                        ->where('id', '!=', $primaryImage->id)
-                        ->update(['is_primary' => false]);
                 } else {
+                    $nextSortOrder = ((int) ProductImage::query()
+                        ->where('product_id', $lockedProduct->id)
+                        ->max('sort_order')) + 1;
+
                     ProductImage::create([
                         'product_id' => $lockedProduct->id,
                         'path' => $newPath,
                         'alt' => $lockedProduct->name,
-                        'sort_order' => 0,
+                        'sort_order' => $nextSortOrder,
                         'is_primary' => true,
                     ]);
                 }
@@ -213,13 +221,13 @@ class ProductController extends Controller
         // Delete the previous image only after the database change commits.
         if (
             $newPath !== null
-            && $oldPath
-            && ! str_starts_with($oldPath, 'http://')
-            && ! str_starts_with($oldPath, 'https://')
-            && ! str_starts_with($oldPath, '//')
-            && $oldPath !== $newPath
+            && $oldPathToDelete
+            && ! str_starts_with($oldPathToDelete, 'http://')
+            && ! str_starts_with($oldPathToDelete, 'https://')
+            && ! str_starts_with($oldPathToDelete, '//')
+            && $oldPathToDelete !== $newPath
         ) {
-            Storage::disk('public')->delete($oldPath);
+            Storage::disk('public')->delete($oldPathToDelete);
         }
 
         return redirect()
