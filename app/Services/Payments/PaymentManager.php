@@ -11,6 +11,16 @@ use InvalidArgumentException;
 class PaymentManager
 {
     /**
+     * Provider adapters listed here must implement the provider's actual
+     * signed/authenticated merchant API contract and verified callback flow.
+     *
+     * The current gateway classes still use generic placeholder payloads, so
+     * no provider is eligible for live charging yet. Credentials and an
+     * environment flag must never be enough to expose a fake payment flow.
+     */
+    private const LIVE_API_ADAPTERS = [];
+
+    /**
      * A provider is live only after the official API contract has been
      * mapped, enabled, and supplied with secure connection settings.
      * Placeholder endpoints alone must never enable charging.
@@ -18,7 +28,7 @@ class PaymentManager
     public function isReady(string $gateway): bool
     {
         $gateway = strtolower($gateway);
-        if (! in_array($gateway, ['digipay', 'snappay', 'torobpay'], true)) {
+        if (! in_array($gateway, self::LIVE_API_ADAPTERS, true)) {
             return false;
         }
 
