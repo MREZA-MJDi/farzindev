@@ -191,7 +191,7 @@ return Application::configure(
 
             return response()->view(
                 'errors.500',
-                ['requestId' => $requestId],
+                ['requestId' => $requestId, 'errorCode' => $status],
                 $status,
                 ['X-Request-ID' => $requestId]
             );
