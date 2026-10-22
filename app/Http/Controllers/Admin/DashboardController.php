@@ -78,6 +78,10 @@ class DashboardController extends Controller
 
         $publishedBlogPosts = BlogPost::query()->published()->count();
         $draftBlogPosts = BlogPost::query()->where('status', 'draft')->count();
+        $scheduledBlogPosts = BlogPost::query()
+            ->where('status', 'published')
+            ->where('published_at', '>', $reportingDate)
+            ->count();
 
         $totalOrders = Order::query()->count();
 
@@ -309,6 +313,7 @@ class DashboardController extends Controller
             'installmentProductsCount' => $installmentProductsCount,
             'publishedBlogPosts' => $publishedBlogPosts,
             'draftBlogPosts' => $draftBlogPosts,
+            'scheduledBlogPosts' => $scheduledBlogPosts,
         ]);
     }
 
