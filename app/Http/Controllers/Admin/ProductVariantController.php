@@ -13,101 +13,33 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Throwable;
-use Illuminate\View\View;
 
 class ProductVariantController extends Controller
 {
     /**
      * Display a listing of product variants.
      */
-    public function index(Request $request): View
+    public function index(Request $request): RedirectResponse
     {
-        $query = ProductVariant::query()
-            ->with([
-                'product',
-                'images',
-            ])
-            ->orderBy('type')
-            ->orderBy('name')
-            ->orderBy('value');
-
-        if ($request->filled('product_id')) {
-            $query->where(
-                'product_id',
-                $request->integer('product_id')
-            );
+        $productId = $request->integer('product_id');
+        if ($productId > 0 && Product::query()->whereKey($productId)->exists()) {
+            return redirect()->route('admin.products.edit', $productId);
         }
 
-        if ($request->filled('type')) {
-            $query->where('type', $request->string('type'));
-        }
-
-        if ($request->filled('is_active')) {
-            $query->where(
-                'is_active',
-                $request->boolean('is_active')
-            );
-        }
-
-        $variants = $query
-            ->paginate(20)
-            ->withQueryString();
-
-        $products = Product::query()
-            ->orderBy('name')
-            ->get([
-                'id',
-                'name',
-            ]);
-
-        $types = ProductVariant::query()
-            ->select('type')
-            ->distinct()
-            ->orderBy('type')
-            ->pluck('type');
-
-        return view(
-            'admin.product-variants.index',
-            compact(
-                'variants',
-                'products',
-                'types'
-            )
-        );
+        return redirect()->route('admin.products.index');
     }
 
     /**
      * Show the form for creating a new product variant.
      */
-    public function create(Request $request): View
+    public function create(Request $request): RedirectResponse
     {
-        $products = Product::query()
-            ->orderBy('name')
-            ->get([
-                'id',
-                'name',
-            ]);
+        $productId = $request->integer('product_id');
+        if ($productId > 0 && Product::query()->whereKey($productId)->exists()) {
+            return redirect()->route('admin.products.edit', $productId);
+        }
 
-        $selectedProductId = $request->filled('product_id')
-            ? $request->integer('product_id')
-            : null;
-
-        $selectedProductImages = $selectedProductId
-            ? ProductImage::query()
-                ->where('product_id', $selectedProductId)
-                ->orderBy('sort_order')
-                ->orderBy('id')
-                ->get()
-            : collect();
-
-        return view(
-            'admin.product-variants.create',
-            compact(
-                'products',
-                'selectedProductId',
-                'selectedProductImages'
-            )
-        );
+        return redirect()->route('admin.products.index');
     }
 
     /**
@@ -187,52 +119,25 @@ class ProductVariantController extends Controller
     /**
      * Display the specified product variant.
      */
-    public function show(
-        ProductVariant $productVariant
-    ): View {
-        $productVariant->load([
-            'product',
-            'images',
-        ]);
+    public function show(ProductVariant $productVariant): RedirectResponse
+    {
+        if (Product::query()->whereKey($productVariant->product_id)->exists()) {
+            return redirect()->route('admin.products.edit', $productVariant->product_id);
+        }
 
-        return view(
-            'admin.product-variants.show',
-            compact('productVariant')
-        );
+        return redirect()->route('admin.products.index');
     }
 
     /**
      * Show the form for editing the specified product variant.
      */
-    public function edit(
-        ProductVariant $productVariant
-    ): View {
-        $productVariant->load('images');
+    public function edit(ProductVariant $productVariant): RedirectResponse
+    {
+        if (Product::query()->whereKey($productVariant->product_id)->exists()) {
+            return redirect()->route('admin.products.edit', $productVariant->product_id);
+        }
 
-        $products = Product::query()
-            ->orderBy('name')
-            ->get([
-                'id',
-                'name',
-            ]);
-
-        $selectedProductId = (int) $productVariant->product_id;
-
-        $selectedProductImages = ProductImage::query()
-            ->where('product_id', $selectedProductId)
-            ->orderBy('sort_order')
-            ->orderBy('id')
-            ->get();
-
-        return view(
-            'admin.product-variants.edit',
-            compact(
-                'productVariant',
-                'products',
-                'selectedProductId',
-                'selectedProductImages'
-            )
-        );
+        return redirect()->route('admin.products.index');
     }
 
     /**
