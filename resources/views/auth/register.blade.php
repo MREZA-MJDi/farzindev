@@ -6,6 +6,40 @@
 
 @section('content')
 
+@push('scripts')
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const password = document.getElementById('password');
+        const confirmation = document.getElementById('password_confirmation');
+        const passwordError = document.getElementById('password-live-error');
+        const confirmationError = document.getElementById('password-confirmation-live-error');
+        if (!password || !confirmation) return;
+
+        const validatePassword = () => {
+            const value = password.value;
+            const errors = [];
+            if (value.length < 8) errors.push('حداقل ۸ کاراکتر وارد کنید.');
+            if (!/[a-z]/.test(value)) errors.push('حداقل یک حرف کوچک انگلیسی لازم است.');
+            if (!/[A-Z]/.test(value)) errors.push('حداقل یک حرف بزرگ انگلیسی لازم است.');
+            if (!/[0-9]/.test(value)) errors.push('حداقل یک عدد لازم است.');
+            passwordError.textContent = value.length ? errors.join(' ') : '';
+            password.setAttribute('aria-invalid', errors.length ? 'true' : 'false');
+            validateConfirmation();
+        };
+
+        const validateConfirmation = () => {
+            const mismatch = confirmation.value.length > 0 && confirmation.value !== password.value;
+            confirmationError.textContent = mismatch ? 'تکرار رمز عبور با رمز عبور یکسان نیست.' : '';
+            confirmation.setAttribute('aria-invalid', mismatch ? 'true' : 'false');
+        };
+
+        password.addEventListener('input', validatePassword);
+        confirmation.addEventListener('input', validateConfirmation);
+        validatePassword();
+    });
+</script>
+@endpush
+
     <section class="min-h-[calc(100vh-80px)]">
 
         <x-layout.container>
@@ -100,21 +134,32 @@
                                 <x-ui.input
                                     type="password"
                                     name="password"
+                                    id="password"
+                                    aria-describedby="password-requirements password-live-error"
                                     label="رمز عبور"
                                     placeholder="حداقل ۸ کاراکتر"
+                                    autocomplete="new-password"
+                                    hint="حداقل ۸ کاراکتر، شامل حرف بزرگ و کوچک انگلیسی و عدد؛ مثال: FarzinPass123"
                                     required
                                 />
 
                                 <x-ui.input
                                     type="password"
                                     name="password_confirmation"
+                                    id="password_confirmation"
+                                    aria-describedby="password-confirmation-live-error"
                                     label="تکرار رمز عبور"
-                                    placeholder="تکرار رمز عبور"
+                                    placeholder="رمز عبور را دوباره وارد کنید"
+                                    autocomplete="new-password"
                                     required
                                 />
 
                             </div>
 
+
+                            <p id="password-requirements" class="sr-only">حداقل ۸ کاراکتر، حداقل یک حرف بزرگ انگلیسی، یک حرف کوچک انگلیسی و یک عدد.</p>
+                            <p id="password-live-error" class="text-[11px] leading-6 text-red-600" aria-live="polite"></p>
+                            <p id="password-confirmation-live-error" class="text-[11px] leading-6 text-red-600" aria-live="polite"></p>
 
                             <label class="flex cursor-pointer items-start gap-3">
 
