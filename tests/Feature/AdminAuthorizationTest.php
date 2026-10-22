@@ -113,6 +113,7 @@ class AdminAuthorizationTest extends TestCase
         $response
             ->assertStatus(500)
             ->assertSee('کد پیگیری')
+            ->assertSee((string) $response->headers->get('X-Request-ID'))
             ->assertDontSee('sensitive filesystem path');
 
         $this->assertNotEmpty($response->headers->get('X-Request-ID'));
