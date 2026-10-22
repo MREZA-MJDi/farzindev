@@ -91,7 +91,7 @@ return Application::configure(
                     'request_method' => $request->method(),
                     'request_route' => $request->route()?->getName()
                         ?? $request->route()?->uri(),
-                    'user_id' => $request->user()?->getAuthIdentifier(),
+                    'user_id' => rescue(fn () => $request->user()?->getAuthIdentifier(), report: false),
                 ]);
             }
 
