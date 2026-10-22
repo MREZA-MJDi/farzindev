@@ -272,32 +272,21 @@
 
                 </a>
 
-                <a
-                    href="{{ route('admin.product-images.index') }}"
-                    @class([
-                        'group flex items-center gap-3 rounded-2xl px-3 py-3 text-xs font-medium transition',
-                        'bg-[var(--admin-accent-soft)] text-[var(--admin-accent-dark)]' => request()->routeIs('admin.product-images.*'),
-                        'text-[var(--admin-text-soft)] hover:bg-[var(--admin-surface)] hover:text-[var(--admin-text)]' => !request()->routeIs('admin.product-images.*'),
-                    ])
-                >
-                    <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[var(--admin-surface)] text-[10px] font-bold text-[var(--admin-muted)]">IMG</span>
-                    <span class="flex-1">تصاویر محصولات</span>
-                    @if(request()->routeIs('admin.product-images.*'))
-                        <span class="h-1.5 w-1.5 rounded-full bg-[var(--admin-accent)]"></span>
-                    @endif
-                </a>
+
+
+
 
                 <a
-                    href="{{ route('admin.product-variants.index') }}"
+                    href="{{ route('admin.blog-posts.index') }}"
                     @class([
                         'group flex items-center gap-3 rounded-2xl px-3 py-3 text-xs font-medium transition',
-                        'bg-[var(--admin-accent-soft)] text-[var(--admin-accent-dark)]' => request()->routeIs('admin.product-variants.*'),
-                        'text-[var(--admin-text-soft)] hover:bg-[var(--admin-surface)] hover:text-[var(--admin-text)]' => !request()->routeIs('admin.product-variants.*'),
+                        'bg-[var(--admin-accent-soft)] text-[var(--admin-accent-dark)]' => request()->routeIs('admin.blog-posts.*'),
+                        'text-[var(--admin-text-soft)] hover:bg-[var(--admin-surface)] hover:text-[var(--admin-text)]' => !request()->routeIs('admin.blog-posts.*'),
                     ])
                 >
-                    <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[var(--admin-surface)] text-[10px] font-bold text-[var(--admin-muted)]">VAR</span>
-                    <span class="flex-1">تنوع‌های محصول</span>
-                    @if(request()->routeIs('admin.product-variants.*'))
+                    <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[var(--admin-surface)] text-[var(--admin-muted)]" aria-hidden="true">BLOG</span>
+                    <span class="flex-1">مقالات و بلاگ</span>
+                    @if(request()->routeIs('admin.blog-posts.*'))
                         <span class="h-1.5 w-1.5 rounded-full bg-[var(--admin-accent)]"></span>
                     @endif
                 </a>
