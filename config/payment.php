@@ -29,6 +29,12 @@ return [
             false
         ),
 
+        // True only after mapping the official merchant API contract.
+        'api_contract_confirmed' => (bool) env(
+            'DIGIPAY_API_CONTRACT_CONFIRMED',
+            false
+        ),
+
         'merchant_id' => env(
             'DIGIPAY_MERCHANT_ID'
         ),
@@ -103,6 +109,12 @@ return [
             false
         ),
 
+        // True only after mapping the official merchant API contract.
+        'api_contract_confirmed' => (bool) env(
+            'SNAPPAY_API_CONTRACT_CONFIRMED',
+            false
+        ),
+
         'merchant_id' => env(
             'SNAPPAY_MERCHANT_ID'
         ),
@@ -174,6 +186,12 @@ return [
     'torobpay' => [
         'enabled' => (bool) env(
             'TOROBPAY_ENABLED',
+            false
+        ),
+
+        // True only after mapping the official merchant API contract.
+        'api_contract_confirmed' => (bool) env(
+            'TOROBPAY_API_CONTRACT_CONFIRMED',
             false
         ),
 
