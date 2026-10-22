@@ -18,6 +18,17 @@ class AdminAuthorizationTest extends TestCase
             ->assertRedirect('/login');
     }
 
+    public function test_valid_admin_can_open_the_dashboard(): void
+    {
+        $admin = User::factory()->create([
+            'role' => 'admin',
+        ]);
+
+        $this->actingAs($admin)
+            ->get('/admin')
+            ->assertOk();
+    }
+
     public function test_authenticated_customer_cannot_open_admin_sections(): void
     {
         $customer = User::factory()->create([
