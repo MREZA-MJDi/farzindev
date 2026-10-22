@@ -820,7 +820,7 @@ class FarzinStorefrontTest extends TestCase
                 'is_new' => '1',
                 'image' => UploadedFile::fake()->image('farzin-hood.png', 800, 600),
             ])
-            ->assertRedirect(route('admin.products.index'))
+            ->assertRedirect(route('admin.products.edit', Product::query()->where('slug', 'farzin-hood-90')->firstOrFail()))
             ->assertSessionHas('success');
 
         $product = Product::query()->where('slug', 'farzin-hood-90')->firstOrFail();
