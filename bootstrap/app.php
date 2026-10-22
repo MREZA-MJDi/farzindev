@@ -10,6 +10,7 @@ use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 
 
@@ -83,6 +84,17 @@ return Application::configure(
                 return null;
             }
 
+            if ($e instanceof HttpExceptionInterface && $e->getStatusCode() >= 500) {
+                Log::error('Unhandled HTTP server error', [
+                    'exception' => $e,
+                    'request_id' => $request->attributes->get('request_id'),
+                    'request_method' => $request->method(),
+                    'request_route' => $request->route()?->getName()
+                        ?? $request->route()?->uri(),
+                    'user_id' => $request->user()?->getAuthIdentifier(),
+                ]);
+            }
+
             $requestId = $request->attributes->get('request_id')
                 ?? (string) \Illuminate\Support\Str::uuid();
             $request->attributes->set('request_id', $requestId);
@@ -152,6 +164,17 @@ return Application::configure(
 
             if ($status < 500) {
                 return null;
+            }
+
+            if ($e instanceof HttpExceptionInterface && $e->getStatusCode() >= 500) {
+                Log::error('Unhandled HTTP server error', [
+                    'exception' => $e,
+                    'request_id' => $request->attributes->get('request_id'),
+                    'request_method' => $request->method(),
+                    'request_route' => $request->route()?->getName()
+                        ?? $request->route()?->uri(),
+                    'user_id' => $request->user()?->getAuthIdentifier(),
+                ]);
             }
 
             $requestId = $request->attributes->get('request_id')
