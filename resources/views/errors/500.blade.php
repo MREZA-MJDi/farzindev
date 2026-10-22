@@ -1,5 +1,5 @@
 @extends('errors.layout')
 @section('title', 'خطای سرور | فرزین')
-@section('code', '500')
+@section('code', $errorCode ?? 500)
 @section('heading', 'مشکلی در سرور رخ داد')
 @section('message', 'در پردازش درخواست مشکلی پیش آمد. لطفاً دوباره تلاش کنید.')
