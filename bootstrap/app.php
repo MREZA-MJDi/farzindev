@@ -61,7 +61,7 @@ return Application::configure(
             'request_method' => request()->method(),
             'request_route' => request()->route()?->getName()
                 ?? request()->route()?->uri(),
-            'user_id' => request()->user()?->getAuthIdentifier(),
+            'user_id' => rescue(fn () => request()->user()?->getAuthIdentifier(), report: false),
         ]);
 
         /*
@@ -101,12 +101,15 @@ return Application::configure(
             $message = config('app.debug') && app()->environment(['local', 'testing'])
                 ? $e->getMessage()
                 : 'در پردازش درخواست مشکلی پیش آمد. لطفاً دوباره تلاش کنید.';
+            $status = $e instanceof HttpExceptionInterface
+                ? $e->getStatusCode()
+                : 500;
 
             return response()->json([
                 'success' => false,
                 'message' => $message,
                 'request_id' => $requestId,
-            ], 500, ['X-Request-ID' => $requestId]);
+            ], $status, ['X-Request-ID' => $requestId]);
         });
 
 
