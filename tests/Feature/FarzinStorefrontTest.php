@@ -1429,6 +1429,10 @@ class FarzinStorefrontTest extends TestCase
             ]);
 
         $manager = \Mockery::mock(\App\Services\Payments\PaymentManager::class);
+        $manager->shouldReceive('isReady')
+            ->once()
+            ->with('digipay')
+            ->andReturn(true);
         $manager->shouldReceive('driver')
             ->once()
             ->with('digipay')
