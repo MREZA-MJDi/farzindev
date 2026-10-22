@@ -210,7 +210,7 @@ function initRevealAnimations() {
 }
 
 function initGridLayouts() {
-    const grids = [...document.querySelectorAll('.grid')];
+    const grids = [...document.querySelectorAll('.home-body .grid')];
     const layouts = [
         { columns: 3, ratio: 1.13, perspective: 1250 },
         { columns: 4, ratio: .92, perspective: 1450 },
