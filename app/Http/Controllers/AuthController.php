@@ -17,8 +17,14 @@ use Illuminate\View\View;
 
 class AuthController extends Controller
 {
-    public function showLogin(): View
+    public function showLogin(Request $request): View
     {
+        $intended = $request->query('intended');
+
+        if (is_string($intended) && str_starts_with($intended, '/') && ! str_starts_with($intended, '//')) {
+            $request->session()->put('url.intended', url($intended));
+        }
+
         return view('auth.login');
     }
 
@@ -102,8 +108,14 @@ class AuthController extends Controller
             );
     }
 
-    public function showRegister(): View
+    public function showRegister(Request $request): View
     {
+        $intended = $request->query('intended');
+
+        if (is_string($intended) && str_starts_with($intended, '/') && ! str_starts_with($intended, '//')) {
+            $request->session()->put('url.intended', url($intended));
+        }
+
         return view('auth.register');
     }
 
