@@ -418,6 +418,11 @@ Route::middleware(['auth', 'admin'])
             AdminProductController::class
         );
 
+        Route::post(
+            'products/{product}/images',
+            [AdminProductImageController::class, 'storeForProduct']
+        )->name('products.images.store');
+
 
         /*
         |--------------------------------------------------------------------------
