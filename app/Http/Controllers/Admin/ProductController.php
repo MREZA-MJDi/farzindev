@@ -65,7 +65,7 @@ class ProductController extends Controller
         }
 
         try {
-            DB::transaction(function () use ($data, $newPath): void {
+            $product = DB::transaction(function () use ($data, $newPath): Product {
                 $product = Product::create($data);
 
                 if ($newPath !== null) {
@@ -77,6 +77,8 @@ class ProductController extends Controller
                         'is_primary' => true,
                     ]);
                 }
+
+                return $product;
             });
         } catch (Throwable $e) {
             if ($newPath !== null) {
@@ -87,8 +89,8 @@ class ProductController extends Controller
         }
 
         return redirect()
-            ->route('admin.products.index')
-            ->with('success', 'محصول با موفقیت ایجاد شد.');
+            ->route('admin.products.edit', $product)
+            ->with('success', 'محصول ایجاد شد. حالا می‌توانید رنگ‌ها و تصاویر هر رنگ را همین‌جا اضافه کنید.');
     }
 
     /**
@@ -110,7 +112,7 @@ class ProductController extends Controller
      */
     public function edit(Product $product): View
     {
-        $product->load('images');
+        $product->load(['images', 'allVariants.images']);
 
         $categories = Category::query()
             ->orderBy('name')
