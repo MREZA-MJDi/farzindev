@@ -63,6 +63,38 @@ class PaymentProviderReadinessTest extends TestCase
         }
     }
 
+    public function test_fully_configured_placeholder_gateway_still_cannot_start_payment(): void
+    {
+        $customer = User::factory()->create(['role' => 'customer']);
+        $order = $this->makeOrder($customer);
+
+        config([
+            'payment.digipay.enabled' => true,
+            'payment.digipay.api_contract_confirmed' => true,
+            'payment.digipay.merchant_id' => 'merchant-test',
+            'payment.digipay.client_id' => 'client-test',
+            'payment.digipay.client_secret' => 'secret-test',
+            'payment.digipay.base_url' => 'https://gateway.example.test',
+            'payment.digipay.callback_url' => 'https://store.example.test/checkout/payment/callback/digipay',
+            'payment.digipay.endpoints.create' => '/v1/payment',
+            'payment.digipay.endpoints.verify' => '/v1/verify',
+        ]);
+
+        try {
+            app(PaymentService::class)->startInstallmentPayment($order, 'digipay');
+            $this->fail('Placeholder adapter must never initiate a payment.');
+        } catch (RuntimeException $exception) {
+            $this->assertStringContainsString('پرداختی آغاز نشده', $exception->getMessage());
+        }
+
+        $this->assertDatabaseMissing('payments', ['order_id' => $order->id]);
+        $this->assertDatabaseHas('orders', [
+            'id' => $order->id,
+            'payment_status' => 'pending',
+            'payment_provider' => null,
+        ]);
+    }
+
     public function test_shaparak_status_page_explains_pending_integration_without_claiming_payment(): void
     {
         $customer = User::factory()->create(['role' => 'customer']);
