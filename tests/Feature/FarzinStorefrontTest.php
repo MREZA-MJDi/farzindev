@@ -1589,6 +1589,43 @@ class FarzinStorefrontTest extends TestCase
         ]);
     }
 
+    public function test_product_editor_can_upload_general_gallery_images_without_a_separate_images_page(): void
+    {
+        Storage::fake('public');
+        $admin = $this->admin();
+        $product = $this->product($this->category(['slug' => 'inline-gallery-images']), [
+            'name' => 'Inline Gallery Product',
+            'slug' => 'inline-gallery-product',
+            'sku' => 'FAR-INLINE-GALLERY',
+            'stock' => 4,
+        ]);
+
+        $this->actingAs($admin)
+            ->get(route('admin.products.edit', $product))
+            ->assertOk()
+            ->assertSee('تصاویر عمومی گالری محصول')
+            ->assertSee(route('admin.products.images.store', $product), false);
+
+        $this->actingAs($admin)
+            ->post(route('admin.products.images.store', $product), [
+                'alt' => 'نمای عمومی محصول',
+                'images' => [
+                    UploadedFile::fake()->image('gallery-front.jpg', 800, 600),
+                    UploadedFile::fake()->image('gallery-side.webp', 900, 700),
+                ],
+            ])
+            ->assertRedirect(route('admin.products.edit', $product))
+            ->assertSessionHas('success');
+
+        $images = ProductImage::query()->where('product_id', $product->id)->orderBy('sort_order')->get();
+        $this->assertCount(2, $images);
+        $this->assertTrue((bool) $images->first()->is_primary);
+        $this->assertFalse((bool) $images->last()->is_primary);
+        $this->assertSame('نمای عمومی محصول', $images->first()->alt);
+        Storage::disk('public')->assertExists($images->first()->path);
+        Storage::disk('public')->assertExists($images->last()->path);
+    }
+
     public function test_product_editor_can_create_and_update_a_color_variant_with_its_own_images(): void
     {
         Storage::fake('public');
