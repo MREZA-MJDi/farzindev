@@ -26,6 +26,11 @@
         <div class="code">@yield('code')</div>
         <h1>@yield('heading')</h1>
         <p>@yield('message')</p>
+        @if (!empty($requestId))
+            <p class="request-reference">
+                کد پیگیری: <code>{{ $requestId }}</code>
+            </p>
+        @endif
         <div class="actions">
             <a class="primary" href="{{ route('home') }}">بازگشت به فروشگاه</a>
             <a href="{{ route('shop.index') }}">مشاهده محصولات</a>

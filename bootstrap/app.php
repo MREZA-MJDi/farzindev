@@ -2,6 +2,7 @@
 
 use App\Http\Middleware\AdminMiddleware;
 use App\Http\Middleware\CustomerMiddleware;
+use App\Http\Middleware\RequestIdMiddleware;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Validation\ValidationException;
@@ -9,6 +10,7 @@ use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 
 
@@ -36,6 +38,9 @@ return Application::configure(
             'customer' => CustomerMiddleware::class,
         ]);
 
+        // Give every request a safe identifier that can be matched to server logs.
+        $middleware->prepend(RequestIdMiddleware::class);
+
         // Payment providers call this public endpoint from outside the browser
         // session, so exempt only the gateway callback route from CSRF tokens.
         $middleware->validateCsrfTokens(except: [
@@ -46,6 +51,18 @@ return Application::configure(
     ->withExceptions(function (
         Exceptions $exceptions
     ) {
+
+        $exceptions->dontReportDuplicates();
+
+        // Attach operational context to exception logs without recording request
+        // bodies, passwords, cookies, or arbitrary headers.
+        $exceptions->context(fn (): array => [
+            'request_id' => request()->attributes->get('request_id'),
+            'request_method' => request()->method(),
+            'request_route' => request()->route()?->getName()
+                ?? request()->route()?->uri(),
+            'user_id' => rescue(fn () => request()->user()?->getAuthIdentifier(), report: false),
+        ]);
 
         /*
         |--------------------------------------------------------------------------
@@ -59,7 +76,7 @@ return Application::configure(
         ) {
             if (
                 ! $request->expectsJson()
-                || $e instanceof HttpExceptionInterface
+                || ($e instanceof HttpExceptionInterface && $e->getStatusCode() < 500)
                 || $e instanceof AuthorizationException
                 || $e instanceof AuthenticationException
                 || $e instanceof ValidationException
@@ -67,12 +84,32 @@ return Application::configure(
                 return null;
             }
 
+            if ($e instanceof HttpExceptionInterface && $e->getStatusCode() >= 500) {
+                Log::error('Unhandled HTTP server error', [
+                    'exception' => $e,
+                    'request_id' => $request->attributes->get('request_id'),
+                    'request_method' => $request->method(),
+                    'request_route' => $request->route()?->getName()
+                        ?? $request->route()?->uri(),
+                    'user_id' => rescue(fn () => $request->user()?->getAuthIdentifier(), report: false),
+                ]);
+            }
+
+            $requestId = $request->attributes->get('request_id')
+                ?? (string) \Illuminate\Support\Str::uuid();
+            $request->attributes->set('request_id', $requestId);
+            $message = config('app.debug') && app()->environment(['local', 'testing'])
+                ? $e->getMessage()
+                : 'در پردازش درخواست مشکلی پیش آمد. لطفاً دوباره تلاش کنید.';
+            $status = $e instanceof HttpExceptionInterface
+                ? $e->getStatusCode()
+                : 500;
+
             return response()->json([
                 'success' => false,
-                'message' => app()->isProduction()
-                    ? 'در پردازش درخواست مشکلی پیش آمد. لطفاً دوباره تلاش کنید.'
-                    : $e->getMessage(),
-            ], 500);
+                'message' => $message,
+                'request_id' => $requestId,
+            ], $status, ['X-Request-ID' => $requestId]);
         });
 
 
@@ -120,19 +157,46 @@ return Application::configure(
             Throwable $e,
             Request $request
         ) {
-            if (
-                ! app()->isProduction()
-                || $request->expectsJson()
-            ) {
+            if (config('app.debug') && app()->environment(['local', 'testing'])) {
                 return null;
             }
 
-            report($e);
+            $status = $e instanceof HttpExceptionInterface
+                ? $e->getStatusCode()
+                : 500;
+
+            if ($status < 500) {
+                return null;
+            }
+
+            if ($e instanceof HttpExceptionInterface && $e->getStatusCode() >= 500) {
+                Log::error('Unhandled HTTP server error', [
+                    'exception' => $e,
+                    'request_id' => $request->attributes->get('request_id'),
+                    'request_method' => $request->method(),
+                    'request_route' => $request->route()?->getName()
+                        ?? $request->route()?->uri(),
+                    'user_id' => $request->user()?->getAuthIdentifier(),
+                ]);
+            }
+
+            $requestId = $request->attributes->get('request_id')
+                ?? (string) \Illuminate\Support\Str::uuid();
+            $request->attributes->set('request_id', $requestId);
+
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'در پردازش درخواست مشکلی پیش آمد. لطفاً دوباره تلاش کنید.',
+                    'request_id' => $requestId,
+                ], $status, ['X-Request-ID' => $requestId]);
+            }
 
             return response()->view(
                 'errors.500',
-                [],
-                500
+                ['requestId' => $requestId, 'errorCode' => $status],
+                $status,
+                ['X-Request-ID' => $requestId]
             );
         });
     })
