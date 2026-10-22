@@ -2030,6 +2030,77 @@ class FarzinStorefrontTest extends TestCase
         ]);
     }
 
+    public function test_replacing_main_product_image_preserves_variant_specific_image_relations(): void
+    {
+        Storage::fake('public');
+        $admin = $this->admin();
+        $category = $this->category(['slug' => 'variant-main-image-preservation']);
+        $product = $this->product($category, [
+            'name' => 'Variant Main Image Hood',
+            'slug' => 'variant-main-image-hood',
+            'sku' => 'FAR-VARIANT-MAIN-IMG',
+            'price' => 10000000,
+            'stock' => 4,
+        ]);
+
+        Storage::disk('public')->put('products/images/black-color.webp', 'black color image');
+        $blackImage = ProductImage::create([
+            'product_id' => $product->id,
+            'path' => 'products/images/black-color.webp',
+            'alt' => 'هود مشکی',
+            'sort_order' => 0,
+            'is_primary' => true,
+        ]);
+        $blackVariant = ProductVariant::create([
+            'product_id' => $product->id,
+            'type' => 'color',
+            'name' => 'رنگ',
+            'value' => 'مشکی',
+            'sku' => 'FAR-VARIANT-MAIN-IMG-BLACK',
+            'price_adjustment' => 0,
+            'stock' => 2,
+            'is_active' => true,
+        ]);
+        $blackVariant->images()->attach($blackImage->id, ['sort_order' => 0]);
+
+        $this->actingAs($admin)
+            ->put(route('admin.products.update', $product), [
+                'category_id' => $category->id,
+                'name' => 'Variant Main Image Hood',
+                'slug' => 'variant-main-image-hood',
+                'sku' => 'FAR-VARIANT-MAIN-IMG',
+                'short_description' => 'هود با چند رنگ',
+                'description' => 'توضیحات محصول',
+                'price' => '10000000',
+                'compare_at_price' => '12000000',
+                'stock' => '4',
+                'status' => 'active',
+                'is_featured' => '0',
+                'is_new' => '0',
+                'installment_enabled' => '0',
+                'image' => UploadedFile::fake()->image('new-main.webp', 800, 600),
+            ])
+            ->assertRedirect(route('admin.products.edit', $product))
+            ->assertSessionHas('success');
+
+        $blackImage->refresh();
+        $this->assertSame('products/images/black-color.webp', $blackImage->path);
+        $this->assertFalse($blackImage->is_primary);
+        $this->assertDatabaseHas('product_variant_images', [
+            'product_image_id' => $blackImage->id,
+            'product_variant_id' => $blackVariant->id,
+        ]);
+        Storage::disk('public')->assertExists('products/images/black-color.webp');
+
+        $newPrimary = ProductImage::query()
+            ->where('product_id', $product->id)
+            ->where('is_primary', true)
+            ->firstOrFail();
+        $this->assertNotSame($blackImage->id, $newPrimary->id);
+        $this->assertSame('Variant Main Image Hood', $newPrimary->alt);
+        Storage::disk('public')->assertExists($newPrimary->path);
+    }
+
     public function test_admin_can_update_and_soft_delete_a_product_without_exposing_it_publicly(): void
     {
         $admin = $this->admin();
