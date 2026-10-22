@@ -154,6 +154,50 @@ class CheckoutController extends Controller
     }
 
     /**
+     * Explain a provider's availability without creating an order payment
+     * or pretending that an external checkout has started.
+     */
+    public function providerStatus(
+        Order $order,
+        string $gateway,
+        \App\Services\Payments\PaymentManager $paymentManager
+    ): View {
+        abort_unless($order->user_id === Auth::id(), 403);
+
+        $providers = [
+            'shaparak' => [
+                'name' => 'پرداخت آنلاین بانکی',
+                'network' => 'شبکه شاپرک',
+                'detail' => 'برای اتصال پرداخت بانکی، PSP یا پرداخت‌یار و مستندات رسمی آن باید مشخص شود.',
+            ],
+            'digipay' => [
+                'name' => 'دیجی‌پی',
+                'network' => 'DigiPay',
+                'detail' => 'اتصال منتظر مستندات رسمی پذیرنده، مشخصات احراز هویت و endpointهای تأیید تراکنش است.',
+            ],
+            'snappay' => [
+                'name' => 'اسنپ‌پی',
+                'network' => 'SnappPay',
+                'detail' => 'اتصال منتظر مستندات رسمی پذیرنده، مشخصات احراز هویت و endpointهای تأیید تراکنش است.',
+            ],
+            'torobpay' => [
+                'name' => 'ترب‌پی',
+                'network' => 'TorobPay',
+                'detail' => 'اتصال منتظر مستندات رسمی پذیرنده، مشخصات احراز هویت و endpointهای تأیید تراکنش است.',
+            ],
+        ];
+
+        abort_unless(isset($providers[$gateway]), 404);
+
+        return view('checkout.provider-pending', [
+            'order' => $order,
+            'gateway' => $gateway,
+            'provider' => $providers[$gateway],
+            'isReady' => $gateway !== 'shaparak' && $paymentManager->isReady($gateway),
+        ]);
+    }
+
+    /**
      * Start DigiPay / SnapPay / TorobPay installment payment.
      */
     public function startInstallmentPayment(

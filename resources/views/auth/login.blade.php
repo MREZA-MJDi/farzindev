@@ -49,6 +49,11 @@
                             method="POST"
                             class="space-y-5"
                         >
+                            @if(request()->query('intended') === '/checkout' || session()->has('url.intended'))
+                                <div class="rounded-2xl border border-[var(--livora-border)] bg-[var(--livora-surface)] p-4 text-xs leading-6 text-[var(--livora-stone)]">
+                                    برای ادامه خرید وارد حساب شوید؛ پس از ورود به مرحله تسویه برمی‌گردید.
+                                </div>
+                            @endif
 
                             @csrf
 

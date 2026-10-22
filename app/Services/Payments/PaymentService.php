@@ -86,6 +86,14 @@ class PaymentService
                 );
             }
 
+            // Preserve actionable order/payment errors above, but refuse all
+            // new attempts until the provider contract and secure config are confirmed.
+            if (! $this->paymentManager->isReady($gateway)) {
+                throw new RuntimeException(
+                    'اتصال این درگاه هنوز تکمیل و تأیید نشده است؛ پرداختی آغاز نشده و مبلغی کسر نشده است.'
+                );
+            }
+
             // A previous failed/cancelled attempt may have released the
             // reservation. Re-reserve under row locks before opening a new
             // gateway attempt; failure prevents sending the customer to pay.

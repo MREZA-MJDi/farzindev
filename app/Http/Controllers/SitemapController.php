@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Category;
+use App\Models\BlogPost;
 use App\Models\Product;
 use App\Services\Seo\SeoSettings;
 use Illuminate\Http\Response;
@@ -50,9 +51,19 @@ class SitemapController extends Controller
                         'lastmod' => $product->updated_at?->toAtomString(),
                     ]);
 
+                $blogPages = BlogPost::query()
+                    ->published()
+                    ->orderBy('id')
+                    ->get(['slug', 'updated_at'])
+                    ->map(fn (BlogPost $post): array => [
+                        'url' => $seoSettings->canonicalUrl(route('blog.show', $post->slug), false),
+                        'lastmod' => $post->updated_at?->toAtomString(),
+                    ]);
+
                 $items = $staticPages
                     ->concat($categoryPages)
                     ->concat($productPages)
+                    ->concat($blogPages)
                     ->unique('url')
                     ->values();
 

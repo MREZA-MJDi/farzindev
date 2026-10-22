@@ -106,6 +106,39 @@ class SeoSettingsTest extends TestCase
             ->assertSee('name="robots" content="noindex, follow, max-snippet:-1, max-video-preview:-1, max-image-preview:large"', false);
     }
 
+    public function test_seo_boolean_settings_render_zero_values_as_unchecked(): void
+    {
+        $admin = User::factory()->create(['role' => 'admin']);
+
+        foreach ([
+            'seo_development_mode',
+            'seo_robots_noindex',
+            'seo_robots_nofollow',
+            'seo_robots_noarchive',
+            'seo_robots_nosnippet',
+            'seo_robots_noimageindex',
+            'seo_sitemap_enabled',
+        ] as $key) {
+            \App\Models\StorefrontSetting::updateOrCreate(
+                ['key' => $key],
+                ['value' => '0']
+            );
+        }
+
+        app(\App\Services\Seo\SeoSettings::class)->clearCache();
+
+        $this->actingAs($admin)
+            ->get(route('admin.seo-settings.edit'))
+            ->assertOk()
+            ->assertDontSee('name="seo_development_mode" value="1" checked', false)
+            ->assertDontSee('name="seo_robots_noindex" value="1" checked', false)
+            ->assertDontSee('name="seo_robots_nofollow" value="1" checked', false)
+            ->assertDontSee('name="seo_robots_noarchive" value="1" checked', false)
+            ->assertDontSee('name="seo_robots_nosnippet" value="1" checked', false)
+            ->assertDontSee('name="seo_robots_noimageindex" value="1" checked', false)
+            ->assertDontSee('name="seo_sitemap_enabled" value="1" checked', false);
+    }
+
     public function test_error_pages_apply_full_noindex_policy(): void
     {
         $this->get('/__seo_nonexistent_path_for_test__')

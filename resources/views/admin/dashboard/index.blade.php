@@ -120,21 +120,26 @@
             </div>
 
             <div class="flex flex-wrap items-center gap-3">
-
-            <span class="rounded-full border border-[var(--admin-border)] bg-[var(--admin-surface)] px-4 py-2 text-xs text-[var(--admin-muted)]">
-                {{ \App\Helpers\JalaliHelper::format(now(), 'l، d F Y') }}
-            </span>
-
-                <a
-                    href="{{ route('admin.products.create') }}"
-                    class="admin-btn admin-btn-primary"
-                >
-                    + افزودن محصول
-                </a>
-
+                <span class="rounded-full border border-[var(--admin-border)] bg-[var(--admin-surface)] px-4 py-2 text-xs text-[var(--admin-muted)]">
+                    {{ \App\Helpers\JalaliHelper::format(now(), 'l، d F Y') }}
+                </span>
+                <a href="{{ route('admin.products.create') }}" class="admin-btn admin-btn-primary">+ افزودن محصول</a>
+                <a href="{{ route('admin.blog-posts.create') }}" class="admin-btn admin-btn-secondary">+ مقاله جدید</a>
             </div>
 
         </div>
+
+        <a href="{{ route('admin.blog-posts.index') }}" class="flex flex-col gap-3 rounded-2xl border border-[var(--admin-border)] bg-[var(--admin-white)] p-4 transition hover:border-[var(--admin-accent)] sm:flex-row sm:items-center sm:justify-between">
+            <div>
+                <p class="text-sm font-semibold text-[var(--admin-text)]">محتوا و بلاگ</p>
+                <p class="mt-1 text-xs leading-6 text-[var(--admin-muted)]">وضعیت انتشار، پیش‌نویس‌ها و مقاله‌های زمان‌بندی‌شده را از پنل محتوا کنترل کنید.</p>
+            </div>
+            <div class="flex items-center gap-2 text-xs">
+                <span class="rounded-full bg-emerald-50 px-3 py-1.5 text-emerald-700">{{ \App\Helpers\PersianNumberHelper::format($publishedBlogPosts ?? 0) }} منتشرشده</span>
+                <span class="rounded-full bg-amber-50 px-3 py-1.5 text-amber-800">{{ \App\Helpers\PersianNumberHelper::format($draftBlogPosts ?? 0) }} پیش‌نویس</span>
+                <span class="rounded-full bg-sky-50 px-3 py-1.5 text-sky-800">{{ \App\Helpers\PersianNumberHelper::format($scheduledBlogPosts ?? 0) }} زمان‌بندی‌شده</span>
+            </div>
+        </a>
 
         @if(($inventoryIssueOrders ?? 0) > 0)
             <a

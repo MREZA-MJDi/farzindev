@@ -2,6 +2,7 @@
 'label' => null,
 'hint' => null,
 'error' => null,
+'hintId' => null,
 'icon' => null,
 'type' => 'text',
 ])
@@ -99,7 +100,7 @@
 
     @elseif($hint)
 
-        <p class="mt-2 text-[11px] leading-6 text-[var(--livora-stone)]">
+        <p @if($hintId) id="{{ $hintId }}" @endif class="mt-2 text-[11px] leading-6 text-[var(--livora-stone)]">
             {{ $hint }}
         </p>
 

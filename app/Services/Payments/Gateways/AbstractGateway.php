@@ -230,7 +230,7 @@ abstract class AbstractGateway implements InstallmentPaymentGatewayInterface
     ): array {
         $config = $this->config();
 
-        if (($config['enabled'] ?? false) !== true) {
+        if (($config['enabled'] ?? false) !== true || ($config['api_contract_confirmed'] ?? false) !== true) {
             return [
                 'success' => false,
                 'payment_url' => null,

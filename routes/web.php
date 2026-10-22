@@ -9,6 +9,8 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\BlogController;
+use App\Http\Controllers\Admin\BlogPostController as AdminBlogPostController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\RobotsController;
@@ -45,8 +47,11 @@ Route::get('/sitemap.xml', SitemapController::class)
 Route::get('/shop', [ShopController::class, 'index'])
     ->name('shop.index');
 
-Route::view('/blog', 'blog.index')
+Route::get('/blog', [BlogController::class, 'index'])
     ->name('blog.index');
+
+Route::get('/blog/{slug}', [BlogController::class, 'show'])
+    ->name('blog.show');
 
 
 Route::get('/product/{slug}', [ProductController::class, 'show'])
@@ -221,6 +226,11 @@ Route::middleware(['auth', 'customer'])->group(function () {
                 [CheckoutController::class, 'payment']
             )->name('payment');
 
+            Route::get(
+                '/payment/{order}/provider/{gateway}',
+                [CheckoutController::class, 'providerStatus']
+            )->name('provider-status');
+
             Route::post(
                 '/payment/{order}/installment',
                 [CheckoutController::class, 'startInstallmentPayment']
@@ -367,6 +377,11 @@ Route::middleware(['auth', 'admin'])
             'seo-settings',
             [AdminSeoSettingsController::class, 'update']
         )->name('seo-settings.update');
+
+        Route::resource(
+            'blog-posts',
+            AdminBlogPostController::class
+        )->except(['show']);
 
         /*
         |--------------------------------------------------------------------------

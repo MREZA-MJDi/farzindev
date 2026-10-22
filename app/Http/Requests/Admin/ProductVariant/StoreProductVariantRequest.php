@@ -67,6 +67,19 @@ class StoreProductVariantRequest extends FormRequest
                     ),
             ],
 
+            'images' => [
+                'nullable',
+                'array',
+                'max:10',
+            ],
+
+            'images.*' => [
+                'image',
+                'mimes:jpg,jpeg,png,webp',
+                'dimensions:min_width=800,min_height=600',
+                'max:20480',
+            ],
+
             'sku' => [
                 'nullable',
                 'string',
@@ -128,6 +141,12 @@ class StoreProductVariantRequest extends FormRequest
             'image_ids.array' => 'تصاویر انتخاب‌شده نامعتبر هستند.',
             'image_ids.max' => 'حداکثر ۳۰ تصویر می‌توان برای یک تنوع انتخاب کرد.',
             'image_ids.*.exists' => 'یکی از تصاویر انتخاب‌شده متعلق به این محصول نیست.',
+            'images.array' => 'تصاویر تنوع باید به‌صورت فهرست ارسال شوند.',
+            'images.max' => 'برای هر رنگ حداکثر ۱۰ تصویر جدید می‌توانید آپلود کنید.',
+            'images.*.image' => 'فایل‌های انتخاب‌شده باید تصویر باشند.',
+            'images.*.mimes' => 'تصاویر باید JPG، PNG یا WEBP باشند.',
+            'images.*.dimensions' => 'هر تصویر باید حداقل ۸۰۰ در ۶۰۰ پیکسل باشد.',
+            'images.*.max' => 'حجم هر تصویر نباید بیشتر از ۲۰ مگابایت باشد.',
 
             'sku.unique' => 'این SKU قبلاً استفاده شده است.',
 

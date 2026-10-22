@@ -71,7 +71,7 @@
                 <div class="grid gap-3 sm:grid-cols-2">
                     <label class="flex items-start gap-3 rounded-xl border border-amber-300 bg-amber-50 p-4 text-sm text-amber-950 sm:col-span-2">
                         <input type="hidden" name="seo_development_mode" value="0">
-                        <input type="checkbox" name="seo_development_mode" value="1" @checked((bool) old('seo_development_mode', $settings['seo_development_mode'])) class="admin-checkbox mt-0.5 h-4 w-4">
+                        <input type="checkbox" name="seo_development_mode" value="1" @checked((string) old('seo_development_mode', $settings['seo_development_mode']) === '1') class="admin-checkbox mt-0.5 h-4 w-4">
                         جلوگیری کامل از ایندکس عمومی تا زمان انتشار
                     </label>
 
@@ -84,7 +84,7 @@
                     ] as $key => $label)
                         <label class="flex items-start gap-3 rounded-xl border border-[var(--admin-border)] p-4 text-sm text-[var(--admin-text)]">
                             <input type="hidden" name="{{ $key }}" value="0">
-                            <input type="checkbox" name="{{ $key }}" value="1" @checked((bool) old($key, $settings[$key])) class="admin-checkbox mt-0.5 h-4 w-4">
+                            <input type="checkbox" name="{{ $key }}" value="1" @checked((string) old($key, $settings[$key]) === '1') class="admin-checkbox mt-0.5 h-4 w-4">
                             {{ $label }}
                         </label>
                     @endforeach
@@ -99,7 +99,7 @@
 
                 <label class="flex items-start gap-3 rounded-xl border border-[var(--admin-border)] p-4 text-sm text-[var(--admin-text)]">
                     <input type="hidden" name="seo_sitemap_enabled" value="0">
-                    <input type="checkbox" name="seo_sitemap_enabled" value="1" @checked((bool) old('seo_sitemap_enabled', $settings['seo_sitemap_enabled'])) class="admin-checkbox mt-0.5 h-4 w-4">
+                    <input type="checkbox" name="seo_sitemap_enabled" value="1" @checked((string) old('seo_sitemap_enabled', $settings['seo_sitemap_enabled']) === '1') class="admin-checkbox mt-0.5 h-4 w-4">
                     انتشار نقشهٔ سایت در مسیر sitemap.xml و معرفی آن به خزنده‌ها
                 </label>
             </section>

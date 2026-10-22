@@ -58,9 +58,9 @@ class FarzinStorefrontTest extends TestCase
         $this->get(route('blog.index'))
             ->assertOk()
             ->assertSee('بلاگ فرزین')
-            ->assertSee('انتخاب هود')
-            ->assertSee('شناخت سینک')
-            ->assertSee('چک‌لیست');
+            ->assertSee('راهنماهای فرزین')
+            ->assertSee('قبل از خرید هود آشپزخانه چه چیزهایی را بررسی کنیم؟')
+            ->assertSee('چک‌لیست ساده پیش از ثبت سفارش');
     }
 
     public function test_homepage_uses_scroll_drawn_architecture_instead_of_a_product_hero_card(): void
@@ -660,6 +660,46 @@ class FarzinStorefrontTest extends TestCase
         $this->assertAuthenticatedAs($user);
     }
 
+    public function test_registration_validation_returns_field_errors_instead_of_creating_an_account(): void
+    {
+        $this->from(route('register'))
+            ->post(route('register.store'), [
+                'first_name' => 'Ali',
+                'last_name' => 'Test',
+                'phone' => '09123456789',
+                'password' => 'weak',
+                'password_confirmation' => 'different',
+                'terms' => '1',
+            ])
+            ->assertRedirect(route('register'))
+            ->assertSessionHasErrors(['password']);
+
+        $this->assertDatabaseMissing('users', ['phone' => '09123456789']);
+    }
+
+    public function test_guest_cart_prominently_offers_login_and_registration_with_checkout_intended(): void
+    {
+        $this->get(route('cart.index'))
+            ->assertOk();
+    }
+
+    public function test_registration_preserves_checkout_destination_from_safe_intended_parameter(): void
+    {
+        $this->get(route('register', ['intended' => '/checkout']))
+            ->assertOk();
+
+        $this->post(route('register.store'), [
+            'first_name' => 'Farzin',
+            'last_name' => 'Buyer',
+            'phone' => '09123456789',
+            'password' => 'FarzinPass123',
+            'password_confirmation' => 'FarzinPass123',
+            'terms' => '1',
+        ])->assertRedirect(route('checkout.index'));
+
+        $this->assertAuthenticated();
+    }
+
     public function test_customer_can_login_with_persian_mobile_digits(): void
     {
         $customer = $this->customer([
@@ -781,7 +821,7 @@ class FarzinStorefrontTest extends TestCase
                 'is_new' => '1',
                 'image' => UploadedFile::fake()->image('farzin-hood.png', 800, 600),
             ])
-            ->assertRedirect(route('admin.products.index'))
+            ->assertRedirect(route('admin.products.edit', Product::query()->where('slug', 'farzin-hood-90')->firstOrFail()))
             ->assertSessionHas('success');
 
         $product = Product::query()->where('slug', 'farzin-hood-90')->firstOrFail();
@@ -1546,6 +1586,93 @@ class FarzinStorefrontTest extends TestCase
             'id' => $category->id,
             'slug' => 'island-hoods',
         ]);
+    }
+
+    public function test_product_editor_can_create_and_update_a_color_variant_with_its_own_images(): void
+    {
+        Storage::fake('public');
+        $admin = $this->admin();
+        $product = $this->product($this->category(['slug' => 'inline-variant-images']), [
+            'name' => 'Inline Color Hood',
+            'slug' => 'inline-color-hood',
+            'sku' => 'FAR-INLINE-COLOR-HOOD',
+            'stock' => 10,
+        ]);
+        $primaryImage = ProductImage::create([
+            'product_id' => $product->id,
+            'path' => 'https://cdn.example.test/inline-hood-main.webp',
+            'alt' => 'تصویر اصلی هود',
+            'sort_order' => 0,
+            'is_primary' => true,
+        ]);
+
+        $this->actingAs($admin)
+            ->post(route('admin.product-variants.store'), [
+                'product_id' => $product->id,
+                'type' => 'color',
+                'name' => 'رنگ',
+                'value' => 'مشکی',
+                'color_hex' => '#202020',
+                'sku' => 'FAR-INLINE-COLOR-BLACK',
+                'price_adjustment' => 0,
+                'stock' => 4,
+                'is_active' => '1',
+                'image_ids' => [$primaryImage->id],
+                'images' => [UploadedFile::fake()->image('hood-black.jpg', 800, 600)],
+                'return_to_product' => '1',
+            ])
+            ->assertRedirect(route('admin.products.edit', $product))
+            ->assertSessionHas('success');
+
+        $variant = ProductVariant::query()
+            ->where('product_id', $product->id)
+            ->where('type', 'color')
+            ->where('value', 'مشکی')
+            ->firstOrFail();
+
+        $this->assertSame(2, $variant->images()->count());
+        $this->assertDatabaseHas('product_variant_images', [
+            'product_variant_id' => $variant->id,
+            'product_image_id' => $primaryImage->id,
+        ]);
+
+        $uploadedImage = $variant->images()
+            ->where('product_images.path', 'like', 'products/images/%')
+            ->firstOrFail();
+        Storage::disk('public')->assertExists($uploadedImage->path);
+        $this->assertSame($uploadedImage->id, $variant->images()->firstOrFail()->id);
+
+        $this->get(route('product.show', $product->slug))
+            ->assertOk()
+            ->assertSee($uploadedImage->url, false)
+            ->assertSee('مشکی');
+
+        $this->actingAs($admin)
+            ->get(route('admin.products.edit', $product))
+            ->assertOk()
+            ->assertSee('رنگ‌ها و تنوع‌های محصول')
+            ->assertSee('افزودن عکس‌های جدید برای همین تنوع', false)
+            ->assertSee('مشکی');
+
+        $this->actingAs($admin)
+            ->put(route('admin.product-variants.update', $variant), [
+                'product_id' => $product->id,
+                'type' => 'color',
+                'name' => 'رنگ',
+                'value' => 'مشکی',
+                'color_hex' => '#202020',
+                'sku' => 'FAR-INLINE-COLOR-BLACK',
+                'price_adjustment' => 100000,
+                'stock' => 3,
+                'is_active' => '1',
+                'image_ids' => [$primaryImage->id, $uploadedImage->id],
+                'return_to_product' => '1',
+            ])
+            ->assertRedirect(route('admin.products.edit', $product))
+            ->assertSessionHas('success');
+
+        $this->assertEquals(100000, (float) $variant->fresh()->price_adjustment);
+        $this->assertSame(2, $variant->fresh()->images()->count());
     }
 
     public function test_admin_can_create_product_variant_and_cart_requires_a_valid_selection(): void

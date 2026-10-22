@@ -97,6 +97,8 @@
                     $option->color_hex
                     ?? $option->color
                     ?? null;
+
+                $optionImage = $option->images?->first()?->url ?? null;
             @endphp
 
             <label
@@ -122,9 +124,40 @@
                     @endif
                 >
 
-                @if($isColor && $colorValue)
+                @if($isColor && filled($optionImage))
 
-                    {{-- Color option --}}
+                    {{-- Color/product image card --}}
+                    <span
+                        class="flex w-[86px] flex-col items-center gap-2 rounded-2xl p-1.5 transition sm:w-[100px]"
+                    >
+                        <span
+                            class="block aspect-square w-full overflow-hidden rounded-xl border-2 bg-[var(--livora-white)] transition"
+                            :class="
+                                selected == {{ $optionId }}
+                                ? 'border-[var(--livora-ink)] ring-2 ring-[var(--livora-ink)]/10'
+                                : 'border-[var(--livora-border)] group-hover:border-[var(--livora-accent)]'
+                            "
+                        >
+                            <img
+                                src="{{ $optionImage }}"
+                                alt="{{ $optionLabel }}"
+                                loading="lazy"
+                                class="h-full w-full object-cover transition duration-300 group-hover:scale-105"
+                            >
+                        </span>
+                        <span class="w-full truncate text-center text-[11px] font-medium text-[var(--livora-text)]">
+                            {{ $optionLabel }}
+                        </span>
+                        @if($isUnavailable)
+                            <span class="text-[10px] text-red-600">ناموجود</span>
+                        @elseif($optionStock !== null)
+                            <span class="text-[10px] text-[var(--livora-stone)]">{{ number_format($optionStock) }} عدد</span>
+                        @endif
+                    </span>
+
+                @elseif($isColor && $colorValue)
+
+                    {{-- Color swatch fallback --}}
                     <span
                         class="flex h-11 w-11 items-center justify-center rounded-full border-2 transition-all duration-300"
                         :class="

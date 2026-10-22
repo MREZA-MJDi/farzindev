@@ -17,8 +17,14 @@ use Illuminate\View\View;
 
 class AuthController extends Controller
 {
-    public function showLogin(): View
+    public function showLogin(Request $request): View
     {
+        $intended = $request->query('intended');
+
+        if (is_string($intended) && str_starts_with($intended, '/') && ! str_starts_with($intended, '//')) {
+            $request->session()->put('url.intended', url($intended));
+        }
+
         return view('auth.login');
     }
 
@@ -102,8 +108,14 @@ class AuthController extends Controller
             );
     }
 
-    public function showRegister(): View
+    public function showRegister(Request $request): View
     {
+        $intended = $request->query('intended');
+
+        if (is_string($intended) && str_starts_with($intended, '/') && ! str_starts_with($intended, '//')) {
+            $request->session()->put('url.intended', url($intended));
+        }
+
         return view('auth.register');
     }
 
@@ -112,10 +124,11 @@ class AuthController extends Controller
     ): RedirectResponse {
         $validated = $request->validated();
 
-        $user = DB::transaction(function () use (
-            $validated
-        ) {
-            return User::create([
+        try {
+            $user = DB::transaction(function () use (
+                $validated
+            ) {
+                return User::create([
                 'name' => trim(
                     $validated['first_name'] .
                     ' ' .
@@ -137,9 +150,20 @@ class AuthController extends Controller
                 | New users are always customers
                 |--------------------------------------------------------------------------
                 */
-                'role' => 'customer',
-            ]);
-        });
+                    'role' => 'customer',
+                ]);
+            });
+        } catch (\Illuminate\Database\QueryException $exception) {
+            report($exception);
+
+            // A concurrent duplicate signup or a storage constraint must never
+            // surface as a raw 500 page; return the user to actionable fields.
+            return back()
+                ->withInput($request->except(['password', 'password_confirmation']))
+                ->withErrors([
+                    'phone' => 'حساب کاربری ایجاد نشد. شماره موبایل و ایمیل را بررسی کنید و دوباره تلاش کنید.',
+                ]);
+        }
 
         // Login rotates the session ID, so keep the guest cart's original key.
         $guestCartSessionId = $request->session()->getId();

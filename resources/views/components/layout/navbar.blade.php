@@ -281,6 +281,17 @@
                 @endauth
 
 
+                @guest
+                    <div class="hidden items-center gap-2 lg:flex">
+                        <a href="{{ route('login') }}" class="inline-flex min-h-10 items-center justify-center rounded-full border border-[var(--livora-border)] px-4 text-xs font-medium text-[var(--livora-text)] transition hover:bg-[var(--livora-white)]">
+                            ورود
+                        </a>
+                        <a href="{{ route('register') }}" class="inline-flex min-h-10 items-center justify-center rounded-full bg-[var(--livora-accent)] px-4 text-xs font-semibold text-white transition hover:opacity-90">
+                            ثبت‌نام
+                        </a>
+                    </div>
+                @endguest
+
                 {{-- =====================================================
                     CART
                 ====================================================== --}}

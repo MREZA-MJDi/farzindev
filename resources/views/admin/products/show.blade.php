@@ -368,24 +368,13 @@
     </div>
 
 
-    {{-- Images --}}
-    <div class="mt-6">
-
-        @include('admin.products.partials.images', [
-            'product' => $product,
-        ])
-
-    </div>
-
-
-    {{-- Variants --}}
-    <div class="mt-6">
-
-        @include('admin.products.partials.variants', [
-            'product' => $product,
-        ])
-
-    </div>
+    <section class="admin-card mt-6 flex flex-col justify-between gap-4 p-5 sm:flex-row sm:items-center sm:p-6">
+        <div>
+            <h3 class="text-sm font-bold text-[var(--admin-text)]">رنگ‌ها و تصاویر وابسته به هر رنگ</h3>
+            <p class="mt-2 text-xs leading-7 text-[var(--admin-muted)]">برای جلوگیری از مدیریت پراکنده، همهٔ تنوع‌ها و تصاویرشان در فرم ویرایش همین محصول به‌صورت یکجا قابل مدیریت‌اند.</p>
+        </div>
+        <a href="{{ route('admin.products.edit', $product) }}" class="admin-btn admin-btn-primary shrink-0">مدیریت محصول و تنوع‌ها</a>
+    </section>
 
 
     {{-- SEO --}}
