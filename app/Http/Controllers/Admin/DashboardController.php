@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Helpers\JalaliHelper;
 use App\Models\Order;
+use App\Models\BlogPost;
 use App\Models\OrderItem;
 use App\Models\Product;
 use App\Models\User;
@@ -74,6 +75,9 @@ class DashboardController extends Controller
         $totalCustomers = User::query()
             ->where('role', 'customer')
             ->count();
+
+        $publishedBlogPosts = BlogPost::query()->published()->count();
+        $draftBlogPosts = BlogPost::query()->where('status', 'draft')->count();
 
         $totalOrders = Order::query()->count();
 
@@ -303,6 +307,8 @@ class DashboardController extends Controller
             'featuredProductsCount' => $featuredProductsCount,
             'newProductsCount' => $newProductsCount,
             'installmentProductsCount' => $installmentProductsCount,
+            'publishedBlogPosts' => $publishedBlogPosts,
+            'draftBlogPosts' => $draftBlogPosts,
         ]);
     }
 
