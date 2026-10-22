@@ -204,6 +204,8 @@
 
     </section>
 
+
+
 @push('scripts')
 <script>
     document.addEventListener('DOMContentLoaded', () => {
@@ -211,7 +213,13 @@
         const confirmation = document.getElementById('password_confirmation');
         const passwordError = document.getElementById('password-live-error');
         const confirmationError = document.getElementById('password-confirmation-live-error');
-        if (!password || !confirmation) return;
+        if (!password || !confirmation || !passwordError || !confirmationError) return;
+
+        const validateConfirmation = () => {
+            const mismatch = confirmation.value.length > 0 && confirmation.value !== password.value;
+            confirmationError.textContent = mismatch ? 'تکرار رمز عبور با رمز عبور یکسان نیست.' : '';
+            confirmation.setAttribute('aria-invalid', mismatch ? 'true' : 'false');
+        };
 
         const validatePassword = () => {
             const value = password.value;
@@ -225,15 +233,8 @@
             validateConfirmation();
         };
 
-        const validateConfirmation = () => {
-            const mismatch = confirmation.value.length > 0 && confirmation.value !== password.value;
-            confirmationError.textContent = mismatch ? 'تکرار رمز عبور با رمز عبور یکسان نیست.' : '';
-            confirmation.setAttribute('aria-invalid', mismatch ? 'true' : 'false');
-        };
-
         password.addEventListener('input', validatePassword);
         confirmation.addEventListener('input', validateConfirmation);
-        validatePassword();
     });
 </script>
 @endpush
