@@ -686,8 +686,16 @@ class FarzinStorefrontTest extends TestCase
             'stock' => 5,
         ]);
 
-        $this->postJson(route('cart.add', $product), ['quantity' => 1])
-            ->assertOk();
+        $addResponse = $this->postJson(route('cart.add', $product), ['quantity' => 1]);
+        $addResponse->assertOk();
+
+        $cart = Cart::query()->whereNull('user_id')->where('status', 'active')->firstOrFail();
+        $sessionCookie = $addResponse->getCookie(config('session.cookie'));
+
+        $this->withCookie(
+            config('session.cookie'),
+            $cart->session_id ?: ($sessionCookie?->getValue() ?? '')
+        )->withSession(['guest_cart_id' => $cart->id]);
 
         $this->get(route('cart.index'))
             ->assertOk()
