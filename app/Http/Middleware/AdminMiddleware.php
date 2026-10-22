@@ -14,13 +14,14 @@ class AdminMiddleware
         Closure $next
     ): Response {
         if (! $request->user()?->isAdmin()) {
-            Log::warning('Blocked access to an admin-only route', [
+            // Log failures must never change the authorization decision.
+            rescue(fn () => Log::warning('Blocked access to an admin-only route', [
                 'request_id' => $request->attributes->get('request_id'),
-                'user_id' => $request->user()?->getAuthIdentifier(),
+                'user_id' => rescue(fn () => $request->user()?->getAuthIdentifier(), report: false),
                 'request_method' => $request->method(),
                 'request_route' => $request->route()?->getName()
                     ?? $request->route()?->uri(),
-            ]);
+            ]), report: false);
 
             abort(403);
         }
