@@ -1,0 +1,79 @@
+@extends('layouts.app')
+
+@section('title', ($post->meta_title ?: $post->title) . ' | بلاگ فرزین')
+@section('description', $post->meta_description ?: ($post->excerpt ?: 'راهنمای تخصصی فرزین برای انتخاب تجهیزات آشپزخانه.'))
+@section('canonical', route('blog.show', $post->slug))
+@section('og_type', 'article')
+@if($post->cover_image_url)
+    @section('og_image', $post->cover_image_url)
+@endif
+
+@push('seo')
+<script type="application/ld+json">{!! json_encode([
+    '@context' => 'https://schema.org',
+    '@type' => 'BlogPosting',
+    'headline' => $post->title,
+    'description' => $post->meta_description ?: $post->excerpt,
+    'datePublished' => $post->published_at?->toAtomString(),
+    'dateModified' => $post->updated_at?->toAtomString(),
+    'mainEntityOfPage' => route('blog.show', $post->slug),
+    'image' => $post->cover_image_url,
+    'author' => ['@type' => 'Organization', 'name' => 'فرزین'],
+    'publisher' => ['@type' => 'Organization', 'name' => 'فرزین'],
+    'inLanguage' => 'fa-IR',
+], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT) !!}</script>
+@endpush
+
+@section('content')
+<article class="bg-[var(--livora-cream)]">
+    <header class="bg-[var(--livora-ink)] text-white">
+        <x-layout.container>
+            <div class="mx-auto max-w-4xl py-12 sm:py-16">
+                <nav aria-label="مسیر صفحه" class="flex flex-wrap items-center gap-2 text-xs text-white/55">
+                    <a href="{{ route('home') }}" class="hover:text-white">خانه</a><span>/</span><a href="{{ route('blog.index') }}" class="hover:text-white">بلاگ</a><span>/</span><span class="text-white/80">{{ $post->title }}</span>
+                </nav>
+                <p class="mt-9 text-[10px] font-semibold uppercase tracking-[0.22em] text-[#b7c9cb]">FARZIN / ARTICLE</p>
+                <h1 class="mt-4 text-3xl font-semibold leading-tight sm:text-5xl">{{ $post->title }}</h1>
+                @if($post->excerpt)<p class="mt-5 max-w-3xl text-sm leading-8 text-white/70 sm:text-base">{{ $post->excerpt }}</p>@endif
+                <p class="mt-5 text-xs text-white/50">انتشار: {{ $post->published_at?->format('Y/m/d') }}</p>
+            </div>
+        </x-layout.container>
+    </header>
+
+    <x-layout.container>
+        <div class="mx-auto grid max-w-6xl gap-10 py-10 sm:py-14 lg:grid-cols-[minmax(0,1fr)_280px]">
+            <div class="min-w-0">
+                @if($post->cover_image_url)
+                    <img src="{{ $post->cover_image_url }}" alt="{{ $post->title }}" class="mb-9 aspect-[16/9] w-full rounded-[1.75rem] object-cover">
+                @endif
+                <div class="rounded-[1.75rem] border border-[var(--livora-border)] bg-[var(--livora-white)] p-6 sm:p-10">
+                    <div class="whitespace-pre-line break-words text-sm leading-9 text-[var(--livora-text)] sm:text-base">{{ $post->body }}</div>
+                </div>
+                <div class="mt-8"><a href="{{ route('blog.index') }}" class="inline-flex items-center gap-2 text-sm font-semibold text-[var(--livora-accent)]"><span aria-hidden="true">→</span> بازگشت به همه مقاله‌ها</a></div>
+            </div>
+
+            <aside class="space-y-5">
+                <div class="rounded-[1.5rem] border border-[var(--livora-border)] bg-[var(--livora-white)] p-6">
+                    <p class="text-[10px] font-semibold uppercase tracking-[0.18em] text-[var(--livora-accent)]">KEEP EXPLORING</p>
+                    <h2 class="mt-3 text-lg font-semibold">راهنماهای بیشتر</h2>
+                    <p class="mt-2 text-xs leading-7 text-[var(--livora-stone)]">برای انتخاب دقیق‌تر، مشخصات و مدل‌های موجود را کنار توصیه‌های مقاله بررسی کنید.</p>
+                    <a href="{{ route('categories.index') }}" class="mt-4 inline-flex text-sm font-semibold text-[var(--livora-accent)]">دسته‌بندی محصولات ←</a>
+                </div>
+                @if($relatedPosts->isNotEmpty())
+                    <div class="rounded-[1.5rem] border border-[var(--livora-border)] bg-[var(--livora-white)] p-6">
+                        <h2 class="text-base font-semibold">مقاله‌های تازه</h2>
+                        <div class="mt-4 space-y-4">
+                            @foreach($relatedPosts as $related)
+                                <a href="{{ route('blog.show', $related->slug) }}" class="block border-b border-[var(--livora-border)] pb-4 last:border-0 last:pb-0">
+                                    <span class="text-sm font-medium leading-6 transition hover:text-[var(--livora-accent)]">{{ $related->title }}</span>
+                                    <span class="mt-1 block text-[10px] text-[var(--livora-stone)]">{{ $related->published_at?->format('Y/m/d') }}</span>
+                                </a>
+                            @endforeach
+                        </div>
+                    </div>
+                @endif
+            </aside>
+        </div>
+    </x-layout.container>
+</article>
+@endsection
