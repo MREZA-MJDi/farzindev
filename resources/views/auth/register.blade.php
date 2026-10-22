@@ -99,30 +99,35 @@
 
                             <div class="grid gap-5 sm:grid-cols-2">
 
-                                <x-ui.input
-                                    type="password"
-                                    name="password"
-                                    id="password"
-                                    aria-describedby="password-requirements password-live-error"
-                                    label="رمز عبور"
-                                    placeholder="حداقل ۸ کاراکتر"
-                                    autocomplete="new-password"
-                                    hint="حداقل ۸ کاراکتر، شامل حرف بزرگ و کوچک انگلیسی و عدد؛ مثال: FarzinPass123"
-                                    required
-                                />
-                                <p id="password-live-error" class="mt-2 text-[11px] leading-6 text-red-600" aria-live="polite"></p>
+                                <div>
+                                    <x-ui.input
+                                        type="password"
+                                        name="password"
+                                        id="password"
+                                        aria-describedby="password-requirements password-live-error"
+                                        hint-id="password-requirements"
+                                        label="رمز عبور"
+                                        placeholder="حداقل ۸ کاراکتر"
+                                        autocomplete="new-password"
+                                        hint="حداقل ۸ کاراکتر، شامل حرف بزرگ و کوچک انگلیسی و عدد؛ مثال: FarzinPass123"
+                                        required
+                                    />
+                                    <p id="password-live-error" class="mt-2 text-[11px] leading-6 text-red-600" aria-live="polite"></p>
+                                </div>
 
-                                <x-ui.input
-                                    type="password"
-                                    name="password_confirmation"
-                                    id="password_confirmation"
-                                    aria-describedby="password-confirmation-live-error"
-                                    label="تکرار رمز عبور"
-                                    placeholder="رمز عبور را دوباره وارد کنید"
-                                    autocomplete="new-password"
-                                    required
-                                />
-                                <p id="password-confirmation-live-error" class="mt-2 text-[11px] leading-6 text-red-600" aria-live="polite"></p>
+                                <div>
+                                    <x-ui.input
+                                        type="password"
+                                        name="password_confirmation"
+                                        id="password_confirmation"
+                                        aria-describedby="password-confirmation-live-error"
+                                        label="تکرار رمز عبور"
+                                        placeholder="رمز عبور را دوباره وارد کنید"
+                                        autocomplete="new-password"
+                                        required
+                                    />
+                                    <p id="password-confirmation-live-error" class="mt-2 text-[11px] leading-6 text-red-600" aria-live="polite"></p>
+                                </div>
 
                             </div>
 
