@@ -35,6 +35,14 @@ class PaymentService
 
         $gateway = $this->normalizeGateway($gateway);
 
+        // Do not create a local payment attempt or reserve stock until the
+        // provider API contract, credentials, URLs, and endpoints are verified.
+        if (! $this->paymentManager->isReady($gateway)) {
+            throw new RuntimeException(
+                'اتصال این درگاه هنوز تکمیل و تأیید نشده است؛ پرداختی آغاز نشده و مبلغی کسر نشده است.'
+            );
+        }
+
         $gatewayService = $this->paymentManager->driver(
             $gateway
         );
