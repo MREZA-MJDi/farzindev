@@ -29,6 +29,22 @@ class AdminAuthorizationTest extends TestCase
             ->assertOk();
     }
 
+    public function test_admin_can_log_in_and_is_redirected_to_dashboard(): void
+    {
+        $admin = User::factory()->create([
+            'role' => 'admin',
+            'email' => 'admin-login@example.test',
+            'password' => Hash::make('StrongPass123'),
+        ]);
+
+        $this->post('/login', [
+            'phone' => 'admin-login@example.test',
+            'password' => 'StrongPass123',
+        ])->assertRedirect(route('admin.dashboard'));
+
+        $this->assertAuthenticatedAs($admin);
+    }
+
     public function test_authenticated_customer_cannot_open_admin_sections(): void
     {
         $customer = User::factory()->create([
