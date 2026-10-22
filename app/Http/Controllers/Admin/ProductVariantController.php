@@ -347,14 +347,34 @@ class ProductVariantController extends Controller
         array $uploadedImageIds
     ): void {
         $syncData = [];
+        $sortOrder = 0;
+        $selected = array_values(array_unique(array_map('intval', $selectedImageIds)));
+        $uploaded = array_values(array_unique(array_map('intval', $uploadedImageIds)));
 
-        foreach (array_values(array_unique(array_map('intval', $uploadedImageIds))) as $index => $imageId) {
-            $syncData[$imageId] = ['sort_order' => $index];
+        foreach ($uploaded as $imageId) {
+            $syncData[$imageId] = ['sort_order' => $sortOrder++];
         }
 
-        foreach (array_values(array_unique(array_map('intval', $selectedImageIds))) as $index => $imageId) {
+        // Preserve the order of images already associated with this color.
+        // This keeps the color-specific photo ahead of a shared main image
+        // when the product is saved again without uploading new files.
+        $previouslyAttached = DB::table('product_variant_images')
+            ->where('product_variant_id', $variant->id)
+            ->orderBy('sort_order')
+            ->orderBy('product_image_id')
+            ->pluck('product_image_id')
+            ->map(fn ($id) => (int) $id)
+            ->all();
+
+        foreach ($previouslyAttached as $imageId) {
+            if (in_array($imageId, $selected, true) && ! array_key_exists($imageId, $syncData)) {
+                $syncData[$imageId] = ['sort_order' => $sortOrder++];
+            }
+        }
+
+        foreach ($selected as $imageId) {
             if (! array_key_exists($imageId, $syncData)) {
-                $syncData[$imageId] = ['sort_order' => 100 + $index];
+                $syncData[$imageId] = ['sort_order' => $sortOrder++];
             }
         }
 
