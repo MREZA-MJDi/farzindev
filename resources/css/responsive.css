@@ -632,3 +632,68 @@ body {
         transition-duration: .01ms;
     }
 }
+
+/* Emergency mobile storefront visibility fixes (shared public layout). */
+@media (max-width: 1023px) {
+    body:not(.home-body) .farzin-mobile-nav,
+    body.home-body .farzin-mobile-nav {
+        display: block !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+        pointer-events: auto !important;
+    }
+
+    .farzin-site-header {
+        display: block !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+    }
+
+    .farzin-site-header .livora-container {
+        width: 100%;
+        max-width: 100%;
+    }
+}
+
+@media (max-width: 767px) {
+    .farzin-mobile-nav {
+        position: fixed !important;
+        z-index: 120 !important;
+        inset-inline: max(.5rem, env(safe-area-inset-left)) !important;
+        bottom: max(.5rem, env(safe-area-inset-bottom)) !important;
+        display: block !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+        transform: none !important;
+    }
+
+    #app {
+        padding-bottom: max(6.5rem, calc(env(safe-area-inset-bottom) + 5.75rem)) !important;
+    }
+
+    .farzin-mobile-nav__inner > a,
+    .farzin-mobile-nav__inner > button {
+        min-height: 3rem;
+        color: var(--livora-stone, #A2A5AD);
+    }
+
+    .farzin-mobile-nav__inner > a span,
+    .farzin-mobile-nav__inner > button span {
+        display: inline-block !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+        line-height: 1.35;
+    }
+
+    .farzin-search-overlay,
+    [x-show="filterOpen"].fixed {
+        overscroll-behavior: contain;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .farzin-search-overlay__panel {
+        width: 100% !important;
+        max-height: 100dvh !important;
+        overflow-y: auto !important;
+    }
+}
