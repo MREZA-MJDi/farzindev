@@ -50,6 +50,33 @@ jobs:
       - name: Run Laravel tests
         run: php artisan test
 
+      - name: Responsive browser smoke tests
+        env:
+          APP_ENV: local
+          APP_DEBUG: "false"
+          APP_URL: http://127.0.0.1:8000
+          DB_CONNECTION: sqlite
+          DB_DATABASE: ${{ github.workspace }}/database/browser-smoke.sqlite
+          CACHE_STORE: file
+          SESSION_DRIVER: file
+          QUEUE_CONNECTION: sync
+        run: |
+          touch "$DB_DATABASE"
+          php artisan migrate:fresh --force
+          ADMIN_EMAIL=browser-admin@example.test ADMIN_PASSWORD=browser-smoke-password php artisan db:seed --force
+          npm install --no-save --package-lock=false @playwright/test@1.55.0
+          npx playwright install --with-deps chromium
+          npx playwright test
+
+      - name: Upload browser traces after failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: farzin-browser-smoke-results
+          path: test-results/
+          if-no-files-found: ignore
+          retention-days: 3
+
       - name: Verify production cache commands
         run: |
           php artisan config:cache
@@ -116,7 +143,7 @@ jobs:
                "tests/*" \
                ".env" \
                "storage/logs/*" \
-               "database/*.sqlite"
+               "database/*.sqlite" \\\n               "playwright.config.js"
           if unzip -Z1 /tmp/farzin-vps-release.zip | grep -Eq '(^|/)\.env$|database/.*\.sqlite|storage/logs/'; then
             echo "Release archive contains environment, SQLite, or log files."
             exit 1
