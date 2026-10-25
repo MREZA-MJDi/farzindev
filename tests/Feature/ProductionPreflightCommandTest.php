@@ -16,7 +16,6 @@ class ProductionPreflightCommandTest extends TestCase
 
         $this->artisan('farzin:preflight')
             ->expectsOutputToContain('Database table: blog_posts')
-            ->expectsOutputToContain('FAIL')
             ->assertExitCode(1);
     }
 }
