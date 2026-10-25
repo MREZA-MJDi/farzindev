@@ -143,7 +143,8 @@ jobs:
                "tests/*" \
                ".env" \
                "storage/logs/*" \
-               "database/*.sqlite" \\\n               "playwright.config.js"
+               "database/*.sqlite" \
+               "playwright.config.js"
           if unzip -Z1 /tmp/farzin-vps-release.zip | grep -Eq '(^|/)\.env$|database/.*\.sqlite|storage/logs/'; then
             echo "Release archive contains environment, SQLite, or log files."
             exit 1

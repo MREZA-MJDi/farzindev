@@ -1,12 +1,12 @@
 <?php
 
-namespace App\\Console\\Commands;
+namespace App\Console\Commands;
 
-use App\\Services\\Payments\\PaymentManager;
-use Illuminate\\Console\\Command;
-use Illuminate\\Support\\Facades\\DB;
-use Illuminate\\Support\\Facades\\File;
-use Illuminate\\Support\\Facades\\Schema;
+use App\Services\Payments\PaymentManager;
+use Illuminate\Console\Command;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Schema;
 use Throwable;
 
 class ProductionPreflightCommand extends Command
@@ -164,7 +164,7 @@ class ProductionPreflightCommand extends Command
         $paymentManager = app(PaymentManager::class);
         $readyProviders = array_values(array_filter(
             ['digipay', 'snappay', 'torobpay'],
-            static fn (string $gateway): bool => $paymentManager->isReady($gateway)
+            fn (string $gateway): bool => $paymentManager->isReady($gateway)
         ));
 
         $add(
