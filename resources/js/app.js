@@ -92,9 +92,16 @@ if (document.querySelector('[data-farzin-gif-card]')) {
     });
 }
 
+// GSAP/ScrollTrigger is a relatively heavy optional chunk. Load it only on
+// pages that contain explicit motion targets; cart, checkout and product detail
+// pages stay on the normal rendering path instead of downloading unused motion.
+const hasStorefrontMotionTargets = document.querySelector(
+    '[data-category-hero], [data-farzin-shop-hero], [data-farzin-reveal], [data-fz-reveal]'
+);
+
 if (
     !document.body.classList.contains('home-body')
-    && document.querySelector('.storefront-content')
+    && hasStorefrontMotionTargets
 ) {
     import('./storefront-motion.js').catch((error) => {
         console.error('Unable to load optional storefront motion.', error);
