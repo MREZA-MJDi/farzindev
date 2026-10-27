@@ -33,6 +33,17 @@ class ProductionPreflightCommandTest extends TestCase
             ->assertExitCode(1);
     }
 
+    public function test_preflight_checks_the_admin_managed_homepage_gallery_column(): void
+    {
+        Schema::table('products', function ($table): void {
+            $table->dropColumn('show_in_home_gallery');
+        });
+
+        $this->artisan('farzin:preflight')
+            ->expectsOutputToContain('Database column: products.show_in_home_gallery')
+            ->assertExitCode(1);
+    }
+
     public function test_preflight_marks_the_missing_blog_table_as_a_critical_blocker(): void
     {
         Schema::dropIfExists('blog_posts');
