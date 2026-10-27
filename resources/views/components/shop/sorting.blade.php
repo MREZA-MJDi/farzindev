@@ -15,7 +15,7 @@
 
     $currentLabel =
         $sortOptions[$currentSort]
-        ?? $sortOptions['latest'];
+        ?? $sortOptions['newest'];
 
     /*
      |--------------------------------------------------------------------------
