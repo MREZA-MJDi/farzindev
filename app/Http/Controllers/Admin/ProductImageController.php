@@ -7,11 +7,15 @@ use App\Http\Requests\Admin\ProductImage\StoreProductImageRequest;
 use App\Http\Requests\Admin\ProductImage\UpdateProductImageRequest;
 use App\Models\Product;
 use App\Models\ProductImage;
+use App\Models\Media;
+use App\Services\Catalog\ProductMediaLibrary;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\Rule;
+use RuntimeException;
 use Throwable;
 
 class ProductImageController extends Controller
@@ -41,10 +45,13 @@ class ProductImageController extends Controller
      * These photos are not tied to a single variant; color-specific photos
      * can be attached from the variant forms below the same editor.
      */
-    public function storeForProduct(Request $request, Product $product): RedirectResponse
-    {
+    public function storeForProduct(
+        Request $request,
+        Product $product,
+        ProductMediaLibrary $mediaLibrary
+    ): RedirectResponse {
         $validated = $request->validate([
-            'images' => ['required', 'array', 'min:1', 'max:10'],
+            'images' => ['nullable', 'array', 'max:10'],
             'images.*' => [
                 'required',
                 'image',
@@ -52,20 +59,39 @@ class ProductImageController extends Controller
                 'dimensions:min_width=800,min_height=600',
                 'max:20480',
             ],
+            'media_ids' => ['nullable', 'array', 'max:30'],
+            'media_ids.*' => [
+                'required',
+                'integer',
+                Rule::exists('media', 'id')->where(
+                    fn ($query) => $query->whereIn('mime_type', ['image/jpeg', 'image/png', 'image/webp'])
+                ),
+            ],
             'alt' => ['nullable', 'string', 'max:255'],
         ], [
-            'images.required' => 'حداقل یک تصویر برای گالری محصول انتخاب کنید.',
-            'images.max' => 'در هر بار حداکثر ۱۰ تصویر می‌توانید اضافه کنید.',
+            'images.max' => 'در هر بار حداکثر ۱۰ تصویر می‌توانید آپلود کنید.',
             'images.*.image' => 'همهٔ فایل‌ها باید تصویر معتبر باشند.',
             'images.*.mimes' => 'فرمت تصویر باید JPG، PNG یا WEBP باشد.',
             'images.*.dimensions' => 'هر تصویر باید حداقل ۸۰۰ در ۶۰۰ پیکسل باشد.',
             'images.*.max' => 'حجم هر تصویر نباید بیشتر از ۲۰ مگابایت باشد.',
+            'media_ids.array' => 'فهرست رسانه‌های انتخاب‌شده معتبر نیست.',
+            'media_ids.max' => 'در هر بار حداکثر ۳۰ تصویر از کتابخانه می‌توانید انتخاب کنید.',
+            'media_ids.*.exists' => 'یکی از رسانه‌های انتخاب‌شده حذف شده یا تصویر قابل استفاده نیست.',
         ]);
+
+        $uploads = $request->file('images', []);
+        $mediaIds = $validated['media_ids'] ?? [];
+
+        if ($uploads === [] && $mediaIds === []) {
+            return back()->withInput()->withErrors([
+                'media_ids' => 'حداقل یک فایل از کتابخانه انتخاب کنید یا تصویر جدید آپلود کنید.',
+            ]);
+        }
 
         $storedPaths = [];
 
         try {
-            foreach ($request->file('images', []) as $file) {
+            foreach ($uploads as $file) {
                 $path = $file->store('products/images', 'public');
 
                 if (! $path) {
@@ -75,11 +101,23 @@ class ProductImageController extends Controller
                 $storedPaths[] = $path;
             }
 
-            DB::transaction(function () use ($product, $validated, $storedPaths): void {
+            DB::transaction(function () use (
+                $product,
+                $validated,
+                $storedPaths,
+                $mediaIds,
+                $mediaLibrary
+            ): void {
                 $lockedProduct = Product::query()
                     ->whereKey($product->id)
                     ->lockForUpdate()
                     ->firstOrFail();
+
+                $mediaLibrary->attachToProduct(
+                    $lockedProduct->id,
+                    $mediaIds,
+                    $validated['alt'] ?? null
+                );
 
                 $hasPrimary = ProductImage::query()
                     ->where('product_id', $lockedProduct->id)
@@ -93,6 +131,7 @@ class ProductImageController extends Controller
                 foreach ($storedPaths as $index => $path) {
                     ProductImage::create([
                         'product_id' => $lockedProduct->id,
+                        'media_id' => null,
                         'path' => $path,
                         'alt' => trim((string) ($validated['alt'] ?? '')) !== ''
                             ? trim((string) $validated['alt'])
@@ -100,6 +139,7 @@ class ProductImageController extends Controller
                         'sort_order' => $nextSortOrder + $index,
                         'is_primary' => ! $hasPrimary && $index === 0,
                     ]);
+                    $hasPrimary = true;
                 }
             });
         } catch (Throwable $exception) {
@@ -114,9 +154,11 @@ class ProductImageController extends Controller
             throw $exception;
         }
 
+        $addedCount = count($storedPaths) + count(array_unique(array_map('intval', $mediaIds)));
+
         return redirect()
             ->route('admin.products.edit', $product)
-            ->with('success', count($storedPaths) . ' تصویر به گالری محصول اضافه شد.');
+            ->with('success', $addedCount . ' تصویر از کتابخانه یا آپلود به گالری محصول اضافه/متصل شد.');
     }
 
     public function store(StoreProductImageRequest $request): RedirectResponse
