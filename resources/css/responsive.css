@@ -174,7 +174,7 @@ body {
 .farzin-shop-catalog .farzin-product-card__image-link {
     display: block;
     width: 100%;
-    aspect-ratio: 4 / 5;
+    aspect-ratio: 4 / 3;
     overflow: hidden;
 }
 
