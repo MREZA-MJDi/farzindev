@@ -152,10 +152,20 @@ class StoreProductRequest extends FormRequest
 
             'image' => [
                 'nullable',
+                'prohibited_with:primary_media_id',
                 'image',
                 'mimes:jpg,jpeg,png,webp',
                 'dimensions:min_width=800,min_height=600',
                 'max:20480',
+            ],
+
+            'primary_media_id' => [
+                'nullable',
+                'integer',
+                'prohibited_with:image',
+                Rule::exists('media', 'id')->where(
+                    fn ($query) => $query->whereIn('mime_type', ['image/jpeg', 'image/png', 'image/webp'])
+                ),
             ],
 
             'price' => [
@@ -281,6 +291,9 @@ class StoreProductRequest extends FormRequest
 
             'short_description.max' => 'توضیح کوتاه نباید بیشتر از ۲۵۵ کاراکتر باشد.',
 
+            'image.prohibited_with' => 'تصویر آپلودی و تصویر کتابخانه را هم‌زمان انتخاب نکنید.',
+            'primary_media_id.exists' => 'تصویر کتابخانه حذف شده یا فرمت آن پشتیبانی نمی‌شود.',
+            'primary_media_id.prohibited_with' => 'تصویر آپلودی و تصویر کتابخانه را هم‌زمان انتخاب نکنید.',
             'image.image' => 'فایل انتخاب‌شده باید تصویر باشد.',
             'image.mimes' => 'فرمت تصویر باید jpg، jpeg، png یا webp باشد.',
             'image.max' => 'حجم تصویر نباید بیشتر از ۲۰ مگابایت باشد.',
