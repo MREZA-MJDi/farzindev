@@ -1850,6 +1850,37 @@ class FarzinStorefrontTest extends TestCase
         $this->assertTrue($galleryImage->is_primary);
         Storage::disk('public')->assertExists($media->path);
 
+        // Removing a product-gallery reference must not remove the shared
+        // physical Media Library asset.
+        Storage::disk('public')->put('media/gallery-only.webp', 'gallery only bytes');
+        $galleryOnlyMedia = Media::create([
+            'user_id' => $admin->id,
+            'disk' => 'public',
+            'path' => 'media/gallery-only.webp',
+            'filename' => 'gallery-only.webp',
+            'original_name' => 'gallery-only.webp',
+            'mime_type' => 'image/webp',
+            'extension' => 'webp',
+            'size' => 18,
+            'alt' => 'تصویر گالری مستقل',
+        ]);
+
+        $this->post(route('admin.products.images.store', $product), [
+            'media_ids' => [$galleryOnlyMedia->id],
+        ])->assertRedirect(route('admin.products.edit', $product));
+
+        $galleryOnlyImage = ProductImage::query()
+            ->where('product_id', $product->id)
+            ->where('media_id', $galleryOnlyMedia->id)
+            ->firstOrFail();
+
+        $this->delete(route('admin.product-images.destroy', $galleryOnlyImage))
+            ->assertRedirect(route('admin.product-images.index', ['product_id' => $product->id]));
+
+        $this->assertDatabaseMissing('product_images', ['id' => $galleryOnlyImage->id]);
+        $this->assertDatabaseHas('media', ['id' => $galleryOnlyMedia->id]);
+        Storage::disk('public')->assertExists($galleryOnlyMedia->path);
+
         // Selecting the same library image again reuses the product-image row.
         $this->post(route('admin.products.images.store', $product), [
             'media_ids' => [$media->id],
