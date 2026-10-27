@@ -73,17 +73,9 @@ test('mobile search and navigation controls remain usable', async ({ page }) => 
     await expect(page.locator('[data-farzin-mobile-menu-panel]')).toBeVisible();
 });
 
-test('customer and admin endpoints do not expose private pages to guests', async ({ page }) => {
+test('customer and admin endpoints redirect guests to login', async ({ page }) => {
     for (const path of ['/checkout', '/account', '/admin', '/admin/blog-posts']) {
-        const response = await page.goto(path, { waitUntil: 'domcontentloaded' });
-
-        // The auth middleware may redirect to login or return a denial response,
-        // but the guest must never receive the private page itself.
-        expect(response, path + ' must return a document response').not.toBeNull();
-        if (/\/login(?:\?.*)?$/.test(new URL(page.url()).pathname + new URL(page.url()).search)) {
-            expect(response.status()).toBeLessThan(400);
-        } else {
-            expect([401, 403, 404]).toContain(response.status());
-        }
+        await page.goto(path, { waitUntil: 'domcontentloaded' });
+        await expect(page).toHaveURL(/\/login(?:\?.*)?$/);
     }
 });
