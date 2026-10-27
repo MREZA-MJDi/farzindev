@@ -1989,7 +1989,7 @@ class FarzinStorefrontTest extends TestCase
 
         $this->get(route('product.show', $product->slug))
             ->assertOk()
-            ->assertSee($media->url, false)
+            ->assertSee('media/library-hood.webp', false)
             ->assertSee('Media Library Hood');
     }
 
