@@ -32,7 +32,7 @@
                     </nav>
 
                     @if (!empty($shopBanner['image_url']))
-                        <div class="farzin-shop-banner__image relative mt-6 aspect-[16/5] min-h-[220px] overflow-hidden rounded-[2rem] bg-[var(--livora-ink)]" data-farzin-reveal>
+                        <div class="farzin-shop-banner__image relative mt-6 aspect-[16/5] min-h-[220px] overflow-hidden rounded-[2rem] bg-[var(--livora-ink)]">
                             <img
                                 src="{{ $shopBanner['image_url'] }}"
                                 alt="{{ $shopBanner['title'] }}"
@@ -53,7 +53,7 @@
                             </div>
                         </div>
                     @else
-                        <div class="mt-6 flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between" data-farzin-reveal>
+                        <div class="mt-6 flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
                             <div>
                                 <p class="text-[10px] font-medium uppercase tracking-[0.22em] text-[var(--livora-accent)]">FARZIN / CATALOG</p>
                                 <h1 class="mt-3 text-3xl font-semibold tracking-tight sm:text-4xl">فروشگاه فرزین</h1>
@@ -325,12 +325,13 @@
 
                         @if($products->isNotEmpty())
 
-                            <div class="mt-8 grid grid-cols-2 gap-x-4 gap-y-10 sm:gap-x-5 lg:grid-cols-2 xl:grid-cols-3">
+                            <div class="mt-8 grid grid-cols-2 gap-x-3 gap-y-6 sm:gap-x-4 sm:gap-y-8 md:grid-cols-3 2xl:grid-cols-4">
 
                                 @foreach($products as $product)
 
                                     <x-product.card
                                         :product="$product"
+                                        :reveal="false"
                                     />
 
                                 @endforeach

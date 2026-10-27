@@ -67,9 +67,42 @@ class HomeController extends Controller
             ->get();
 
         // The architecture hero does not consume a catalogue product.
-        $featuredProducts = $catalogProducts
-            ->take(8)
-            ->values();
+        $featuredProducts = Product::query()
+            ->active()
+            ->whereHas('category', fn ($query) => $query->where('is_active', true))
+            ->with([
+                'category',
+                'images' => fn ($query) => $query
+                    ->select([
+                        'id',
+                        'product_id',
+                        'media_id',
+                        'path',
+                        'alt',
+                        'sort_order',
+                        'is_primary',
+                    ])
+                    ->limit(1),
+                'images.media:id,path',
+            ])
+            ->withSum([
+                'orderItems as sold_quantity' => function ($orderItemQuery): void {
+                    $orderItemQuery->whereHas('order', function ($orderQuery): void {
+                        $orderQuery
+                            ->where('payment_status', 'paid')
+                            ->where('status', '!=', 'cancelled');
+                    });
+                },
+            ], 'quantity')
+            ->orderByDesc('sold_quantity')
+            ->orderByDesc('is_featured')
+            ->orderByDesc('updated_at')
+            ->limit(8)
+            ->get();
+
+        $hasBestSellerSales = $featuredProducts->contains(
+            fn (Product $product): bool => (int) ($product->sold_quantity ?? 0) > 0
+        );
 
         $usedProductIds = $featuredProducts
             ->pluck('id')
@@ -130,6 +163,7 @@ class HomeController extends Controller
             'demoImages' => $demoImages,
             'gridGroups' => $demoImages->chunk(9)->values(),
             'featuredProducts' => $featuredProducts,
+            'hasBestSellerSales' => $hasBestSellerSales,
             'newProducts' => $newProducts,
             'catalogCount' => $catalogCount,
             'galleryCount' => $demoImages->count(),

@@ -126,6 +126,18 @@ class ShopController extends Controller
             });
         }
 
+        if (!empty($filters['featured'])) {
+            $query->where('is_featured', true);
+        }
+
+        if (!empty($filters['new'])) {
+            $query->where('is_new', true);
+        }
+
+        if (!empty($filters['installment'])) {
+            $query->where('installment_enabled', true);
+        }
+
         /*
         |--------------------------------------------------------------------------
         | Sorting
@@ -134,17 +146,27 @@ class ShopController extends Controller
 
         match ($filters['sort'] ?? 'newest') {
 
-            'price_asc' => $query->orderBy('price'),
+            'price_asc' => $query->orderBy('price')->orderBy('id'),
 
-            'price_desc' => $query->orderByDesc('price'),
+            'price_desc' => $query->orderByDesc('price')->orderByDesc('id'),
 
-            'name_asc' => $query->orderBy('name'),
+            'name_asc' => $query->orderBy('name')->orderBy('id'),
 
             'popular' => $query
+                ->withSum([
+                    'orderItems as sold_quantity' => function ($orderItemQuery): void {
+                        $orderItemQuery->whereHas('order', function ($orderQuery): void {
+                            $orderQuery
+                                ->where('payment_status', 'paid')
+                                ->where('status', '!=', 'cancelled');
+                        });
+                    },
+                ], 'quantity')
+                ->orderByDesc('sold_quantity')
                 ->orderByDesc('is_featured')
-                ->latest(),
+                ->orderByDesc('updated_at'),
 
-            default => $query->latest(),
+            default => $query->latest()->orderByDesc('id'),
         };
 
         /*
@@ -154,7 +176,7 @@ class ShopController extends Controller
         */
 
         $products = $query
-            ->paginate(12)
+            ->paginate(8)
             ->withQueryString();
 
         /*

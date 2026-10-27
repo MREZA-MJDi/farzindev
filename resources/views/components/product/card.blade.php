@@ -1,5 +1,6 @@
 @props([
     'product',
+    'reveal' => true,
 ])
 
 @php
@@ -28,7 +29,7 @@
 
 <article
     class="farzin-product-card group relative flex h-full min-w-0 flex-col"
-    data-farzin-reveal
+    @if($reveal) data-farzin-reveal @endif
 >
     <div class="farzin-product-card__media relative overflow-hidden rounded-[1.25rem]">
         <a
@@ -40,6 +41,8 @@
                 <img
                     src="{{ $image }}"
                     alt="{{ $product->name }}"
+                    width="640"
+                    height="480"
                     loading="lazy"
                     decoding="async"
                     class="farzin-product-card__image h-full w-full object-cover"
@@ -52,8 +55,6 @@
                 </div>
             @endif
         </a>
-
-        <div 
 
         <div class="absolute left-3 top-3 z-10 flex flex-col items-start gap-2">
             @if($product->is_new)

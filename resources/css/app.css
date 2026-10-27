@@ -1540,10 +1540,6 @@ a[data-farzin-gif-card].is-gif-previewing .farzin-category-card__gif { opacity: 
     scroll-margin-top: 6rem;
 }
 
-[data-farzin-reveal] {
-    will-change: transform, opacity;
-}
-
 @media (max-width: 900px) {
     .farzin-shop-hero__layout {
         grid-template-columns: minmax(0, 1fr) minmax(245px, .8fr);
