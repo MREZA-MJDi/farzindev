@@ -3637,6 +3637,45 @@ class FarzinStorefrontTest extends TestCase
         ]);
     }
 
+    public function test_gateway_initialization_cannot_reactivate_terminal_payment_attempts(): void
+    {
+        $customer = $this->customer();
+        $order = $this->order($customer);
+
+        $service = new class(
+            app(\App\Services\Payments\PaymentManager::class),
+            app(\App\Services\Inventory\InventoryReservationService::class)
+        ) extends \App\Services\Payments\PaymentService {
+            public function initiateForTest(Payment $payment): void
+            {
+                $this->markPaymentAsInitiated($payment, [
+                    'authority' => 'late-gateway-authority',
+                    'transaction_id' => 'late-gateway-transaction',
+                ]);
+            }
+        };
+
+        foreach (['failed', 'cancelled', 'refunded', 'paid'] as $status) {
+            $payment = Payment::create([
+                'order_id' => $order->id,
+                'user_id' => $customer->id,
+                'gateway' => 'digipay',
+                'amount' => $order->total,
+                'status' => $status,
+                'metadata' => ['initial_status' => $status],
+            ]);
+
+            $service->initiateForTest($payment);
+
+            $this->assertDatabaseHas('payments', [
+                'id' => $payment->id,
+                'status' => $status,
+                'authority' => null,
+                'transaction_id' => null,
+            ]);
+        }
+    }
+
     public function test_duplicate_callback_for_a_paid_payment_is_idempotent(): void
     {
         $customer = $this->customer();
