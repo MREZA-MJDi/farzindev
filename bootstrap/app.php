@@ -5,6 +5,7 @@ use App\Http\Middleware\CustomerMiddleware;
 use App\Http\Middleware\RequestIdMiddleware;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Auth\AuthenticationException;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -157,6 +158,18 @@ return Application::configure(
             Throwable $e,
             Request $request
         ) {
+            // Let Laravel retain its native redirect/4xx behavior for expected
+            // framework exceptions. The production fallback is for unexpected
+            // server failures, not authentication, validation, or missing rows.
+            if (
+                $e instanceof AuthenticationException
+                || $e instanceof AuthorizationException
+                || $e instanceof ValidationException
+                || $e instanceof ModelNotFoundException
+            ) {
+                return null;
+            }
+
             if (config('app.debug') && app()->environment(['local', 'testing'])) {
                 return null;
             }
