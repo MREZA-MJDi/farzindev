@@ -273,10 +273,16 @@
                     <div class="fz-section-heading fz-reveal">
                         <div>
                             <p class="fz-eyebrow"><span></span> کاتالوگ محصولات</p>
-                            <h2 id="fz-products-heading">محصولات فرزین</h2>
-                            <p>{{ \App\Helpers\PersianNumberHelper::format($catalogCount) }} محصول فعال در کاتالوگ ثبت شده است؛ برای مشخصات کامل، صفحه‌ی همان محصول را باز کنید.</p>
+                            <h2 id="fz-products-heading">پرفروش‌ترین محصولات</h2>
+                            <p>
+                                @if($hasBestSellerSales)
+                                    بر اساس تعداد محصولات ثبت‌شده در سفارش‌های پرداخت‌شده؛ برای مشخصات کامل، صفحه‌ی هر محصول را باز کنید.
+                                @else
+                                    سفارش پرداخت‌شده‌ای برای رتبه‌بندی ثبت نشده است؛ مدل‌های منتخب فرزین را بررسی کنید.
+                                @endif
+                            </p>
                         </div>
-                        <a class="fz-text-link" href="{{ route('shop.index') }}">دیدن همه‌ی محصولات <span aria-hidden="true">←</span></a>
+                        <a class="fz-text-link" href="{{ route('shop.index', ['sort' => 'popular']) }}">مشاهده پرفروش‌ها <span aria-hidden="true">←</span></a>
                     </div>
                     <div class="fz-product-grid">
                         @foreach($featuredProducts as $product)
