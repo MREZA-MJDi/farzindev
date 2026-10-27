@@ -7,6 +7,7 @@ use App\Http\Requests\Admin\ProductImage\StoreProductImageRequest;
 use App\Http\Requests\Admin\ProductImage\UpdateProductImageRequest;
 use App\Models\Product;
 use App\Models\ProductImage;
+use App\Models\Media;
 use App\Services\Catalog\ProductMediaLibrary;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -92,7 +93,20 @@ class ProductImageController extends Controller
 
         try {
             foreach ($uploads as $file) {
-                $path = $file->store('products/images', 'public');
+                try {
+            $path = $file->store('products/images', 'public');
+        } catch (Throwable $exception) {
+            $requestId = (string) $request->attributes->get('request_id', 'unavailable');
+            Log::error('Legacy product image upload failed.', [
+                'request_id' => $requestId,
+                'product_id' => $request->input('product_id'),
+                'exception' => $exception,
+            ]);
+
+            return back()->withInput()->withErrors([
+                'image' => 'ذخیره تصویر محصول انجام نشد؛ فضای دیسک و دسترسی نوشتن را بررسی کنید. کد پیگیری: ' . $requestId,
+            ]);
+        }
 
                 if (! $path) {
                     throw new RuntimeException('ذخیره یکی از تصاویر گالری انجام نشد.');
@@ -205,10 +219,19 @@ class ProductImageController extends Controller
 
                 ProductImage::create($data);
             });
-        } catch (Throwable $e) {
+        } catch (Throwable $exception) {
             Storage::disk('public')->delete($path);
 
-            throw $e;
+            $requestId = (string) $request->attributes->get('request_id', 'unavailable');
+            Log::error('Legacy product image database write failed.', [
+                'request_id' => $requestId,
+                'product_id' => $data['product_id'] ?? null,
+                'exception' => $exception,
+            ]);
+
+            return back()->withInput()->withErrors([
+                'image' => 'ثبت تصویر محصول انجام نشد؛ تغییرات ذخیره نشدند. کد پیگیری: ' . $requestId,
+            ]);
         }
 
         return redirect()
@@ -254,15 +277,29 @@ class ProductImageController extends Controller
         $oldProductId = $productImage->product_id;
         $oldPath = $productImage->path;
         $oldMediaId = $productImage->media_id;
+        $oldPathIsMediaAsset = $oldMediaId !== null || Media::query()->where('path', $oldPath)->exists();
         $oldWasPrimary = (bool) $productImage->is_primary;
 
         $newPath = null;
 
         if ($request->hasFile('image')) {
-            $newPath = $request->file('image')->store(
-                'products/images',
-                'public'
-            );
+            try {
+                $newPath = $request->file('image')->store(
+                    'products/images',
+                    'public'
+                );
+            } catch (Throwable $exception) {
+                $requestId = (string) $request->attributes->get('request_id', 'unavailable');
+                Log::error('Product image replacement upload failed.', [
+                    'request_id' => $requestId,
+                    'product_image_id' => $productImage->id,
+                    'exception' => $exception,
+                ]);
+
+                return back()->withInput()->withErrors([
+                    'image' => 'ذخیره تصویر جدید انجام نشد؛ تصویر فعلی حفظ شد. کد پیگیری: ' . $requestId,
+                ]);
+            }
 
             if (! $newPath) {
                 return back()
@@ -324,17 +361,26 @@ class ProductImageController extends Controller
                 $productImage->update(['is_primary' => true]);
             }
             });
-        } catch (Throwable $e) {
+        } catch (Throwable $exception) {
             if ($newPath !== null) {
                 Storage::disk('public')->delete($newPath);
             }
 
-            throw $e;
+            $requestId = (string) $request->attributes->get('request_id', 'unavailable');
+            Log::error('Product image update failed.', [
+                'request_id' => $requestId,
+                'product_image_id' => $productImage->id,
+                'exception' => $exception,
+            ]);
+
+            return back()->withInput()->withErrors([
+                'image' => 'ذخیره تغییرات تصویر انجام نشد؛ تصویر فعلی حفظ شد. کد پیگیری: ' . $requestId,
+            ]);
         }
 
         if (
             $newPath !== null
-            && $oldMediaId === null
+            && ! $oldPathIsMediaAsset
             && $oldPath
             && $oldPath !== $newPath
             && ! Str::startsWith($oldPath, ['http://', 'https://', '//'])
@@ -360,7 +406,8 @@ class ProductImageController extends Controller
 
         $productId = $productImage->product_id;
         $path = $productImage->path;
-        $isMediaAsset = $productImage->media_id !== null;
+        $isMediaAsset = $productImage->media_id !== null
+            || Media::query()->where('path', $path)->exists();
         $wasPrimary = (bool) $productImage->is_primary;
 
         DB::transaction(function () use (
