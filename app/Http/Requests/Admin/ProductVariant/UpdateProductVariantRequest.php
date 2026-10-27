@@ -72,6 +72,20 @@ class UpdateProductVariantRequest extends FormRequest
                     ),
             ],
 
+            'media_ids' => [
+                'nullable',
+                'array',
+                'max:30',
+            ],
+
+            'media_ids.*' => [
+                'required',
+                'integer',
+                Rule::exists('media', 'id')->where(
+                    fn ($query) => $query->whereIn('mime_type', ['image/jpeg', 'image/png', 'image/webp'])
+                ),
+            ],
+
             'images' => [
                 'nullable',
                 'array',
@@ -159,6 +173,10 @@ class UpdateProductVariantRequest extends FormRequest
             'image_ids.array' => 'تصاویر انتخاب‌شده نامعتبر هستند.',
             'image_ids.max' => 'حداکثر ۳۰ تصویر می‌توان برای یک تنوع انتخاب کرد.',
             'image_ids.*.exists' => 'یکی از تصاویر انتخاب‌شده متعلق به این محصول نیست.',
+            'media_ids.array' => 'فهرست تصاویر کتابخانه رسانه معتبر نیست.',
+            'media_ids.max' => 'برای هر تنوع حداکثر ۳۰ تصویر از کتابخانه رسانه انتخاب کنید.',
+            'media_ids.*.exists' => 'یکی از تصاویر کتابخانه حذف شده یا فرمت آن پشتیبانی نمی‌شود.',
+
             'images.array' => 'تصاویر تنوع باید به‌صورت فهرست ارسال شوند.',
             'images.max' => 'برای هر رنگ حداکثر ۱۰ تصویر جدید می‌توانید آپلود کنید.',
             'images.*.image' => 'فایل‌های انتخاب‌شده باید تصویر باشند.',
