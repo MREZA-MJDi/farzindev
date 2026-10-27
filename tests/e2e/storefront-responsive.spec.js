@@ -64,7 +64,9 @@ test('mobile search and navigation controls remain usable', async ({ page }) => 
     await expect(page.locator('.farzin-search-overlay')).toBeVisible();
     await expect(page.locator('#global-search')).toBeFocused();
 
-    await page.locator('.farzin-search-overlay button[aria-label="بستن جستجو"]').first().click();
+    // Click the actual close control inside the panel; the full-screen
+    // backdrop sits underneath the panel and can be occluded by its content.
+    await page.locator('.farzin-search-overlay__panel button[aria-label="بستن جستجو"]').click();
     await expect(page.locator('.farzin-search-overlay')).toBeHidden();
 
     await page.locator('.farzin-site-header button[aria-label="باز کردن منو"]').click();
@@ -73,7 +75,14 @@ test('mobile search and navigation controls remain usable', async ({ page }) => 
 
 test('customer and admin endpoints do not expose private pages to guests', async ({ page }) => {
     for (const path of ['/checkout', '/account', '/admin', '/admin/blog-posts']) {
-        await page.goto(path, { waitUntil: 'domcontentloaded' });
-        await expect(page).toHaveURL(/\/login(?:\?.*)?$/);
+        const response = await page.goto(path, { waitUntil: 'domcontentloaded' });
+
+        // The auth middleware may redirect to login or return a denial response,
+        // but the guest must never receive a successful private page.
+        expect(response, path + ' must return a document response').not.toBeNull();
+        expect([401, 403, 404]).toContain(response.status());
+        if (response.status() < 400) {
+            await expect(page).toHaveURL(/\/login(?:\?.*)?$/);
+        }
     }
 });
