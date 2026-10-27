@@ -8,6 +8,7 @@ use App\Http\Requests\Admin\Product\UpdateProductRequest;
 use App\Models\Category;
 use App\Models\Product;
 use App\Models\ProductImage;
+use App\Models\Media;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
@@ -100,8 +101,8 @@ class ProductController extends Controller
     {
         $product->load([
             'category',
-            'images',
-            'allVariants.images',
+            'images.media',
+            'allVariants.images.media',
         ]);
 
         return view('admin.products.show', compact('product'));
@@ -112,15 +113,24 @@ class ProductController extends Controller
      */
     public function edit(Product $product): View
     {
-        $product->load(['images', 'allVariants.images']);
+        $product->load(['images.media', 'allVariants.images.media']);
 
         $categories = Category::query()
             ->orderBy('name')
             ->get();
 
+        // Keep the picker responsive on large libraries: the newest 60 supported
+        // raster images are enough for common workflows; the full library remains
+        // available from Admin > Media.
+        $mediaImages = Media::query()
+            ->whereIn('mime_type', ['image/jpeg', 'image/png', 'image/webp'])
+            ->latest('id')
+            ->limit(60)
+            ->get();
+
         return view(
             'admin.products.edit',
-            compact('product', 'categories')
+            compact('product', 'categories', 'mediaImages')
         );
     }
 
@@ -190,9 +200,14 @@ class ProductController extends Controller
                 $lockedProduct->images()->update(['is_primary' => false]);
 
                 if ($primaryImage && ! $isPrimaryAttachedToVariant) {
-                    $oldPathToDelete = $primaryImage->path;
+                    // Media Library assets are shared. Detach the ProductImage
+                    // from its Media record without deleting the shared file.
+                    $oldPathToDelete = $primaryImage->media_id === null
+                        ? $primaryImage->path
+                        : null;
                     $primaryImage->update([
                         'path' => $newPath,
+                        'media_id' => null,
                         'alt' => $lockedProduct->name,
                         'is_primary' => true,
                     ]);
