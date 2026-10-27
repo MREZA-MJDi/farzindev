@@ -4,7 +4,6 @@ namespace App\Services\Catalog;
 
 use App\Models\Media;
 use App\Models\ProductImage;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 
 class ProductMediaLibrary
