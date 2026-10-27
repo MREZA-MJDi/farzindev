@@ -14,6 +14,28 @@ class AdminAuthorizationTest extends TestCase
 {
     use RefreshDatabase;
 
+    public function test_production_error_fallback_preserves_auth_validation_and_not_found_responses(): void
+    {
+        config(['app.debug' => false]);
+
+        $this->get('/checkout')
+            ->assertRedirect(route('login'));
+
+        $this->get('/admin')
+            ->assertRedirect(route('login'));
+
+        $this->get(route('product.show', 'missing-product-for-error-handler-test'))
+            ->assertNotFound();
+
+        $admin = User::factory()->create(['role' => 'admin']);
+
+        $this->actingAs($admin)
+            ->from(route('admin.products.create'))
+            ->post(route('admin.products.store'), [])
+            ->assertRedirect(route('admin.products.create'))
+            ->assertSessionHasErrors();
+    }
+
     public function test_guest_cannot_enter_admin_dashboard(): void
     {
         $this->get('/admin')
