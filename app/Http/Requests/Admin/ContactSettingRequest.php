@@ -31,6 +31,20 @@ class ContactSettingRequest extends FormRequest
                 'string',
             ],
 
+            'latitude' => [
+                'nullable',
+                'required_with:longitude',
+                'numeric',
+                'between:-90,90',
+            ],
+
+            'longitude' => [
+                'nullable',
+                'required_with:latitude',
+                'numeric',
+                'between:-180,180',
+            ],
+
             'hours' => [
                 'nullable',
                 'string',
@@ -83,6 +97,8 @@ class ContactSettingRequest extends FormRequest
             'phone' => 'شماره تماس',
             'email' => 'ایمیل',
             'address' => 'آدرس',
+            'latitude' => 'عرض جغرافیایی (Latitude)',
+            'longitude' => 'طول جغرافیایی (Longitude)',
             'hours' => 'ساعات کاری',
             'phone_label' => 'عنوان تماس تلفنی',
             'email_label' => 'عنوان ایمیل',
@@ -98,6 +114,10 @@ class ContactSettingRequest extends FormRequest
     {
         return [
             'email.email' => 'فرمت ایمیل واردشده صحیح نیست.',
+            'latitude.required_with' => 'برای ثبت مختصات، هر دو مقدار Latitude و Longitude را وارد کنید.',
+            'longitude.required_with' => 'برای ثبت مختصات، هر دو مقدار Latitude و Longitude را وارد کنید.',
+            'latitude.between' => 'عرض جغرافیایی باید بین ۹۰- و ۹۰ باشد.',
+            'longitude.between' => 'طول جغرافیایی باید بین ۱۸۰- و ۱۸۰ باشد.',
 
             'phone.max' => 'شماره تماس نمی‌تواند بیشتر از :max کاراکتر باشد.',
 

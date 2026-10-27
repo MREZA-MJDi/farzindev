@@ -3428,7 +3428,9 @@ class FarzinStorefrontTest extends TestCase
             ->get(route('admin.storefront-settings.edit'))
             ->assertOk()
             ->assertSee('بنر صفحه فروشگاه')
-            ->assertSee('اطلاعات تماس واقعی');
+            ->assertSee('اطلاعات تماس واقعی')
+            ->assertSee('name="latitude"', false)
+            ->assertSee('name="longitude"', false);
 
         $this->put(route('admin.storefront-settings.update'), [
             'shop_banner_image' => UploadedFile::fake()->image('shop-banner.jpg', 1600, 900),
@@ -3475,6 +3477,59 @@ class FarzinStorefrontTest extends TestCase
             ->assertSee('name="message"', false)
             ->assertSee('https://wa.me/989123456789', false)
             ->assertSee('https://instagram.com/farzin.test', false);
+    }
+
+    public function test_admin_can_save_contact_map_coordinates_and_the_contact_page_uses_them(): void
+    {
+        $admin = $this->admin();
+
+        $this->actingAs($admin)
+            ->put(route('admin.storefront-settings.update'), [
+                'shop_banner_title' => 'فروشگاه فرزین',
+                'shop_banner_subtitle' => 'راهنمای انتخاب هود و سینک',
+                'address' => 'آدرس تستی که نباید جای مختصات استفاده شود',
+                'latitude' => '35.6892',
+                'longitude' => '51.3890',
+            ])
+            ->assertRedirect(route('admin.storefront-settings.edit'))
+            ->assertSessionHas('success');
+
+        $contact = \App\Models\ContactSetting::query()->firstOrFail();
+
+        $this->assertEqualsWithDelta(35.6892, (float) $contact->latitude, 0.0000001);
+        $this->assertEqualsWithDelta(51.3890, (float) $contact->longitude, 0.0000001);
+
+        $coordinateQuery = urlencode((string) $contact->latitude.','.(string) $contact->longitude);
+
+        $this->get(route('contact'))
+            ->assertOk()
+            ->assertSee("https://www.google.com/maps?q={$coordinateQuery}&amp;z=15&amp;output=embed", false)
+            ->assertSee("https://www.google.com/maps/search/?api=1&amp;query={$coordinateQuery}", false)
+            ->assertSee('آدرس تستی که نباید جای مختصات استفاده شود');
+    }
+
+    public function test_contact_map_coordinates_must_be_in_range_and_provided_as_a_pair(): void
+    {
+        $admin = $this->admin();
+
+        $this->actingAs($admin)
+            ->from(route('admin.storefront-settings.edit'))
+            ->put(route('admin.storefront-settings.update'), [
+                'shop_banner_title' => 'فروشگاه فرزین',
+                'latitude' => '91',
+                'longitude' => '181',
+            ])
+            ->assertRedirect(route('admin.storefront-settings.edit'))
+            ->assertSessionHasErrors(['latitude', 'longitude']);
+
+        $this->from(route('admin.storefront-settings.edit'))
+            ->put(route('admin.storefront-settings.update'), [
+                'shop_banner_title' => 'فروشگاه فرزین',
+                'latitude' => '35.6892',
+                'longitude' => '',
+            ])
+            ->assertRedirect(route('admin.storefront-settings.edit'))
+            ->assertSessionHasErrors('longitude');
     }
 
     private function category(array $attributes = []): Category

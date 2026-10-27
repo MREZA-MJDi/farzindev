@@ -140,7 +140,7 @@
             <section class="admin-card p-5 sm:p-7">
                 <div class="mb-6">
                     <h2 class="text-base font-bold text-[var(--admin-text)]">اطلاعات تماس واقعی</h2>
-                    <p class="mt-2 text-xs leading-6 text-[var(--admin-muted)]">شماره تماس، ایمیل و آدرس این بخش در صفحه «تماس با ما» استفاده می‌شود. نقشه گوگل از روی آدرس واردشده ساخته می‌شود.</p>
+                    <p class="mt-2 text-xs leading-6 text-[var(--admin-muted)]">شماره تماس، آدرس و مختصات این بخش در صفحه «تماس با ما» استفاده می‌شود. اگر Latitude و Longitude را وارد کنید، نقشه دقیقاً روی همان نقطه باز می‌شود؛ در غیر این صورت از آدرس کمک می‌گیرد.</p>
                 </div>
 
                 @php($contact = $contactSetting)
@@ -159,6 +159,19 @@
                         <label for="address" class="admin-label">آدرس دقیق برای نمایش و نقشه گوگل</label>
                         <textarea id="address" name="address" rows="3" class="admin-input" maxlength="2000" placeholder="استان، شهر، خیابان، پلاک...">{{ old('address', $contact?->address) }}</textarea>
                         @error('address')<p class="mt-2 text-xs text-[var(--admin-danger)]">{{ $message }}</p>@enderror
+                    </div>
+                    <div>
+                        <label for="latitude" class="admin-label">Latitude — عرض جغرافیایی</label>
+                        <input id="latitude" name="latitude" type="number" inputmode="decimal" step="0.0000001" min="-90" max="90" dir="ltr" value="{{ old('latitude', $contact?->latitude) }}" class="admin-input" placeholder="35.6892" aria-describedby="map-coordinates-help">
+                        @error('latitude')<p class="mt-2 text-xs text-[var(--admin-danger)]">{{ $message }}</p>@enderror
+                    </div>
+                    <div>
+                        <label for="longitude" class="admin-label">Longitude — طول جغرافیایی</label>
+                        <input id="longitude" name="longitude" type="number" inputmode="decimal" step="0.0000001" min="-180" max="180" dir="ltr" value="{{ old('longitude', $contact?->longitude) }}" class="admin-input" placeholder="51.3890" aria-describedby="map-coordinates-help">
+                        @error('longitude')<p class="mt-2 text-xs text-[var(--admin-danger)]">{{ $message }}</p>@enderror
+                    </div>
+                    <div id="map-coordinates-help" class="sm:col-span-2 rounded-xl bg-[var(--admin-surface-muted)] p-3 text-xs leading-6 text-[var(--admin-muted)]">
+                        برای یافتن مختصات، <a href="https://maps.google.com/" target="_blank" rel="noopener noreferrer" class="font-semibold text-[var(--admin-text)] underline">Google Maps را باز کنید</a>، روی محل دقیق راست‌کلیک کنید و دو عدد نمایش‌داده‌شده را به‌ترتیب در Latitude و Longitude قرار دهید. هر دو فیلد را با هم وارد کنید؛ خالی گذاشتن هر دو یعنی استفاده از آدرس.
                     </div>
                     <div>
                         <label for="whatsapp" class="admin-label">شماره واتساپ (اختیاری)</label>

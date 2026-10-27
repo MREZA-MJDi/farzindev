@@ -17,6 +17,12 @@
 @section('content')
     @php
         $mapAddress = trim((string) ($contactSetting?->address ?? ''));
+        $mapLatitude = $contactSetting?->latitude;
+        $mapLongitude = $contactSetting?->longitude;
+        $hasMapCoordinates = is_numeric($mapLatitude) && is_numeric($mapLongitude);
+        $mapQuery = $hasMapCoordinates
+            ? (string) $mapLatitude . ',' . (string) $mapLongitude
+            : $mapAddress;
         $whatsappDigits = preg_replace('/\D+/', '', (string) ($contactSetting?->whatsapp ?? ''));
 
         if ($whatsappDigits !== '') {
@@ -139,11 +145,11 @@
                                 </span>
                             </div>
 
-                            @if($mapAddress !== '')
+                            @if($hasMapCoordinates || $mapAddress !== '')
                                 <div class="fz-contact-map-frame">
                                     <iframe
                                         title="نقشه موقعیت مجموعه فرزین"
-                                        src="https://www.google.com/maps?q={{ urlencode($mapAddress) }}&amp;output=embed"
+                                        src="https://www.google.com/maps?q={{ urlencode($mapQuery) }}&amp;z=15&amp;output=embed"
                                         loading="lazy"
                                         referrerpolicy="no-referrer-when-downgrade"
                                         allowfullscreen
@@ -156,12 +162,17 @@
                                         <svg viewBox="0 0 24 24" fill="none"><path d="M19 10c0 5-7 11-7 11S5 15 5 10a7 7 0 1 1 14 0Z" stroke="currentColor" stroke-width="1.7"/><circle cx="12" cy="10" r="2.4" stroke="currentColor" stroke-width="1.7"/></svg>
                                     </span>
                                     <div>
-                                        <span>آدرس ثبت‌شده</span>
-                                        <p>{{ $mapAddress }}</p>
+                                        @if($mapAddress !== '')
+                                            <span>آدرس ثبت‌شده</span>
+                                            <p>{{ $mapAddress }}</p>
+                                        @else
+                                            <span>مختصات ثبت‌شده</span>
+                                            <p dir="ltr">{{ $mapLatitude }}, {{ $mapLongitude }}</p>
+                                        @endif
                                     </div>
                                 </div>
                                 <a
-                                    href="https://www.google.com/maps/search/?api=1&amp;query={{ urlencode($mapAddress) }}"
+                                    href="https://www.google.com/maps/search/?api=1&amp;query={{ urlencode($mapQuery) }}"
                                     class="fz-contact-directions"
                                     target="_blank"
                                     rel="noopener noreferrer"
@@ -169,12 +180,12 @@
                             @else
                                 <div class="fz-contact-map-empty" role="status">
                                     <div class="fz-contact-map-empty__rings" aria-hidden="true"><span></span><i></i></div>
-                                    <strong>هنوز آدرسی ثبت نشده</strong>
-                                    <p>پس از ثبت آدرس مجموعه در تنظیمات تماس پنل مدیریت، نقشه در همین بخش نمایش داده می‌شود.</p>
+                                    <strong>هنوز موقعیتی ثبت نشده</strong>
+                                    <p>پس از ثبت آدرس یا مختصات مجموعه در تنظیمات فروشگاه پنل مدیریت، نقشه در همین بخش نمایش داده می‌شود.</p>
                                 </div>
                                 <div class="fz-contact-address fz-contact-address--pending">
                                     <span class="fz-contact-address__icon" aria-hidden="true">⌖</span>
-                                    <div><span>موقعیت مجموعه</span><p>آدرس از تنظیمات واقعی فروشگاه خوانده می‌شود.</p></div>
+                                    <div><span>موقعیت مجموعه</span><p>آدرس یا مختصات از تنظیمات واقعی فروشگاه خوانده می‌شود.</p></div>
                                 </div>
                             @endif
 
