@@ -3,111 +3,16 @@
 namespace App\Http\Requests\Admin\Product;
 
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Support\Str;
+use App\Http\Requests\Admin\Product\Concerns\PreparesProductInput;
 use Illuminate\Validation\Rule;
 
 class StoreProductRequest extends FormRequest
 {
+    use PreparesProductInput;
+
     public function authorize(): bool
     {
         return true;
-    }
-
-    protected function prepareForValidation(): void
-    {
-        $installmentEnabled =
-            $this->boolean('installment_enabled');
-
-        $this->merge([
-            'price' => $this->normalizeNumericInput($this->input('price')),
-            'compare_at_price' => $this->normalizeNumericInput($this->input('compare_at_price')),
-            'slug' =>
-                $this->slug
-                    ?: Str::slug($this->name),
-
-            'stock' =>
-                $this->normalizeNumericInput($this->input('stock')) ?? 0,
-
-            'is_featured' =>
-                $this->boolean('is_featured'),
-
-            'is_new' =>
-                $this->boolean('is_new'),
-
-            'installment_enabled' =>
-                $installmentEnabled,
-
-            /*
-             * Disable installment settings completely
-             * when installment sales are disabled.
-             */
-            'installment_cash_percent' =>
-                $installmentEnabled
-                    ? ($this->installment_cash_percent ?? 50)
-                    : null,
-
-            'installment_remainder_method' =>
-                $installmentEnabled
-                    ? ($this->installment_remainder_method ?? 'cheque')
-                    : null,
-
-            'installment_cheque_count' =>
-                $installmentEnabled
-                    ? ($this->installment_cheque_count ?? 2)
-                    : null,
-
-            'installment_interval_months' =>
-                $installmentEnabled
-                    ? ($this->installment_interval_months ?? 2)
-                    : null,
-        ]);
-    }
-
-    /**
-     * Normalize Persian/Arabic digits and formatted money values
-     * before Laravel numeric validation runs.
-     */
-    private function normalizeNumericInput(mixed $value): ?string
-    {
-        if ($value === null) {
-            return null;
-        }
-
-        $value = trim((string) $value);
-
-        if ($value === '') {
-            return null;
-        }
-
-        $persian = ['۰','۱','۲','۳','۴','۵','۶','۷','۸','۹'];
-        $arabic = ['٠','١','٢','٣','٤','٥','٦','٧','٨','٩'];
-
-        $value = str_replace(
-            $persian,
-            ['0','1','2','3','4','5','6','7','8','9'],
-            $value
-        );
-
-        $value = str_replace(
-            $arabic,
-            ['0','1','2','3','4','5','6','7','8','9'],
-            $value
-        );
-
-        $value = str_replace(
-            [',', '٬', ' ', '٫'],
-            ['', '', '', '.'],
-            $value
-        );
-
-        $value = preg_replace('/[^0-9.\-]/u', '', $value) ?? '';
-
-        if (substr_count($value, '.') > 1) {
-            $parts = explode('.', $value);
-            $value = array_shift($parts) . '.' . implode('', $parts);
-        }
-
-        return $value !== '' ? $value : null;
     }
 
     public function withValidator(\Illuminate\Contracts\Validation\Validator $validator): void
@@ -214,6 +119,10 @@ class StoreProductRequest extends FormRequest
             ],
 
             'is_new' => [
+                'boolean',
+            ],
+
+            'show_in_home_gallery' => [
                 'boolean',
             ],
 
@@ -327,6 +236,7 @@ class StoreProductRequest extends FormRequest
 
             'is_featured.boolean' => 'وضعیت محصول ویژه نامعتبر است.',
             'is_new.boolean' => 'وضعیت محصول جدید نامعتبر است.',
+            'show_in_home_gallery.boolean' => 'وضعیت گالری صفحه اصلی نامعتبر است.',
 
             'installment_enabled.boolean' => 'وضعیت خرید اقساطی نامعتبر است.',
             'installment_cash_percent.integer' => 'درصد پیش‌پرداخت باید عدد صحیح باشد.',
@@ -361,6 +271,7 @@ class StoreProductRequest extends FormRequest
             'compare_at_price' => 'قیمت قبل',
             'stock' => 'موجودی',
             'status' => 'وضعیت',
+            'show_in_home_gallery' => 'گالری تصویری صفحه اصلی',
             'installment_enabled' => 'خرید اقساطی',
             'installment_cash_percent' => 'درصد پیش‌پرداخت',
             'installment_remainder_method' => 'روش تسویه',

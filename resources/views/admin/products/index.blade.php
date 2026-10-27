@@ -75,7 +75,7 @@
                 @forelse($products as $product)
 
                     @php
-                        $primaryImage = $product->primaryImage();
+                        $primaryImage = $product->images->first();
                     @endphp
 
                     <tr>

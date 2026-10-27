@@ -128,6 +128,7 @@ class ProductSeeder extends Seeder
                 'status' => $publishPreview ? 'active' : 'draft',
                 'is_featured' => $number <= 8,
                 'is_new' => $number >= 18 && $number <= 25,
+                'show_in_home_gallery' => true,
                 'meta_title' => "{$name} فرزین — مدل H" . str_pad((string) $number, 2, '0', STR_PAD_LEFT),
                 'meta_description' => 'پیش‌نمایش رکورد کاتالوگ هود فرزین؛ مشخصات نهایی و قیمت باید تأیید شوند.',
             ];
@@ -148,6 +149,7 @@ class ProductSeeder extends Seeder
                 'status' => $publishPreview ? 'active' : 'draft',
                 'is_featured' => $number <= 8,
                 'is_new' => $number >= 18 && $number <= 25,
+                'show_in_home_gallery' => true,
                 'meta_title' => "{$name} فرزین — مدل S" . str_pad((string) $number, 2, '0', STR_PAD_LEFT),
                 'meta_description' => 'پیش‌نمایش رکورد کاتالوگ سینک فرزین؛ مشخصات نهایی و قیمت باید تأیید شوند.',
             ];

@@ -7,6 +7,7 @@ use App\Models\CartItem;
 use App\Models\Category;
 use App\Models\ContactMessage;
 use App\Models\Order;
+use App\Models\Payment;
 use App\Models\Media;
 use App\Models\Product;
 use App\Models\ProductImage;
@@ -136,6 +137,11 @@ class FarzinStorefrontTest extends TestCase
                 'Admin route returned HTTP 500: ' . $url
             );
         }
+
+        $this->get(route('admin.products.edit', $product))
+            ->assertOk()
+            ->assertSee('name="show_in_home_gallery"', false)
+            ->assertSee('نمایش در گالری تصویری صفحه اصلی');
     }
 
     public function test_admin_can_choose_a_media_library_asset_as_the_primary_product_image(): void
@@ -324,6 +330,31 @@ class FarzinStorefrontTest extends TestCase
             ->assertDontSee('PREVIEW · 5 SEC');
     }
 
+    public function test_homepage_mosaic_uses_products_selected_in_the_admin_editor(): void
+    {
+        $category = $this->category(['slug' => 'homepage-mosaic-control']);
+        $product = $this->product($category, [
+            'name' => 'محصول منتخب گالری صفحه اصلی',
+            'slug' => 'selected-homepage-mosaic-product',
+            'sku' => 'FAR-HOME-MOSAIC-SELECTED',
+            'show_in_home_gallery' => true,
+        ]);
+
+        ProductImage::create([
+            'product_id' => $product->id,
+            'path' => 'https://cdn.example.test/home-mosaic-selected.webp',
+            'alt' => 'Homepage mosaic selected image',
+            'sort_order' => 0,
+            'is_primary' => true,
+        ]);
+
+        $this->get(route('home'))
+            ->assertOk()
+            ->assertSee('۱ <small>تصویر در گالری</small>', false)
+            ->assertSee('data-product-id="'.$product->id.'"', false)
+            ->assertSee('https://cdn.example.test/home-mosaic-selected.webp', false);
+    }
+
     public function test_homepage_lists_active_products_even_without_uploaded_images(): void
     {
         $category = $this->category();
@@ -434,6 +465,30 @@ class FarzinStorefrontTest extends TestCase
             ->assertDontSee('name }} | فرزین')
             ->assertDontSee("meta_description ?? ('محصولات")
             ->assertDontSee('image_url }}');
+    }
+
+    public function test_product_page_does_not_render_raw_seo_template_fragments(): void
+    {
+        $category = $this->category([
+            'name' => 'دسته تست محصول',
+            'slug' => 'product-seo-test-category',
+        ]);
+
+        $product = $this->product($category, [
+            'name' => 'هود تست متادیتای محصول',
+            'slug' => 'product-seo-raw-fragment-test',
+            'sku' => 'FAR-PRODUCT-SEO-RAW',
+        ]);
+
+        $this->get(route('product.show', $product->slug))
+            ->assertOk()
+            ->assertSee('<meta property="product:price:amount"', false)
+            ->assertSee('<script type="application/ld+json">', false)
+            ->assertSee('"@context":"https://schema.org"', false)
+            ->assertSee('"@type":"Product"', false)
+            ->assertDontSee('slug) }}"')
+            ->assertDontSee('meta_description ??')
+            ->assertDontSee('@@context');
     }
 
     public function test_shop_search_and_price_filters_exclude_unavailable_products(): void
@@ -583,8 +638,8 @@ class FarzinStorefrontTest extends TestCase
         $this->get(route('product.show', $active->slug))
             ->assertOk()
             ->assertSee($active->name)
-            ->assertSee('"@type": "Product"', false)
-            ->assertSee('"priceCurrency": "IRR"', false);
+            ->assertSee('"@type":"Product"', false)
+            ->assertSee('"priceCurrency":"IRR"', false);
 
         $this->get(route('product.show', $archived->slug))
             ->assertNotFound();
@@ -3530,6 +3585,128 @@ class FarzinStorefrontTest extends TestCase
             ])
             ->assertRedirect(route('admin.storefront-settings.edit'))
             ->assertSessionHasErrors('longitude');
+    }
+
+    public function test_failing_a_stale_payment_attempt_does_not_downgrade_an_order_that_has_paid(): void
+    {
+        $customer = $this->customer();
+        $order = $this->order($customer, [
+            'payment_status' => 'paid',
+        ]);
+
+        Payment::create([
+            'order_id' => $order->id,
+            'user_id' => $customer->id,
+            'gateway' => 'digipay',
+            'amount' => $order->total,
+            'status' => 'paid',
+            'transaction_id' => 'FAR-PAID-ATTEMPT-ONE',
+            'paid_at' => now(),
+            'metadata' => ['test' => true],
+        ]);
+
+        $staleAttempt = Payment::create([
+            'order_id' => $order->id,
+            'user_id' => $customer->id,
+            'gateway' => 'digipay',
+            'amount' => $order->total,
+            'status' => 'initiated',
+            'authority' => 'FAR-STALE-ATTEMPT-TWO',
+            'metadata' => ['test' => true],
+        ]);
+
+        $service = new class(
+            app(\App\Services\Payments\PaymentManager::class),
+            app(\App\Services\Inventory\InventoryReservationService::class)
+        ) extends \App\Services\Payments\PaymentService {
+            public function failForTest(Payment $payment): void
+            {
+                $this->markPaymentAsFailed($payment, 'stale callback');
+            }
+        };
+
+        $service->failForTest($staleAttempt);
+
+        $this->assertDatabaseHas('payments', [
+            'id' => $staleAttempt->id,
+            'status' => 'failed',
+        ]);
+        $this->assertDatabaseHas('orders', [
+            'id' => $order->id,
+            'payment_status' => 'paid',
+        ]);
+    }
+
+    public function test_gateway_initialization_cannot_reactivate_terminal_payment_attempts(): void
+    {
+        $customer = $this->customer();
+        $order = $this->order($customer);
+
+        $service = new class(
+            app(\App\Services\Payments\PaymentManager::class),
+            app(\App\Services\Inventory\InventoryReservationService::class)
+        ) extends \App\Services\Payments\PaymentService {
+            public function initiateForTest(Payment $payment): void
+            {
+                $this->markPaymentAsInitiated($payment, [
+                    'authority' => 'late-gateway-authority',
+                    'transaction_id' => 'late-gateway-transaction',
+                ]);
+            }
+        };
+
+        foreach (['failed', 'cancelled', 'refunded', 'paid'] as $status) {
+            $payment = Payment::create([
+                'order_id' => $order->id,
+                'user_id' => $customer->id,
+                'gateway' => 'digipay',
+                'amount' => $order->total,
+                'status' => $status,
+                'metadata' => ['initial_status' => $status],
+            ]);
+
+            $service->initiateForTest($payment);
+
+            $this->assertDatabaseHas('payments', [
+                'id' => $payment->id,
+                'status' => $status,
+                'authority' => null,
+                'transaction_id' => null,
+            ]);
+        }
+    }
+
+    public function test_duplicate_callback_for_a_paid_payment_is_idempotent(): void
+    {
+        $customer = $this->customer();
+        $order = $this->order($customer, ['payment_status' => 'paid']);
+        $payment = Payment::create([
+            'order_id' => $order->id,
+            'user_id' => $customer->id,
+            'gateway' => 'digipay',
+            'amount' => $order->total,
+            'status' => 'paid',
+            'transaction_id' => 'FAR-IDEMPOTENT-CALLBACK',
+            'paid_at' => now(),
+            'metadata' => ['test' => true],
+        ]);
+
+        $result = app(PaymentService::class)->handleCallback('digipay', [
+            'payment_id' => $payment->id,
+            'verified' => false,
+        ]);
+
+        $this->assertTrue($result['success']);
+        $this->assertTrue($result['data']['already_paid']);
+        $this->assertDatabaseHas('payments', [
+            'id' => $payment->id,
+            'status' => 'paid',
+            'transaction_id' => 'FAR-IDEMPOTENT-CALLBACK',
+        ]);
+        $this->assertDatabaseHas('orders', [
+            'id' => $order->id,
+            'payment_status' => 'paid',
+        ]);
     }
 
     private function category(array $attributes = []): Category

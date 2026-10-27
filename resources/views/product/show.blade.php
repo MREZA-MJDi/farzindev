@@ -170,61 +170,44 @@
 @section('og_image', $mainImage ?? '')
 
 @push('seo')
-slug) }}"
-    >
-
     @if($mainImage)
-        
-
+        <meta property="og:image:alt" content="{{ $product->name }}">
     @endif
+    <meta property="product:price:amount" content="{{ (int) round($productPrice * 10) }}">
+    <meta property="product:price:currency" content="IRR">
 
-    
+    @php
+        $productSchema = [
+            '@context' => 'https://schema.org',
+            '@type' => 'Product',
+            'name' => $product->name,
+            'description' => $pageDescription,
+            'sku' => $product->sku,
+            'url' => route('product.show', $product->slug),
+            'brand' => [
+                '@type' => 'Brand',
+                'name' => 'فرزین',
+            ],
+            'offers' => [
+                '@type' => 'Offer',
+                'url' => route('product.show', $product->slug),
+                'priceCurrency' => 'IRR',
+                // Product prices are stored in toman; schema.org expects rial.
+                'price' => (string) (int) round((float) $product->price * 10),
+                'availability' => $availability,
+            ],
+        ];
 
+        if (filled($mainImage)) {
+            $productSchema['image'] = [$mainImage];
+        }
 
-    
+        if ($product->category) {
+            $productSchema['category'] = $product->category->name;
+        }
+    @endphp
 
-
-    
-
-
-    @if($mainImage)
-        
-
-    @endif
-
-    {{-- Product Schema --}}
-    
-
-
-    
-
-
-    {{-- Product entity data for search engines --}}
-    <script type="application/ld+json">
-    {
-        "@@context": "https://schema.org",
-        "@@type": "Product",
-        "name": @json($product->name),
-        "description": @json($pageDescription),
-        "sku": @json($product->sku),
-        "url": @json(route('product.show', $product->slug)),
-        "brand": {
-            "@@type": "Brand",
-            "name": "فرزین"
-        }@if($mainImage),
-        "image": @json([$mainImage])@endif
-        @if($product->category),
-        "category": @json($product->category->name)@endif
-        @if((float) $product->price > 0),
-        "offers": {
-            "@@type": "Offer",
-            "url": @json(route('product.show', $product->slug)),
-            "priceCurrency": "IRR",
-            "price": @json((int) round((float) $product->price * 10)),
-            "availability": @json($availability)
-        }@endif
-    }
-    </script>
+    <script type="application/ld+json">{!! json_encode($productSchema, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT) !!}</script>
 @endpush
 
 @section('content')

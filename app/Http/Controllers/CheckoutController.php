@@ -225,6 +225,12 @@ class CheckoutController extends Controller
                     $validated['gateway']
                 );
 
+            if ($result['already_paid'] ?? false) {
+                return redirect()
+                    ->route('account.orders.show', $order)
+                    ->with('success', 'پرداخت سفارش در همین فاصله تأیید شد.');
+            }
+
             if (!($result['success'] ?? false)) {
                 return back()->with(
                     'error',

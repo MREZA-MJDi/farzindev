@@ -188,6 +188,29 @@ class PaymentService
 
             $payment = $payment->fresh();
 
+            if ($payment?->status === 'paid') {
+                return [
+                    'success' => true,
+                    'already_paid' => true,
+                    'payment' => $payment,
+                    'gateway' => $gateway,
+                    'redirect_url' => null,
+                    'message' => 'پرداخت در همین فاصله تأیید شده است.',
+                    'data' => [],
+                ];
+            }
+
+            if (! $payment || $payment->status !== 'initiated') {
+                return [
+                    'success' => false,
+                    'payment' => $payment,
+                    'gateway' => $gateway,
+                    'redirect_url' => null,
+                    'message' => 'این درخواست پرداخت در همین فاصله منقضی یا لغو شده است؛ وضعیت سفارش را بررسی کنید.',
+                    'data' => [],
+                ];
+            }
+
             $redirectUrl =
                 $result['payment_url']
                 ?? null;
@@ -731,43 +754,37 @@ class PaymentService
                         $payment,
                         $result
                     ) {
-                        $lockedPayment =
-                            Payment::query()
-                                ->whereKey(
-                                    $payment->id
-                                )
-                                ->lockForUpdate()
-                                ->firstOrFail();
+                        $lockedOrder = Order::query()
+                            ->whereKey($payment->order_id)
+                            ->lockForUpdate()
+                            ->first();
 
-                        if (
-                            $lockedPayment->status === 'paid'
-                        ) {
+                        if (! $lockedOrder) {
+                            return;
+                        }
+
+                        $lockedPayment = Payment::query()
+                            ->whereKey($payment->id)
+                            ->lockForUpdate()
+                            ->firstOrFail();
+
+                        if ($lockedPayment->status === 'paid') {
                             return;
                         }
 
                         $lockedPayment->update([
-                            'status' =>
-                                'cancelled',
-
-                            'metadata' =>
-                                array_merge(
-                                    $lockedPayment->metadata ?? [],
-                                    [
-                                        'cancel_response' =>
-                                            $result,
-
-                                        'cancelled_at' =>
-                                            now()->toISOString(),
-                                    ]
-                                ),
+                            'status' => 'cancelled',
+                            'metadata' => array_merge(
+                                $lockedPayment->metadata ?? [],
+                                [
+                                    'cancel_response' => $result,
+                                    'cancelled_at' => now()->toISOString(),
+                                ]
+                            ),
                         ]);
 
-                        $this->syncOrderPaymentStatus(
-                            $lockedPayment->order
-                        );
-                        $this->releaseInventoryIfNoActivePaymentAttempts(
-                            $lockedPayment->order
-                        );
+                        $this->syncOrderPaymentStatus($lockedOrder);
+                        $this->releaseInventoryIfNoActivePaymentAttempts($lockedOrder);
                     }
                 );
             }
@@ -831,40 +848,36 @@ class PaymentService
                         $payment,
                         $result
                     ) {
-                        $lockedPayment =
-                            Payment::query()
-                                ->whereKey(
-                                    $payment->id
-                                )
-                                ->lockForUpdate()
-                                ->firstOrFail();
+                        $lockedOrder = Order::query()
+                            ->whereKey($payment->order_id)
+                            ->lockForUpdate()
+                            ->first();
 
-                        if (
-                            $lockedPayment->status !== 'paid'
-                        ) {
+                        if (! $lockedOrder) {
+                            return;
+                        }
+
+                        $lockedPayment = Payment::query()
+                            ->whereKey($payment->id)
+                            ->lockForUpdate()
+                            ->firstOrFail();
+
+                        if ($lockedPayment->status !== 'paid') {
                             return;
                         }
 
                         $lockedPayment->update([
-                            'status' =>
-                                'refunded',
-
-                            'metadata' =>
-                                array_merge(
-                                    $lockedPayment->metadata ?? [],
-                                    [
-                                        'refund_response' =>
-                                            $result,
-
-                                        'refunded_at' =>
-                                            now()->toISOString(),
-                                    ]
-                                ),
+                            'status' => 'refunded',
+                            'metadata' => array_merge(
+                                $lockedPayment->metadata ?? [],
+                                [
+                                    'refund_response' => $result,
+                                    'refunded_at' => now()->toISOString(),
+                                ]
+                            ),
                         ]);
 
-                        $this->syncOrderPaymentStatus(
-                            $lockedPayment->order
-                        );
+                        $this->syncOrderPaymentStatus($lockedOrder);
                     }
                 );
             }
@@ -904,12 +917,10 @@ class PaymentService
                         ->lockForUpdate()
                         ->firstOrFail();
 
-                /*
-                 * Never change a paid payment back to initiated.
-                 */
-                if (
-                    $lockedPayment->status === 'paid'
-                ) {
+                // A gateway init response may arrive after a timeout or
+                // expiry job has already moved this attempt to a terminal state.
+                // Only the original pending attempt may become initiated.
+                if ($lockedPayment->status !== 'pending') {
                     return;
                 }
 
@@ -955,13 +966,17 @@ class PaymentService
                 $transactionId,
                 $extraMetadata
             ) {
-                $lockedPayment =
-                    Payment::query()
-                        ->whereKey(
-                            $payment->id
-                        )
-                        ->lockForUpdate()
-                        ->firstOrFail();
+                // Use one lock order for all payment-state transitions:
+                // parent order first, then the payment attempt.
+                $order = Order::query()
+                    ->whereKey($payment->order_id)
+                    ->lockForUpdate()
+                    ->firstOrFail();
+
+                $lockedPayment = Payment::query()
+                    ->whereKey($payment->id)
+                    ->lockForUpdate()
+                    ->firstOrFail();
 
                 /*
                  * Idempotency.
@@ -1013,11 +1028,6 @@ class PaymentService
                         ),
                 ]);
 
-                $order = Order::query()
-                    ->whereKey($lockedPayment->order_id)
-                    ->lockForUpdate()
-                    ->firstOrFail();
-
                 /*
                  * External gateways represent an online payment.
                  * A successful late callback reopens an expired/cancelled
@@ -1057,62 +1067,44 @@ class PaymentService
                 $message,
                 $data
             ) {
-                $lockedPayment =
-                    Payment::query()
-                        ->whereKey(
-                            $payment->id
-                        )
-                        ->lockForUpdate()
-                        ->first();
+                // Match expiry/success/cancellation lock order: order -> payment.
+                $lockedOrder = Order::query()
+                    ->whereKey($payment->order_id)
+                    ->lockForUpdate()
+                    ->first();
+
+                if (! $lockedOrder) {
+                    return;
+                }
+
+                $lockedPayment = Payment::query()
+                    ->whereKey($payment->id)
+                    ->lockForUpdate()
+                    ->first();
 
                 if (! $lockedPayment) {
                     return;
                 }
 
-                /*
-                 * Do not overwrite a successful payment.
-                 */
-                if (
-                    $lockedPayment->status === 'paid'
-                ) {
-                    return;
-                }
-
-                /*
-                 * A refunded payment stays refunded.
-                 */
-                if (
-                    $lockedPayment->status === 'refunded'
-                ) {
+                // A concurrent successful attempt or refund must not be downgraded.
+                if (in_array($lockedPayment->status, ['paid', 'refunded'], true)) {
                     return;
                 }
 
                 $lockedPayment->update([
-                    'status' =>
-                        'failed',
-
-                    'metadata' =>
-                        array_merge(
-                            $lockedPayment->metadata ?? [],
-                            [
-                                'failure_message' =>
-                                    $message,
-
-                                'failure_response' =>
-                                    $data,
-
-                                'failed_at' =>
-                                    now()->toISOString(),
-                            ]
-                        ),
+                    'status' => 'failed',
+                    'metadata' => array_merge(
+                        $lockedPayment->metadata ?? [],
+                        [
+                            'failure_message' => $message,
+                            'failure_response' => $data,
+                            'failed_at' => now()->toISOString(),
+                        ]
+                    ),
                 ]);
 
-                $this->syncOrderPaymentStatus(
-                    $lockedPayment->order
-                );
-                $this->releaseInventoryIfNoActivePaymentAttempts(
-                    $lockedPayment->order
-                );
+                $this->syncOrderPaymentStatus($lockedOrder);
+                $this->releaseInventoryIfNoActivePaymentAttempts($lockedOrder);
             }
         );
     }

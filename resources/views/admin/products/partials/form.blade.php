@@ -1157,13 +1157,7 @@
                 <label
                     class="flex cursor-pointer items-start gap-3 rounded-xl border border-[var(--admin-border)] bg-[var(--admin-surface-soft)] p-4"
                 >
-
-                    <input
-                        type="hidden"
-                        name="is_new"
-                        value="0"
-                    >
-
+                    <input type="hidden" name="is_new" value="0">
                     <input
                         type="checkbox"
                         name="is_new"
@@ -1171,20 +1165,30 @@
                         class="admin-checkbox mt-1 h-4 w-4"
                         @checked(old('is_new', $product->is_new ?? false))
                     >
-
-
                     <span>
-
-                        <span class="block text-sm font-semibold text-[var(--admin-text)]">
-                            محصول جدید
-                        </span>
-
+                        <span class="block text-sm font-semibold text-[var(--admin-text)]">محصول جدید</span>
                         <span class="mt-1 block text-xs leading-6 text-[var(--admin-muted)]">
                             برچسب «جدید» روی محصول نمایش داده می‌شود.
                         </span>
-
                     </span>
+                </label>
 
+                {{-- Homepage Mosaic Gallery --}}
+                <label class="flex cursor-pointer items-start gap-3 rounded-xl border border-[var(--admin-border)] bg-[var(--admin-surface-soft)] p-4">
+                    <input type="hidden" name="show_in_home_gallery" value="0">
+                    <input
+                        type="checkbox"
+                        name="show_in_home_gallery"
+                        value="1"
+                        class="admin-checkbox mt-1 h-4 w-4"
+                        @checked(old('show_in_home_gallery', $product->show_in_home_gallery ?? !$editing))
+                    >
+                    <span>
+                        <span class="block text-sm font-semibold text-[var(--admin-text)]">نمایش در گالری تصویری صفحه اصلی</span>
+                        <span class="mt-1 block text-xs leading-6 text-[var(--admin-muted)]">
+                            تصویر اصلی این محصول در گالری موزاییکی صفحه خانه نمایش داده می‌شود. برای نتیجه بهتر، تصویر اصلی معتبر ثبت کنید.
+                        </span>
+                    </span>
                 </label>
 
             </div>

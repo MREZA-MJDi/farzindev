@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\Cart\AddToCartRequest;
 use App\Http\Requests\Cart\UpdateCartRequest;
 use App\Models\Cart;
+use App\Models\Category;
 use App\Models\CartItem;
 use App\Models\Product;
 use App\Models\ProductVariant;
@@ -12,6 +13,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
 
@@ -153,141 +155,217 @@ class CartController extends Controller
         Product $product
     ): RedirectResponse|JsonResponse {
         $validated = $request->validated();
-
         $cart = $this->getCart($request);
+        $requestedQuantity = (int) $validated['quantity'];
 
-        $variants = $this->resolveSelectedVariants(
+        $result = DB::transaction(function () use (
+            $cart,
             $product,
-            $validated['variants'] ?? null,
-            $validated['product_variant_id'] ?? null
-        );
+            $validated,
+            $requestedQuantity
+        ): array {
+            // Serialize all mutations and checkout snapshots for the same cart.
+            $lockedCart = Cart::query()
+                ->whereKey($cart->id)
+                ->where('status', 'active')
+                ->lockForUpdate()
+                ->firstOrFail();
 
-        $availableStock = $variants->isNotEmpty()
-            ? (int) $variants->min('stock')
-            : (int) $product->stock;
+            $lockedProduct = Product::query()
+                ->whereKey($product->id)
+                ->lockForUpdate()
+                ->firstOrFail();
 
-        $quantity = (int) $validated['quantity'];
+            $lockedCategory = Category::query()
+                ->whereKey($lockedProduct->category_id)
+                ->lockForUpdate()
+                ->first();
 
-        if ($quantity > $availableStock) {
-            if ($request->expectsJson()) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'موجودی کافی نیست؛ تعداد فعلی سبد خرید را بررسی کنید.',
-                ], 422);
-            }
-
-            return back()->withErrors([
-                'quantity' => 'موجودی کافی نیست.',
-            ]);
-        }
-
-        $unitPrice = max(
-            0,
-            (float) $product->price
-            + (float) $variants->sum(
-                fn (ProductVariant $variant) =>
-                    (float) $variant->price_adjustment
-            )
-        );
-
-        $variantOptions = $variants
-            ->sortBy('type', SORT_NATURAL | SORT_FLAG_CASE)
-            ->map(fn (ProductVariant $variant) => [
-                'id' => (int) $variant->id,
-                'type' => (string) $variant->type,
-                'name' => (string) $variant->name,
-                'value' => (string) $variant->value,
-                'sku' => $variant->sku,
-                'color_hex' => $variant->color_hex,
-                'price_adjustment' => (float) $variant->price_adjustment,
-                'stock' => (int) $variant->stock,
-            ])
-            ->values()
-            ->all();
-
-        $variantKey = $this->buildVariantKey(
-            $variants,
-            $product
-        );
-
-        $primaryVariantId = $variants->first()?->id;
-
-        $item = $cart->items()
-            ->where('product_id', $product->id)
-            ->where(function ($query) use (
-                $variantKey,
-                $primaryVariantId,
-                $variants
+            if (
+                $lockedProduct->status !== 'active'
+                || ! $lockedCategory
+                || ! $lockedCategory->is_active
             ) {
-                $query->where('variant_key', $variantKey);
+                return ['error' => 'product'];
+            }
 
-                /*
-                 * Merge legacy one-variant cart rows created before the
-                 * multi-variant snapshot fields were introduced.
-                 */
-                if ($variants->count() === 1) {
-                    $query->orWhere(function ($legacy) use (
-                        $primaryVariantId
-                    ) {
-                        $legacy
-                            ->whereNull('variant_key')
-                            ->whereNull('variant_options')
-                            ->where(
-                                'product_variant_id',
-                                $primaryVariantId
-                            );
-                    });
+            // Lock active options in a stable order and re-check selections
+            // after acquiring the lock; request validation alone can be stale.
+            $currentVariants = $lockedProduct->variants()
+                ->orderBy('id')
+                ->lockForUpdate()
+                ->get();
+
+            $submittedVariants = collect($validated['variants'] ?? [])
+                ->filter(fn ($id) => filled($id))
+                ->mapWithKeys(fn ($id, $type) => [(string) $type => (int) $id]);
+
+            if (
+                $submittedVariants->isEmpty()
+                && filled($validated['product_variant_id'] ?? null)
+            ) {
+                $legacyVariant = $currentVariants->firstWhere(
+                    'id',
+                    (int) $validated['product_variant_id']
+                );
+
+                if ($legacyVariant) {
+                    $submittedVariants->put(
+                        (string) $legacyVariant->type,
+                        (int) $legacyVariant->id
+                    );
+                } else {
+                    return ['error' => 'options'];
+                }
+            }
+
+            $currentTypes = $currentVariants
+                ->pluck('type')
+                ->map(fn ($type) => (string) $type)
+                ->unique()
+                ->values();
+
+            if ($currentVariants->isEmpty()) {
+                if ($submittedVariants->isNotEmpty()) {
+                    return ['error' => 'options'];
                 }
 
-                if ($variants->isEmpty()) {
-                    $query->orWhere(function ($legacy) {
-                        $legacy
-                            ->whereNull('variant_key')
-                            ->whereNull('variant_options')
-                            ->whereNull('product_variant_id');
-                    });
+                $variants = collect();
+            } else {
+                if (
+                    $currentTypes->diff($submittedVariants->keys())->isNotEmpty()
+                    || $submittedVariants->keys()->diff($currentTypes)->isNotEmpty()
+                ) {
+                    return ['error' => 'options'];
                 }
-            })
-            ->first();
 
-        if ($item) {
-            $quantity += (int) $item->quantity;
-        }
+                $variants = $submittedVariants
+                    ->map(fn ($id, $type) => $currentVariants->first(
+                        fn (ProductVariant $variant) =>
+                            (string) $variant->type === (string) $type
+                            && (int) $variant->id === (int) $id
+                    ))
+                    ->values();
 
-        if ($quantity > $availableStock) {
+                if (
+                    $variants->count() !== $submittedVariants->count()
+                    || $variants->pluck('type')->unique()->count() !== $currentTypes->count()
+                ) {
+                    return ['error' => 'options'];
+                }
+            }
+
+            $availableStock = $variants->isNotEmpty()
+                ? (int) $variants->min('stock')
+                : (int) $lockedProduct->stock;
+
+            $variantKey = $this->buildVariantKey($variants, $lockedProduct);
+            $primaryVariantId = $variants->first()?->id;
+
+            $itemQuery = $lockedCart->items()
+                ->where('product_id', $lockedProduct->id)
+                ->where(function ($query) use (
+                    $variantKey,
+                    $primaryVariantId,
+                    $variants
+                ): void {
+                    $query->where('variant_key', $variantKey);
+
+                    // Merge legacy rows written before variant snapshots existed.
+                    if ($variants->count() === 1) {
+                        $query->orWhere(function ($legacy) use ($primaryVariantId): void {
+                            $legacy
+                                ->whereNull('variant_key')
+                                ->whereNull('variant_options')
+                                ->where('product_variant_id', $primaryVariantId);
+                        });
+                    }
+
+                    if ($variants->isEmpty()) {
+                        $query->orWhere(function ($legacy): void {
+                            $legacy
+                                ->whereNull('variant_key')
+                                ->whereNull('variant_options')
+                                ->whereNull('product_variant_id');
+                        });
+                    }
+                });
+
+            $item = $itemQuery->lockForUpdate()->first();
+            $totalQuantity = $requestedQuantity + (int) ($item?->quantity ?? 0);
+
+            if ($availableStock < 1 || $totalQuantity > $availableStock) {
+                return ['error' => 'stock'];
+            }
+
+            $unitPrice = max(
+                0,
+                (float) $lockedProduct->price
+                    + (float) $variants->sum(
+                        fn (ProductVariant $variant) => (float) $variant->price_adjustment
+                    )
+            );
+
+            $variantOptions = $variants
+                ->sortBy('type', SORT_NATURAL | SORT_FLAG_CASE)
+                ->map(fn (ProductVariant $variant) => [
+                    'id' => (int) $variant->id,
+                    'type' => (string) $variant->type,
+                    'name' => (string) $variant->name,
+                    'value' => (string) $variant->value,
+                    'sku' => $variant->sku,
+                    'color_hex' => $variant->color_hex,
+                    'price_adjustment' => (float) $variant->price_adjustment,
+                    'stock' => (int) $variant->stock,
+                ])
+                ->values()
+                ->all();
+
+            $payload = [
+                'product_id' => $lockedProduct->id,
+                'product_variant_id' => $primaryVariantId,
+                'variant_key' => $variantKey,
+                'variant_options' => $variantOptions ?: null,
+                'quantity' => $totalQuantity,
+                'unit_price' => $unitPrice,
+            ];
+
+            if ($item) {
+                $item->update($payload);
+            } else {
+                $lockedCart->items()->create($payload);
+            }
+
+            return ['cart_id' => (int) $lockedCart->id];
+        }, 3);
+
+        if (isset($result['error'])) {
+            $messages = [
+                'product' => 'این محصول یا دسته‌بندی دیگر برای خرید فعال نیست.',
+                'options' => 'گزینه‌های محصول تغییر کرده‌اند؛ صفحه را تازه کنید و گزینه‌ها را دوباره انتخاب کنید.',
+                'stock' => 'موجودی کافی نیست؛ تعداد فعلی سبد خرید را بررسی کنید.',
+            ];
+            $message = $messages[$result['error']] ?? 'افزودن محصول انجام نشد.';
+
             if ($request->expectsJson()) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'موجودی کافی نیست؛ تعداد فعلی سبد خرید را بررسی کنید.',
+                    'message' => $message,
                 ], 422);
             }
 
             return back()->withErrors([
-                'quantity' => 'موجودی کافی نیست.',
+                ($result['error'] === 'stock' ? 'quantity' : 'product') => $message,
             ]);
         }
 
-        $payload = [
-            'product_id' => $product->id,
-            'product_variant_id' => $primaryVariantId,
-            'variant_key' => $variantKey,
-            'variant_options' => $variantOptions ?: null,
-            'quantity' => $quantity,
-            'unit_price' => $unitPrice,
-        ];
-
-        if ($item) {
-            $item->update($payload);
-        } else {
-            $cart->items()->create(
-                $payload
-            );
-        }
-
-        $cart->load('items');
+        $cart = Cart::query()
+            ->with('items')
+            ->findOrFail($result['cart_id']);
 
         if ($request->expectsJson()) {
             return response()->json([
+                'success' => true,
                 'message' => 'محصول به سبد اضافه شد.',
                 'cart_count' => $cart->itemCount(),
                 'subtotal' => $cart->subtotal(),
@@ -304,101 +382,136 @@ class CartController extends Controller
         CartItem $item
     ): RedirectResponse|JsonResponse {
         $this->authorizeCartItemAccess($request, $item, 'update');
-
         $validated = $request->validated();
+        $cartId = (int) $item->cart_id;
+        $itemId = (int) $item->id;
 
-        $item->load([
-            'cart',
-            'product',
-            'variant',
-        ]);
+        return DB::transaction(function () use (
+            $request,
+            $validated,
+            $cartId,
+            $itemId
+        ): RedirectResponse|JsonResponse {
+            // Checkout also locks the cart before reading/deleting its lines.
+            $lockedCart = Cart::query()
+                ->whereKey($cartId)
+                ->where('status', 'active')
+                ->lockForUpdate()
+                ->firstOrFail();
 
-        $product = $item->product;
+            $item = CartItem::query()
+                ->whereKey($itemId)
+                ->where('cart_id', $lockedCart->id)
+                ->lockForUpdate()
+                ->firstOrFail();
 
-        if (
-            ! $product
-            || $product->status !== 'active'
-            || ! $product->category()->where('is_active', true)->exists()
-        ) {
-            return back()->withErrors([
-                'quantity' => 'این محصول یا دسته‌بندی آن دیگر برای خرید فعال نیست؛ آن را از سبد حذف کنید.',
+            $item->load([
+                'cart',
+                'product',
+                'variant',
             ]);
-        }
 
-        $selectedIds = $item->selectedVariantIds();
-        $variants = $this->resolveVariantsFromCartItem($item);
-        $currentVariants = $product->variants()
-            ->where('is_active', true)
-            ->orderBy('id')
-            ->get();
+            $product = $item->product
+                ? Product::query()
+                    ->whereKey($item->product_id)
+                    ->lockForUpdate()
+                    ->first()
+                : null;
 
-        $selectedTypes = $variants->pluck('type')->unique()->values();
-        $currentTypes = $currentVariants->pluck('type')->unique()->values();
+            $category = $product
+                ? Category::query()
+                    ->whereKey($product->category_id)
+                    ->lockForUpdate()
+                    ->first()
+                : null;
 
-        $validVariantSelection = count($selectedIds) === $variants->count()
-            && $variants->pluck('type')->count() === $selectedTypes->count()
-            && $currentTypes->diff($selectedTypes)->isEmpty()
-            && $selectedTypes->diff($currentTypes)->isEmpty();
+            if (
+                ! $product
+                || $product->status !== 'active'
+                || ! $category
+                || ! $category->is_active
+            ) {
+                return back()->withErrors([
+                    'quantity' => 'این محصول یا دسته‌بندی آن دیگر برای خرید فعال نیست؛ آن را از سبد حذف کنید.',
+                ]);
+            }
 
-        if (! $validVariantSelection) {
-            return back()->withErrors([
-                'quantity' => 'گزینه‌های این محصول تغییر کرده‌اند؛ آن را از سبد حذف و با گزینه‌های فعلی دوباره اضافه کنید.',
+            $item->setRelation('product', $product);
+
+            $selectedIds = $item->selectedVariantIds();
+            $variants = $this->resolveVariantsFromCartItem($item);
+            $currentVariants = $product->variants()
+                ->where('is_active', true)
+                ->orderBy('id')
+                ->lockForUpdate()
+                ->get();
+
+            $selectedTypes = $variants->pluck('type')->unique()->values();
+            $currentTypes = $currentVariants->pluck('type')->unique()->values();
+
+            $validVariantSelection = count($selectedIds) === $variants->count()
+                && $variants->pluck('type')->count() === $selectedTypes->count()
+                && $currentTypes->diff($selectedTypes)->isEmpty()
+                && $selectedTypes->diff($currentTypes)->isEmpty();
+
+            if (! $validVariantSelection) {
+                return back()->withErrors([
+                    'quantity' => 'گزینه‌های این محصول تغییر کرده‌اند؛ آن را از سبد حذف و با گزینه‌های فعلی دوباره اضافه کنید.',
+                ]);
+            }
+
+            $stock = $variants->isNotEmpty()
+                ? (int) $variants->min('stock')
+                : (int) $product->stock;
+
+            if ((int) $validated['quantity'] > $stock) {
+                return back()->withErrors([
+                    'quantity' => 'موجودی کافی نیست.',
+                ]);
+            }
+
+            $unitPrice = max(
+                0,
+                (float) $product->price
+                    + (float) $variants->sum(
+                        fn (ProductVariant $variant) => (float) $variant->price_adjustment
+                    )
+            );
+
+            $variantOptions = $variants
+                ->sortBy('type', SORT_NATURAL | SORT_FLAG_CASE)
+                ->map(fn (ProductVariant $variant) => [
+                    'id' => (int) $variant->id,
+                    'type' => (string) $variant->type,
+                    'name' => (string) $variant->name,
+                    'value' => (string) $variant->value,
+                    'sku' => $variant->sku,
+                    'color_hex' => $variant->color_hex,
+                    'price_adjustment' => (float) $variant->price_adjustment,
+                    'stock' => (int) $variant->stock,
+                ])
+                ->values()
+                ->all();
+
+            $item->update([
+                'quantity' => (int) $validated['quantity'],
+                'unit_price' => $unitPrice,
+                'variant_options' => $variantOptions ?: null,
             ]);
-        }
 
-        $stock = $variants->isNotEmpty()
-            ? (int) $variants->min('stock')
-            : (int) $product->stock;
+            $cart = $lockedCart->fresh('items');
 
-        if ((int) $validated['quantity'] > $stock) {
-            return back()->withErrors([
-                'quantity' => 'موجودی کافی نیست.',
-            ]);
-        }
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'سبد به‌روزرسانی شد.',
+                    'cart_count' => $cart->itemCount(),
+                    'subtotal' => $cart->subtotal(),
+                ]);
+            }
 
-        $unitPrice = max(
-            0,
-            (float) $product->price
-            + (float) $variants->sum(
-                fn (ProductVariant $variant) => (float) $variant->price_adjustment
-            )
-        );
-
-        $variantOptions = $variants
-            ->sortBy('type', SORT_NATURAL | SORT_FLAG_CASE)
-            ->map(fn (ProductVariant $variant) => [
-                'id' => (int) $variant->id,
-                'type' => (string) $variant->type,
-                'name' => (string) $variant->name,
-                'value' => (string) $variant->value,
-                'sku' => $variant->sku,
-                'color_hex' => $variant->color_hex,
-                'price_adjustment' => (float) $variant->price_adjustment,
-                'stock' => (int) $variant->stock,
-            ])
-            ->values()
-            ->all();
-
-        $item->update([
-            'quantity' => (int) $validated['quantity'],
-            'unit_price' => $unitPrice,
-            'variant_options' => $variantOptions ?: null,
-        ]);
-
-        $cart = $item->cart->fresh('items');
-
-        if ($request->expectsJson()) {
-            return response()->json([
-                'message' => 'سبد به‌روزرسانی شد.',
-                'cart_count' => $cart->itemCount(),
-                'subtotal' => $cart->subtotal(),
-            ]);
-        }
-
-        return back()->with(
-            'success',
-            'سبد خرید به‌روزرسانی شد.'
-        );
+            return back()->with('success', 'سبد خرید به‌روزرسانی شد.');
+        }, 3);
     }
 
     public function remove(
@@ -406,25 +519,37 @@ class CartController extends Controller
         CartItem $item
     ): RedirectResponse|JsonResponse {
         $this->authorizeCartItemAccess($request, $item, 'delete');
+        $cartId = (int) $item->cart_id;
+        $itemId = (int) $item->id;
 
-        $cart = $item->cart;
+        $cart = DB::transaction(function () use ($cartId, $itemId): Cart {
+            $lockedCart = Cart::query()
+                ->whereKey($cartId)
+                ->where('status', 'active')
+                ->lockForUpdate()
+                ->firstOrFail();
 
-        $item->delete();
+            $lockedItem = CartItem::query()
+                ->whereKey($itemId)
+                ->where('cart_id', $lockedCart->id)
+                ->lockForUpdate()
+                ->firstOrFail();
+
+            $lockedItem->delete();
+
+            return $lockedCart->fresh('items');
+        }, 3);
 
         if ($request->expectsJson()) {
-            $cart = $cart->fresh('items');
-
             return response()->json([
+                'success' => true,
                 'message' => 'محصول از سبد حذف شد.',
                 'cart_count' => $cart->itemCount(),
                 'subtotal' => $cart->subtotal(),
             ]);
         }
 
-        return back()->with(
-            'success',
-            'محصول از سبد حذف شد.'
-        );
+        return back()->with('success', 'محصول از سبد حذف شد.');
     }
 
     public function clear(
@@ -432,20 +557,26 @@ class CartController extends Controller
     ): RedirectResponse|JsonResponse {
         $cart = $this->getCart($request);
 
-        $cart->items()->delete();
+        DB::transaction(function () use ($cart): void {
+            $lockedCart = Cart::query()
+                ->whereKey($cart->id)
+                ->where('status', 'active')
+                ->lockForUpdate()
+                ->firstOrFail();
+
+            $lockedCart->items()->delete();
+        }, 3);
 
         if ($request->expectsJson()) {
             return response()->json([
+                'success' => true,
                 'message' => 'سبد خرید خالی شد.',
                 'cart_count' => 0,
                 'subtotal' => 0,
             ]);
         }
 
-        return back()->with(
-            'success',
-            'سبد خرید خالی شد.'
-        );
+        return back()->with('success', 'سبد خرید خالی شد.');
     }
 
     /**
