@@ -121,6 +121,121 @@ class SeoSettings
         return rtrim(implode("\n", $lines)) . "\n";
     }
 
+    /**
+     * @return array<int, array{type: string, key: string, content: string}>
+     */
+    public function customMetaTags(): array
+    {
+        $rows = $this->decodeStoredList($this->all()['seo_custom_meta_tags'] ?? '[]');
+        $reserved = [
+            'name' => [
+                'description', 'keywords', 'robots', 'google-site-verification',
+                'msvalidate.01', 'viewport', 'referrer', 'twitter:title', 'twitter:description',
+                'twitter:card', 'twitter:image', 'twitter:site',
+            ],
+            'property' => [
+                'og:type', 'og:site_name', 'og:title', 'og:description', 'og:url', 'og:image',
+            ],
+        ];
+        $tags = [];
+
+        foreach ($rows as $row) {
+            $type = strtolower(trim((string) ($row['type'] ?? '')));
+            $key = trim((string) ($row['key'] ?? ''));
+            $content = trim((string) ($row['content'] ?? ''));
+
+            if (
+                ! in_array($type, ['name', 'property'], true)
+                || $key === ''
+                || $content === ''
+                || ! preg_match('/^[A-Za-z][A-Za-z0-9:._-]{0,99}$/D', $key)
+                || in_array(strtolower($key), $reserved[$type], true)
+            ) {
+                continue;
+            }
+
+            $tags[] = ['type' => $type, 'key' => $key, 'content' => $content];
+        }
+
+        return $tags;
+    }
+
+    /**
+     * @return array<int, array{rel: string, href: string, hreflang: string, type: string, as: string, crossorigin: string}>
+     */
+    public function customLinkTags(): array
+    {
+        $rows = $this->decodeStoredList($this->all()['seo_custom_link_tags'] ?? '[]');
+        $allowedRels = [
+            'alternate', 'apple-touch-icon', 'author', 'dns-prefetch', 'help', 'icon',
+            'license', 'manifest', 'mask-icon', 'modulepreload', 'preconnect', 'prefetch',
+            'preload', 'stylesheet',
+        ];
+        $allowedAs = ['audio', 'document', 'embed', 'fetch', 'font', 'image', 'object', 'script', 'style', 'track', 'video', 'worker'];
+        $tags = [];
+
+        foreach ($rows as $row) {
+            $rel = strtolower(trim((string) ($row['rel'] ?? '')));
+            $href = trim((string) ($row['href'] ?? ''));
+            $hreflang = trim((string) ($row['hreflang'] ?? ''));
+            $type = trim((string) ($row['type'] ?? ''));
+            $as = strtolower(trim((string) ($row['as'] ?? '')));
+            $crossorigin = strtolower(trim((string) ($row['crossorigin'] ?? '')));
+
+            if (
+                $href === ''
+                || ! in_array($rel, $allowedRels, true)
+                || ! $this->isSafeCustomHref($href)
+                || ($hreflang !== '' && ! preg_match('/^[A-Za-z]{2,3}(?:-[A-Za-z0-9]{2,8})*$/D', $hreflang))
+                || ($type !== '' && ! preg_match('/^[A-Za-z0-9.+\/-]{1,100}$/D', $type))
+                || ($as !== '' && (! in_array($as, $allowedAs, true) || ! in_array($rel, ['preload', 'modulepreload'], true)))
+                || ($crossorigin !== '' && ! in_array($crossorigin, ['anonymous', 'use-credentials'], true))
+            ) {
+                continue;
+            }
+
+            $tags[] = [
+                'rel' => $rel,
+                'href' => $href,
+                'hreflang' => $hreflang,
+                'type' => $type,
+                'as' => $as,
+                'crossorigin' => $crossorigin,
+            ];
+        }
+
+        return $tags;
+    }
+
+    /**
+     * @return array<int, array<string, mixed>>
+     */
+    private function decodeStoredList(?string $value): array
+    {
+        $decoded = json_decode((string) $value, true);
+
+        if (! is_array($decoded)) {
+            return [];
+        }
+
+        return array_values(array_filter($decoded, 'is_array'));
+    }
+
+    private function isSafeCustomHref(string $href): bool
+    {
+        if ($href === '' || preg_match('/[\x00-\x20]/', $href) || str_contains($href, chr(92))) {
+            return false;
+        }
+
+        if (filter_var($href, FILTER_VALIDATE_URL)) {
+            return in_array(strtolower((string) parse_url($href, PHP_URL_SCHEME)), ['http', 'https'], true);
+        }
+
+        return str_starts_with($href, '/')
+            && ! str_starts_with($href, '//')
+            && ! preg_match('/[\x00-\x1F]/', $href);
+    }
+
     public function clearCache(): void
     {
         Cache::forget(self::CACHE_KEY);
@@ -141,6 +256,8 @@ class SeoSettings
             'seo_default_title' => 'خرید هود و سینک آشپزخانه | فرزین',
             'seo_default_description' => 'خرید هود و سینک آشپزخانه از فرزین؛ مشخصات محصولات، مدل‌ها و گزینه‌های موجود را بررسی و مقایسه کنید.',
             'seo_default_keywords' => 'خرید هود آشپزخانه، خرید سینک ظرفشویی، هود فرزین، سینک فرزین، تجهیزات آشپزخانه',
+            'seo_custom_meta_tags' => '[]',
+            'seo_custom_link_tags' => '[]',
             'seo_default_og_image' => null,
             'seo_development_mode' => '1',
             'seo_robots_noindex' => '0',
