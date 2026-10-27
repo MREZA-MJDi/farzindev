@@ -639,7 +639,7 @@ class FarzinStorefrontTest extends TestCase
             ->assertOk()
             ->assertSee($active->name)
             ->assertSee('"@type":"Product"', false)
-            ->assertSee('"priceCurrency": "IRR"', false);
+            ->assertSee('"priceCurrency":"IRR"', false);
 
         $this->get(route('product.show', $archived->slug))
             ->assertNotFound();
