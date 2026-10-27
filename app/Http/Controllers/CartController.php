@@ -355,7 +355,7 @@ class CartController extends Controller
             }
 
             return back()->withErrors([
-                $result['error'] === 'stock' ? 'quantity' : 'product' => $message,
+                ($result['error'] === 'stock' ? 'quantity' : 'product') => $message,
             ]);
         }
 
