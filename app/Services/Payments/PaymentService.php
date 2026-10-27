@@ -754,26 +754,21 @@ class PaymentService
                         $payment,
                         $result
                     ) {
-                        $lockedPayment =
-                            Payment::query()
-                                ->whereKey(
-                                    $payment->id
-                                )
-                                ->lockForUpdate()
-                                ->firstOrFail();
-
-                        if (
-                            $lockedPayment->status === 'paid'
-                        ) {
-                            return;
-                        }
-
                         $lockedOrder = Order::query()
-                            ->whereKey($lockedPayment->order_id)
+                            ->whereKey($payment->order_id)
                             ->lockForUpdate()
                             ->first();
 
                         if (! $lockedOrder) {
+                            return;
+                        }
+
+                        $lockedPayment = Payment::query()
+                            ->whereKey($payment->id)
+                            ->lockForUpdate()
+                            ->firstOrFail();
+
+                        if ($lockedPayment->status === 'paid') {
                             return;
                         }
 
@@ -853,24 +848,21 @@ class PaymentService
                         $payment,
                         $result
                     ) {
-                        $lockedPayment =
-                            Payment::query()
-                                ->whereKey(
-                                    $payment->id
-                                )
-                                ->lockForUpdate()
-                                ->firstOrFail();
-
-                        if ($lockedPayment->status !== 'paid') {
-                            return;
-                        }
-
                         $lockedOrder = Order::query()
-                            ->whereKey($lockedPayment->order_id)
+                            ->whereKey($payment->order_id)
                             ->lockForUpdate()
                             ->first();
 
                         if (! $lockedOrder) {
+                            return;
+                        }
+
+                        $lockedPayment = Payment::query()
+                            ->whereKey($payment->id)
+                            ->lockForUpdate()
+                            ->firstOrFail();
+
+                        if ($lockedPayment->status !== 'paid') {
                             return;
                         }
 
@@ -974,13 +966,17 @@ class PaymentService
                 $transactionId,
                 $extraMetadata
             ) {
-                $lockedPayment =
-                    Payment::query()
-                        ->whereKey(
-                            $payment->id
-                        )
-                        ->lockForUpdate()
-                        ->firstOrFail();
+                // Use one lock order for all payment-state transitions:
+                // parent order first, then the payment attempt.
+                $order = Order::query()
+                    ->whereKey($payment->order_id)
+                    ->lockForUpdate()
+                    ->firstOrFail();
+
+                $lockedPayment = Payment::query()
+                    ->whereKey($payment->id)
+                    ->lockForUpdate()
+                    ->firstOrFail();
 
                 /*
                  * Idempotency.
@@ -1032,11 +1028,6 @@ class PaymentService
                         ),
                 ]);
 
-                $order = Order::query()
-                    ->whereKey($lockedPayment->order_id)
-                    ->lockForUpdate()
-                    ->firstOrFail();
-
                 /*
                  * External gateways represent an online payment.
                  * A successful late callback reopens an expired/cancelled
@@ -1076,45 +1067,27 @@ class PaymentService
                 $message,
                 $data
             ) {
-                $lockedPayment =
-                    Payment::query()
-                        ->whereKey(
-                            $payment->id
-                        )
-                        ->lockForUpdate()
-                        ->first();
+                // Match expiry/success/cancellation lock order: order -> payment.
+                $lockedOrder = Order::query()
+                    ->whereKey($payment->order_id)
+                    ->lockForUpdate()
+                    ->first();
+
+                if (! $lockedOrder) {
+                    return;
+                }
+
+                $lockedPayment = Payment::query()
+                    ->whereKey($payment->id)
+                    ->lockForUpdate()
+                    ->first();
 
                 if (! $lockedPayment) {
                     return;
                 }
 
-                /*
-                 * Do not overwrite a successful payment.
-                 */
-                if (
-                    $lockedPayment->status === 'paid'
-                ) {
-                    return;
-                }
-
-                /*
-                 * A refunded payment stays refunded.
-                 */
-                if (
-                    $lockedPayment->status === 'refunded'
-                ) {
-                    return;
-                }
-
-                // Use the same lock order as the success path (payment -> order).
-                // This prevents a late failure callback from racing with another
-                // attempt that has already paid the parent order.
-                $lockedOrder = Order::query()
-                    ->whereKey($lockedPayment->order_id)
-                    ->lockForUpdate()
-                    ->first();
-
-                if (! $lockedOrder) {
+                // A concurrent successful attempt or refund must not be downgraded.
+                if (in_array($lockedPayment->status, ['paid', 'refunded'], true)) {
                     return;
                 }
 
