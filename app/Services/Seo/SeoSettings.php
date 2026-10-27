@@ -130,7 +130,7 @@ class SeoSettings
         $reserved = [
             'name' => [
                 'description', 'keywords', 'robots', 'google-site-verification',
-                'msvalidate.01', 'twitter:title', 'twitter:description',
+                'msvalidate.01', 'viewport', 'referrer', 'twitter:title', 'twitter:description',
                 'twitter:card', 'twitter:image', 'twitter:site',
             ],
             'property' => [
@@ -146,8 +146,9 @@ class SeoSettings
 
             if (
                 ! in_array($type, ['name', 'property'], true)
-                || ! preg_match('/^[A-Za-z][A-Za-z0-9:._-]{0,99}$/D', $key)
+                || $key === ''
                 || $content === ''
+                || ! preg_match('/^[A-Za-z][A-Za-z0-9:._-]{0,99}$/D', $key)
                 || in_array(strtolower($key), $reserved[$type], true)
             ) {
                 continue;
@@ -182,7 +183,8 @@ class SeoSettings
             $crossorigin = strtolower(trim((string) ($row['crossorigin'] ?? '')));
 
             if (
-                ! in_array($rel, $allowedRels, true)
+                $href === ''
+                || ! in_array($rel, $allowedRels, true)
                 || ! $this->isSafeCustomHref($href)
                 || ($hreflang !== '' && ! preg_match('/^[A-Za-z]{2,3}(?:-[A-Za-z0-9]{2,8})*$/D', $hreflang))
                 || ($type !== '' && ! preg_match('/^[A-Za-z0-9.+\/-]{1,100}$/D', $type))
