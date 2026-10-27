@@ -106,6 +106,114 @@ class SeoSettingsTest extends TestCase
             ->assertSee('name="robots" content="noindex, follow, max-snippet:-1, max-video-preview:-1, max-image-preview:large"', false);
     }
 
+    public function test_admin_can_add_custom_meta_and_link_tags_and_render_them_on_the_storefront(): void
+    {
+        $admin = User::factory()->create(['role' => 'admin']);
+
+        $this->actingAs($admin)
+            ->put(route('admin.seo-settings.update'), [
+                'seo_canonical_base_url' => 'https://farajihome.com',
+                'seo_site_name' => 'فرزین',
+                'seo_default_title' => 'عنوان SEO',
+                'seo_default_description' => 'توضیحات سایت',
+                'seo_default_keywords' => 'هود، سینک',
+                'seo_robots_txt_rules' => "User-agent: *\nAllow: /",
+                'seo_sitemap_enabled' => '1',
+                'seo_custom_meta_tags' => [
+                    ['type' => 'name', 'key' => 'theme-color', 'content' => '#f5f1e9'],
+                    ['type' => 'property', 'key' => 'og:locale:alternate', 'content' => 'fa_IR'],
+                    // Empty default rows should be ignored rather than blocking Save.
+                    ['type' => 'name', 'key' => '', 'content' => ''],
+                ],
+                'seo_custom_link_tags' => [
+                    [
+                        'rel' => 'alternate',
+                        'href' => 'https://farajihome.com/en',
+                        'hreflang' => 'en',
+                        'type' => '',
+                        'as' => '',
+                        'crossorigin' => '',
+                    ],
+                    [
+                        'rel' => 'preconnect',
+                        'href' => 'https://fonts.gstatic.com',
+                        'hreflang' => '',
+                        'type' => '',
+                        'as' => '',
+                        'crossorigin' => 'anonymous',
+                    ],
+                    [
+                        'rel' => 'alternate',
+                        'href' => '',
+                        'hreflang' => '',
+                        'type' => '',
+                        'as' => '',
+                        'crossorigin' => '',
+                    ],
+                ],
+            ])
+            ->assertRedirect(route('admin.seo-settings.edit'))
+            ->assertSessionHasNoErrors();
+
+        $storedMetaTags = json_decode(
+            (string) StorefrontSetting::query()->where('key', 'seo_custom_meta_tags')->value('value'),
+            true
+        );
+        $storedLinkTags = json_decode(
+            (string) StorefrontSetting::query()->where('key', 'seo_custom_link_tags')->value('value'),
+            true
+        );
+
+        $this->assertSame([
+            ['type' => 'name', 'key' => 'theme-color', 'content' => '#f5f1e9'],
+            ['type' => 'property', 'key' => 'og:locale:alternate', 'content' => 'fa_IR'],
+        ], $storedMetaTags);
+        $this->assertCount(2, $storedLinkTags);
+
+        app(SeoSettings::class)->clearCache();
+
+        $this->get(route('home'))
+            ->assertOk()
+            ->assertSee('<meta name="theme-color" content="#f5f1e9">', false)
+            ->assertSee('<meta property="og:locale:alternate" content="fa_IR">', false)
+            ->assertSee('<link rel="alternate" href="https://farajihome.com/en"', false)
+            ->assertSee('hreflang="en"', false)
+            ->assertSee('<link rel="preconnect" href="https://fonts.gstatic.com"', false)
+            ->assertSee('crossorigin="anonymous"', false);
+
+        $this->actingAs($admin)
+            ->get(route('admin.seo-settings.edit'))
+            ->assertOk()
+            ->assertSee('افزودن تگ')
+            ->assertSee('افزودن لینک')
+            ->assertSee('theme-color');
+    }
+
+    public function test_custom_link_tags_reject_javascript_urls(): void
+    {
+        $admin = User::factory()->create(['role' => 'admin']);
+
+        $this->actingAs($admin)
+            ->from(route('admin.seo-settings.edit'))
+            ->put(route('admin.seo-settings.update'), [
+                'seo_canonical_base_url' => 'https://farajihome.com',
+                'seo_site_name' => 'فرزین',
+                'seo_default_title' => 'عنوان SEO',
+                'seo_default_description' => 'توضیحات سایت',
+                'seo_default_keywords' => '',
+                'seo_robots_txt_rules' => "User-agent: *\nAllow: /",
+                'seo_custom_link_tags' => [
+                    ['rel' => 'alternate', 'href' => 'javascript:alert(1)'],
+                ],
+            ])
+            ->assertRedirect(route('admin.seo-settings.edit'))
+            ->assertSessionHasErrors('seo_custom_link_tags');
+
+        $this->assertDatabaseMissing('storefront_settings', [
+            'key' => 'seo_custom_link_tags',
+        ]);
+    }
+
     public function test_seo_boolean_settings_render_zero_values_as_unchecked(): void
     {
         $admin = User::factory()->create(['role' => 'admin']);
