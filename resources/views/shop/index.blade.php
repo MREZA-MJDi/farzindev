@@ -32,7 +32,7 @@
                     </nav>
 
                     @if (!empty($shopBanner['image_url']))
-                        <div class="farzin-shop-banner__image relative mt-6 aspect-[16/5] min-h-[220px] overflow-hidden rounded-[2rem] bg-[var(--livora-ink)]" data-farzin-reveal>
+                        <div class="farzin-shop-banner__image relative mt-6 aspect-[16/5] min-h-[220px] overflow-hidden rounded-[2rem] bg-[var(--livora-ink)]">
                             <img
                                 src="{{ $shopBanner['image_url'] }}"
                                 alt="{{ $shopBanner['title'] }}"
@@ -53,7 +53,7 @@
                             </div>
                         </div>
                     @else
-                        <div class="mt-6 flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between" data-farzin-reveal>
+                        <div class="mt-6 flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
                             <div>
                                 <p class="text-[10px] font-medium uppercase tracking-[0.22em] text-[var(--livora-accent)]">FARZIN / CATALOG</p>
                                 <h1 class="mt-3 text-3xl font-semibold tracking-tight sm:text-4xl">فروشگاه فرزین</h1>
@@ -331,6 +331,7 @@
 
                                     <x-product.card
                                         :product="$product"
+                                        :reveal="false"
                                     />
 
                                 @endforeach
