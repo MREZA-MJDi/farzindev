@@ -9,7 +9,6 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
@@ -303,6 +302,12 @@ class SeoSettingsController extends Controller
                 ]);
             }
 
+            if ($rel === 'preload' && $as === '') {
+                throw ValidationException::withMessages([
+                    'seo_custom_link_tags' => 'برای rel=preload باید نوع منبع (as) را مشخص کنید.',
+                ]);
+            }
+
             if ($crossorigin !== '' && ! in_array($crossorigin, ['anonymous', 'use-credentials'], true)) {
                 throw ValidationException::withMessages([
                     'seo_custom_link_tags' => 'مقدار crossorigin معتبر نیست.',
@@ -332,7 +337,7 @@ class SeoSettingsController extends Controller
 
     private function isSafeCustomLinkHref(string $href): bool
     {
-        if ($href === '' || preg_match('/[\x00-\x20\\\\]/', $href)) {
+        if ($href === '' || preg_match('/[\x00-\x20]/', $href) || str_contains($href, chr(92))) {
             return false;
         }
 
@@ -342,7 +347,6 @@ class SeoSettingsController extends Controller
 
         return str_starts_with($href, '/')
             && ! str_starts_with($href, '//')
-            && ! str_contains($href, '\\\\')
             && ! preg_match('/[\x00-\x1F]/', $href);
     }
 
