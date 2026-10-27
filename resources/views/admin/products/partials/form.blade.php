@@ -141,6 +141,26 @@
                         <p role="alert" class="mt-2 text-xs text-red-600">{{ $message }}</p>
                     @enderror
                 </details>
+                <script>
+                    (() => {
+                        const root = document.currentScript?.closest('.admin-card') || document;
+                        const upload = root.querySelector('#image');
+                        const mediaChoices = root.querySelectorAll('input[name="primary_media_id"]');
+
+                        upload?.addEventListener('change', () => {
+                            if (!upload.files?.length) return;
+                            mediaChoices.forEach((choice) => { choice.checked = false; });
+                        });
+
+                        mediaChoices.forEach((choice) => {
+                            choice.addEventListener('change', () => {
+                                if (!choice.checked || !upload?.files?.length) return;
+                                upload.value = '';
+                                upload.dispatchEvent(new Event('change', { bubbles: true }));
+                            });
+                        });
+                    })();
+                </script>
             @endif
 
             <div data-image-editor-panel hidden class="mt-5 space-y-4 rounded-2xl border border-[var(--admin-border)] bg-[var(--admin-surface-soft)] p-4">
