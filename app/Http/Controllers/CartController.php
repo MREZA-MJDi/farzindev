@@ -176,9 +176,15 @@ class CartController extends Controller
                 ->lockForUpdate()
                 ->firstOrFail();
 
+            $lockedCategory = Category::query()
+                ->whereKey($lockedProduct->category_id)
+                ->lockForUpdate()
+                ->first();
+
             if (
                 $lockedProduct->status !== 'active'
-                || ! $lockedProduct->category()->where('is_active', true)->exists()
+                || ! $lockedCategory
+                || ! $lockedCategory->is_active
             ) {
                 return ['error' => 'product'];
             }
@@ -405,17 +411,32 @@ class CartController extends Controller
                 'variant',
             ]);
 
-            $product = $item->product;
+            $product = $item->product
+                ? Product::query()
+                    ->whereKey($item->product_id)
+                    ->lockForUpdate()
+                    ->first()
+                : null;
+
+            $category = $product
+                ? Category::query()
+                    ->whereKey($product->category_id)
+                    ->lockForUpdate()
+                    ->first()
+                : null;
 
             if (
                 ! $product
                 || $product->status !== 'active'
-                || ! $product->category()->where('is_active', true)->exists()
+                || ! $category
+                || ! $category->is_active
             ) {
                 return back()->withErrors([
                     'quantity' => 'این محصول یا دسته‌بندی آن دیگر برای خرید فعال نیست؛ آن را از سبد حذف کنید.',
                 ]);
             }
+
+            $item->setRelation('product', $product);
 
             $selectedIds = $item->selectedVariantIds();
             $variants = $this->resolveVariantsFromCartItem($item);
