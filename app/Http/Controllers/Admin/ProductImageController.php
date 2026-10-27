@@ -7,7 +7,6 @@ use App\Http\Requests\Admin\ProductImage\StoreProductImageRequest;
 use App\Http\Requests\Admin\ProductImage\UpdateProductImageRequest;
 use App\Models\Product;
 use App\Models\ProductImage;
-use App\Models\Media;
 use App\Services\Catalog\ProductMediaLibrary;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -243,6 +242,7 @@ class ProductImageController extends Controller
 
         $oldProductId = $productImage->product_id;
         $oldPath = $productImage->path;
+        $oldMediaId = $productImage->media_id;
         $oldWasPrimary = (bool) $productImage->is_primary;
 
         $newPath = null;
@@ -262,6 +262,9 @@ class ProductImageController extends Controller
             }
 
             $data['path'] = $newPath;
+            // The replacement upload is now product-owned rather than a shared
+            // Media Library asset.
+            $data['media_id'] = null;
         }
 
         try {
@@ -320,6 +323,7 @@ class ProductImageController extends Controller
 
         if (
             $newPath !== null
+            && $oldMediaId === null
             && $oldPath
             && $oldPath !== $newPath
             && ! Str::startsWith($oldPath, ['http://', 'https://', '//'])
@@ -345,6 +349,7 @@ class ProductImageController extends Controller
 
         $productId = $productImage->product_id;
         $path = $productImage->path;
+        $isMediaAsset = $productImage->media_id !== null;
         $wasPrimary = (bool) $productImage->is_primary;
 
         DB::transaction(function () use (
@@ -368,7 +373,8 @@ class ProductImageController extends Controller
         });
 
         if (
-            $path
+            ! $isMediaAsset
+            && $path
             && ! Str::startsWith($path, ['http://', 'https://', '//'])
         ) {
             Storage::disk('public')->delete($path);
