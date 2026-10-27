@@ -1087,32 +1087,32 @@ class PaymentService
                     return;
                 }
 
+                // Use the same lock order as the success path (payment -> order).
+                // This prevents a late failure callback from racing with another
+                // attempt that has already paid the parent order.
+                $lockedOrder = Order::query()
+                    ->whereKey($lockedPayment->order_id)
+                    ->lockForUpdate()
+                    ->first();
+
+                if (! $lockedOrder) {
+                    return;
+                }
+
                 $lockedPayment->update([
-                    'status' =>
-                        'failed',
-
-                    'metadata' =>
-                        array_merge(
-                            $lockedPayment->metadata ?? [],
-                            [
-                                'failure_message' =>
-                                    $message,
-
-                                'failure_response' =>
-                                    $data,
-
-                                'failed_at' =>
-                                    now()->toISOString(),
-                            ]
-                        ),
+                    'status' => 'failed',
+                    'metadata' => array_merge(
+                        $lockedPayment->metadata ?? [],
+                        [
+                            'failure_message' => $message,
+                            'failure_response' => $data,
+                            'failed_at' => now()->toISOString(),
+                        ]
+                    ),
                 ]);
 
-                $this->syncOrderPaymentStatus(
-                    $lockedPayment->order
-                );
-                $this->releaseInventoryIfNoActivePaymentAttempts(
-                    $lockedPayment->order
-                );
+                $this->syncOrderPaymentStatus($lockedOrder);
+                $this->releaseInventoryIfNoActivePaymentAttempts($lockedOrder);
             }
         );
     }
