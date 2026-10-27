@@ -9,6 +9,7 @@ use App\Models\Category;
 use App\Models\Product;
 use App\Models\ProductImage;
 use App\Models\Media;
+use App\Services\Catalog\ProductMediaLibrary;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
@@ -38,18 +39,26 @@ class ProductController extends Controller
         $categories = Category::query()
             ->orderBy('name')
             ->get();
+        $mediaImages = Media::query()
+            ->whereIn('mime_type', ['image/jpeg', 'image/png', 'image/webp'])
+            ->latest('id')
+            ->limit(60)
+            ->get();
 
-        return view('admin.products.create', compact('categories'));
+        return view('admin.products.create', compact('categories', 'mediaImages'));
     }
 
     /**
      * Store a newly created product.
      */
-    public function store(StoreProductRequest $request): RedirectResponse
-    {
+    public function store(
+        StoreProductRequest $request,
+        ProductMediaLibrary $mediaLibrary
+    ): RedirectResponse {
         $data = $request->validated();
         $uploadedImage = $request->file('image');
-        unset($data['image']);
+        $primaryMediaId = $data['primary_media_id'] ?? null;
+        unset($data['image'], $data['primary_media_id']);
 
         $newPath = null;
 
@@ -66,17 +75,24 @@ class ProductController extends Controller
         }
 
         try {
-            $product = DB::transaction(function () use ($data, $newPath): Product {
+            $product = DB::transaction(function () use ($data, $newPath, $primaryMediaId, $mediaLibrary): Product {
                 $product = Product::create($data);
 
                 if ($newPath !== null) {
                     ProductImage::create([
                         'product_id' => $product->id,
+                        'media_id' => null,
                         'path' => $newPath,
                         'alt' => $product->name,
                         'sort_order' => 0,
                         'is_primary' => true,
                     ]);
+                } elseif ($primaryMediaId !== null) {
+                    $mediaLibrary->attachToProduct(
+                        $product->id,
+                        [(int) $primaryMediaId],
+                        $product->name
+                    );
                 }
 
                 return $product;
@@ -139,11 +155,13 @@ class ProductController extends Controller
      */
     public function update(
         UpdateProductRequest $request,
-        Product $product
+        Product $product,
+        ProductMediaLibrary $mediaLibrary
     ): RedirectResponse {
         $data = $request->validated();
         $uploadedImage = $request->file('image');
-        unset($data['image']);
+        $primaryMediaId = $data['primary_media_id'] ?? null;
+        unset($data['image'], $data['primary_media_id']);
 
         $newPath = null;
 
@@ -162,7 +180,14 @@ class ProductController extends Controller
         $oldPathToDelete = null;
 
         try {
-            DB::transaction(function () use ($product, $data, $newPath, &$oldPathToDelete): void {
+            DB::transaction(function () use (
+                $product,
+                $data,
+                $newPath,
+                $primaryMediaId,
+                $mediaLibrary,
+                &$oldPathToDelete
+            ): void {
                 $lockedProduct = Product::query()
                     ->whereKey($product->id)
                     ->lockForUpdate()
@@ -170,7 +195,24 @@ class ProductController extends Controller
 
                 $lockedProduct->update($data);
 
-                if ($newPath === null) {
+                if ($newPath === null && $primaryMediaId === null) {
+                    return;
+                }
+
+                if ($primaryMediaId !== null) {
+                    $mediaImageIds = $mediaLibrary->attachToProduct(
+                        $lockedProduct->id,
+                        [(int) $primaryMediaId],
+                        $lockedProduct->name
+                    );
+                    $selectedImage = ProductImage::query()
+                        ->whereKey($mediaImageIds[0])
+                        ->lockForUpdate()
+                        ->firstOrFail();
+
+                    $lockedProduct->images()->update(['is_primary' => false]);
+                    $selectedImage->update(['is_primary' => true]);
+
                     return;
                 }
 
