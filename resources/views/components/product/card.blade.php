@@ -1,5 +1,6 @@
 @props([
     'product',
+    'reveal' => true,
 ])
 
 @php
@@ -28,7 +29,7 @@
 
 <article
     class="farzin-product-card group relative flex h-full min-w-0 flex-col"
-    data-farzin-reveal
+    @if($reveal) data-farzin-reveal @endif
 >
     <div class="farzin-product-card__media relative overflow-hidden rounded-[1.25rem]">
         <a
