@@ -7,6 +7,7 @@ use App\Models\CartItem;
 use App\Models\Category;
 use App\Models\ContactMessage;
 use App\Models\Order;
+use App\Models\Payment;
 use App\Models\Media;
 use App\Models\Product;
 use App\Models\ProductImage;
@@ -344,7 +345,7 @@ class FarzinStorefrontTest extends TestCase
 
         $this->get(route('home'))
             ->assertOk()
-            ->assertSee('۱', false)
+            ->assertSee('۱ <small>تصویر در گالری</small>', false)
             ->assertSee('data-product-id="'.$product->id.'"', false)
             ->assertSee('https://cdn.example.test/home-mosaic-selected.webp', false);
     }
