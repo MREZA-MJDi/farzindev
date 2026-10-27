@@ -115,6 +115,34 @@
                 class="admin-input p-2"
             >
 
+            @if(isset($mediaImages) && $mediaImages->isNotEmpty())
+                <details class="mt-4 rounded-xl border border-[var(--admin-border)] p-4">
+                    <summary class="cursor-pointer text-sm font-semibold text-[var(--admin-text)]">یا انتخاب تصویر اصلی از کتابخانه رسانه</summary>
+                    <p class="mt-2 text-xs leading-6 text-[var(--admin-muted)]">فقط یک تصویر اصلی انتخاب کنید. در این حالت فایل جدید بالا را انتخاب نکنید؛ تصویر کتابخانه بدون آپلود دوباره به محصول متصل می‌شود.</p>
+                    <div class="mt-3 grid max-h-80 gap-3 overflow-y-auto sm:grid-cols-2 lg:grid-cols-3">
+                        @foreach($mediaImages as $mediaItem)
+                            <label class="flex cursor-pointer items-center gap-3 rounded-xl border border-[var(--admin-border)] p-2 text-xs hover:bg-[var(--admin-surface-soft)]">
+                                <input
+                                    type="radio"
+                                    name="primary_media_id"
+                                    value="{{ $mediaItem->id }}"
+                                    @checked((string) old('primary_media_id', $primaryImage?->media_id ?? '') === (string) $mediaItem->id)
+                                    class="admin-checkbox h-4 w-4 shrink-0"
+                                >
+                                <img src="{{ $mediaItem->url }}" alt="{{ $mediaItem->alt ?: $mediaItem->original_name }}" loading="lazy" class="h-14 w-14 shrink-0 rounded-lg object-cover">
+                                <span class="min-w-0">
+                                    <span class="block truncate font-medium">{{ $mediaItem->alt ?: $mediaItem->original_name }}</span>
+                                    <span class="mt-1 block text-[10px] text-[var(--admin-muted)]">{{ $mediaItem->human_size }}</span>
+                                </span>
+                            </label>
+                        @endforeach
+                    </div>
+                    @error('primary_media_id')
+                        <p role="alert" class="mt-2 text-xs text-red-600">{{ $message }}</p>
+                    @enderror
+                </details>
+            @endif
+
             <div data-image-editor-panel hidden class="mt-5 space-y-4 rounded-2xl border border-[var(--admin-border)] bg-[var(--admin-surface-soft)] p-4">
                 <strong class="block text-sm font-semibold text-[var(--admin-text)]">برش و ویرایش تصویر</strong>
                 <canvas data-image-editor-canvas role="img" aria-label="پیش‌نمایش برش تصویر" class="mx-auto block max-w-full rounded-xl bg-[var(--admin-bg)]" style="width:min(100%,640px);height:auto;aspect-ratio:4/3;touch-action:none;cursor:grab;"></canvas>
