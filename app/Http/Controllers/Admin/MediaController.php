@@ -88,6 +88,14 @@ class MediaController extends Controller
 
     public function destroy(Media $media): RedirectResponse
     {
+        // A Media asset can be reused by multiple products and variants. Never
+        // remove the underlying file while product_images still references it.
+        if ($media->productImages()->exists()) {
+            return redirect()
+                ->route('admin.media.index')
+                ->with('error', 'این رسانه به گالری یک یا چند محصول متصل است؛ ابتدا اتصال آن را از ویرایش محصولات بردارید.');
+        }
+
         $disk = $media->disk;
         $path = $media->path;
 
