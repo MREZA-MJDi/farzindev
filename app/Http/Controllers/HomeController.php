@@ -71,6 +71,16 @@ class HomeController extends Controller
             ->take(8)
             ->values();
 
+        $usedProductIds = $featuredProducts
+            ->pluck('id')
+            ->values();
+
+        $newProducts = $catalogProducts
+            ->filter(fn (Product $product) => (bool) $product->is_new)
+            ->reject(fn (Product $product) => $usedProductIds->contains($product->id))
+            ->take(8)
+            ->values();
+
         // The mosaic is independently curated from the product editor.
         // Keep the result bounded and eager-load only one (primary) image per item.
         $galleryProducts = Product::query()
