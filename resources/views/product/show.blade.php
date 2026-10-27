@@ -173,7 +173,7 @@
     @if($mainImage)
         <meta property="og:image:alt" content="{{ $product->name }}">
     @endif
-    <meta property="product:price:amount" content="{{ $productPrice }}">
+    <meta property="product:price:amount" content="{{ (int) round($productPrice * 10) }}">
     <meta property="product:price:currency" content="IRR">
 
     @php
