@@ -81,12 +81,20 @@ class ProductionPreflightCommand extends Command
                 'users',
                 'categories',
                 'products',
+                'product_images',
                 'product_variants',
+                'product_variant_images',
+                'media',
                 'carts',
                 'cart_items',
+                'wishlists',
                 'orders',
                 'order_items',
+                'order_installments',
+                'addresses',
                 'payments',
+                'contact_settings',
+                'contact_messages',
                 'blog_posts',
                 'storefront_settings',
             ] as $table) {
@@ -95,6 +103,20 @@ class ProductionPreflightCommand extends Command
                     $exists ? 'OK' : 'FAIL',
                     'Database table: ' . $table,
                     $exists ? 'Table exists.' : 'Table is missing; review and apply the matching migration.'
+                );
+            }
+
+            foreach ([
+                ['product_images', 'media_id', 'Product gallery must support shared Media Library assets.'],
+                ['product_variants', 'color_hex', 'Variant color picker requires color_hex.'],
+                ['product_variant_images', 'product_variant_id', 'Variant gallery pivot table must be migrated.'],
+                ['product_variant_images', 'product_image_id', 'Variant gallery pivot table must link product images.'],
+            ] as [$table, $column, $detail]) {
+                $exists = Schema::hasTable($table) && Schema::hasColumn($table, $column);
+                $add(
+                    $exists ? 'OK' : 'FAIL',
+                    'Database column: ' . $table . '.' . $column,
+                    $exists ? 'Column exists.' : $detail . ' Apply and verify the matching migration before using product variants.'
                 );
             }
 

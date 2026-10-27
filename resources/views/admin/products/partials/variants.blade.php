@@ -49,16 +49,39 @@
         </div>
         <form method="POST" action="{{ route('admin.products.images.store', $product) }}" enctype="multipart/form-data" class="space-y-4">
             @csrf
-            <label class="block text-xs text-[var(--admin-text)]">انتخاب چند تصویر
-                <input type="file" name="images[]" accept="image/jpeg,image/png,image/webp" multiple required class="admin-input mt-2 w-full p-2">
+            <label class="block text-xs text-[var(--admin-text)]">آپلود تصویر جدید (اختیاری)
+                <input type="file" name="images[]" accept="image/jpeg,image/png,image/webp" multiple class="admin-input mt-2 w-full p-2">
             </label>
+            @if(isset($mediaImages) && $mediaImages->isNotEmpty())
+                <div>
+                    <div class="mb-3 flex flex-wrap items-center justify-between gap-2">
+                        <p class="text-xs font-semibold text-[var(--admin-text)]">انتخاب از کتابخانه رسانه ({{ $mediaImages->count() }} تصویر اخیر)</p>
+                        <a href="{{ route('admin.media.index') }}" class="text-xs font-medium text-[var(--admin-accent)] underline">مشاهده همه رسانه‌ها</a>
+                    </div>
+                    <div class="grid max-h-80 gap-3 overflow-y-auto rounded-xl border border-[var(--admin-border)] p-3 sm:grid-cols-2 lg:grid-cols-3">
+                        @foreach($mediaImages as $mediaItem)
+                            <label class="flex cursor-pointer items-center gap-3 rounded-xl border border-[var(--admin-border)] p-2 text-xs hover:bg-[var(--admin-surface-soft)]">
+                                <input type="checkbox" name="media_ids[]" value="{{ $mediaItem->id }}" @checked(in_array((string) $mediaItem->id, array_map('strval', (array) old('media_ids', [])), true)) class="admin-checkbox h-4 w-4 shrink-0">
+                                <img src="{{ $mediaItem->url }}" alt="{{ $mediaItem->alt ?: $mediaItem->original_name }}" loading="lazy" class="h-14 w-14 shrink-0 rounded-lg object-cover">
+                                <span class="min-w-0">
+                                    <span class="block truncate font-medium">{{ $mediaItem->alt ?: $mediaItem->original_name }}</span>
+                                    <span class="mt-1 block text-[10px] text-[var(--admin-muted)]">{{ $mediaItem->human_size }}</span>
+                                </span>
+                            </label>
+                        @endforeach
+                    </div>
+                </div>
+            @else
+                <p class="text-xs leading-6 text-[var(--admin-muted)]">هنوز تصویری در کتابخانه نیست. ابتدا از بخش رسانه‌ها تصویرها را آپلود کنید یا همین‌جا فایل انتخاب کنید.</p>
+            @endif
             <label class="block text-xs text-[var(--admin-text)]">متن جایگزین مشترک (اختیاری)
                 <input name="alt" maxlength="255" value="{{ old('alt') }}" class="admin-input mt-2 w-full" placeholder="{{ $product->name }} - نمای محصول">
             </label>
             <p class="text-[11px] leading-6 text-[var(--admin-muted)]">JPG، PNG یا WEBP؛ حداقل ۸۰۰×۶۰۰ پیکسل؛ حداکثر ۲۰ مگابایت برای هر فایل و ۱۰ تصویر در هر بار.</p>
             @error('images')<p class="text-xs text-red-600">{{ $message }}</p>@enderror
             @error('images.*')<p class="text-xs text-red-600">{{ $message }}</p>@enderror
-            <button type="submit" class="admin-btn admin-btn-secondary">افزودن تصاویر به گالری</button>
+            @error('media_ids')<p role="alert" class="text-xs text-red-600">{{ $message }}</p>@enderror
+            <button type="submit" class="admin-btn admin-btn-secondary">افزودن تصاویر منتخب به گالری</button>
         </form>
     </section>
 
@@ -106,6 +129,27 @@
                     <input name="stock" type="number" min="0" value="{{ old('stock', 0) }}" required class="admin-input mt-2 w-full" dir="ltr">
                 </label>
             </div>
+
+            @if(isset($mediaImages) && $mediaImages->isNotEmpty())
+                <div>
+                    <div class="mb-3 flex flex-wrap items-center justify-between gap-2">
+                        <p class="text-xs font-semibold text-[var(--admin-text)]">انتخاب تصویر تنوع از کتابخانه رسانه</p>
+                        <a href="{{ route('admin.media.index') }}" class="text-xs font-medium text-[var(--admin-accent)] underline">همه رسانه‌ها</a>
+                    </div>
+                    <div class="grid max-h-72 gap-3 overflow-y-auto rounded-xl border border-[var(--admin-border)] p-3 sm:grid-cols-2 lg:grid-cols-3">
+                        @foreach($mediaImages as $mediaItem)
+                            <label class="flex cursor-pointer items-center gap-3 rounded-xl border border-[var(--admin-border)] p-2 text-xs hover:bg-[var(--admin-surface-soft)]">
+                                <input type="checkbox" name="media_ids[]" value="{{ $mediaItem->id }}" @checked(in_array((string) $mediaItem->id, array_map('strval', (array) old('media_ids', [])), true)) class="admin-checkbox h-4 w-4 shrink-0">
+                                <img src="{{ $mediaItem->url }}" alt="{{ $mediaItem->alt ?: $mediaItem->original_name }}" loading="lazy" class="h-14 w-14 shrink-0 rounded-lg object-cover">
+                                <span class="min-w-0">
+                                    <span class="block truncate font-medium">{{ $mediaItem->alt ?: $mediaItem->original_name }}</span>
+                                    <span class="mt-1 block text-[10px] text-[var(--admin-muted)]">{{ $mediaItem->human_size }}</span>
+                                </span>
+                            </label>
+                        @endforeach
+                    </div>
+                </div>
+            @endif
 
             @if($productImages->isNotEmpty())
                 <div>
@@ -191,6 +235,27 @@
                         <input name="stock" type="number" min="0" value="{{ $variant->stock }}" required class="admin-input mt-2 w-full" dir="ltr">
                     </label>
                 </div>
+
+                @if(isset($mediaImages) && $mediaImages->isNotEmpty())
+                    <div>
+                        <div class="mb-3 flex flex-wrap items-center justify-between gap-2">
+                            <p class="text-xs font-semibold text-[var(--admin-text)]">افزودن از کتابخانه رسانه به این تنوع</p>
+                            <a href="{{ route('admin.media.index') }}" class="text-xs font-medium text-[var(--admin-accent)] underline">همه رسانه‌ها</a>
+                        </div>
+                        <div class="grid max-h-72 gap-3 overflow-y-auto rounded-xl border border-[var(--admin-border)] p-3 sm:grid-cols-2 lg:grid-cols-3">
+                            @foreach($mediaImages as $mediaItem)
+                                <label class="flex cursor-pointer items-center gap-3 rounded-xl border border-[var(--admin-border)] p-2 text-xs hover:bg-[var(--admin-surface-soft)]">
+                                    <input type="checkbox" name="media_ids[]" value="{{ $mediaItem->id }}" class="admin-checkbox h-4 w-4 shrink-0">
+                                    <img src="{{ $mediaItem->url }}" alt="{{ $mediaItem->alt ?: $mediaItem->original_name }}" loading="lazy" class="h-14 w-14 shrink-0 rounded-lg object-cover">
+                                    <span class="min-w-0">
+                                        <span class="block truncate font-medium">{{ $mediaItem->alt ?: $mediaItem->original_name }}</span>
+                                        <span class="mt-1 block text-[10px] text-[var(--admin-muted)]">{{ $mediaItem->human_size }}</span>
+                                    </span>
+                                </label>
+                            @endforeach
+                        </div>
+                    </div>
+                @endif
 
                 @if($productImages->isNotEmpty())
                     <div>

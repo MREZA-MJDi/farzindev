@@ -135,8 +135,47 @@ if (cards.length > 0) {
         if (!card.querySelector('[data-farzin-category-gif], [data-farzin-category-video]')) return;
 
         card.addEventListener('pointerdown', (event) => {
-            card.dataset.farzinPointerType = event.pointerType || 'mouse';
+            const pointerType = event.pointerType || 'mouse';
+            card.dataset.farzinPointerType = pointerType;
+
+            // Start media during the real touch gesture so mobile browsers
+            // classify the video.play() call as user-initiated. The click
+            // handler still suppresses navigation on the first tap only.
+            if (
+                pointerType === 'touch'
+                && !reduceMotionQuery.matches
+                && card.dataset.farzinPreviewTapped !== '1'
+            ) {
+                startPreview(card);
+            }
         });
+
+        // Fallback for browsers where Pointer Events are unavailable or only
+        // partially implemented. The active-preview guard prevents duplicates.
+        card.addEventListener('mouseenter', () => {
+            if (!reduceMotionQuery.matches && !('PointerEvent' in window)) {
+                startPreview(card);
+            }
+        });
+
+        card.addEventListener('mouseleave', () => {
+            if (
+                !('PointerEvent' in window)
+                && card.dataset.farzinPreviewTapped !== '1'
+            ) {
+                stopPreview(card);
+            }
+        });
+
+        card.addEventListener('touchstart', () => {
+            card.dataset.farzinPointerType = 'touch';
+            if (
+                !reduceMotionQuery.matches
+                && card.dataset.farzinPreviewTapped !== '1'
+            ) {
+                startPreview(card);
+            }
+        }, { passive: true });
 
         card.addEventListener('pointerenter', (event) => {
             // Avoid implicit motion for touch and reduced-motion users.
@@ -166,12 +205,14 @@ if (cards.length > 0) {
             if (!touchActivation || event.detail === 0) return;
 
             // First tap previews. A second tap navigates, even after preview
-            // playback has naturally finished.
+            // playback has naturally finished. If no usable media exists, do
+            // not swallow the user's first click.
             if (card.dataset.farzinPreviewTapped === '1') return;
+
+            if (!startPreview(card)) return;
 
             event.preventDefault();
             card.dataset.farzinPreviewTapped = '1';
-            startPreview(card);
         });
     });
 

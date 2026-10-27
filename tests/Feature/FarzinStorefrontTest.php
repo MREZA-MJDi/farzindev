@@ -23,6 +23,211 @@ class FarzinStorefrontTest extends TestCase
 {
     use RefreshDatabase;
 
+    public function test_admin_can_render_every_crud_dashboard_surface_with_real_records(): void
+    {
+        $admin = $this->admin();
+        $category = $this->category([
+            'name' => 'Smoke Category',
+            'slug' => 'admin-smoke-category',
+        ]);
+        $product = $this->product($category, [
+            'name' => 'Smoke Product',
+            'slug' => 'admin-smoke-product',
+            'sku' => 'FAR-ADMIN-SMOKE',
+        ]);
+        $image = ProductImage::create([
+            'product_id' => $product->id,
+            'path' => 'https://cdn.example.test/admin-smoke.webp',
+            'alt' => 'Smoke image',
+            'sort_order' => 0,
+            'is_primary' => true,
+        ]);
+        $variant = ProductVariant::create([
+            'product_id' => $product->id,
+            'type' => 'color',
+            'name' => 'رنگ',
+            'value' => 'مشکی',
+            'sku' => 'FAR-ADMIN-SMOKE-BLACK',
+            'price_adjustment' => 0,
+            'stock' => 2,
+            'is_active' => true,
+        ]);
+        $customer = $this->customer([
+            'name' => 'Smoke Customer',
+            'email' => 'admin-smoke-customer@farzin.test',
+        ]);
+        $order = $this->order($customer);
+        $media = Media::create([
+            'user_id' => $admin->id,
+            'disk' => 'public',
+            'path' => 'media/admin-smoke.webp',
+            'filename' => 'admin-smoke.webp',
+            'original_name' => 'admin-smoke.webp',
+            'mime_type' => 'image/webp',
+            'extension' => 'webp',
+            'size' => 128,
+            'alt' => 'Admin smoke image',
+        ]);
+        $post = \App\Models\BlogPost::create([
+            'title' => 'Admin smoke article',
+            'slug' => 'admin-smoke-article',
+            'excerpt' => 'Dashboard smoke test',
+            'body' => 'Body for the admin CRUD surface test.',
+            'status' => 'draft',
+            'author_id' => $admin->id,
+        ]);
+        $message = ContactMessage::create([
+            'user_id' => $customer->id,
+            'name' => 'Smoke Customer',
+            'phone' => '09123456789',
+            'email' => $customer->email,
+            'subject' => 'product',
+            'message' => 'Admin dashboard smoke test message.',
+            'status' => 'unread',
+        ]);
+
+        $this->actingAs($admin);
+
+        $urls = [
+            route('admin.dashboard'),
+            route('admin.products.index'),
+            route('admin.products.create'),
+            route('admin.products.show', $product),
+            route('admin.products.edit', $product),
+            route('admin.categories.index'),
+            route('admin.categories.create'),
+            route('admin.categories.show', $category),
+            route('admin.categories.edit', $category),
+            route('admin.product-images.index', ['product_id' => $product->id]),
+            route('admin.product-images.create', ['product_id' => $product->id]),
+            route('admin.product-images.show', $image),
+            route('admin.product-images.edit', $image),
+            route('admin.product-variants.index', ['product_id' => $product->id]),
+            route('admin.product-variants.create', ['product_id' => $product->id]),
+            route('admin.product-variants.show', $variant),
+            route('admin.product-variants.edit', $variant),
+            route('admin.orders.index'),
+            route('admin.orders.show', $order),
+            route('admin.customers.index'),
+            route('admin.customers.show', $customer),
+            route('admin.customers.edit', $customer),
+            route('admin.media.index'),
+            route('admin.media.create'),
+            route('admin.blog-posts.index'),
+            route('admin.blog-posts.create'),
+            route('admin.blog-posts.edit', $post),
+            route('admin.seo-settings.edit'),
+            route('admin.storefront-settings.edit'),
+            route('admin.contact-messages.index'),
+            route('admin.contact-messages.show', $message),
+        ];
+
+        foreach ($urls as $url) {
+            $response = $this->get($url);
+
+            $this->assertContains(
+                $response->getStatusCode(),
+                [200, 301, 302, 303],
+                'Unexpected response for admin route: ' . $url . ' (HTTP ' . $response->getStatusCode() . ')'
+            );
+            $this->assertNotSame(
+                500,
+                $response->getStatusCode(),
+                'Admin route returned HTTP 500: ' . $url
+            );
+        }
+    }
+
+    public function test_admin_can_choose_a_media_library_asset_as_the_primary_product_image(): void
+    {
+        Storage::fake('public');
+        $admin = $this->admin();
+        $category = $this->category(['slug' => 'primary-media-category']);
+        Storage::disk('public')->put('media/primary-hood.webp', 'primary media bytes');
+
+        $media = Media::create([
+            'user_id' => $admin->id,
+            'disk' => 'public',
+            'path' => 'media/primary-hood.webp',
+            'filename' => 'primary-hood.webp',
+            'original_name' => 'primary-hood.webp',
+            'mime_type' => 'image/webp',
+            'extension' => 'webp',
+            'size' => 19,
+            'alt' => 'تصویر اصلی از کتابخانه',
+        ]);
+
+        $this->actingAs($admin)
+            ->get(route('admin.products.create'))
+            ->assertOk()
+            ->assertSee('انتخاب تصویر اصلی از کتابخانه رسانه')
+            ->assertSee('primary_media_id', false);
+
+        $this->post(route('admin.products.store'), [
+            'category_id' => $category->id,
+            'name' => 'Primary Media Hood',
+            'slug' => 'primary-media-hood',
+            'sku' => 'FAR-PRIMARY-MEDIA-HOOD',
+            'short_description' => 'تصویر اصلی انتخاب‌شده از کتابخانه',
+            'description' => 'آزمایش اتصال تصویر رسانه به عنوان تصویر اصلی محصول.',
+            'price' => '24500000',
+            'stock' => '5',
+            'status' => 'active',
+            'is_featured' => '0',
+            'is_new' => '0',
+            'primary_media_id' => $media->id,
+        ])->assertRedirect()
+            ->assertSessionHas('success');
+
+        $product = Product::query()->where('sku', 'FAR-PRIMARY-MEDIA-HOOD')->firstOrFail();
+        $image = $product->images()->firstOrFail();
+
+        $this->assertSame($media->id, $image->media_id);
+        $this->assertSame($media->path, $image->path);
+        $this->assertTrue($image->is_primary);
+        Storage::disk('public')->assertExists($media->path);
+
+        Storage::disk('public')->put('media/primary-hood-replacement.webp', 'replacement media bytes');
+        $replacementMedia = Media::create([
+            'user_id' => $admin->id,
+            'disk' => 'public',
+            'path' => 'media/primary-hood-replacement.webp',
+            'filename' => 'primary-hood-replacement.webp',
+            'original_name' => 'primary-hood-replacement.webp',
+            'mime_type' => 'image/webp',
+            'extension' => 'webp',
+            'size' => 25,
+            'alt' => 'تصویر جایگزین از کتابخانه',
+        ]);
+
+        $this->put(route('admin.products.update', $product), [
+            'category_id' => $category->id,
+            'name' => 'Primary Media Hood',
+            'slug' => 'primary-media-hood',
+            'sku' => 'FAR-PRIMARY-MEDIA-HOOD',
+            'short_description' => 'تصویر اصلی انتخاب‌شده از کتابخانه',
+            'description' => 'آزمایش تغییر تصویر اصلی بدون کپی‌کردن فایل.',
+            'price' => '24500000',
+            'stock' => '5',
+            'status' => 'active',
+            'is_featured' => '0',
+            'is_new' => '0',
+            'primary_media_id' => $replacementMedia->id,
+        ])->assertRedirect(route('admin.products.edit', $product))
+            ->assertSessionHas('success');
+
+        $image->refresh();
+        $replacementImage = ProductImage::query()
+            ->where('product_id', $product->id)
+            ->where('media_id', $replacementMedia->id)
+            ->firstOrFail();
+
+        $this->assertFalse($image->is_primary);
+        $this->assertTrue($replacementImage->is_primary);
+        Storage::disk('public')->assertExists($media->path);
+        Storage::disk('public')->assertExists($replacementMedia->path);
+    }
+
     public function test_public_pages_render_successfully(): void
     {
         foreach (['/', '/shop', '/categories', '/about', '/contact', '/blog'] as $uri) {
@@ -1636,6 +1841,156 @@ class FarzinStorefrontTest extends TestCase
         $this->assertSame('نمای عمومی محصول', $images->first()->alt);
         Storage::disk('public')->assertExists($images->first()->path);
         Storage::disk('public')->assertExists($images->last()->path);
+    }
+
+    public function test_product_and_variant_can_reuse_media_library_images_without_copying_or_deleting_them(): void
+    {
+        Storage::fake('public');
+        $admin = $this->admin();
+        $product = $this->product($this->category(['slug' => 'media-library-gallery']), [
+            'name' => 'Media Library Hood',
+            'slug' => 'media-library-hood',
+            'sku' => 'FAR-MEDIA-LIBRARY-HOOD',
+            'stock' => 8,
+        ]);
+
+        Storage::disk('public')->put('media/library-hood.webp', 'shared image bytes');
+        $media = Media::create([
+            'user_id' => $admin->id,
+            'disk' => 'public',
+            'path' => 'media/library-hood.webp',
+            'filename' => 'library-hood.webp',
+            'original_name' => 'library-hood.webp',
+            'mime_type' => 'image/webp',
+            'extension' => 'webp',
+            'size' => 19,
+            'alt' => 'هود از کتابخانه رسانه',
+        ]);
+
+        $this->actingAs($admin)
+            ->get(route('admin.products.edit', $product))
+            ->assertOk()
+            ->assertSee('کتابخانه رسانه')
+            ->assertSee('media_ids[]', false);
+
+        $this->actingAs($admin)
+            ->post(route('admin.products.images.store', $product), [
+                'media_ids' => [$media->id],
+                'alt' => 'هود استفاده‌شده از کتابخانه',
+            ])
+            ->assertRedirect(route('admin.products.edit', $product))
+            ->assertSessionHas('success');
+
+        $galleryImage = ProductImage::query()
+            ->where('product_id', $product->id)
+            ->where('media_id', $media->id)
+            ->firstOrFail();
+
+        $this->assertSame('media/library-hood.webp', $galleryImage->path);
+        $this->assertTrue($galleryImage->is_primary);
+        Storage::disk('public')->assertExists($media->path);
+
+        // Removing a product-gallery reference must not remove the shared
+        // physical Media Library asset.
+        Storage::disk('public')->put('media/gallery-only.webp', 'gallery only bytes');
+        $galleryOnlyMedia = Media::create([
+            'user_id' => $admin->id,
+            'disk' => 'public',
+            'path' => 'media/gallery-only.webp',
+            'filename' => 'gallery-only.webp',
+            'original_name' => 'gallery-only.webp',
+            'mime_type' => 'image/webp',
+            'extension' => 'webp',
+            'size' => 18,
+            'alt' => 'تصویر گالری مستقل',
+        ]);
+
+        $this->post(route('admin.products.images.store', $product), [
+            'media_ids' => [$galleryOnlyMedia->id],
+        ])->assertRedirect(route('admin.products.edit', $product));
+
+        $galleryOnlyImage = ProductImage::query()
+            ->where('product_id', $product->id)
+            ->where('media_id', $galleryOnlyMedia->id)
+            ->firstOrFail();
+
+        $this->delete(route('admin.product-images.destroy', $galleryOnlyImage))
+            ->assertRedirect(route('admin.product-images.index', ['product_id' => $product->id]));
+
+        $this->assertDatabaseMissing('product_images', ['id' => $galleryOnlyImage->id]);
+        $this->assertDatabaseHas('media', ['id' => $galleryOnlyMedia->id]);
+        Storage::disk('public')->assertExists($galleryOnlyMedia->path);
+
+        // Selecting the same library image again reuses the product-image row.
+        $this->post(route('admin.products.images.store', $product), [
+            'media_ids' => [$media->id],
+        ])->assertRedirect(route('admin.products.edit', $product));
+
+        $this->assertSame(
+            1,
+            ProductImage::query()
+                ->where('product_id', $product->id)
+                ->where('media_id', $media->id)
+                ->count()
+        );
+
+        $this->post(route('admin.product-variants.store'), [
+            'product_id' => $product->id,
+            'type' => 'color',
+            'name' => 'رنگ',
+            'value' => 'مشکی',
+            'sku' => 'FAR-MEDIA-LIBRARY-BLACK',
+            'price_adjustment' => 0,
+            'stock' => 4,
+            'is_active' => '1',
+            'media_ids' => [$media->id],
+            'return_to_product' => '1',
+        ])->assertRedirect(route('admin.products.edit', $product))
+            ->assertSessionHas('success');
+
+        $variant = ProductVariant::query()
+            ->where('sku', 'FAR-MEDIA-LIBRARY-BLACK')
+            ->firstOrFail();
+
+        $this->assertSame(1, $variant->images()->count());
+        $this->assertDatabaseHas('product_variant_images', [
+            'product_variant_id' => $variant->id,
+            'product_image_id' => $galleryImage->id,
+        ]);
+
+        $this->put(route('admin.product-variants.update', $variant), [
+            'product_id' => $product->id,
+            'type' => 'color',
+            'name' => 'رنگ',
+            'value' => 'مشکی',
+            'sku' => 'FAR-MEDIA-LIBRARY-BLACK',
+            'price_adjustment' => 0,
+            'stock' => 4,
+            'is_active' => '1',
+            'image_ids' => [$galleryImage->id],
+            'media_ids' => [$media->id],
+            'return_to_product' => '1',
+        ])->assertRedirect(route('admin.products.edit', $product))
+            ->assertSessionHas('success');
+
+        $this->assertSame(1, $variant->fresh()->images()->count());
+
+        // Do not delete a file from the library while it is referenced by a product.
+        $this->delete(route('admin.media.destroy', $media))
+            ->assertRedirect(route('admin.media.index'))
+            ->assertSessionHas('error');
+
+        $this->assertDatabaseHas('media', ['id' => $media->id]);
+        $this->assertDatabaseHas('product_images', [
+            'id' => $galleryImage->id,
+            'media_id' => $media->id,
+        ]);
+        Storage::disk('public')->assertExists($media->path);
+
+        $this->get(route('product.show', $product->slug))
+            ->assertOk()
+            ->assertSee('media/library-hood.webp', false)
+            ->assertSee('Media Library Hood');
     }
 
     public function test_product_editor_can_create_and_update_a_color_variant_with_its_own_images(): void

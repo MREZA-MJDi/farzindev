@@ -8,10 +8,13 @@ use App\Http\Requests\Admin\ProductVariant\UpdateProductVariantRequest;
 use App\Models\Product;
 use App\Models\ProductImage;
 use App\Models\ProductVariant;
+use App\Services\Catalog\ProductMediaLibrary;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Validation\ValidationException;
 use Throwable;
 
 class ProductVariantController extends Controller
@@ -46,34 +49,54 @@ class ProductVariantController extends Controller
      * Store a newly created product variant.
      */
     public function store(
-        StoreProductVariantRequest $request
+        StoreProductVariantRequest $request,
+        ProductMediaLibrary $mediaLibrary
     ): RedirectResponse {
         $data = $request->validated();
 
         $imageIds = $data['image_ids'] ?? [];
+        $mediaIds = $data['media_ids'] ?? [];
         $uploads = $request->file('images', []);
-        unset($data['image_ids'], $data['images']);
+        unset($data['image_ids'], $data['media_ids'], $data['images']);
 
         $productId = (int) $data['product_id'];
         $storedPaths = [];
         $newImageIds = [];
 
         foreach ($uploads as $upload) {
-            $path = $upload->store('products/images', 'public');
+            try {
+                $path = $upload->store('products/images', 'public');
+            } catch (Throwable $exception) {
+                foreach ($storedPaths as $storedPath) {
+                    Storage::disk('public')->delete($storedPath);
+                }
+
+                $requestId = (string) $request->attributes->get('request_id', 'unavailable');
+                Log::error('Variant image upload failed.', [
+                    'request_id' => $requestId,
+                    'product_id' => $productId,
+                    'exception' => $exception,
+                ]);
+
+                return back()->withInput()->withErrors([
+                    'images' => 'آپلود تصویر تنوع انجام نشد؛ فضای دیسک و محدودیت آپلود را بررسی کنید. کد پیگیری: ' . $requestId,
+                ]);
+            }
+
             if (! $path) {
                 foreach ($storedPaths as $storedPath) {
                     Storage::disk('public')->delete($storedPath);
                 }
 
                 return back()->withInput()->withErrors([
-                    'images' => 'ذخیره یکی از تصاویر تنوع انجام نشد.',
+                    'images' => 'ذخیره یکی از تصاویر تنوع انجام نشد؛ فضای دیسک و دسترسی نوشتن را بررسی کنید.',
                 ]);
             }
             $storedPaths[] = $path;
         }
 
         try {
-            DB::transaction(function () use ($data, $imageIds, $productId, $storedPaths, &$newImageIds): void {
+            DB::transaction(function () use ($data, $imageIds, $mediaIds, $productId, $storedPaths, &$newImageIds, $mediaLibrary): void {
                 // Serialize variant changes with checkout's product/stock locks.
                 $product = Product::query()
                     ->whereKey($productId)
@@ -96,13 +119,33 @@ class ProductVariantController extends Controller
                     $newImageIds[] = $image->id;
                 }
 
-                $this->syncVariantImages($productVariant, $imageIds, $newImageIds);
+                $libraryImageIds = $mediaLibrary->attachToProduct(
+                    $productId,
+                    $mediaIds,
+                    trim($data['name'] . ' ' . $data['value'])
+                );
+                $this->syncVariantImages($productVariant, $imageIds, array_merge($newImageIds, $libraryImageIds));
             });
         } catch (Throwable $exception) {
             foreach ($storedPaths as $storedPath) {
                 Storage::disk('public')->delete($storedPath);
             }
-            throw $exception;
+
+            if ($exception instanceof ValidationException) {
+                throw $exception;
+            }
+
+            $requestId = (string) $request->attributes->get('request_id', 'unavailable');
+            Log::error('Variant creation failed.', [
+                'request_id' => $requestId,
+                'product_id' => $productId,
+                'media_ids' => $mediaIds,
+                'exception' => $exception,
+            ]);
+
+            return back()->withInput()->withErrors([
+                'images' => 'ذخیره تنوع یا تصاویر آن انجام نشد؛ گالری قبلی حفظ شد. اگر مشکل تکرار شد، لاگ Laravel را با کد پیگیری بررسی کنید: ' . $requestId,
+            ]);
         }
 
         if ($request->boolean('return_to_product')) {
@@ -145,13 +188,15 @@ class ProductVariantController extends Controller
      */
     public function update(
         UpdateProductVariantRequest $request,
-        ProductVariant $productVariant
+        ProductVariant $productVariant,
+        ProductMediaLibrary $mediaLibrary
     ): RedirectResponse {
         $data = $request->validated();
 
         $imageIds = $data['image_ids'] ?? [];
+        $mediaIds = $data['media_ids'] ?? [];
         $uploads = $request->file('images', []);
-        unset($data['image_ids'], $data['images']);
+        unset($data['image_ids'], $data['media_ids'], $data['images']);
 
         $oldProductId = (int) $productVariant->product_id;
         $newProductId = (int) $data['product_id'];
@@ -159,14 +204,33 @@ class ProductVariantController extends Controller
         $newImageIds = [];
 
         foreach ($uploads as $upload) {
-            $path = $upload->store('products/images', 'public');
+            try {
+                $path = $upload->store('products/images', 'public');
+            } catch (Throwable $exception) {
+                foreach ($storedPaths as $storedPath) {
+                    Storage::disk('public')->delete($storedPath);
+                }
+
+                $requestId = (string) $request->attributes->get('request_id', 'unavailable');
+                Log::error('Variant image replacement upload failed.', [
+                    'request_id' => $requestId,
+                    'variant_id' => $productVariant->id,
+                    'product_id' => $newProductId,
+                    'exception' => $exception,
+                ]);
+
+                return back()->withInput()->withErrors([
+                    'images' => 'آپلود تصویر تنوع انجام نشد؛ تصاویر قبلی حفظ شدند. کد پیگیری: ' . $requestId,
+                ]);
+            }
+
             if (! $path) {
                 foreach ($storedPaths as $storedPath) {
                     Storage::disk('public')->delete($storedPath);
                 }
 
                 return back()->withInput()->withErrors([
-                    'images' => 'ذخیره یکی از تصاویر تنوع انجام نشد؛ تصاویر قبلی حفظ شدند.',
+                    'images' => 'ذخیره یکی از تصاویر تنوع انجام نشد؛ فضای دیسک و دسترسی نوشتن را بررسی کنید. تصاویر قبلی حفظ شدند.',
                 ]);
             }
             $storedPaths[] = $path;
@@ -180,7 +244,9 @@ class ProductVariantController extends Controller
                 $oldProductId,
                 $newProductId,
                 $storedPaths,
-                &$newImageIds
+                $mediaIds,
+                &$newImageIds,
+                $mediaLibrary
             ): void {
                 // Lock product rows in a deterministic order to reduce deadlocks.
                 $lockedProducts = Product::query()
@@ -218,13 +284,35 @@ class ProductVariantController extends Controller
                     $newImageIds[] = $image->id;
                 }
 
-                $this->syncVariantImages($lockedVariant, $imageIds, $newImageIds);
+                $libraryImageIds = $mediaLibrary->attachToProduct(
+                    $newProductId,
+                    $mediaIds,
+                    trim($data['name'] . ' ' . $data['value'])
+                );
+                $this->syncVariantImages($lockedVariant, $imageIds, array_merge($newImageIds, $libraryImageIds));
             });
         } catch (Throwable $exception) {
             foreach ($storedPaths as $storedPath) {
                 Storage::disk('public')->delete($storedPath);
             }
-            throw $exception;
+
+            if ($exception instanceof ValidationException) {
+                throw $exception;
+            }
+
+            $requestId = (string) $request->attributes->get('request_id', 'unavailable');
+            Log::error('Variant update failed.', [
+                'request_id' => $requestId,
+                'variant_id' => $productVariant->id,
+                'old_product_id' => $oldProductId,
+                'new_product_id' => $newProductId,
+                'media_ids' => $mediaIds,
+                'exception' => $exception,
+            ]);
+
+            return back()->withInput()->withErrors([
+                'images' => 'ذخیره تنوع یا تصاویر آن انجام نشد؛ تغییرات قبلی حفظ شدند. کد پیگیری برای بررسی لاگ: ' . $requestId,
+            ]);
         }
 
         if ($request->boolean('return_to_product')) {

@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\Media\MediaUploadRequest;
 use App\Models\Media;
+use App\Models\ProductImage;
+use App\Models\Category;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -88,6 +90,20 @@ class MediaController extends Controller
 
     public function destroy(Media $media): RedirectResponse
     {
+        // A Media asset can be reused by multiple products and variants. Never
+        // remove the underlying file while product_images still references it.
+        $usedByProduct = $media->productImages()->exists()
+            || ProductImage::query()->where('path', $media->path)->exists();
+        $usedByCategory = Category::query()->where('hover_media_id', $media->id)->exists();
+
+        if ($usedByProduct || $usedByCategory) {
+            return redirect()
+                ->route('admin.media.index')
+                ->with('error', $usedByCategory
+                    ? 'این رسانه برای پیش‌نمایش یک دسته‌بندی استفاده می‌شود؛ ابتدا آن اتصال را بردارید.'
+                    : 'این رسانه به گالری یک یا چند محصول یا تنوع متصل است؛ ابتدا اتصال آن را از ویرایش محصولات بردارید.');
+        }
+
         $disk = $media->disk;
         $path = $media->path;
 

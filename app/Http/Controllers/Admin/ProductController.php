@@ -8,9 +8,13 @@ use App\Http\Requests\Admin\Product\UpdateProductRequest;
 use App\Models\Category;
 use App\Models\Product;
 use App\Models\ProductImage;
+use App\Models\Media;
+use App\Services\Catalog\ProductMediaLibrary;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Validation\ValidationException;
 use Throwable;
 use Illuminate\View\View;
 
@@ -37,23 +41,44 @@ class ProductController extends Controller
         $categories = Category::query()
             ->orderBy('name')
             ->get();
+        $mediaImages = Media::query()
+            ->whereIn('mime_type', ['image/jpeg', 'image/png', 'image/webp'])
+            ->latest('id')
+            ->limit(60)
+            ->get();
 
-        return view('admin.products.create', compact('categories'));
+        return view('admin.products.create', compact('categories', 'mediaImages'));
     }
 
     /**
      * Store a newly created product.
      */
-    public function store(StoreProductRequest $request): RedirectResponse
-    {
+    public function store(
+        StoreProductRequest $request,
+        ProductMediaLibrary $mediaLibrary
+    ): RedirectResponse {
         $data = $request->validated();
         $uploadedImage = $request->file('image');
-        unset($data['image']);
+        $primaryMediaId = $data['primary_media_id'] ?? null;
+        unset($data['image'], $data['primary_media_id']);
 
         $newPath = null;
 
         if ($uploadedImage) {
-            $newPath = $uploadedImage->store('products/images', 'public');
+            try {
+                $newPath = $uploadedImage->store('products/images', 'public');
+            } catch (Throwable $exception) {
+                $requestId = (string) $request->attributes->get('request_id', 'unavailable');
+                Log::error('Product image storage failed during creation.', [
+                    'request_id' => $requestId,
+                    'sku' => $data['sku'] ?? null,
+                    'exception' => $exception,
+                ]);
+
+                return back()->withInput()->withErrors([
+                    'image' => 'ذخیره تصویر محصول انجام نشد؛ فضای دیسک و محدودیت آپلود را بررسی کنید. کد پیگیری: ' . $requestId,
+                ]);
+            }
 
             if (! $newPath) {
                 return back()
@@ -65,27 +90,48 @@ class ProductController extends Controller
         }
 
         try {
-            $product = DB::transaction(function () use ($data, $newPath): Product {
+            $product = DB::transaction(function () use ($data, $newPath, $primaryMediaId, $mediaLibrary): Product {
                 $product = Product::create($data);
 
                 if ($newPath !== null) {
                     ProductImage::create([
                         'product_id' => $product->id,
+                        'media_id' => null,
                         'path' => $newPath,
                         'alt' => $product->name,
                         'sort_order' => 0,
                         'is_primary' => true,
                     ]);
+                } elseif ($primaryMediaId !== null) {
+                    $mediaLibrary->attachToProduct(
+                        $product->id,
+                        [(int) $primaryMediaId],
+                        $product->name
+                    );
                 }
 
                 return $product;
             });
-        } catch (Throwable $e) {
+        } catch (Throwable $exception) {
             if ($newPath !== null) {
                 Storage::disk('public')->delete($newPath);
             }
 
-            throw $e;
+            if ($exception instanceof ValidationException) {
+                throw $exception;
+            }
+
+            $requestId = (string) $request->attributes->get('request_id', 'unavailable');
+            Log::error('Product creation failed.', [
+                'request_id' => $requestId,
+                'sku' => $data['sku'] ?? null,
+                'primary_media_id' => $primaryMediaId,
+                'exception' => $exception,
+            ]);
+
+            return back()->withInput()->withErrors([
+                'name' => 'ذخیره محصول انجام نشد؛ هیچ تغییر ناقصی ثبت نشد. کد پیگیری: ' . $requestId,
+            ]);
         }
 
         return redirect()
@@ -100,8 +146,8 @@ class ProductController extends Controller
     {
         $product->load([
             'category',
-            'images',
-            'allVariants.images',
+            'images.media',
+            'allVariants.images.media',
         ]);
 
         return view('admin.products.show', compact('product'));
@@ -112,15 +158,24 @@ class ProductController extends Controller
      */
     public function edit(Product $product): View
     {
-        $product->load(['images', 'allVariants.images']);
+        $product->load(['images.media', 'allVariants.images.media']);
 
         $categories = Category::query()
             ->orderBy('name')
             ->get();
 
+        // Keep the picker responsive on large libraries: the newest 60 supported
+        // raster images are enough for common workflows; the full library remains
+        // available from Admin > Media.
+        $mediaImages = Media::query()
+            ->whereIn('mime_type', ['image/jpeg', 'image/png', 'image/webp'])
+            ->latest('id')
+            ->limit(60)
+            ->get();
+
         return view(
             'admin.products.edit',
-            compact('product', 'categories')
+            compact('product', 'categories', 'mediaImages')
         );
     }
 
@@ -129,16 +184,31 @@ class ProductController extends Controller
      */
     public function update(
         UpdateProductRequest $request,
-        Product $product
+        Product $product,
+        ProductMediaLibrary $mediaLibrary
     ): RedirectResponse {
         $data = $request->validated();
         $uploadedImage = $request->file('image');
-        unset($data['image']);
+        $primaryMediaId = $data['primary_media_id'] ?? null;
+        unset($data['image'], $data['primary_media_id']);
 
         $newPath = null;
 
         if ($uploadedImage) {
-            $newPath = $uploadedImage->store('products/images', 'public');
+            try {
+                $newPath = $uploadedImage->store('products/images', 'public');
+            } catch (Throwable $exception) {
+                $requestId = (string) $request->attributes->get('request_id', 'unavailable');
+                Log::error('Product image storage failed during update.', [
+                    'request_id' => $requestId,
+                    'product_id' => $product->id,
+                    'exception' => $exception,
+                ]);
+
+                return back()->withInput()->withErrors([
+                    'image' => 'ذخیره تصویر جدید انجام نشد؛ تصویر قبلی حفظ شد. کد پیگیری: ' . $requestId,
+                ]);
+            }
 
             if (! $newPath) {
                 return back()
@@ -152,7 +222,14 @@ class ProductController extends Controller
         $oldPathToDelete = null;
 
         try {
-            DB::transaction(function () use ($product, $data, $newPath, &$oldPathToDelete): void {
+            DB::transaction(function () use (
+                $product,
+                $data,
+                $newPath,
+                $primaryMediaId,
+                $mediaLibrary,
+                &$oldPathToDelete
+            ): void {
                 $lockedProduct = Product::query()
                     ->whereKey($product->id)
                     ->lockForUpdate()
@@ -160,7 +237,24 @@ class ProductController extends Controller
 
                 $lockedProduct->update($data);
 
-                if ($newPath === null) {
+                if ($newPath === null && $primaryMediaId === null) {
+                    return;
+                }
+
+                if ($primaryMediaId !== null) {
+                    $mediaImageIds = $mediaLibrary->attachToProduct(
+                        $lockedProduct->id,
+                        [(int) $primaryMediaId],
+                        $lockedProduct->name
+                    );
+                    $selectedImage = ProductImage::query()
+                        ->whereKey($mediaImageIds[0])
+                        ->lockForUpdate()
+                        ->firstOrFail();
+
+                    $lockedProduct->images()->update(['is_primary' => false]);
+                    $selectedImage->update(['is_primary' => true]);
+
                     return;
                 }
 
@@ -190,9 +284,14 @@ class ProductController extends Controller
                 $lockedProduct->images()->update(['is_primary' => false]);
 
                 if ($primaryImage && ! $isPrimaryAttachedToVariant) {
-                    $oldPathToDelete = $primaryImage->path;
+                    // Media Library assets are shared. Detach the ProductImage
+                    // from its Media record without deleting the shared file.
+                    $isSharedMediaAsset = $primaryImage->media_id !== null
+                        || Media::query()->where('path', $primaryImage->path)->exists();
+                    $oldPathToDelete = $isSharedMediaAsset ? null : $primaryImage->path;
                     $primaryImage->update([
                         'path' => $newPath,
+                        'media_id' => null,
                         'alt' => $lockedProduct->name,
                         'is_primary' => true,
                     ]);
@@ -210,12 +309,26 @@ class ProductController extends Controller
                     ]);
                 }
             });
-        } catch (Throwable $e) {
+        } catch (Throwable $exception) {
             if ($newPath !== null) {
                 Storage::disk('public')->delete($newPath);
             }
 
-            throw $e;
+            if ($exception instanceof ValidationException) {
+                throw $exception;
+            }
+
+            $requestId = (string) $request->attributes->get('request_id', 'unavailable');
+            Log::error('Product update failed.', [
+                'request_id' => $requestId,
+                'product_id' => $product->id,
+                'primary_media_id' => $primaryMediaId,
+                'exception' => $exception,
+            ]);
+
+            return back()->withInput()->withErrors([
+                'name' => 'ذخیره تغییرات محصول انجام نشد؛ نسخه قبلی حفظ شد. کد پیگیری: ' . $requestId,
+            ]);
         }
 
         // Delete the previous image only after the database change commits.

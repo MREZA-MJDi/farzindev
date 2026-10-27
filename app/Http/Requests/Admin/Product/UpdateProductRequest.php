@@ -106,6 +106,18 @@ class UpdateProductRequest extends FormRequest
         return $value !== '' ? $value : null;
     }
 
+    public function withValidator(\Illuminate\Contracts\Validation\Validator $validator): void
+    {
+        $validator->after(function ($validator): void {
+            if ($this->hasFile('image') && filled($this->input('primary_media_id'))) {
+                $validator->errors()->add(
+                    'primary_media_id',
+                    'تصویر آپلودی و تصویر کتابخانه را هم‌زمان انتخاب نکنید.'
+                );
+            }
+        });
+    }
+
     public function rules(): array
     {
         $product = $this->route('product');
@@ -156,6 +168,14 @@ class UpdateProductRequest extends FormRequest
                 'mimes:jpg,jpeg,png,webp',
                 'dimensions:min_width=800,min_height=600',
                 'max:20480',
+            ],
+
+            'primary_media_id' => [
+                'nullable',
+                'integer',
+                Rule::exists('media', 'id')->where(
+                    fn ($query) => $query->whereIn('mime_type', ['image/jpeg', 'image/png', 'image/webp'])
+                ),
             ],
 
             'price' => [
@@ -281,6 +301,7 @@ class UpdateProductRequest extends FormRequest
 
             'short_description.max' => 'توضیح کوتاه نباید بیشتر از ۲۵۵ کاراکتر باشد.',
 
+            'primary_media_id.exists' => 'تصویر کتابخانه حذف شده یا فرمت آن پشتیبانی نمی‌شود.',
             'image.image' => 'فایل انتخاب‌شده باید تصویر باشد.',
             'image.mimes' => 'فرمت تصویر باید jpg، jpeg، png یا webp باشد.',
             'image.max' => 'حجم تصویر نباید بیشتر از ۲۰ مگابایت باشد.',
