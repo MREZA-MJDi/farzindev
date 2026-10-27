@@ -122,6 +122,8 @@ class SeoSettingsTest extends TestCase
                 'seo_custom_meta_tags' => [
                     ['type' => 'name', 'key' => 'theme-color', 'content' => '#f5f1e9'],
                     ['type' => 'property', 'key' => 'og:locale:alternate', 'content' => 'fa_IR'],
+                    // Empty default rows should be ignored rather than blocking Save.
+                    ['type' => 'name', 'key' => '', 'content' => ''],
                 ],
                 'seo_custom_link_tags' => [
                     [
@@ -139,6 +141,14 @@ class SeoSettingsTest extends TestCase
                         'type' => '',
                         'as' => '',
                         'crossorigin' => 'anonymous',
+                    ],
+                    [
+                        'rel' => 'alternate',
+                        'href' => '',
+                        'hreflang' => '',
+                        'type' => '',
+                        'as' => '',
+                        'crossorigin' => '',
                     ],
                 ],
             ])
