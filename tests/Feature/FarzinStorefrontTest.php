@@ -137,6 +137,11 @@ class FarzinStorefrontTest extends TestCase
                 'Admin route returned HTTP 500: ' . $url
             );
         }
+
+        $this->get(route('admin.products.edit', $product))
+            ->assertOk()
+            ->assertSee('name="show_in_home_gallery"', false)
+            ->assertSee('نمایش در گالری تصویری صفحه اصلی');
     }
 
     public function test_admin_can_choose_a_media_library_asset_as_the_primary_product_image(): void
