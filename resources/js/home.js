@@ -210,21 +210,11 @@ function initRevealAnimations() {
 }
 
 function initGridLayouts() {
-    const grids = [...document.querySelectorAll('.home-body .grid')];
-    const layouts = [
-        { columns: 3, ratio: 1.13, perspective: 1250 },
-        { columns: 4, ratio: .92, perspective: 1450 },
-        { columns: 3, ratio: 1.0, perspective: 1350 },
-        { columns: 4, ratio: .88, perspective: 1550 },
-        { columns: 3, ratio: 1.06, perspective: 1250 },
-        { columns: 3, ratio: 1.0, perspective: 1400 },
-    ];
-
-    grids.forEach((grid, index) => {
-        const layout = layouts[index % layouts.length];
-        grid.style.setProperty('--grid-columns', String(layout.columns));
-        grid.style.setProperty('--grid-item-ratio', String(layout.ratio));
-        grid.style.setProperty('--perspective', layout.perspective + 'px');
+    // Gallery sizing is handled by the responsive CSS grid contract.
+    // Keep each gallery in a predictable reading order; do not vary columns per section.
+    document.querySelectorAll('.home-body .grid').forEach((grid) => {
+        grid.style.removeProperty('--grid-columns');
+        grid.style.removeProperty('--grid-item-ratio');
         grid.classList.add('grid--static');
     });
 }
