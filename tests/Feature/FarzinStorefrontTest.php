@@ -3428,7 +3428,9 @@ class FarzinStorefrontTest extends TestCase
             ->get(route('admin.storefront-settings.edit'))
             ->assertOk()
             ->assertSee('بنر صفحه فروشگاه')
-            ->assertSee('اطلاعات تماس واقعی');
+            ->assertSee('اطلاعات تماس واقعی')
+            ->assertSee('name="latitude"', false)
+            ->assertSee('name="longitude"', false);
 
         $this->put(route('admin.storefront-settings.update'), [
             'shop_banner_image' => UploadedFile::fake()->image('shop-banner.jpg', 1600, 900),
@@ -3492,7 +3494,7 @@ class FarzinStorefrontTest extends TestCase
             ->assertRedirect(route('admin.storefront-settings.edit'))
             ->assertSessionHas('success');
 
-        $contact = \\App\\Models\\ContactSetting::query()->firstOrFail();
+        $contact = \App\Models\ContactSetting::query()->firstOrFail();
 
         $this->assertEqualsWithDelta(35.6892, (float) $contact->latitude, 0.0000001);
         $this->assertEqualsWithDelta(51.3890, (float) $contact->longitude, 0.0000001);
