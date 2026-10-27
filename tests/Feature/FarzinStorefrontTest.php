@@ -638,7 +638,7 @@ class FarzinStorefrontTest extends TestCase
         $this->get(route('product.show', $active->slug))
             ->assertOk()
             ->assertSee($active->name)
-            ->assertSee('"@type": "Product"', false)
+            ->assertSee('"@type":"Product"', false)
             ->assertSee('"priceCurrency": "IRR"', false);
 
         $this->get(route('product.show', $archived->slug))
