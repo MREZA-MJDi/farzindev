@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test';
+import { resolve } from 'node:path';
 
 const viewports = [
     { width: 360, height: 740 },
@@ -71,6 +72,62 @@ test('mobile search and navigation controls remain usable', async ({ page }) => 
 
     await page.locator('.farzin-site-header button[aria-label="باز کردن منو"]').click();
     await expect(page.locator('[data-farzin-mobile-menu-panel]')).toBeVisible();
+});
+
+test('homepage category GIF preview starts on hover and the first touch tap', async ({ page }) => {
+    await page.goto('/', { waitUntil: 'domcontentloaded' });
+
+    // Deterministic, network-free animated-media fixture. Load the same preview
+    // module used by Vite after the fixture exists so this test checks real
+    // pointer/touch event behavior rather than only checking the Blade markup.
+    const fixture = await page.evaluate(() => {
+        const card = document.createElement('a');
+        card.href = '/categories';
+        card.className = 'fz-category-card';
+        card.setAttribute('data-farzin-gif-card', '');
+        card.innerHTML = `
+            <span class="fz-category-card__art">
+                <img class="fz-category-card__image" alt="Category cover">
+                <img
+                    data-farzin-category-gif
+                    data-farzin-gif-src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs="
+                    alt=""
+                >
+            </span>
+        `;
+        document.body.appendChild(card);
+        return card;
+    });
+
+    await page.addScriptTag({ path: resolve(process.cwd(), 'resources/js/category-gif-preview.js') });
+
+    await page.evaluate((card) => {
+        card.dispatchEvent(new PointerEvent('pointerenter', {
+            bubbles: false,
+            pointerType: 'mouse',
+        }));
+    }, fixture);
+
+    await expect(fixture).toHaveClass(/is-gif-previewing/);
+
+    // Reset the preview and exercise the mobile interaction: first tap arms
+    // the preview; a second tap is allowed to follow the category link.
+    await page.evaluate((card) => {
+        card.dispatchEvent(new Event('pointerleave'));
+        card.dataset.farzinPreviewTapped = '';
+        card.dispatchEvent(new PointerEvent('pointerdown', {
+            bubbles: true,
+            pointerType: 'touch',
+        }));
+        card.dispatchEvent(new MouseEvent('click', {
+            bubbles: true,
+            cancelable: true,
+            detail: 1,
+        }));
+    }, fixture);
+
+    await expect(fixture).toHaveClass(/is-gif-previewing/);
+    await expect(fixture).toHaveAttribute('data-farzin-preview-tapped', '1');
 });
 
 test('customer and admin endpoints redirect guests to login', async ({ page }) => {
