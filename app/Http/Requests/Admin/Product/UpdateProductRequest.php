@@ -34,6 +34,9 @@ class UpdateProductRequest extends FormRequest
             'is_new' =>
                 $this->boolean('is_new'),
 
+            'show_in_home_gallery' =>
+                $this->boolean('show_in_home_gallery'),
+
             'installment_enabled' =>
                 $installmentEnabled,
 
@@ -217,6 +220,10 @@ class UpdateProductRequest extends FormRequest
                 'boolean',
             ],
 
+            'show_in_home_gallery' => [
+                'boolean',
+            ],
+
             /*
              |--------------------------------------------------------------------------
              | Installments
@@ -327,6 +334,7 @@ class UpdateProductRequest extends FormRequest
 
             'is_featured.boolean' => 'وضعیت محصول ویژه نامعتبر است.',
             'is_new.boolean' => 'وضعیت محصول جدید نامعتبر است.',
+            'show_in_home_gallery.boolean' => 'وضعیت گالری صفحه اصلی نامعتبر است.',
 
             'installment_enabled.boolean' => 'وضعیت خرید اقساطی نامعتبر است.',
             'installment_cash_percent.integer' => 'درصد پیش‌پرداخت باید عدد صحیح باشد.',
@@ -360,6 +368,7 @@ class UpdateProductRequest extends FormRequest
             'compare_at_price' => 'قیمت قبل',
             'stock' => 'موجودی',
             'status' => 'وضعیت',
+            'show_in_home_gallery' => 'گالری تصویری صفحه اصلی',
             'installment_enabled' => 'خرید اقساطی',
             'installment_cash_percent' => 'درصد پیش‌پرداخت',
             'installment_remainder_method' => 'روش تسویه',
