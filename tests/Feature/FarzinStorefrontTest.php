@@ -23,6 +23,171 @@ class FarzinStorefrontTest extends TestCase
 {
     use RefreshDatabase;
 
+    public function test_admin_can_render_every_crud_dashboard_surface_with_real_records(): void
+    {
+        $admin = $this->admin();
+        $category = $this->category([
+            'name' => 'Smoke Category',
+            'slug' => 'admin-smoke-category',
+        ]);
+        $product = $this->product($category, [
+            'name' => 'Smoke Product',
+            'slug' => 'admin-smoke-product',
+            'sku' => 'FAR-ADMIN-SMOKE',
+        ]);
+        $image = ProductImage::create([
+            'product_id' => $product->id,
+            'path' => 'https://cdn.example.test/admin-smoke.webp',
+            'alt' => 'Smoke image',
+            'sort_order' => 0,
+            'is_primary' => true,
+        ]);
+        $variant = ProductVariant::create([
+            'product_id' => $product->id,
+            'type' => 'color',
+            'name' => 'رنگ',
+            'value' => 'مشکی',
+            'sku' => 'FAR-ADMIN-SMOKE-BLACK',
+            'price_adjustment' => 0,
+            'stock' => 2,
+            'is_active' => true,
+        ]);
+        $customer = $this->customer([
+            'name' => 'Smoke Customer',
+            'email' => 'admin-smoke-customer@farzin.test',
+        ]);
+        $order = $this->order($customer);
+        $media = Media::create([
+            'user_id' => $admin->id,
+            'disk' => 'public',
+            'path' => 'media/admin-smoke.webp',
+            'filename' => 'admin-smoke.webp',
+            'original_name' => 'admin-smoke.webp',
+            'mime_type' => 'image/webp',
+            'extension' => 'webp',
+            'size' => 128,
+            'alt' => 'Admin smoke image',
+        ]);
+        $post = \App\Models\BlogPost::create([
+            'title' => 'Admin smoke article',
+            'slug' => 'admin-smoke-article',
+            'excerpt' => 'Dashboard smoke test',
+            'body' => 'Body for the admin CRUD surface test.',
+            'status' => 'draft',
+            'author_id' => $admin->id,
+        ]);
+        $message = ContactMessage::create([
+            'user_id' => $customer->id,
+            'name' => 'Smoke Customer',
+            'phone' => '09123456789',
+            'email' => $customer->email,
+            'subject' => 'product',
+            'message' => 'Admin dashboard smoke test message.',
+            'status' => 'unread',
+        ]);
+
+        $this->actingAs($admin);
+
+        $urls = [
+            route('admin.dashboard'),
+            route('admin.products.index'),
+            route('admin.products.create'),
+            route('admin.products.show', $product),
+            route('admin.products.edit', $product),
+            route('admin.categories.index'),
+            route('admin.categories.create'),
+            route('admin.categories.show', $category),
+            route('admin.categories.edit', $category),
+            route('admin.product-images.index', ['product_id' => $product->id]),
+            route('admin.product-images.create', ['product_id' => $product->id]),
+            route('admin.product-images.show', $image),
+            route('admin.product-images.edit', $image),
+            route('admin.product-variants.index', ['product_id' => $product->id]),
+            route('admin.product-variants.create', ['product_id' => $product->id]),
+            route('admin.product-variants.show', $variant),
+            route('admin.product-variants.edit', $variant),
+            route('admin.orders.index'),
+            route('admin.orders.show', $order),
+            route('admin.customers.index'),
+            route('admin.customers.show', $customer),
+            route('admin.customers.edit', $customer),
+            route('admin.media.index'),
+            route('admin.media.create'),
+            route('admin.blog-posts.index'),
+            route('admin.blog-posts.create'),
+            route('admin.blog-posts.edit', $post),
+            route('admin.seo-settings.edit'),
+            route('admin.storefront-settings.edit'),
+            route('admin.contact-messages.index'),
+            route('admin.contact-messages.show', $message),
+        ];
+
+        foreach ($urls as $url) {
+            $response = $this->get($url);
+
+            $this->assertContains(
+                $response->getStatusCode(),
+                [200, 301, 302, 303],
+                'Unexpected response for admin route: ' . $url . ' (HTTP ' . $response->getStatusCode() . ')'
+            );
+            $this->assertNotSame(
+                500,
+                $response->getStatusCode(),
+                'Admin route returned HTTP 500: ' . $url
+            );
+        }
+    }
+
+    public function test_admin_can_choose_a_media_library_asset_as_the_primary_product_image(): void
+    {
+        Storage::fake('public');
+        $admin = $this->admin();
+        $category = $this->category(['slug' => 'primary-media-category']);
+        Storage::disk('public')->put('media/primary-hood.webp', 'primary media bytes');
+
+        $media = Media::create([
+            'user_id' => $admin->id,
+            'disk' => 'public',
+            'path' => 'media/primary-hood.webp',
+            'filename' => 'primary-hood.webp',
+            'original_name' => 'primary-hood.webp',
+            'mime_type' => 'image/webp',
+            'extension' => 'webp',
+            'size' => 19,
+            'alt' => 'تصویر اصلی از کتابخانه',
+        ]);
+
+        $this->actingAs($admin)
+            ->get(route('admin.products.create'))
+            ->assertOk()
+            ->assertSee('انتخاب تصویر اصلی از کتابخانه رسانه')
+            ->assertSee('primary_media_id', false);
+
+        $this->post(route('admin.products.store'), [
+            'category_id' => $category->id,
+            'name' => 'Primary Media Hood',
+            'slug' => 'primary-media-hood',
+            'sku' => 'FAR-PRIMARY-MEDIA-HOOD',
+            'short_description' => 'تصویر اصلی انتخاب‌شده از کتابخانه',
+            'description' => 'آزمایش اتصال تصویر رسانه به عنوان تصویر اصلی محصول.',
+            'price' => '24500000',
+            'stock' => '5',
+            'status' => 'active',
+            'is_featured' => '0',
+            'is_new' => '0',
+            'primary_media_id' => $media->id,
+        ])->assertRedirect()
+            ->assertSessionHas('success');
+
+        $product = Product::query()->where('sku', 'FAR-PRIMARY-MEDIA-HOOD')->firstOrFail();
+        $image = $product->images()->firstOrFail();
+
+        $this->assertSame($media->id, $image->media_id);
+        $this->assertSame($media->path, $image->path);
+        $this->assertTrue($image->is_primary);
+        Storage::disk('public')->assertExists($media->path);
+    }
+
     public function test_public_pages_render_successfully(): void
     {
         foreach (['/', '/shop', '/categories', '/about', '/contact', '/blog'] as $uri) {
