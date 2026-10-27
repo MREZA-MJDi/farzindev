@@ -199,7 +199,7 @@ class SeoSettingsController extends Controller
         $reserved = [
             'name' => [
                 'description', 'keywords', 'robots', 'google-site-verification',
-                'msvalidate.01', 'twitter:title', 'twitter:description',
+                'msvalidate.01', 'viewport', 'referrer', 'twitter:title', 'twitter:description',
                 'twitter:card', 'twitter:image', 'twitter:site',
             ],
             'property' => [
@@ -216,7 +216,9 @@ class SeoSettingsController extends Controller
             $key = trim((string) ($row['key'] ?? ''));
             $content = trim((string) ($row['content'] ?? ''));
 
-            if ($type === '' && $key === '' && $content === '') {
+            // The UI defaults the type to "name"; an otherwise empty row
+            // should still be ignored when the user clicks Add and then Save.
+            if ($key === '' && $content === '') {
                 continue;
             }
 
@@ -274,7 +276,9 @@ class SeoSettingsController extends Controller
             $as = strtolower(trim((string) ($row['as'] ?? '')));
             $crossorigin = strtolower(trim((string) ($row['crossorigin'] ?? '')));
 
-            if ($rel === '' && $href === '' && $hreflang === '' && $type === '' && $as === '' && $crossorigin === '') {
+            // The UI defaults rel to "alternate"; ignore rows without an
+            // href when every optional attribute is empty.
+            if ($href === '' && $hreflang === '' && $type === '' && $as === '' && $crossorigin === '') {
                 continue;
             }
 
