@@ -12,6 +12,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 use RuntimeException;
@@ -146,11 +147,21 @@ class ProductImageController extends Controller
                 Storage::disk('public')->delete($storedPath);
             }
 
+            $requestId = (string) $request->attributes->get('request_id', 'unavailable');
+            Log::error('Product gallery attach failed.', [
+                'request_id' => $requestId,
+                'product_id' => $product->id,
+                'media_ids' => $mediaIds,
+                'exception' => $exception,
+            ]);
+
             if ($exception instanceof RuntimeException && $exception->getMessage() === 'ذخیره یکی از تصاویر گالری انجام نشد.') {
                 return back()->withInput()->withErrors(['images' => $exception->getMessage()]);
             }
 
-            throw $exception;
+            return back()->withInput()->withErrors([
+                'images' => 'ذخیره گالری انجام نشد؛ تصاویر قبلی حفظ شدند. کد پیگیری: ' . $requestId,
+            ]);
         }
 
         $addedCount = count($storedPaths) + count(array_unique(array_map('intval', $mediaIds)));
