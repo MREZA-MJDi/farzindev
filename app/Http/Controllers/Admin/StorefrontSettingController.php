@@ -60,6 +60,8 @@ class StorefrontSettingController extends Controller
             'whatsapp' => ['nullable', 'string', 'max:30', 'regex:/^[+0-9()\-\s]+$/'],
             'instagram_url' => ['nullable', 'url', 'max:255'],
             'address' => ['nullable', 'string', 'max:2000'],
+            'latitude' => ['nullable', 'required_with:longitude', 'numeric', 'between:-90,90'],
+            'longitude' => ['nullable', 'required_with:latitude', 'numeric', 'between:-180,180'],
             'hours' => ['nullable', 'string', 'max:255'],
             'phone_label' => ['nullable', 'string', 'max:100'],
             'email_label' => ['nullable', 'string', 'max:100'],
@@ -76,6 +78,12 @@ class StorefrontSettingController extends Controller
             'email.email' => 'فرمت ایمیل معتبر نیست.',
             'whatsapp.regex' => 'شماره واتساپ را فقط با رقم و علامت‌های متداول وارد کنید.',
             'instagram_url.url' => 'لینک اینستاگرام معتبر نیست.',
+            'latitude.required_with' => 'برای ثبت مختصات نقشه، طول و عرض جغرافیایی را هر دو وارد کنید.',
+            'longitude.required_with' => 'برای ثبت مختصات نقشه، طول و عرض جغرافیایی را هر دو وارد کنید.',
+            'latitude.numeric' => 'عرض جغرافیایی باید عددی باشد.',
+            'longitude.numeric' => 'طول جغرافیایی باید عددی باشد.',
+            'latitude.between' => 'عرض جغرافیایی باید بین ۹۰- و ۹۰ باشد.',
+            'longitude.between' => 'طول جغرافیایی باید بین ۱۸۰- و ۱۸۰ باشد.',
         ]);
 
         $oldPath = StorefrontSetting::query()
@@ -139,6 +147,8 @@ class StorefrontSettingController extends Controller
                     'whatsapp' => $data['whatsapp'] ?? null,
                     'instagram_url' => $data['instagram_url'] ?? null,
                     'address' => $data['address'] ?? null,
+                    'latitude' => $data['latitude'] ?? null,
+                    'longitude' => $data['longitude'] ?? null,
                     'hours' => $data['hours'] ?? null,
                     'phone_label' => $data['phone_label'] ?? null,
                     'email_label' => $data['email_label'] ?? null,
