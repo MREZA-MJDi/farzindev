@@ -8,6 +8,7 @@ use App\Http\Requests\Admin\ProductVariant\UpdateProductVariantRequest;
 use App\Models\Product;
 use App\Models\ProductImage;
 use App\Models\ProductVariant;
+use App\Services\Catalog\ProductMediaLibrary;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -46,13 +47,15 @@ class ProductVariantController extends Controller
      * Store a newly created product variant.
      */
     public function store(
-        StoreProductVariantRequest $request
+        StoreProductVariantRequest $request,
+        ProductMediaLibrary $mediaLibrary
     ): RedirectResponse {
         $data = $request->validated();
 
         $imageIds = $data['image_ids'] ?? [];
+        $mediaIds = $data['media_ids'] ?? [];
         $uploads = $request->file('images', []);
-        unset($data['image_ids'], $data['images']);
+        unset($data['image_ids'], $data['media_ids'], $data['images']);
 
         $productId = (int) $data['product_id'];
         $storedPaths = [];
@@ -73,7 +76,7 @@ class ProductVariantController extends Controller
         }
 
         try {
-            DB::transaction(function () use ($data, $imageIds, $productId, $storedPaths, &$newImageIds): void {
+            DB::transaction(function () use ($data, $imageIds, $mediaIds, $productId, $storedPaths, &$newImageIds, $mediaLibrary): void {
                 // Serialize variant changes with checkout's product/stock locks.
                 $product = Product::query()
                     ->whereKey($productId)
@@ -96,7 +99,12 @@ class ProductVariantController extends Controller
                     $newImageIds[] = $image->id;
                 }
 
-                $this->syncVariantImages($productVariant, $imageIds, $newImageIds);
+                $libraryImageIds = $mediaLibrary->attachToProduct(
+                    $productId,
+                    $mediaIds,
+                    trim($data['name'] . ' ' . $data['value'])
+                );
+                $this->syncVariantImages($productVariant, $imageIds, array_merge($newImageIds, $libraryImageIds));
             });
         } catch (Throwable $exception) {
             foreach ($storedPaths as $storedPath) {
@@ -145,7 +153,8 @@ class ProductVariantController extends Controller
      */
     public function update(
         UpdateProductVariantRequest $request,
-        ProductVariant $productVariant
+        ProductVariant $productVariant,
+        ProductMediaLibrary $mediaLibrary
     ): RedirectResponse {
         $data = $request->validated();
 
@@ -180,7 +189,9 @@ class ProductVariantController extends Controller
                 $oldProductId,
                 $newProductId,
                 $storedPaths,
-                &$newImageIds
+                $mediaIds,
+                &$newImageIds,
+                $mediaLibrary
             ): void {
                 // Lock product rows in a deterministic order to reduce deadlocks.
                 $lockedProducts = Product::query()
@@ -218,7 +229,12 @@ class ProductVariantController extends Controller
                     $newImageIds[] = $image->id;
                 }
 
-                $this->syncVariantImages($lockedVariant, $imageIds, $newImageIds);
+                $libraryImageIds = $mediaLibrary->attachToProduct(
+                    $newProductId,
+                    $mediaIds,
+                    trim($data['name'] . ' ' . $data['value'])
+                );
+                $this->syncVariantImages($lockedVariant, $imageIds, array_merge($newImageIds, $libraryImageIds));
             });
         } catch (Throwable $exception) {
             foreach ($storedPaths as $storedPath) {
