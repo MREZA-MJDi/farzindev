@@ -186,6 +186,46 @@ class FarzinStorefrontTest extends TestCase
         $this->assertSame($media->path, $image->path);
         $this->assertTrue($image->is_primary);
         Storage::disk('public')->assertExists($media->path);
+
+        Storage::disk('public')->put('media/primary-hood-replacement.webp', 'replacement media bytes');
+        $replacementMedia = Media::create([
+            'user_id' => $admin->id,
+            'disk' => 'public',
+            'path' => 'media/primary-hood-replacement.webp',
+            'filename' => 'primary-hood-replacement.webp',
+            'original_name' => 'primary-hood-replacement.webp',
+            'mime_type' => 'image/webp',
+            'extension' => 'webp',
+            'size' => 25,
+            'alt' => 'تصویر جایگزین از کتابخانه',
+        ]);
+
+        $this->put(route('admin.products.update', $product), [
+            'category_id' => $category->id,
+            'name' => 'Primary Media Hood',
+            'slug' => 'primary-media-hood',
+            'sku' => 'FAR-PRIMARY-MEDIA-HOOD',
+            'short_description' => 'تصویر اصلی انتخاب‌شده از کتابخانه',
+            'description' => 'آزمایش تغییر تصویر اصلی بدون کپی‌کردن فایل.',
+            'price' => '24500000',
+            'stock' => '5',
+            'status' => 'active',
+            'is_featured' => '0',
+            'is_new' => '0',
+            'primary_media_id' => $replacementMedia->id,
+        ])->assertRedirect(route('admin.products.edit', $product))
+            ->assertSessionHas('success');
+
+        $image->refresh();
+        $replacementImage = ProductImage::query()
+            ->where('product_id', $product->id)
+            ->where('media_id', $replacementMedia->id)
+            ->firstOrFail();
+
+        $this->assertFalse($image->is_primary);
+        $this->assertTrue($replacementImage->is_primary);
+        Storage::disk('public')->assertExists($media->path);
+        Storage::disk('public')->assertExists($replacementMedia->path);
     }
 
     public function test_public_pages_render_successfully(): void
