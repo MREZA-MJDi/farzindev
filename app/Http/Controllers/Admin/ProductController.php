@@ -13,6 +13,8 @@ use App\Services\Catalog\ProductMediaLibrary;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Validation\ValidationException;
 use Throwable;
 use Illuminate\View\View;
 
@@ -63,7 +65,20 @@ class ProductController extends Controller
         $newPath = null;
 
         if ($uploadedImage) {
-            $newPath = $uploadedImage->store('products/images', 'public');
+            try {
+                $newPath = $uploadedImage->store('products/images', 'public');
+            } catch (Throwable $exception) {
+                $requestId = (string) $request->attributes->get('request_id', 'unavailable');
+                Log::error('Product image storage failed during creation.', [
+                    'request_id' => $requestId,
+                    'sku' => $data['sku'] ?? null,
+                    'exception' => $exception,
+                ]);
+
+                return back()->withInput()->withErrors([
+                    'image' => 'ذخیره تصویر محصول انجام نشد؛ فضای دیسک و محدودیت آپلود را بررسی کنید. کد پیگیری: ' . $requestId,
+                ]);
+            }
 
             if (! $newPath) {
                 return back()
@@ -97,12 +112,26 @@ class ProductController extends Controller
 
                 return $product;
             });
-        } catch (Throwable $e) {
+        } catch (Throwable $exception) {
             if ($newPath !== null) {
                 Storage::disk('public')->delete($newPath);
             }
 
-            throw $e;
+            if ($exception instanceof ValidationException) {
+                throw $exception;
+            }
+
+            $requestId = (string) $request->attributes->get('request_id', 'unavailable');
+            Log::error('Product creation failed.', [
+                'request_id' => $requestId,
+                'sku' => $data['sku'] ?? null,
+                'primary_media_id' => $primaryMediaId,
+                'exception' => $exception,
+            ]);
+
+            return back()->withInput()->withErrors([
+                'name' => 'ذخیره محصول انجام نشد؛ هیچ تغییر ناقصی ثبت نشد. کد پیگیری: ' . $requestId,
+            ]);
         }
 
         return redirect()
@@ -166,7 +195,20 @@ class ProductController extends Controller
         $newPath = null;
 
         if ($uploadedImage) {
-            $newPath = $uploadedImage->store('products/images', 'public');
+            try {
+                $newPath = $uploadedImage->store('products/images', 'public');
+            } catch (Throwable $exception) {
+                $requestId = (string) $request->attributes->get('request_id', 'unavailable');
+                Log::error('Product image storage failed during update.', [
+                    'request_id' => $requestId,
+                    'product_id' => $product->id,
+                    'exception' => $exception,
+                ]);
+
+                return back()->withInput()->withErrors([
+                    'image' => 'ذخیره تصویر جدید انجام نشد؛ تصویر قبلی حفظ شد. کد پیگیری: ' . $requestId,
+                ]);
+            }
 
             if (! $newPath) {
                 return back()
@@ -244,9 +286,9 @@ class ProductController extends Controller
                 if ($primaryImage && ! $isPrimaryAttachedToVariant) {
                     // Media Library assets are shared. Detach the ProductImage
                     // from its Media record without deleting the shared file.
-                    $oldPathToDelete = $primaryImage->media_id === null
-                        ? $primaryImage->path
-                        : null;
+                    $isSharedMediaAsset = $primaryImage->media_id !== null
+                        || Media::query()->where('path', $primaryImage->path)->exists();
+                    $oldPathToDelete = $isSharedMediaAsset ? null : $primaryImage->path;
                     $primaryImage->update([
                         'path' => $newPath,
                         'media_id' => null,
@@ -267,12 +309,26 @@ class ProductController extends Controller
                     ]);
                 }
             });
-        } catch (Throwable $e) {
+        } catch (Throwable $exception) {
             if ($newPath !== null) {
                 Storage::disk('public')->delete($newPath);
             }
 
-            throw $e;
+            if ($exception instanceof ValidationException) {
+                throw $exception;
+            }
+
+            $requestId = (string) $request->attributes->get('request_id', 'unavailable');
+            Log::error('Product update failed.', [
+                'request_id' => $requestId,
+                'product_id' => $product->id,
+                'primary_media_id' => $primaryMediaId,
+                'exception' => $exception,
+            ]);
+
+            return back()->withInput()->withErrors([
+                'name' => 'ذخیره تغییرات محصول انجام نشد؛ نسخه قبلی حفظ شد. کد پیگیری: ' . $requestId,
+            ]);
         }
 
         // Delete the previous image only after the database change commits.
