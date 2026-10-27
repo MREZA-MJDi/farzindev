@@ -172,6 +172,157 @@
                 </div>
             </section>
 
+            <section class="admin-card space-y-5 p-5 sm:p-7"
+                x-data="{ tags: @js(old('seo_custom_meta_tags', $customMetaTags)) }">
+                <div class="flex flex-wrap items-start justify-between gap-3">
+                    <div>
+                        <h2 class="text-base font-bold text-[var(--admin-text)]">۵. تگ‌های meta سفارشی</h2>
+                        <p class="mt-2 text-xs leading-6 text-[var(--admin-muted)]">
+                            برای افزودن تگ‌هایی مثل theme-color یا og:locale:alternate استفاده کنید. تگ‌های اصلی title، description، robots، canonical و Open Graph که سیستم تولید می‌کند، تکرارشدنی نیستند.
+                        </p>
+                    </div>
+                    <button type="button"
+                        @click="tags.push({ type: 'name', key: '', content: '' })"
+                        class="rounded-xl border border-[var(--admin-border)] px-4 py-2 text-sm font-semibold text-[var(--admin-text)] hover:bg-[var(--admin-surface)]">
+                        + افزودن تگ
+                    </button>
+                </div>
+
+                <p x-show="tags.length === 0" class="rounded-xl border border-dashed border-[var(--admin-border)] p-4 text-sm text-[var(--admin-muted)]">
+                    هنوز تگ سفارشی ثبت نشده است.
+                </p>
+
+                <template x-for="(tag, index) in tags" :key="index">
+                    <div class="grid gap-3 rounded-xl border border-[var(--admin-border)] p-4 sm:grid-cols-12">
+                        <label class="block text-sm text-[var(--admin-text)] sm:col-span-2">
+                            نوع تگ
+                            <select :name="'seo_custom_meta_tags[' + index + '][type]'"
+                                x-model="tag.type" class="admin-input mt-2 w-full">
+                                <option value="name">name</option>
+                                <option value="property">property</option>
+                            </select>
+                        </label>
+                        <label class="block text-sm text-[var(--admin-text)] sm:col-span-4">
+                            نام / کلید
+                            <input :name="'seo_custom_meta_tags[' + index + '][key]'"
+                                x-model="tag.key" maxlength="100" placeholder="theme-color"
+                                class="admin-input mt-2 w-full" dir="ltr">
+                        </label>
+                        <label class="block text-sm text-[var(--admin-text)] sm:col-span-5">
+                            محتوا
+                            <input :name="'seo_custom_meta_tags[' + index + '][content]'"
+                                x-model="tag.content" maxlength="1000" placeholder="#f5f1e9"
+                                class="admin-input mt-2 w-full" dir="ltr">
+                        </label>
+                        <div class="flex items-end sm:col-span-1">
+                            <button type="button" @click="tags.splice(index, 1)"
+                                class="w-full rounded-xl border border-red-200 px-3 py-2 text-sm text-red-700 hover:bg-red-50">
+                                حذف
+                            </button>
+                        </div>
+                    </div>
+                </template>
+            </section>
+
+            <section class="admin-card space-y-5 p-5 sm:p-7"
+                x-data="{ links: @js(old('seo_custom_link_tags', $customLinkTags)) }">
+                <div class="flex flex-wrap items-start justify-between gap-3">
+                    <div>
+                        <h2 class="text-base font-bold text-[var(--admin-text)]">۶. تگ‌های link سفارشی</h2>
+                        <p class="mt-2 text-xs leading-6 text-[var(--admin-muted)]">
+                            برای لینک زبان جایگزین (hreflang)، آیکون سایت، manifest، preconnect یا preload استفاده کنید. تگ canonical در این بخش غیرفعال است تا با canonical خودکار تداخل نداشته باشد.
+                        </p>
+                    </div>
+                    <button type="button"
+                        @click="links.push({ rel: 'alternate', href: '', hreflang: '', type: '', as: '', crossorigin: '' })"
+                        class="rounded-xl border border-[var(--admin-border)] px-4 py-2 text-sm font-semibold text-[var(--admin-text)] hover:bg-[var(--admin-surface)]">
+                        + افزودن لینک
+                    </button>
+                </div>
+
+                <p x-show="links.length === 0" class="rounded-xl border border-dashed border-[var(--admin-border)] p-4 text-sm text-[var(--admin-muted)]">
+                    هنوز لینک سفارشی ثبت نشده است.
+                </p>
+
+                <template x-for="(link, index) in links" :key="index">
+                    <div class="space-y-4 rounded-xl border border-[var(--admin-border)] p-4">
+                        <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                            <label class="block text-sm text-[var(--admin-text)]">
+                                رابطه (rel)
+                                <select :name="'seo_custom_link_tags[' + index + '][rel]'"
+                                    x-model="link.rel" class="admin-input mt-2 w-full">
+                                    <option value="alternate">alternate (زبان جایگزین)</option>
+                                    <option value="icon">icon (آیکون سایت)</option>
+                                    <option value="apple-touch-icon">apple-touch-icon</option>
+                                    <option value="manifest">manifest</option>
+                                    <option value="preconnect">preconnect</option>
+                                    <option value="dns-prefetch">dns-prefetch</option>
+                                    <option value="preload">preload</option>
+                                    <option value="modulepreload">modulepreload</option>
+                                    <option value="prefetch">prefetch</option>
+                                    <option value="stylesheet">stylesheet</option>
+                                    <option value="author">author</option>
+                                    <option value="help">help</option>
+                                    <option value="license">license</option>
+                                    <option value="mask-icon">mask-icon</option>
+                                </select>
+                            </label>
+                            <label class="block text-sm text-[var(--admin-text)] sm:col-span-2">
+                                آدرس (href)
+                                <input :name="'seo_custom_link_tags[' + index + '][href]'"
+                                    x-model="link.href" maxlength="2048"
+                                    placeholder="https://example.com/en یا /favicon.svg"
+                                    class="admin-input mt-2 w-full" dir="ltr">
+                            </label>
+                            <label class="block text-sm text-[var(--admin-text)]">
+                                زبان جایگزین (اختیاری)
+                                <input :name="'seo_custom_link_tags[' + index + '][hreflang]'"
+                                    x-model="link.hreflang" maxlength="35" placeholder="en یا fa-IR"
+                                    class="admin-input mt-2 w-full" dir="ltr">
+                            </label>
+                            <label class="block text-sm text-[var(--admin-text)]">
+                                نوع فایل (اختیاری)
+                                <input :name="'seo_custom_link_tags[' + index + '][type]'"
+                                    x-model="link.type" maxlength="100"
+                                    placeholder="image/svg+xml یا text/css"
+                                    class="admin-input mt-2 w-full" dir="ltr">
+                            </label>
+                            <label class="block text-sm text-[var(--admin-text)]">
+                                نوع منبع برای preload (اختیاری)
+                                <select :name="'seo_custom_link_tags[' + index + '][as]'"
+                                    x-model="link.as" class="admin-input mt-2 w-full">
+                                    <option value="">بدون مقدار</option>
+                                    <option value="font">font</option>
+                                    <option value="image">image</option>
+                                    <option value="script">script</option>
+                                    <option value="style">style</option>
+                                    <option value="fetch">fetch</option>
+                                    <option value="document">document</option>
+                                    <option value="audio">audio</option>
+                                    <option value="video">video</option>
+                                    <option value="worker">worker</option>
+                                </select>
+                            </label>
+                            <label class="block text-sm text-[var(--admin-text)]">
+                                crossorigin (اختیاری)
+                                <select :name="'seo_custom_link_tags[' + index + '][crossorigin]'"
+                                    x-model="link.crossorigin" class="admin-input mt-2 w-full">
+                                    <option value="">بدون مقدار</option>
+                                    <option value="anonymous">anonymous</option>
+                                    <option value="use-credentials">use-credentials</option>
+                                </select>
+                            </label>
+                        </div>
+                        <div class="flex justify-end">
+                            <button type="button" @click="links.splice(index, 1)"
+                                class="rounded-xl border border-red-200 px-4 py-2 text-sm text-red-700 hover:bg-red-50">
+                                حذف لینک
+                            </button>
+                        </div>
+                    </div>
+                </template>
+            </section>
+
             <div class="flex flex-wrap items-center justify-between gap-3">
                 <p class="max-w-2xl text-xs leading-6 text-[var(--admin-muted)]">پس از ذخیره، کش تنظیمات و sitemap باطل می‌شود. این صفحه تنظیمات تکنیکی را کنترل می‌کند؛ رتبه یا ایندکس‌شدن در گوگل تضمین‌پذیر نیست.</p>
                 <button type="submit" class="admin-btn admin-btn-primary">ذخیره تنظیمات SEO</button>
