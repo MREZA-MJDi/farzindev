@@ -159,8 +159,9 @@ class ProductVariantController extends Controller
         $data = $request->validated();
 
         $imageIds = $data['image_ids'] ?? [];
+        $mediaIds = $data['media_ids'] ?? [];
         $uploads = $request->file('images', []);
-        unset($data['image_ids'], $data['images']);
+        unset($data['image_ids'], $data['media_ids'], $data['images']);
 
         $oldProductId = (int) $productVariant->product_id;
         $newProductId = (int) $data['product_id'];
