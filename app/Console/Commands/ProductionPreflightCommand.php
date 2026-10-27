@@ -108,6 +108,11 @@ class ProductionPreflightCommand extends Command
 
             foreach ([
                 ['product_images', 'media_id', 'Product gallery must support shared Media Library assets.'],
+                ['products', 'show_in_home_gallery', 'Homepage mosaic requires the admin-managed gallery selection column.'],
+                ['contact_settings', 'latitude', 'Contact page map coordinates require the latitude column.'],
+                ['contact_settings', 'longitude', 'Contact page map coordinates require the longitude column.'],
+                ['orders', 'inventory_reserved_at', 'Checkout safety requires the inventory reservation lifecycle migration.'],
+                ['orders', 'inventory_committed_at', 'Checkout safety requires the inventory commit marker.'],
                 ['product_variants', 'color_hex', 'Variant color picker requires color_hex.'],
                 ['product_variant_images', 'product_variant_id', 'Variant gallery pivot table must be migrated.'],
                 ['product_variant_images', 'product_image_id', 'Variant gallery pivot table must link product images.'],
