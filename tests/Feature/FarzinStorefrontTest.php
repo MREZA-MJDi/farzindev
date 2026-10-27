@@ -1638,6 +1638,125 @@ class FarzinStorefrontTest extends TestCase
         Storage::disk('public')->assertExists($images->last()->path);
     }
 
+    public function test_product_and_variant_can_reuse_media_library_images_without_copying_or_deleting_them(): void
+    {
+        Storage::fake('public');
+        $admin = $this->admin();
+        $product = $this->product($this->category(['slug' => 'media-library-gallery']), [
+            'name' => 'Media Library Hood',
+            'slug' => 'media-library-hood',
+            'sku' => 'FAR-MEDIA-LIBRARY-HOOD',
+            'stock' => 8,
+        ]);
+
+        Storage::disk('public')->put('media/library-hood.webp', 'shared image bytes');
+        $media = Media::create([
+            'user_id' => $admin->id,
+            'disk' => 'public',
+            'path' => 'media/library-hood.webp',
+            'filename' => 'library-hood.webp',
+            'original_name' => 'library-hood.webp',
+            'mime_type' => 'image/webp',
+            'extension' => 'webp',
+            'size' => 19,
+            'alt' => 'هود از کتابخانه رسانه',
+        ]);
+
+        $this->actingAs($admin)
+            ->get(route('admin.products.edit', $product))
+            ->assertOk()
+            ->assertSee('کتابخانه رسانه')
+            ->assertSee('media_ids[]', false);
+
+        $this->actingAs($admin)
+            ->post(route('admin.products.images.store', $product), [
+                'media_ids' => [$media->id],
+                'alt' => 'هود استفاده‌شده از کتابخانه',
+            ])
+            ->assertRedirect(route('admin.products.edit', $product))
+            ->assertSessionHas('success');
+
+        $galleryImage = ProductImage::query()
+            ->where('product_id', $product->id)
+            ->where('media_id', $media->id)
+            ->firstOrFail();
+
+        $this->assertSame('media/library-hood.webp', $galleryImage->path);
+        $this->assertTrue($galleryImage->is_primary);
+        Storage::disk('public')->assertExists($media->path);
+
+        // Selecting the same library image again reuses the product-image row.
+        $this->post(route('admin.products.images.store', $product), [
+            'media_ids' => [$media->id],
+        ])->assertRedirect(route('admin.products.edit', $product));
+
+        $this->assertSame(
+            1,
+            ProductImage::query()
+                ->where('product_id', $product->id)
+                ->where('media_id', $media->id)
+                ->count()
+        );
+
+        $this->post(route('admin.product-variants.store'), [
+            'product_id' => $product->id,
+            'type' => 'color',
+            'name' => 'رنگ',
+            'value' => 'مشکی',
+            'sku' => 'FAR-MEDIA-LIBRARY-BLACK',
+            'price_adjustment' => 0,
+            'stock' => 4,
+            'is_active' => '1',
+            'media_ids' => [$media->id],
+            'return_to_product' => '1',
+        ])->assertRedirect(route('admin.products.edit', $product))
+            ->assertSessionHas('success');
+
+        $variant = ProductVariant::query()
+            ->where('sku', 'FAR-MEDIA-LIBRARY-BLACK')
+            ->firstOrFail();
+
+        $this->assertSame(1, $variant->images()->count());
+        $this->assertDatabaseHas('product_variant_images', [
+            'product_variant_id' => $variant->id,
+            'product_image_id' => $galleryImage->id,
+        ]);
+
+        $this->put(route('admin.product-variants.update', $variant), [
+            'product_id' => $product->id,
+            'type' => 'color',
+            'name' => 'رنگ',
+            'value' => 'مشکی',
+            'sku' => 'FAR-MEDIA-LIBRARY-BLACK',
+            'price_adjustment' => 0,
+            'stock' => 4,
+            'is_active' => '1',
+            'image_ids' => [$galleryImage->id],
+            'media_ids' => [$media->id],
+            'return_to_product' => '1',
+        ])->assertRedirect(route('admin.products.edit', $product))
+            ->assertSessionHas('success');
+
+        $this->assertSame(1, $variant->fresh()->images()->count());
+
+        // Do not delete a file from the library while it is referenced by a product.
+        $this->delete(route('admin.media.destroy', $media))
+            ->assertRedirect(route('admin.media.index'))
+            ->assertSessionHas('error');
+
+        $this->assertDatabaseHas('media', ['id' => $media->id]);
+        $this->assertDatabaseHas('product_images', [
+            'id' => $galleryImage->id,
+            'media_id' => $media->id,
+        ]);
+        Storage::disk('public')->assertExists($media->path);
+
+        $this->get(route('product.show', $product->slug))
+            ->assertOk()
+            ->assertSee($media->url, false)
+            ->assertSee('Media Library Hood');
+    }
+
     public function test_product_editor_can_create_and_update_a_color_variant_with_its_own_images(): void
     {
         Storage::fake('public');
