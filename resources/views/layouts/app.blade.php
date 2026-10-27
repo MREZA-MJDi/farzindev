@@ -102,6 +102,18 @@
         <meta name="msvalidate.01" content="{{ $seoValues['seo_bing_site_verification'] }}">
     @endif
 
+    @foreach ($seoService->customMetaTags() as $customMetaTag)
+        <meta {{ $customMetaTag['type'] }}="{{ $customMetaTag['key'] }}" content="{{ $customMetaTag['content'] }}">
+    @endforeach
+    @foreach ($seoService->customLinkTags() as $customLinkTag)
+        <link rel="{{ $customLinkTag['rel'] }}" href="{{ $customLinkTag['href'] }}"
+            @if(filled($customLinkTag['hreflang'])) hreflang="{{ $customLinkTag['hreflang'] }}" @endif
+            @if(filled($customLinkTag['type'])) type="{{ $customLinkTag['type'] }}" @endif
+            @if(filled($customLinkTag['as'])) as="{{ $customLinkTag['as'] }}" @endif
+            @if(filled($customLinkTag['crossorigin'])) crossorigin="{{ $customLinkTag['crossorigin'] }}" @endif
+        >
+    @endforeach
+
     <script type="application/ld+json">{!! json_encode($seoWebsiteSchema, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT) !!}</script>
     <script type="application/ld+json">{!! json_encode($seoOrganizationSchema, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT) !!}</script>
 
