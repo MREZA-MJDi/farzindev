@@ -80,8 +80,9 @@ test('homepage category GIF preview starts on hover and the first touch tap', as
     // Deterministic, network-free animated-media fixture. Load the same preview
     // module used by Vite after the fixture exists so this test checks real
     // pointer/touch event behavior rather than only checking the Blade markup.
-    const fixture = await page.evaluate(() => {
+    await page.evaluate(() => {
         const card = document.createElement('a');
+        card.id = 'category-preview-test-fixture';
         card.href = '/categories';
         card.className = 'fz-category-card';
         card.setAttribute('data-farzin-gif-card', '');
@@ -96,23 +97,24 @@ test('homepage category GIF preview starts on hover and the first touch tap', as
             </span>
         `;
         document.body.appendChild(card);
-        return card;
     });
+    const fixture = page.locator('#category-preview-test-fixture');
 
     await page.addScriptTag({ path: resolve(process.cwd(), 'resources/js/category-gif-preview.js') });
 
-    await page.evaluate((card) => {
-        card.dispatchEvent(new PointerEvent('pointerenter', {
+    await page.evaluate(() => {
+        document.querySelector('#category-preview-test-fixture').dispatchEvent(new PointerEvent('pointerenter', {
             bubbles: false,
             pointerType: 'mouse',
         }));
-    }, fixture);
+    });
 
     await expect(fixture).toHaveClass(/is-gif-previewing/);
 
     // Reset the preview and exercise the mobile interaction: first tap arms
     // the preview; a second tap is allowed to follow the category link.
-    await page.evaluate((card) => {
+    await page.evaluate(() => {
+        const card = document.querySelector('#category-preview-test-fixture');
         card.dispatchEvent(new Event('pointerleave'));
         card.dataset.farzinPreviewTapped = '';
         card.dispatchEvent(new PointerEvent('pointerdown', {
@@ -124,7 +126,7 @@ test('homepage category GIF preview starts on hover and the first touch tap', as
             cancelable: true,
             detail: 1,
         }));
-    }, fixture);
+    });
 
     await expect(fixture).toHaveClass(/is-gif-previewing/);
     await expect(fixture).toHaveAttribute('data-farzin-preview-tapped', '1');
