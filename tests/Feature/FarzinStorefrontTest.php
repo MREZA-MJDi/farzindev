@@ -436,6 +436,30 @@ class FarzinStorefrontTest extends TestCase
             ->assertDontSee('image_url }}');
     }
 
+    public function test_product_page_does_not_render_raw_seo_template_fragments(): void
+    {
+        $category = $this->category([
+            'name' => 'دسته تست محصول',
+            'slug' => 'product-seo-test-category',
+        ]);
+
+        $product = $this->product($category, [
+            'name' => 'هود تست متادیتای محصول',
+            'slug' => 'product-seo-raw-fragment-test',
+            'sku' => 'FAR-PRODUCT-SEO-RAW',
+        ]);
+
+        $this->get(route('product.show', $product->slug))
+            ->assertOk()
+            ->assertSee('<meta property="product:price:amount"', false)
+            ->assertSee('<script type="application/ld+json">', false)
+            ->assertSee('"@context":"https://schema.org"', false)
+            ->assertSee('"@type":"Product"', false)
+            ->assertDontSee('slug) }}"')
+            ->assertDontSee('meta_description ??')
+            ->assertDontSee('@@context');
+    }
+
     public function test_shop_search_and_price_filters_exclude_unavailable_products(): void
     {
         $category = $this->category(['slug' => 'hoods']);
