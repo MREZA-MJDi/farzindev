@@ -3,11 +3,11 @@
 ])
 
 @php
-    $currentSort = request('sort', 'latest');
+    $currentSort = request('sort', 'newest');
 
     $sortOptions = [
-        'latest' => 'جدیدترین',
-        'oldest' => 'قدیمی‌ترین',
+        'newest' => 'جدیدترین',
+        'popular' => 'پرفروش‌ترین',
         'price_asc' => 'ارزان‌ترین',
         'price_desc' => 'گران‌ترین',
         'name_asc' => 'الفبایی',
@@ -23,7 +23,7 @@
      |--------------------------------------------------------------------------
      */
 
-    $baseQuery = request()->except('sort');
+    $baseQuery = request()->except(['sort', 'page']);
 @endphp
 
 <div
