@@ -26,6 +26,7 @@ class Product extends Model
         'status',
         'is_featured',
         'is_new',
+        'show_in_home_gallery',
         'meta_title',
         'meta_description',
 
@@ -57,6 +58,7 @@ class Product extends Model
 
             'is_featured' => 'boolean',
             'is_new' => 'boolean',
+            'show_in_home_gallery' => 'boolean',
 
             /*
              * Internal installment settings
