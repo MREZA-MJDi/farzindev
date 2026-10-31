@@ -12,6 +12,7 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\BlogController;
 use App\Http\Controllers\PublicSeoRedirectController;
 use App\Http\Controllers\Admin\BlogTermController as AdminBlogTermController;
+use App\Http\Controllers\Admin\BlogAppearanceController as AdminBlogAppearanceController;
 use App\Http\Controllers\Admin\SeoRedirectController as AdminSeoRedirectController;
 use App\Http\Controllers\Admin\BlogPostController as AdminBlogPostController;
 use App\Http\Controllers\OrderController;
@@ -394,6 +395,9 @@ Route::middleware(['auth', 'admin'])
             'seo-settings',
             [AdminSeoSettingsController::class, 'update']
         )->name('seo-settings.update');
+
+        Route::get('blog-appearance', [AdminBlogAppearanceController::class, 'edit'])->name('blog-appearance.edit');
+        Route::put('blog-appearance', [AdminBlogAppearanceController::class, 'update'])->name('blog-appearance.update');
 
         Route::resource(
             'blog-posts',
