@@ -29,6 +29,10 @@ class Product extends Model
         'show_in_home_gallery',
         'meta_title',
         'meta_description',
+        'canonical_url',
+        'og_title',
+        'og_description',
+        'seo_robots',
 
         /*
          * Internal installment settings
