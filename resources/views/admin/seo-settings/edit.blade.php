@@ -12,7 +12,7 @@
         </div>
 
         @php
-            $indexingBlocked = ($settings['seo_development_mode'] ?? '0') === '1'
+            $indexingBlocked = ($settings['seo_development_mode'] ?? '1') === '1'
                 || ($settings['seo_robots_noindex'] ?? '0') === '1'
                 || ($settings['seo_robots_nofollow'] ?? '0') === '1';
         @endphp
