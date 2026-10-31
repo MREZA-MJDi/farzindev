@@ -49,10 +49,44 @@
                     <button type="button" data-editor-command="insertUnorderedList" class="admin-btn admin-btn-secondary px-3 py-2">فهرست نقطه‌ای</button>
                     <button type="button" data-editor-command="insertOrderedList" class="admin-btn admin-btn-secondary px-3 py-2">فهرست شماره‌ای</button>
                     <button type="button" data-editor-command="createLink" class="admin-btn admin-btn-secondary px-3 py-2">افزودن لینک</button>
-                    <button type="button" data-editor-insert-image class="admin-btn admin-btn-secondary px-3 py-2">تصویر در متن</button>
+                    <button type="button" data-editor-insert-image class="admin-btn admin-btn-secondary px-3 py-2">افزودن با نشانی</button>
                     <button type="button" data-editor-command="undo" class="admin-btn admin-btn-ghost px-3 py-2">Undo</button>
                     <button type="button" data-editor-command="redo" class="admin-btn admin-btn-ghost px-3 py-2">Redo</button>
                 </div>
+
+                <details class="overflow-hidden rounded-2xl border border-[var(--admin-border)] bg-[var(--admin-surface-soft)]" data-editor-media-picker>
+                    <summary class="flex min-h-12 cursor-pointer list-none items-center justify-between gap-3 px-4 py-3 text-xs font-semibold text-[var(--admin-text)]">
+                        <span>انتخاب تصویر از کتابخانه رسانه</span>
+                        <span class="rounded-full bg-[var(--admin-white)] px-2.5 py-1 text-[10px] font-medium text-[var(--admin-muted)]">{{ count($mediaImages) }} تصویر اخیر</span>
+                    </summary>
+                    <div class="border-t border-[var(--admin-border)] p-3">
+                        @if(count($mediaImages))
+                            <div class="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
+                                @foreach($mediaImages as $mediaImage)
+                                    <button
+                                        type="button"
+                                        data-editor-media-image
+                                        data-media-url="{{ $mediaImage->url }}"
+                                        data-media-alt="{{ $mediaImage->alt ?: $mediaImage->original_name }}"
+                                        class="group overflow-hidden rounded-xl border border-[var(--admin-border)] bg-[var(--admin-white)] text-right transition hover:border-[var(--admin-accent)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--admin-accent)]"
+                                        aria-label="درج تصویر {{ $mediaImage->alt ?: $mediaImage->original_name }}"
+                                    >
+                                        <span class="block aspect-[4/3] overflow-hidden bg-[var(--admin-surface)]">
+                                            <img src="{{ $mediaImage->url }}" alt="" loading="lazy" decoding="async" class="h-full w-full object-cover transition duration-300 group-hover:scale-105">
+                                        </span>
+                                        <span class="block truncate px-2.5 py-2 text-[10px] font-medium text-[var(--admin-text-soft)]">{{ $mediaImage->original_name }}</span>
+                                    </button>
+                                @endforeach
+                            </div>
+                        @else
+                            <div class="rounded-xl border border-dashed border-[var(--admin-border)] bg-[var(--admin-white)] px-4 py-7 text-center">
+                                <p class="text-xs font-semibold text-[var(--admin-text)]">کتابخانه هنوز تصویر ندارد.</p>
+                                <a href="{{ route('admin.media.create') }}" target="_blank" rel="noopener" class="admin-btn admin-btn-secondary mt-3">آپلود تصویر جدید</a>
+                            </div>
+                        @endif
+                        <p class="mt-3 text-[10px] leading-5 text-[var(--admin-muted)]">با انتخاب هر تصویر، آن را در محل نشانگر متن درج می‌کنیم. متن Alt از اطلاعات رسانه برداشته می‌شود و بعداً هم می‌توانی ویرایشش کنی.</p>
+                    </div>
+                </details>
 
                 <textarea id="blog-body-source" name="body" data-editor-source rows="18" required class="admin-input w-full leading-8">{{ old('body', $post->body_html ?: $post->body) }}</textarea>
                 <div data-editor-surface hidden class="admin-blog-editor" aria-label="متن مقاله">{!! $editorHtml !!}</div>
@@ -209,15 +243,56 @@
         </section>
 
         <section class="admin-card space-y-4 p-5">
-            <h2 class="text-sm font-bold text-[var(--admin-text)]">تصویر شاخص</h2>
-            @if($post->cover_image_url)
-                <img src="{{ $post->cover_image_url }}" alt="{{ $post->cover_image_alt ?: $post->title }}" class="aspect-video w-full rounded-xl object-cover">
-            @endif
-            <input type="file" name="cover_image" accept="image/jpeg,image/png,image/webp" class="admin-input w-full p-2">
+            <div>
+                <h2 class="text-sm font-bold text-[var(--admin-text)]">تصویر شاخص مقاله</h2>
+                <p class="mt-1 text-xs leading-6 text-[var(--admin-muted)]">یک تصویر برای کارت مجله و سربرگ مقاله؛ کادر ۱۶:۹ را دقیق تنظیم کن.</p>
+            </div>
+
+            <div class="admin-image-preview aspect-video">
+                <img
+                    src="{{ $post->cover_image_url ?: '' }}"
+                    alt="{{ $post->cover_image_alt ?: $post->title }}"
+                    data-image-editor-existing-preview
+                    @if(! $post->cover_image_url) class="hidden" @endif
+                    loading="lazy"
+                    decoding="async"
+                >
+                <div data-image-editor-placeholder class="{{ $post->cover_image_url ? 'hidden' : 'flex' }} h-full flex-col items-center justify-center gap-2 bg-[var(--admin-surface-soft)] p-4 text-center">
+                    <span class="text-3xl text-[var(--admin-muted)]">F.</span>
+                    <span class="text-xs text-[var(--admin-muted)]">هنوز تصویر شاخص انتخاب نشده است.</span>
+                </div>
+            </div>
+
+            <label class="block text-sm text-[var(--admin-text)]">انتخاب تصویر جدید
+                <input type="file" name="cover_image" accept="image/jpeg,image/png,image/webp" data-image-editor-input data-image-editor-min-width="800" data-image-editor-min-height="450" data-image-editor-default-ratio="16:9" class="admin-input mt-2 w-full p-2">
+            </label>
+
+            <div data-image-editor-panel hidden class="space-y-4 rounded-2xl border border-[var(--admin-border)] bg-[var(--admin-surface-soft)] p-4">
+                <div>
+                    <h3 class="text-xs font-bold text-[var(--admin-text)]">تنظیم قاب تصویر</h3>
+                    <p class="mt-1 text-[11px] leading-5 text-[var(--admin-muted)]">برای جابه‌جایی تصویر، روی پیش‌نمایش بکش؛ زوم و چرخش هم در دسترس است.</p>
+                </div>
+                <canvas data-image-editor-canvas role="img" aria-label="پیش‌نمایش برش تصویر شاخص" class="mx-auto block max-w-full rounded-xl bg-[var(--admin-bg)]" style="width:min(100%,520px);height:auto;aspect-ratio:16/9;touch-action:none;cursor:grab;"></canvas>
+                <div class="grid gap-4 sm:grid-cols-2">
+                    <label class="block text-xs text-[var(--admin-text)]">نسبت کادر
+                        <select data-image-editor-ratio class="admin-select mt-2 w-full"><option value="16:9" selected>عریض ۱۶:۹</option><option value="4:3">استاندارد ۴:۳</option><option value="1:1">مربع ۱:۱</option><option value="4:5">پرتره ۴:۵</option></select>
+                    </label>
+                    <label class="block text-xs text-[var(--admin-text)]">بزرگ‌نمایی <span data-image-editor-zoom-label>۱×</span>
+                        <input data-image-editor-zoom type="range" min="1" max="3" step="0.05" value="1" class="mt-3 w-full">
+                    </label>
+                </div>
+                <div class="flex flex-wrap gap-2">
+                    <button type="button" data-image-editor-rotate="-90" class="admin-btn admin-btn-secondary">چرخش پادساعت‌گرد</button>
+                    <button type="button" data-image-editor-rotate="90" class="admin-btn admin-btn-secondary">چرخش ساعت‌گرد</button>
+                    <button type="button" data-image-editor-reset class="admin-btn admin-btn-ghost">بازنشانی</button>
+                </div>
+                <p data-image-editor-status class="text-xs text-[var(--admin-muted)]" aria-live="polite">کادر را تنظیم کن.</p>
+            </div>
+
             <label class="block text-sm text-[var(--admin-text)]">متن جایگزین تصویر (Alt)
                 <input name="cover_image_alt" value="{{ old('cover_image_alt', $post->cover_image_alt) }}" maxlength="255" class="admin-input mt-2 w-full">
             </label>
-            <p class="text-xs leading-6 text-[var(--admin-muted)]">JPG، PNG یا WEBP؛ حداقل ۸۰۰×۴۵۰؛ حداکثر ۸ مگابایت.</p>
+            <p class="text-xs leading-6 text-[var(--admin-muted)]">JPG، PNG یا WEBP؛ خروجی برش حداقل ۸۰۰×۴۵۰؛ حداکثر ۸ مگابایت.</p>
             @error('cover_image')<span class="block text-xs text-red-600">{{ $message }}</span>@enderror
             @error('cover_image_alt')<span class="block text-xs text-red-600">{{ $message }}</span>@enderror
         </section>
