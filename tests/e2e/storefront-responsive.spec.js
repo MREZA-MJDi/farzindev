@@ -138,3 +138,38 @@ test('customer and admin endpoints redirect guests to login', async ({ page }) =
         await expect(page).toHaveURL(/\/login(?:\?.*)?$/);
     }
 });
+
+
+test('guest navigation uses account icons without login or register text buttons', async ({ page }) => {
+    await page.setViewportSize({ width: 1440, height: 960 });
+    await page.goto('/', { waitUntil: 'domcontentloaded' });
+
+    const desktopHeader = page.locator('.farzin-site-header');
+    await expect(desktopHeader.getByText('ورود', { exact: true })).toHaveCount(0);
+    await expect(desktopHeader.getByText('ثبت‌نام', { exact: true })).toHaveCount(0);
+    await expect(desktopHeader.locator('a[aria-label="حساب کاربری"]')).toBeVisible();
+
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.reload({ waitUntil: 'domcontentloaded' });
+
+    const mobileAccount = page.locator('.farzin-mobile-nav a[aria-label="حساب کاربری"]');
+    await expect(mobileAccount).toBeVisible();
+    await expect(mobileAccount.locator('span')).toHaveCount(0);
+    await expect(page.locator('.farzin-site-header').getByText('ورود', { exact: true })).toHaveCount(0);
+    await expect(page.locator('.farzin-site-header').getByText('ثبت‌نام', { exact: true })).toHaveCount(0);
+});
+
+test('homepage image and product sections stay within the loading budget', async ({ page }) => {
+    for (const viewport of [
+        { width: 390, height: 844 },
+        { width: 1440, height: 960 },
+    ]) {
+        await page.setViewportSize(viewport);
+        await page.goto('/', { waitUntil: 'domcontentloaded' });
+
+        await expect(page.locator('.fz-category-card')).toHaveCountLessThanOrEqual(6);
+        await expect(page.locator('.grid__image')).toHaveCountLessThanOrEqual(6);
+        await expect(page.locator('.fz-product-section .fz-product-card')).toHaveCountLessThanOrEqual(4);
+        await expect(page.locator('.fz-new-section .fz-product-card')).toHaveCountLessThanOrEqual(4);
+    }
+});
