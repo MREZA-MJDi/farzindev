@@ -57,21 +57,59 @@ for (const viewport of viewports) {
     });
 }
 
-test('mobile search and navigation controls remain usable', async ({ page }) => {
-    await page.setViewportSize({ width: 390, height: 844 });
+test('global mobile search is available and usable on every public page', async ({ page }) => {
+    await page.setViewportSize({ width: 360, height: 640 });
+
+    for (const path of publicRoutes) {
+        await page.goto(path, { waitUntil: 'domcontentloaded' });
+
+        const searchTrigger = page.locator('.farzin-mobile-nav button[aria-label="جستجو"]');
+        await expect(searchTrigger, path + ' mobile search trigger').toBeVisible();
+        await searchTrigger.click();
+
+        await expect(page.locator('.farzin-search-overlay'), path + ' global search overlay').toBeVisible();
+        await expect(page.locator('#global-search'), path + ' search input').toBeFocused();
+
+        const searchOverflow = await page.locator('.farzin-search-overlay__panel').evaluate((panel) => (
+            panel.scrollWidth - panel.clientWidth
+        ));
+        expect(searchOverflow, path + ' search panel must fit the mobile viewport').toBeLessThanOrEqual(1);
+
+        await page.locator('.farzin-search-overlay__panel button[aria-label="بستن جستجو"]').click();
+        await expect(page.locator('.farzin-search-overlay')).toBeHidden();
+    }
+
     await page.goto('/', { waitUntil: 'domcontentloaded' });
-
-    await page.locator('.farzin-mobile-nav button[aria-label="جستجو"]').click();
-    await expect(page.locator('.farzin-search-overlay')).toBeVisible();
-    await expect(page.locator('#global-search')).toBeFocused();
-
-    // Click the actual close control inside the panel; the full-screen
-    // backdrop sits underneath the panel and can be occluded by its content.
-    await page.locator('.farzin-search-overlay__panel button[aria-label="بستن جستجو"]').click();
-    await expect(page.locator('.farzin-search-overlay')).toBeHidden();
-
     await page.locator('.farzin-site-header button[aria-label="باز کردن منو"]').click();
     await expect(page.locator('[data-farzin-mobile-menu-panel]')).toBeVisible();
+});
+
+test('shop mobile filters apply together, scroll safely and preserve the selected sort', async ({ page }) => {
+    await page.setViewportSize({ width: 360, height: 640 });
+    await page.goto('/shop?sort=popular', { waitUntil: 'domcontentloaded' });
+
+    await page.getByRole('button', { name: 'فیلترها' }).click();
+
+    const drawer = page.locator('[data-farzin-filter-drawer]');
+    await expect(drawer).toBeVisible();
+    await expect(drawer).toHaveCount(1);
+
+    const initialUrl = page.url();
+    const category = drawer.locator('input[name="category"]').first();
+    await expect(category).toBeVisible();
+    await category.check();
+    await drawer.locator('input[name="installment"]').check();
+    await drawer.locator('input[name="search"]').fill('هود');
+
+    // Mobile controls stay in the drawer until Apply is pressed.
+    expect(page.url()).toBe(initialUrl);
+
+    await drawer.getByRole('button', { name: 'اعمال فیلتر' }).click();
+    await expect(page).toHaveURL(/\/shop\?/);
+    await expect(page).toHaveURL(/sort=popular/);
+    await expect(page).toHaveURL(/search=%D9%87%D9%88%D8%AF|search=هود/);
+    await expect(page).toHaveURL(/category=/);
+    await expect(page).toHaveURL(/installment=1/);
 });
 
 test('homepage category GIF preview starts on hover and the first touch tap', async ({ page }) => {
@@ -171,5 +209,46 @@ test('homepage image and product sections stay within the loading budget', async
         expect(await page.locator('.grid__image').count()).toBeLessThanOrEqual(6);
         expect(await page.locator('.fz-product-section .fz-product-card').count()).toBeLessThanOrEqual(4);
         expect(await page.locator('.fz-new-section .fz-product-card').count()).toBeLessThanOrEqual(4);
+    }
+});
+
+
+test('admin mobile quick search and list filters remain reachable without horizontal overflow', async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto('/login', { waitUntil: 'domcontentloaded' });
+
+    const loginForm = page.locator('form').filter({ has: page.locator('input[name="phone"]') });
+    await loginForm.locator('input[name="phone"]').fill('browser-admin@example.test');
+    await loginForm.locator('input[name="password"]').fill('browser-smoke-password');
+    await loginForm.locator('button[type="submit"]').click();
+    await expect(page).toHaveURL(/\/admin(?:\/dashboard)?(?:\?.*)?$/);
+
+    const mobileSearchTrigger = page.locator('.admin-navbar button[aria-label="جست‌وجوی پنل"]');
+    await expect(mobileSearchTrigger).toBeVisible();
+    await mobileSearchTrigger.click();
+
+    const mobileSearch = page.locator('#admin-quick-search-mobile');
+    await expect(mobileSearch).toBeVisible();
+    await expect(mobileSearch).toBeFocused();
+    await mobileSearch.fill('محصولات');
+    await expect(page.locator('#admin-quick-search-mobile-results a').first()).toBeVisible();
+
+    for (const route of [
+        { path: '/admin/orders', input: 'input[name="search"]' },
+        { path: '/admin/customers', input: 'input[name="search"]' },
+        { path: '/admin/blog-posts', input: 'input[name="q"]' },
+    ]) {
+        await page.goto(route.path, { waitUntil: 'domcontentloaded' });
+        const filterInput = page.locator('.admin-main ' + route.input);
+        await expect(filterInput, route.path + ' mobile filter input').toBeVisible();
+
+        const fontSize = await filterInput.evaluate((element) => Number.parseFloat(getComputedStyle(element).fontSize));
+        expect(fontSize, route.path + ' mobile input must avoid automatic browser zoom').toBeGreaterThanOrEqual(16);
+
+        const overflow = await page.evaluate(() => (
+            Math.max(document.documentElement.scrollWidth, document.body.scrollWidth)
+            - document.documentElement.clientWidth
+        ));
+        expect(overflow, route.path + ' must not overflow horizontally').toBeLessThanOrEqual(1);
     }
 });
