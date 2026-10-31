@@ -140,6 +140,21 @@
                     @endif
                 </a>
 
+                <a
+                    href="{{ route('admin.blog-appearance.edit') }}"
+                    @class([
+                        'group flex items-center gap-3 rounded-2xl px-3 py-3 text-xs font-medium transition',
+                        'bg-[var(--admin-accent-soft)] text-[var(--admin-accent-dark)]' => request()->routeIs('admin.blog-appearance.*'),
+                        'text-[var(--admin-text-soft)] hover:bg-[var(--admin-surface)] hover:text-[var(--admin-text)]' => !request()->routeIs('admin.blog-appearance.*'),
+                    ])
+                >
+                    <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[var(--admin-surface)] text-[var(--admin-muted)]" aria-hidden="true">ART</span>
+                    <span class="flex-1">ظاهر و تصاویر مجله</span>
+                    @if(request()->routeIs('admin.blog-appearance.*'))
+                        <span class="h-1.5 w-1.5 rounded-full bg-[var(--admin-accent)]"></span>
+                    @endif
+                </a>
+
             </div>
 
         </div>
