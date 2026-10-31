@@ -18,6 +18,7 @@ class BlogPost extends Model
         'body',
         'body_html',
         'cover_image',
+        'cover_image_alt',
         'meta_title',
         'meta_description',
         'focus_keyword',
