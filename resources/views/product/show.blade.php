@@ -22,6 +22,10 @@
                 ?: ('خرید ' . $product->name . ' با مشاهده قیمت، مشخصات و شرایط خرید در فرزین.'))
     );
 
+    $pageCanonical = $product->canonical_url ?: route('product.show', $product->slug);
+    $pageOgTitle = $product->og_title ?: $pageTitle;
+    $pageOgDescription = $product->og_description ?: $pageDescription;
+
     /*
     |--------------------------------------------------------------------------
     | Installment
@@ -158,15 +162,15 @@
 @endphp
 
 @section('title', $pageTitle)
-
 @section('description', $pageDescription)
-
-@section(
-    'canonical',
-    route('product.show', $product->slug)
-)
-
+@section('canonical', $pageCanonical)
+@if(($product->seo_robots ?? 'inherit') !== 'inherit')
+    @section('robots', $product->seo_robots)
+@endif
 @section('og_type', 'product')
+@section('og_title', $pageOgTitle)
+@section('og_description', $pageOgDescription)
+@section('twitter_card', $mainImage ? 'summary_large_image' : 'summary')
 @section('og_image', $mainImage ?? '')
 
 @push('seo')
@@ -183,7 +187,7 @@
             'name' => $product->name,
             'description' => $pageDescription,
             'sku' => $product->sku,
-            'url' => route('product.show', $product->slug),
+            'url' => $pageCanonical,
             'brand' => [
                 '@type' => 'Brand',
                 'name' => 'فرزین',
