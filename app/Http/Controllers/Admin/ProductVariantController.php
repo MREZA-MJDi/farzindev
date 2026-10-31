@@ -87,7 +87,7 @@ class ProductVariantController extends Controller
 
             if (! $path) {
                 foreach ($storedPaths as $storedPath) {
-                    Storage::disk('public')->delete($storedPath);
+                    $images->delete($storedPath);
                 }
 
                 return back()->withInput()->withErrors([
@@ -208,7 +208,7 @@ class ProductVariantController extends Controller
 
         foreach ($uploads as $upload) {
             try {
-                $path = $upload->store('products/images', 'public');
+                $path = $images->store($upload, 'products/images');
             } catch (Throwable $exception) {
                 foreach ($storedPaths as $storedPath) {
                     Storage::disk('public')->delete($storedPath);
