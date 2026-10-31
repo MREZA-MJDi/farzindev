@@ -331,4 +331,38 @@ class BlogCmsTest extends TestCase
         ]);
     }
 
+
+    public function test_blog_archive_uses_the_editorial_magazine_layout(): void
+    {
+        $featured = BlogPost::create([
+            'title' => 'راهنمای انتخاب هود برای آشپزخانه مدرن',
+            'slug' => 'editorial-featured-hood-guide',
+            'excerpt' => 'راهنمایی کاربردی برای انتخاب بهتر.',
+            'body' => 'متن مقاله منتخب.',
+            'status' => 'published',
+            'published_at' => now()->subHours(2),
+            'is_featured' => true,
+        ]);
+
+        BlogPost::create([
+            'title' => 'چطور سینک مناسب انتخاب کنیم؟',
+            'slug' => 'editorial-sink-guide',
+            'excerpt' => 'چند نکته برای انتخاب سینک.',
+            'body' => 'متن راهنمای سینک.',
+            'status' => 'published',
+            'published_at' => now()->subHour(),
+        ]);
+
+        $this->get(route('blog.index'))
+            ->assertOk()
+            ->assertSee('data-blog-motion', false)
+            ->assertSee('blog-masthead', false)
+            ->assertSee('blog-featured-card', false)
+            ->assertSee('blog-article-card', false)
+            ->assertSee('FARZIN JOURNAL')
+            ->assertSee($featured->title)
+            ->assertSee('تازه‌های مجله');
+    }
+
+
 }

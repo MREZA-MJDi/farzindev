@@ -449,3 +449,30 @@ test('admin mobile quick search and list filters remain reachable without horizo
         expect(overflow, route.path + ' must not overflow horizontally').toBeLessThanOrEqual(1);
     }
 });
+
+test('blog archive renders the editorial magazine layout without horizontal overflow', async ({ page }) => {
+    for (const viewport of [
+        { width: 390, height: 844 },
+        { width: 768, height: 900 },
+        { width: 1440, height: 960 },
+    ]) {
+        await page.setViewportSize(viewport);
+        await page.goto('/blog', { waitUntil: 'domcontentloaded' });
+
+        await expect(page.locator('.blog-masthead')).toBeVisible();
+        await expect(page.locator('.blog-masthead__title')).toBeVisible();
+        await expect(page.locator('.blog-featured-card')).toBeVisible();
+        await expect(page.locator('.blog-article-card').first()).toBeVisible();
+
+        await page.locator('.blog-featured-card').scrollIntoViewIfNeeded();
+        await expect(page.locator('.blog-featured-card')).toHaveClass(/is-visible/);
+
+        const overflow = await page.evaluate(() => (
+            Math.max(document.documentElement.scrollWidth, document.body.scrollWidth)
+            - document.documentElement.clientWidth
+        ));
+
+        expect(overflow, 'blog magazine layout must not overflow at ' + viewport.width + 'px').toBeLessThanOrEqual(1);
+    }
+});
+

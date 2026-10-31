@@ -275,7 +275,7 @@ class FarzinStorefrontTest extends TestCase
         $this->get(route('blog.index'))
             ->assertOk()
             ->assertSee('بلاگ فرزین')
-            ->assertSee('راهنماهای فرزین')
+            ->assertSee('تازه‌های مجله')
             ->assertSee('قبل از خرید هود آشپزخانه چه چیزهایی را بررسی کنیم؟')
             ->assertSee('چک‌لیست ساده پیش از ثبت سفارش');
     }
