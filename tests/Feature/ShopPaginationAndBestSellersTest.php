@@ -19,7 +19,7 @@ class ShopPaginationAndBestSellersTest extends TestCase
 
         for ($index = 1; $index <= 13; $index++) {
             $this->product($category, [
-                'name' => 'Pagination Product '.$index,
+                'name' => 'Pagination Product '.str_pad((string) $index, 2, '0', STR_PAD_LEFT),
                 'slug' => 'pagination-product-'.$index,
                 'sku' => 'FAR-PAGINATION-'.$index,
             ]);
@@ -30,11 +30,11 @@ class ShopPaginationAndBestSellersTest extends TestCase
             ->assertSee('page=2', false)
             ->assertSee('sort=price_desc', false)
             ->assertSee('Pagination Product 13')
-            ->assertDontSee('Pagination Product 1');
+            ->assertDontSee('Pagination Product 01');
 
         $this->get(route('shop.index', ['page' => 2, 'sort' => 'price_desc']))
             ->assertOk()
-            ->assertSee('Pagination Product 1');
+            ->assertSee('Pagination Product 01');
     }
 
     public function test_popular_sort_uses_paid_order_quantities(): void
