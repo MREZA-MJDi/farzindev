@@ -91,7 +91,12 @@ class SeoSettings
                 return null;
             }
 
-            return $value;
+            $path = (string) ($parts['path'] ?? '/');
+            $path = $path === '' ? '/' : $path;
+
+            return $scheme . '://' . ($parts['host'] ?? '') 
+                . (isset($parts['port']) ? ':' . $parts['port'] : '')
+                . $path;
         }
 
         if (
