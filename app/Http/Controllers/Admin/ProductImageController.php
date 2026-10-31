@@ -98,6 +98,10 @@ class ProductImageController extends Controller
                 try {
             $path = $images->store($file, 'products/images');
         } catch (Throwable $exception) {
+            foreach ($storedPaths as $storedPath) {
+                $images->delete($storedPath);
+            }
+
             $requestId = (string) $request->attributes->get('request_id', 'unavailable');
             Log::error('Legacy product image upload failed.', [
                 'request_id' => $requestId,
@@ -193,7 +197,7 @@ class ProductImageController extends Controller
         $file = $request->file('image');
         unset($data['image']);
 
-        $path = $file->store('products/images', 'public');
+        $path = $images->store($file, 'products/images');
 
         if (! $path) {
             return back()
@@ -435,7 +439,7 @@ class ProductImageController extends Controller
             && $path
             && ! Str::startsWith($path, ['http://', 'https://', '//'])
         ) {
-            Storage::disk('public')->delete($path);
+            $images->delete($path);
         }
 
         return redirect()
