@@ -299,7 +299,7 @@ class BlogCmsTest extends TestCase
         $redirect = SeoRedirect::query()->where('source_path', '/old-kitchen-guide')->firstOrFail();
         $this->get('/old-kitchen-guide')->assertRedirect('/blog/new-kitchen-guide');
         $this->assertSame(0, $redirect->fresh()->hits);
-        $this->post('/old-kitchen-guide')->assertNotFound();
+        $this->post('/old-kitchen-guide')->assertStatus(405);
     }
 
     public function test_changing_published_blog_slug_creates_a_301_redirect(): void
