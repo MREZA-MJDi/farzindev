@@ -212,7 +212,9 @@ class SeoSettingsController extends Controller
         $seen = [];
         $reserved = [
             'name' => [
-                'description', 'keywords', 'robots', 'google-site-verification',
+                'description', 'keywords', 'robots', 'googlebot', 'googlebot-news',
+                'googlebot-image', 'bingbot', 'yandex', 'slurp', 'duckduckbot',
+                'baiduspider', 'applebot', 'google-site-verification',
                 'msvalidate.01', 'viewport', 'referrer', 'twitter:title', 'twitter:description',
                 'twitter:card', 'twitter:image', 'twitter:site',
             ],
