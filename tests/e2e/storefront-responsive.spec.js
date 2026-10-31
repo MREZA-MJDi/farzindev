@@ -232,19 +232,59 @@ test('homepage category GIF preview starts on hover and the first touch tap', as
     await expect(fixture).toHaveAttribute('data-farzin-preview-tapped', '1');
 });
 
-test('home and shop footer has consistent breathing room above the shared footer', async ({ page }) => {
-    await page.setViewportSize({ width: 1440, height: 960 });
+test('homepage CTA meets the shared footer at the same spacing used by interior pages', async ({ page }) => {
+    for (const viewport of [
+        { width: 390, height: 844 },
+        { width: 768, height: 900 },
+        { width: 1440, height: 960 },
+    ]) {
+        await page.setViewportSize(viewport);
 
-    for (const path of ['/', '/shop']) {
-        await page.goto(path, { waitUntil: 'domcontentloaded' });
-        const footer = page.locator('.farzin-site-footer');
-        await expect(footer).toBeVisible();
+        // On the homepage, the CTA must not add a second bottom gap on top
+        // of the shared footer margin. Interior pages keep that same margin.
+        await page.goto('/', { waitUntil: 'domcontentloaded' });
+        await expect(page.locator('.farzin-site-footer')).toBeVisible();
 
-        const marginTop = await footer.evaluate((element) => (
-            Number.parseFloat(window.getComputedStyle(element).marginBlockStart)
-        ));
+        const homeSpacing = await page.evaluate(() => {
+            const cta = document.querySelector('.fz-bottom-cta');
+            const ctaPanel = document.querySelector('.fz-bottom-cta__inner');
+            const footer = document.querySelector('.farzin-site-footer');
+            const ctaStyle = window.getComputedStyle(cta);
+            const footerStyle = window.getComputedStyle(footer);
 
-        expect(marginTop, path + ' must separate the footer from the preceding content row').toBeGreaterThanOrEqual(24);
+            return {
+                ctaPaddingBottom: Number.parseFloat(ctaStyle.paddingBlockEnd),
+                panelToFooter: footer.getBoundingClientRect().top - ctaPanel.getBoundingClientRect().bottom,
+                footerMarginTop: Number.parseFloat(footerStyle.marginBlockStart),
+            };
+        });
+
+        expect(
+            homeSpacing.ctaPaddingBottom,
+            'homepage CTA must leave the final separation to the shared footer'
+        ).toBeLessThanOrEqual(1);
+        expect(
+            Math.abs(homeSpacing.panelToFooter - homeSpacing.footerMarginTop),
+            'homepage CTA-to-footer gap must equal the shared footer margin'
+        ).toBeLessThanOrEqual(1);
+
+        await page.goto('/shop', { waitUntil: 'domcontentloaded' });
+        const shopSpacing = await page.evaluate(() => {
+            const main = document.querySelector('#main-content');
+            const footer = document.querySelector('.farzin-site-footer');
+            const footerStyle = window.getComputedStyle(footer);
+
+            return {
+                mainToFooter: footer.getBoundingClientRect().top - main.getBoundingClientRect().bottom,
+                footerMarginTop: Number.parseFloat(footerStyle.marginBlockStart),
+            };
+        });
+
+        expect(
+            Math.abs(shopSpacing.mainToFooter - shopSpacing.footerMarginTop),
+            'interior page must use the same shared footer margin'
+        ).toBeLessThanOrEqual(1);
+        expect(shopSpacing.footerMarginTop).toBeGreaterThanOrEqual(24);
     }
 });
 
