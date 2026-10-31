@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\BlogPost;
 use App\Models\BlogTerm;
+use App\Models\Media;
 use App\Models\SeoRedirect;
 use App\Services\Content\RichTextSanitizer;
 use App\Services\Media\ResponsiveImageService;
@@ -58,6 +59,7 @@ class BlogPostController extends Controller
         return view('admin.blog-posts.create', [
             'post' => $post,
             'termOptions' => $this->termOptions(),
+            'mediaImages' => $this->mediaImageOptions(),
             'selectedTermIds' => [],
             'seoReport' => $analyzer->analyze($post),
             'editorHtml' => $sanitizer->sanitize((string) old('body', '')),
@@ -128,6 +130,7 @@ class BlogPostController extends Controller
         return view('admin.blog-posts.edit', [
             'post' => $blogPost,
             'termOptions' => $this->termOptions(),
+            'mediaImages' => $this->mediaImageOptions(),
             'selectedTermIds' => $blogPost->terms->modelKeys(),
             'seoReport' => $analyzer->analyze($blogPost),
             'editorHtml' => $sanitizer->sanitize(
@@ -230,6 +233,19 @@ class BlogPostController extends Controller
         return redirect()
             ->route('admin.blog-posts.index')
             ->with('success', 'مقاله به زباله‌دان منتقل شد؛ محتوا و تصویر آن حذف نشده‌اند.');
+    }
+
+    /**
+     * @return array<int, Media>
+     */
+    private function mediaImageOptions(): array
+    {
+        return Media::query()
+            ->where('mime_type', 'like', 'image/%')
+            ->latest('id')
+            ->limit(36)
+            ->get(['id', 'path', 'disk', 'original_name', 'alt', 'mime_type'])
+            ->all();
     }
 
     /**
