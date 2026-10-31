@@ -12,6 +12,7 @@ const budgets = [
     { key: 'resources/css/responsive.css', label: 'Shared responsive CSS', maxGzipKb: 8 },
     { key: 'resources/css/home.css', label: 'Homepage-only CSS', maxGzipKb: 18 },
     { key: 'resources/css/admin.css', label: 'Admin-only CSS', maxGzipKb: 24 },
+    { key: 'resources/css/blog.css', label: 'Blog-only CSS', maxGzipKb: 5 },
 ];
 
 let failed = false;
