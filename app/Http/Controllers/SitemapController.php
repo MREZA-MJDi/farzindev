@@ -21,9 +21,10 @@ class SitemapController extends Controller
 
         $counts = $this->publicUrlCounts();
         $total = array_sum($counts);
+        $fingerprint = $this->publicContentFingerprint($seoSettings, $counts);
 
         $xml = Cache::remember(
-            $seoSettings->sitemapCacheKey(),
+            $seoSettings->sitemapCacheKey() . '.' . $fingerprint,
             now()->addMinutes(30),
             function () use ($seoSettings, $counts, $total): string {
                 if ($total > self::MAX_URLS_PER_SITEMAP) {
@@ -48,6 +49,7 @@ class SitemapController extends Controller
         $counts = $this->publicUrlCounts();
         abort_unless(array_key_exists($type, $counts), 404);
 
+        $fingerprint = $this->publicContentFingerprint($seoSettings, $counts);
         $count = (int) $counts[$type];
         $total = array_sum($counts);
         $segmentSize = $this->segmentSize($total);
@@ -55,7 +57,7 @@ class SitemapController extends Controller
 
         abort_unless($page >= 1 && $page <= $pageCount, 404);
 
-        $cacheKey = 'storefront.sitemap.segment.' . md5(json_encode($counts)) . '.' . $type . '.' . $page;
+        $cacheKey = 'storefront.sitemap.segment.' . $fingerprint . '.' . $type . '.' . $page;
 
         $xml = Cache::remember(
             $cacheKey,
@@ -89,6 +91,26 @@ class SitemapController extends Controller
         ];
     }
 
+    /**
+     * Include canonical host and latest public-content timestamps so edits to
+     * slugs or canonical settings cannot keep serving stale sitemap URLs.
+     *
+     * @param array<string, int> $counts
+     */
+    private function publicContentFingerprint(SeoSettings $seoSettings, array $counts): string
+    {
+        return md5(json_encode([
+            'counts' => $counts,
+            'canonical' => $seoSettings->canonicalUrl('/', false),
+            'categories_updated_at' => Category::query()->active()->max('updated_at'),
+            'products_updated_at' => Product::query()
+                ->active()
+                ->whereHas('category', fn ($query) => $query->where('is_active', true))
+                ->max('updated_at'),
+            'blog_updated_at' => BlogPost::query()->published()->max('updated_at'),
+        ], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE));
+    }
+
     private function segmentSize(int $total): int
     {
         if ($total <= self::MAX_URLS_PER_SITEMAP) {
@@ -97,9 +119,11 @@ class SitemapController extends Controller
 
         // Keep every sitemap at or below the protocol limit and the index
         // itself at or below 50,000 entries, even for very large catalogues.
+        $maximumSegments = self::MAX_URLS_PER_SITEMAP - 4;
+
         return min(
             self::MAX_URLS_PER_SITEMAP,
-            max(self::PREFERRED_SEGMENT_SIZE, (int) ceil($total / self::MAX_URLS_PER_SITEMAP))
+            max(self::PREFERRED_SEGMENT_SIZE, (int) ceil($total / $maximumSegments))
         );
     }
 
