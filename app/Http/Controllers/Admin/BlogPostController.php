@@ -60,7 +60,7 @@ class BlogPostController extends Controller
             'termOptions' => $this->termOptions(),
             'selectedTermIds' => [],
             'seoReport' => $analyzer->analyze($post),
-            'editorHtml' => '',
+            'editorHtml' => $sanitizer->sanitize((string) old('body', '')),
         ]);
     }
 
