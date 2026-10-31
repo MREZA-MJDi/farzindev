@@ -24,9 +24,14 @@ class BlogTermController extends Controller
         return view('admin.blog-terms.index', compact('terms'));
     }
 
-    public function create(): View
+    public function create(Request $request): View
     {
-        return view('admin.blog-terms.create', ['term' => new BlogTerm(['type' => 'category', 'is_active' => true])]);
+        $type = $request->query('type');
+        if (! in_array($type, [BlogTerm::TYPE_CATEGORY, BlogTerm::TYPE_TAG], true)) {
+            $type = BlogTerm::TYPE_CATEGORY;
+        }
+
+        return view('admin.blog-terms.create', ['term' => new BlogTerm(['type' => $type, 'is_active' => true])]);
     }
 
     public function store(Request $request): RedirectResponse
