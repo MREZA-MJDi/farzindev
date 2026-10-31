@@ -35,6 +35,7 @@
                         <div class="farzin-shop-banner__image relative mt-6 aspect-[16/5] min-h-[220px] overflow-hidden rounded-[2rem] bg-[var(--livora-ink)]">
                             <img
                                 src="{{ $shopBanner['image_url'] }}"
+                                @if(!empty($shopBanner['image_srcset'])) srcset="{{ $shopBanner['image_srcset'] }}" sizes="100vw" @endif
                                 alt="{{ $shopBanner['title'] }}"
                                 class="absolute inset-0 h-full w-full object-cover"
                                 width="1600"
