@@ -1836,6 +1836,19 @@ footer {
 }
 footer a { transition: color .2s ease, transform .2s ease; }
 footer a:hover { color: var(--livora-sage) !important; }
+/* Storefront entrance motion is transform-only. Content is always visible. */
+.storefront-content :where([data-fz-reveal], [data-farzin-reveal], [data-shop-animate]) {
+    opacity: 1 !important;
+    visibility: visible !important;
+}
+@media (prefers-reduced-motion: reduce) {
+    .storefront-content :where([data-fz-reveal], [data-farzin-reveal], [data-shop-animate]) {
+        animation: none !important;
+        transition: none !important;
+        transform: none !important;
+    }
+}
+
 /* Shared storefront header: one readable monochrome treatment on every public route. */
 .farzin-site-header {
     position: sticky;
@@ -1873,20 +1886,64 @@ footer a:hover { color: var(--livora-sage) !important; }
     color: var(--livora-text);
     background-color: var(--livora-ink);
     border-top: 1px solid rgba(255, 255, 255, .12);
+    direction: rtl;
+    text-align: right;
+    font-family: var(--livora-font-family, "IRANYekanX FaNum", sans-serif);
+    font-size: .875rem;
+    line-height: 1.85;
 }
 .farzin-site-footer nav a {
-    line-height: 1.7;
+    display: inline-flex;
+    width: fit-content;
+    max-width: 100%;
+    align-items: center;
+    line-height: 1.9;
+    color: rgba(255, 255, 255, .76);
+}
+.farzin-site-footer__brand-name {
+    color: #FFFFFF;
+    font-size: 1.65rem;
+    font-weight: 850;
+    letter-spacing: -.04em;
+    line-height: 1.35;
+}
+.farzin-site-footer__brand-caption {
+    margin-block-start: .2rem;
+    color: rgba(255, 255, 255, .55);
+    font-size: .7rem;
+    font-weight: 600;
+    letter-spacing: .04em;
+}
+.farzin-site-footer__intro {
+    max-width: 24rem;
+    margin-block-start: 1rem;
+    color: rgba(255, 255, 255, .72);
+    font-size: .8rem;
+    line-height: 2;
+}
+.farzin-site-footer__trust p:not(.farzin-site-footer__heading) {
+    color: rgba(255, 255, 255, .7);
+    font-size: .78rem;
+    line-height: 1.9;
+}
+.farzin-site-footer :where(p, a, span) {
+    overflow-wrap: anywhere;
+}
+@media (max-width: 767px) {
+    .farzin-site-footer {
+        margin-block-start: 1.5rem;
+    }
 }
 .farzin-site-footer__heading {
     display: block;
-    min-height: 1.25rem;
+    min-height: 1.5rem;
     margin: 0;
-    color: rgba(255, 255, 255, .68);
-    font-size: .75rem;
-    font-weight: 650;
-    line-height: 1.25rem;
-    letter-spacing: .14em;
-    text-transform: uppercase;
+    color: #FFFFFF;
+    font-size: .9rem;
+    font-weight: 750;
+    line-height: 1.5rem;
+    letter-spacing: 0;
+    text-transform: none;
 }
 .farzin-site-footer__main {
     align-items: start;
