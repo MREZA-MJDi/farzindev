@@ -98,6 +98,12 @@ if (document.querySelector('[data-farzin-gif-card]')) {
     });
 }
 
+if (document.querySelector('[data-blog-motion]')) {
+    import('./blog-motion.js').catch((error) => {
+        console.error('Unable to initialize blog reveal animations.', error);
+    });
+}
+
 // GSAP/ScrollTrigger is a relatively heavy optional chunk. Load it only on
 // pages that contain explicit motion targets; cart, checkout and product detail
 // pages stay on the normal rendering path instead of downloading unused motion.
