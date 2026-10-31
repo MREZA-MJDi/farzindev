@@ -3,7 +3,6 @@
 namespace Tests\Feature;
 
 use App\Models\Media;
-use App\Models\StorefrontSetting;
 use App\Models\User;
 use App\Services\Blog\BlogAppearance;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -99,7 +98,8 @@ class BlogAppearanceTest extends TestCase
             ->assertOk()
             ->assertSee('data-editor-media-image', false)
             ->assertSee('تصویر نمونه درون مقاله')
-            ->assertSee('editor-library-sample.webp');
+            ->assertSee('editor-library-sample.webp')
+            ->assertSee('data-media-url="/storage/media/editor-library-sample.webp"', false);
     }
 
     public function test_public_blog_keeps_rss_subscription_as_a_real_action_link(): void
