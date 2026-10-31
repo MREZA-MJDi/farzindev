@@ -5,19 +5,21 @@ namespace App\Http\Controllers;
 use App\Models\BlogPost;
 use App\Models\BlogTerm;
 use App\Models\SeoRedirect;
+use App\Services\Blog\BlogAppearance;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\Response;
 use Illuminate\Http\RedirectResponse;
 
 class BlogController extends Controller
 {
-    public function index(): View
+    public function index(BlogAppearance $appearance): View
     {
         $posts = $this->publishedPosts()->paginate(9)->withQueryString();
 
         return view('blog.index', [
             'posts' => $posts,
             'term' => null,
+            'appearance' => $appearance->all(),
         ]);
     }
 
@@ -31,7 +33,7 @@ class BlogController extends Controller
         return $this->term(BlogTerm::TYPE_TAG, $slug);
     }
 
-    public function term(string $type, string $slug): View
+    public function term(string $type, string $slug, BlogAppearance $appearance): View
     {
         abort_unless(in_array($type, [BlogTerm::TYPE_CATEGORY, BlogTerm::TYPE_TAG], true), 404);
 
@@ -46,7 +48,11 @@ class BlogController extends Controller
             ->paginate(9)
             ->withQueryString();
 
-        return view('blog.index', compact('posts', 'term'));
+        return view('blog.index', [
+            'posts' => $posts,
+            'term' => $term,
+            'appearance' => $appearance->all(),
+        ]);
     }
 
     public function show(string $slug): View|RedirectResponse
