@@ -9,6 +9,7 @@ use App\Models\Product;
 use App\Models\ProductImage;
 use App\Models\Media;
 use App\Services\Catalog\ProductMediaLibrary;
+use App\Services\Media\ResponsiveImageService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -49,7 +50,8 @@ class ProductImageController extends Controller
     public function storeForProduct(
         Request $request,
         Product $product,
-        ProductMediaLibrary $mediaLibrary
+        ProductMediaLibrary $mediaLibrary,
+        ResponsiveImageService $images
     ): RedirectResponse {
         $validated = $request->validate([
             'images' => ['nullable', 'array', 'max:10'],
@@ -94,7 +96,7 @@ class ProductImageController extends Controller
         try {
             foreach ($uploads as $file) {
                 try {
-            $path = $file->store('products/images', 'public');
+            $path = $images->store($file, 'products/images');
         } catch (Throwable $exception) {
             $requestId = (string) $request->attributes->get('request_id', 'unavailable');
             Log::error('Legacy product image upload failed.', [
@@ -158,7 +160,7 @@ class ProductImageController extends Controller
             });
         } catch (Throwable $exception) {
             foreach ($storedPaths as $storedPath) {
-                Storage::disk('public')->delete($storedPath);
+                $images->delete($storedPath);
             }
 
             $requestId = (string) $request->attributes->get('request_id', 'unavailable');
@@ -185,7 +187,7 @@ class ProductImageController extends Controller
             ->with('success', $addedCount . ' تصویر از کتابخانه یا آپلود به گالری محصول اضافه/متصل شد.');
     }
 
-    public function store(StoreProductImageRequest $request): RedirectResponse
+    public function store(StoreProductImageRequest $request, ResponsiveImageService $images): RedirectResponse
     {
         $data = $request->validated();
         $file = $request->file('image');
@@ -220,7 +222,7 @@ class ProductImageController extends Controller
                 ProductImage::create($data);
             });
         } catch (Throwable $exception) {
-            Storage::disk('public')->delete($path);
+            $images->delete($path);
 
             $requestId = (string) $request->attributes->get('request_id', 'unavailable');
             Log::error('Legacy product image database write failed.', [
@@ -261,7 +263,8 @@ class ProductImageController extends Controller
 
     public function update(
         UpdateProductImageRequest $request,
-        ProductImage $productImage
+        ProductImage $productImage,
+        ResponsiveImageService $images
     ): RedirectResponse {
         // Variant-linked images are shared catalogue records. Mutating their
         // path/product or deleting them from the legacy endpoint would silently
@@ -284,10 +287,7 @@ class ProductImageController extends Controller
 
         if ($request->hasFile('image')) {
             try {
-                $newPath = $request->file('image')->store(
-                    'products/images',
-                    'public'
-                );
+                $newPath = $images->store($request->file('image'), 'products/images');
             } catch (Throwable $exception) {
                 $requestId = (string) $request->attributes->get('request_id', 'unavailable');
                 Log::error('Product image replacement upload failed.', [
@@ -363,7 +363,7 @@ class ProductImageController extends Controller
             });
         } catch (Throwable $exception) {
             if ($newPath !== null) {
-                Storage::disk('public')->delete($newPath);
+                $images->delete($newPath);
             }
 
             $requestId = (string) $request->attributes->get('request_id', 'unavailable');
@@ -385,7 +385,7 @@ class ProductImageController extends Controller
             && $oldPath !== $newPath
             && ! Str::startsWith($oldPath, ['http://', 'https://', '//'])
         ) {
-            Storage::disk('public')->delete($oldPath);
+            $images->delete($oldPath);
         }
 
         return redirect()
@@ -395,7 +395,7 @@ class ProductImageController extends Controller
             ->with('success', 'تصویر محصول با موفقیت بروزرسانی شد.');
     }
 
-    public function destroy(ProductImage $productImage): RedirectResponse
+    public function destroy(ProductImage $productImage, ResponsiveImageService $images): RedirectResponse
     {
         // Prevent legacy routes from deleting a file still used by a color variant.
         if ($productImage->variants()->exists()) {
