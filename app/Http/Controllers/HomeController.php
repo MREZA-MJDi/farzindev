@@ -29,12 +29,7 @@ class HomeController extends Controller
             ->limit(6)
             ->get();
 
-        /*
-         * The hero is a self-contained architectural drawing; it deliberately
-         * does not select or load a featured product image. The catalogue
-         * remains bounded, with one eager-loaded image per product for cards
-         * and the lower product mosaic.
-         */
+        // Count the active catalogue without loading full product models or galleries.
         $catalogCount = Product::query()
             ->active()
             ->whereHas('category', fn ($query) => $query->where('is_active', true))
@@ -166,7 +161,7 @@ class HomeController extends Controller
         return view('home.index', [
             'categories' => $categories,
             'demoImages' => $demoImages,
-            'gridGroups' => $demoImages->chunk(9)->values(),
+            'gridGroups' => $demoImages->chunk(6)->values(),
             'featuredProducts' => $featuredProducts,
             'hasBestSellerSales' => $hasBestSellerSales,
             'newProducts' => $newProducts,
