@@ -228,7 +228,7 @@
                             <p class="content__description">{{ $mosaicTitles[$index % count($mosaicTitles)]['text'] }}</p>
                         </div>
                         <div class="grid grid--{{ ($index % 6) + 1 }}" data-grid-index="{{ $index }}">
-                            <div class="grid-wrap">
+                            <div class="grid-wrap {{ $group->count() <= 2 ? 'grid-wrap--compact' : '' }}">
                                 @foreach($group as $item)
                                     <div class="grid__item">
                                         <a
@@ -284,7 +284,7 @@
                         </div>
                         <a class="fz-text-link" href="{{ route('shop.index') }}">مشاهده همه محصولات <span aria-hidden="true">←</span></a>
                     </div>
-                    <div class="fz-product-grid fz-product-grid--limited">
+                    <div class="fz-product-grid">
                         @foreach($featuredProducts as $product)
                             <x-home.product-card :product="$product" />
                         @endforeach
@@ -304,7 +304,7 @@
                         </div>
                         <a class="fz-text-link" href="{{ route('shop.index', ['sort' => 'newest']) }}">جدیدترین‌ها <span aria-hidden="true">←</span></a>
                     </div>
-                    <div class="fz-product-grid fz-product-grid--limited">
+                    <div class="fz-product-grid">
                         @foreach($newProducts as $product)
                             <x-home.product-card :product="$product" />
                         @endforeach

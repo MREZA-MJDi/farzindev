@@ -12,7 +12,12 @@ class OrderController extends Controller
     {
         $orders = Auth::user()
             ->orders()
-            ->with('items')
+            ->with([
+                'items.product.images' => fn ($query) => $query
+                    ->select(['id', 'product_id', 'media_id', 'path', 'alt', 'sort_order', 'is_primary'])
+                    ->limit(1),
+                'items.product.images.media:id,path',
+            ])
             ->latest()
             ->paginate(10);
 
@@ -26,7 +31,10 @@ class OrderController extends Controller
         $this->authorize('view', $order);
 
         $order->load([
-            'items.product.images',
+            'items.product.images' => fn ($query) => $query
+                ->select(['id', 'product_id', 'media_id', 'path', 'alt', 'sort_order', 'is_primary'])
+                ->limit(1),
+            'items.product.images.media:id,path',
             'items.variant',
             'latestPayment',
         ]);

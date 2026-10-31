@@ -683,6 +683,11 @@ body.home-body {
     transform-style: preserve-3d;
 }
 
+.home-body .grid-wrap--compact {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    max-width: 920px;
+}
+
 .home-body .grid__item {
     height: 100%;
     min-width: 0;
@@ -955,11 +960,3 @@ body.home-body {
     .fz-hero__architecture [data-hero-draw] path { stroke-dashoffset: 0 !important; }
 }
 
-
-/* Homepage deliberately exposes a maximum of eight unique products.
-   Two-card rows stay centered instead of leaving half of a four-column grid empty. */
-.home-body .fz-product-grid--limited {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    width: min(100%, 42rem);
-    margin-inline: auto;
-}

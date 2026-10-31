@@ -25,28 +25,22 @@ class AccountController extends Controller
             ->limit(5)
             ->get();
 
+        $orderStats = $user->orders()
+            ->selectRaw(
+                'COUNT(*) AS total_orders,
+                 COALESCE(SUM(CASE WHEN status IN (?, ?) THEN 1 ELSE 0 END), 0) AS processing_orders,
+                 COALESCE(SUM(CASE WHEN payment_status = ? THEN 1 ELSE 0 END), 0) AS paid_orders,
+                 COALESCE(SUM(CASE WHEN payment_method = ? THEN 1 ELSE 0 END), 0) AS installment_orders',
+                ['pending', 'processing', 'paid', 'installment']
+            )
+            ->first();
+
         $stats = [
-            'orders' => $user->orders()->count(),
-
-            'processing_orders' => $user
-                ->orders()
-                ->whereIn('status', [
-                    'pending',
-                    'processing',
-                ])
-                ->count(),
-
-            'wishlist' => $user
-                ->wishlists()
-                ->count(),
-
-            'paid_orders' => $user->orders()
-                ->where('payment_status', 'paid')
-                ->count(),
-
-            'installment_orders' => $user->orders()
-                ->where('payment_method', 'installment')
-                ->count(),
+            'orders' => (int) $orderStats->total_orders,
+            'processing_orders' => (int) $orderStats->processing_orders,
+            'wishlist' => $user->wishlists()->count(),
+            'paid_orders' => (int) $orderStats->paid_orders,
+            'installment_orders' => (int) $orderStats->installment_orders,
         ];
 
         return view('account.index', [
