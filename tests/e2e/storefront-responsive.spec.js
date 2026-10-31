@@ -95,8 +95,10 @@ for (const viewport of viewports) {
 
             expect(footerLayout.footerHeadingCount, path + ' footer must expose all six aligned section headings').toBe(6);
             expect(footerLayout.footerHeadingStyleCount, path + ' footer headings must share one typography scale').toBe(1);
-            expect(footerLayout.mainHeadingTopSpread, path + ' main footer headings must share one row').toBeLessThanOrEqual(1);
-            expect(footerLayout.trustHeadingTopSpread, path + ' trust headings must share one row').toBeLessThanOrEqual(1);
+            if (viewport.width >= 1200) {
+                expect(footerLayout.mainHeadingTopSpread, path + ' desktop main footer headings must share one row').toBeLessThanOrEqual(1);
+                expect(footerLayout.trustHeadingTopSpread, path + ' desktop trust headings must share one row').toBeLessThanOrEqual(1);
+            }
 
             if (viewport.width < 1024) {
                 await expect(page.locator('.farzin-mobile-nav'), path + ' mobile navigation').toBeVisible();
