@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\BlogPost;
+use App\Models\StorefrontSetting;
 use App\Models\User;
 use App\Services\Seo\SeoSettings;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -57,6 +58,12 @@ class BlogCmsTest extends TestCase
 
         $this->get(route('blog.show', $draft->slug))->assertNotFound();
         $this->get(route('blog.show', $scheduled->slug))->assertNotFound();
+
+        StorefrontSetting::query()->updateOrCreate(
+            ['key' => 'seo_development_mode'],
+            ['value' => '0'],
+        );
+        app(SeoSettings::class)->clearCache();
 
         $this->get(route('sitemap'))
             ->assertOk()
