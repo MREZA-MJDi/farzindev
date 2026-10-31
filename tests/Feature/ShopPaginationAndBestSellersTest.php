@@ -245,8 +245,8 @@ class ShopPaginationAndBestSellersTest extends TestCase
             if ($index <= 2) {
                 $this->product($category, [
                     'name' => 'Homepage New Arrival '.$index,
-                'slug' => 'homepage-new-arrival-'.$index,
-                'sku' => 'FAR-HOMEPAGE-NEW-'.$index,
+                    'slug' => 'homepage-new-arrival-'.$index,
+                    'sku' => 'FAR-HOMEPAGE-NEW-'.$index,
                     'is_new' => true,
                 ]);
             }

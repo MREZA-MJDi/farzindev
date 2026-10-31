@@ -133,7 +133,7 @@ class HomeController extends Controller
             ])
             ->orderByDesc('updated_at')
             ->orderByDesc('id')
-            ->limit(4)
+            ->limit(2)
             ->get();
 
 
