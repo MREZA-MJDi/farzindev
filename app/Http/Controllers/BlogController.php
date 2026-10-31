@@ -4,8 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\BlogPost;
 use App\Models\BlogTerm;
+use App\Models\SeoRedirect;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\Response;
+use Illuminate\Http\RedirectResponse;
 
 class BlogController extends Controller
 {
@@ -47,13 +49,26 @@ class BlogController extends Controller
         return view('blog.index', compact('posts', 'term'));
     }
 
-    public function show(string $slug): View
+    public function show(string $slug): View|RedirectResponse
     {
         $post = BlogPost::query()
             ->published()
             ->with(['author:id,name', 'terms:id,type,name,slug'])
             ->where('slug', $slug)
-            ->firstOrFail();
+            ->first();
+
+        if (! $post) {
+            $redirect = SeoRedirect::query()
+                ->where('source_path', route('blog.show', $slug, false))
+                ->where('is_active', true)
+                ->first();
+
+            if ($redirect) {
+                return redirect()->to($redirect->target_url, $redirect->status_code);
+            }
+
+            abort(404);
+        }
 
         $termIds = $post->terms->modelKeys();
         $relatedQuery = BlogPost::query()
