@@ -69,7 +69,7 @@
                 </a>
             </div>
             <a href="https://search.google.com/search-console" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 text-xs font-semibold text-[var(--admin-accent)] underline">
-                اتصال و بررسی سایت در Google Search Console ↗
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.7" /><path d="m16 16 4.5 4.5" /></svg> اتصال و بررسی سایت در Google Search Console
             </a>
         </section>
 
@@ -148,7 +148,7 @@
                         <article data-seo-page-preview class="rounded-2xl border border-[var(--admin-border)] bg-[var(--admin-surface-soft)] p-4 sm:p-5">
                             <div class="mb-4 flex flex-wrap items-center justify-between gap-2">
                                 <h3 class="text-sm font-bold text-[var(--admin-text)]">{{ $page['label'] }}</h3>
-                                <a href="{{ $page['route'] }}" target="_blank" rel="noopener noreferrer" class="text-xs font-semibold text-[var(--admin-accent)] underline">مشاهده صفحه ↗</a>
+                                <a href="{{ $page['route'] }}" target="_blank" rel="noopener noreferrer" class="inline-flex min-h-11 items-center gap-2 text-xs font-semibold text-[var(--admin-accent)] underline"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4" aria-hidden="true"><path d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6Z" /><circle cx="12" cy="12" r="2.5" /></svg> مشاهده صفحه</a>
                             </div>
 
                             <label class="block text-sm text-[var(--admin-text)]">
