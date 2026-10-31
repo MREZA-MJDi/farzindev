@@ -183,10 +183,9 @@ document.addEventListener('keydown', (event) => {
 });
 
 /*
- * Do not preload the gallery. Native lazy-loading allows the page to render
- * immediately, while GSAP animates only small groups as they enter the
- * viewport. Native scrolling is intentionally preserved; Lenis used to run
- * a perpetual RAF and make scrolling feel disconnected on slower devices.
+ * Do not preload the gallery. Native lazy-loading lets the page render
+ * immediately. IntersectionObserver triggers only small CSS entrance states;
+ * native scrolling stays in control and no perpetual animation loop is used.
  */
 function initRevealAnimations() {
     const elements = [...document.querySelectorAll('.fz-reveal')];
