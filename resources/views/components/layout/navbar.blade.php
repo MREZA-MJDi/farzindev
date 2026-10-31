@@ -28,7 +28,7 @@
             {{-- =========================================================
                 DESKTOP NAVIGATION
             ========================================================== --}}
-            <div class="hidden items-center gap-9 lg:flex">
+            <div class="hidden min-w-0 items-center gap-3 lg:flex xl:gap-8">
 
                 <a
                     href="{{ route('home') }}"
@@ -391,7 +391,7 @@
 
                     <a
                         href="{{ route('login') }}"
-                        aria-label="ورود"
+                        aria-label="حساب کاربری"
                         class="group hidden h-10 w-10 items-center justify-center rounded-full text-[var(--livora-text)] transition duration-300 hover:bg-[var(--livora-white)] lg:flex"
                     >
                         <svg
