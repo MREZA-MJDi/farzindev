@@ -231,6 +231,7 @@ class SeoSettingsTest extends TestCase
         foreach ([
             'seo_development_mode',
             'seo_robots_noindex',
+            'seo_noindex_shop_filters',
             'seo_robots_nofollow',
             'seo_robots_noarchive',
             'seo_robots_nosnippet',
@@ -250,11 +251,23 @@ class SeoSettingsTest extends TestCase
             ->assertOk()
             ->assertDontSee('name="seo_development_mode" value="1" checked', false)
             ->assertDontSee('name="seo_robots_noindex" value="1" checked', false)
+            ->assertDontSee('name="seo_noindex_shop_filters" value="1" checked', false)
             ->assertDontSee('name="seo_robots_nofollow" value="1" checked', false)
             ->assertDontSee('name="seo_robots_noarchive" value="1" checked', false)
             ->assertDontSee('name="seo_robots_nosnippet" value="1" checked', false)
             ->assertDontSee('name="seo_robots_noimageindex" value="1" checked', false)
             ->assertDontSee('name="seo_sitemap_enabled" value="1" checked', false);
+    }
+
+    public function test_filtered_shop_urls_are_noindex_follow_by_default_but_catalogue_root_is_indexable(): void
+    {
+        $this->get(route('shop.index'))
+            ->assertOk()
+            ->assertSee('name="robots" content="index, follow, max-snippet:-1, max-video-preview:-1, max-image-preview:large"', false);
+
+        $this->get(route('shop.index', ['search' => 'hood']))
+            ->assertOk()
+            ->assertSee('name="robots" content="noindex, follow, max-snippet:-1, max-video-preview:-1, max-image-preview:large"', false);
     }
 
     public function test_error_pages_apply_full_noindex_policy(): void
