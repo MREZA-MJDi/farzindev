@@ -476,3 +476,63 @@ test('blog archive renders the editorial magazine layout without horizontal over
     }
 });
 
+test('blog actions are real touch targets and the magazine stays free of heavy motion runtimes', async ({ page }) => {
+    for (const viewport of [
+        { width: 390, height: 844 },
+        { width: 1440, height: 960 },
+    ]) {
+        await page.setViewportSize(viewport);
+        await page.goto('/blog', { waitUntil: 'domcontentloaded' });
+
+        const rss = page.getByRole('link', {
+            name: 'دنبال‌کردن مقاله‌های مجله با فید RSS',
+        });
+        await expect(rss).toBeVisible();
+        await expect(rss).toHaveAttribute('href', /\/blog\/feed\.xml$/);
+        await expect(rss.locator('svg')).toHaveCount(1);
+
+        const target = await rss.boundingBox();
+        expect(target, 'RSS should have a measurable click target').not.toBeNull();
+        expect(target.height, 'RSS click target must be at least 44px high').toBeGreaterThanOrEqual(44);
+        expect(target.width, 'RSS pill must be wide enough to tap comfortably').toBeGreaterThanOrEqual(160);
+
+        const motion = await page.evaluate(() => ({
+            gsap: typeof window.gsap,
+            intersectionObserver: typeof window.IntersectionObserver,
+            loadedHeavyMotionFiles: performance.getEntriesByType('resource')
+                .map((resource) => resource.name.toLowerCase())
+                .filter((name) => name.includes('gsap') || name.includes('lenis')),
+        }));
+
+        expect(motion.gsap, 'blog must not load GSAP').toBe('undefined');
+        expect(motion.intersectionObserver, 'blog should use the native observer API').toBe('function');
+        expect(motion.loadedHeavyMotionFiles, 'blog must not request GSAP or Lenis assets').toEqual([]);
+
+        await rss.click();
+        await expect(page).toHaveURL(/\/blog\/feed\.xml$/);
+        await expect(page.locator('body')).not.toBeEmpty();
+    }
+});
+
+test('admin blog image workflows expose the cropper and saved media library', async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto('/login', { waitUntil: 'domcontentloaded' });
+
+    const loginForm = page.locator('form').filter({ has: page.locator('input[name="phone"]') });
+    await loginForm.locator('input[name="phone"]').fill('browser-admin@example.test');
+    await loginForm.locator('input[name="password"]').fill('browser-smoke-password');
+    await loginForm.locator('button[type="submit"]').click();
+    await expect(page).toHaveURL(/\/admin(?:\/dashboard)?(?:\?.*)?$/);
+
+    await page.goto('/admin/blog-appearance', { waitUntil: 'domcontentloaded' });
+    await expect(page.locator('[data-blog-appearance]')).toBeVisible();
+    await expect(page.locator('.blog-design-preview')).toHaveCount(2);
+    await expect(page.locator('[data-blog-container-width]')).toBeVisible();
+
+    await page.goto('/admin/blog-posts/create', { waitUntil: 'domcontentloaded' });
+    await expect(page.locator('input[name="cover_image"][data-image-editor-input]')).toHaveAttribute(
+        'data-image-editor-default-ratio',
+        '16:9'
+    );
+    await expect(page.locator('[data-editor-media-picker] summary')).toBeVisible();
+});
