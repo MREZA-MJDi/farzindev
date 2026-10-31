@@ -18,6 +18,7 @@ class CustomerController extends Controller
     {
         $query = User::query()
             ->where('role', 'customer')
+            ->withCount('orders')
             ->latest();
 
         if ($request->filled('search')) {
@@ -52,15 +53,23 @@ class CustomerController extends Controller
             404
         );
 
-        $customer->load([
+        $customer->loadCount(['orders', 'wishlists', 'addresses']);
+
+        // Detail pages stay bounded: show the latest five addresses and one
+        // page of recent orders instead of hydrating the customer's full history.
+        $customer->setRelation(
             'addresses',
-            'orders',
-            'wishlists',
-        ]);
+            $customer->addresses()->latest()->limit(5)->get()
+        );
+
+        $orders = $customer->orders()
+            ->latest()
+            ->paginate(10, ['*'], 'orders_page')
+            ->withQueryString();
 
         return view(
             'admin.customers.show',
-            compact('customer')
+            compact('customer', 'orders')
         );
     }
 
