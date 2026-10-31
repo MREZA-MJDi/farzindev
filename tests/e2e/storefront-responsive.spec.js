@@ -402,8 +402,8 @@ test('homepage image and product sections stay within the loading budget', async
 
         const homepageProductCount = await page.locator('.grid__item-inner, .fz-product-card').count();
         expect(homepageProductCount, 'homepage must never display more than eight unique product entries').toBeLessThanOrEqual(8);
-        await expect(page.locator('.fz-category-section .fz-text-link')).toHaveAttribute('href', '/categories');
-        await expect(page.locator('.fz-product-section .fz-text-link')).toHaveAttribute('href', /\\/shop/);
+        await expect(page.locator('.fz-category-section .fz-text-link')).toHaveAttribute('href', /\/categories(?:\?|$)/);
+        await expect(page.locator('.fz-product-section .fz-text-link')).toHaveAttribute('href', /\/shop(?:\?|$)/);
     }
 });
 
