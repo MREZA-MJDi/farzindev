@@ -64,6 +64,8 @@ class StorefrontPaginationAndSeoManagementTest extends TestCase
                 'postal_code' => str_pad((string) $index, 10, '0', STR_PAD_LEFT),
                 'unit' => null,
                 'is_default' => $index === 1,
+                'created_at' => now()->addSeconds($index),
+                'updated_at' => now()->addSeconds($index),
             ]);
         }
 
