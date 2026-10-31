@@ -52,9 +52,12 @@ async function addToCart(productId, btn, endpoint) {
 
         if (response.ok) {
             toast(payload.message || 'محصول به سبد خرید اضافه شد.', 'success');
-            const cartCount = document.querySelector('[data-cart-count]');
-            if (cartCount && Number.isFinite(Number(payload.cart_count))) {
-                cartCount.textContent = String(payload.cart_count);
+            if (Number.isFinite(Number(payload.cart_count))) {
+                const count = Number(payload.cart_count);
+                document.querySelectorAll('[data-cart-count]').forEach((badge) => {
+                    badge.textContent = String(count);
+                    badge.classList.toggle('hidden', count < 1);
+                });
             }
             return;
         }
