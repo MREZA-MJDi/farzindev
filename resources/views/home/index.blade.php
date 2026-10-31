@@ -282,7 +282,7 @@
                                 @endif
                             </p>
                         </div>
-                        <a class="fz-text-link" href="{{ route('shop.index', ['sort' => 'popular']) }}">مشاهده پرفروش‌ها <span aria-hidden="true">←</span></a>
+                        <a class="fz-text-link" href="{{ route('shop.index') }}">مشاهده همه محصولات <span aria-hidden="true">←</span></a>
                     </div>
                     <div class="fz-product-grid fz-product-grid--limited">
                         @foreach($featuredProducts as $product)
