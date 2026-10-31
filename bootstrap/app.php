@@ -1,5 +1,6 @@
 <?php
 
+use App\Console\Commands\OptimizeResponsiveImages;
 use App\Http\Middleware\AdminMiddleware;
 use App\Http\Middleware\CustomerMiddleware;
 use App\Http\Middleware\RequestIdMiddleware;
@@ -23,6 +24,10 @@ return Application::configure(
         commands: __DIR__ . '/../routes/console.php',
         health: '/up',
     )
+
+    ->withCommands([
+        OptimizeResponsiveImages::class,
+    ])
 
     ->withMiddleware(function (
         Middleware $middleware
