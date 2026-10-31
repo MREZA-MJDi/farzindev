@@ -699,8 +699,8 @@ body {
 }
 
 
-/* Mobile search and filters: keep controls tappable, readable and inside the visual viewport. */
-@media (max-width: 767px) {
+/* Mobile/tablet search and filters: keep controls tappable, readable and inside the visual viewport. */
+@media (max-width: 1023px) {
     .storefront-content input:not([type="checkbox"]):not([type="radio"]),
     .storefront-content select,
     .farzin-search-overlay input[type="search"],
