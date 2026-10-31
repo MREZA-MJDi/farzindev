@@ -188,6 +188,12 @@
                         جلوگیری کامل از ایندکس عمومی تا زمان انتشار
                     </label>
 
+                    <label class="flex items-start gap-3 rounded-xl border border-[var(--admin-border)] p-4 text-sm text-[var(--admin-text)] sm:col-span-2">
+                        <input type="hidden" name="seo_noindex_shop_filters" value="0">
+                        <input type="checkbox" name="seo_noindex_shop_filters" value="1" @checked((string) old('seo_noindex_shop_filters', $settings['seo_noindex_shop_filters'] ?? '1') === '1') class="admin-checkbox mt-0.5 h-4 w-4">
+                        noindex برای URLهای جست‌وجو و فیلتر فروشگاه (صفحه اصلی فروشگاه و صفحات دسته‌بندی مستقل ایندکس می‌مانند)
+                    </label>
+
                     @foreach ([
                         'seo_robots_noindex' => 'جلوگیری از ایندکس',
                         'seo_robots_nofollow' => 'دنبال‌نکردن لینک‌ها',
