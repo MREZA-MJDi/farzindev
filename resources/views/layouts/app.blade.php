@@ -12,6 +12,8 @@
             'shop.index' => ['title' => 'seo_shop_title', 'description' => 'seo_shop_description'],
             'categories.index' => ['title' => 'seo_categories_title', 'description' => 'seo_categories_description'],
             'blog.index' => ['title' => 'seo_blog_title', 'description' => 'seo_blog_description'],
+            'about' => ['title' => 'seo_about_title', 'description' => 'seo_about_description'],
+            'contact' => ['title' => 'seo_contact_title', 'description' => 'seo_contact_description'],
             default => null,
         };
 
