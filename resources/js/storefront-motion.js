@@ -1,225 +1,55 @@
-import { gsap } from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
-
-gsap.registerPlugin(ScrollTrigger);
-window.gsap = gsap;
-window.ScrollTrigger = ScrollTrigger;
-
 /**
- * Farzin storefront motion system.
- * Motion is progressive enhancement: content remains visible if JS is disabled,
- * and reduced-motion preferences disable scroll and ambient animations.
+ * Lightweight storefront entrance enhancement.
+ *
+ * Content is never hidden while waiting for JavaScript or scroll events.
+ * The old GSAP flow set sections to autoAlpha: 0 on every navigation, which
+ * caused the page to appear empty and then rebuild itself as ScrollTrigger ran.
+ * This version observes only explicitly marked elements and animates position,
+ * never opacity or visibility. Normal document flow remains unchanged.
  */
-const initFarzinMotion = () => {
-    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const selector = '[data-fz-reveal], [data-farzin-reveal], [data-shop-animate]';
 
-    if (reduceMotion) {
-        return;
-    }
+if (!reduceMotion && 'IntersectionObserver' in window) {
+    const targets = [...document.querySelectorAll(selector)];
 
-    const categoryHero = document.querySelector('[data-category-hero]');
+    if (targets.length > 0) {
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach((entry) => {
+                if (!entry.isIntersecting) {
+                    return;
+                }
 
-    if (categoryHero) {
-        const showcaseCards = gsap.utils.toArray('[data-category-float]', categoryHero);
+                const element = entry.target;
+                observer.unobserve(element);
 
-        gsap.fromTo(categoryHero,
-            { autoAlpha: 0, y: 18 },
-            {
-                autoAlpha: 1,
-                y: 0,
-                duration: 0.8,
-                ease: 'power3.out',
-                clearProps: 'transform',
-                scrollTrigger: {
-                    trigger: categoryHero,
-                    start: 'top 88%',
-                    toggleActions: 'play none none none',
-                    once: true,
-                },
-            },
-        );
-
-        showcaseCards.forEach((card, index) => {
-            gsap.to(card, {
-                y: index === 0 ? -7 : 7,
-                rotation: index === 0 ? -0.6 : 1.4,
-                duration: index === 0 ? 3.6 : 4.2,
-                delay: index === 0 ? 0 : -1.8,
-                repeat: -1,
-                yoyo: true,
-                ease: 'sine.inOut',
+                // Keep all text/images visible. Only add a small, compositor-
+                // friendly translate when an element enters the viewport.
+                if (typeof element.animate === 'function') {
+                    try {
+                        element.animate(
+                            [
+                                { translate: '0 8px' },
+                                { translate: '0 0' },
+                            ],
+                            {
+                                duration: 360,
+                                easing: 'cubic-bezier(.22, 1, .36, 1)',
+                                fill: 'none',
+                            },
+                        );
+                    } catch {
+                        // The content is already visible; animation is optional.
+                    }
+                }
             });
+        }, {
+            root: null,
+            rootMargin: '0px 0px -5% 0px',
+            threshold: 0.04,
         });
 
-        const orbit = categoryHero.querySelector('.fz-category-hero__orbit--outer');
-
-        if (orbit) {
-            gsap.to(orbit, {
-                rotation: 360,
-                duration: 42,
-                repeat: -1,
-                ease: 'none',
-                transformOrigin: '50% 50%',
-            });
-        }
+        targets.forEach((element) => observer.observe(element));
+        window.addEventListener('pagehide', () => observer.disconnect(), { once: true });
     }
-
-    const shopHero = document.querySelector('[data-farzin-shop-hero]');
-
-    if (shopHero) {
-        const heroCopy = gsap.utils.toArray('[data-shop-animate]', shopHero);
-        const heroArt = shopHero.querySelector('[data-shop-art]');
-
-        gsap.set(heroCopy, { autoAlpha: 0, y: 22 });
-
-        gsap.timeline({
-            scrollTrigger: {
-                trigger: shopHero,
-                start: 'top 82%',
-                toggleActions: 'play none none none',
-                once: true,
-            },
-        }).to(heroCopy, {
-            autoAlpha: 1,
-            y: 0,
-            duration: 0.78,
-            stagger: 0.085,
-            ease: 'power3.out',
-            clearProps: 'transform',
-        });
-
-        if (heroArt) {
-            gsap.fromTo(
-                heroArt,
-                { autoAlpha: 0, x: -18, scale: 0.965 },
-                {
-                    autoAlpha: 1,
-                    x: 0,
-                    scale: 1,
-                    duration: 1.15,
-                    ease: 'power3.out',
-                    scrollTrigger: {
-                        trigger: shopHero,
-                        start: 'top 82%',
-                        toggleActions: 'play none none none',
-                        once: true,
-                    },
-                },
-            );
-
-            const hood = heroArt.querySelector('.farzin-shop-hero__hood');
-            const orbit = heroArt.querySelector('.farzin-shop-hero__art-orbit--inner');
-            const sinkCard = heroArt.querySelector('.farzin-shop-hero__sink-card');
-            const artLine = heroArt.querySelector('.farzin-shop-hero__art-note-line');
-
-            if (hood) {
-                gsap.to(hood, {
-                    y: -7,
-                    duration: 3.4,
-                    repeat: -1,
-                    yoyo: true,
-                    ease: 'sine.inOut',
-                });
-            }
-
-            if (orbit) {
-                gsap.to(orbit, {
-                    rotation: 8,
-                    duration: 12,
-                    repeat: -1,
-                    yoyo: true,
-                    transformOrigin: '50% 50%',
-                    ease: 'sine.inOut',
-                });
-            }
-
-            if (sinkCard) {
-                gsap.to(sinkCard, {
-                    y: -8,
-                    rotation: 0.8,
-                    duration: 3.6,
-                    repeat: -1,
-                    yoyo: true,
-                    transformOrigin: '50% 50%',
-                    ease: 'sine.inOut',
-                });
-            }
-
-            if (artLine) {
-                gsap.fromTo(
-                    artLine,
-                    { scaleX: 0.55, transformOrigin: 'right center' },
-                    {
-                        scaleX: 1,
-                        duration: 1.4,
-                        repeat: -1,
-                        yoyo: true,
-                        ease: 'sine.inOut',
-                    },
-                );
-            }
-        }
-    }
-
-    // Shared page motion for the unified non-home layouts. Content remains visible
-    // when JavaScript is unavailable, and reduced-motion preferences are respected.
-    if (!document.body.classList.contains('home-body')) {
-        gsap.utils.toArray('.storefront-content section:not(.fz-contact-hero), .storefront-content [data-fz-reveal]').forEach((element) => {
-            if (element.dataset.fzMotionReady === 'true') {
-                return;
-            }
-
-            element.dataset.fzMotionReady = 'true';
-            gsap.fromTo(element,
-                { autoAlpha: 0, y: 18 },
-                {
-                    autoAlpha: 1,
-                    y: 0,
-                    duration: 0.72,
-                    ease: 'power3.out',
-                    clearProps: 'transform',
-                    scrollTrigger: {
-                        trigger: element,
-                        start: 'top 92%',
-                        toggleActions: 'play none none none',
-                        once: true,
-                    },
-                },
-            );
-        });
-    }
-
-    gsap.utils.toArray('[data-farzin-reveal]').forEach((card) => {
-        if (card.dataset.farzinMotionReady === 'true') {
-            return;
-        }
-
-        card.dataset.farzinMotionReady = 'true';
-
-        gsap.fromTo(
-            card,
-            { autoAlpha: 0, y: 24 },
-            {
-                autoAlpha: 1,
-                y: 0,
-                duration: 0.68,
-                ease: 'power3.out',
-                clearProps: 'transform',
-                scrollTrigger: {
-                    trigger: card,
-                    start: 'top 93%',
-                    toggleActions: 'play none none none',
-                    once: true,
-                },
-            },
-        );
-    });
-
-    ScrollTrigger.refresh();
-};
-
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initFarzinMotion, { once: true });
-} else {
-    initFarzinMotion();
 }
