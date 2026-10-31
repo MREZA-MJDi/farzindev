@@ -172,7 +172,7 @@ class ProductController extends Controller
         $categories = Category::query()
             ->where(function ($query) use ($product): void {
                 $query->where('is_active', true)
-                    ->orWhereKey($product->category_id);
+                    ->orWhere('id', $product->category_id);
             })
             ->orderByRaw('CASE WHEN id = ? THEN 0 ELSE 1 END', [$product->category_id])
             ->orderBy('name')
