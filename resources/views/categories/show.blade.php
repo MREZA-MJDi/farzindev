@@ -1,21 +1,23 @@
 @extends('layouts.app')
 
-@section(
-    'title',
-    $category->meta_title ?: ($category->name . ' | خرید هود و سینک آشپزخانه | فرزین')
-)
+@php
+    $categoryPageTitle = $category->meta_title ?: ($category->name . ' | خرید هود و سینک آشپزخانه | فرزین');
+    $categoryPageDescription = $category->meta_description
+        ?: ('مشاهده و خرید محصولات دسته‌بندی ' . $category->name . ' در فرزین؛ بررسی قیمت و مشخصات فنی محصولات.');
+    $categoryPageCanonical = $category->canonical_url ?: route('categories.show', $category->slug);
+    $categoryOgTitle = $category->og_title ?: $categoryPageTitle;
+    $categoryOgDescription = $category->og_description ?: $categoryPageDescription;
+@endphp
 
-@section(
-    'description',
-    $category->meta_description
-        ?: ('مشاهده و خرید محصولات دسته‌بندی ' . $category->name . ' در فرزین؛ بررسی قیمت و مشخصات فنی محصولات.')
-)
-
-@section(
-    'canonical',
-    route('categories.show', $category->slug)
-)
-
+@section('title', $categoryPageTitle)
+@section('description', $categoryPageDescription)
+@section('canonical', $categoryPageCanonical)
+@if(($category->seo_robots ?? 'inherit') !== 'inherit')
+    @section('robots', $category->seo_robots)
+@endif
+@section('og_type', 'website')
+@section('og_title', $categoryOgTitle)
+@section('og_description', $categoryOgDescription)
 @section('og_image', $category->image_url ?? '')
 
 

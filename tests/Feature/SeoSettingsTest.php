@@ -20,18 +20,34 @@ class SeoSettingsTest extends TestCase
         Cache::flush();
     }
 
-    public function test_public_layout_allows_indexing_and_following_by_default(): void
+    public function test_public_layout_defaults_to_sitewide_noindex_nofollow_before_seo_release(): void
     {
         $response = $this->get(route('home'));
 
         $response->assertOk()
-            ->assertSee('name="robots" content="index, follow, max-snippet:-1, max-video-preview:-1, max-image-preview:large"', false)
-            ->assertDontSee('name="robots" content="noindex', false)
+            ->assertSee('name="robots" content="noindex, nofollow, noarchive, nosnippet, noimageindex"', false)
             ->assertSee('rel="canonical" href="' . app(SeoSettings::class)->canonicalUrl('/', false) . '"', false)
             ->assertSee('property="og:title"', false)
             ->assertSee('application/ld+json', false);
 
         $this->assertSame(1, substr_count((string) $response->getContent(), '"@type":"WebSite"'));
+    }
+
+    public function test_prelaunch_gate_applies_to_every_public_storefront_page(): void
+    {
+        foreach ([
+            route('home'),
+            route('shop.index'),
+            route('categories.index'),
+            route('blog.index'),
+            route('about'),
+            route('contact'),
+            route('login'),
+        ] as $url) {
+            $this->get($url)
+                ->assertOk()
+                ->assertSee('name="robots" content="noindex, nofollow, noarchive, nosnippet, noimageindex"', false);
+        }
     }
 
     public function test_robots_txt_is_generated_from_settings_and_keeps_crawling_allowed_for_meta_noindex(): void
@@ -42,12 +58,30 @@ class SeoSettingsTest extends TestCase
             ->assertSee('User-agent: *')
             ->assertSee('Allow: /')
             ->assertDontSee('Disallow: /')
+            ->assertDontSee('Sitemap:');
+
+        StorefrontSetting::query()->updateOrCreate(
+            ['key' => 'seo_development_mode'],
+            ['value' => '0'],
+        );
+        app(SeoSettings::class)->clearCache();
+
+        $this->get(route('robots'))
+            ->assertOk()
             ->assertSee('Sitemap: ' . app(SeoSettings::class)->canonicalUrl('/sitemap.xml', false));
     }
 
     public function test_sitemap_uses_canonical_urls_and_can_be_disabled_in_settings(): void
     {
         $canonicalHome = app(SeoSettings::class)->canonicalUrl('/', false);
+
+        $this->get(route('sitemap'))->assertNotFound();
+
+        StorefrontSetting::query()->updateOrCreate(
+            ['key' => 'seo_development_mode'],
+            ['value' => '0'],
+        );
+        app(SeoSettings::class)->clearCache();
 
         $this->get(route('sitemap'))
             ->assertOk()
@@ -261,6 +295,12 @@ class SeoSettingsTest extends TestCase
 
     public function test_filtered_shop_urls_are_noindex_follow_by_default_but_catalogue_root_is_indexable(): void
     {
+        StorefrontSetting::query()->updateOrCreate(
+            ['key' => 'seo_development_mode'],
+            ['value' => '0'],
+        );
+        app(SeoSettings::class)->clearCache();
+
         $this->get(route('shop.index'))
             ->assertOk()
             ->assertSee('name="robots" content="index, follow, max-snippet:-1, max-video-preview:-1, max-image-preview:large"', false);
@@ -268,6 +308,62 @@ class SeoSettingsTest extends TestCase
         $this->get(route('shop.index', ['search' => 'hood']))
             ->assertOk()
             ->assertSee('name="robots" content="noindex, follow, max-snippet:-1, max-video-preview:-1, max-image-preview:large"', false);
+    }
+
+    public function test_admin_can_release_sitewide_indexing_and_following_from_seo_dashboard(): void
+    {
+        $admin = User::factory()->create(['role' => 'admin']);
+
+        $this->actingAs($admin)
+            ->put(route('admin.seo-settings.update'), [
+                'seo_canonical_base_url' => 'https://farajihome.com',
+                'seo_site_name' => 'فرزین',
+                'seo_default_title' => 'فرزین | تجهیزات آشپزخانه',
+                'seo_default_description' => 'توضیحات اصلی سایت فرزین.',
+                'seo_robots_txt_rules' => "User-agent: *\\nAllow: /",
+                'seo_development_mode' => '0',
+                'seo_robots_noindex' => '0',
+                'seo_robots_nofollow' => '0',
+                'seo_robots_noarchive' => '0',
+                'seo_robots_nosnippet' => '0',
+                'seo_robots_noimageindex' => '0',
+                'seo_sitemap_enabled' => '1',
+            ])
+            ->assertRedirect(route('admin.seo-settings.edit'));
+
+        app(SeoSettings::class)->clearCache();
+
+        $this->get(route('home'))
+            ->assertOk()
+            ->assertSee('name="robots" content="index, follow, max-snippet:-1, max-video-preview:-1, max-image-preview:large"', false);
+
+        $this->get(route('sitemap'))
+            ->assertOk()
+            ->assertHeader('content-type', 'application/xml; charset=UTF-8');
+    }
+
+    public function test_custom_meta_tags_cannot_override_search_crawler_robots_directives(): void
+    {
+        $admin = User::factory()->create(['role' => 'admin']);
+
+        $this->actingAs($admin)
+            ->from(route('admin.seo-settings.edit'))
+            ->put(route('admin.seo-settings.update'), [
+                'seo_canonical_base_url' => 'https://farajihome.com',
+                'seo_site_name' => 'فرزین',
+                'seo_default_title' => 'عنوان SEO',
+                'seo_default_description' => 'توضیحات سایت',
+                'seo_robots_txt_rules' => "User-agent: *\\nAllow: /",
+                'seo_custom_meta_tags' => [
+                    ['type' => 'name', 'key' => 'googlebot', 'content' => 'index,follow'],
+                ],
+            ])
+            ->assertRedirect(route('admin.seo-settings.edit'))
+            ->assertSessionHasErrors('seo_custom_meta_tags');
+
+        $this->assertDatabaseMissing('storefront_settings', [
+            'key' => 'seo_custom_meta_tags',
+        ]);
     }
 
     public function test_error_pages_apply_full_noindex_policy(): void

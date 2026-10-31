@@ -66,10 +66,55 @@ class SeoSettings
         return $this->canonicalUrl(Storage::disk('public')->url(ltrim($value, '/')), false);
     }
 
-    public function robotsMeta(): string
+    /**
+     * Resolve a content-specific canonical URL. Absolute values must be valid
+     * HTTP(S) URLs without credentials; local values must be root-relative.
+     */
+    public function canonicalOverride(?string $value): ?string
+    {
+        $value = trim((string) $value);
+
+        if ($value === '') {
+            return null;
+        }
+
+        if (filter_var($value, FILTER_VALIDATE_URL)) {
+            $parts = parse_url($value) ?: [];
+            $scheme = strtolower((string) ($parts['scheme'] ?? ''));
+
+            if (
+                ! in_array($scheme, ['http', 'https'], true)
+                || isset($parts['user'])
+                || isset($parts['pass'])
+                || isset($parts['fragment'])
+            ) {
+                return null;
+            }
+
+            $path = (string) ($parts['path'] ?? '/');
+            $path = $path === '' ? '/' : $path;
+
+            return $scheme . '://' . ($parts['host'] ?? '') 
+                . (isset($parts['port']) ? ':' . $parts['port'] : '')
+                . $path;
+        }
+
+        if (
+            str_starts_with($value, '/')
+            && ! str_starts_with($value, '//')
+            && ! preg_match('/[\\x00-\\x20]/', $value)
+            && ! str_contains($value, chr(92))
+        ) {
+            return $this->canonicalUrl($value, false);
+        }
+
+        return null;
+    }
+
+    public function robotsMeta(?string $pageOverride = null): string
     {
         $settings = $this->all();
-        $developmentMode = ($settings['seo_development_mode'] ?? '0') === '1';
+        $developmentMode = ($settings['seo_development_mode'] ?? '1') === '1';
         $shopFilterParameters = [
             'search', 'category', 'min_price', 'max_price',
             'in_stock', 'featured', 'new', 'installment', 'sort',
@@ -79,10 +124,17 @@ class SeoSettings
                 fn (string $parameter): bool => request()->filled($parameter)
             );
 
+        $pageDirectives = array_values(array_filter(array_map(
+            static fn (string $directive): string => trim(strtolower($directive)),
+            explode(',', (string) $pageOverride)
+        )));
         $noIndex = $developmentMode
             || ($settings['seo_robots_noindex'] ?? '0') === '1'
-            || ($hasFilteredShopUrl && ($settings['seo_noindex_shop_filters'] ?? '1') === '1');
-        $noFollow = $developmentMode || ($settings['seo_robots_nofollow'] ?? '0') === '1';
+            || ($hasFilteredShopUrl && ($settings['seo_noindex_shop_filters'] ?? '1') === '1')
+            || in_array('noindex', $pageDirectives, true);
+        $noFollow = $developmentMode
+            || ($settings['seo_robots_nofollow'] ?? '0') === '1'
+            || in_array('nofollow', $pageDirectives, true);
         $directives = [
             $noIndex ? 'noindex' : 'index',
             $noFollow ? 'nofollow' : 'follow',
@@ -115,12 +167,22 @@ class SeoSettings
 
     public function sitemapEnabled(): bool
     {
-        return ($this->all()['seo_sitemap_enabled'] ?? '1') === '1';
+        $settings = $this->all();
+
+        return ($settings['seo_development_mode'] ?? '1') !== '1'
+            && ($settings['seo_sitemap_enabled'] ?? '1') === '1';
     }
 
     public function robotsTxt(): string
     {
         $settings = $this->all();
+
+        // Never block crawling during pre-launch: crawlers must be able to read
+        // the page-level noindex directive. Hide the sitemap until publication.
+        if (($settings['seo_development_mode'] ?? '1') === '1') {
+            return "User-agent: *\nAllow: /\n";
+        }
+
         $rules = trim(str_replace(["\r\n", "\r"], "\n", (string) $settings['seo_robots_txt_rules']));
         $lines = $rules === '' ? ['User-agent: *', 'Allow: /'] : explode("\n", $rules);
 
@@ -140,7 +202,9 @@ class SeoSettings
         $rows = $this->decodeStoredList($this->all()['seo_custom_meta_tags'] ?? '[]');
         $reserved = [
             'name' => [
-                'description', 'keywords', 'robots', 'google-site-verification',
+                'description', 'keywords', 'robots', 'googlebot', 'googlebot-news',
+                'googlebot-image', 'bingbot', 'yandex', 'slurp', 'duckduckbot',
+                'baiduspider', 'applebot', 'google-site-verification',
                 'msvalidate.01', 'viewport', 'referrer', 'twitter:title', 'twitter:description',
                 'twitter:card', 'twitter:image', 'twitter:site',
             ],
@@ -282,7 +346,7 @@ class SeoSettings
             'seo_custom_meta_tags' => '[]',
             'seo_custom_link_tags' => '[]',
             'seo_default_og_image' => null,
-            'seo_development_mode' => '0',
+            'seo_development_mode' => '1',
             'seo_robots_noindex' => '0',
             'seo_noindex_shop_filters' => '1',
             'seo_robots_nofollow' => '0',

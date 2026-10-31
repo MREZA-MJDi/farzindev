@@ -1857,3 +1857,45 @@ p {
         min-height: 44px;
     }
 }
+
+
+/* Blog rich editor: intentionally lives in the admin-only CSS entry. */
+.admin-blog-editor {
+    min-height: 24rem;
+    max-height: 72vh;
+    overflow-y: auto;
+    padding: 1.15rem 1.25rem;
+    border: 1px solid var(--admin-border);
+    border-radius: 1rem;
+    color: var(--admin-text);
+    background: var(--admin-surface, #fff);
+    font-size: .92rem;
+    line-height: 2.05;
+    outline: none;
+    overflow-wrap: anywhere;
+}
+
+.admin-blog-editor:focus {
+    border-color: var(--admin-accent);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--admin-accent) 14%, transparent);
+}
+
+.admin-blog-editor > * + * { margin-top: .9rem; }
+.admin-blog-editor p { margin-block: .7rem; }
+.admin-blog-editor h2 { margin-block: 1.6rem .6rem; font-size: 1.45rem; font-weight: 850; line-height: 1.7; }
+.admin-blog-editor h3 { margin-block: 1.3rem .5rem; font-size: 1.2rem; font-weight: 800; line-height: 1.7; }
+.admin-blog-editor h4 { margin-block: 1.1rem .45rem; font-size: 1.05rem; font-weight: 750; line-height: 1.7; }
+.admin-blog-editor ul { padding-inline-start: 1.5rem; list-style: disc; }
+.admin-blog-editor ol { padding-inline-start: 1.5rem; list-style: decimal; }
+.admin-blog-editor li { margin-block: .35rem; }
+.admin-blog-editor blockquote {
+    margin-block: 1rem;
+    padding: .75rem 1rem;
+    border-inline-start: 3px solid var(--admin-accent);
+    border-radius: .5rem;
+    color: var(--admin-muted);
+    background: var(--admin-surface-soft);
+}
+.admin-blog-editor a { color: var(--admin-accent); text-decoration: underline; text-underline-offset: 3px; }
+.admin-blog-editor img { display: block; max-width: 100%; height: auto; margin-block: 1rem; border-radius: .85rem; }
+.admin-blog-editor:empty::before { content: 'متن مقاله را اینجا بنویسید…'; color: var(--admin-muted); pointer-events: none; }

@@ -273,7 +273,7 @@
                     <div class="fz-section-heading fz-reveal">
                         <div>
                             <p class="fz-eyebrow"><span></span> کاتالوگ محصولات</p>
-                            <h2 id="fz-products-heading">پرفروش‌ترین محصولات</h2>
+                            <h2 id="fz-products-heading">{{ $hasBestSellerSales ? 'پرفروش‌ترین محصولات' : 'مدل‌های منتخب فرزین' }}</h2>
                             <p>
                                 @if($hasBestSellerSales)
                                     بر اساس تعداد محصولات ثبت‌شده در سفارش‌های پرداخت‌شده؛ برای مشخصات کامل، صفحه‌ی هر محصول را باز کنید.
@@ -284,7 +284,7 @@
                         </div>
                         <a class="fz-text-link" href="{{ route('shop.index') }}">مشاهده همه محصولات <span aria-hidden="true">←</span></a>
                     </div>
-                    <div class="fz-product-grid">
+                    <div class="fz-product-grid {{ match($featuredProducts->count()) { 1 => 'fz-product-grid--single', 2 => 'fz-product-grid--pair', 3 => 'fz-product-grid--triple', default => '' } }}">
                         @foreach($featuredProducts as $product)
                             <x-home.product-card :product="$product" />
                         @endforeach
@@ -304,7 +304,7 @@
                         </div>
                         <a class="fz-text-link" href="{{ route('shop.index', ['sort' => 'newest']) }}">جدیدترین‌ها <span aria-hidden="true">←</span></a>
                     </div>
-                    <div class="fz-product-grid">
+                    <div class="fz-product-grid {{ match($newProducts->count()) { 1 => 'fz-product-grid--single', 2 => 'fz-product-grid--pair', default => '' } }}">
                         @foreach($newProducts as $product)
                             <x-home.product-card :product="$product" />
                         @endforeach

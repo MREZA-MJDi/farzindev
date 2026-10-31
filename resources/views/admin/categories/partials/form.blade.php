@@ -2,6 +2,7 @@
 
 @php
     $editing = isset($category);
+    $category = $category ?? new \App\Models\Category();
 @endphp
 
 <div class="grid grid-cols-1 gap-6 xl:grid-cols-3">
@@ -118,6 +119,28 @@
                     توضیحات متا
                     <textarea id="meta_description" name="meta_description" rows="3" maxlength="320" class="admin-textarea mt-2" placeholder="توضیح کوتاه و دقیق درباره این دسته‌بندی...">{{ old('meta_description', $category->meta_description ?? '') }}</textarea>
                     @error('meta_description')<span class="mt-1 block text-xs text-[var(--admin-danger)]">{{ $message }}</span>@enderror
+                </label>
+
+                <label class="block text-sm font-medium text-[var(--admin-text)]">Canonical URL
+                    <input name="canonical_url" type="url" inputmode="url" dir="ltr" maxlength="2048" value="{{ old('canonical_url', $category->canonical_url ?? '') }}" placeholder="https://farajihome.com/categories/..." class="admin-input mt-2 w-full">
+                    @error('canonical_url')<span class="mt-1 block text-xs text-[var(--admin-danger)]">{{ $message }}</span>@enderror
+                </label>
+
+                <label class="block text-sm font-medium text-[var(--admin-text)]">قانون ربات‌ها
+                    <select name="seo_robots" class="admin-select mt-2 w-full">
+                        @foreach (['inherit' => 'ارث‌بری از سایت', 'index,follow' => 'Index, Follow', 'noindex,follow' => 'Noindex, Follow', 'noindex,nofollow' => 'Noindex, Nofollow'] as $value => $label)
+                            <option value="{{ $value }}" @selected(old('seo_robots', $category->seo_robots ?: 'inherit') === $value)>{{ $label }}</option>
+                        @endforeach
+                    </select>
+                    @error('seo_robots')<span class="mt-1 block text-xs text-[var(--admin-danger)]">{{ $message }}</span>@enderror
+                </label>
+
+                <label class="block text-sm font-medium text-[var(--admin-text)]">عنوان Open Graph
+                    <input name="og_title" value="{{ old('og_title', $category->og_title ?? '') }}" maxlength="255" class="admin-input mt-2 w-full">
+                </label>
+
+                <label class="block text-sm font-medium text-[var(--admin-text)]">توضیحات Open Graph
+                    <textarea name="og_description" rows="2" maxlength="320" class="admin-textarea mt-2 w-full">{{ old('og_description', $category->og_description ?? '') }}</textarea>
                 </label>
 
                 <p class="text-xs leading-6 text-[var(--admin-muted)]">پیشنهاد: عنوان منحصربه‌فرد و توضیح واقعی این دسته را بنویسید؛ متن تکراری بین دسته‌ها به سئو کمکی نمی‌کند.</p>

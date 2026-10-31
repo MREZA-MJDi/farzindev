@@ -12,8 +12,10 @@ use App\Models\Media;
 use App\Models\Product;
 use App\Models\ProductImage;
 use App\Models\ProductVariant;
+use App\Models\StorefrontSetting;
 use App\Models\User;
 use App\Services\Payments\PaymentService;
+use App\Services\Seo\SeoSettings;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Hash;
@@ -390,6 +392,12 @@ class FarzinStorefrontTest extends TestCase
             'is_active' => false,
         ]);
 
+        StorefrontSetting::query()->updateOrCreate(
+            ['key' => 'seo_development_mode'],
+            ['value' => '0'],
+        );
+        app(SeoSettings::class)->clearCache();
+
         $response = $this->get(route('sitemap'));
 
         $response->assertOk()
@@ -439,6 +447,12 @@ class FarzinStorefrontTest extends TestCase
         $this->get(route('shop.index'))
             ->assertOk()
             ->assertDontSee($product->name);
+
+        StorefrontSetting::query()->updateOrCreate(
+            ['key' => 'seo_development_mode'],
+            ['value' => '0'],
+        );
+        app(SeoSettings::class)->clearCache();
 
         $this->get(route('sitemap'))
             ->assertOk()

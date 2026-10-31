@@ -33,9 +33,14 @@
         $seoKeywords = $seoKeywords !== '' ? $seoKeywords : trim((string) ($seoValues['seo_default_keywords'] ?? ''));
 
         $seoCanonicalSource = trim((string) $__env->yieldContent('canonical'));
-        $seoCanonical = $seoService->canonicalUrl($seoCanonicalSource !== '' ? $seoCanonicalSource : request()->getPathInfo());
+        $seoCanonical = $seoService->canonicalOverride($seoCanonicalSource)
+            ?? $seoService->canonicalUrl($seoCanonicalSource !== '' ? $seoCanonicalSource : request()->getPathInfo());
+        $seoRobotsOverride = trim((string) $__env->yieldContent('robots'));
 
         $seoOgType = trim((string) $__env->yieldContent('og_type')) ?: 'website';
+        $seoOgTitle = trim((string) $__env->yieldContent('og_title')) ?: $seoTitle;
+        $seoOgDescription = trim((string) $__env->yieldContent('og_description')) ?: $seoDescription;
+        $seoTwitterCard = trim((string) $__env->yieldContent('twitter_card')) ?: 'summary_large_image';
         $seoPageOgImage = trim((string) $__env->yieldContent('og_image'));
         $seoOgImage = $seoService->resolvePublicAssetUrl(
             $seoPageOgImage !== '' ? $seoPageOgImage : ($seoValues['seo_default_og_image'] ?? null)
@@ -131,23 +136,23 @@
         <meta name="keywords" content="{{ $seoKeywords }}">
     @endif
 
-    <meta name="robots" content="{{ $seoService->robotsMeta() }}">
+    <meta name="robots" content="{{ $seoService->robotsMeta($seoRobotsOverride) }}">
     <link rel="canonical" href="{{ $seoCanonical }}">
 
     <meta property="og:type" content="{{ $seoOgType }}">
     <meta property="og:site_name" content="{{ $seoValues['seo_site_name'] }}">
-    <meta property="og:title" content="{{ $seoTitle }}">
-    <meta property="og:description" content="{{ $seoDescription }}">
+    <meta property="og:title" content="{{ $seoOgTitle }}">
+    <meta property="og:description" content="{{ $seoOgDescription }}">
     <meta property="og:url" content="{{ $seoCanonical }}">
     @if($seoOgImage)
         <meta property="og:image" content="{{ $seoOgImage }}">
         <meta name="twitter:image" content="{{ $seoOgImage }}">
-        <meta name="twitter:card" content="summary_large_image">
+        <meta name="twitter:card" content="{{ $seoTwitterCard }}">
     @else
-        <meta name="twitter:card" content="summary">
+        <meta name="twitter:card" content="{{ $seoTwitterCard }}">
     @endif
-    <meta name="twitter:title" content="{{ $seoTitle }}">
-    <meta name="twitter:description" content="{{ $seoDescription }}">
+    <meta name="twitter:title" content="{{ $seoOgTitle }}">
+    <meta name="twitter:description" content="{{ $seoOgDescription }}">
     @if(filled($seoValues['seo_twitter_site'] ?? null))
         <meta name="twitter:site" content="{{ $seoValues['seo_twitter_site'] }}">
     @endif

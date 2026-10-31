@@ -10,6 +10,9 @@ use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\BlogController;
+use App\Http\Controllers\PublicSeoRedirectController;
+use App\Http\Controllers\Admin\BlogTermController as AdminBlogTermController;
+use App\Http\Controllers\Admin\SeoRedirectController as AdminSeoRedirectController;
 use App\Http\Controllers\Admin\BlogPostController as AdminBlogPostController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProductController;
@@ -45,7 +48,7 @@ Route::get('/sitemap.xml', SitemapController::class)
     ->name('sitemap');
 
 Route::get('/sitemap/{type}/{page}.xml', [SitemapController::class, 'segment'])
-    ->whereIn('type', ['pages', 'categories', 'products', 'blog'])
+    ->whereIn('type', ['pages', 'categories', 'products', 'blog', 'blog-categories', 'blog-tags'])
     ->whereNumber('page')
     ->name('sitemap.segment');
 
@@ -54,6 +57,15 @@ Route::get('/shop', [ShopController::class, 'index'])
 
 Route::get('/blog', [BlogController::class, 'index'])
     ->name('blog.index');
+
+Route::get('/blog/feed.xml', [BlogController::class, 'feed'])
+    ->name('blog.feed');
+
+Route::get('/blog/category/{slug}', [BlogController::class, 'category'])
+    ->name('blog.category');
+
+Route::get('/blog/tag/{slug}', [BlogController::class, 'tag'])
+    ->name('blog.tag');
 
 Route::get('/blog/{slug}', [BlogController::class, 'show'])
     ->name('blog.show');
@@ -388,6 +400,20 @@ Route::middleware(['auth', 'admin'])
             AdminBlogPostController::class
         )->except(['show']);
 
+        Route::resource(
+            'blog-terms',
+            AdminBlogTermController::class
+        )->except(['show']);
+
+        Route::get('seo-redirects', [AdminSeoRedirectController::class, 'index'])
+            ->name('seo-redirects.index');
+        Route::post('seo-redirects', [AdminSeoRedirectController::class, 'store'])
+            ->name('seo-redirects.store');
+        Route::put('seo-redirects/{seoRedirect}', [AdminSeoRedirectController::class, 'update'])
+            ->name('seo-redirects.update');
+        Route::delete('seo-redirects/{seoRedirect}', [AdminSeoRedirectController::class, 'destroy'])
+            ->name('seo-redirects.destroy');
+
         /*
         |--------------------------------------------------------------------------
         | Dashboard
@@ -555,3 +581,8 @@ Route::middleware(['auth', 'admin'])
             [ContactMessageController::class, 'destroy']
         )->name('contact-messages.destroy');
     });
+
+
+// CMS-managed redirects are the last public route, after all known pages.
+Route::fallback([PublicSeoRedirectController::class, 'handle'])
+    ->name('fallback');

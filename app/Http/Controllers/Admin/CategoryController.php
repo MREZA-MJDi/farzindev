@@ -35,7 +35,9 @@ class CategoryController extends Controller
     {
         $motionMedia = $this->selectableMotionMedia();
 
-        return view('admin.categories.create', compact('motionMedia'));
+        $category = new Category();
+
+        return view('admin.categories.create', compact('motionMedia', 'category'));
     }
 
     /**

@@ -35,7 +35,7 @@ Open `http://127.0.0.1:8000`. For Vite hot reload, run `npm run dev` in a separa
 - New catalogue records use preview names and prices; verify each specification, SKU, price, stock count and product photo in the admin dashboard before publishing. In production, new preview records are drafts with zero stock.
 - The category seeder hides inherited demo furniture categories. The product seeder archives inherited products with the `LIV-*` SKU prefix, preserves existing order history, and does not overwrite already-existing seeded records that staff have edited.
 - To upload product covers and gallery images, the dashboard allows JPG/JPEG/PNG/WEBP up to 20 MB. The PHP runtime must accept requests of at least 26 MB for these limits to work.
-- The `/blog` page contains a starter set of buying guides for hoods, sinks, and installation measurements. Its copy is currently maintained in `resources/views/blog/index.blade.php`, not in an admin CMS.
+- The `/blog` section is managed by the Laravel admin CMS (`Admin > مقالات بلاگ`): articles are stored in `blog_posts`, support drafts, scheduled/published dates, cover images, unique slugs, excerpts, and per-article SEO title/description. Public routes only expose published articles. The storefront blog templates live in `resources/views/blog/`.
 
 ## Deployment
 
@@ -44,6 +44,14 @@ The current deployment target is an Ubuntu VPS over SSH, not cPanel. Follow [the
 [The older Hostiran cPanel guide](docs/deploy-hostiran-cpanel.md) is retained only for reference and should not be used as the current deployment procedure.
 
 The GitHub Actions workflow builds a `farzin-vps-release` artifact after the test suite, production asset build, seeder smoke tests and Laravel cache-command checks pass. A green artifact is not proof of live DNS/TLS, verified catalogue data, email delivery or payment-provider readiness. Keep the external gateways disabled until provider-specific merchant API requests and server-side callbacks pass sandbox verification.
+
+## SEO publishing gate
+
+Farzin includes a native Laravel SEO manager; it does not require WordPress or a separate CMS. It manages global and page-level title/description defaults, canonical URLs, robots directives and rules, sitemap generation, Open Graph defaults, verification tokens, organization structured data, safe custom meta/link tags, and SEO fields for products, categories, and blog articles.
+
+The pre-launch safety gate is enabled by default. While `seo_development_mode=1`, public storefront pages emit `noindex, nofollow` (plus restrictive preview directives), `robots.txt` remains crawlable so search engines can read those meta directives, and `sitemap.xml` is not published. A designated SEO administrator must explicitly turn off **قفل انتشار** in **Admin → SEO Settings** after reviewing real catalogue/content data; only then can the sitemap be enabled and normal indexing/following take effect. Do not set `Disallow: /` in `robots.txt` as a substitute for the meta robots gate.
+
+Before release, verify real product/category descriptions and images, article quality and publication dates, canonical host `https://farajihome.com`, structured-data accuracy, redirects, robots output, and the generated sitemap. Then submit the sitemap in Google Search Console and monitor indexing reports.
 
 ## Tests
 ```bash
