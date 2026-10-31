@@ -36,7 +36,7 @@
 
     <div class="admin-table-wrap overflow-x-auto">
         <table class="admin-table">
-            <thead><tr><th>مسیر مبدأ</th><th>مقصد</th><th>کد</th><th>بازدید Redirect</th><th>وضعیت</th><th>عملیات</th></tr></thead>
+            <thead><tr><th>مسیر مبدأ</th><th>مقصد</th><th>کد</th><th>آخرین تغییر</th><th>وضعیت</th><th>عملیات</th></tr></thead>
             <tbody>
                 @forelse($redirects as $redirect)
                     <tr>
@@ -56,8 +56,8 @@
                                         <option value="302" @selected($redirect->status_code === 302)>302</option>
                                     </select>
                                 </label>
-                                <label class="block text-xs">تعداد
-                                    <span class="mt-3 block text-sm font-semibold">{{ number_format($redirect->hits) }}</span>
+                                <label class="block text-xs">آخرین تغییر
+                                    <span class="mt-3 block text-xs text-[var(--admin-muted)]">{{ $redirect->updated_at?->format('Y/m/d H:i') }}</span>
                                 </label>
                                 <label class="flex items-center gap-2 text-xs">
                                     <input type="hidden" name="is_active" value="0">
