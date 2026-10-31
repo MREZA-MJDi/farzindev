@@ -11,6 +11,52 @@
             <p class="admin-subtitle mt-2">این تنظیمات مستقیماً روی metaهای عمومی، canonical، robots.txt، sitemap و داده‌های ساختاریافته اعمال می‌شوند.</p>
         </div>
 
+        @php
+            $indexingBlocked = ($settings['seo_development_mode'] ?? '0') === '1'
+                || ($settings['seo_robots_noindex'] ?? '0') === '1'
+                || ($settings['seo_robots_nofollow'] ?? '0') === '1';
+        @endphp
+
+        <section class="admin-card space-y-4 p-5 sm:p-6">
+            <div class="flex flex-wrap items-center justify-between gap-3">
+                <div>
+                    <h2 class="text-sm font-bold text-[var(--admin-text)]">وضعیت فعلی حضور در گوگل</h2>
+                    <p class="mt-1 text-xs leading-6 text-[var(--admin-muted)]">تغییرات این پنل پس از ذخیره روی robots، metaها و sitemap عمومی سایت اعمال می‌شوند.</p>
+                </div>
+                <span class="rounded-full px-3 py-2 text-xs font-semibold {{ $indexingBlocked ? 'bg-amber-100 text-amber-800' : 'bg-emerald-100 text-emerald-800' }}">
+                    {{ $indexingBlocked ? 'ایندکس محدود شده' : 'ایندکس و دنبال‌کردن لینک‌ها فعال' }}
+                </span>
+            </div>
+            <p class="text-xs leading-6 text-[var(--admin-muted)]">
+                برای جلوگیری از پنهان‌شدن ناخواسته سایت، حالت آماده‌سازی و گزینه‌های noindex / nofollow به‌صورت پیش‌فرض خاموش هستند. فقط هنگام نیاز واقعی، آن‌ها را از همین صفحه روشن کنید.
+                نقشه سایت:
+                <a href="{{ route('sitemap') }}" target="_blank" rel="noopener noreferrer" class="font-semibold text-[var(--admin-accent)] underline">مشاهده sitemap.xml</a>
+                · فایل ربات‌ها:
+                <a href="{{ route('robots') }}" target="_blank" rel="noopener noreferrer" class="font-semibold text-[var(--admin-accent)] underline">مشاهده robots.txt</a>
+            </p>
+            <div class="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+                <a href="{{ route('admin.products.index') }}" class="rounded-xl border border-[var(--admin-border)] p-4 transition hover:border-[var(--admin-accent)] hover:bg-[var(--admin-surface)]">
+                    <strong class="block text-sm text-[var(--admin-text)]">SEO محصولات</strong>
+                    <span class="mt-1 block text-xs leading-6 text-[var(--admin-muted)]">عنوان و توضیحات اختصاصی هر محصول</span>
+                </a>
+                <a href="{{ route('admin.categories.index') }}" class="rounded-xl border border-[var(--admin-border)] p-4 transition hover:border-[var(--admin-accent)] hover:bg-[var(--admin-surface)]">
+                    <strong class="block text-sm text-[var(--admin-text)]">SEO دسته‌بندی‌ها</strong>
+                    <span class="mt-1 block text-xs leading-6 text-[var(--admin-muted)]">عنوان و توضیحات اختصاصی دسته‌ها</span>
+                </a>
+                <a href="{{ route('admin.blog-posts.index') }}" class="rounded-xl border border-[var(--admin-border)] p-4 transition hover:border-[var(--admin-accent)] hover:bg-[var(--admin-surface)]">
+                    <strong class="block text-sm text-[var(--admin-text)]">SEO مقالات</strong>
+                    <span class="mt-1 block text-xs leading-6 text-[var(--admin-muted)]">عنوان، توضیحات و زمان انتشار</span>
+                </a>
+                <a href="{{ route('admin.storefront-settings.edit') }}" class="rounded-xl border border-[var(--admin-border)] p-4 transition hover:border-[var(--admin-accent)] hover:bg-[var(--admin-surface)]">
+                    <strong class="block text-sm text-[var(--admin-text)]">اطلاعات تماس و نقشه</strong>
+                    <span class="mt-1 block text-xs leading-6 text-[var(--admin-muted)]">آدرس واقعی، مختصات Google Maps و راه‌های ارتباطی</span>
+                </a>
+            </div>
+            <a href="https://search.google.com/search-console" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 text-xs font-semibold text-[var(--admin-accent)] underline">
+                اتصال و بررسی سایت در Google Search Console ↗
+            </a>
+        </section>
+
         @if (session('success'))
             <div role="status" class="rounded-2xl border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-800">{{ session('success') }}</div>
         @endif
