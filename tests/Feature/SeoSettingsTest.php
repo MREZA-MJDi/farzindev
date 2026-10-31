@@ -20,12 +20,13 @@ class SeoSettingsTest extends TestCase
         Cache::flush();
     }
 
-    public function test_public_layout_applies_development_noindex_defaults(): void
+    public function test_public_layout_allows_indexing_and_following_by_default(): void
     {
         $response = $this->get(route('home'));
 
         $response->assertOk()
-            ->assertSee('name="robots" content="noindex, nofollow, noarchive, nosnippet, noimageindex"', false)
+            ->assertSee('name="robots" content="index, follow, max-snippet:-1, max-video-preview:-1, max-image-preview:large"', false)
+            ->assertDontSee('name="robots" content="noindex', false)
             ->assertSee('rel="canonical" href="' . app(SeoSettings::class)->canonicalUrl('/', false) . '"', false)
             ->assertSee('property="og:title"', false)
             ->assertSee('application/ld+json', false);
