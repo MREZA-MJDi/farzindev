@@ -63,6 +63,7 @@
             $resolvedImages->map(function ($image) use ($productName) {
                 return [
                     'url' => $image->url,
+                    'srcset' => $image->responsive_srcset,
                     'alt' => ($image->alt ?: $productName),
                 ];
             })->values()
@@ -155,6 +156,7 @@
                         x-transition:enter-start="opacity-0 scale-[1.02]"
                         x-transition:enter-end="opacity-100 scale-100"
                         src="{{ $image->url }}"
+                        @if($image->responsive_srcset) srcset="{{ $image->responsive_srcset }}" sizes="(max-width: 1023px) 100vw, 50vw" @endif
                         alt="{{ ($image->alt ?: $productName) }}"
                         @if($index !== 0)
                         loading="lazy"
@@ -328,6 +330,7 @@
 
                     <img
                         src="{{ $image->url }}"
+                        @if($image->responsive_srcset) srcset="{{ $image->responsive_srcset }}" sizes="80px" @endif
                         alt="{{ ($image->alt ?: $productName) }}"
                         loading="lazy"
                         class="h-full w-full object-cover transition duration-500 group-hover:scale-105"
@@ -385,6 +388,8 @@
 
                         <img
                             :src="images[imageIndex].url"
+                            :srcset="images[imageIndex].srcset"
+                            sizes="80px"
                             :alt="images[imageIndex].alt"
                             loading="lazy"
                             class="h-full w-full object-cover transition duration-300 group-hover:scale-105"
@@ -498,6 +503,8 @@
                             x-show="active === index"
                             x-transition.opacity
                             :src="image.url"
+                            :srcset="image.srcset"
+                            sizes="(max-width: 1023px) 100vw, 72vw"
                             :alt="image.alt"
                             class="max-h-[88vh] max-w-full rounded-2xl object-contain shadow-2xl"
                         >

@@ -1,6 +1,7 @@
 @props([
     'name',
     'image' => null,
+    'imageSrcset' => null,
     'motionMedia' => null,
     'href' => '#',
     'count' => null,
@@ -15,7 +16,7 @@
         <div class="farzin-category-card__surface relative overflow-hidden rounded-[1.65rem]">
             <div class="farzin-category-card__media relative aspect-[5/4] overflow-hidden">
                 @if($image)
-                    <img src="{{ $image }}" alt="{{ $name }}" loading="lazy" decoding="async" class="farzin-category-card__image h-full w-full object-cover">
+                    <img src="{{ $image }}" @if($imageSrcset) srcset="{{ $imageSrcset }}" sizes="(max-width: 639px) 90vw, (max-width: 1023px) 45vw, 320px" @endif alt="{{ $name }}" loading="lazy" decoding="async" class="farzin-category-card__image h-full w-full object-cover">
                 @else
                     <div class="farzin-category-fallback flex h-full w-full items-center justify-center">
                         <div class="farzin-category-fallback__mark" aria-hidden="true"><span>FZ</span><i></i></div>

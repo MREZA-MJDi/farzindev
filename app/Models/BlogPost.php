@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Facades\Storage;
+use App\Services\Media\ResponsiveImageService;
 
 class BlogPost extends Model
 {
@@ -40,6 +41,13 @@ class BlogPost extends Model
             ->where('status', 'published')
             ->whereNotNull('published_at')
             ->where('published_at', '<=', now());
+    }
+
+    public function getCoverImageSrcsetAttribute(): ?string
+    {
+        return $this->cover_image
+            ? app(ResponsiveImageService::class)->srcset($this->cover_image)
+            : null;
     }
 
     public function getCoverImageUrlAttribute(): ?string

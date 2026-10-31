@@ -4,7 +4,9 @@
 ])
 
 @php
-    $image = $product->images?->first()?->url;
+    $imageModel = $product->images?->first();
+    $image = $imageModel?->url;
+    $imageSrcset = $imageModel?->responsive_srcset;
 
     $hasDiscount =
         $product->compare_at_price !== null
@@ -40,6 +42,7 @@
             @if($image)
                 <img
                     src="{{ $image }}"
+                    @if($imageSrcset) srcset="{{ $imageSrcset }}" sizes="(max-width: 639px) 46vw, (max-width: 1279px) 30vw, 320px" @endif
                     alt="{{ $product->name }}"
                     width="640"
                     height="480"

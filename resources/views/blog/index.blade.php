@@ -48,7 +48,7 @@
                         <article class="group flex min-w-0 flex-col overflow-hidden rounded-[1.75rem] border border-[var(--livora-border)] bg-[var(--livora-cream)] transition duration-300 hover:-translate-y-1 hover:border-[var(--livora-accent)] hover:shadow-[var(--livora-shadow-md)]">
                             <a href="{{ route('blog.show', $post->slug) }}" class="block aspect-[16/10] overflow-hidden bg-[var(--livora-surface)]">
                                 @if($post->cover_image_url)
-                                    <img src="{{ $post->cover_image_url }}" alt="{{ $post->title }}" loading="lazy" class="h-full w-full object-cover transition duration-500 group-hover:scale-105">
+                                    <img src="{{ $post->cover_image_url }}" @if($post->cover_image_srcset) srcset="{{ $post->cover_image_srcset }}" sizes="(max-width: 639px) 90vw, (max-width: 1023px) 45vw, 320px" @endif alt="{{ $post->title }}" loading="lazy" decoding="async" class="h-full w-full object-cover transition duration-500 group-hover:scale-105">
                                 @else
                                     <div class="flex h-full items-end bg-gradient-to-br from-[#111416] via-[#354247] to-[#8b9b9f] p-5"><span class="text-2xl font-semibold text-white">{{ $post->title }}</span></div>
                                 @endif

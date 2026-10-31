@@ -9,10 +9,10 @@ use App\Models\Product;
 use App\Models\ProductImage;
 use App\Models\ProductVariant;
 use App\Services\Catalog\ProductMediaLibrary;
+use App\Services\Media\ResponsiveImageService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
 use Throwable;
@@ -50,7 +50,8 @@ class ProductVariantController extends Controller
      */
     public function store(
         StoreProductVariantRequest $request,
-        ProductMediaLibrary $mediaLibrary
+        ProductMediaLibrary $mediaLibrary,
+        ResponsiveImageService $images
     ): RedirectResponse {
         $data = $request->validated();
 
@@ -65,10 +66,10 @@ class ProductVariantController extends Controller
 
         foreach ($uploads as $upload) {
             try {
-                $path = $upload->store('products/images', 'public');
+                $path = $images->store($upload, 'products/images');
             } catch (Throwable $exception) {
                 foreach ($storedPaths as $storedPath) {
-                    Storage::disk('public')->delete($storedPath);
+                    $images->delete($storedPath);
                 }
 
                 $requestId = (string) $request->attributes->get('request_id', 'unavailable');
@@ -85,7 +86,7 @@ class ProductVariantController extends Controller
 
             if (! $path) {
                 foreach ($storedPaths as $storedPath) {
-                    Storage::disk('public')->delete($storedPath);
+                    $images->delete($storedPath);
                 }
 
                 return back()->withInput()->withErrors([
@@ -128,7 +129,7 @@ class ProductVariantController extends Controller
             });
         } catch (Throwable $exception) {
             foreach ($storedPaths as $storedPath) {
-                Storage::disk('public')->delete($storedPath);
+                $images->delete($storedPath);
             }
 
             if ($exception instanceof ValidationException) {
@@ -189,7 +190,8 @@ class ProductVariantController extends Controller
     public function update(
         UpdateProductVariantRequest $request,
         ProductVariant $productVariant,
-        ProductMediaLibrary $mediaLibrary
+        ProductMediaLibrary $mediaLibrary,
+        ResponsiveImageService $images
     ): RedirectResponse {
         $data = $request->validated();
 
@@ -205,10 +207,10 @@ class ProductVariantController extends Controller
 
         foreach ($uploads as $upload) {
             try {
-                $path = $upload->store('products/images', 'public');
+                $path = $images->store($upload, 'products/images');
             } catch (Throwable $exception) {
                 foreach ($storedPaths as $storedPath) {
-                    Storage::disk('public')->delete($storedPath);
+                    $images->delete($storedPath);
                 }
 
                 $requestId = (string) $request->attributes->get('request_id', 'unavailable');
@@ -226,7 +228,7 @@ class ProductVariantController extends Controller
 
             if (! $path) {
                 foreach ($storedPaths as $storedPath) {
-                    Storage::disk('public')->delete($storedPath);
+                    $images->delete($storedPath);
                 }
 
                 return back()->withInput()->withErrors([
@@ -293,7 +295,7 @@ class ProductVariantController extends Controller
             });
         } catch (Throwable $exception) {
             foreach ($storedPaths as $storedPath) {
-                Storage::disk('public')->delete($storedPath);
+                $images->delete($storedPath);
             }
 
             if ($exception instanceof ValidationException) {

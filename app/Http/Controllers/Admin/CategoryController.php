@@ -7,9 +7,9 @@ use App\Http\Requests\Admin\Category\StoreCategoryRequest;
 use App\Http\Requests\Admin\Category\UpdateCategoryRequest;
 use App\Models\Category;
 use App\Models\Media;
+use App\Services\Media\ResponsiveImageService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Storage;
 use Throwable;
 use Illuminate\View\View;
 
@@ -41,7 +41,7 @@ class CategoryController extends Controller
     /**
      * Store a newly created category.
      */
-    public function store(StoreCategoryRequest $request): RedirectResponse
+    public function store(StoreCategoryRequest $request, ResponsiveImageService $images): RedirectResponse
     {
         $data = $request->validated();
         $uploadedImage = $request->file('image');
@@ -50,7 +50,7 @@ class CategoryController extends Controller
         $newImage = null;
 
         if ($uploadedImage) {
-            $newImage = $uploadedImage->store('categories', 'public');
+            $newImage = $images->store($uploadedImage, 'categories');
 
             if (! $newImage) {
                 return back()
@@ -73,7 +73,7 @@ class CategoryController extends Controller
             });
         } catch (Throwable $e) {
             if ($newImage !== null) {
-                Storage::disk('public')->delete($newImage);
+                $images->delete($newImage);
             }
 
             throw $e;
@@ -107,7 +107,8 @@ class CategoryController extends Controller
      */
     public function update(
         UpdateCategoryRequest $request,
-        Category $category
+        Category $category,
+        ResponsiveImageService $images
     ): RedirectResponse {
         $data = $request->validated();
         $uploadedImage = $request->file('image');
@@ -116,7 +117,7 @@ class CategoryController extends Controller
         $newImage = null;
 
         if ($uploadedImage) {
-            $newImage = $uploadedImage->store('categories', 'public');
+            $newImage = $images->store($uploadedImage, 'categories');
 
             if (! $newImage) {
                 return back()
@@ -147,7 +148,7 @@ class CategoryController extends Controller
             });
         } catch (Throwable $e) {
             if ($newImage !== null) {
-                Storage::disk('public')->delete($newImage);
+                $images->delete($newImage);
             }
 
             throw $e;
@@ -160,7 +161,7 @@ class CategoryController extends Controller
             && ! str_starts_with($oldImage, 'https://')
             && ! str_starts_with($oldImage, '//')
         ) {
-            Storage::disk('public')->delete($oldImage);
+            $images->delete($oldImage);
         }
 
         return redirect()
@@ -191,7 +192,7 @@ class CategoryController extends Controller
     /**
      * Remove the specified category.
      */
-    public function destroy(Category $category): RedirectResponse
+    public function destroy(Category $category, ResponsiveImageService $images): RedirectResponse
     {
         // Soft-deleted products still reference this category through
         // a restrictive foreign key, so they must be considered too.
@@ -214,7 +215,7 @@ class CategoryController extends Controller
             && ! str_starts_with($image, 'https://')
             && ! str_starts_with($image, '//')
         ) {
-            Storage::disk('public')->delete($image);
+            $images->delete($image);
         }
 
         return redirect()

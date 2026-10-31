@@ -3559,7 +3559,7 @@ class FarzinStorefrontTest extends TestCase
         $this->get(route('contact'))
             ->assertOk()
             ->assertSee("https://www.google.com/maps?q={$coordinateQuery}&amp;z=15&amp;output=embed", false)
-            ->assertSee("https://www.google.com/maps/search/?api=1&amp;query={$coordinateQuery}", false)
+            ->assertSee("https://www.google.com/maps/dir/?api=1&amp;destination={$coordinateQuery}", false)
             ->assertSee('آدرس تستی که نباید جای مختصات استفاده شود');
     }
 

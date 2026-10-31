@@ -172,11 +172,11 @@
                                     </div>
                                 </div>
                                 <a
-                                    href="https://www.google.com/maps/search/?api=1&amp;query={{ urlencode($mapQuery) }}"
+                                    href="https://www.google.com/maps/dir/?api=1&amp;destination={{ urlencode($mapQuery) }}"
                                     class="fz-contact-directions"
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                >مسیریابی در Google Maps <span aria-hidden="true">↗</span></a>
+                                >مسیریابی به نشانی فرزین در Google Maps <span aria-hidden="true">↗</span></a>
                             @else
                                 <div class="fz-contact-map-empty" role="status">
                                     <div class="fz-contact-map-empty__rings" aria-hidden="true"><span></span><i></i></div>

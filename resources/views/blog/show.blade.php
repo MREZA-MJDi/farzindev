@@ -44,7 +44,7 @@
         <div class="mx-auto grid max-w-6xl gap-10 py-10 sm:py-14 lg:grid-cols-[minmax(0,1fr)_280px]">
             <div class="min-w-0">
                 @if($post->cover_image_url)
-                    <img src="{{ $post->cover_image_url }}" alt="{{ $post->title }}" class="mb-9 aspect-[16/9] w-full rounded-[1.75rem] object-cover">
+                    <img src="{{ $post->cover_image_url }}" @if($post->cover_image_srcset) srcset="{{ $post->cover_image_srcset }}" sizes="(max-width: 1023px) 100vw, 72vw" @endif alt="{{ $post->title }}" decoding="async" class="mb-9 aspect-[16/9] w-full rounded-[1.75rem] object-cover">
                 @endif
                 <div class="rounded-[1.75rem] border border-[var(--livora-border)] bg-[var(--livora-white)] p-6 sm:p-10">
                     <div class="whitespace-pre-line break-words text-sm leading-9 text-[var(--livora-text)] sm:text-base">{{ $post->body }}</div>

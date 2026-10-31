@@ -259,7 +259,7 @@ class SeoSettings
             'seo_custom_meta_tags' => '[]',
             'seo_custom_link_tags' => '[]',
             'seo_default_og_image' => null,
-            'seo_development_mode' => '1',
+            'seo_development_mode' => '0',
             'seo_robots_noindex' => '0',
             'seo_robots_nofollow' => '0',
             'seo_robots_noarchive' => '0',

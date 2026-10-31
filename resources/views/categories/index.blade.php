@@ -148,6 +148,7 @@
                                 <x-shop.category-card
                                     :name="$category->name"
                                     :image="$category->image_url"
+                                    :image-srcset="$category->image_srcset"
                                     :motion-media="$category->hoverMedia"
                                     :href="route('categories.show', $category->slug)"
                                     :count="$category->products_count"

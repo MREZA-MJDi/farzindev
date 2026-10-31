@@ -2,13 +2,13 @@
 
 @section(
     'title',
-    $category->name . ' | خرید هود و سینک آشپزخانه | فرزین'
+    $category->meta_title ?: ($category->name . ' | خرید هود و سینک آشپزخانه | فرزین')
 )
 
 @section(
     'description',
     $category->meta_description
-        ?? ('مشاهده و خرید محصولات دسته‌بندی ' . $category->name . ' در فرزین؛ بررسی قیمت و مشخصات فنی محصولات.')
+        ?: ('مشاهده و خرید محصولات دسته‌بندی ' . $category->name . ' در فرزین؛ بررسی قیمت و مشخصات فنی محصولات.')
 )
 
 @section(
@@ -115,6 +115,7 @@
 
                                 <img
                                     src="{{ $category->image_url }}"
+                                    @if($category->image_srcset) srcset="{{ $category->image_srcset }}" sizes="(max-width: 767px) 100vw, 50vw" @endif
                                     alt="{{ $category->name }}"
                                     class="aspect-[4/3] h-full w-full object-cover transition duration-700 hover:scale-[1.03]"
                                 >

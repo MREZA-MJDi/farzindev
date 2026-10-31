@@ -50,6 +50,47 @@
             ];
         }
 
+        // Location details are shared with the Contact page and cached so the
+        // structured data does not add a database query to every public request.
+        $seoContactLocation = \Illuminate\Support\Facades\Cache::remember(
+            'storefront.seo-contact-location.v1',
+            now()->addMinutes(10),
+            static function (): array {
+                $contact = \App\Models\ContactSetting::query()
+                    ->where('is_active', true)
+                    ->first(['address', 'latitude', 'longitude']);
+
+                return [
+                    'address' => $contact?->address,
+                    'latitude' => $contact?->latitude,
+                    'longitude' => $contact?->longitude,
+                ];
+            }
+        );
+
+        if (
+            is_numeric($seoContactLocation['latitude'] ?? null)
+            && is_numeric($seoContactLocation['longitude'] ?? null)
+        ) {
+            $coordinates = (string) $seoContactLocation['latitude'] . ',' . (string) $seoContactLocation['longitude'];
+            $seoOrganizationSchema['location'] = [
+                '@type' => 'Place',
+                'geo' => [
+                    '@type' => 'GeoCoordinates',
+                    'latitude' => (float) $seoContactLocation['latitude'],
+                    'longitude' => (float) $seoContactLocation['longitude'],
+                ],
+                'hasMap' => 'https://www.google.com/maps/search/?api=1&query=' . urlencode($coordinates),
+            ];
+
+            if (! filled($seoValues['seo_organization_address'] ?? null) && filled($seoContactLocation['address'] ?? null)) {
+                $seoOrganizationSchema['address'] = [
+                    '@type' => 'PostalAddress',
+                    'streetAddress' => $seoContactLocation['address'],
+                ];
+            }
+        }
+
         $seoWebsiteSchema = [
             '@context' => 'https://schema.org',
             '@type' => 'WebSite',
