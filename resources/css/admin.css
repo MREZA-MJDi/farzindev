@@ -1830,3 +1830,30 @@ p {
         transition: none;
     }
 }
+
+
+/* Touch-friendly mobile admin search and filter controls. */
+@media (max-width: 767px) {
+    .admin-main input:not([type="checkbox"]):not([type="radio"]),
+    .admin-main select,
+    .admin-main textarea,
+    .admin-navbar input[type="search"],
+    .admin-mobile-search-panel input[type="search"] {
+        width: 100%;
+        min-width: 0;
+        max-width: 100%;
+        min-height: 44px;
+        font-size: 16px !important;
+    }
+
+    .admin-mobile-search-panel {
+        max-height: calc(100dvh - 96px);
+        overflow-y: auto;
+        overscroll-behavior: contain;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .admin-main form .admin-btn {
+        min-height: 44px;
+    }
+}
