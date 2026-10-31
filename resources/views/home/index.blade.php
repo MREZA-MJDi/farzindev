@@ -170,7 +170,7 @@
                             <a class="fz-category-card fz-reveal" href="{{ route('categories.show', $category) }}" @if($category->hoverMedia?->url) data-farzin-gif-card @endif>
                                 <span class="fz-category-card__art">
                                     @if($category->homepage_image_url)
-                                        <img class="fz-category-card__image" src="{{ $category->homepage_image_url }}" alt="" width="640" height="480" loading="lazy" decoding="async">
+                                        <img class="fz-category-card__image" src="{{ $category->homepage_image_url }}" @if($category->homepage_image_srcset) srcset="{{ $category->homepage_image_srcset }}" sizes="(max-width: 639px) 85vw, (max-width: 1023px) 45vw, 320px" @endif alt="" width="640" height="480" loading="lazy" decoding="async">
                                     @else
                                         <span class="fz-category-card__monogram">{{ $category->slug === 'sinks' ? 'S' : 'H' }}</span>
                                     @endif
@@ -243,7 +243,7 @@
                                             data-product-stock="{{ $item['product_stock'] }}"
                                             data-cart-url="{{ $item['cart_url'] }}"
                                         >
-                                            <img class="grid__image" src="{{ $item['url'] }}" alt="{{ $item['alt'] }}" width="720" height="900" loading="lazy" decoding="async">
+                                            <img class="grid__image" src="{{ $item['url'] }}" @if(!empty($item['srcset'])) srcset="{{ $item['srcset'] }}" sizes="(max-width: 639px) 48vw, (max-width: 1023px) 32vw, 24vw" @endif alt="{{ $item['alt'] }}" width="720" height="900" loading="lazy" decoding="async">
                                             <span class="grid__item-caption"><small>{{ $item['category_name'] }}</small><strong>{{ $item['product_name'] }}</strong></span>
                                         </a>
                                     </div>
