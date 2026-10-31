@@ -5,6 +5,9 @@
 ])
 
 <div class="space-y-5">
+    @if(request()->filled('sort'))
+        <input type="hidden" name="sort" value="{{ request('sort') }}">
+    @endif
 
     {{-- =========================================================
          CATEGORY
@@ -44,7 +47,7 @@
                                     name="category"
                                     value="{{ $category->slug }}"
                                     @checked((string) $selectedCategory === (string) $category->slug)
-                                    @change="$el.form.submit()"
+                                    @if(!$mobile) @change="$el.form.submit()" @endif
                                     class="h-4 w-4 border-[var(--livora-border)] text-[var(--livora-text)] focus:ring-[var(--livora-ink)]"
                                 >
 
@@ -106,6 +109,9 @@
             <input
                 type="search"
                 name="search"
+                inputmode="search"
+                enterkeyhint="search"
+                autocomplete="off"
                 value="{{ request('search') }}"
                 placeholder="نام یا مدل محصول..."
                 @keydown.enter.prevent="$el.form.submit()"
@@ -147,7 +153,7 @@
                     name="installment"
                     value="1"
                     @checked(request()->boolean('installment'))
-                @change="$el.form.submit()"
+                @if(!$mobile) @change="$el.form.submit()" @endif
                 class="h-4 w-4 rounded border-[var(--livora-border)] text-[var(--livora-text)] focus:ring-[var(--livora-ink)]"
                 >
 
@@ -265,7 +271,7 @@
                     name="featured"
                     value="1"
                     @checked(request()->boolean('featured'))
-                @change="$el.form.submit()"
+                @if(!$mobile) @change="$el.form.submit()" @endif
                 class="h-4 w-4 rounded border-[var(--livora-border)] text-[var(--livora-text)] focus:ring-[var(--livora-ink)]"
                 >
 
@@ -287,7 +293,7 @@
                     name="new"
                     value="1"
                     @checked(request()->boolean('new'))
-                @change="$el.form.submit()"
+                @if(!$mobile) @change="$el.form.submit()" @endif
                 class="h-4 w-4 rounded border-[var(--livora-border)] text-[var(--livora-text)] focus:ring-[var(--livora-ink)]"
                 >
 
