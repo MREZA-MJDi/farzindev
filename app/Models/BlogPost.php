@@ -72,7 +72,7 @@ class BlogPost extends Model
 
     public function scopeIndexable(Builder $query): Builder
     {
-        return $query->whereIn('seo_robots', ['inherit', 'index']);
+        return $query->whereIn('seo_robots', ['inherit', 'index,follow']);
     }
 
     public function getCoverImageSrcsetAttribute(): ?string
