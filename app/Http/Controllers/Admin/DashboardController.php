@@ -28,11 +28,19 @@ class DashboardController extends Controller
         |--------------------------------------------------------------------------
         */
 
-        $totalProducts = Product::query()->count();
+        $productMetrics = Product::query()
+            ->selectRaw(
+                'COUNT(*) AS total_products,
+                 COALESCE(SUM(CASE WHEN status = ? THEN 1 ELSE 0 END), 0) AS active_products,
+                 COALESCE(SUM(CASE WHEN is_featured = ? THEN 1 ELSE 0 END), 0) AS featured_products,
+                 COALESCE(SUM(CASE WHEN is_new = ? THEN 1 ELSE 0 END), 0) AS new_products,
+                 COALESCE(SUM(CASE WHEN installment_enabled = ? THEN 1 ELSE 0 END), 0) AS installment_products',
+                ['active', true, true, true]
+            )
+            ->first();
 
-        $activeProducts = Product::query()
-            ->where('status', 'active')
-            ->count();
+        $totalProducts = (int) $productMetrics->total_products;
+        $activeProducts = (int) $productMetrics->active_products;
 
         // Variant-backed products track inventory on their active options;
         // the parent product's stock column is only authoritative when there
@@ -76,69 +84,70 @@ class DashboardController extends Controller
             ->where('role', 'customer')
             ->count();
 
-        $publishedBlogPosts = BlogPost::query()->published()->count();
-        $draftBlogPosts = BlogPost::query()->where('status', 'draft')->count();
-        $scheduledBlogPosts = BlogPost::query()
-            ->where('status', 'published')
-            ->where('published_at', '>', $reportingDate)
-            ->count();
+        $blogMetrics = BlogPost::query()
+            ->selectRaw(
+                'COALESCE(SUM(CASE WHEN status = ? AND published_at IS NOT NULL AND published_at <= ? THEN 1 ELSE 0 END), 0) AS published_posts,
+                 COALESCE(SUM(CASE WHEN status = ? THEN 1 ELSE 0 END), 0) AS draft_posts,
+                 COALESCE(SUM(CASE WHEN status = ? AND published_at > ? THEN 1 ELSE 0 END), 0) AS scheduled_posts',
+                ['published', $reportingDate, 'draft', 'published', $reportingDate]
+            )
+            ->first();
 
-        $totalOrders = Order::query()->count();
-
-        $pendingOrders = Order::query()
-            ->whereIn('status', [
-                'pending',
-                'processing',
-            ])
-            ->count();
-
-        $inventoryIssueOrders = Order::query()
-            ->whereNotNull('inventory_issue_at')
-            ->where('payment_status', 'paid')
-            ->count();
-
-        $paidOrders = Order::query()
-            ->where('payment_status', 'paid')
-            ->count();
-
-        /*
-        |--------------------------------------------------------------------------
-        | Revenue
-        |--------------------------------------------------------------------------
-        |
-        | Only successfully paid orders are counted as revenue.
-        |
-        */
-
-        $totalRevenue = Order::query()
-            ->where('payment_status', 'paid')
-            ->sum('total');
+        $publishedBlogPosts = (int) $blogMetrics->published_posts;
+        $draftBlogPosts = (int) $blogMetrics->draft_posts;
+        $scheduledBlogPosts = (int) $blogMetrics->scheduled_posts;
 
         [$currentMonthStart, $nextMonthStart] = JalaliHelper::monthRange($reportingDate);
         [$previousMonthStart, $currentMonthStartForPrevious] = JalaliHelper::monthRange($reportingDate, 1);
 
-        $currentMonthRevenue = Order::query()
-            ->where('payment_status', 'paid')
-            ->where('created_at', '>=', $currentMonthStart)
-            ->where('created_at', '<', $nextMonthStart)
-            ->sum('total');
+        // One conditional aggregate supplies order KPIs, status distribution and revenue summaries.
+        $orderMetrics = Order::query()
+            ->selectRaw(
+                'COUNT(*) AS total_orders,
+                 COALESCE(SUM(CASE WHEN status IN (?, ?) THEN 1 ELSE 0 END), 0) AS pending_orders,
+                 COALESCE(SUM(CASE WHEN inventory_issue_at IS NOT NULL AND payment_status = ? THEN 1 ELSE 0 END), 0) AS inventory_issue_orders,
+                 COALESCE(SUM(CASE WHEN payment_status = ? THEN 1 ELSE 0 END), 0) AS paid_orders,
+                 COALESCE(SUM(CASE WHEN payment_status = ? THEN total ELSE 0 END), 0) AS total_revenue,
+                 COALESCE(SUM(CASE WHEN payment_status = ? AND created_at >= ? AND created_at < ? THEN total ELSE 0 END), 0) AS current_month_revenue,
+                 COALESCE(SUM(CASE WHEN created_at >= ? AND created_at < ? THEN 1 ELSE 0 END), 0) AS current_month_orders,
+                 COALESCE(SUM(CASE WHEN payment_status = ? AND created_at >= ? AND created_at < ? THEN total ELSE 0 END), 0) AS previous_month_revenue,
+                 COALESCE(SUM(CASE WHEN status = ? THEN 1 ELSE 0 END), 0) AS status_pending,
+                 COALESCE(SUM(CASE WHEN status = ? THEN 1 ELSE 0 END), 0) AS status_processing,
+                 COALESCE(SUM(CASE WHEN status = ? THEN 1 ELSE 0 END), 0) AS status_shipped,
+                 COALESCE(SUM(CASE WHEN status = ? THEN 1 ELSE 0 END), 0) AS status_delivered,
+                 COALESCE(SUM(CASE WHEN status = ? THEN 1 ELSE 0 END), 0) AS status_cancelled,
+                 COALESCE(SUM(CASE WHEN payment_method = ? THEN 1 ELSE 0 END), 0) AS installment_orders,
+                 COALESCE(SUM(CASE WHEN payment_method = ? AND payment_status = ? THEN 1 ELSE 0 END), 0) AS installment_paid_orders,
+                 AVG(CASE WHEN payment_status = ? THEN total ELSE NULL END) AS average_order_value',
+                [
+                    'pending', 'processing',
+                    'paid',
+                    'paid',
+                    'paid',
+                    'paid', $currentMonthStart, $nextMonthStart,
+                    $currentMonthStart, $nextMonthStart,
+                    'paid', $previousMonthStart, $currentMonthStartForPrevious,
+                    'pending', 'processing', 'shipped', 'delivered', 'cancelled',
+                    'installment',
+                    'installment', 'paid',
+                    'paid',
+                ]
+            )
+            ->first();
 
-        $currentMonthOrders = Order::query()
-            ->where('created_at', '>=', $currentMonthStart)
-            ->where('created_at', '<', $nextMonthStart)
-            ->count();
-
-        /*
-        |--------------------------------------------------------------------------
-        | Previous Month Comparison
-        |--------------------------------------------------------------------------
-        */
-
-        $previousMonthRevenue = Order::query()
-            ->where('payment_status', 'paid')
-            ->where('created_at', '>=', $previousMonthStart)
-            ->where('created_at', '<', $currentMonthStartForPrevious)
-            ->sum('total');
+        $totalOrders = (int) $orderMetrics->total_orders;
+        $pendingOrders = (int) $orderMetrics->pending_orders;
+        $inventoryIssueOrders = (int) $orderMetrics->inventory_issue_orders;
+        $paidOrders = (int) $orderMetrics->paid_orders;
+        $totalRevenue = (float) $orderMetrics->total_revenue;
+        $currentMonthRevenue = (float) $orderMetrics->current_month_revenue;
+        $currentMonthOrders = (int) $orderMetrics->current_month_orders;
+        $previousMonthRevenue = (float) $orderMetrics->previous_month_revenue;
+        $installmentOrders = (int) $orderMetrics->installment_orders;
+        $installmentPaidOrders = (int) $orderMetrics->installment_paid_orders;
+        $averageOrderValue = $orderMetrics->average_order_value === null
+            ? null
+            : (float) $orderMetrics->average_order_value;
 
         $revenueGrowthPercent = 0;
 
@@ -172,25 +181,11 @@ class DashboardController extends Controller
         */
 
         $orderStatus = [
-            'pending' => Order::query()
-                ->where('status', 'pending')
-                ->count(),
-
-            'processing' => Order::query()
-                ->where('status', 'processing')
-                ->count(),
-
-            'shipped' => Order::query()
-                ->where('status', 'shipped')
-                ->count(),
-
-            'delivered' => Order::query()
-                ->where('status', 'delivered')
-                ->count(),
-
-            'cancelled' => Order::query()
-                ->where('status', 'cancelled')
-                ->count(),
+            'pending' => (int) $orderMetrics->status_pending,
+            'processing' => (int) $orderMetrics->status_processing,
+            'shipped' => (int) $orderMetrics->status_shipped,
+            'delivered' => (int) $orderMetrics->status_delivered,
+            'cancelled' => (int) $orderMetrics->status_cancelled,
         ];
 
         /*
@@ -207,14 +202,7 @@ class DashboardController extends Controller
         |--------------------------------------------------------------------------
         */
 
-        $installmentOrders = Order::query()
-            ->where('payment_method', 'installment')
-            ->count();
 
-        $installmentPaidOrders = Order::query()
-            ->where('payment_method', 'installment')
-            ->where('payment_status', 'paid')
-            ->count();
 
         /*
         |--------------------------------------------------------------------------
@@ -248,17 +236,9 @@ class DashboardController extends Controller
         |--------------------------------------------------------------------------
         */
 
-        $featuredProductsCount = Product::query()
-            ->where('is_featured', true)
-            ->count();
-
-        $newProductsCount = Product::query()
-            ->where('is_new', true)
-            ->count();
-
-        $installmentProductsCount = Product::query()
-            ->where('installment_enabled', true)
-            ->count();
+        $featuredProductsCount = (int) $productMetrics->featured_products;
+        $newProductsCount = (int) $productMetrics->new_products;
+        $installmentProductsCount = (int) $productMetrics->installment_products;
 
         /*
         |--------------------------------------------------------------------------
@@ -266,9 +246,7 @@ class DashboardController extends Controller
         |--------------------------------------------------------------------------
         */
 
-        $averageOrderValue = Order::query()
-            ->where('payment_status', 'paid')
-            ->avg('total');
+
 
         /*
         |--------------------------------------------------------------------------
@@ -326,33 +304,49 @@ class DashboardController extends Controller
             'admin.dashboard.monthly-revenue.' . JalaliHelper::format($reportingDate, 'Y-m'),
             now()->addMinute(),
             function () use ($reportingDate): Collection {
-                $months = collect();
+                $periods = [];
+                $expressions = [];
+                $bindings = [];
+                $firstMonthStart = null;
+                $lastMonthEnd = null;
 
                 for ($monthsAgo = 5; $monthsAgo >= 0; $monthsAgo--) {
                     [$monthStart, $nextMonthStart] = JalaliHelper::monthRange($reportingDate, $monthsAgo);
+                    $index = count($periods);
 
-                    $revenue = Order::query()
-                        ->where('payment_status', 'paid')
-                        ->where('created_at', '>=', $monthStart)
-                        ->where('created_at', '<', $nextMonthStart)
-                        ->sum('total');
+                    $expressions[] = "COALESCE(SUM(CASE WHEN created_at >= ? AND created_at < ? THEN total ELSE 0 END), 0) AS revenue_{$index}";
+                    $bindings[] = $monthStart;
+                    $bindings[] = $nextMonthStart;
 
-                    $orders = Order::query()
-                        ->where('payment_status', 'paid')
-                        ->where('created_at', '>=', $monthStart)
-                        ->where('created_at', '<', $nextMonthStart)
-                        ->count();
+                    $expressions[] = "COALESCE(SUM(CASE WHEN created_at >= ? AND created_at < ? THEN 1 ELSE 0 END), 0) AS orders_{$index}";
+                    $bindings[] = $monthStart;
+                    $bindings[] = $nextMonthStart;
 
-                    $months->push([
+                    $periods[] = [
                         'key' => JalaliHelper::format($monthStart, 'Y-m'),
                         'label' => JalaliHelper::format($monthStart, 'M'),
                         'full_label' => JalaliHelper::format($monthStart, 'F Y'),
-                        'revenue' => (float) $revenue,
-                        'orders' => $orders,
-                    ]);
+                    ];
+
+                    $firstMonthStart ??= $monthStart;
+                    $lastMonthEnd = $nextMonthStart;
                 }
 
-                return $months;
+                $aggregates = Order::query()
+                    ->where('payment_status', 'paid')
+                    ->where('created_at', '>=', $firstMonthStart)
+                    ->where('created_at', '<', $lastMonthEnd)
+                    ->selectRaw(implode(",\n", $expressions), $bindings)
+                    ->first();
+
+                return collect($periods)
+                    ->values()
+                    ->map(function (array $period, int $index) use ($aggregates): array {
+                        return $period + [
+                            'revenue' => (float) ($aggregates->{"revenue_{$index}"} ?? 0),
+                            'orders' => (int) ($aggregates->{"orders_{$index}"} ?? 0),
+                        ];
+                    });
             }
         );
     }
