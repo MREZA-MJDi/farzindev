@@ -740,7 +740,7 @@ h6 {
 
 
 /* Farzin responsive safeguards */
-:root { --site-content-max: 1280px; }
+:root { --site-content-max: 1440px; }
 .livora-container { max-width: var(--site-content-max); }
 .livora-button, .admin-btn { white-space: nowrap; flex: 0 0 auto; }
 @media (max-width: 767px) { .livora-container { padding-inline: 1rem; } .livora-button { min-height: 2.875rem; padding-inline: 1rem; font-size: .8125rem; } }
@@ -1828,10 +1828,7 @@ body:not(.home-body) {
 }
 footer {
     position: relative;
-    width: 100%;
-    max-width: 100%;
-    min-width: 0;
-    overflow: clip;
+    overflow: hidden;
     background-image: radial-gradient(ellipse at 88% 0%, rgba( 140, 140, 140, .17), transparent 30rem) !important;
 }
 footer a { transition: color .2s ease, transform .2s ease; }
