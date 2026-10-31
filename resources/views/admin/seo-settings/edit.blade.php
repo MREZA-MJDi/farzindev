@@ -177,7 +177,7 @@
 
             <section class="admin-card space-y-5 p-5 sm:p-7">
                 <div>
-                    <h2 class="text-base font-bold text-[var(--admin-text)]">۲. کنترل ایندکس و robots.txt</h2>
+                    <h2 class="text-base font-bold text-[var(--admin-text)]">۳. کنترل ایندکس و robots.txt</h2>
                     <p class="mt-2 text-xs leading-6 text-[var(--admin-muted)]">حالت آماده‌سازی، meta ربات‌ها را به noindex, nofollow, noarchive, nosnippet, noimageindex تغییر می‌دهد. فایل robots همچنان اجازهٔ Crawl می‌دهد تا خزنده بتواند meta noindex را بخواند.</p>
                 </div>
 
@@ -219,7 +219,7 @@
 
             <section class="admin-card space-y-5 p-5 sm:p-7">
                 <div>
-                    <h2 class="text-base font-bold text-[var(--admin-text)]">۳. تصویر اشتراک‌گذاری و تأیید سایت</h2>
+                    <h2 class="text-base font-bold text-[var(--admin-text)]">۴. تصویر اشتراک‌گذاری و تأیید سایت</h2>
                     <p class="mt-2 text-xs leading-6 text-[var(--admin-muted)]">تصویر عمومی برای پیش‌نمایش شبکه‌های اجتماعی به‌کار می‌رود. اندازهٔ پیشنهادی حداقل ۱۲۰۰×۶۳۰ و حداکثر حجم ۵ مگابایت است.</p>
                 </div>
 
@@ -257,7 +257,7 @@
 
             <section class="admin-card space-y-5 p-5 sm:p-7">
                 <div>
-                    <h2 class="text-base font-bold text-[var(--admin-text)]">۴. اطلاعات کسب‌وکار برای JSON-LD</h2>
+                    <h2 class="text-base font-bold text-[var(--admin-text)]">۵. اطلاعات کسب‌وکار برای JSON-LD</h2>
                     <p class="mt-2 text-xs leading-6 text-[var(--admin-muted)]">فقط اطلاعات واقعی و قابل‌تأیید را وارد کنید؛ این داده‌ها برای معرفی سازمان در داده‌های ساختاریافته به‌کار می‌روند.</p>
                 </div>
 
@@ -289,7 +289,7 @@
                 x-data="{ tags: @js(old('seo_custom_meta_tags', $customMetaTags)) }">
                 <div class="flex flex-wrap items-start justify-between gap-3">
                     <div>
-                        <h2 class="text-base font-bold text-[var(--admin-text)]">۵. تگ‌های meta سفارشی</h2>
+                        <h2 class="text-base font-bold text-[var(--admin-text)]">۶. تگ‌های meta سفارشی</h2>
                         <p class="mt-2 text-xs leading-6 text-[var(--admin-muted)]">
                             برای افزودن تگ‌هایی مثل theme-color یا og:locale:alternate استفاده کنید. تگ‌های اصلی title، description، robots، canonical و Open Graph که سیستم تولید می‌کند، تکرارشدنی نیستند.
                         </p>
@@ -341,7 +341,7 @@
                 x-data="{ links: @js(old('seo_custom_link_tags', $customLinkTags)) }">
                 <div class="flex flex-wrap items-start justify-between gap-3">
                     <div>
-                        <h2 class="text-base font-bold text-[var(--admin-text)]">۶. تگ‌های link سفارشی</h2>
+                        <h2 class="text-base font-bold text-[var(--admin-text)]">۷. تگ‌های link سفارشی</h2>
                         <p class="mt-2 text-xs leading-6 text-[var(--admin-muted)]">
                             برای لینک زبان جایگزین (hreflang)، آیکون سایت، manifest، preconnect یا preload استفاده کنید. تگ canonical در این بخش غیرفعال است تا با canonical خودکار تداخل نداشته باشد.
                         </p>
