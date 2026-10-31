@@ -89,7 +89,7 @@
             </p>
 
             <p class="admin-stat-value">
-                {{ $customer->orders->count() }}
+                {{ number_format((int) $customer->orders_count) }}
             </p>
 
         </div>
@@ -102,7 +102,7 @@
             </p>
 
             <p class="admin-stat-value">
-                {{ $customer->wishlists->count() }}
+                {{ number_format((int) $customer->wishlists_count) }}
             </p>
 
         </div>
@@ -210,7 +210,7 @@
                     </h3>
 
                     <p class="mt-1 text-xs text-[var(--admin-muted)]">
-                        آدرس‌های ثبت‌شده توسط مشتری
+                        آخرین ۵ آدرس از {{ number_format((int) $customer->addresses_count) }} آدرس ثبت‌شده
                     </p>
 
                 </div>
@@ -289,11 +289,11 @@
                 </div>
 
 
-                @if($customer->orders->count())
+                @if($orders->total() > 0)
 
                     <div class="space-y-3">
 
-                        @foreach($customer->orders->sortByDesc('created_at')->take(10) as $order)
+                        @foreach($orders as $order)
 
                             <a
                                 href="{{ route('admin.orders.show', $order) }}"
@@ -367,6 +367,12 @@
                         @endforeach
 
                     </div>
+
+                    @if($orders->hasPages())
+                        <div class="mt-5">
+                            {{ $orders->links() }}
+                        </div>
+                    @endif
 
                 @else
 

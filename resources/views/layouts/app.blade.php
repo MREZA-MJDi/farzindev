@@ -6,11 +6,28 @@
         $seoService = app(\App\Services\Seo\SeoSettings::class);
         $seoValues = $seoService->all();
 
+        $seoRouteName = request()->route()?->getName();
+        $seoStaticPage = match ($seoRouteName) {
+            'home' => ['title' => 'seo_home_title', 'description' => 'seo_home_description'],
+            'shop.index' => ['title' => 'seo_shop_title', 'description' => 'seo_shop_description'],
+            'categories.index' => ['title' => 'seo_categories_title', 'description' => 'seo_categories_description'],
+            'blog.index' => ['title' => 'seo_blog_title', 'description' => 'seo_blog_description'],
+            'about' => ['title' => 'seo_about_title', 'description' => 'seo_about_description'],
+            'contact' => ['title' => 'seo_contact_title', 'description' => 'seo_contact_description'],
+            default => null,
+        };
+
         $seoTitle = trim((string) $__env->yieldContent('title'));
-        $seoTitle = $seoTitle !== '' ? $seoTitle : (string) $seoValues['seo_default_title'];
+        $seoPageTitle = $seoStaticPage ? trim((string) ($seoValues[$seoStaticPage['title']] ?? '')) : '';
+        $seoTitle = $seoPageTitle !== ''
+            ? $seoPageTitle
+            : ($seoTitle !== '' ? $seoTitle : (string) $seoValues['seo_default_title']);
 
         $seoDescription = trim((string) $__env->yieldContent('description'));
-        $seoDescription = $seoDescription !== '' ? $seoDescription : (string) $seoValues['seo_default_description'];
+        $seoPageDescription = $seoStaticPage ? trim((string) ($seoValues[$seoStaticPage['description']] ?? '')) : '';
+        $seoDescription = $seoPageDescription !== ''
+            ? $seoPageDescription
+            : ($seoDescription !== '' ? $seoDescription : (string) $seoValues['seo_default_description']);
 
         $seoKeywords = trim((string) $__env->yieldContent('keywords'));
         $seoKeywords = $seoKeywords !== '' ? $seoKeywords : trim((string) ($seoValues['seo_default_keywords'] ?? ''));
@@ -73,15 +90,13 @@
             && is_numeric($seoContactLocation['longitude'] ?? null)
         ) {
             $coordinates = (string) $seoContactLocation['latitude'] . ',' . (string) $seoContactLocation['longitude'];
-            $seoOrganizationSchema['location'] = [
-                '@type' => 'Place',
-                'geo' => [
-                    '@type' => 'GeoCoordinates',
-                    'latitude' => (float) $seoContactLocation['latitude'],
-                    'longitude' => (float) $seoContactLocation['longitude'],
-                ],
-                'hasMap' => 'https://www.google.com/maps/search/?api=1&query=' . urlencode($coordinates),
+            $seoOrganizationSchema['@type'] = 'LocalBusiness';
+            $seoOrganizationSchema['geo'] = [
+                '@type' => 'GeoCoordinates',
+                'latitude' => (float) $seoContactLocation['latitude'],
+                'longitude' => (float) $seoContactLocation['longitude'],
             ];
+            $seoOrganizationSchema['hasMap'] = 'https://www.google.com/maps/search/?api=1&query=' . urlencode($coordinates);
 
             if (! filled($seoValues['seo_organization_address'] ?? null) && filled($seoContactLocation['address'] ?? null)) {
                 $seoOrganizationSchema['address'] = [

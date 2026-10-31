@@ -108,9 +108,78 @@
                 </label>
             </section>
 
+            @php
+                $managedSeoPages = [
+                    ['key' => 'home', 'label' => 'صفحه اصلی', 'route' => route('home'), 'title' => 'seo_home_title', 'description' => 'seo_home_description'],
+                    ['key' => 'shop', 'label' => 'فروشگاه', 'route' => route('shop.index'), 'title' => 'seo_shop_title', 'description' => 'seo_shop_description'],
+                    ['key' => 'categories', 'label' => 'فهرست دسته‌بندی‌ها', 'route' => route('categories.index'), 'title' => 'seo_categories_title', 'description' => 'seo_categories_description'],
+                    ['key' => 'blog', 'label' => 'فهرست مقالات', 'route' => route('blog.index'), 'title' => 'seo_blog_title', 'description' => 'seo_blog_description'],
+                    ['key' => 'about', 'label' => 'درباره ما', 'route' => route('about'), 'title' => 'seo_about_title', 'description' => 'seo_about_description'],
+                    ['key' => 'contact', 'label' => 'تماس با ما', 'route' => route('contact'), 'title' => 'seo_contact_title', 'description' => 'seo_contact_description'],
+                ];
+            @endphp
+
             <section class="admin-card space-y-5 p-5 sm:p-7">
                 <div>
-                    <h2 class="text-base font-bold text-[var(--admin-text)]">۲. کنترل ایندکس و robots.txt</h2>
+                    <h2 class="text-base font-bold text-[var(--admin-text)]">۲. سئوی اختصاصی صفحه‌های اصلی</h2>
+                    <p class="mt-2 text-xs leading-6 text-[var(--admin-muted)]">
+                        این فیلدها مستقیماً عنوان و توضیحات متای چهار صفحه عمومی را کنترل می‌کنند. خالی‌گذاشتن هر فیلد یعنی استفاده از عنوان داخل صفحه یا مقدار پیش‌فرض سراسری. عنوان محصول، دسته‌بندی و مقاله همچنان از فرم اختصاصی همان محتوا مدیریت می‌شود.
+                    </p>
+                </div>
+
+                <div class="grid gap-4 xl:grid-cols-2">
+                    @foreach($managedSeoPages as $page)
+                        <article data-seo-page-preview class="rounded-2xl border border-[var(--admin-border)] bg-[var(--admin-surface-soft)] p-4 sm:p-5">
+                            <div class="mb-4 flex flex-wrap items-center justify-between gap-2">
+                                <h3 class="text-sm font-bold text-[var(--admin-text)]">{{ $page['label'] }}</h3>
+                                <a href="{{ $page['route'] }}" target="_blank" rel="noopener noreferrer" class="text-xs font-semibold text-[var(--admin-accent)] underline">مشاهده صفحه ↗</a>
+                            </div>
+
+                            <label class="block text-sm text-[var(--admin-text)]">
+                                عنوان SEO
+                                <input
+                                    name="{{ $page['title'] }}"
+                                    value="{{ old($page['title'], $settings[$page['title']] ?? '') }}"
+                                    maxlength="255"
+                                    data-seo-preview-title
+                                    class="admin-input mt-2 w-full"
+                                    placeholder="{{ $settings['seo_default_title'] }}"
+                                >
+                                <span class="mt-1 flex justify-between gap-3 text-[11px] text-[var(--admin-muted)]">
+                                    <span>هدف پیشنهادی: حدود ۵۰ تا ۶۰ نویسه</span>
+                                    <span data-seo-title-count>۰ / ۲۵۵</span>
+                                </span>
+                            </label>
+
+                            <label class="mt-4 block text-sm text-[var(--admin-text)]">
+                                توضیحات متا
+                                <textarea
+                                    name="{{ $page['description'] }}"
+                                    rows="3"
+                                    maxlength="320"
+                                    data-seo-preview-description
+                                    class="admin-input mt-2 w-full"
+                                    placeholder="{{ $settings['seo_default_description'] }}"
+                                >{{ old($page['description'], $settings[$page['description']] ?? '') }}</textarea>
+                                <span class="mt-1 flex justify-between gap-3 text-[11px] text-[var(--admin-muted)]">
+                                    <span>توضیح یکتا و مرتبط با محتوای همین صفحه</span>
+                                    <span data-seo-description-count>۰ / ۳۲۰</span>
+                                </span>
+                            </label>
+
+                            <div class="mt-4 rounded-xl border border-[var(--admin-border)] bg-white p-4" dir="ltr">
+                                <p class="text-[11px] text-slate-500">{{ parse_url($page['route'], PHP_URL_HOST) }}{{ parse_url($page['route'], PHP_URL_PATH) }}</p>
+                                <p data-seo-preview-title-output class="mt-1 line-clamp-2 text-lg font-medium text-blue-800">{{ old($page['title'], $settings[$page['title']] ?? $settings['seo_default_title']) }}</p>
+                                <p data-seo-preview-description-output class="mt-1 line-clamp-3 text-sm leading-6 text-slate-600">{{ old($page['description'], $settings[$page['description']] ?? $settings['seo_default_description']) }}</p>
+                            </div>
+                        </article>
+                    @endforeach
+                </div>
+            </section>
+
+            <section class="admin-card space-y-5 p-5 sm:p-7">
+                <div>
+                    <h2 class="text-base font-bold text-[var(--admin-text)]">۳. کنترل ایندکس و robots.txt</h2>
                     <p class="mt-2 text-xs leading-6 text-[var(--admin-muted)]">حالت آماده‌سازی، meta ربات‌ها را به noindex, nofollow, noarchive, nosnippet, noimageindex تغییر می‌دهد. فایل robots همچنان اجازهٔ Crawl می‌دهد تا خزنده بتواند meta noindex را بخواند.</p>
                 </div>
 
@@ -119,6 +188,12 @@
                         <input type="hidden" name="seo_development_mode" value="0">
                         <input type="checkbox" name="seo_development_mode" value="1" @checked((string) old('seo_development_mode', $settings['seo_development_mode']) === '1') class="admin-checkbox mt-0.5 h-4 w-4">
                         جلوگیری کامل از ایندکس عمومی تا زمان انتشار
+                    </label>
+
+                    <label class="flex items-start gap-3 rounded-xl border border-[var(--admin-border)] p-4 text-sm text-[var(--admin-text)] sm:col-span-2">
+                        <input type="hidden" name="seo_noindex_shop_filters" value="0">
+                        <input type="checkbox" name="seo_noindex_shop_filters" value="1" @checked((string) old('seo_noindex_shop_filters', $settings['seo_noindex_shop_filters'] ?? '1') === '1') class="admin-checkbox mt-0.5 h-4 w-4">
+                        noindex برای URLهای جست‌وجو و فیلتر فروشگاه (صفحه اصلی فروشگاه و صفحات دسته‌بندی مستقل ایندکس می‌مانند)
                     </label>
 
                     @foreach ([
@@ -152,7 +227,7 @@
 
             <section class="admin-card space-y-5 p-5 sm:p-7">
                 <div>
-                    <h2 class="text-base font-bold text-[var(--admin-text)]">۳. تصویر اشتراک‌گذاری و تأیید سایت</h2>
+                    <h2 class="text-base font-bold text-[var(--admin-text)]">۴. تصویر اشتراک‌گذاری و تأیید سایت</h2>
                     <p class="mt-2 text-xs leading-6 text-[var(--admin-muted)]">تصویر عمومی برای پیش‌نمایش شبکه‌های اجتماعی به‌کار می‌رود. اندازهٔ پیشنهادی حداقل ۱۲۰۰×۶۳۰ و حداکثر حجم ۵ مگابایت است.</p>
                 </div>
 
@@ -190,7 +265,7 @@
 
             <section class="admin-card space-y-5 p-5 sm:p-7">
                 <div>
-                    <h2 class="text-base font-bold text-[var(--admin-text)]">۴. اطلاعات کسب‌وکار برای JSON-LD</h2>
+                    <h2 class="text-base font-bold text-[var(--admin-text)]">۵. اطلاعات کسب‌وکار برای JSON-LD</h2>
                     <p class="mt-2 text-xs leading-6 text-[var(--admin-muted)]">فقط اطلاعات واقعی و قابل‌تأیید را وارد کنید؛ این داده‌ها برای معرفی سازمان در داده‌های ساختاریافته به‌کار می‌روند.</p>
                 </div>
 
@@ -222,7 +297,7 @@
                 x-data="{ tags: @js(old('seo_custom_meta_tags', $customMetaTags)) }">
                 <div class="flex flex-wrap items-start justify-between gap-3">
                     <div>
-                        <h2 class="text-base font-bold text-[var(--admin-text)]">۵. تگ‌های meta سفارشی</h2>
+                        <h2 class="text-base font-bold text-[var(--admin-text)]">۶. تگ‌های meta سفارشی</h2>
                         <p class="mt-2 text-xs leading-6 text-[var(--admin-muted)]">
                             برای افزودن تگ‌هایی مثل theme-color یا og:locale:alternate استفاده کنید. تگ‌های اصلی title، description، robots، canonical و Open Graph که سیستم تولید می‌کند، تکرارشدنی نیستند.
                         </p>
@@ -274,7 +349,7 @@
                 x-data="{ links: @js(old('seo_custom_link_tags', $customLinkTags)) }">
                 <div class="flex flex-wrap items-start justify-between gap-3">
                     <div>
-                        <h2 class="text-base font-bold text-[var(--admin-text)]">۶. تگ‌های link سفارشی</h2>
+                        <h2 class="text-base font-bold text-[var(--admin-text)]">۷. تگ‌های link سفارشی</h2>
                         <p class="mt-2 text-xs leading-6 text-[var(--admin-muted)]">
                             برای لینک زبان جایگزین (hreflang)، آیکون سایت، manifest، preconnect یا preload استفاده کنید. تگ canonical در این بخش غیرفعال است تا با canonical خودکار تداخل نداشته باشد.
                         </p>
@@ -376,3 +451,32 @@
         </form>
     </div>
 @endsection
+
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('[data-seo-page-preview]').forEach(function (card) {
+        const title = card.querySelector('[data-seo-preview-title]');
+        const description = card.querySelector('[data-seo-preview-description]');
+        const titleOutput = card.querySelector('[data-seo-preview-title-output]');
+        const descriptionOutput = card.querySelector('[data-seo-preview-description-output]');
+        const titleCount = card.querySelector('[data-seo-title-count]');
+        const descriptionCount = card.querySelector('[data-seo-description-count]');
+
+        const update = function () {
+            const titleValue = title.value.trim();
+            const descriptionValue = description.value.trim();
+
+            titleOutput.textContent = titleValue || title.getAttribute('placeholder') || '';
+            descriptionOutput.textContent = descriptionValue || description.getAttribute('placeholder') || '';
+            titleCount.textContent = title.value.length + ' / 255';
+            descriptionCount.textContent = description.value.length + ' / 320';
+        };
+
+        title.addEventListener('input', update);
+        description.addEventListener('input', update);
+        update();
+    });
+});
+</script>
+@endpush

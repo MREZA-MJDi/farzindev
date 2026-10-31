@@ -191,7 +191,15 @@ class ShopController extends Controller
             ->withCount([
                 'products' => fn ($query) => $query->active(),
             ])
+            // Category::active() adds its own sort order. Reset it so a
+            // selected category outside the first 100 is promoted before cap.
+            ->reorder()
+            ->orderByRaw(
+                'CASE WHEN slug = ? THEN 0 ELSE 1 END',
+                [$filters['category'] ?? '']
+            )
             ->orderBy('sort_order')
+            ->limit(100)
             ->get();
 
         /*

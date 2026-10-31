@@ -70,7 +70,18 @@ class SeoSettings
     {
         $settings = $this->all();
         $developmentMode = ($settings['seo_development_mode'] ?? '0') === '1';
-        $noIndex = $developmentMode || ($settings['seo_robots_noindex'] ?? '0') === '1';
+        $shopFilterParameters = [
+            'search', 'category', 'min_price', 'max_price',
+            'in_stock', 'featured', 'new', 'installment', 'sort',
+        ];
+        $hasFilteredShopUrl = request()->routeIs('shop.index')
+            && collect($shopFilterParameters)->contains(
+                fn (string $parameter): bool => request()->filled($parameter)
+            );
+
+        $noIndex = $developmentMode
+            || ($settings['seo_robots_noindex'] ?? '0') === '1'
+            || ($hasFilteredShopUrl && ($settings['seo_noindex_shop_filters'] ?? '1') === '1');
         $noFollow = $developmentMode || ($settings['seo_robots_nofollow'] ?? '0') === '1';
         $directives = [
             $noIndex ? 'noindex' : 'index',
@@ -256,11 +267,24 @@ class SeoSettings
             'seo_default_title' => 'خرید هود و سینک آشپزخانه | فرزین',
             'seo_default_description' => 'خرید هود و سینک آشپزخانه از فرزین؛ مشخصات محصولات، مدل‌ها و گزینه‌های موجود را بررسی و مقایسه کنید.',
             'seo_default_keywords' => 'خرید هود آشپزخانه، خرید سینک ظرفشویی، هود فرزین، سینک فرزین، تجهیزات آشپزخانه',
+            'seo_home_title' => 'خرید هود و سینک آشپزخانه | فرزین',
+            'seo_home_description' => 'مدل‌های هود و سینک آشپزخانه فرزین را بررسی کنید؛ مشخصات فنی، قیمت و راهنمای انتخاب محصولات.',
+            'seo_shop_title' => 'فروشگاه هود و سینک آشپزخانه | فرزین',
+            'seo_shop_description' => 'همه محصولات هود و سینک فرزین را مقایسه کنید؛ قیمت، مشخصات، موجودی و شرایط خرید هر مدل را ببینید.',
+            'seo_categories_title' => 'دسته‌بندی محصولات هود و سینک | فرزین',
+            'seo_categories_description' => 'دسته‌بندی‌های محصولات فرزین را ببینید و هود، سینک و تجهیزات متناسب با آشپزخانه خود را پیدا کنید.',
+            'seo_blog_title' => 'مجله و راهنمای خرید هود و سینک | فرزین',
+            'seo_blog_description' => 'راهنمای انتخاب، نصب و نگهداری هود و سینک آشپزخانه؛ نکته‌های کاربردی را در مجله فرزین بخوانید.',
+            'seo_about_title' => 'درباره فرزین | تجهیزات آشپزخانه',
+            'seo_about_description' => 'با مجموعه فرزین، مسیر فعالیت، خدمات و رویکرد ما در ارائه تجهیزات آشپزخانه آشنا شوید.',
+            'seo_contact_title' => 'تماس با فرزین | مشاوره و پشتیبانی',
+            'seo_contact_description' => 'برای مشاوره خرید، پیگیری و ارتباط با فرزین از راه‌های تماس و نشانی مجموعه استفاده کنید.',
             'seo_custom_meta_tags' => '[]',
             'seo_custom_link_tags' => '[]',
             'seo_default_og_image' => null,
             'seo_development_mode' => '0',
             'seo_robots_noindex' => '0',
+            'seo_noindex_shop_filters' => '1',
             'seo_robots_nofollow' => '0',
             'seo_robots_noarchive' => '0',
             'seo_robots_nosnippet' => '0',

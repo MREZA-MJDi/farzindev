@@ -16,7 +16,9 @@ class CategoryController extends Controller
                 'products' => fn ($query) => $query->active(),
             ])
             ->orderBy('sort_order')
-            ->get();
+            ->orderBy('id')
+            ->paginate(12)
+            ->withQueryString();
 
         return view('categories.index', [
             'categories' => $categories,

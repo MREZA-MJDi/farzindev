@@ -82,8 +82,10 @@ class AccountController extends Controller
     {
         $addresses = Auth::user()
             ->addresses()
+            ->orderByDesc('is_default')
             ->latest()
-            ->get();
+            ->paginate(10)
+            ->withQueryString();
 
         return view('account.addresses.index', [
             'addresses' => $addresses,

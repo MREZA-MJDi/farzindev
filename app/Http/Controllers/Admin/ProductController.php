@@ -45,7 +45,9 @@ class ProductController extends Controller
     public function create(): View
     {
         $categories = Category::query()
+            ->where('is_active', true)
             ->orderBy('name')
+            ->limit(100)
             ->get();
         $mediaImages = Media::query()
             ->whereIn('mime_type', ['image/jpeg', 'image/png', 'image/webp'])
@@ -168,7 +170,13 @@ class ProductController extends Controller
         $product->load(['images.media', 'allVariants.images.media']);
 
         $categories = Category::query()
+            ->where(function ($query) use ($product): void {
+                $query->where('is_active', true)
+                    ->orWhere('id', $product->category_id);
+            })
+            ->orderByRaw('CASE WHEN id = ? THEN 0 ELSE 1 END', [$product->category_id])
             ->orderBy('name')
+            ->limit(101)
             ->get();
 
         // Keep the picker responsive on large libraries: the newest 60 supported

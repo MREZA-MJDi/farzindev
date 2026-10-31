@@ -186,6 +186,7 @@ class CategoryController extends Controller
                 });
             })
             ->latest()
+            ->limit(60)
             ->get(['id', 'original_name', 'mime_type', 'extension', 'size']);
     }
 

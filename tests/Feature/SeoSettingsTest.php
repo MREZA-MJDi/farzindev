@@ -84,6 +84,8 @@ class SeoSettingsTest extends TestCase
                 'seo_default_title' => 'عنوان SEO آزمایشی',
                 'seo_default_description' => 'توضیحات SEO از پنل مدیریت',
                 'seo_default_keywords' => 'هود, سینک',
+                'seo_home_title' => 'عنوان صفحه اصلی از پنل',
+                'seo_home_description' => 'توضیحات صفحه اصلی که از پنل SEO ذخیره شده است.',
                 'seo_development_mode' => '0',
                 'seo_robots_noindex' => '1',
                 'seo_robots_nofollow' => '0',
@@ -100,10 +102,17 @@ class SeoSettingsTest extends TestCase
             'value' => 'عنوان SEO آزمایشی',
         ]);
 
+        $this->assertDatabaseHas('storefront_settings', [
+            'key' => 'seo_home_title',
+            'value' => 'عنوان صفحه اصلی از پنل',
+        ]);
+
         app(SeoSettings::class)->clearCache();
 
         $this->get(route('home'))
             ->assertOk()
+            ->assertSee('<title>عنوان صفحه اصلی از پنل</title>', false)
+            ->assertSee('name="description" content="توضیحات صفحه اصلی که از پنل SEO ذخیره شده است."', false)
             ->assertSee('name="robots" content="noindex, follow, max-snippet:-1, max-video-preview:-1, max-image-preview:large"', false);
     }
 
@@ -222,6 +231,7 @@ class SeoSettingsTest extends TestCase
         foreach ([
             'seo_development_mode',
             'seo_robots_noindex',
+            'seo_noindex_shop_filters',
             'seo_robots_nofollow',
             'seo_robots_noarchive',
             'seo_robots_nosnippet',
@@ -241,11 +251,23 @@ class SeoSettingsTest extends TestCase
             ->assertOk()
             ->assertDontSee('name="seo_development_mode" value="1" checked', false)
             ->assertDontSee('name="seo_robots_noindex" value="1" checked', false)
+            ->assertDontSee('name="seo_noindex_shop_filters" value="1" checked', false)
             ->assertDontSee('name="seo_robots_nofollow" value="1" checked', false)
             ->assertDontSee('name="seo_robots_noarchive" value="1" checked', false)
             ->assertDontSee('name="seo_robots_nosnippet" value="1" checked', false)
             ->assertDontSee('name="seo_robots_noimageindex" value="1" checked', false)
             ->assertDontSee('name="seo_sitemap_enabled" value="1" checked', false);
+    }
+
+    public function test_filtered_shop_urls_are_noindex_follow_by_default_but_catalogue_root_is_indexable(): void
+    {
+        $this->get(route('shop.index'))
+            ->assertOk()
+            ->assertSee('name="robots" content="index, follow, max-snippet:-1, max-video-preview:-1, max-image-preview:large"', false);
+
+        $this->get(route('shop.index', ['search' => 'hood']))
+            ->assertOk()
+            ->assertSee('name="robots" content="noindex, follow, max-snippet:-1, max-video-preview:-1, max-image-preview:large"', false);
     }
 
     public function test_error_pages_apply_full_noindex_policy(): void
