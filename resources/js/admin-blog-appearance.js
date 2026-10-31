@@ -67,6 +67,7 @@ slots.forEach((form) => {
         const state = updateSlotPreview(form);
         if (state.image) {
             state.image.src = previewUrl;
+            state.image.removeAttribute('srcset');
             state.image.classList.remove('hidden');
         }
         state.fallback?.classList.add('hidden');
@@ -99,7 +100,9 @@ function updateContainerPreview() {
     }
 
     if (containerPreview) {
-        containerPreview.style.maxWidth = `${value}px`;
+        const visualWidth = 70 + ((value - 1080) / 360) * 30;
+        containerPreview.style.width = `${visualWidth}%`;
+        containerPreview.style.maxWidth = '100%';
         containerPreview.setAttribute('aria-label', `پیش‌نمایش عرض ${value} پیکسل`);
     }
 }
