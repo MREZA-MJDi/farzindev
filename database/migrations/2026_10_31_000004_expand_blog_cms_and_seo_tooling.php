@@ -10,6 +10,7 @@ return new class extends Migration
     {
         Schema::table('blog_posts', function (Blueprint $table): void {
             $table->longText('body_html')->nullable()->after('body');
+            $table->string('cover_image_alt', 255)->nullable()->after('cover_image');
             $table->string('focus_keyword', 160)->nullable()->after('meta_description');
             $table->string('canonical_url', 2048)->nullable()->after('focus_keyword');
             $table->string('og_title', 255)->nullable()->after('canonical_url');
@@ -68,6 +69,7 @@ return new class extends Migration
         Schema::table('blog_posts', function (Blueprint $table): void {
             $table->dropColumn([
                 'body_html',
+                'cover_image_alt',
                 'focus_keyword',
                 'canonical_url',
                 'og_title',
