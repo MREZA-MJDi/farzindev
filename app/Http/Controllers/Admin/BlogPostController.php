@@ -47,7 +47,7 @@ class BlogPostController extends Controller
         return view('admin.blog-posts.index', compact('posts'));
     }
 
-    public function create(BlogSeoAnalyzer $analyzer): View
+    public function create(BlogSeoAnalyzer $analyzer, RichTextSanitizer $sanitizer): View
     {
         $post = new BlogPost([
             'status' => 'draft',
@@ -60,6 +60,7 @@ class BlogPostController extends Controller
             'termOptions' => $this->termOptions(),
             'selectedTermIds' => [],
             'seoReport' => $analyzer->analyze($post),
+            'editorHtml' => '',
         ]);
     }
 
@@ -119,7 +120,8 @@ class BlogPostController extends Controller
 
     public function edit(
         BlogPost $blogPost,
-        BlogSeoAnalyzer $analyzer
+        BlogSeoAnalyzer $analyzer,
+        RichTextSanitizer $sanitizer
     ): View {
         $blogPost->load('terms:id,type,name,slug');
 
@@ -128,6 +130,9 @@ class BlogPostController extends Controller
             'termOptions' => $this->termOptions(),
             'selectedTermIds' => $blogPost->terms->modelKeys(),
             'seoReport' => $analyzer->analyze($blogPost),
+            'editorHtml' => $sanitizer->sanitize(
+                (string) old('body', $blogPost->body_html ?: e($blogPost->body))
+            ),
         ]);
     }
 
