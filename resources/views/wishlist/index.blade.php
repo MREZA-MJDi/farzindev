@@ -17,7 +17,7 @@
 @section('content')
 
     @php
-        $wishlistItems = $wishlist->items ?? $wishlist;
+        $wishlistItems = $products;
     @endphp
 
     <div class="min-h-[70vh] bg-[var(--livora-cream)]">
@@ -164,7 +164,7 @@
                                 </p>
 
                                 <p class="mt-2 text-sm text-[var(--livora-stone)]">
-                                    {{ number_format($wishlistItems->count()) }}
+                                    {{ number_format($wishlistItems->total()) }}
                                     محصول ذخیره شده
                                 </p>
 
@@ -184,11 +184,7 @@
                         {{-- Products --}}
                         <div class="grid grid-cols-2 gap-x-4 gap-y-10 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
 
-                            @foreach($wishlistItems as $item)
-
-                                @php
-                                    $product = $item->product ?? $item;
-                                @endphp
+                            @foreach($wishlistItems as $product)
 
                                 <div class="group relative min-w-0">
 
@@ -198,17 +194,15 @@
                                     />
 
                                     {{-- Remove --}}
-                                    @if($item->product)
+                                    <form
+                                        action="{{ route('account.wishlist.destroy', $product) }}"
+                                        method="POST"
+                                        class="absolute right-3 top-3 z-20"
+                                    >
+                                        @csrf
+                                        @method('DELETE')
 
-                                        <form
-                                            action="{{ route('account.wishlist.destroy', $product) }}"
-                                            method="POST"
-                                            class="absolute right-3 top-3 z-20"
-                                        >
-                                            @csrf
-                                            @method('DELETE')
-
-                                            <button
+                                        <button
                                                 type="submit"
                                                 aria-label="حذف از علاقه‌مندی‌ها"
                                                 onclick="return confirm('این محصول از علاقه‌مندی‌ها حذف شود؟')"
@@ -226,17 +220,21 @@
                                                     />
                                                 </svg>
 
-                                            </button>
+                                        </button>
 
-                                        </form>
-
-                                    @endif
+                                    </form>
 
                                 </div>
 
                             @endforeach
 
                         </div>
+
+                        @if($wishlistItems->hasPages())
+                            <div class="mt-10">
+                                {{ $wishlistItems->links() }}
+                            </div>
+                        @endif
 
                     </div>
 

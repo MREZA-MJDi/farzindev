@@ -15,10 +15,11 @@ class WishlistController extends Controller
             ->wishlistProducts()
             ->with([
                 'category',
-                'images',
+                'images.media',
             ])
             ->latest('wishlists.created_at')
-            ->paginate(12);
+            ->paginate(12)
+            ->withQueryString();
 
         return view('wishlist.index', [
             'products' => $products,
@@ -46,9 +47,11 @@ class WishlistController extends Controller
             ->where('product_id', $product->id)
             ->delete();
 
-        return back()->with(
-            'success',
-            'محصول از علاقه‌مندی‌ها حذف شد.'
-        );
+        return redirect()
+            ->route('account.wishlist.index')
+            ->with(
+                'success',
+                'محصول از علاقه‌مندی‌ها حذف شد.'
+            );
     }
 }
