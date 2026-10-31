@@ -51,9 +51,6 @@
     @vite(['resources/css/blog.css'])
 @endpush
 
-@push('scripts')
-    @vite(['resources/js/blog-motion.js'])
-@endpush
 
 @section('content')
 <div class="blog-shell" data-blog-motion>
