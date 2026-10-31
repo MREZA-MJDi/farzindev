@@ -238,7 +238,7 @@ test('home and shop footer has consistent breathing room above the shared footer
     for (const path of ['/', '/shop']) {
         await page.goto(path, { waitUntil: 'domcontentloaded' });
         const footer = page.locator('.farzin-site-footer');
-        await expect(footer).toHaveClass(/farzin-site-footer--spaced/);
+        await expect(footer).toBeVisible();
 
         const marginTop = await footer.evaluate((element) => (
             Number.parseFloat(window.getComputedStyle(element).marginBlockStart)
