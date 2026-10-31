@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use App\Services\Media\ResponsiveImageService;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -53,6 +54,27 @@ class Category extends Model
         }
 
         return Storage::disk('public')->url($path);
+    }
+
+    public function getImageSrcsetAttribute(): ?string
+    {
+        if (! $this->image || Str::startsWith($this->image, ['http://', 'https://', '//'])) {
+            return null;
+        }
+
+        return app(ResponsiveImageService::class)->srcset($this->image);
+    }
+
+    public function getHomepageImageSrcsetAttribute(): ?string
+    {
+        $categoryImageIsUploaded = $this->image
+            && ! Str::startsWith($this->image, ['http://', 'https://', '//']);
+
+        if ($categoryImageIsUploaded && $this->image_srcset) {
+            return $this->image_srcset;
+        }
+
+        return $this->latestActiveProduct?->images?->first()?->responsive_srcset;
     }
 
     /** Animated category preview selected from the existing media library. */
