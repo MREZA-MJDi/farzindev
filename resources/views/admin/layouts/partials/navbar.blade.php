@@ -60,6 +60,9 @@
         ['title' => 'سفارش‌ها', 'url' => route('admin.orders.index'), 'terms' => 'orders sales'],
         ['title' => 'مشتریان', 'url' => route('admin.customers.index'), 'terms' => 'customers users'],
         ['title' => 'رسانه', 'url' => route('admin.media.index'), 'terms' => 'media uploads فایل آپلود'],
+        ['title' => 'مقالات بلاگ', 'url' => route('admin.blog-posts.index'), 'terms' => 'blog articles posts محتوا نوشته'],
+        ['title' => 'دسته‌ها و برچسب‌های بلاگ', 'url' => route('admin.blog-terms.index'), 'terms' => 'blog category tag موضوع'],
+        ['title' => 'ظاهر و تصاویر مجله', 'url' => route('admin.blog-appearance.edit'), 'terms' => 'blog design art hero image'],
         ['title' => 'پیام‌های کاربران', 'url' => route('admin.contact-messages.index'), 'terms' => 'contact messages support'],
     ];
 
