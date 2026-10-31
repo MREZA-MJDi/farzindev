@@ -425,8 +425,7 @@
                                             href="{{ route('checkout.provider-status', ['order' => $order, 'gateway' => $gateway['key']]) }}"
                                             class="mt-4 inline-flex items-center gap-2 text-[10px] font-semibold text-[var(--livora-accent)] underline underline-offset-4"
                                         >
-                                            مشاهده وضعیت اتصال
-                                            <span aria-hidden="true">←</span>
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4 shrink-0" aria-hidden="true"><path d="M8 3v5m8-5v5M5 8h14v3a7 7 0 0 1-7 7v3m0-3a7 7 0 0 1-7-7V8Z" /></svg> مشاهده وضعیت اتصال
                                         </a>
                                     @endunless
 
@@ -473,9 +472,7 @@
                                         ادامه به درگاه
                                     </span>
 
-                                        <span class="text-white/60">
-                                        ←
-                                    </span>
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4 shrink-0" aria-hidden="true"><rect x="2.5" y="5" width="19" height="14" rx="2.3" /><path d="M2.5 10h19m-15 5h4" /></svg>
 
                                     </button>
 
@@ -667,9 +664,7 @@
                                             ادامه فرآیند خرید اقساطی
                                         </span>
 
-                                            <span>
-                                            ←
-                                        </span>
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4 shrink-0" aria-hidden="true"><rect x="2.5" y="5" width="19" height="14" rx="2.3" /><path d="M2.5 10h19m-15 5h4" /></svg>
                                         </button>
 
                                     </form>
