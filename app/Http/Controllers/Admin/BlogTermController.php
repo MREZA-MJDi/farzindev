@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\BlogTerm;
+use App\Models\SeoRedirect;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -54,11 +55,32 @@ class BlogTermController extends Controller
     public function update(Request $request, BlogTerm $blogTerm): RedirectResponse
     {
         $validated = $this->validateTerm($request, $blogTerm);
+        $oldType = $blogTerm->type;
+        $oldSlug = $blogTerm->slug;
         $validated['slug'] = $this->uniqueSlug($validated['slug'] ?? null, $validated['name'], $validated['type'], $blogTerm);
         $validated['is_active'] = $request->boolean('is_active');
         $validated['sort_order'] = (int) ($validated['sort_order'] ?? 0);
 
         $blogTerm->update($validated);
+
+        if ($oldType !== $blogTerm->type || $oldSlug !== $blogTerm->slug) {
+            $oldPath = $oldType === BlogTerm::TYPE_CATEGORY
+                ? route('blog.category', $oldSlug, false)
+                : route('blog.tag', $oldSlug, false);
+            $newPath = $blogTerm->type === BlogTerm::TYPE_CATEGORY
+                ? route('blog.category', $blogTerm->slug, false)
+                : route('blog.tag', $blogTerm->slug, false);
+
+            SeoRedirect::query()->updateOrCreate(
+                ['source_path' => $oldPath],
+                [
+                    'target_url' => $newPath,
+                    'status_code' => 301,
+                    'is_active' => true,
+                    'notes' => 'تغییر خودکار مسیر دسته/برچسب بلاگ ' . $blogTerm->id,
+                ]
+            );
+        }
 
         return redirect()->route('admin.blog-terms.edit', $blogTerm)->with('success', 'تغییرات ذخیره شد.');
     }
