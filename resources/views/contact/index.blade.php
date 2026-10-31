@@ -61,15 +61,15 @@
 
                         <div class="fz-contact-actions">
                             <a href="#contact-form" class="fz-contact-button fz-contact-button--primary">
-                                <span>ارسال پیام</span><span aria-hidden="true">↙</span>
+                                <span>ارسال پیام</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4" aria-hidden="true"><path d="M20 11.5a7.5 7.5 0 0 1-7.5 7.5H6l-3 2v-9.5A7.5 7.5 0 0 1 10.5 4h2A7.5 7.5 0 0 1 20 11.5Z" /><path d="M8 11h8m-8 3h5" /></svg>
                             </a>
                             @if(filled($contactSetting?->phone))
                                 <a href="tel:{{ $contactSetting->phone }}" class="fz-contact-button fz-contact-button--glass">
-                                    <span>تماس مستقیم</span><span aria-hidden="true">↗</span>
+                                    <span>تماس مستقیم</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4" aria-hidden="true"><path d="M5 4.5h3l1.4 3.7-2 1.4a15 15 0 0 0 7 7l1.4-2 3.7 1.4v3c0 .8-.7 1.5-1.5 1.5A14.5 14.5 0 0 1 3.5 6c0-.8.7-1.5 1.5-1.5Z" /></svg>
                                 </a>
                             @else
                                 <a href="{{ route('shop.index') }}" class="fz-contact-button fz-contact-button--glass">
-                                    <span>مشاهده محصولات</span><span aria-hidden="true">↗</span>
+                                    <span>مشاهده محصولات</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4" aria-hidden="true"><path d="M3.5 9h17l-1 11h-15l-1-11Z" /><path d="M8 9V6.5a4 4 0 0 1 8 0V9" /></svg>
                                 </a>
                             @endif
                         </div>
@@ -116,7 +116,7 @@
                             <div class="fz-contact-art__device-status"><span></span> ارتباط مستقیم با فرزین</div>
                         </div>
                         <div class="fz-contact-art__floating fz-contact-art__floating--message">
-                            <span class="fz-contact-art__floating-icon" aria-hidden="true">↗</span>
+                            <span class="fz-contact-art__floating-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4" aria-hidden="true"><path d="M20 11.5a7.5 7.5 0 0 1-7.5 7.5H6l-3 2v-9.5A7.5 7.5 0 0 1 10.5 4h2A7.5 7.5 0 0 1 20 11.5Z" /><path d="M8 11h8m-8 3h5" /></svg></span>
                             <span><b>LET'S TALK</b><small>پاسخ‌گویی به پرسش شما</small></span>
                         </div>
                         <div class="fz-contact-art__floating fz-contact-art__floating--pin">
@@ -176,7 +176,7 @@
                                     class="fz-contact-directions"
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                >مسیریابی به نشانی فرزین در Google Maps <span aria-hidden="true">↗</span></a>
+                                ><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4" aria-hidden="true"><path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z" /><circle cx="12" cy="10" r="2.5" /></svg> مسیریابی به نشانی فرزین در Google Maps</a>
                             @else
                                 <div class="fz-contact-map-empty" role="status">
                                     <div class="fz-contact-map-empty__rings" aria-hidden="true"><span></span><i></i></div>
@@ -222,7 +222,7 @@
                                             <svg viewBox="0 0 24 24" fill="none"><path d="M7 3.8 4.9 5.1c-.8.5-1.1 1.6-.7 2.5 2.4 5.3 6.8 9.7 12.1 12.1.9.4 2 0 2.5-.7l1.3-2.1-4.1-2.5-1.4 1.7a16 16 0 0 1-6.7-6.7l1.7-1.4L7 3.8Z" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
                                         </span>
                                         <span class="fz-contact-channel__copy"><small>PHONE / تماس تلفنی</small><strong>{{ $contactSetting->phone_label ?: 'تماس مستقیم' }}</strong><em dir="ltr">{{ $contactSetting->phone }}</em></span>
-                                        <span class="fz-contact-channel__arrow" aria-hidden="true">↗</span>
+
                                     </a>
                                 @endif
 
@@ -232,7 +232,7 @@
                                             <svg viewBox="0 0 24 24" fill="none"><rect x="3" y="5" width="18" height="14" rx="2.5" stroke="currentColor" stroke-width="1.6"/><path d="m4 7 8 6 8-6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
                                         </span>
                                         <span class="fz-contact-channel__copy"><small>EMAIL / ایمیل</small><strong>{{ $contactSetting->email_label ?: 'ارتباط ایمیلی' }}</strong><em dir="ltr">{{ $contactSetting->email }}</em></span>
-                                        <span class="fz-contact-channel__arrow" aria-hidden="true">↗</span>
+
                                     </a>
                                 @endif
 
@@ -250,12 +250,12 @@
                                     <div class="fz-contact-social__links">
                                         @if($whatsappDigits !== '')
                                             <a href="https://wa.me/{{ $whatsappDigits }}" target="_blank" rel="noopener noreferrer" class="fz-contact-social__link fz-contact-social__link--whatsapp">
-                                                <span aria-hidden="true">W</span> واتساپ <b aria-hidden="true">↗</b>
+                                                <span aria-hidden="true">W</span> واتساپ
                                             </a>
                                         @endif
                                         @if(filled($contactSetting?->instagram_url))
                                             <a href="{{ $contactSetting->instagram_url }}" target="_blank" rel="noopener noreferrer" class="fz-contact-social__link fz-contact-social__link--instagram">
-                                                <span aria-hidden="true">◎</span> اینستاگرام <b aria-hidden="true">↗</b>
+                                                <span aria-hidden="true">◎</span> اینستاگرام
                                             </a>
                                         @endif
                                     </div>
@@ -354,7 +354,7 @@
                         <h2>برای انتخاب دقیق‌تر، از کاتالوگ شروع کنید.</h2>
                         <p>مدل‌ها و مشخصات هود و سینک را ببینید؛ هر سؤال دیگری داشتید، همین‌جا به ما پیام بدهید.</p>
                     </div>
-                    <a href="{{ route('shop.index') }}" class="fz-contact-button fz-contact-button--light">رفتن به فروشگاه <span aria-hidden="true">↗</span></a>
+                    <a href="{{ route('shop.index') }}" class="fz-contact-button fz-contact-button--light"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4" aria-hidden="true"><path d="M3.5 9h17l-1 11h-15l-1-11Z" /><path d="M8 9V6.5a4 4 0 0 1 8 0V9" /></svg> رفتن به فروشگاه</a>
                 </div>
             </x-layout.container>
         </section>
