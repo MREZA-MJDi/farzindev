@@ -5,14 +5,14 @@
         <link>{{ route('blog.index') }}</link>
         <description>راهنماهای انتخاب، نصب و نگهداری تجهیزات آشپزخانه از فرزین.</description>
         <language>fa-IR</language>
-        <lastBuildDate>{{ now()->toRssString() }}</lastBuildDate>
+        <lastBuildDate>{{ now()->format(DATE_RSS) }}</lastBuildDate>
         @foreach($posts as $post)
             <item>
                 <title>{{ $post->title }}</title>
                 <link>{{ route('blog.show', $post->slug) }}</link>
                 <guid isPermaLink="true">{{ route('blog.show', $post->slug) }}</guid>
                 <description>{{ $post->excerpt ?: $post->meta_description }}</description>
-                <pubDate>{{ $post->published_at?->toRssString() }}</pubDate>
+                <pubDate>{{ $post->published_at?->format(DATE_RSS) }}</pubDate>
                 @if($post->author)
                     <author>{{ $post->author->name }}</author>
                 @endif
