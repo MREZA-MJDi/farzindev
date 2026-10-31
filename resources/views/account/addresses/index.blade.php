@@ -24,7 +24,7 @@
                     <h1 class="mt-3 text-3xl font-semibold">آدرس‌های تحویل</h1>
                     <p class="mt-3 text-sm leading-7 text-[var(--livora-stone)]">آدرس‌های ذخیره‌شده را مدیریت کنید یا آدرس تازه‌ای اضافه کنید.</p>
                 </div>
-                <a href="{{ route('account.index') }}" class="text-sm font-medium text-[var(--livora-accent)]">بازگشت به حساب ←</a>
+                <a href="{{ route('account.index') }}" class="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--livora-accent)]">بازگشت به حساب</a>
             </div>
 
             @if (session('success'))
