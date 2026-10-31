@@ -176,7 +176,7 @@ class ShopController extends Controller
         */
 
         $products = $query
-            ->paginate(8)
+            ->paginate(12)
             ->withQueryString();
 
         /*
