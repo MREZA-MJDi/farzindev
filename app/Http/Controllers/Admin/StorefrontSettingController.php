@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\ContactSetting;
 use App\Models\StorefrontSetting;
+use App\Services\Media\ResponsiveImageService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -39,7 +40,7 @@ class StorefrontSettingController extends Controller
         ]);
     }
 
-    public function update(Request $request): RedirectResponse
+    public function update(Request $request, ResponsiveImageService $images): RedirectResponse
     {
         $data = $request->validate([
             'shop_banner_image' => [
@@ -93,7 +94,7 @@ class StorefrontSettingController extends Controller
         $newPath = null;
 
         if ($request->hasFile('shop_banner_image')) {
-            $newPath = $request->file('shop_banner_image')->store('banners', 'public');
+            $newPath = $images->store($request->file('shop_banner_image'), 'banners');
 
             if (! $newPath) {
                 return back()
@@ -163,7 +164,7 @@ class StorefrontSettingController extends Controller
         } catch (Throwable $e) {
             // Keep the currently published image if the database update fails.
             if ($newPath !== null) {
-                Storage::disk('public')->delete($newPath);
+                $images->delete($newPath);
             }
 
             throw $e;
@@ -175,7 +176,7 @@ class StorefrontSettingController extends Controller
             && $oldPath
             && $oldPath !== $newPath
         ) {
-            Storage::disk('public')->delete($oldPath);
+            $images->delete($oldPath);
         }
 
         return redirect()
