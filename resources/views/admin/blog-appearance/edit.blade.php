@@ -87,8 +87,8 @@
                             </label>
                         </div>
                         <div class="flex flex-wrap gap-2">
-                            <button type="button" data-image-editor-rotate="-90" class="admin-btn admin-btn-secondary">↶ چرخش</button>
-                            <button type="button" data-image-editor-rotate="90" class="admin-btn admin-btn-secondary">چرخش ↷</button>
+                            <button type="button" data-image-editor-rotate="-90" class="admin-btn admin-btn-secondary"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4" aria-hidden="true"><path d="M4 7v5h5" /><path d="M4.8 13.5A8 8 0 1 0 7 6.1L4 9" /></svg> چرخش به چپ</button>
+                            <button type="button" data-image-editor-rotate="90" class="admin-btn admin-btn-secondary"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4" aria-hidden="true"><path d="M20 7v5h-5" /><path d="M19.2 13.5A8 8 0 1 1 17 6.1L20 9" /></svg> چرخش به راست</button>
                             <button type="button" data-image-editor-reset class="admin-btn admin-btn-ghost">بازنشانی</button>
                         </div>
                         <p data-image-editor-status class="text-xs text-[var(--admin-muted)]" aria-live="polite">کادر را تنظیم کن.</p>
@@ -197,8 +197,8 @@
                             </label>
                         </div>
                         <div class="flex flex-wrap gap-2">
-                            <button type="button" data-image-editor-rotate="-90" class="admin-btn admin-btn-secondary">↶ چرخش</button>
-                            <button type="button" data-image-editor-rotate="90" class="admin-btn admin-btn-secondary">چرخش ↷</button>
+                            <button type="button" data-image-editor-rotate="-90" class="admin-btn admin-btn-secondary"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4" aria-hidden="true"><path d="M4 7v5h5" /><path d="M4.8 13.5A8 8 0 1 0 7 6.1L4 9" /></svg> چرخش به چپ</button>
+                            <button type="button" data-image-editor-rotate="90" class="admin-btn admin-btn-secondary"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4" aria-hidden="true"><path d="M20 7v5h-5" /><path d="M19.2 13.5A8 8 0 1 1 17 6.1L20 9" /></svg> چرخش به راست</button>
                             <button type="button" data-image-editor-reset class="admin-btn admin-btn-ghost">بازنشانی</button>
                         </div>
                         <p data-image-editor-status class="text-xs text-[var(--admin-muted)]" aria-live="polite">کادر را تنظیم کن.</p>
@@ -245,7 +245,7 @@
                         <div class="blog-design-preview__copy">
                             <span>THOUGHTFUL CHOICES</span>
                             <strong>الهام بگیر.<br>دقیق‌تر انتخاب کن.</strong>
-                            <small>گشت‌وگذار در محصولات ←</small>
+                            <small>گشت‌وگذار در محصولات</small>
                         </div>
                         <div class="blog-design-preview__art" data-blog-slot-live-frame>
                             @if($closing['image_url'])
