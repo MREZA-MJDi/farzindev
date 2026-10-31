@@ -96,7 +96,7 @@ class BlogPostController extends Controller
         $uploadedPath = null;
 
         if ($request->hasFile('cover_image')) {
-            $uploadedPath = $request->file('cover_image')->store('blog', 'public');
+            $uploadedPath = $images->store($request->file('cover_image'), 'blog');
             if (! $uploadedPath) {
                 return back()->withInput()->withErrors([
                     'cover_image' => 'ذخیره تصویر جدید انجام نشد؛ تصویر قبلی حفظ شد.',
@@ -123,7 +123,7 @@ class BlogPostController extends Controller
             });
         } catch (Throwable $exception) {
             if ($uploadedPath !== null) {
-                Storage::disk('public')->delete($uploadedPath);
+                $images->delete($uploadedPath);
             }
             throw $exception;
         }
