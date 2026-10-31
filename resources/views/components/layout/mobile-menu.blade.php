@@ -147,7 +147,7 @@
                     FARZIN GUIDE
                 </p>
 
-                <div class="mt-3 grid grid-cols-2 gap-3">
+                <div class="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2">
 
                     <a
                         href="{{ route('cart.index') }}"
@@ -217,28 +217,6 @@
                             </a>
 
                         @endif
-
-                    @else
-
-                        <a
-                            href="{{ route('login') }}"
-                            @click="mobileOpen = false"
-                            class="rounded-2xl border border-[var(--livora-border)] bg-[var(--livora-white)] p-4"
-                        >
-
-                            <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-[var(--livora-surface)] text-xs font-semibold">
-                                02
-                            </div>
-
-                            <p class="mt-4 text-sm font-semibold">
-                                ورود
-                            </p>
-
-                            <p class="mt-1 text-[11px] text-[var(--livora-stone)]">
-                                ورود به حساب
-                            </p>
-
-                        </a>
 
                     @endauth
 
