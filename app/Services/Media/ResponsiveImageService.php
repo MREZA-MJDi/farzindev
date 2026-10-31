@@ -119,6 +119,7 @@ class ResponsiveImageService
         sort($widths);
 
         $created = [];
+        $sourceSize = (int) $storage->size($path);
 
         foreach ($widths as $targetWidth) {
             if ($targetWidth < 1 || $targetWidth >= $sourceWidth) {
@@ -171,7 +172,7 @@ class ResponsiveImageService
             }
 
             // A derivative should not be larger than the original upload.
-            if (strlen($webp) >= (int) ($imageInfo['bits'] ?? 0) && strlen($webp) >= filesize($sourcePath)) {
+            if ($sourceSize > 0 && strlen($webp) >= $sourceSize) {
                 continue;
             }
 
