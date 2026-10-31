@@ -16,10 +16,10 @@
                 @if($post->author)
                     <author>{{ $post->author->name }}</author>
                 @endif
-                @foreach($post->categories as $category)
+                @foreach($post->terms->where('type', 'category') as $category)
                     <category>{{ $category->name }}</category>
                 @endforeach
-                @foreach($post->tags as $tag)
+                @foreach($post->terms->where('type', 'tag') as $tag)
                     <category>{{ $tag->name }}</category>
                 @endforeach
             </item>
