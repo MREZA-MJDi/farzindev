@@ -7,6 +7,7 @@ use App\Http\Requests\Admin\Media\MediaUploadRequest;
 use App\Models\Media;
 use App\Models\ProductImage;
 use App\Models\Category;
+use App\Services\Media\ResponsiveImageService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -29,13 +30,16 @@ class MediaController extends Controller
         return view('admin.media.create');
     }
 
-    public function store(MediaUploadRequest $request): RedirectResponse
+    public function store(MediaUploadRequest $request, ResponsiveImageService $images): RedirectResponse
     {
         $file = $request->file('file');
         $disk = 'public';
 
         try {
-            $path = $file->store('media', $disk);
+            $mimeType = $file->getMimeType() ?: $file->getClientMimeType();
+            $path = in_array($mimeType, ['image/jpeg', 'image/png', 'image/webp'], true)
+                ? $images->store($file, 'media', $disk)
+                : $file->store('media', $disk);
         } catch (Throwable $exception) {
             Log::error('Media upload storage write failed.', [
                 'user_id' => $request->user()?->id,
@@ -63,7 +67,7 @@ class MediaController extends Controller
                     'path' => $path,
                     'filename' => basename($path),
                     'original_name' => Str::limit($file->getClientOriginalName(), 255, ''),
-                    'mime_type' => $file->getMimeType() ?: $file->getClientMimeType(),
+                    'mime_type' => $mimeType,
                     'extension' => strtolower($file->getClientOriginalExtension()),
                     'size' => $file->getSize(),
                     'alt' => $request->input('alt'),
@@ -71,7 +75,7 @@ class MediaController extends Controller
                 ]);
             });
         } catch (Throwable $exception) {
-            Storage::disk($disk)->delete($path);
+            $images->delete($path, $disk);
 
             Log::error('Media upload database write failed.', [
                 'user_id' => $request->user()?->id,
@@ -88,7 +92,7 @@ class MediaController extends Controller
         return redirect()->route('admin.media.index')->with('success', 'رسانه با موفقیت آپلود شد.');
     }
 
-    public function destroy(Media $media): RedirectResponse
+    public function destroy(Media $media, ResponsiveImageService $images): RedirectResponse
     {
         // A Media asset can be reused by multiple products and variants. Never
         // remove the underlying file while product_images still references it.
