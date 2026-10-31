@@ -29,8 +29,6 @@ class PublicSeoRedirectController extends Controller
             throw new NotFoundHttpException();
         }
 
-        $redirect->increment('hits', 1, ['last_hit_at' => now()]);
-
         return redirect()->to($redirect->target_url, $redirect->status_code);
     }
 }
