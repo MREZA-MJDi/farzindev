@@ -148,7 +148,7 @@ class CategoryController extends Controller
             });
         } catch (Throwable $e) {
             if ($newImage !== null) {
-                Storage::disk('public')->delete($newImage);
+                $images->delete($newImage);
             }
 
             throw $e;
