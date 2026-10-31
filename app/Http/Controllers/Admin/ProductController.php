@@ -205,7 +205,7 @@ class ProductController extends Controller
 
         if ($uploadedImage) {
             try {
-                $newPath = $uploadedImage->store('products/images', 'public');
+                $newPath = $images->store($uploadedImage, 'products/images');
             } catch (Throwable $exception) {
                 $requestId = (string) $request->attributes->get('request_id', 'unavailable');
                 Log::error('Product image storage failed during update.', [
@@ -320,7 +320,7 @@ class ProductController extends Controller
             });
         } catch (Throwable $exception) {
             if ($newPath !== null) {
-                Storage::disk('public')->delete($newPath);
+                $images->delete($newPath);
             }
 
             if ($exception instanceof ValidationException) {
