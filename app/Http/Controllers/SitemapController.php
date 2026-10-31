@@ -167,7 +167,8 @@ class SitemapController extends Controller
         Category::query()
             ->active()
             ->orderBy('id')
-            ->chunkById(1000, function ($categories) use ($items, $seoSettings, $canonicalRoot): void {
+            ->select(['id', 'slug', 'updated_at'])
+            ->chunkById(1000, function ($categories) use ($items, $canonicalRoot): void {
                 foreach ($categories as $category) {
                     $items->push([
                         'url' => $this->canonicalPath(
@@ -183,7 +184,8 @@ class SitemapController extends Controller
             ->active()
             ->whereHas('category', fn ($query) => $query->where('is_active', true))
             ->orderBy('id')
-            ->chunkById(1000, function ($products) use ($items, $seoSettings, $canonicalRoot): void {
+            ->select(['id', 'slug', 'updated_at'])
+            ->chunkById(1000, function ($products) use ($items, $canonicalRoot): void {
                 foreach ($products as $product) {
                     $items->push([
                         'url' => $this->canonicalPath(
@@ -198,7 +200,8 @@ class SitemapController extends Controller
         BlogPost::query()
             ->published()
             ->orderBy('id')
-            ->chunkById(1000, function ($posts) use ($items, $seoSettings, $canonicalRoot): void {
+            ->select(['id', 'slug', 'updated_at'])
+            ->chunkById(1000, function ($posts) use ($items, $canonicalRoot): void {
                 foreach ($posts as $post) {
                     $items->push([
                         'url' => $this->canonicalPath(
