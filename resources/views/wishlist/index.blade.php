@@ -174,8 +174,7 @@
                                 href="{{ route('shop.index') }}"
                                 class="text-sm font-medium text-[var(--livora-accent)]"
                             >
-                                مشاهده فروشگاه
-                                <span class="mr-1">←</span>
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4 shrink-0" aria-hidden="true"><path d="M3.5 9h17l-1 11h-15l-1-11Z" /><path d="M8 9V6.5a4 4 0 0 1 8 0V9" /></svg> مشاهده فروشگاه
                             </a>
 
                         </div>
