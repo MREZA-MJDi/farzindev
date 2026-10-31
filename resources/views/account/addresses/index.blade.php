@@ -107,6 +107,12 @@
                             <p class="mt-2 text-sm leading-7 text-[var(--livora-stone)]">برای تسویه‌حساب سریع‌تر، اولین آدرس تحویل خود را اضافه کنید.</p>
                         </div>
                     @endforelse
+
+                    @if($addresses->hasPages())
+                        <div class="pt-2">
+                            {{ $addresses->links() }}
+                        </div>
+                    @endif
                 </div>
 
                 <aside class="rounded-[2rem] border border-[var(--livora-border)] bg-[var(--livora-white)] p-5 sm:p-7">
