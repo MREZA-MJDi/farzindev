@@ -140,6 +140,12 @@ class StorefrontPaginationAndSeoManagementTest extends TestCase
 
     public function test_sitemap_segment_route_serves_bounded_xml_and_rejects_unknown_pages(): void
     {
+        StorefrontSetting::query()->updateOrCreate(
+            ['key' => 'seo_development_mode'],
+            ['value' => '0'],
+        );
+        app(SeoSettings::class)->clearCache();
+
         $this->get(route('sitemap.segment', ['type' => 'pages', 'page' => 1]))
             ->assertOk()
             ->assertHeader('content-type', 'application/xml; charset=UTF-8')
