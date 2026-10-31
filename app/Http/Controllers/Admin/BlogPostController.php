@@ -262,6 +262,7 @@ class BlogPostController extends Controller
             'excerpt' => ['nullable', 'string', 'max:600'],
             'body' => ['required', 'string', 'max:2000000'],
             'cover_image' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'dimensions:min_width=800,min_height=450', 'max:8192'],
+            'cover_image_alt' => ['nullable', 'string', 'max:255'],
             'meta_title' => ['nullable', 'string', 'max:255'],
             'meta_description' => ['nullable', 'string', 'max:320'],
             'focus_keyword' => ['nullable', 'string', 'max:160'],
