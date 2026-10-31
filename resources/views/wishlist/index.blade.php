@@ -195,14 +195,14 @@
 
                                     {{-- Remove --}}
                                     <form
-                                            action="{{ route('account.wishlist.destroy', $product) }}"
-                                            method="POST"
-                                            class="absolute right-3 top-3 z-20"
-                                        >
-                                            @csrf
-                                            @method('DELETE')
+                                        action="{{ route('account.wishlist.destroy', $product) }}"
+                                        method="POST"
+                                        class="absolute right-3 top-3 z-20"
+                                    >
+                                        @csrf
+                                        @method('DELETE')
 
-                                            <button
+                                        <button
                                                 type="submit"
                                                 aria-label="حذف از علاقه‌مندی‌ها"
                                                 onclick="return confirm('این محصول از علاقه‌مندی‌ها حذف شود؟')"
@@ -220,15 +220,21 @@
                                                     />
                                                 </svg>
 
-                                            </button>
+                                        </button>
 
-                                        </form>
+                                    </form>
 
                                 </div>
 
                             @endforeach
 
                         </div>
+
+                        @if($wishlistItems->hasPages())
+                            <div class="mt-10">
+                                {{ $wishlistItems->links() }}
+                            </div>
+                        @endif
 
                     </div>
 
