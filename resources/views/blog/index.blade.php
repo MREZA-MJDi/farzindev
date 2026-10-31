@@ -10,6 +10,15 @@
     $archiveCanonical = $term
         ? ($term->type === 'category' ? route('blog.category', $term->slug) : route('blog.tag', $term->slug))
         : route('blog.index');
+
+    $visiblePosts = $posts->getCollection();
+    $featuredPost = $visiblePosts->first();
+    $gridPosts = $visiblePosts->skip(1);
+    $topicTerms = $visiblePosts
+        ->flatMap(fn ($post) => $post->terms)
+        ->where('type', 'category')
+        ->unique('id')
+        ->take(7);
 @endphp
 
 @section('title', $archiveTitle)
@@ -42,88 +51,294 @@
     @vite(['resources/css/blog.css'])
 @endpush
 
+@push('scripts')
+    @vite(['resources/js/blog-motion.js'])
+@endpush
+
 @section('content')
-<div class="overflow-hidden bg-[var(--livora-cream)]">
-    <section class="relative overflow-hidden bg-[var(--livora-ink)] text-white">
-        <div class="pointer-events-none absolute -left-24 -top-28 h-80 w-80 rounded-full border border-white/10"></div>
+<div class="blog-shell" data-blog-motion>
+    <section class="blog-masthead" aria-labelledby="blog-page-title">
+        <div class="blog-masthead__grid" aria-hidden="true"></div>
+        <div class="blog-masthead__glow blog-masthead__glow--one" aria-hidden="true"></div>
+        <div class="blog-masthead__glow blog-masthead__glow--two" aria-hidden="true"></div>
+
         <x-layout.container>
-            <div class="relative py-14 sm:py-20 lg:py-24">
-                <nav aria-label="مسیر صفحه" class="flex flex-wrap items-center gap-2 text-xs text-white/55">
-                    <a href="{{ route('home') }}" class="transition hover:text-white">خانه</a>
-                    <span>/</span>
-                    <a href="{{ route('blog.index') }}" class="transition hover:text-white">بلاگ</a>
-                    @if($term)<span>/</span><span class="text-[#b7c9cb]">{{ $term->name }}</span>@endif
+            <div class="blog-masthead__top">
+                <nav aria-label="مسیر صفحه" class="blog-breadcrumb">
+                    <a href="{{ route('home') }}">خانه</a>
+                    <span aria-hidden="true">/</span>
+                    <a href="{{ route('blog.index') }}">مجله</a>
+                    @if($term)
+                        <span aria-hidden="true">/</span>
+                        <span aria-current="page">{{ $term->name }}</span>
+                    @endif
                 </nav>
-                <div class="mt-10 grid gap-10 lg:grid-cols-[1fr_0.55fr] lg:items-end">
-                    <div class="max-w-4xl">
-                        <p class="text-[10px] font-semibold uppercase tracking-[0.28em] text-[#b7c9cb]">FARZIN / FIELD NOTES</p>
-                        <h1 class="mt-5 text-4xl font-semibold leading-tight tracking-tight sm:text-5xl lg:text-7xl">
-                            @if($term)
-                                {{ $term->name }}
-                            @else
-                                انتخاب آگاهانه، <span class="block text-[#b7c9cb]">از همین‌جا شروع می‌شود.</span>
-                            @endif
-                        </h1>
-                        <p class="mt-5 max-w-2xl text-sm leading-8 text-white/65 sm:text-base">{{ $archiveDescription }}</p>
-                    </div>
-                    <div class="flex flex-wrap items-center gap-3 lg:justify-end">
-                        <a href="{{ route('blog.index') }}" class="rounded-full border border-white/20 px-4 py-2 text-xs text-white/80 transition hover:bg-white/10">همه مقاله‌ها</a>
-                        <a href="{{ route('blog.feed') }}" class="rounded-full border border-white/20 px-4 py-2 text-xs text-white/80 transition hover:bg-white/10">RSS Feed</a>
+
+                <a href="{{ route('blog.feed') }}" class="blog-rss-link">
+                    <span class="blog-rss-link__icon" aria-hidden="true">↗</span>
+                    دنبال‌کردن از طریق RSS
+                </a>
+            </div>
+
+            <div class="blog-masthead__layout">
+                <div class="blog-masthead__copy" data-blog-reveal>
+                    <p class="blog-eyebrow"><span class="blog-eyebrow__dot"></span> FARZIN JOURNAL <span class="blog-eyebrow__slash">/</span> خانه، با فکر بهتر</p>
+
+                    <h1 id="blog-page-title" class="blog-masthead__title">
+                        @if($term)
+                            {{ $term->name }}
+                            <span>از نگاه فرزین.</span>
+                        @else
+                            برای خانه‌ای
+                            <span>که به سلیقه‌ی تو فکر شده.</span>
+                        @endif
+                    </h1>
+
+                    <p class="blog-masthead__description">{{ $archiveDescription }}</p>
+
+                    <div class="blog-masthead__actions">
+                        <a href="#blog-articles" class="blog-button blog-button--light">
+                            کشف مقاله‌ها
+                            <span aria-hidden="true">↓</span>
+                        </a>
+                        <a href="{{ route('categories.index') }}" class="blog-text-link">
+                            دیدن محصولات
+                            <span aria-hidden="true">↗</span>
+                        </a>
                     </div>
                 </div>
+
+                <div class="blog-masthead__visual" data-blog-reveal aria-hidden="true">
+                    <div class="blog-orbit blog-orbit--outer"></div>
+                    <div class="blog-orbit blog-orbit--middle"></div>
+                    <div class="blog-orbit blog-orbit--inner"></div>
+                    <div class="blog-orbit__core"><span>F</span></div>
+                    <div class="blog-visual-note blog-visual-note--top">
+                        <span class="blog-visual-note__spark"></span>
+                        <span>DESIGN YOUR EVERYDAY</span>
+                    </div>
+                    <div class="blog-visual-note blog-visual-note--bottom">
+                        <strong>01—25</strong>
+                        <span>IDEAS FOR BETTER LIVING</span>
+                    </div>
+                    <span class="blog-visual-index">F / J</span>
+                </div>
+            </div>
+
+            <div class="blog-masthead__bottom">
+                <div class="blog-masthead__stats">
+                    <div class="blog-stat">
+                        <strong>{{ number_format($posts->total()) }}</strong>
+                        <span>یادداشت و راهنما</span>
+                    </div>
+                    <span class="blog-stat-divider" aria-hidden="true"></span>
+                    <div class="blog-stat">
+                        <strong>FARZIN</strong>
+                        <span>برای انتخاب آگاهانه</span>
+                    </div>
+                </div>
+                <a href="#blog-featured" class="blog-scroll-cue">
+                    <span class="blog-scroll-cue__line"></span>
+                    کمی پایین‌تر، چیزهای خوب هست
+                </a>
             </div>
         </x-layout.container>
     </section>
 
-    <section class="bg-[var(--livora-white)] py-12 sm:py-16">
-        <x-layout.container>
-            <div class="mb-8 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-                <div>
-                    <p class="text-[10px] font-semibold uppercase tracking-[0.22em] text-[var(--livora-accent)]">THE BUYING GUIDE</p>
-                    <h2 class="mt-3 text-3xl font-semibold tracking-tight sm:text-4xl">{{ $term ? 'مقاله‌های این موضوع' : 'راهنماهای فرزین' }}</h2>
+    @if($featuredPost)
+        <section id="blog-featured" class="blog-section blog-featured-section" aria-labelledby="blog-featured-title">
+            <x-layout.container>
+                <div class="blog-section-heading" data-blog-reveal>
+                    <div>
+                        <p class="blog-section-kicker">THE EDITOR'S DESK <span>— 01</span></p>
+                        <h2 id="blog-featured-title">از اینجا شروع کن.</h2>
+                    </div>
+                    <p>یک انتخاب خوب، از یک سؤال درست شروع می‌شود.</p>
                 </div>
-                <a href="{{ route('categories.index') }}" class="text-sm font-semibold text-[var(--livora-accent)]">مشاهده محصولات <span aria-hidden="true">←</span></a>
+
+                @php
+                    $featuredCategory = $featuredPost->terms->firstWhere('type', 'category');
+                @endphp
+
+                <article class="blog-featured-card" data-blog-reveal>
+                    <div class="blog-featured-card__content">
+                        <div class="blog-featured-card__topline">
+                            <span class="blog-featured-card__badge">
+                                <span class="blog-featured-card__badge-dot"></span>
+                                {{ $featuredPost->is_featured ? 'پیشنهاد مجله' : 'تازه‌ترین نوشته' }}
+                            </span>
+                            <span class="blog-featured-card__number">01 / FEATURED</span>
+                        </div>
+
+                        @if($featuredCategory)
+                            <a href="{{ route('blog.category', $featuredCategory->slug) }}" class="blog-featured-card__category">
+                                {{ $featuredCategory->name }}
+                            </a>
+                        @endif
+
+                        <h3>
+                            <a href="{{ route('blog.show', $featuredPost->slug) }}">{{ $featuredPost->title }}</a>
+                        </h3>
+
+                        @if($featuredPost->excerpt)
+                            <p class="blog-featured-card__excerpt">{{ $featuredPost->excerpt }}</p>
+                        @endif
+
+                        <div class="blog-featured-card__meta">
+                            <time datetime="{{ $featuredPost->published_at?->toAtomString() }}">{{ $featuredPost->published_at?->format('Y/m/d') }}</time>
+                            <span aria-hidden="true">·</span>
+                            <span>{{ $featuredPost->reading_time }} دقیقه مطالعه</span>
+                            @if($featuredPost->author)
+                                <span aria-hidden="true">·</span>
+                                <span>{{ $featuredPost->author->name }}</span>
+                            @endif
+                        </div>
+
+                        <a href="{{ route('blog.show', $featuredPost->slug) }}" class="blog-featured-card__action">
+                            <span>خواندن این راهنما</span>
+                            <span class="blog-featured-card__action-icon" aria-hidden="true">↗</span>
+                        </a>
+
+                        <span class="blog-featured-card__watermark" aria-hidden="true">F.</span>
+                    </div>
+
+                    <a href="{{ route('blog.show', $featuredPost->slug) }}" class="blog-featured-card__media" aria-label="مطالعه {{ $featuredPost->title }}">
+                        @if($featuredPost->cover_image_url)
+                            <img
+                                src="{{ $featuredPost->cover_image_url }}"
+                                @if($featuredPost->cover_image_srcset) srcset="{{ $featuredPost->cover_image_srcset }}" sizes="(max-width: 767px) 100vw, 54vw" @endif
+                                alt="{{ $featuredPost->cover_image_alt ?: $featuredPost->title }}"
+                                width="1200"
+                                height="900"
+                                fetchpriority="high"
+                                decoding="async"
+                            >
+                        @else
+                            <span class="blog-art-fallback">
+                                <span class="blog-art-fallback__circle"></span>
+                                <span class="blog-art-fallback__word">FARZIN<br>JOURNAL</span>
+                                <span class="blog-art-fallback__caption">{{ $featuredPost->title }}</span>
+                            </span>
+                        @endif
+                        <span class="blog-featured-card__media-label">FARZIN / FIELD NOTE</span>
+                        <span class="blog-featured-card__media-arrow" aria-hidden="true">↗</span>
+                    </a>
+                </article>
+            </x-layout.container>
+        </section>
+    @endif
+
+    <section id="blog-articles" class="blog-section blog-articles-section" aria-labelledby="blog-articles-title">
+        <x-layout.container>
+            <div class="blog-section-heading blog-section-heading--articles" data-blog-reveal>
+                <div>
+                    <p class="blog-section-kicker">THE LATEST STORIES <span>— 02</span></p>
+                    <h2 id="blog-articles-title">{{ $term ? 'بیشتر در ' . $term->name : 'تازه‌های مجله' }}</h2>
+                </div>
+                <p>ایده‌های کوچک، برای تصمیم‌هایی که هر روز با آن‌ها زندگی می‌کنی.</p>
             </div>
 
-            @if($posts->isNotEmpty())
-                <div class="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-                    @foreach($posts as $post)
-                        <article class="group flex min-w-0 flex-col overflow-hidden rounded-[1.75rem] border border-[var(--livora-border)] bg-[var(--livora-cream)] transition duration-300 hover:-translate-y-1 hover:border-[var(--livora-accent)] hover:shadow-[var(--livora-shadow-md)]">
-                            <a href="{{ route('blog.show', $post->slug) }}" class="block aspect-[16/10] overflow-hidden bg-[var(--livora-surface)]">
+            @if($topicTerms->isNotEmpty() || $term)
+                <nav class="blog-topics" aria-label="موضوع‌های مجله" data-blog-reveal>
+                    <a href="{{ route('blog.index') }}" @class(['blog-topic', 'is-active' => ! $term])>همه نوشته‌ها</a>
+                    @if($term)
+                        <a href="{{ $term->type === 'category' ? route('blog.category', $term->slug) : route('blog.tag', $term->slug) }}" class="blog-topic is-active">{{ $term->name }}</a>
+                    @endif
+                    @foreach($topicTerms as $topic)
+                        @if(! $term || $topic->id !== $term->id)
+                            <a href="{{ route('blog.category', $topic->slug) }}" class="blog-topic">{{ $topic->name }}</a>
+                        @endif
+                    @endforeach
+                </nav>
+            @endif
+
+            @if($gridPosts->isNotEmpty())
+                <div class="blog-article-grid">
+                    @foreach($gridPosts as $post)
+                        @php
+                            $postCategory = $post->terms->firstWhere('type', 'category');
+                        @endphp
+                        <article class="blog-article-card" data-blog-reveal style="--blog-delay: {{ min($loop->index, 8) * 55 }}ms">
+                            <a href="{{ route('blog.show', $post->slug) }}" class="blog-article-card__media" aria-label="مطالعه {{ $post->title }}">
                                 @if($post->cover_image_url)
-                                    <img src="{{ $post->cover_image_url }}" @if($post->cover_image_srcset) srcset="{{ $post->cover_image_srcset }}" sizes="(max-width: 639px) 90vw, (max-width: 1023px) 45vw, 320px" @endif alt="{{ $post->cover_image_alt ?: $post->title }}" loading="lazy" decoding="async" class="h-full w-full object-cover transition duration-500 group-hover:scale-105">
+                                    <img
+                                        src="{{ $post->cover_image_url }}"
+                                        @if($post->cover_image_srcset) srcset="{{ $post->cover_image_srcset }}" sizes="(max-width: 639px) 100vw, (max-width: 1023px) 50vw, 33vw" @endif
+                                        alt="{{ $post->cover_image_alt ?: $post->title }}"
+                                        width="720"
+                                        height="520"
+                                        loading="lazy"
+                                        decoding="async"
+                                    >
                                 @else
-                                    <div class="flex h-full items-end bg-gradient-to-br from-[#111416] via-[#354247] to-[#8b9b9f] p-5"><span class="text-2xl font-semibold text-white">{{ $post->title }}</span></div>
+                                    <span class="blog-art-fallback blog-art-fallback--small">
+                                        <span class="blog-art-fallback__circle"></span>
+                                        <span class="blog-art-fallback__word">F.</span>
+                                    </span>
                                 @endif
+                                @if($postCategory)
+                                    <span class="blog-article-card__category">{{ $postCategory->name }}</span>
+                                @endif
+                                <span class="blog-article-card__media-arrow" aria-hidden="true">↗</span>
                             </a>
-                            <div class="flex flex-1 flex-col p-6">
-                                <div class="flex flex-wrap items-center gap-2 text-[10px] text-[var(--livora-stone)]">
+
+                            <div class="blog-article-card__body">
+                                <div class="blog-article-card__meta">
                                     <time datetime="{{ $post->published_at?->toAtomString() }}">{{ $post->published_at?->format('Y/m/d') }}</time>
                                     <span aria-hidden="true">·</span>
                                     <span>{{ $post->reading_time }} دقیقه مطالعه</span>
                                 </div>
-                                <h3 class="mt-3 text-xl font-semibold leading-8"><a href="{{ route('blog.show', $post->slug) }}" class="transition group-hover:text-[var(--livora-accent)]">{{ $post->title }}</a></h3>
-                                @if($post->excerpt)<p class="mt-3 line-clamp-3 text-sm leading-7 text-[var(--livora-stone)]">{{ $post->excerpt }}</p>@endif
-                                @if($post->terms->isNotEmpty())
-                                    <div class="mt-4 flex flex-wrap gap-2">
-                                        @foreach($post->terms->where('type', 'category') as $categoryTerm)
-                                            <a href="{{ route('blog.category', $categoryTerm->slug) }}" class="rounded-full border border-[var(--livora-border)] px-2.5 py-1 text-[10px] text-[var(--livora-stone)] hover:border-[var(--livora-accent)]">{{ $categoryTerm->name }}</a>
-                                        @endforeach
-                                    </div>
+
+                                <h3><a href="{{ route('blog.show', $post->slug) }}">{{ $post->title }}</a></h3>
+
+                                @if($post->excerpt)
+                                    <p>{{ $post->excerpt }}</p>
                                 @endif
-                                <a href="{{ route('blog.show', $post->slug) }}" class="mt-6 inline-flex items-center gap-2 text-sm font-semibold text-[var(--livora-accent)]">مطالعه مقاله <span aria-hidden="true">←</span></a>
+
+                                <a href="{{ route('blog.show', $post->slug) }}" class="blog-article-card__read">
+                                    <span>ادامه‌ی مطلب</span>
+                                    <span aria-hidden="true">←</span>
+                                </a>
                             </div>
                         </article>
                     @endforeach
                 </div>
-                <div class="mt-10">{{ $posts->links() }}</div>
-            @else
-                <div class="rounded-[2rem] border border-[var(--livora-border)] bg-[var(--livora-cream)] px-6 py-14 text-center">
-                    <h3 class="text-xl font-semibold">{{ $term ? 'هنوز مقاله‌ای در این موضوع منتشر نشده است.' : 'مقاله‌های جدید به‌زودی منتشر می‌شوند.' }}</h3>
-                    <p class="mx-auto mt-3 max-w-lg text-sm leading-7 text-[var(--livora-stone)]">در این فاصله می‌توانید محصولات و دسته‌بندی‌ها را بررسی کنید.</p>
-                    <a href="{{ route('categories.index') }}" class="mt-6 inline-flex rounded-2xl bg-[var(--livora-ink)] px-5 py-3.5 text-sm font-semibold text-white transition hover:bg-[var(--livora-accent)]">مشاهده دسته‌بندی‌ها</a>
+            @elseif(! $featuredPost)
+                <div class="blog-empty-state" data-blog-reveal>
+                    <span class="blog-empty-state__mark" aria-hidden="true">F.</span>
+                    <p class="blog-section-kicker">A LITTLE PAUSE</p>
+                    <h3>{{ $term ? 'هنوز نوشته‌ای در این موضوع منتشر نشده.' : 'اولین داستان به‌زودی اینجا منتشر می‌شود.' }}</h3>
+                    <p>تا آن زمان، می‌توانی نگاهی به مجموعه‌ی محصولات و انتخاب‌های فرزین بیندازی.</p>
+                    <a href="{{ route('categories.index') }}" class="blog-button blog-button--light">دیدن دسته‌بندی محصولات <span aria-hidden="true">↗</span></a>
                 </div>
             @endif
+
+            @if($posts->hasPages())
+                <div class="blog-pagination" data-blog-reveal>
+                    {{ $posts->links() }}
+                </div>
+            @endif
+        </x-layout.container>
+    </section>
+
+    <section class="blog-closing-section">
+        <x-layout.container>
+            <div class="blog-closing-card" data-blog-reveal>
+                <div class="blog-closing-card__copy">
+                    <p class="blog-section-kicker">THOUGHTFUL CHOICES, BETTER SPACES</p>
+                    <h2>الهام بگیر. دقیق‌تر انتخاب کن.</h2>
+                    <p>راهنماها را بخوان و بعد، با خیال راحت‌تر سراغ انتخاب محصول مناسب خانه‌ات برو.</p>
+                    <a href="{{ route('categories.index') }}" class="blog-button blog-button--dark">
+                        گشت‌وگذار در محصولات
+                        <span aria-hidden="true">↗</span>
+                    </a>
+                </div>
+                <div class="blog-closing-card__art" aria-hidden="true">
+                    <span class="blog-closing-card__ring"></span>
+                    <span class="blog-closing-card__ring blog-closing-card__ring--two"></span>
+                    <span class="blog-closing-card__letter">F.</span>
+                </div>
+            </div>
         </x-layout.container>
     </section>
 </div>
