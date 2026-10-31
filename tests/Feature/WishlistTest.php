@@ -139,7 +139,7 @@ class WishlistTest extends TestCase
 
         return Product::create([
             'category_id' => $category->id,
-            'name' => 'محصول تست علاقه‌مندی ' . $sequence,
+            'name' => 'محصول تست علاقه‌مندی ' . str_pad((string) $sequence, 2, '0', STR_PAD_LEFT),
             'slug' => 'wishlist-product-' . $sequence,
             'sku' => 'WISHLIST-TEST-' . $sequence,
             'short_description' => 'محصول آزمایشی',
