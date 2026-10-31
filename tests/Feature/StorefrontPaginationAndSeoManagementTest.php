@@ -164,6 +164,10 @@ class StorefrontPaginationAndSeoManagementTest extends TestCase
             'seo_categories_description' => 'توضیحات مدیریت‌شده برای فهرست دسته‌بندی‌ها.',
             'seo_blog_title' => 'عنوان مدیریت‌شده مجله فرزین',
             'seo_blog_description' => 'توضیحات مدیریت‌شده برای فهرست مقالات فرزین.',
+            'seo_about_title' => 'عنوان مدیریت‌شده درباره فرزین',
+            'seo_about_description' => 'توضیحات مدیریت‌شده درباره مجموعه فرزین.',
+            'seo_contact_title' => 'عنوان مدیریت‌شده تماس با فرزین',
+            'seo_contact_description' => 'توضیحات مدیریت‌شده برای تماس با فرزین.',
         ];
 
         foreach ($settings as $key => $value) {
@@ -191,6 +195,16 @@ class StorefrontPaginationAndSeoManagementTest extends TestCase
             ->assertOk()
             ->assertSee('<title>عنوان مدیریت‌شده مجله فرزین</title>', false)
             ->assertSee('name="description" content="توضیحات مدیریت‌شده برای فهرست مقالات فرزین."', false);
+
+        $this->get(route('about'))
+            ->assertOk()
+            ->assertSee('<title>عنوان مدیریت‌شده درباره فرزین</title>', false)
+            ->assertSee('name="description" content="توضیحات مدیریت‌شده درباره مجموعه فرزین."', false);
+
+        $this->get(route('contact'))
+            ->assertOk()
+            ->assertSee('<title>عنوان مدیریت‌شده تماس با فرزین</title>', false)
+            ->assertSee('name="description" content="توضیحات مدیریت‌شده برای تماس با فرزین."', false);
     }
 
     public function test_shop_filter_category_dataset_remains_bounded_and_selected_category_stays_available(): void
@@ -225,6 +239,8 @@ class StorefrontPaginationAndSeoManagementTest extends TestCase
             ->assertSee('seo_shop_title', false)
             ->assertSee('seo_categories_title', false)
             ->assertSee('seo_blog_title', false)
+            ->assertSee('seo_about_title', false)
+            ->assertSee('seo_contact_title', false)
             ->assertSee('data-seo-page-preview', false)
             ->assertSee('data-seo-preview-title-output', false);
     }
