@@ -156,17 +156,44 @@ body {
     max-width: calc(100% - .5rem);
 }
 
+/* The footer lives outside .storefront-content. Give it a full-bleed
+ * surface and align its inner content with the same public 1280px grid. */
+#app > .farzin-site-footer {
+    display: block;
+    flex: 0 0 auto;
+    align-self: stretch;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    margin-inline: 0;
+}
+
+.farzin-site-footer > .livora-container {
+    width: 100%;
+    max-width: 1280px;
+    margin-inline: auto;
+    padding-inline: clamp(1rem, 3.5vw, 2rem);
+}
+
 .farzin-site-footer,
-.farzin-site-footer * ,
+.farzin-site-footer *,
 .farzin-site-footer__main > *,
 .farzin-site-footer__trust > *,
 .farzin-site-footer__bottom > * {
+    box-sizing: border-box;
     min-width: 0;
+}
+
+.farzin-site-footer__main {
+    display: grid;
+    grid-template-columns: minmax(0, 1.25fr) repeat(2, minmax(0, .75fr)) minmax(0, 1fr);
+    align-items: start;
 }
 
 .farzin-site-footer nav a,
 .farzin-site-footer p,
 .farzin-site-footer a {
+    max-width: 100%;
     overflow-wrap: anywhere;
 }
 
@@ -360,9 +387,22 @@ body {
     }
 }
 
-@media (min-width: 768px) and (max-width: 1023px) {
-    .storefront-content .farzin-site-footer__main {
+@media (min-width: 768px) and (max-width: 1199px) {
+    .farzin-site-footer__main {
         grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: clamp(1.5rem, 3vw, 2.5rem);
+    }
+
+    .farzin-site-footer__trust {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .farzin-site-footer__trust > :last-child {
+        grid-column: 1 / -1;
+        border-top: 1px solid rgba(255, 255, 255, .1);
+        border-inline: 0;
+        padding-inline: 0;
     }
 }
 
@@ -449,10 +489,19 @@ body {
         padding: 1.15rem;
     }
 
+    .farzin-site-footer > .livora-container {
+        padding-inline: 1rem;
+    }
+
     .farzin-site-footer__main {
         grid-template-columns: minmax(0, 1fr);
-        gap: 2rem;
+        gap: 1.75rem;
         padding-block: 2.5rem;
+    }
+
+    .farzin-site-footer__main > * {
+        width: 100%;
+        max-width: none;
     }
 
     .farzin-site-footer__trust {
