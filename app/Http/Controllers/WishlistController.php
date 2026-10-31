@@ -18,7 +18,8 @@ class WishlistController extends Controller
                 'images',
             ])
             ->latest('wishlists.created_at')
-            ->paginate(12);
+            ->paginate(12)
+            ->withQueryString();
 
         return view('wishlist.index', [
             'products' => $products,
