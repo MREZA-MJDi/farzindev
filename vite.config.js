@@ -12,6 +12,7 @@ export default defineConfig({
                 'resources/css/home.css',
                 'resources/js/home.js',
                 'resources/css/responsive.css',
+                'resources/css/blog.css',
             ],
             refresh: true,
         }),
