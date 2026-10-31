@@ -37,6 +37,12 @@
         'admin.media.index' => 'رسانه',
         'admin.media.create' => 'افزودن رسانه',
 
+        'admin.blog-posts.index' => 'مقالات بلاگ',
+        'admin.blog-posts.create' => 'مقاله جدید',
+        'admin.blog-posts.edit' => 'ویرایش مقاله',
+        'admin.blog-terms.index' => 'دسته‌ها و برچسب‌های بلاگ',
+        'admin.blog-appearance.edit' => 'ظاهر و تصاویر مجله',
+
         'admin.contact-messages.index' => 'پیام‌های کاربران',
         'admin.contact-messages.show' => 'مشاهده پیام',
     ];
