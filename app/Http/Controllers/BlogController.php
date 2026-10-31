@@ -23,14 +23,14 @@ class BlogController extends Controller
         ]);
     }
 
-    public function category(string $slug): View
+    public function category(string $slug, BlogAppearance $appearance): View
     {
-        return $this->term(BlogTerm::TYPE_CATEGORY, $slug);
+        return $this->term(BlogTerm::TYPE_CATEGORY, $slug, $appearance);
     }
 
-    public function tag(string $slug): View
+    public function tag(string $slug, BlogAppearance $appearance): View
     {
-        return $this->term(BlogTerm::TYPE_TAG, $slug);
+        return $this->term(BlogTerm::TYPE_TAG, $slug, $appearance);
     }
 
     public function term(string $type, string $slug, BlogAppearance $appearance): View
