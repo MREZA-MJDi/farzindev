@@ -55,6 +55,14 @@
                     <strong class="block text-sm text-[var(--admin-text)]">SEO مقالات</strong>
                     <span class="mt-1 block text-xs leading-6 text-[var(--admin-muted)]">عنوان، توضیحات و زمان انتشار</span>
                 </a>
+                <a href="{{ route('admin.blog-terms.index') }}" class="rounded-xl border border-[var(--admin-border)] p-4 transition hover:border-[var(--admin-accent)] hover:bg-[var(--admin-surface)]">
+                    <strong class="block text-sm text-[var(--admin-text)]">دسته‌ها و برچسب‌های بلاگ</strong>
+                    <span class="mt-1 block text-xs leading-6 text-[var(--admin-muted)]">آرشیوهای موضوعی و SEO مستقل هر دسته/برچسب</span>
+                </a>
+                <a href="{{ route('admin.seo-redirects.index') }}" class="rounded-xl border border-[var(--admin-border)] p-4 transition hover:border-[var(--admin-accent)] hover:bg-[var(--admin-surface)]">
+                    <strong class="block text-sm text-[var(--admin-text)]">مدیریت Redirectها</strong>
+                    <span class="mt-1 block text-xs leading-6 text-[var(--admin-muted)]">ریدایرکت 301/302، تغییر slug و شمارش استفاده</span>
+                </a>
                 <a href="{{ route('admin.storefront-settings.edit') }}" class="rounded-xl border border-[var(--admin-border)] p-4 transition hover:border-[var(--admin-accent)] hover:bg-[var(--admin-surface)]">
                     <strong class="block text-sm text-[var(--admin-text)]">اطلاعات تماس و نقشه</strong>
                     <span class="mt-1 block text-xs leading-6 text-[var(--admin-muted)]">آدرس واقعی، مختصات Google Maps و راه‌های ارتباطی</span>
