@@ -288,6 +288,63 @@ test('homepage CTA meets the shared footer at the same spacing used by interior 
     }
 });
 
+test('shared footer keeps the same typography, content and grid on every storefront page', async ({ page }) => {
+    const snapshots = [];
+
+    for (const path of ['/', '/shop', '/categories/hoods', '/contact']) {
+        await page.goto(path, { waitUntil: 'domcontentloaded' });
+
+        snapshots.push(await page.locator('.farzin-site-footer').evaluate((footer) => {
+            const main = footer.querySelector('.farzin-site-footer__main');
+            const heading = footer.querySelector('.farzin-site-footer__heading');
+            const style = window.getComputedStyle(footer);
+            const headingStyle = window.getComputedStyle(heading);
+            return {
+                text: footer.innerText.replace(/\s+/g, ' ').trim(),
+                direction: style.direction,
+                fontFamily: style.fontFamily,
+                fontSize: style.fontSize,
+                lineHeight: style.lineHeight,
+                color: style.color,
+                backgroundColor: style.backgroundColor,
+                columns: window.getComputedStyle(main).gridTemplateColumns,
+                headingFont: headingStyle.font,
+                headingColor: headingStyle.color,
+                headingCount: footer.querySelectorAll('.farzin-site-footer__heading').length,
+            };
+        }));
+    }
+
+    for (const snapshot of snapshots.slice(1)) {
+        expect(snapshot).toEqual(snapshots[0]);
+    }
+    expect(snapshots[0].headingCount).toBe(6);
+});
+
+test('storefront sections never disappear while entrance motion initializes', async ({ page }) => {
+    for (const path of ['/categories/hoods', '/contact']) {
+        await page.goto(path, { waitUntil: 'domcontentloaded' });
+
+        const motionState = await page.locator(
+            '.storefront-content [data-fz-reveal], .storefront-content [data-farzin-reveal], .storefront-content [data-shop-animate]'
+        ).evaluateAll((elements) => elements.map((element) => {
+            const style = window.getComputedStyle(element);
+            return {
+                opacity: style.opacity,
+                visibility: style.visibility,
+                display: style.display,
+            };
+        }));
+
+        expect(motionState.length, path + ' should cover explicit motion targets').toBeGreaterThan(0);
+        expect(
+            motionState.filter((item) => item.opacity !== '1' || item.visibility !== 'visible' || item.display === 'none'),
+            path + ' motion targets must stay visible during page entry'
+        ).toEqual([]);
+        expect(await page.evaluate(() => typeof window.gsap)).toBe('undefined');
+    }
+});
+
 test('customer and admin endpoints redirect guests to login', async ({ page }) => {
     for (const path of ['/checkout', '/account', '/admin', '/admin/blog-posts']) {
         await page.goto(path, { waitUntil: 'domcontentloaded' });

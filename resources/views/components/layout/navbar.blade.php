@@ -1,3 +1,5 @@
+@props(['cartCount' => 0])
+
 <nav
     x-data
     aria-label="ناوبری اصلی فرزین"
@@ -282,21 +284,6 @@
                 {{-- =====================================================
                     CART
                 ====================================================== --}}
-                @php
-                    $cartCount = 0;
-
-                    if (
-                        auth()->check()
-                        && auth()->user()->isCustomer()
-                    ) {
-                        $cart = auth()->user()->activeCart;
-
-                        if ($cart) {
-                            $cartCount = $cart->itemCount();
-                        }
-                    }
-                @endphp
-
                 <a
                     href="{{ route('cart.index') }}"
                     aria-label="سبد خرید"
@@ -317,15 +304,15 @@
                         />
                     </svg>
 
-                    @if($cartCount > 0)
-
-                        <span
-                            class="absolute -right-0.5 -top-0.5 flex h-[17px] min-w-[17px] items-center justify-center rounded-full bg-[var(--livora-accent)] px-1 text-[9px] font-semibold leading-none text-white"
-                        >
-                            {{ $cartCount }}
-                        </span>
-
-                    @endif
+                    <span
+                        data-cart-count
+                        @class([
+                            'absolute -right-0.5 -top-0.5 flex h-[17px] min-w-[17px] items-center justify-center rounded-full bg-[var(--livora-accent)] px-1 text-[9px] font-semibold leading-none text-white',
+                            'hidden' => $cartCount < 1,
+                        ])
+                        aria-live="polite"
+                        aria-atomic="true"
+                    >{{ $cartCount }}</span>
 
                 </a>
 
