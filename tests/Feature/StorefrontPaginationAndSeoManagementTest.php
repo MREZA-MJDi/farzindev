@@ -197,6 +197,26 @@ class StorefrontPaginationAndSeoManagementTest extends TestCase
             ->assertSee('name="description" content="توضیحات مدیریت‌شده برای فهرست مقالات فرزین."', false);
     }
 
+    public function test_shop_filter_category_dataset_remains_bounded_and_selected_category_stays_available(): void
+    {
+        for ($index = 1; $index <= 105; $index++) {
+            Category::create([
+                'name' => 'Shop Filter Category ' . str_pad((string) $index, 3, '0', STR_PAD_LEFT),
+                'slug' => 'shop-filter-category-' . $index,
+                'description' => 'Category used for bounded shop filters.',
+                'is_active' => true,
+                'sort_order' => $index,
+            ]);
+        }
+
+        $selected = Category::query()->where('slug', 'shop-filter-category-105')->firstOrFail();
+
+        $this->get(route('shop.index', ['category' => $selected->slug]))
+            ->assertOk()
+            ->assertSee($selected->name)
+            ->assertSee($selected->slug);
+    }
+
     public function test_seo_admin_dashboard_exposes_page_specific_fields_and_live_preview_controls(): void
     {
         $admin = User::factory()->create(['role' => 'admin']);
