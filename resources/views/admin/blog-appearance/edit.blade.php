@@ -19,7 +19,10 @@
                 <p class="admin-subtitle mt-2 max-w-3xl">تصویر هدر، گرافیک بخش پایانی و عرض چیدمان را کنترل کن. کراپ، پیش‌نمایش و تنظیم جای تصویر همین‌جا انجام می‌شود.</p>
             </div>
             <div class="flex flex-wrap gap-2">
-                <a href="{{ route('blog.index') }}" target="_blank" rel="noopener noreferrer" class="admin-btn admin-btn-secondary">مشاهده مجله ↗</a>
+                <a href="{{ route('blog.index') }}" target="_blank" rel="noopener noreferrer" class="admin-btn admin-btn-secondary">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4" aria-hidden="true"><path d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6Z" /><circle cx="12" cy="12" r="2.5" /></svg>
+                    پیش‌نمایش مجله
+                </a>
                 <a href="{{ route('admin.media.index') }}" class="admin-btn admin-btn-secondary">کتابخانه رسانه</a>
                 <a href="{{ route('admin.blog-posts.index') }}" class="admin-btn admin-btn-primary">مدیریت مقاله‌ها</a>
             </div>
