@@ -71,9 +71,17 @@
                     @endif
                 </nav>
 
-                <a href="{{ route('blog.feed') }}" class="blog-rss-link">
-                    <span class="blog-rss-link__icon" aria-hidden="true">↗</span>
-                    دنبال‌کردن از طریق RSS
+                <a href="{{ route('blog.feed') }}" class="blog-rss-link" aria-label="دنبال‌کردن مقاله‌های مجله با فید RSS">
+                    <span class="blog-rss-link__icon" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="blog-action-icon">
+                            <circle cx="5" cy="19" r="1.25" fill="currentColor" stroke="none" />
+                            <path d="M4.5 11a8.5 8.5 0 0 1 8.5 8.5M4.5 5a14.5 14.5 0 0 1 14.5 14.5" />
+                        </svg>
+                    </span>
+                    <span class="blog-rss-link__copy">
+                        <strong>دنبال‌کردن مقاله‌ها</strong>
+                        <small>دریافت خودکار نوشته‌های تازه · RSS</small>
+                    </span>
                 </a>
             </div>
 
@@ -95,12 +103,12 @@
 
                     <div class="blog-masthead__actions">
                         <a href="#blog-articles" class="blog-button blog-button--light">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" class="blog-action-icon" aria-hidden="true"><path d="M12 7.5c-2.2-1.6-5-2.1-8.25-1.5v12c3.25-.6 6.05-.1 8.25 1.5m0-12c2.2-1.6 5-2.1 8.25-1.5v12c-3.25-.6-6.05-.1-8.25 1.5" /><path d="M12 7.5v12" /></svg>
                             کشف مقاله‌ها
-                            <span aria-hidden="true">↓</span>
                         </a>
                         <a href="{{ route('categories.index') }}" class="blog-text-link">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="blog-action-icon" aria-hidden="true"><path d="M3.5 9h17l-1 11h-15l-1-11Z" /><path d="M8 9V6.5a4 4 0 0 1 8 0V9" /></svg>
                             دیدن محصولات
-                            <span aria-hidden="true">↗</span>
                         </a>
                     </div>
                 </div>
@@ -207,7 +215,7 @@
 
                         <a href="{{ route('blog.show', $featuredPost->slug) }}" class="blog-featured-card__action">
                             <span>خواندن این راهنما</span>
-                            <span class="blog-featured-card__action-icon" aria-hidden="true">↗</span>
+                            <span class="blog-featured-card__action-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" class="blog-action-icon" aria-hidden="true"><path d="M12 7.5c-2.2-1.6-5-2.1-8.25-1.5v12c3.25-.6 6.05-.1 8.25 1.5m0-12c2.2-1.6 5-2.1 8.25-1.5v12c-3.25-.6-6.05-.1-8.25 1.5" /><path d="M12 7.5v12" /></svg></span>
                         </a>
 
                         <span class="blog-featured-card__watermark" aria-hidden="true">F.</span>
@@ -232,7 +240,7 @@
                             </span>
                         @endif
                         <span class="blog-featured-card__media-label">FARZIN / FIELD NOTE</span>
-                        <span class="blog-featured-card__media-arrow" aria-hidden="true">↗</span>
+                        <span class="blog-featured-card__media-arrow" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" class="blog-action-icon" aria-hidden="true"><path d="M12 7.5c-2.2-1.6-5-2.1-8.25-1.5v12c3.25-.6 6.05-.1 8.25 1.5m0-12c2.2-1.6 5-2.1 8.25-1.5v12c-3.25-.6-6.05-.1-8.25 1.5" /><path d="M12 7.5v12" /></svg></span>
                     </a>
                 </article>
             </x-layout.container>
@@ -290,7 +298,7 @@
                                 @if($postCategory)
                                     <span class="blog-article-card__category">{{ $postCategory->name }}</span>
                                 @endif
-                                <span class="blog-article-card__media-arrow" aria-hidden="true">↗</span>
+                                <span class="blog-article-card__media-arrow" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" class="blog-action-icon" aria-hidden="true"><path d="M12 7.5c-2.2-1.6-5-2.1-8.25-1.5v12c3.25-.6 6.05-.1 8.25 1.5m0-12c2.2-1.6 5-2.1 8.25-1.5v12c-3.25-.6-6.05-.1-8.25 1.5" /><path d="M12 7.5v12" /></svg></span>
                             </a>
 
                             <div class="blog-article-card__body">
@@ -308,7 +316,7 @@
 
                                 <a href="{{ route('blog.show', $post->slug) }}" class="blog-article-card__read">
                                     <span>ادامه‌ی مطلب</span>
-                                    <span aria-hidden="true">←</span>
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" class="blog-action-icon" aria-hidden="true"><path d="M12 7.5c-2.2-1.6-5-2.1-8.25-1.5v12c3.25-.6 6.05-.1 8.25 1.5m0-12c2.2-1.6 5-2.1 8.25-1.5v12c-3.25-.6-6.05-.1-8.25 1.5" /><path d="M12 7.5v12" /></svg>
                                 </a>
                             </div>
                         </article>
@@ -320,7 +328,10 @@
                     <p class="blog-section-kicker">A LITTLE PAUSE</p>
                     <h3>{{ $term ? 'هنوز نوشته‌ای در این موضوع منتشر نشده.' : 'اولین داستان به‌زودی اینجا منتشر می‌شود.' }}</h3>
                     <p>تا آن زمان، می‌توانی نگاهی به مجموعه‌ی محصولات و انتخاب‌های فرزین بیندازی.</p>
-                    <a href="{{ route('categories.index') }}" class="blog-button blog-button--light">دیدن دسته‌بندی محصولات <span aria-hidden="true">↗</span></a>
+                    <a href="{{ route('categories.index') }}" class="blog-button blog-button--light">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="blog-action-icon" aria-hidden="true"><path d="M3.5 9h17l-1 11h-15l-1-11Z" /><path d="M8 9V6.5a4 4 0 0 1 8 0V9" /></svg>
+                        دیدن دسته‌بندی محصولات
+                    </a>
                 </div>
             @endif
 
@@ -340,8 +351,8 @@
                     <h2>الهام بگیر. دقیق‌تر انتخاب کن.</h2>
                     <p>راهنماها را بخوان و بعد، با خیال راحت‌تر سراغ انتخاب محصول مناسب خانه‌ات برو.</p>
                     <a href="{{ route('categories.index') }}" class="blog-button blog-button--dark">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="blog-action-icon" aria-hidden="true"><path d="M3.5 9h17l-1 11h-15l-1-11Z" /><path d="M8 9V6.5a4 4 0 0 1 8 0V9" /></svg>
                         گشت‌وگذار در محصولات
-                        <span aria-hidden="true">↗</span>
                     </a>
                 </div>
                 <div class="blog-closing-card__art" @if(! $appearance['closing']['image_url']) aria-hidden="true" @endif>
