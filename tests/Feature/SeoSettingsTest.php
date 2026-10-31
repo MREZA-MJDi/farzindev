@@ -6,7 +6,9 @@ use App\Models\StorefrontSetting;
 use App\Models\User;
 use App\Services\Seo\SeoSettings;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
 class SeoSettingsTest extends TestCase
@@ -376,4 +378,47 @@ class SeoSettingsTest extends TestCase
             ->assertSee('name="robots" content="noindex, nofollow, noarchive, nosnippet, noimageindex"', false)
             ->assertHeader('X-Robots-Tag', 'noindex, nofollow, noarchive, nosnippet, noimageindex');
     }
+
+    public function test_admin_can_upload_default_social_image_while_prelaunch_indexing_remains_disabled(): void
+    {
+        Storage::fake('public');
+
+        $admin = User::factory()->create(['role' => 'admin']);
+
+        $this->actingAs($admin)
+            ->get(route('admin.seo-settings.edit'))
+            ->assertOk()
+            ->assertSee('name="seo_default_og_image_upload"', false);
+
+        $this->actingAs($admin)
+            ->put(route('admin.seo-settings.update'), [
+                'seo_canonical_base_url' => 'https://farajihome.com',
+                'seo_site_name' => 'فرزین',
+                'seo_default_title' => 'خرید هود و سینک آشپزخانه | فرزین',
+                'seo_default_description' => 'تصویر و توضیحات رسمی اشتراک‌گذاری فرزین.',
+                'seo_default_og_image_upload' => UploadedFile::fake()->image('farzin-og.jpg', 1200, 630),
+                'seo_development_mode' => '1',
+                'seo_robots_txt_rules' => "User-agent: *\\nAllow: /",
+                'seo_sitemap_enabled' => '1',
+            ])
+            ->assertRedirect(route('admin.seo-settings.edit'))
+            ->assertSessionHasNoErrors();
+
+        $storedPath = StorefrontSetting::query()
+            ->where('key', 'seo_default_og_image')
+            ->value('value');
+
+        $this->assertNotEmpty($storedPath);
+        Storage::disk('public')->assertExists($storedPath);
+
+        $imageUrl = 'https://farajihome.com/storage/' . ltrim($storedPath, '/');
+        $this->get(route('home'))
+            ->assertOk()
+            ->assertSee('property="og:image" content="' . $imageUrl . '"', false)
+            ->assertSee('<meta name="twitter:image" content="' . $imageUrl . '">', false)
+            ->assertSee('name="robots" content="noindex, nofollow, noarchive, nosnippet, noimageindex"', false)
+            ->assertHeader('X-Robots-Tag', 'noindex, nofollow, noarchive, nosnippet, noimageindex');
+    }
+
+
 }
