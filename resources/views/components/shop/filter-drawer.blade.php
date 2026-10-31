@@ -16,7 +16,7 @@
     x-transition:leave="transition ease-in duration-200"
     x-transition:leave-start="opacity-100"
     x-transition:leave-end="opacity-0"
-    class="farzin-filter-drawer fixed inset-0 z-[110] lg:hidden" data-farzin-filter-drawer
+    class="farzin-filter-drawer fixed inset-0 z-[150] lg:hidden" data-farzin-filter-drawer
 >
 
     {{-- =========================================================
