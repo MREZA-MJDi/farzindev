@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use App\Services\Media\ResponsiveImageService;
 
 class Media extends Model
 {
@@ -42,6 +43,15 @@ class Media extends Model
     public function getUrlAttribute(): string
     {
         return asset('storage/' . ltrim($this->path, '/'));
+    }
+
+    public function getResponsiveSrcsetAttribute(): ?string
+    {
+        if (! $this->is_image || $this->mime_type === 'image/gif') {
+            return null;
+        }
+
+        return app(ResponsiveImageService::class)->srcset($this->path, $this->disk ?: 'public');
     }
 
     /**
