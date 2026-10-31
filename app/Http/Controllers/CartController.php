@@ -25,7 +25,10 @@ class CartController extends Controller
 
         $cart->load([
             'items.product.category',
-            'items.product.images.media',
+            'items.product.images' => fn ($query) => $query
+                ->select(['id', 'product_id', 'media_id', 'path', 'alt', 'sort_order', 'is_primary'])
+                ->limit(1),
+            'items.product.images.media:id,path',
             'items.product.variants',
             'items.variant',
         ]);

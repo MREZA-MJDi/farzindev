@@ -367,7 +367,10 @@ class DashboardController extends Controller
             now()->addMinute(),
             fn (): Collection => OrderItem::query()
                 ->with([
-                    'product.images.media',
+                    'product.images' => fn ($query) => $query
+                        ->select(['id', 'product_id', 'media_id', 'path', 'alt', 'sort_order', 'is_primary'])
+                        ->limit(1),
+                    'product.images.media:id,path',
                 ])
                 ->whereHas(
                     'order',

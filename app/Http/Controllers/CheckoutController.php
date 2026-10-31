@@ -25,7 +25,10 @@ class CheckoutController extends Controller
 
         $cart->load([
             'items.product.category',
-            'items.product.images',
+            'items.product.images' => fn ($query) => $query
+                ->select(['id', 'product_id', 'media_id', 'path', 'alt', 'sort_order', 'is_primary'])
+                ->limit(1),
+            'items.product.images.media:id,path',
             'items.variant',
         ]);
 
@@ -58,7 +61,10 @@ class CheckoutController extends Controller
         );
 
         $order->load([
-            'items.product.images',
+            'items.product.images' => fn ($query) => $query
+                ->select(['id', 'product_id', 'media_id', 'path', 'alt', 'sort_order', 'is_primary'])
+                ->limit(1),
+            'items.product.images.media:id,path',
             'installments',
         ]);
 
@@ -143,7 +149,10 @@ class CheckoutController extends Controller
         );
 
         $order->load([
-            'items.product.images',
+            'items.product.images' => fn ($query) => $query
+                ->select(['id', 'product_id', 'media_id', 'path', 'alt', 'sort_order', 'is_primary'])
+                ->limit(1),
+            'items.product.images.media:id,path',
             'latestPayment',
             'installments',
         ]);

@@ -6,6 +6,7 @@ use App\Models\Category;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Product;
+use App\Models\ProductImage;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -210,4 +211,56 @@ class ShopPaginationAndBestSellersTest extends TestCase
             'total' => $product->price * $quantity,
         ]);
     }
+    public function test_homepage_shows_four_best_sellers_and_four_new_arrivals_with_a_separate_four_image_mosaic(): void
+    {
+        $category = $this->category();
+
+        for ($index = 1; $index <= 4; $index++) {
+            $galleryProduct = $this->product($category, [
+                'name' => 'Editorial Gallery Product '.$index,
+                'slug' => 'editorial-gallery-product-'.$index,
+                'sku' => 'FAR-EDITORIAL-GALLERY-'.$index,
+                'show_in_home_gallery' => true,
+            ]);
+
+            ProductImage::create([
+                'product_id' => $galleryProduct->id,
+                'path' => 'https://cdn.example.test/editorial-gallery-'.$index.'.webp',
+                'alt' => $galleryProduct->name,
+                'sort_order' => 0,
+                'is_primary' => true,
+            ]);
+        }
+
+        $order = $this->paidOrder();
+
+        for ($index = 1; $index <= 4; $index++) {
+            $bestSeller = $this->product($category, [
+                'name' => 'Homepage Bestseller '.$index,
+                'slug' => 'homepage-bestseller-'.$index,
+                'sku' => 'FAR-HOMEPAGE-BESTSELLER-'.$index,
+            ]);
+            $this->addOrderItem($order, $bestSeller, 10 - $index);
+
+            $this->product($category, [
+                'name' => 'Homepage New Arrival '.$index,
+                'slug' => 'homepage-new-arrival-'.$index,
+                'sku' => 'FAR-HOMEPAGE-NEW-'.$index,
+                'is_new' => true,
+            ]);
+        }
+
+        $response = $this->get(route('home'))->assertOk();
+        $html = $response->getContent();
+
+        $this->assertSame(4, substr_count($html, 'class="grid__image"'));
+        $this->assertSame(8, substr_count($html, 'class="fz-product-card fz-reveal"'));
+
+        for ($index = 1; $index <= 4; $index++) {
+            $response->assertSee('Editorial Gallery Product '.$index)
+                ->assertSee('Homepage Bestseller '.$index)
+                ->assertSee('Homepage New Arrival '.$index);
+        }
+    }
+
 }
