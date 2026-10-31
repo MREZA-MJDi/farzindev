@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\StorefrontSetting;
 use App\Services\Seo\SeoSettings;
+use App\Services\Media\ResponsiveImageService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -39,7 +40,7 @@ class SeoSettingsController extends Controller
         ]);
     }
 
-    public function update(Request $request, SeoSettings $seoSettings): RedirectResponse
+    public function update(Request $request, SeoSettings $seoSettings, ResponsiveImageService $images): RedirectResponse
     {
         $validated = $request->validate([
             'seo_canonical_base_url' => ['required', 'url', 'regex:~^https?://[A-Za-z0-9.-]+(?::[0-9]{1,5})?/?$~i', 'max:255'],
@@ -141,7 +142,7 @@ class SeoSettingsController extends Controller
 
         $newImagePath = null;
         if ($request->hasFile('seo_default_og_image_upload')) {
-            $newImagePath = $request->file('seo_default_og_image_upload')->store('seo', 'public');
+            $newImagePath = $images->store($request->file('seo_default_og_image_upload'), 'seo');
             if (! $newImagePath) {
                 return back()->withInput()->withErrors([
                     'seo_default_og_image_upload' => 'ذخیره تصویر انجام نشد؛ تنظیم قبلی حفظ شد.',
@@ -167,7 +168,7 @@ class SeoSettingsController extends Controller
             });
         } catch (Throwable $exception) {
             if ($newImagePath !== null) {
-                Storage::disk('public')->delete($newImagePath);
+                $images->delete($newImagePath);
             }
             throw $exception;
         }
@@ -178,7 +179,7 @@ class SeoSettingsController extends Controller
             && ! filter_var($oldImageValue, FILTER_VALIDATE_URL)
             && ! str_starts_with($oldImageValue, '/')
         ) {
-            Storage::disk('public')->delete($oldImageValue);
+            $images->delete($oldImageValue);
         }
 
         $seoSettings->clearCache();
