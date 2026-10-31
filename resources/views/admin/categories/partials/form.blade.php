@@ -102,6 +102,30 @@
 
 
         <div class="admin-card p-6">
+            <div class="mb-5">
+                <h3 class="text-base font-bold text-[var(--admin-text)]">SEO اختصاصی دسته‌بندی</h3>
+                <p class="mt-1 text-xs leading-6 text-[var(--admin-muted)]">این عنوان و توضیحات در صفحه عمومی دسته‌بندی استفاده می‌شوند و بر پیش‌فرض سراسری SEO اولویت دارند.</p>
+            </div>
+
+            <div class="space-y-4">
+                <label for="meta_title" class="block text-sm font-medium text-[var(--admin-text)]">
+                    عنوان SEO
+                    <input id="meta_title" name="meta_title" type="text" maxlength="255" value="{{ old('meta_title', $category->meta_title ?? '') }}" class="admin-input mt-2" placeholder="خرید هود آشپزخانه | فرزین">
+                    @error('meta_title')<span class="mt-1 block text-xs text-[var(--admin-danger)]">{{ $message }}</span>@enderror
+                </label>
+
+                <label for="meta_description" class="block text-sm font-medium text-[var(--admin-text)]">
+                    توضیحات متا
+                    <textarea id="meta_description" name="meta_description" rows="3" maxlength="320" class="admin-textarea mt-2" placeholder="توضیح کوتاه و دقیق درباره این دسته‌بندی...">{{ old('meta_description', $category->meta_description ?? '') }}</textarea>
+                    @error('meta_description')<span class="mt-1 block text-xs text-[var(--admin-danger)]">{{ $message }}</span>@enderror
+                </label>
+
+                <p class="text-xs leading-6 text-[var(--admin-muted)]">پیشنهاد: عنوان منحصربه‌فرد و توضیح واقعی این دسته را بنویسید؛ متن تکراری بین دسته‌ها به سئو کمکی نمی‌کند.</p>
+            </div>
+        </div>
+
+
+        <div class="admin-card p-6">
 
             <div class="mb-6">
                 <h3 class="text-base font-bold text-[var(--admin-text)]">
