@@ -36,7 +36,7 @@
                     </span>
 
                     <span class="rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-xs text-white/75">
-                        انتخاب محصول
+                        SINKS
                     </span>
 
                 </div>
@@ -234,7 +234,7 @@
             <div class="border-b border-white/10 py-5 md:border-b-0 md:px-6 md:py-6">
 
                 <h2 class="farzin-site-footer__heading">
-                    SINKS
+                    مشخصات محصول
                 </h2>
 
                 <p class="mt-2 text-sm leading-6 text-white/70">
