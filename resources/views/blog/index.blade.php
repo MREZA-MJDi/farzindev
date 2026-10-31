@@ -53,7 +53,7 @@
 
 
 @section('content')
-<div class="blog-shell" data-blog-motion>
+<div class="blog-shell" data-blog-motion style="--blog-container-width: {{ $appearance['container_width'] }}px;">
     <section class="blog-masthead" aria-labelledby="blog-page-title">
         <div class="blog-masthead__grid" aria-hidden="true"></div>
         <div class="blog-masthead__glow blog-masthead__glow--one" aria-hidden="true"></div>
@@ -109,7 +109,21 @@
                     <div class="blog-orbit blog-orbit--outer"></div>
                     <div class="blog-orbit blog-orbit--middle"></div>
                     <div class="blog-orbit blog-orbit--inner"></div>
-                    <div class="blog-orbit__core"><span>F</span></div>
+                    @if($appearance['hero']['image_url'])
+                        <div class="blog-user-art" style="--blog-image-fit: {{ $appearance['hero']['fit'] }}; --blog-image-position: {{ $appearance['hero']['object_position'] }}; --blog-image-scale: {{ number_format($appearance['hero']['scale'] / 100, 2, '.', '') }};">
+                            <img
+                                src="{{ $appearance['hero']['image_url'] }}"
+                                @if($appearance['hero']['image_srcset']) srcset="{{ $appearance['hero']['image_srcset'] }}" sizes="(max-width: 767px) 65vw, 320px" @endif
+                                alt="{{ $appearance['hero']['alt'] ?: 'تصویر شاخص مجله فرزین' }}"
+                                width="640"
+                                height="640"
+                                fetchpriority="high"
+                                decoding="async"
+                            >
+                        </div>
+                    @else
+                        <div class="blog-orbit__core"><span>F</span></div>
+                    @endif
                     <div class="blog-visual-note blog-visual-note--top">
                         <span class="blog-visual-note__spark"></span>
                         <span>DESIGN YOUR EVERYDAY</span>
@@ -330,10 +344,24 @@
                         <span aria-hidden="true">↗</span>
                     </a>
                 </div>
-                <div class="blog-closing-card__art" aria-hidden="true">
-                    <span class="blog-closing-card__ring"></span>
-                    <span class="blog-closing-card__ring blog-closing-card__ring--two"></span>
-                    <span class="blog-closing-card__letter">F.</span>
+                <div class="blog-closing-card__art" @if(! $appearance['closing']['image_url']) aria-hidden="true" @endif>
+                    @if($appearance['closing']['image_url'])
+                        <img
+                            class="blog-closing-card__image"
+                            src="{{ $appearance['closing']['image_url'] }}"
+                            @if($appearance['closing']['image_srcset']) srcset="{{ $appearance['closing']['image_srcset'] }}" sizes="(max-width: 767px) 35vw, 260px" @endif
+                            alt="{{ $appearance['closing']['alt'] ?: 'تصویر بخش پایانی مجله فرزین' }}"
+                            width="640"
+                            height="640"
+                            loading="lazy"
+                            decoding="async"
+                            style="--blog-image-fit: {{ $appearance['closing']['fit'] }}; --blog-image-position: {{ $appearance['closing']['object_position'] }}; --blog-image-scale: {{ number_format($appearance['closing']['scale'] / 100, 2, '.', '') }};"
+                        >
+                    @else
+                        <span class="blog-closing-card__ring"></span>
+                        <span class="blog-closing-card__ring blog-closing-card__ring--two"></span>
+                        <span class="blog-closing-card__letter">F.</span>
+                    @endif
                 </div>
             </div>
         </x-layout.container>
