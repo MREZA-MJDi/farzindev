@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\BlogPost;
 use App\Services\Seo\SeoSettings;
+use App\Services\Media\ResponsiveImageService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -47,13 +48,13 @@ class BlogPostController extends Controller
         ]);
     }
 
-    public function store(Request $request, SeoSettings $seoSettings): RedirectResponse
+    public function store(Request $request, SeoSettings $seoSettings, ResponsiveImageService $images): RedirectResponse
     {
         $validated = $this->validatePost($request);
         $uploadedPath = null;
 
         if ($request->hasFile('cover_image')) {
-            $uploadedPath = $request->file('cover_image')->store('blog', 'public');
+            $uploadedPath = $images->store($request->file('cover_image'), 'blog');
             if (! $uploadedPath) {
                 return back()->withInput()->withErrors([
                     'cover_image' => 'ذخیره تصویر شاخص انجام نشد؛ دوباره تلاش کنید.',
@@ -72,7 +73,7 @@ class BlogPostController extends Controller
             $post = DB::transaction(fn (): BlogPost => BlogPost::create($validated));
         } catch (Throwable $exception) {
             if ($uploadedPath !== null) {
-                Storage::disk('public')->delete($uploadedPath);
+                $images->delete($uploadedPath);
             }
             throw $exception;
         }
@@ -89,7 +90,7 @@ class BlogPostController extends Controller
         return view('admin.blog-posts.edit', ['post' => $blogPost]);
     }
 
-    public function update(Request $request, BlogPost $blogPost, SeoSettings $seoSettings): RedirectResponse
+    public function update(Request $request, BlogPost $blogPost, SeoSettings $seoSettings, ResponsiveImageService $images): RedirectResponse
     {
         $validated = $this->validatePost($request, $blogPost);
         $uploadedPath = null;
@@ -128,7 +129,7 @@ class BlogPostController extends Controller
         }
 
         if ($uploadedPath !== null && $oldImage && $oldImage !== $uploadedPath) {
-            Storage::disk('public')->delete($oldImage);
+            $images->delete($oldImage);
         }
 
         $seoSettings->clearCache();
@@ -138,13 +139,13 @@ class BlogPostController extends Controller
             ->with('success', 'تغییرات مقاله ذخیره شد.');
     }
 
-    public function destroy(BlogPost $blogPost, SeoSettings $seoSettings): RedirectResponse
+    public function destroy(BlogPost $blogPost, SeoSettings $seoSettings, ResponsiveImageService $images): RedirectResponse
     {
         $image = $blogPost->cover_image;
         $blogPost->delete();
 
         if ($image) {
-            Storage::disk('public')->delete($image);
+            $images->delete($image);
         }
 
         $seoSettings->clearCache();
