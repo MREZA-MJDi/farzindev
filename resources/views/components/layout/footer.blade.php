@@ -15,13 +15,14 @@
                     aria-label="فرزین"
                     class="inline-flex items-center"
                 >
-                    <span class="text-2xl font-semibold tracking-[0.24em] text-white transition hover:text-[var(--livora-text)]">
+                    <span class="farzin-site-footer__brand-name transition hover:text-[var(--livora-text)]">
                         فرزین
                     </span>
                 </a>
 
-                <p class="mt-6 max-w-sm text-sm leading-8 text-white/75">
-                    هود و سینک آشپزخانه؛ انتخابی دقیق برای کارایی بهتر و هماهنگی با فضای شما.
+                <p class="farzin-site-footer__brand-caption">تجهیزات تخصصی آشپزخانه</p>
+                <p class="farzin-site-footer__intro">
+                    هود و سینک آشپزخانه فرزین؛ برای انتخابی هماهنگ با فضای نصب، کاربری و نیاز روزمره.
                 </p>
 
                 <div class="mt-7 flex flex-wrap gap-2">
@@ -31,11 +32,11 @@
                     </span>
 
                     <span class="rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-xs text-white/75">
-                        Living
+                        KITCHEN
                     </span>
 
                     <span class="rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-xs text-white/75">
-                        SINKS
+                        انتخاب محصول
                     </span>
 
                 </div>
@@ -46,9 +47,9 @@
             {{-- Shop --}}
             <div>
 
-                <p class="farzin-site-footer__heading">
-                    SHOP
-                </p>
+                <h2 class="farzin-site-footer__heading">
+                    محصولات و دسته‌بندی‌ها
+                </h2>
 
                 <nav
                     aria-label="لینک‌های فروشگاه"
@@ -84,10 +85,10 @@
                     </a>
 
                     <a
-                        href="{{ route('shop.index') }}"
+                        href="{{ route('shop.index', ['sort' => 'popular']) }}"
                         class="text-sm text-white/75 transition hover:text-white"
                     >
-                        محصولات منتخب
+                        پرفروش‌ترین محصولات
                     </a>
 
                     <a
@@ -105,9 +106,9 @@
             {{-- Customer --}}
             <div>
 
-                <p class="farzin-site-footer__heading">
-                    CUSTOMER
-                </p>
+                <h2 class="farzin-site-footer__heading">
+                    خدمات مشتریان
+                </h2>
 
                 <nav
                     aria-label="لینک‌های مشتریان"
@@ -190,12 +191,12 @@
             {{-- Contact / Newsletter --}}
             <div>
 
-                <p class="farzin-site-footer__heading">
-                    CONTACT
-                </p>
+                <h2 class="farzin-site-footer__heading">
+                    ارتباط با فرزین
+                </h2>
 
-                <p class="mt-5 max-w-xs text-sm leading-7 text-white/75">
-                    برای مشاوره‌ی انتخاب هود و سینک یا پیگیری سفارش، از صفحه‌ی تماس با فرزین پیام بفرستید.
+                <p class="farzin-site-footer__intro">
+                    برای مشاوره انتخاب هود و سینک، بررسی مشخصات یا پیگیری سفارش با فرزین در ارتباط باشید.
                 </p>
 
 
@@ -220,36 +221,36 @@
 
             <div class="border-b border-white/10 py-5 md:border-b-0 md:border-l md:px-6 md:py-6">
 
-                <p class="farzin-site-footer__heading">
-                    PAYMENT
-                </p>
+                <h2 class="farzin-site-footer__heading">
+                    روش‌های خرید
+                </h2>
 
                 <p class="mt-2 text-sm leading-6 text-white/70">
-                    مسیر پرداخت متناسب با سفارش و روش انتخابی مدیریت می‌شود.
+                    روش‌های پرداخت و شرایط خرید هر محصول را پیش از ثبت سفارش بررسی کنید.
                 </p>
 
             </div>
 
             <div class="border-b border-white/10 py-5 md:border-b-0 md:px-6 md:py-6">
 
-                <p class="farzin-site-footer__heading">
+                <h2 class="farzin-site-footer__heading">
                     SINKS
-                </p>
+                </h2>
 
                 <p class="mt-2 text-sm leading-6 text-white/70">
-                    مشخصات، ابعاد و نوع نصب هر محصول را پیش از ثبت سفارش بررسی کنید.
+                    ابعاد، جنس و شیوه نصب را با فضای آشپزخانه و نیاز روزمره تطبیق دهید.
                 </p>
 
             </div>
 
             <div class="py-5 md:px-6 md:py-6">
 
-                <p class="farzin-site-footer__heading">
-                    SUPPORT
-                </p>
+                <h2 class="farzin-site-footer__heading">
+                    پشتیبانی خرید
+                </h2>
 
                 <p class="mt-2 text-sm leading-6 text-white/70">
-                    برای راهنمایی انتخاب محصول یا پیگیری سفارش با تیم فرزین در تماس باشید.
+                    برای انتخاب محصول، دریافت راهنمایی یا پیگیری سفارش کنار شما هستیم.
                 </p>
 
             </div>
