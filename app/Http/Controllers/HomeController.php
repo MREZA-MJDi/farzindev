@@ -39,32 +39,7 @@ class HomeController extends Controller
             ->active()
             ->whereHas('category', fn ($query) => $query->where('is_active', true))
             ->count();
-
-        $catalogProducts = Product::query()
-            ->active()
-            ->whereHas('category', fn ($query) => $query->where('is_active', true))
-            ->with([
-                'category',
-                // Cards and the product mosaic need only one image per product.
-                // Avoid loading full galleries for up to 50 catalogue products.
-                'images' => fn ($query) => $query
-                    ->select([
-                        'id',
-                        'product_id',
-                        'media_id',
-                        'path',
-                        'alt',
-                        'sort_order',
-                        'is_primary',
-                    ])
-                    ->limit(1),
-                'images.media:id,path',
-            ])
-            ->orderByDesc('is_featured')
-            ->orderByDesc('is_new')
-            ->orderByDesc('updated_at')
-            ->limit(50)
-            ->get();
+        // Each homepage section is deliberately bounded to keep image and query volume low.
 
         // The architecture hero does not consume a catalogue product.
         $featuredProducts = Product::query()
@@ -97,7 +72,7 @@ class HomeController extends Controller
             ->orderByDesc('sold_quantity')
             ->orderByDesc('is_featured')
             ->orderByDesc('updated_at')
-            ->limit(8)
+            ->limit(4)
             ->get();
 
         $hasBestSellerSales = $featuredProducts->contains(
@@ -108,11 +83,33 @@ class HomeController extends Controller
             ->pluck('id')
             ->values();
 
-        $newProducts = $catalogProducts
-            ->filter(fn (Product $product) => (bool) $product->is_new)
-            ->reject(fn (Product $product) => $usedProductIds->contains($product->id))
-            ->take(8)
-            ->values();
+        $newProducts = Product::query()
+            ->active()
+            ->where('is_new', true)
+            ->whereHas('category', fn ($query) => $query->where('is_active', true))
+            ->when(
+                $usedProductIds->isNotEmpty(),
+                fn ($query) => $query->whereNotIn('id', $usedProductIds)
+            )
+            ->with([
+                'category',
+                'images' => fn ($query) => $query
+                    ->select([
+                        'id',
+                        'product_id',
+                        'media_id',
+                        'path',
+                        'alt',
+                        'sort_order',
+                        'is_primary',
+                    ])
+                    ->limit(1),
+                'images.media:id,path',
+            ])
+            ->orderByDesc('updated_at')
+            ->orderByDesc('id')
+            ->limit(4)
+            ->get();
 
         // The mosaic is independently curated from the product editor.
         // Keep the result bounded and eager-load only one (primary) image per item.
@@ -130,7 +127,7 @@ class HomeController extends Controller
             ])
             ->orderByDesc('updated_at')
             ->orderByDesc('id')
-            ->limit(30)
+            ->limit(9)
             ->get()
             ->filter(fn (Product $product) => $product->images->contains(
                 fn ($image) => filled($image->url)
