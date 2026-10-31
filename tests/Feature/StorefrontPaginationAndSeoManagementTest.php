@@ -94,7 +94,7 @@ class StorefrontPaginationAndSeoManagementTest extends TestCase
         $customer = User::factory()->create(['role' => 'customer']);
 
         for ($index = 1; $index <= 11; $index++) {
-            Order::create([
+            $order = Order::create([
                 'user_id' => $customer->id,
                 'order_number' => 'FAR-CUSTOMER-HISTORY-' . str_pad((string) $index, 5, '0', STR_PAD_LEFT),
                 'status' => 'delivered',
@@ -113,9 +113,14 @@ class StorefrontPaginationAndSeoManagementTest extends TestCase
                 'city' => 'Tehran',
                 'address' => 'Customer address',
                 'postal_code' => '1234567890',
-                'created_at' => now()->subDays($index),
-                'updated_at' => now()->subDays($index),
             ]);
+
+            DB::table('orders')
+                ->where('id', $order->id)
+                ->update([
+                    'created_at' => now()->subDays($index),
+                    'updated_at' => now()->subDays($index),
+                ]);
         }
 
         $this->actingAs($admin)
