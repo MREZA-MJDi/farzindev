@@ -243,3 +243,65 @@
     .blog-orbit--outer, .blog-visual-note--top, .blog-visual-note--bottom { animation: none !important; }
     .blog-reveal-ready { opacity: 1 !important; transform: none !important; }
 }
+
+
+/* Dashboard-managed editorial artwork and the user-adjustable blog grid. */
+.blog-shell .livora-container {
+    width: min(100%, var(--blog-container-width, 1280px));
+    max-width: var(--blog-container-width, 1280px);
+}
+.blog-user-art {
+    position: absolute;
+    z-index: 2;
+    inset: 25%;
+    overflow: hidden;
+    border: 1px solid rgba(255,255,255,.35);
+    border-radius: 1.7rem;
+    background: rgba(255,255,255,.08);
+    box-shadow: 0 26px 70px rgba(0,0,0,.38), 0 0 0 9px rgba(255,255,255,.035);
+    transform: rotate(-5deg);
+    animation: blog-art-hover 8s ease-in-out infinite;
+}
+.blog-user-art::after {
+    position: absolute;
+    inset: 0;
+    content: "";
+    border: 1px solid rgba(255,255,255,.16);
+    border-radius: inherit;
+    pointer-events: none;
+}
+.blog-user-art img {
+    width: 100%;
+    height: 100%;
+    object-fit: var(--blog-image-fit, cover);
+    object-position: var(--blog-image-position, center);
+    transform: scale(var(--blog-image-scale, 1));
+    transition: transform .45s cubic-bezier(.2,.75,.25,1);
+}
+.blog-featured-card__media img,
+.blog-article-card__media img,
+.blog-closing-card__image { backface-visibility: hidden; }
+.blog-closing-card__image {
+    position: absolute;
+    inset: 15%;
+    width: 70%;
+    height: 70%;
+    overflow: hidden;
+    border: 1px solid rgba(18,20,26,.16);
+    border-radius: 36% 36% 42% 42%;
+    object-fit: var(--blog-image-fit, cover);
+    object-position: var(--blog-image-position, center);
+    transform: scale(var(--blog-image-scale, 1)) rotate(7deg);
+    box-shadow: 0 20px 45px rgba(0,0,0,.18);
+}
+@keyframes blog-art-hover {
+    0%,100% { translate: 0 0; }
+    50% { translate: 0 -8px; }
+}
+@media (max-width: 767px) {
+    .blog-user-art { inset: 25%; border-radius: 1.2rem; }
+    .blog-closing-card__image { inset: 12%; width: 76%; height: 76%; }
+}
+@media (prefers-reduced-motion: reduce) {
+    .blog-user-art { animation: none !important; }
+}
