@@ -52,7 +52,7 @@ class StorefrontPaginationAndSeoManagementTest extends TestCase
         $customer = User::factory()->create(['role' => 'customer']);
 
         for ($index = 1; $index <= 11; $index++) {
-            Address::create([
+            $address = Address::create([
                 'user_id' => $customer->id,
                 'title' => 'Saved Address ' . str_pad((string) $index, 2, '0', STR_PAD_LEFT),
                 'first_name' => 'Test',
@@ -63,10 +63,15 @@ class StorefrontPaginationAndSeoManagementTest extends TestCase
                 'address' => 'Test street ' . $index,
                 'postal_code' => str_pad((string) $index, 10, '0', STR_PAD_LEFT),
                 'unit' => null,
-                'is_default' => $index === 1,
-                'created_at' => now()->addSeconds($index),
-                'updated_at' => now()->addSeconds($index),
+                'is_default' => false,
             ]);
+
+            \\Illuminate\\Support\\Facades\\DB::table('addresses')
+                ->where('id', $address->id)
+                ->update([
+                    'created_at' => now()->addSeconds($index),
+                    'updated_at' => now()->addSeconds($index),
+                ]);
         }
 
         $this->actingAs($customer)
