@@ -435,8 +435,9 @@ body.home-body {
 .fz-maker__spec p { margin:.2rem 0 0; color:#77756F; font-size:.72rem; line-height:1.85; }
 .fz-maker__watermark { position:absolute; z-index:-1; inset-inline-start:-.05em; inset-block-end:-.45em; color:rgba(55,52,45,.045); font-size:clamp(12rem,28vw,28rem); line-height:1; font-weight:950; letter-spacing:-.11em; pointer-events:none; user-select:none; }
 
-/* Closing call to action and an independent footer */
+/* Closing call to action. The shared footer owns the final page-to-footer gap. */
 .fz-bottom-cta { padding-block:clamp(3.5rem,6vw,6rem); }
+.home-body .fz-bottom-cta { padding-block-end: 0; }
 .fz-bottom-cta__inner { display:flex; align-items:center; justify-content:space-between; gap:2rem; padding:clamp(1.5rem,4vw,3.2rem); border:1px solid var(--fz-line); border-radius:1rem; background:#FFFFFF; box-shadow:0 10px 34px rgba(35,32,27,.035); }
 .fz-bottom-cta__inner h2 { max-width:680px; font-size:clamp(1.55rem,2.7vw,2.55rem); }
 .fz-bottom-cta__inner .fz-hero__actions { margin-top:0; flex:0 0 auto; }
