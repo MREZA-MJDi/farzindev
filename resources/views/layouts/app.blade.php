@@ -210,7 +210,22 @@
     class="min-h-screen flex flex-col pb-24 lg:pb-0"
 >
 
-    <x-layout.navbar />
+    @php
+        // One aggregate query feeds both responsive cart counters.
+        // Avoid loading every cart-item row twice from separate layout components.
+        $storefrontCartCount = 0;
+
+        if (auth()->check() && auth()->user()->isCustomer()) {
+            $cartSummary = auth()->user()
+                ->activeCart()
+                ->withSum('items', 'quantity')
+                ->first();
+
+            $storefrontCartCount = (int) ($cartSummary?->items_sum_quantity ?? 0);
+        }
+    @endphp
+
+    <x-layout.navbar :cart-count="$storefrontCartCount" />
 
     <x-layout.mobile-menu />
 
@@ -222,7 +237,7 @@
 
     <x-layout.footer />
 
-    <x-layout.mobile-bottom-bar />
+    <x-layout.mobile-bottom-bar :cart-count="$storefrontCartCount" />
 
 </div>
 
