@@ -63,7 +63,7 @@ class SeoRedirectController extends Controller
                 'required',
                 'string',
                 'max:255',
-                'regex:~^/(?!/)[A-Za-z0-9._~!$&\'()*+,;=:@%/-]*$~',
+                'regex:#^/(?!/)[A-Za-z0-9/_-]+$#',
                 Rule::unique('seo_redirects', 'source_path')->ignore($redirect?->id),
             ],
             'target_url' => ['required', 'string', 'max:2048', 'regex:~^(?:https://[^\s]+|/(?!/)[^\s]*)$~i'],
