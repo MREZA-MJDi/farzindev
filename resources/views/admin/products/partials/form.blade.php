@@ -967,6 +967,33 @@
                 </div>
 
 
+                <div class="grid gap-4 sm:grid-cols-2">
+                    <label class="block text-sm font-medium text-[var(--admin-text)]">Canonical URL
+                        <input name="canonical_url" type="url" inputmode="url" dir="ltr" maxlength="2048" value="{{ old('canonical_url', $product->canonical_url ?? '') }}" placeholder="https://farajihome.com/product/..." class="admin-input mt-2">
+                        @error('canonical_url')<span class="mt-1 block text-xs text-[var(--admin-danger)]">{{ $message }}</span>@enderror
+                    </label>
+                    <label class="block text-sm font-medium text-[var(--admin-text)]">قانون ربات‌ها
+                        <select name="seo_robots" class="admin-select mt-2 w-full">
+                            @foreach (['inherit' => 'ارث‌بری از سایت', 'index,follow' => 'Index, Follow', 'noindex,follow' => 'Noindex, Follow', 'noindex,nofollow' => 'Noindex, Nofollow'] as $value => $label)
+                                <option value="{{ $value }}" @selected(old('seo_robots', $product->seo_robots ?: 'inherit') === $value)>{{ $label }}</option>
+                            @endforeach
+                        </select>
+                        @error('seo_robots')<span class="mt-1 block text-xs text-[var(--admin-danger)]">{{ $message }}</span>@enderror
+                    </label>
+                </div>
+
+                <label class="block text-sm font-medium text-[var(--admin-text)]">عنوان Open Graph
+                    <input name="og_title" maxlength="255" value="{{ old('og_title', $product->og_title ?? '') }}" class="admin-input mt-2 w-full">
+                    @error('og_title')<span class="mt-1 block text-xs text-[var(--admin-danger)]">{{ $message }}</span>@enderror
+                </label>
+
+                <label class="block text-sm font-medium text-[var(--admin-text)]">توضیحات Open Graph
+                    <textarea name="og_description" rows="3" maxlength="320" class="admin-textarea mt-2 w-full">{{ old('og_description', $product->og_description ?? '') }}</textarea>
+                    @error('og_description')<span class="mt-1 block text-xs text-[var(--admin-danger)]">{{ $message }}</span>@enderror
+                </label>
+
+                <p class="text-xs leading-6 text-[var(--admin-muted)]">قانون سراسری پیش‌انتشار همیشه اولویت دارد؛ تنظیم Index برای یک محصول نمی‌تواند قفل noindex سایت را دور بزند.</p>
+
                 {{-- Google Preview --}}
                 <div
                     class="rounded-2xl border border-[var(--admin-border)] bg-[var(--admin-surface-soft)] p-5"
