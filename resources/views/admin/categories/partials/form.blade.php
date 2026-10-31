@@ -2,7 +2,7 @@
 
 @php
     $editing = isset($category);
-    $category = $category ?? new \\App\\Models\\Category();
+    $category = $category ?? new \App\Models\Category();
 @endphp
 
 <div class="grid grid-cols-1 gap-6 xl:grid-cols-3">
