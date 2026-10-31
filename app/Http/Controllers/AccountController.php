@@ -82,6 +82,7 @@ class AccountController extends Controller
     {
         $addresses = Auth::user()
             ->addresses()
+            ->orderByDesc('is_default')
             ->latest()
             ->paginate(10)
             ->withQueryString();
