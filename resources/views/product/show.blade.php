@@ -948,8 +948,7 @@
                                     href="{{ route('categories.show', $product->category->slug) }}"
                                     class="text-sm font-medium text-[var(--livora-accent)]"
                                 >
-                                    مشاهده دسته‌بندی
-                                    <span class="mr-1">←</span>
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4 shrink-0" aria-hidden="true"><rect x="3.5" y="3.5" width="7" height="7" rx="1.3" /><rect x="13.5" y="3.5" width="7" height="7" rx="1.3" /><rect x="3.5" y="13.5" width="7" height="7" rx="1.3" /><rect x="13.5" y="13.5" width="7" height="7" rx="1.3" /></svg> مشاهده دسته‌بندی
                                 </a>
 
                             @endif
