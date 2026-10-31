@@ -97,7 +97,7 @@ class HomeController extends Controller
             ->orderByDesc('sold_quantity')
             ->orderByDesc('is_featured')
             ->orderByDesc('updated_at')
-            ->limit(2)
+            ->limit(4)
             ->get();
 
         $hasBestSellerSales = $featuredProducts->contains(
@@ -134,7 +134,7 @@ class HomeController extends Controller
             ])
             ->orderByDesc('updated_at')
             ->orderByDesc('id')
-            ->limit(2)
+            ->limit(4)
             ->get();
 
 
