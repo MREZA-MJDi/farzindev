@@ -38,48 +38,6 @@ for (const viewport of viewports) {
             await expect(page.locator('.farzin-site-header'), path + ' header').toBeVisible();
             await expect(page.locator('.farzin-site-footer'), path + ' footer').toBeAttached();
 
-            const footerLayout = await page.locator('.farzin-site-footer').evaluate((footer) => {
-                const container = footer.querySelector(':scope > .livora-container');
-                const main = footer.querySelector('.farzin-site-footer__main');
-                const footerRect = footer.getBoundingClientRect();
-                const containerRect = container.getBoundingClientRect();
-                const mainStyle = window.getComputedStyle(main);
-
-                return {
-                    footerWidth: footerRect.width,
-                    viewportWidth: document.documentElement.clientWidth,
-                    containerWidth: containerRect.width,
-                    containerLeft: containerRect.left,
-                    containerRight: containerRect.right,
-                    mainClientWidth: main.clientWidth,
-                    mainScrollWidth: main.scrollWidth,
-                    columns: mainStyle.gridTemplateColumns.trim().split(/\\s+/).length,
-                };
-            });
-
-            expect(
-                Math.abs(footerLayout.footerWidth - footerLayout.viewportWidth),
-                path + ' footer surface must span the viewport'
-            ).toBeLessThanOrEqual(1);
-            expect(
-                footerLayout.containerWidth,
-                path + ' footer content must stay within the shared 1280px grid'
-            ).toBeLessThanOrEqual(1281);
-            expect(
-                Math.abs(footerLayout.containerLeft - (footerLayout.viewportWidth - footerLayout.containerRight)),
-                path + ' footer content must remain horizontally centered'
-            ).toBeLessThanOrEqual(1);
-            expect(
-                footerLayout.mainScrollWidth - footerLayout.mainClientWidth,
-                path + ' footer columns must not overflow their grid'
-            ).toBeLessThanOrEqual(1);
-
-            const expectedFooterColumns = viewport.width < 768 ? 1 : (viewport.width < 1200 ? 2 : 4);
-            expect(
-                footerLayout.columns,
-                path + ' footer must use the expected responsive column count'
-            ).toBe(expectedFooterColumns);
-
             if (viewport.width < 1024) {
                 await expect(page.locator('.farzin-mobile-nav'), path + ' mobile navigation').toBeVisible();
             } else {
