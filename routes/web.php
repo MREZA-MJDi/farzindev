@@ -44,6 +44,11 @@ Route::get('/robots.txt', RobotsController::class)
 Route::get('/sitemap.xml', SitemapController::class)
     ->name('sitemap');
 
+Route::get('/sitemap/{type}/{page}.xml', [SitemapController::class, 'segment'])
+    ->whereIn('type', ['pages', 'categories', 'products', 'blog'])
+    ->whereNumber('page')
+    ->name('sitemap.segment');
+
 Route::get('/shop', [ShopController::class, 'index'])
     ->name('shop.index');
 
