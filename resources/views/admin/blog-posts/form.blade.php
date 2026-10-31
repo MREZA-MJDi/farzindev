@@ -66,7 +66,7 @@
                                     <button
                                         type="button"
                                         data-editor-media-image
-                                        data-media-url="{{ $mediaImage->url }}"
+                                        data-media-url="{{ '/storage/' . ltrim($mediaImage->path, '/') }}"
                                         data-media-alt="{{ $mediaImage->alt ?: $mediaImage->original_name }}"
                                         class="group overflow-hidden rounded-xl border border-[var(--admin-border)] bg-[var(--admin-white)] text-right transition hover:border-[var(--admin-accent)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--admin-accent)]"
                                         aria-label="درج تصویر {{ $mediaImage->alt ?: $mediaImage->original_name }}"
