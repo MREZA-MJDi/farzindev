@@ -2,13 +2,13 @@
 
 @section(
     'title',
-    $category->name . ' | خرید هود و سینک آشپزخانه | فرزین'
+    $category->meta_title ?: ($category->name . ' | خرید هود و سینک آشپزخانه | فرزین')
 )
 
 @section(
     'description',
     $category->meta_description
-        ?? ('مشاهده و خرید محصولات دسته‌بندی ' . $category->name . ' در فرزین؛ بررسی قیمت و مشخصات فنی محصولات.')
+        ?: ('مشاهده و خرید محصولات دسته‌بندی ' . $category->name . ' در فرزین؛ بررسی قیمت و مشخصات فنی محصولات.')
 )
 
 @section(
