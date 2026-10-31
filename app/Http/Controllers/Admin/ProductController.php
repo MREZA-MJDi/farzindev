@@ -55,7 +55,9 @@ class ProductController extends Controller
             ->limit(60)
             ->get();
 
-        return view('admin.products.create', compact('categories', 'mediaImages'));
+        $product = new Product();
+
+        return view('admin.products.create', compact('categories', 'mediaImages', 'product'));
     }
 
     /**
