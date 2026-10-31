@@ -97,7 +97,10 @@ DB_PASSWORD=REPLACE_WITH_THE_DATABASE_SECRET
 
 SESSION_DRIVER=database
 SESSION_SECURE_COOKIE=true
+SESSION_DOMAIN=null
+SESSION_COOKIE=farzin_session
 CACHE_STORE=database
+CACHE_PREFIX=farzin_
 QUEUE_CONNECTION=sync
 FILESYSTEM_DISK=public
 
@@ -203,6 +206,15 @@ Invoke Laravel's scheduler every minute with this cron entry under the deploymen
 
 The app currently uses the synchronous queue in this recommended configuration. If you change `QUEUE_CONNECTION` to `database` or `redis`, provision and supervise a queue worker rather than assuming queued jobs run automatically.
 
+## Hosting several independent projects on this VPS
+
+Do not point 3–4 unrelated domains at this same Laravel installation. Each project needs its own release directory and Nginx document root, `.env`, `APP_KEY`, database and least-privilege database user, uploaded media/storage, logs, cache namespace and session cookie. Set a unique `CACHE_PREFIX` (for example `farzin_`, `project_b_`) and unique `SESSION_COOKIE`; keep `SESSION_DOMAIN=null`/unset for host-only session cookies unless shared subdomain login is explicitly designed. Never share `APP_KEY` values between projects.
+
+Create one Nginx server block and TLS certificate per domain. Each `root` must point only to that project's `public/` directory. Use a dedicated PHP-FPM pool per application when resources allow it, with a separate Unix user/socket and a bounded `pm.max_children`; measure peak worker memory before choosing the limit instead of copying one number across all apps. Give each project its own queue worker process and queue name only when it actually needs asynchronous jobs. Do not start always-on workers for four apps just by default on a small VPS.
+
+Before deciding whether the VPS can host four applications, measure installed RAM and CPU, MySQL buffer pool size, Redis memory, PHP-FPM process RSS under concurrent requests, queue load, and p95 request duration. Leave enough memory for the database, Nginx, filesystem cache, the operating system and deployment spikes. If the combined peak working set does not fit with headroom, use separate servers or move the database rather than overcommitting FPM workers.
+
+Farzin's Vite build is performed in CI and shipped in the release artifact. Do not run `npm install`, a Vite dev server, or an asset build for every request or on the VPS during ordinary deployments.
 ## 7. Release verification
 
 Before opening the site to customers, verify:
