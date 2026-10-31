@@ -60,7 +60,7 @@ class MediaController extends Controller
         }
 
         try {
-            DB::transaction(function () use ($file, $disk, $path, $request): void {
+            DB::transaction(function () use ($file, $disk, $path, $request, $mimeType): void {
                 Media::create([
                     'user_id' => $request->user()?->id,
                     'disk' => $disk,
@@ -116,7 +116,7 @@ class MediaController extends Controller
         });
 
         if ($disk && $path) {
-            Storage::disk($disk)->delete($path);
+            $images->delete($path, $disk);
         }
 
         return redirect()->route('admin.media.index')->with('success', 'رسانه با موفقیت حذف شد.');
