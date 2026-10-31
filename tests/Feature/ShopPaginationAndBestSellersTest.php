@@ -211,11 +211,11 @@ class ShopPaginationAndBestSellersTest extends TestCase
             'total' => $product->price * $quantity,
         ]);
     }
-    public function test_homepage_shows_four_best_sellers_and_four_new_arrivals_with_a_separate_four_image_mosaic(): void
+    public function test_homepage_shows_four_best_sellers_and_two_new_arrivals_with_a_separate_two_image_mosaic(): void
     {
         $category = $this->category();
 
-        for ($index = 1; $index <= 4; $index++) {
+        for ($index = 1; $index <= 2; $index++) {
             $galleryProduct = $this->product($category, [
                 'name' => 'Editorial Gallery Product '.$index,
                 'slug' => 'editorial-gallery-product-'.$index,
@@ -242,24 +242,28 @@ class ShopPaginationAndBestSellersTest extends TestCase
             ]);
             $this->addOrderItem($order, $bestSeller, 10 - $index);
 
-            $this->product($category, [
-                'name' => 'Homepage New Arrival '.$index,
+            if ($index <= 2) {
+                $this->product($category, [
+                    'name' => 'Homepage New Arrival '.$index,
                 'slug' => 'homepage-new-arrival-'.$index,
                 'sku' => 'FAR-HOMEPAGE-NEW-'.$index,
-                'is_new' => true,
-            ]);
+                    'is_new' => true,
+                ]);
+            }
         }
 
         $response = $this->get(route('home'))->assertOk();
         $html = $response->getContent();
 
-        $this->assertSame(4, substr_count($html, 'class="grid__image"'));
-        $this->assertSame(8, substr_count($html, 'class="fz-product-card fz-reveal"'));
+        $this->assertSame(2, substr_count($html, 'class="grid__image"'));
+        $this->assertSame(6, substr_count($html, 'class="fz-product-card fz-reveal"'));
 
-        for ($index = 1; $index <= 4; $index++) {
+        for ($index = 1; $index <= 2; $index++) {
             $response->assertSee('Editorial Gallery Product '.$index)
-                ->assertSee('Homepage Bestseller '.$index)
                 ->assertSee('Homepage New Arrival '.$index);
+        }
+        for ($index = 1; $index <= 4; $index++) {
+            $response->assertSee('Homepage Bestseller '.$index);
         }
     }
 

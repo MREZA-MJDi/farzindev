@@ -29,13 +29,12 @@ class HomeController extends Controller
             ->limit(4)
             ->get();
 
-        // Count the active catalogue without loading full product models or galleries.
+        // Keep the home page to eight distinct catalog products: two editorial images,
+        // four bestsellers and two new arrivals. All others remain in the paginated shop.
         $catalogCount = Product::query()
             ->active()
             ->whereHas('category', fn ($query) => $query->where('is_active', true))
             ->count();
-        // Homepage exposure is capped at 8 unique products: 4 editorial gallery images, 2 bestsellers and 2 new arrivals.
-        // The full catalogue remains available from the dedicated shop page.
 
         // The mosaic is independently curated from the product editor.
         // Keep the result bounded and eager-load only one (primary) image per item.
@@ -53,7 +52,7 @@ class HomeController extends Controller
             ])
             ->orderByDesc('updated_at')
             ->orderByDesc('id')
-            ->limit(4)
+            ->limit(2)
             ->get()
             ->filter(fn (Product $product) => $product->images->contains(
                 fn ($image) => filled($image->url)

@@ -228,7 +228,7 @@
                             <p class="content__description">{{ $mosaicTitles[$index % count($mosaicTitles)]['text'] }}</p>
                         </div>
                         <div class="grid grid--{{ ($index % 6) + 1 }}" data-grid-index="{{ $index }}">
-                            <div class="grid-wrap">
+                            <div class="grid-wrap {{ $group->count() <= 2 ? 'grid-wrap--compact' : '' }}">
                                 @foreach($group as $item)
                                     <div class="grid__item">
                                         <a

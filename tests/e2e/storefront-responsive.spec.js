@@ -396,12 +396,14 @@ test('homepage image and product sections stay within the loading budget', async
         await page.goto('/', { waitUntil: 'domcontentloaded' });
 
         expect(await page.locator('.fz-category-card').count()).toBeLessThanOrEqual(4);
-        expect(await page.locator('.grid__image').count()).toBeLessThanOrEqual(4);
+        expect(await page.locator('.grid__image').count()).toBeLessThanOrEqual(2);
         expect(await page.locator('.fz-product-section .fz-product-card').count()).toBeLessThanOrEqual(4);
-        expect(await page.locator('.fz-new-section .fz-product-card').count()).toBeLessThanOrEqual(4);
+        expect(await page.locator('.fz-new-section .fz-product-card').count()).toBeLessThanOrEqual(2);
 
         const homepageProductCards = await page.locator('.fz-product-section .fz-product-card, .fz-new-section .fz-product-card').count();
-        expect(homepageProductCards, 'homepage must never display more than eight full product cards').toBeLessThanOrEqual(8);
+        expect(homepageProductCards, 'homepage shows at most six full product cards').toBeLessThanOrEqual(6);
+        const homepageProductEntries = await page.locator('.grid__item-inner[data-product-id], .fz-product-section .fz-product-card, .fz-new-section .fz-product-card').count();
+        expect(homepageProductEntries, 'homepage keeps no more than eight unique catalog entries').toBeLessThanOrEqual(8);
         await expect(page.locator('.fz-category-section .fz-text-link')).toHaveAttribute('href', /\/categories(?:\?|$)/);
         await expect(page.locator('.fz-product-section .fz-text-link')).toHaveAttribute('href', /\/shop(?:\?|$)/);
     }

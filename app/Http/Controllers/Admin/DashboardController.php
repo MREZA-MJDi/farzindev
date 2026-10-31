@@ -198,14 +198,6 @@ class DashboardController extends Controller
 
         /*
         |--------------------------------------------------------------------------
-        | Installment Orders
-        |--------------------------------------------------------------------------
-        */
-
-
-
-        /*
-        |--------------------------------------------------------------------------
         | Recent Orders
         |--------------------------------------------------------------------------
         */
@@ -239,14 +231,6 @@ class DashboardController extends Controller
         $featuredProductsCount = (int) $productMetrics->featured_products;
         $newProductsCount = (int) $productMetrics->new_products;
         $installmentProductsCount = (int) $productMetrics->installment_products;
-
-        /*
-        |--------------------------------------------------------------------------
-        | Average Order Value
-        |--------------------------------------------------------------------------
-        */
-
-
 
         /*
         |--------------------------------------------------------------------------
@@ -342,9 +326,12 @@ class DashboardController extends Controller
                 return collect($periods)
                     ->values()
                     ->map(function (array $period, int $index) use ($aggregates): array {
+                        $revenueKey = 'revenue_' . $index;
+                        $ordersKey = 'orders_' . $index;
+
                         return $period + [
-                            'revenue' => (float) ($aggregates->{"revenue_{$index}"} ?? 0),
-                            'orders' => (int) ($aggregates->{"orders_{$index}"} ?? 0),
+                            'revenue' => (float) ($aggregates->{$revenueKey} ?? 0),
+                            'orders' => (int) ($aggregates->{$ordersKey} ?? 0),
                         ];
                     });
             }
