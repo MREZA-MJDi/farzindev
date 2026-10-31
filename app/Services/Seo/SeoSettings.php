@@ -70,7 +70,18 @@ class SeoSettings
     {
         $settings = $this->all();
         $developmentMode = ($settings['seo_development_mode'] ?? '0') === '1';
-        $noIndex = $developmentMode || ($settings['seo_robots_noindex'] ?? '0') === '1';
+        $shopFilterParameters = [
+            'search', 'category', 'min_price', 'max_price',
+            'in_stock', 'featured', 'new', 'installment',
+        ];
+        $hasFilteredShopUrl = request()->routeIs('shop.index')
+            && collect($shopFilterParameters)->contains(
+                fn (string $parameter): bool => request()->filled($parameter)
+            );
+
+        $noIndex = $developmentMode
+            || ($settings['seo_robots_noindex'] ?? '0') === '1'
+            || ($hasFilteredShopUrl && ($settings['seo_noindex_shop_filters'] ?? '1') === '1');
         $noFollow = $developmentMode || ($settings['seo_robots_nofollow'] ?? '0') === '1';
         $directives = [
             $noIndex ? 'noindex' : 'index',
@@ -269,6 +280,7 @@ class SeoSettings
             'seo_default_og_image' => null,
             'seo_development_mode' => '0',
             'seo_robots_noindex' => '0',
+            'seo_noindex_shop_filters' => '1',
             'seo_robots_nofollow' => '0',
             'seo_robots_noarchive' => '0',
             'seo_robots_nosnippet' => '0',
