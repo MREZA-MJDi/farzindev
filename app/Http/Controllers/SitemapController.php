@@ -161,16 +161,18 @@ class SitemapController extends Controller
     private function collectAllPublicUrls(): Collection
     {
         $items = $this->staticPages();
+        $seoSettings = app(SeoSettings::class);
+        $canonicalRoot = $seoSettings->canonicalUrl('/', false);
 
         Category::query()
             ->active()
             ->orderBy('id')
-            ->chunkById(1000, function ($categories) use ($items): void {
+            ->chunkById(1000, function ($categories) use ($items, $seoSettings, $canonicalRoot): void {
                 foreach ($categories as $category) {
                     $items->push([
-                        'url' => app(SeoSettings::class)->canonicalUrl(
-                            route('categories.show', $category->slug),
-                            false
+                        'url' => $this->canonicalPath(
+                            $canonicalRoot,
+                            route('categories.show', $category->slug, false)
                         ),
                         'lastmod' => $category->updated_at?->toAtomString(),
                     ]);
@@ -181,12 +183,12 @@ class SitemapController extends Controller
             ->active()
             ->whereHas('category', fn ($query) => $query->where('is_active', true))
             ->orderBy('id')
-            ->chunkById(1000, function ($products) use ($items): void {
+            ->chunkById(1000, function ($products) use ($items, $seoSettings, $canonicalRoot): void {
                 foreach ($products as $product) {
                     $items->push([
-                        'url' => app(SeoSettings::class)->canonicalUrl(
-                            route('product.show', $product->slug),
-                            false
+                        'url' => $this->canonicalPath(
+                            $canonicalRoot,
+                            route('product.show', $product->slug, false)
                         ),
                         'lastmod' => $product->updated_at?->toAtomString(),
                     ]);
@@ -196,12 +198,12 @@ class SitemapController extends Controller
         BlogPost::query()
             ->published()
             ->orderBy('id')
-            ->chunkById(1000, function ($posts) use ($items): void {
+            ->chunkById(1000, function ($posts) use ($items, $seoSettings, $canonicalRoot): void {
                 foreach ($posts as $post) {
                     $items->push([
-                        'url' => app(SeoSettings::class)->canonicalUrl(
-                            route('blog.show', $post->slug),
-                            false
+                        'url' => $this->canonicalPath(
+                            $canonicalRoot,
+                            route('blog.show', $post->slug, false)
                         ),
                         'lastmod' => $post->updated_at?->toAtomString(),
                     ]);
@@ -218,6 +220,7 @@ class SitemapController extends Controller
     {
         $offset = ($page - 1) * $segmentSize;
         $seoSettings = app(SeoSettings::class);
+        $canonicalRoot = $seoSettings->canonicalUrl('/', false);
 
         if ($type === 'pages') {
             return $this->staticPages();
@@ -231,7 +234,7 @@ class SitemapController extends Controller
                 ->limit($segmentSize)
                 ->get(['id', 'slug', 'updated_at'])
                 ->map(fn (Category $category): array => [
-                    'url' => $seoSettings->canonicalUrl(route('categories.show', $category->slug), false),
+                    'url' => $this->canonicalPath($canonicalRoot, route('categories.show', $category->slug, false)),
                     'lastmod' => $category->updated_at?->toAtomString(),
                 ]);
         }
@@ -245,7 +248,7 @@ class SitemapController extends Controller
                 ->limit($segmentSize)
                 ->get(['id', 'slug', 'updated_at'])
                 ->map(fn (Product $product): array => [
-                    'url' => $seoSettings->canonicalUrl(route('product.show', $product->slug), false),
+                    'url' => $this->canonicalPath($canonicalRoot, route('product.show', $product->slug, false)),
                     'lastmod' => $product->updated_at?->toAtomString(),
                 ]);
         }
@@ -257,7 +260,7 @@ class SitemapController extends Controller
             ->limit($segmentSize)
             ->get(['id', 'slug', 'updated_at'])
             ->map(fn (BlogPost $post): array => [
-                'url' => $seoSettings->canonicalUrl(route('blog.show', $post->slug), false),
+                'url' => $this->canonicalPath($canonicalRoot, route('blog.show', $post->slug, false)),
                 'lastmod' => $post->updated_at?->toAtomString(),
             ]);
     }
@@ -280,6 +283,14 @@ class SitemapController extends Controller
             'url' => $seoSettings->canonicalUrl($path, false),
             'lastmod' => null,
         ]);
+    }
+
+    private function canonicalPath(string $canonicalRoot, string $path): string
+    {
+        $pathOnly = parse_url($path, PHP_URL_PATH);
+        $pathOnly = is_string($pathOnly) && $pathOnly !== '' ? $pathOnly : '/';
+
+        return rtrim($canonicalRoot, '/') . '/' . ltrim($pathOnly, '/');
     }
 
     private function xmlResponse(string $xml): Response
