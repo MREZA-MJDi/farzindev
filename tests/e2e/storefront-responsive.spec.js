@@ -508,9 +508,15 @@ test('blog actions are real touch targets and the magazine stays free of heavy m
         expect(motion.intersectionObserver, 'blog should use the native observer API').toBe('function');
         expect(motion.loadedHeavyMotionFiles, 'blog must not request GSAP or Lenis assets').toEqual([]);
 
+        const feedResponsePromise = page.waitForResponse((response) => (
+            response.url().endsWith('/blog/feed.xml') && response.status() === 200
+        ));
         await rss.click();
+
+        const feedResponse = await feedResponsePromise;
+        expect(feedResponse.headers()['content-type']).toContain('application/rss+xml');
         await expect(page).toHaveURL(/\/blog\/feed\.xml$/);
-        await expect(page.locator('body')).not.toBeEmpty();
+        await expect(page.locator('rss > channel > title')).toContainText('مجله فرزین');
     }
 });
 
