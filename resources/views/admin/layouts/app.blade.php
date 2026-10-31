@@ -18,7 +18,8 @@
     x-data="{
         sidebarOpen: false,
         userMenuOpen: false,
-        notificationOpen: false
+        notificationOpen: false,
+        mobileSearchOpen: false
     }"
     class="admin-shell min-h-screen"
 >

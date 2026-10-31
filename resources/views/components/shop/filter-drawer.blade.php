@@ -6,13 +6,17 @@
 <div
     x-show="filterOpen"
     x-cloak
+    role="dialog"
+    aria-modal="true"
+    aria-label="فیلتر محصولات"
+    @keydown.escape.window="if (filterOpen) filterOpen = false"
     x-transition:enter="transition ease-out duration-300"
     x-transition:enter-start="opacity-0"
     x-transition:enter-end="opacity-100"
     x-transition:leave="transition ease-in duration-200"
     x-transition:leave-start="opacity-100"
     x-transition:leave-end="opacity-0"
-    class="fixed inset-0 z-[110] lg:hidden"
+    class="farzin-filter-drawer fixed inset-0 z-[150] lg:hidden" data-farzin-filter-drawer
 >
 
     {{-- =========================================================
@@ -39,7 +43,7 @@
         x-transition:leave="transition ease-in duration-200"
         x-transition:leave-start="translate-x-0"
         x-transition:leave-end="translate-x-full"
-        class="absolute right-0 top-0 flex h-full w-[88%] max-w-md flex-col bg-[var(--livora-cream)] shadow-2xl"
+        class="farzin-filter-drawer__panel absolute right-0 top-0 flex h-full w-[min(88vw,28rem)] max-w-md flex-col bg-[var(--livora-cream)] shadow-2xl"
     >
 
         {{-- =====================================================
@@ -104,7 +108,7 @@
                  SCROLL AREA
             ================================================== --}}
 
-            <div class="min-h-0 flex-1 overflow-y-auto px-5 py-6">
+            <div class="farzin-filter-drawer__scroll min-h-0 flex-1 overflow-y-auto overscroll-contain px-5 py-6">
 
                 <x-shop.filters
                     mobile

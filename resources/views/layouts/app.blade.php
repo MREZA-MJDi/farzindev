@@ -136,7 +136,6 @@
         mobileOpen: false,
         searchOpen: false,
         searchReturnFocus: null,
-        filterOpen: false,
         openSearch(trigger) {
             this.searchReturnFocus = trigger || null;
             this.mobileOpen = false;
@@ -160,8 +159,6 @@
     <x-layout.mobile-menu />
 
     <x-layout.search-overlay />
-
-    <x-shop.filter-drawer />
 
     <main id="main-content" class="storefront-content flex-1">
         @yield('content')

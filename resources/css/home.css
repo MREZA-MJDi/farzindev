@@ -56,7 +56,7 @@ body.home-body {
     --fz-sunset-light: #FFFFFF;
     position: relative;
     isolation: isolate;
-    height: 280svh;
+    height: 180svh;
     overflow: clip;
     color: var(--fz-text);
     background: #050505;
@@ -899,7 +899,7 @@ body.home-body {
 }
 @media (max-width: 767px) {
     :root { --fz-header-height: 68px; }
-    .fz-hero { height: 255svh; }
+    .fz-hero { height: 160svh; }
     .fz-hero__stage { min-height: 0; }
     .fz-hero__layout {
         grid-template-columns: minmax(0, 1fr);

@@ -28,7 +28,7 @@
             {{-- =========================================================
                 DESKTOP NAVIGATION
             ========================================================== --}}
-            <div class="hidden items-center gap-9 lg:flex">
+            <div class="hidden min-w-0 items-center gap-3 lg:flex xl:gap-8">
 
                 <a
                     href="{{ route('home') }}"
@@ -279,19 +279,6 @@
                     </a>
 
                 @endauth
-
-
-                @guest
-                    <div class="hidden items-center gap-2 lg:flex">
-                        <a href="{{ route('login') }}" class="inline-flex min-h-10 items-center justify-center rounded-full border border-[var(--livora-border)] px-4 text-xs font-medium text-[var(--livora-text)] transition hover:bg-[var(--livora-white)]">
-                            ورود
-                        </a>
-                        <a href="{{ route('register') }}" class="inline-flex min-h-10 items-center justify-center rounded-full bg-[var(--livora-accent)] px-4 text-xs font-semibold text-white transition hover:opacity-90">
-                            ثبت‌نام
-                        </a>
-                    </div>
-                @endguest
-
                 {{-- =====================================================
                     CART
                 ====================================================== --}}
@@ -404,7 +391,7 @@
 
                     <a
                         href="{{ route('login') }}"
-                        aria-label="ورود"
+                        aria-label="حساب کاربری"
                         class="group hidden h-10 w-10 items-center justify-center rounded-full text-[var(--livora-text)] transition duration-300 hover:bg-[var(--livora-white)] lg:flex"
                     >
                         <svg

@@ -279,6 +279,73 @@
             </div>
 
 
+            {{-- Mobile admin quick search --}}
+            <div
+                class="relative md:hidden"
+                x-data="adminQuickSearch"
+                data-pages='@json($quickSearchPages)'
+                @click.outside="query = ''; mobileSearchOpen = false"
+            >
+                <button
+                    type="button"
+                    aria-label="جست‌وجوی پنل"
+                    :aria-expanded="mobileSearchOpen.toString()"
+                    @click="mobileSearchOpen = !mobileSearchOpen; if (mobileSearchOpen) $nextTick(() => $refs.mobileAdminSearch?.focus())"
+                    class="flex h-10 w-10 items-center justify-center rounded-xl border border-[var(--admin-border)] bg-[var(--admin-white)] text-[var(--admin-text-soft)] transition hover:bg-[var(--admin-surface)]"
+                >
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" class="h-[18px] w-[18px]" aria-hidden="true">
+                        <circle cx="11" cy="11" r="6.5"/>
+                        <path stroke-linecap="round" stroke-linejoin="round" d="m16 16 4.2 4.2"/>
+                    </svg>
+                </button>
+
+                <div
+                    x-show="mobileSearchOpen"
+                    x-cloak
+                    x-transition
+                    class="admin-mobile-search-panel fixed inset-x-3 top-[80px] z-[60] mx-auto w-auto max-w-xl rounded-2xl border border-[var(--admin-border)] bg-[var(--admin-white)] p-3 shadow-[var(--admin-shadow-lg)]"
+                >
+                    <form role="search" @submit.prevent="goToFirst()">
+                        <label for="admin-quick-search-mobile" class="sr-only">جست‌وجوی بخش‌های پنل</label>
+                        <input
+                            x-ref="mobileAdminSearch"
+                            id="admin-quick-search-mobile"
+                            type="search"
+                            x-model="query"
+                            @keydown.escape="query = ''; mobileSearchOpen = false"
+                            :aria-expanded="(query.trim().length > 0).toString()"
+                            aria-controls="admin-quick-search-mobile-results"
+                            autocomplete="off"
+                            enterkeyhint="search"
+                            placeholder="جست‌وجوی بخش‌های پنل..."
+                            class="admin-input w-full"
+                        >
+                    </form>
+
+                    <div
+                        id="admin-quick-search-mobile-results"
+                        x-show="query.trim().length > 0"
+                        x-cloak
+                        class="mt-2 max-h-[min(55dvh,24rem)] overflow-y-auto rounded-xl border border-[var(--admin-border)] bg-[var(--admin-white)] p-2"
+                    >
+                        <template x-for="page in matches" :key="page.url">
+                            <a
+                                :href="page.url"
+                                @click="query = ''; mobileSearchOpen = false"
+                                class="block rounded-xl px-3 py-3 text-sm text-[var(--admin-text)] transition hover:bg-[var(--admin-surface)]"
+                            >
+                                <span x-text="page.title"></span>
+                                <span class="mr-2 text-xs text-[var(--admin-muted)]" aria-hidden="true">↗</span>
+                            </a>
+                        </template>
+                        <p x-show="matches.length === 0" class="px-3 py-3 text-xs text-[var(--admin-muted)]">
+                            بخشی پیدا نشد؛ نام صفحه را ساده‌تر وارد کنید.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+
             {{-- =====================================================
                  NOTIFICATIONS
             ====================================================== --}}

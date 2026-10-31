@@ -20,7 +20,7 @@
     x-transition:leave="transition ease-in duration-200"
     x-transition:leave-start="opacity-100"
     x-transition:leave-end="opacity-0"
-    class="farzin-search-overlay fixed inset-0 z-[110] overflow-y-auto overscroll-contain"
+    class="farzin-search-overlay fixed inset-0 z-[150] overflow-y-auto overscroll-contain"
 >
 
     {{-- Backdrop --}}
