@@ -10,6 +10,7 @@ use App\Models\Product;
 use App\Models\ProductImage;
 use App\Models\Media;
 use App\Services\Catalog\ProductMediaLibrary;
+use App\Services\Media\ResponsiveImageService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
@@ -61,7 +62,8 @@ class ProductController extends Controller
      */
     public function store(
         StoreProductRequest $request,
-        ProductMediaLibrary $mediaLibrary
+        ProductMediaLibrary $mediaLibrary,
+        ResponsiveImageService $images
     ): RedirectResponse {
         $data = $request->validated();
         $uploadedImage = $request->file('image');
@@ -72,7 +74,7 @@ class ProductController extends Controller
 
         if ($uploadedImage) {
             try {
-                $newPath = $uploadedImage->store('products/images', 'public');
+                $newPath = $images->store($uploadedImage, 'products/images');
             } catch (Throwable $exception) {
                 $requestId = (string) $request->attributes->get('request_id', 'unavailable');
                 Log::error('Product image storage failed during creation.', [
@@ -120,7 +122,7 @@ class ProductController extends Controller
             });
         } catch (Throwable $exception) {
             if ($newPath !== null) {
-                Storage::disk('public')->delete($newPath);
+                $images->delete($newPath);
             }
 
             if ($exception instanceof ValidationException) {
@@ -191,7 +193,8 @@ class ProductController extends Controller
     public function update(
         UpdateProductRequest $request,
         Product $product,
-        ProductMediaLibrary $mediaLibrary
+        ProductMediaLibrary $mediaLibrary,
+        ResponsiveImageService $images
     ): RedirectResponse {
         $data = $request->validated();
         $uploadedImage = $request->file('image');
@@ -346,7 +349,7 @@ class ProductController extends Controller
             && ! str_starts_with($oldPathToDelete, '//')
             && $oldPathToDelete !== $newPath
         ) {
-            Storage::disk('public')->delete($oldPathToDelete);
+            $images->delete($oldPathToDelete);
         }
 
         return redirect()
