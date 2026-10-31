@@ -21,6 +21,7 @@ The production build runs a gzip-size gate for the six intentional entrypoints. 
 | Shared responsive CSS | 8 KB |
 | Homepage-only CSS | 18 KB |
 | Admin-only CSS | 24 KB |
+| Blog-only CSS | 5 KB |
 
 Build and verify the production asset graph:
 
