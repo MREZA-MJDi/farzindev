@@ -9,6 +9,7 @@ use App\Models\StorefrontSetting;
 use App\Models\User;
 use App\Services\Seo\SeoSettings;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Cache;
 use Tests\TestCase;
 
@@ -66,7 +67,7 @@ class StorefrontPaginationAndSeoManagementTest extends TestCase
                 'is_default' => false,
             ]);
 
-            \\Illuminate\\Support\\Facades\\DB::table('addresses')
+            DB::table('addresses')
                 ->where('id', $address->id)
                 ->update([
                     'created_at' => now()->addSeconds($index),
