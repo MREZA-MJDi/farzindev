@@ -68,21 +68,19 @@
                     <span class="whitespace-nowrap text-[10px] font-medium">حساب</span>
                 </a>
             @else
-                <a href="{{ route('login') }}" class="flex min-w-0 flex-col items-center justify-center gap-1 rounded-xl px-1 py-2.5 text-[var(--livora-stone)] transition hover:text-[var(--livora-text)]" aria-label="ورود">
+                <a href="{{ route('login') }}" class="flex min-w-0 flex-col items-center justify-center gap-1 rounded-xl px-1 py-2.5 text-[var(--livora-stone)] transition hover:text-[var(--livora-text)]" aria-label="حساب کاربری">
                     <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
                         <circle cx="12" cy="8" r="3.5"/>
                         <path stroke-linecap="round" stroke-linejoin="round" d="M5 20a7 7 0 0 1 14 0"/>
                     </svg>
-                    <span class="whitespace-nowrap text-[10px] font-medium">ورود</span>
                 </a>
             @endif
         @else
-            <a href="{{ route('login') }}" class="flex min-w-0 flex-col items-center justify-center gap-1 rounded-xl px-1 py-2.5 text-[var(--livora-stone)] transition hover:text-[var(--livora-text)]" aria-label="ورود">
+            <a href="{{ route('login') }}" class="flex min-w-0 flex-col items-center justify-center gap-1 rounded-xl px-1 py-2.5 text-[var(--livora-stone)] transition hover:text-[var(--livora-text)]" aria-label="حساب کاربری">
                 <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
                     <circle cx="12" cy="8" r="3.5"/>
                     <path stroke-linecap="round" stroke-linejoin="round" d="M5 20a7 7 0 0 1 14 0"/>
                 </svg>
-                <span class="whitespace-nowrap text-[10px] font-medium">ورود</span>
             </a>
         @endauth
 
