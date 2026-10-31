@@ -55,15 +55,16 @@ class BlogController extends Controller
             ->where('slug', $slug)
             ->firstOrFail();
 
-        $relatedPosts = BlogPost::query()
+        $termIds = $post->terms->modelKeys();
+        $relatedQuery = BlogPost::query()
             ->published()
-            ->whereKeyNot($post->id)
-            ->where(function ($query) use ($post): void {
-                $termIds = $post->terms->modelKeys();
-                if ($termIds !== []) {
-                    $query->whereHas('terms', fn ($terms) => $terms->whereIn('blog_terms.id', $termIds));
-                }
-            })
+            ->whereKeyNot($post->id);
+
+        if ($termIds !== []) {
+            $relatedQuery->whereHas('terms', fn ($terms) => $terms->whereIn('blog_terms.id', $termIds));
+        }
+
+        $relatedPosts = $relatedQuery
             ->orderByDesc('published_at')
             ->limit(3)
             ->get();
@@ -84,8 +85,8 @@ class BlogController extends Controller
     {
         $posts = BlogPost::query()
             ->published()
-            ->indexable()
-            ->with('author:id,name')
+            ->whereIn('seo_robots', ['inherit', 'index,follow'])
+            ->with(['author:id,name', 'terms:id,type,name,slug'])
             ->orderByDesc('published_at')
             ->limit(20)
             ->get();
