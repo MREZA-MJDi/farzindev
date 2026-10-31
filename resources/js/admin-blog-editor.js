@@ -147,10 +147,6 @@ function setupEditor(root) {
         sync();
     };
 
-    surface.addEventListener('mouseup', captureSelection);
-    surface.addEventListener('keyup', captureSelection);
-    surface.addEventListener('blur', captureSelection);
-
     root.querySelectorAll('[data-editor-media-image]').forEach((button) => {
         button.addEventListener('pointerdown', captureSelection);
         button.addEventListener('mousedown', (event) => {
