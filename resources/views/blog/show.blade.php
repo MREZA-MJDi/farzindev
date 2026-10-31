@@ -10,7 +10,7 @@
         ? $post->schema_type
         : 'BlogPosting';
     $articleKeywords = collect([$post->focus_keyword])
-        ->merge($post->tags->pluck('name'))
+        ->merge($post->terms->where('type', 'tag')->pluck('name'))
         ->filter()
         ->unique()
         ->values()
@@ -54,7 +54,7 @@
         'name' => 'فرزین',
     ],
     'keywords' => $articleKeywords,
-    'articleSection' => $post->categories->pluck('name')->values()->all(),
+    'articleSection' => $post->terms->where('type', 'category')->pluck('name')->values()->all(),
     'inLanguage' => 'fa-IR',
 ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT) !!}</script>
 @endpush
@@ -72,7 +72,7 @@
                     <a href="{{ route('home') }}" class="hover:text-white">خانه</a>
                     <span>/</span>
                     <a href="{{ route('blog.index') }}" class="hover:text-white">بلاگ</a>
-                    @foreach($post->categories as $categoryTerm)
+                    @foreach($post->terms->where('type', 'category') as $categoryTerm)
                         <span>/</span>
                         <a href="{{ route('blog.category', $categoryTerm->slug) }}" class="hover:text-white">{{ $categoryTerm->name }}</a>
                     @endforeach
@@ -95,7 +95,7 @@
                         @foreach($post->categories as $categoryTerm)
                             <a href="{{ route('blog.category', $categoryTerm->slug) }}" class="rounded-full border border-white/20 px-3 py-1.5 text-[11px] text-white/80 hover:bg-white/10">{{ $categoryTerm->name }}</a>
                         @endforeach
-                        @foreach($post->tags as $tagTerm)
+                        @foreach($post->terms->where('type', 'tag') as $tagTerm)
                             <a href="{{ route('blog.tag', $tagTerm->slug) }}" class="rounded-full bg-white/10 px-3 py-1.5 text-[11px] text-white/75 hover:bg-white/20">#{{ $tagTerm->name }}</a>
                         @endforeach
                     </div>
