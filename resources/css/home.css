@@ -954,3 +954,12 @@ body.home-body {
     .fz-hero__stage { position: relative; top: auto; height: auto; min-height: calc(100svh - var(--fz-header-height, 68px)); }
     .fz-hero__architecture [data-hero-draw] path { stroke-dashoffset: 0 !important; }
 }
+
+
+/* Homepage deliberately exposes a maximum of eight unique products.
+   Two-card rows stay centered instead of leaving half of a four-column grid empty. */
+.home-body .fz-product-grid--limited {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    width: min(100%, 42rem);
+    margin-inline: auto;
+}

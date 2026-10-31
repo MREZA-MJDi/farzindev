@@ -230,10 +230,10 @@
                     : null;
             @endphp
 
-            <div class="admin-image-preview aspect-square">
-
+            <div class="admin-image-preview mb-5 aspect-[4/3]">
                 <img
                     id="category-image-preview"
+                    data-image-editor-existing-preview
                     src="{{ $categoryImageUrl ?: '' }}"
                     alt="{{ $category->name ?? 'تصویر دسته‌بندی' }}"
                     class="admin-image {{ $categoryImageUrl ? '' : 'hidden' }}"
@@ -241,51 +241,69 @@
 
                 <div
                     id="category-image-placeholder"
-                    class="{{ $categoryImageUrl ? 'hidden' : 'flex' }} h-full flex-col items-center justify-center p-6 text-center"
+                    data-image-editor-placeholder
+                    class="{{ $categoryImageUrl ? 'hidden' : 'flex' }} h-full flex-col items-center justify-center rounded-2xl border border-dashed border-[var(--admin-border)] bg-[var(--admin-surface-soft)] p-6 text-center"
                 >
                     <svg xmlns="http://www.w3.org/2000/svg"
                          fill="none" viewBox="0 0 24 24"
                          stroke-width="1.5" stroke="currentColor"
                          class="mb-3 h-10 w-10 text-[var(--admin-muted)]">
                         <path stroke-linecap="round" stroke-linejoin="round"
-                              d="m2.25 15.75 5.159-5.159a2.25 2.25 0 0 1 3.182 0l2.659 2.659 1.5-1.5a2.25 2.25 0 0 1 3.182 0l3.068 3.068M3.75 19.5h16.5A1.5 1.5 0 0 0 20.25 18V6A1.5 1.5 0 0 0 20.25 4.5H3.75A1.5 1.5 0 0 0 2.25 6v12A1.5 1.5 0 0 0 3.75 19.5Z" />
-                        <path stroke-linecap="round" stroke-linejoin="round"
-                              d="M8.25 8.25h.008v.008H8.25V8.25Z" />
+                              d="m2.25 15.75 5.159-5.159a2.25 2.25 0 0 1 3.182 0l2.659 2.659 1.5-1.5a2.25 2.25 0 0 1 3.182 0l3.068 3.068M3.75 19.5h16.5A1.5 1.5 0 0 0 21.75 18V6A1.5 1.5 0 0 0 20.25 4.5H3.75A1.5 1.5 0 0 0 2.25 6v12A1.5 1.5 0 0 0 3.75 19.5Z" />
                     </svg>
-
                     <span class="text-xs text-[var(--admin-muted)]">
                         {{ $editing ? 'تصویری برای این دسته‌بندی ثبت نشده است.' : 'هنوز تصویری انتخاب نشده است.' }}
                     </span>
                 </div>
-
             </div>
 
+            <label for="image" class="admin-label">
+                {{ $editing ? 'تغییر تصویر' : 'انتخاب تصویر دسته‌بندی' }}
+            </label>
+            <input
+                id="image"
+                name="image"
+                type="file"
+                data-image-editor-input
+                data-image-editor-default-ratio="4:3"
+                data-image-editor-min-width="800"
+                data-image-editor-min-height="600"
+                accept="image/jpeg,image/png,image/webp"
+                class="admin-input p-2"
+            >
 
-            <div class="mt-5">
-
-                <label for="image" class="admin-label">
-                    انتخاب تصویر
-                </label>
-
-                <input
-                    id="image"
-                    name="image"
-                    type="file"
-                    accept="image/jpeg,image/png,image/webp"
-                    class="admin-input p-2"
-                >
-
-                <p class="mt-2 text-xs leading-6 text-[var(--admin-muted)]">
-                    فرمت‌های مجاز: JPG، PNG و WEBP — حداکثر حجم تصویر ۲۰ مگابایت.
-                </p>
-
-                @error('image')
-                <p class="mt-2 text-xs text-[var(--admin-danger)]">
-                    {{ $message }}
-                </p>
-                @enderror
-
+            <div data-image-editor-panel hidden class="mt-5 space-y-4 rounded-2xl border border-[var(--admin-border)] bg-[var(--admin-surface-soft)] p-4">
+                <strong class="block text-sm font-semibold text-[var(--admin-text)]">پیش‌نمایش و برش تصویر</strong>
+                <canvas data-image-editor-canvas role="img" aria-label="پیش‌نمایش برش تصویر دسته‌بندی" class="mx-auto block max-w-full rounded-xl bg-[var(--admin-bg)]" style="width:min(100%,640px);height:auto;aspect-ratio:4/3;touch-action:none;cursor:grab;"></canvas>
+                <p class="text-xs leading-6 text-[var(--admin-muted)]">تصویر را داخل کادر بکشید، نسبت را تغییر دهید و در صورت نیاز زوم یا چرخش کنید. خروجی نهایی دقیقاً مطابق همین پیش‌نمایش ذخیره می‌شود.</p>
+                <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
+                    <label class="block text-xs text-[var(--admin-text)]">نسبت کادر
+                        <select data-image-editor-ratio class="admin-select mt-2">
+                            <option value="1:1">مربع ۱:۱</option>
+                            <option value="4:3" selected>استاندارد ۴:۳</option>
+                            <option value="4:5">پرتره ۴:۵</option>
+                            <option value="16:9">عریض ۱۶:۹</option>
+                        </select>
+                    </label>
+                    <label class="block text-xs text-[var(--admin-text)]">بزرگ‌نمایی <span data-image-editor-zoom-label>۱×</span>
+                        <input data-image-editor-zoom type="range" min="1" max="3" step="0.05" value="1" class="mt-3 w-full">
+                    </label>
+                    <div class="flex flex-wrap items-end gap-2">
+                        <button type="button" data-image-editor-rotate="-90" class="admin-btn admin-btn-secondary">↶ چرخش</button>
+                        <button type="button" data-image-editor-rotate="90" class="admin-btn admin-btn-secondary">چرخش ↷</button>
+                        <button type="button" data-image-editor-reset class="admin-btn admin-btn-ghost">بازنشانی</button>
+                    </div>
+                </div>
+                <p data-image-editor-status class="text-xs text-[var(--admin-muted)]" aria-live="polite">کادر را تنظیم کنید.</p>
             </div>
+
+            <p class="mt-2 text-xs leading-6 text-[var(--admin-muted)]">
+                فرمت‌های مجاز: JPG، PNG و WEBP؛ حداکثر حجم ۲۰ مگابایت. برای خروجی باکیفیت، تصویر حداقل ۸۰۰×۶۰۰ پیکسل باشد.
+            </p>
+
+            @error('image')
+                <p role="alert" class="mt-2 text-xs text-[var(--admin-danger)]">{{ $message }}</p>
+            @enderror
 
         </div>
 
@@ -346,52 +364,4 @@
 </div>
 
 
-@push('scripts')
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
 
-        const imageInput =
-            document.getElementById('image');
-
-        const imagePreview =
-            document.getElementById('category-image-preview');
-
-        const imagePlaceholder =
-            document.getElementById('category-image-placeholder');
-
-        if (!imageInput || !imagePreview) {
-            return;
-        }
-
-        imageInput.addEventListener('change', function () {
-
-            const file =
-                imageInput.files?.[0];
-
-            if (!file || !file.type.startsWith('image/')) {
-                return;
-            }
-
-            const objectUrl =
-                URL.createObjectURL(file);
-
-            imagePreview.src =
-                objectUrl;
-
-            imagePreview.classList.remove('hidden');
-
-            if (imagePlaceholder) {
-                imagePlaceholder.classList.add('hidden');
-                imagePlaceholder.classList.remove('flex');
-            }
-
-            imagePreview.onload =
-                function () {
-                    URL.revokeObjectURL(objectUrl);
-                };
-
-        });
-
-    });
-</script>
-@endpush
