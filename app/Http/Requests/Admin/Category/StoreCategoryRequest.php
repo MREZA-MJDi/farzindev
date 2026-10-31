@@ -46,6 +46,9 @@ class StoreCategoryRequest extends FormRequest
                 'string',
             ],
 
+            'meta_title' => ['nullable', 'string', 'max:255'],
+            'meta_description' => ['nullable', 'string', 'max:320'],
+
             'image' => [
                 'nullable',
                 'image',
@@ -97,6 +100,8 @@ class StoreCategoryRequest extends FormRequest
             'slug.unique' => 'این Slug قبلاً استفاده شده است.',
 
             'description.string' => 'توضیحات باید به صورت متن باشد.',
+            'meta_title.max' => 'عنوان SEO حداکثر ۲۵۵ کاراکتر است.',
+            'meta_description.max' => 'توضیحات SEO حداکثر ۳۲۰ کاراکتر است.',
 
             'image.image' => 'فایل انتخاب‌شده باید تصویر باشد.',
             'image.mimes' => 'فرمت تصویر باید jpg، jpeg، png یا webp باشد.',
