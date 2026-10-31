@@ -4,6 +4,7 @@ use App\Console\Commands\OptimizeResponsiveImages;
 use App\Http\Middleware\AdminMiddleware;
 use App\Http\Middleware\CustomerMiddleware;
 use App\Http\Middleware\RequestIdMiddleware;
+use App\Http\Middleware\ApplyRobotsHeaders;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -46,6 +47,9 @@ return Application::configure(
 
         // Give every request a safe identifier that can be matched to server logs.
         $middleware->prepend(RequestIdMiddleware::class);
+
+        // Enforce the SEO pre-launch gate on every web response, including XML and files.
+        $middleware->appendToGroup('web', [ApplyRobotsHeaders::class]);
 
         // Payment providers call this public endpoint from outside the browser
         // session, so exempt only the gateway callback route from CSRF tokens.
