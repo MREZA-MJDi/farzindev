@@ -1,12 +1,12 @@
 <?php
 
-namespace Tests\\Feature;
+namespace Tests\Feature;
 
-use App\\Models\\Category;
-use App\\Models\\Product;
-use App\\Models\\User;
-use Illuminate\\Foundation\\Testing\\RefreshDatabase;
-use Tests\\TestCase;
+use App\Models\Category;
+use App\Models\Product;
+use App\Models\User;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
 
 class WishlistTest extends TestCase
 {
@@ -68,7 +68,7 @@ class WishlistTest extends TestCase
 
         $this->actingAs($customer)
             ->delete(route('account.wishlist.destroy', $product))
-            ->assertRedirect();
+            ->assertRedirect(route('account.wishlist.index'));
 
         $this->assertDatabaseMissing('wishlists', [
             'user_id' => $customer->id,
@@ -85,19 +85,29 @@ class WishlistTest extends TestCase
         $customer = User::factory()->create(['role' => 'customer']);
         $products = collect(range(1, 13))->map(fn (int $number) => $this->product($number));
 
-        foreach ($products as $product) {
-            $customer->wishlists()->create(['product_id' => $product->id]);
+        foreach ($products as $index => $product) {
+            $wishlist = $customer->wishlists()->create(['product_id' => $product->id]);
+            $timestamp = now()->addSeconds($index);
+            $wishlist->forceFill([
+                'created_at' => $timestamp,
+                'updated_at' => $timestamp,
+            ])->save();
         }
 
         $this->actingAs($customer)
             ->get(route('account.wishlist.index'))
             ->assertOk()
-            ->assertSee($products->first()->name)
-            ->assertDontSee($products->last()->name);
+            ->assertSee($products->last()->name)
+            ->assertDontSee($products->first()->name)
+            ->assertSee('page=2', false);
 
         $this->get(route('account.wishlist.index', ['page' => 2]))
             ->assertOk()
-            ->assertSee($products->last()->name);
+            ->assertSee($products->first()->name);
+
+        $this->from(route('account.wishlist.index', ['page' => 2]))
+            ->delete(route('account.wishlist.destroy', $products->first()))
+            ->assertRedirect(route('account.wishlist.index'));
     }
 
     public function test_guests_and_admins_cannot_access_customer_wishlists(): void
