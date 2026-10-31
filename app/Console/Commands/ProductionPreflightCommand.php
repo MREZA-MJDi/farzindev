@@ -174,6 +174,17 @@ class ProductionPreflightCommand extends Command
             }
         }
 
+        $webpSupported = extension_loaded('gd')
+            && function_exists('imagecreatefromstring')
+            && function_exists('imagewebp');
+        $add(
+            $webpSupported ? 'OK' : 'WARN',
+            'Responsive WebP image support',
+            $webpSupported
+                ? 'GD can create responsive WebP derivatives; originals are retained.'
+                : 'Install or enable PHP GD with WebP support to generate responsive image variants. Original uploads will still work.'
+        );
+
         $manifestExists = is_file(public_path('build/manifest.json'));
         $add(
             $manifestExists ? 'OK' : 'FAIL',
