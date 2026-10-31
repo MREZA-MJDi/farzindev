@@ -960,3 +960,35 @@ body.home-body {
     .fz-hero__architecture [data-hero-draw] path { stroke-dashoffset: 0 !important; }
 }
 
+
+
+/* Sparse catalogue sections should not leave one card stranded in a four-column row. */
+.home-body .fz-product-grid.fz-product-grid--single {
+    grid-template-columns: minmax(0, min(100%, 390px));
+    justify-content: center;
+    max-width: 100%;
+    margin-inline: auto;
+}
+
+.home-body .fz-product-grid.fz-product-grid--pair {
+    grid-template-columns: repeat(2, minmax(0, min(100%, 370px)));
+    justify-content: center;
+    max-width: 800px;
+    margin-inline: auto;
+}
+
+.home-body .fz-product-grid.fz-product-grid--triple {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    max-width: 1120px;
+    margin-inline: auto;
+}
+
+@media (max-width: 767px) {
+    .home-body .fz-product-grid.fz-product-grid--pair {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .home-body .fz-product-grid.fz-product-grid--triple {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
