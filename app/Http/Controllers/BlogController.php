@@ -19,6 +19,16 @@ class BlogController extends Controller
         ]);
     }
 
+    public function category(string $slug): View
+    {
+        return $this->term(BlogTerm::TYPE_CATEGORY, $slug);
+    }
+
+    public function tag(string $slug): View
+    {
+        return $this->term(BlogTerm::TYPE_TAG, $slug);
+    }
+
     public function term(string $type, string $slug): View
     {
         abort_unless(in_array($type, [BlogTerm::TYPE_CATEGORY, BlogTerm::TYPE_TAG], true), 404);
