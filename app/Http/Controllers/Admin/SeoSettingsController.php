@@ -72,6 +72,7 @@ class SeoSettingsController extends Controller
             'seo_default_og_image_upload' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'dimensions:min_width=1200,min_height=630', 'max:5120'],
             'seo_development_mode' => ['sometimes', 'boolean'],
             'seo_robots_noindex' => ['sometimes', 'boolean'],
+            'seo_noindex_shop_filters' => ['sometimes', 'boolean'],
             'seo_robots_nofollow' => ['sometimes', 'boolean'],
             'seo_robots_noarchive' => ['sometimes', 'boolean'],
             'seo_robots_nosnippet' => ['sometimes', 'boolean'],
@@ -134,6 +135,7 @@ class SeoSettingsController extends Controller
         foreach ([
             'seo_development_mode',
             'seo_robots_noindex',
+            'seo_noindex_shop_filters',
             'seo_robots_nofollow',
             'seo_robots_noarchive',
             'seo_robots_nosnippet',
