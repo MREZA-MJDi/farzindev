@@ -187,7 +187,12 @@ class UpdateProductRequest extends FormRequest
             'meta_description' => [
                 'nullable',
                 'string',
+                'max:320',
             ],
+            'canonical_url' => ['nullable', 'url:https', 'max:2048'],
+            'og_title' => ['nullable', 'string', 'max:255'],
+            'og_description' => ['nullable', 'string', 'max:320'],
+            'seo_robots' => ['nullable', Rule::in(['inherit', 'index,follow', 'noindex,follow', 'noindex,nofollow'])],
         ];
     }
 
