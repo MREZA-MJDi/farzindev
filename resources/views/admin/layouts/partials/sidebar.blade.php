@@ -125,6 +125,21 @@
 
                 </a>
 
+                <a
+                    href="{{ route('admin.blog-terms.index') }}"
+                    @class([
+                        'group flex items-center gap-3 rounded-2xl px-3 py-3 text-xs font-medium transition',
+                        'bg-[var(--admin-accent-soft)] text-[var(--admin-accent-dark)]' => request()->routeIs('admin.blog-terms.*'),
+                        'text-[var(--admin-text-soft)] hover:bg-[var(--admin-surface)] hover:text-[var(--admin-text)]' => !request()->routeIs('admin.blog-terms.*'),
+                    ])
+                >
+                    <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[var(--admin-surface)] text-[var(--admin-muted)]" aria-hidden="true">TAG</span>
+                    <span class="flex-1">دسته‌ها و برچسب‌های بلاگ</span>
+                    @if(request()->routeIs('admin.blog-terms.*'))
+                        <span class="h-1.5 w-1.5 rounded-full bg-[var(--admin-accent)]"></span>
+                    @endif
+                </a>
+
             </div>
 
         </div>
@@ -419,6 +434,18 @@
                 >
                     <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-white/70 text-sm" aria-hidden="true">⌕</span>
                     <span class="min-w-0 flex-1 truncate">سئو و ایندکس</span>
+                </a>
+
+                <a
+                    href="{{ route('admin.seo-redirects.index') }}"
+                    @class([
+                        'group flex items-center gap-3 rounded-xl px-3 py-3 text-xs font-medium transition duration-200',
+                        'bg-[var(--admin-accent-soft)] text-[var(--admin-accent-dark)]' => request()->routeIs('admin.seo-redirects.*'),
+                        'text-[var(--admin-text-soft)] hover:bg-[var(--admin-surface)] hover:text-[var(--admin-text)]' => !request()->routeIs('admin.seo-redirects.*'),
+                    ])
+                >
+                    <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-white/70 text-sm" aria-hidden="true">↪</span>
+                    <span class="min-w-0 flex-1 truncate">مدیریت Redirectها</span>
                 </a>
 
                 {{-- Contact Messages --}}
