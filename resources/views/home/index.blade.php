@@ -282,9 +282,9 @@
                                 @endif
                             </p>
                         </div>
-                        <a class="fz-text-link" href="{{ route('shop.index', ['sort' => 'popular']) }}">مشاهده پرفروش‌ها <span aria-hidden="true">←</span></a>
+                        <a class="fz-text-link" href="{{ route('shop.index') }}">مشاهده همه محصولات <span aria-hidden="true">←</span></a>
                     </div>
-                    <div class="fz-product-grid">
+                    <div class="fz-product-grid fz-product-grid--limited">
                         @foreach($featuredProducts as $product)
                             <x-home.product-card :product="$product" />
                         @endforeach
@@ -304,7 +304,7 @@
                         </div>
                         <a class="fz-text-link" href="{{ route('shop.index', ['sort' => 'newest']) }}">جدیدترین‌ها <span aria-hidden="true">←</span></a>
                     </div>
-                    <div class="fz-product-grid">
+                    <div class="fz-product-grid fz-product-grid--limited">
                         @foreach($newProducts as $product)
                             <x-home.product-card :product="$product" />
                         @endforeach

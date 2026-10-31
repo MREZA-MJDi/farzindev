@@ -1,11 +1,11 @@
 <footer class="farzin-site-footer border-t border-white/10 bg-[var(--livora-ink)] text-[var(--livora-text)]">
 
-    <x-layout.container>
+    <x-layout.container class="farzin-site-footer__container">
 
         {{-- =========================================================
              MAIN FOOTER
         ========================================================== --}}
-        <div class="farzin-site-footer__main grid min-w-0 grid-cols-1 gap-8 py-10 sm:gap-10 sm:py-14 md:grid-cols-2 lg:grid-cols-[1.25fr_0.75fr_0.75fr_1fr] lg:gap-12 lg:py-20">
+        <div class="farzin-site-footer__main">
 
             {{-- Brand --}}
             <div class="max-w-md">
@@ -219,7 +219,7 @@
         ========================================================== --}}
         <div class="farzin-site-footer__trust grid border-t border-white/10 md:grid-cols-3">
 
-            <div class="border-b border-white/10 py-5 md:border-b-0 md:border-l md:px-6 md:py-6">
+            <div class="farzin-site-footer__trust-item border-b border-white/10 md:border-b-0 md:border-l">
 
                 <h2 class="farzin-site-footer__heading">
                     روش‌های خرید
@@ -231,7 +231,7 @@
 
             </div>
 
-            <div class="border-b border-white/10 py-5 md:border-b-0 md:px-6 md:py-6">
+            <div class="farzin-site-footer__trust-item border-b border-white/10 md:border-b-0">
 
                 <h2 class="farzin-site-footer__heading">
                     مشخصات محصول
@@ -243,7 +243,7 @@
 
             </div>
 
-            <div class="py-5 md:px-6 md:py-6">
+            <div class="farzin-site-footer__trust-item">
 
                 <h2 class="farzin-site-footer__heading">
                     پشتیبانی خرید

@@ -38,4 +38,34 @@ class CategorySeoMetadataTest extends TestCase
             ->assertSee('<title>خرید هود مخفی آشپزخانه | فرزین</title>', false)
             ->assertSee('name="description" content="مدل‌های هود مخفی فرزین را با مشخصات و قیمت بررسی کنید."', false);
     }
+
+    public function test_category_image_forms_use_the_shared_preview_and_crop_editor(): void
+    {
+        $admin = User::factory()->create(['role' => 'admin']);
+        $category = Category::create([
+            'name' => 'دسته تست کراپ',
+            'slug' => 'category-crop-test',
+            'description' => 'آزمایش ویرایش تصویر دسته‌بندی',
+            'is_active' => true,
+            'sort_order' => 1,
+        ]);
+
+        foreach ([
+            route('admin.categories.create'),
+            route('admin.categories.edit', $category),
+        ] as $url) {
+            $this->actingAs($admin)
+                ->get($url)
+                ->assertOk()
+                ->assertSee('data-image-editor-input', false)
+                ->assertSee('data-image-editor-existing-preview', false)
+                ->assertSee('data-image-editor-placeholder', false)
+                ->assertSee('data-image-editor-panel', false)
+                ->assertSee('data-image-editor-canvas', false)
+                ->assertSee('data-image-editor-ratio', false)
+                ->assertSee('data-image-editor-zoom', false)
+                ->assertSee('data-image-editor-rotate', false);
+        }
+    }
+
 }

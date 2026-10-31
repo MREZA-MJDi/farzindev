@@ -62,6 +62,12 @@ for (const viewport of viewports) {
                     containerRight: containerRect.right,
                     mainClientWidth: main.clientWidth,
                     mainScrollWidth: main.scrollWidth,
+                    mainPaddingBlock: [Number.parseFloat(mainStyle.paddingTop), Number.parseFloat(mainStyle.paddingBottom)],
+                    trustPaddingBlock: (() => {
+                        const trust = footer.querySelector('.farzin-site-footer__trust');
+                        const trustStyle = window.getComputedStyle(trust);
+                        return [Number.parseFloat(trustStyle.paddingTop), Number.parseFloat(trustStyle.paddingBottom)];
+                    })(),
                     columns: mainStyle.gridTemplateColumns.trim().split(' ').filter(Boolean).length,
                     footerHeadingCount: footerHeadings.length,
                     footerHeadingStyleCount: new Set(headingStyles).size,
@@ -94,6 +100,8 @@ for (const viewport of viewports) {
             ).toBe(expectedFooterColumns);
 
             expect(footerLayout.footerHeadingCount, path + ' footer must expose all six aligned section headings').toBe(6);
+            expect(Math.max(...footerLayout.mainPaddingBlock), path + ' footer main section must use the shared compact vertical scale').toBeLessThanOrEqual(52);
+            expect(Math.max(...footerLayout.trustPaddingBlock), path + ' footer trust strip must not add excessive vertical space').toBeLessThanOrEqual(16);
             expect(footerLayout.footerHeadingStyleCount, path + ' footer headings must share one typography scale').toBe(1);
             if (viewport.width >= 1200) {
                 expect(footerLayout.mainHeadingTopSpread, path + ' desktop main footer headings must share one row').toBeLessThanOrEqual(1);
@@ -387,10 +395,15 @@ test('homepage image and product sections stay within the loading budget', async
         await page.setViewportSize(viewport);
         await page.goto('/', { waitUntil: 'domcontentloaded' });
 
-        expect(await page.locator('.fz-category-card').count()).toBeLessThanOrEqual(6);
-        expect(await page.locator('.grid__image').count()).toBeLessThanOrEqual(6);
-        expect(await page.locator('.fz-product-section .fz-product-card').count()).toBeLessThanOrEqual(4);
-        expect(await page.locator('.fz-new-section .fz-product-card').count()).toBeLessThanOrEqual(4);
+        expect(await page.locator('.fz-category-card').count()).toBeLessThanOrEqual(4);
+        expect(await page.locator('.grid__image').count()).toBeLessThanOrEqual(4);
+        expect(await page.locator('.fz-product-section .fz-product-card').count()).toBeLessThanOrEqual(2);
+        expect(await page.locator('.fz-new-section .fz-product-card').count()).toBeLessThanOrEqual(2);
+
+        const homepageProductCount = await page.locator('.grid__item-inner, .fz-product-card').count();
+        expect(homepageProductCount, 'homepage must never display more than eight unique product entries').toBeLessThanOrEqual(8);
+        await expect(page.locator('.fz-category-section .fz-text-link')).toHaveAttribute('href', /\/categories(?:\?|$)/);
+        await expect(page.locator('.fz-product-section .fz-text-link')).toHaveAttribute('href', /\/shop(?:\?|$)/);
     }
 });
 

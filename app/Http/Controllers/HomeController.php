@@ -26,7 +26,7 @@ class HomeController extends Controller
                 'products' => fn ($query) => $query->active(),
             ])
             ->orderBy('sort_order')
-            ->limit(6)
+            ->limit(4)
             ->get();
 
         // Count the active catalogue without loading full product models or galleries.
@@ -34,7 +34,8 @@ class HomeController extends Controller
             ->active()
             ->whereHas('category', fn ($query) => $query->where('is_active', true))
             ->count();
-        // Each homepage section is deliberately bounded to keep image and query volume low.
+        // Homepage exposure is capped at 8 unique products: 4 editorial gallery images, 2 bestsellers and 2 new arrivals.
+        // The full catalogue remains available from the dedicated shop page.
 
         // The mosaic is independently curated from the product editor.
         // Keep the result bounded and eager-load only one (primary) image per item.
@@ -52,7 +53,7 @@ class HomeController extends Controller
             ])
             ->orderByDesc('updated_at')
             ->orderByDesc('id')
-            ->limit(6)
+            ->limit(4)
             ->get()
             ->filter(fn (Product $product) => $product->images->contains(
                 fn ($image) => filled($image->url)
@@ -96,7 +97,7 @@ class HomeController extends Controller
             ->orderByDesc('sold_quantity')
             ->orderByDesc('is_featured')
             ->orderByDesc('updated_at')
-            ->limit(4)
+            ->limit(2)
             ->get();
 
         $hasBestSellerSales = $featuredProducts->contains(
@@ -133,7 +134,7 @@ class HomeController extends Controller
             ])
             ->orderByDesc('updated_at')
             ->orderByDesc('id')
-            ->limit(4)
+            ->limit(2)
             ->get();
 
 
