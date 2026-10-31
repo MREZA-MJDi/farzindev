@@ -13,11 +13,11 @@ class ShopPaginationAndBestSellersTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_shop_paginates_eight_products_and_second_page_is_reachable(): void
+    public function test_shop_paginates_twelve_products_and_preserves_sort_on_next_page(): void
     {
         $category = $this->category();
 
-        for ($index = 1; $index <= 9; $index++) {
+        for ($index = 1; $index <= 13; $index++) {
             $this->product($category, [
                 'name' => 'Pagination Product '.$index,
                 'slug' => 'pagination-product-'.$index,
@@ -25,13 +25,14 @@ class ShopPaginationAndBestSellersTest extends TestCase
             ]);
         }
 
-        $this->get(route('shop.index'))
+        $this->get(route('shop.index', ['sort' => 'price_desc']))
             ->assertOk()
             ->assertSee('page=2', false)
-            ->assertSee('Pagination Product 9')
+            ->assertSee('sort=price_desc', false)
+            ->assertSee('Pagination Product 13')
             ->assertDontSee('Pagination Product 1');
 
-        $this->get(route('shop.index', ['page' => 2]))
+        $this->get(route('shop.index', ['page' => 2, 'sort' => 'price_desc']))
             ->assertOk()
             ->assertSee('Pagination Product 1');
     }
