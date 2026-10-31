@@ -194,7 +194,7 @@
             ],
             'offers' => [
                 '@type' => 'Offer',
-                'url' => route('product.show', $product->slug),
+                'url' => $pageCanonical,
                 'priceCurrency' => 'IRR',
                 // Product prices are stored in toman; schema.org expects rial.
                 'price' => (string) (int) round((float) $product->price * 10),
