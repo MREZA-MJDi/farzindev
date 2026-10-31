@@ -1,11 +1,3 @@
-const escapeHtml = (value) => String(value).replace(/[&<>"']/g, (character) => ({
-    '&': '&amp;',
-    '<': '&lt;',
-    '>': '&gt;',
-    '"': '&quot;',
-    "'": '&#39;',
-}[character]));
-
 function setupEditor(root) {
     const surface = root.querySelector('[data-editor-surface]');
     const source = root.querySelector('[data-editor-source]');
@@ -30,10 +22,39 @@ function setupEditor(root) {
         );
     };
 
+    let savedRange = null;
+
+    const captureSelection = () => {
+        const selection = window.getSelection();
+        if (
+            selection?.rangeCount
+            && surface.contains(selection.anchorNode)
+            && surface.contains(selection.focusNode)
+        ) {
+            savedRange = selection.getRangeAt(0).cloneRange();
+        }
+    };
+
+    const restoreSelection = () => {
+        const selection = window.getSelection();
+        if (!savedRange || !selection) return;
+        selection.removeAllRanges();
+        selection.addRange(savedRange);
+    };
+
+    surface.addEventListener('mouseup', captureSelection);
+    surface.addEventListener('keyup', captureSelection);
+    surface.addEventListener('blur', captureSelection);
+
     root.querySelectorAll('[data-editor-command]').forEach((button) => {
+        button.addEventListener('mousedown', (event) => {
+            captureSelection();
+            event.preventDefault();
+        });
         button.addEventListener('click', () => {
             const command = button.dataset.editorCommand;
             surface.focus();
+            restoreSelection();
 
             if (command === 'createLink') {
                 const rawUrl = window.prompt('آدرس لینک را وارد کنید (HTTPS یا مسیر داخلی):');
@@ -57,32 +78,40 @@ function setupEditor(root) {
         });
     });
 
-    root.querySelector('[data-editor-block]')?.addEventListener('change', (event) => {
+    const blockSelect = root.querySelector('[data-editor-block]');
+    blockSelect?.addEventListener('focus', captureSelection);
+    blockSelect?.addEventListener('mousedown', captureSelection);
+    blockSelect?.addEventListener('change', (event) => {
         const block = event.currentTarget.value;
         if (!block) return;
 
         surface.focus();
+        restoreSelection();
         document.execCommand('formatBlock', false, block);
         event.currentTarget.value = '';
+        captureSelection();
         sync();
     });
 
-    let savedRange = null;
-
-    const captureSelection = () => {
-        const selection = window.getSelection();
-        if (
-            selection?.rangeCount
-            && surface.contains(selection.anchorNode)
-            && surface.contains(selection.focusNode)
-        ) {
-            savedRange = selection.getRangeAt(0).cloneRange();
-        }
-    };
-
     const insertImage = (url, alt = '') => {
-        if (!url || !(/^https:\/\//i.test(url) || /^\/(storage|images)\//i.test(url))) {
-            window.alert('آدرس تصویر باید HTTPS یا مسیر داخلی مجاز باشد.');
+        let resolvedUrl;
+
+        try {
+            resolvedUrl = new URL(url, window.location.origin);
+        } catch {
+            window.alert('آدرس تصویر معتبر نیست.');
+            return;
+        }
+
+        const sameOrigin = resolvedUrl.origin === window.location.origin;
+        const secureExternal = resolvedUrl.protocol === 'https:' && /^https:\/\//i.test(url);
+
+        if (
+            !['http:', 'https:'].includes(resolvedUrl.protocol)
+            || (!sameOrigin && !secureExternal)
+            || (sameOrigin && !/^https?:\/\//i.test(url) && !/^\/(storage|images)\//i.test(url))
+        ) {
+            window.alert('فقط HTTPS یا آدرس تصویر داخلی مجاز است.');
             return;
         }
 
@@ -102,7 +131,7 @@ function setupEditor(root) {
         }
 
         const image = document.createElement('img');
-        image.src = url;
+        image.src = resolvedUrl.href;
         image.alt = alt;
         image.loading = 'lazy';
         image.decoding = 'async';
