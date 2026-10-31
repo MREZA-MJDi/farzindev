@@ -59,7 +59,11 @@ class CustomerController extends Controller
         // page of recent orders instead of hydrating the customer's full history.
         $customer->setRelation(
             'addresses',
-            $customer->addresses()->latest()->limit(5)->get()
+            $customer->addresses()
+                ->orderByDesc('is_default')
+                ->latest()
+                ->limit(5)
+                ->get()
         );
 
         $orders = $customer->orders()
