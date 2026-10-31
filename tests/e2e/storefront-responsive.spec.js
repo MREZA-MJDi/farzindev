@@ -515,8 +515,10 @@ test('blog actions are real touch targets and the magazine stays free of heavy m
 
         const feedResponse = await feedResponsePromise;
         expect(feedResponse.headers()['content-type']).toContain('application/rss+xml');
+        const feedXml = await feedResponse.text();
+        expect(feedXml).toContain('<rss');
+        expect(feedXml).toContain('<title>مجله فرزین</title>');
         await expect(page).toHaveURL(/\/blog\/feed\.xml$/);
-        await expect(page.locator('rss > channel > title')).toContainText('مجله فرزین');
     }
 });
 
