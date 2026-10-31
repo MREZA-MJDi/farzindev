@@ -1,7 +1,4 @@
-<footer @class([
-    'farzin-site-footer border-t border-white/10 bg-[var(--livora-ink)] text-[var(--livora-text)]',
-    'farzin-site-footer--spaced' => request()->routeIs('home', 'shop.index'),
-])>
+<footer class="farzin-site-footer border-t border-white/10 bg-[var(--livora-ink)] text-[var(--livora-text)]">
 
     <x-layout.container>
 
