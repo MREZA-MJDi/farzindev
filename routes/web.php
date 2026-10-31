@@ -48,7 +48,7 @@ Route::get('/sitemap.xml', SitemapController::class)
     ->name('sitemap');
 
 Route::get('/sitemap/{type}/{page}.xml', [SitemapController::class, 'segment'])
-    ->whereIn('type', ['pages', 'categories', 'products', 'blog'])
+    ->whereIn('type', ['pages', 'categories', 'products', 'blog', 'blog-categories', 'blog-tags'])
     ->whereNumber('page')
     ->name('sitemap.segment');
 
