@@ -13,7 +13,6 @@ use App\Services\Media\ResponsiveImageService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
 use Throwable;
@@ -130,7 +129,7 @@ class ProductVariantController extends Controller
             });
         } catch (Throwable $exception) {
             foreach ($storedPaths as $storedPath) {
-                Storage::disk('public')->delete($storedPath);
+                $images->delete($storedPath);
             }
 
             if ($exception instanceof ValidationException) {
@@ -211,7 +210,7 @@ class ProductVariantController extends Controller
                 $path = $images->store($upload, 'products/images');
             } catch (Throwable $exception) {
                 foreach ($storedPaths as $storedPath) {
-                    Storage::disk('public')->delete($storedPath);
+                    $images->delete($storedPath);
                 }
 
                 $requestId = (string) $request->attributes->get('request_id', 'unavailable');
@@ -229,7 +228,7 @@ class ProductVariantController extends Controller
 
             if (! $path) {
                 foreach ($storedPaths as $storedPath) {
-                    Storage::disk('public')->delete($storedPath);
+                    $images->delete($storedPath);
                 }
 
                 return back()->withInput()->withErrors([
@@ -296,7 +295,7 @@ class ProductVariantController extends Controller
             });
         } catch (Throwable $exception) {
             foreach ($storedPaths as $storedPath) {
-                Storage::disk('public')->delete($storedPath);
+                $images->delete($storedPath);
             }
 
             if ($exception instanceof ValidationException) {
