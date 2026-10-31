@@ -2,6 +2,8 @@
 
 namespace Tests\Feature;
 
+use App\Models\BlogPost;
+use App\Models\BlogTerm;
 use App\Models\Media;
 use App\Models\User;
 use App\Services\Blog\BlogAppearance;
@@ -100,6 +102,40 @@ class BlogAppearanceTest extends TestCase
             ->assertSee('تصویر نمونه درون مقاله')
             ->assertSee('editor-library-sample.webp')
             ->assertSee('data-media-url="/storage/media/editor-library-sample.webp"', false);
+    }
+
+    public function test_category_and_tag_archives_receive_the_shared_blog_appearance(): void
+    {
+        $category = BlogTerm::create([
+            'type' => 'category',
+            'name' => 'راهنماهای انتخاب',
+            'slug' => 'appearance-category-test',
+            'is_active' => true,
+        ]);
+        $tag = BlogTerm::create([
+            'type' => 'tag',
+            'name' => 'هود',
+            'slug' => 'appearance-tag-test',
+            'is_active' => true,
+        ]);
+        $post = BlogPost::create([
+            'title' => 'راهنمای انتخاب هود',
+            'slug' => 'appearance-taxonomy-post',
+            'body' => 'متن آزمایشی.',
+            'status' => 'published',
+            'published_at' => now()->subHour(),
+        ]);
+        $post->terms()->sync([$category->id, $tag->id]);
+
+        $this->get(route('blog.category', $category->slug))
+            ->assertOk()
+            ->assertSee($post->title)
+            ->assertSee('--blog-container-width: 1280px', false);
+
+        $this->get(route('blog.tag', $tag->slug))
+            ->assertOk()
+            ->assertSee($post->title)
+            ->assertSee('--blog-container-width: 1280px', false);
     }
 
     public function test_public_blog_keeps_rss_subscription_as_a_real_action_link(): void
