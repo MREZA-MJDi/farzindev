@@ -1,13 +1,13 @@
 <?php
 
-namespace Tests\\Feature;
+namespace Tests\Feature;
 
-use App\\Models\\Media;
-use App\\Models\\StorefrontSetting;
-use App\\Models\\User;
-use App\\Services\\Blog\\BlogAppearance;
-use Illuminate\\Foundation\\Testing\\RefreshDatabase;
-use Tests\\TestCase;
+use App\Models\Media;
+use App\Models\StorefrontSetting;
+use App\Models\User;
+use App\Services\Blog\BlogAppearance;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
 
 class BlogAppearanceTest extends TestCase
 {
