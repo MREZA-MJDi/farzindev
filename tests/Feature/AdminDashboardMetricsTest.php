@@ -98,7 +98,7 @@ class AdminDashboardMetricsTest extends TestCase
             ->assertViewHas('currentMonthRevenue', 25000000.0)
             ->assertViewHas('averageOrderValue', 25000000.0)
             ->assertViewHas('installmentOrders', 0)
-            ->assertViewHas('publishedBlogPosts', 1)
+            ->assertViewHas('publishedBlogPosts', 4)
             ->assertViewHas('draftBlogPosts', 1)
             ->assertViewHas('scheduledBlogPosts', 1)
             ->assertViewHas('monthlyRevenue', function ($months): bool {
