@@ -115,6 +115,7 @@
 
                                 <img
                                     src="{{ $category->image_url }}"
+                                    @if($category->image_srcset) srcset="{{ $category->image_srcset }}" sizes="(max-width: 767px) 100vw, 50vw" @endif
                                     alt="{{ $category->name }}"
                                     class="aspect-[4/3] h-full w-full object-cover transition duration-700 hover:scale-[1.03]"
                                 >
