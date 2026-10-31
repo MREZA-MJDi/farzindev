@@ -167,9 +167,9 @@ test('homepage image and product sections stay within the loading budget', async
         await page.setViewportSize(viewport);
         await page.goto('/', { waitUntil: 'domcontentloaded' });
 
-        await expect(page.locator('.fz-category-card')).toHaveCountLessThanOrEqual(6);
-        await expect(page.locator('.grid__image')).toHaveCountLessThanOrEqual(6);
-        await expect(page.locator('.fz-product-section .fz-product-card')).toHaveCountLessThanOrEqual(4);
-        await expect(page.locator('.fz-new-section .fz-product-card')).toHaveCountLessThanOrEqual(4);
+        expect(await page.locator('.fz-category-card').count()).toBeLessThanOrEqual(6);
+        expect(await page.locator('.grid__image').count()).toBeLessThanOrEqual(6);
+        expect(await page.locator('.fz-product-section .fz-product-card').count()).toBeLessThanOrEqual(4);
+        expect(await page.locator('.fz-new-section .fz-product-card').count()).toBeLessThanOrEqual(4);
     }
 });
