@@ -1,5 +1,6 @@
 @php
     $editing = isset($product);
+    $product = $product ?? new \\App\\Models\\Product();
 
     $installmentEnabled = (bool) old(
         'installment_enabled',
