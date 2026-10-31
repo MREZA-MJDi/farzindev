@@ -67,21 +67,84 @@ function setupEditor(root) {
         sync();
     });
 
+    let savedRange = null;
+
+    const captureSelection = () => {
+        const selection = window.getSelection();
+        if (
+            selection?.rangeCount
+            && surface.contains(selection.anchorNode)
+            && surface.contains(selection.focusNode)
+        ) {
+            savedRange = selection.getRangeAt(0).cloneRange();
+        }
+    };
+
+    const insertImage = (url, alt = '') => {
+        if (!url || !(/^https:\/\//i.test(url) || /^\/(storage|images)\//i.test(url))) {
+            window.alert('آدرس تصویر باید HTTPS یا مسیر داخلی مجاز باشد.');
+            return;
+        }
+
+        surface.focus();
+
+        const selection = window.getSelection();
+        let range = savedRange?.cloneRange() || null;
+
+        if (!range && selection?.rangeCount && surface.contains(selection.anchorNode)) {
+            range = selection.getRangeAt(0).cloneRange();
+        }
+
+        if (!range || !surface.contains(range.commonAncestorContainer)) {
+            range = document.createRange();
+            range.selectNodeContents(surface);
+            range.collapse(false);
+        }
+
+        const image = document.createElement('img');
+        image.src = url;
+        image.alt = alt;
+        image.loading = 'lazy';
+        image.decoding = 'async';
+
+        range.deleteContents();
+        range.insertNode(image);
+        range.setStartAfter(image);
+        range.collapse(true);
+
+        selection?.removeAllRanges();
+        selection?.addRange(range);
+        savedRange = null;
+        sync();
+    };
+
+    surface.addEventListener('mouseup', captureSelection);
+    surface.addEventListener('keyup', captureSelection);
+    surface.addEventListener('blur', captureSelection);
+
+    root.querySelectorAll('[data-editor-media-image]').forEach((button) => {
+        button.addEventListener('pointerdown', captureSelection);
+        button.addEventListener('mousedown', (event) => {
+            captureSelection();
+            event.preventDefault();
+        });
+        button.addEventListener('click', () => {
+            insertImage(button.dataset.mediaUrl || '', button.dataset.mediaAlt || '');
+        });
+    });
+
+    root.querySelector('[data-editor-insert-image]')?.addEventListener('pointerdown', captureSelection);
+    root.querySelector('[data-editor-insert-image]')?.addEventListener('mousedown', (event) => {
+        captureSelection();
+        event.preventDefault();
+    });
     root.querySelector('[data-editor-insert-image]')?.addEventListener('click', () => {
         const rawUrl = window.prompt('آدرس HTTPS یا مسیر تصویر در /storage/ یا /images/ را وارد کنید:');
         if (!rawUrl) return;
 
         const url = rawUrl.trim();
-        if (!(/^https:\/\//i.test(url) || /^\/(storage|images)\//i.test(url))) {
-            window.alert('آدرس تصویر باید HTTPS یا مسیر داخلی مجاز باشد.');
-            return;
-        }
-
         const alt = window.prompt('متن جایگزین تصویر (Alt):') || '';
-        surface.focus();
-        document.execCommand('insertHTML', false,
-            '<img src="' + escapeHtml(url) + '" alt="' + escapeHtml(alt) + '" loading="lazy">');
-        sync();
+        insertImage(url, alt);
     });
 
     surface.addEventListener('input', sync);
