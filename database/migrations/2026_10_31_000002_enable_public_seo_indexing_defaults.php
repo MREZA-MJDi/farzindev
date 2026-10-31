@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Cache;
 
 return new class extends Migration
 {
@@ -21,6 +22,9 @@ return new class extends Migration
                 'seo_robots_noimageindex',
             ])
             ->update(['value' => '0']);
+
+        Cache::forget('storefront.seo-settings.v1');
+        Cache::forget('storefront.sitemap.xml.v1');
     }
 
     public function down(): void
