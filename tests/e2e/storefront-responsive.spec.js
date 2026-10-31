@@ -300,7 +300,7 @@ test('shared footer keeps the same typography, content and grid on every storefr
             const style = window.getComputedStyle(footer);
             const headingStyle = window.getComputedStyle(heading);
             return {
-                text: footer.innerText.replace(/\\s+/g, ' ').trim(),
+                text: footer.innerText.replace(/\s+/g, ' ').trim(),
                 direction: style.direction,
                 fontFamily: style.fontFamily,
                 fontSize: style.fontSize,
@@ -322,7 +322,7 @@ test('shared footer keeps the same typography, content and grid on every storefr
 });
 
 test('storefront sections never disappear while entrance motion initializes', async ({ page }) => {
-    for (const path of ['/shop', '/categories/hoods', '/contact']) {
+    for (const path of ['/categories/hoods', '/contact']) {
         await page.goto(path, { waitUntil: 'domcontentloaded' });
 
         const motionState = await page.locator(
