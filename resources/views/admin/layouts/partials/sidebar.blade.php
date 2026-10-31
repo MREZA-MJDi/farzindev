@@ -133,9 +133,28 @@
                         'text-[var(--admin-text-soft)] hover:bg-[var(--admin-surface)] hover:text-[var(--admin-text)]' => !request()->routeIs('admin.blog-terms.*'),
                     ])
                 >
-                    <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[var(--admin-surface)] text-[var(--admin-muted)]" aria-hidden="true">TAG</span>
+                    <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[var(--admin-surface)] text-[var(--admin-muted)]" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4"><path d="m20.5 13.5-7 7a1.4 1.4 0 0 1-2 0L3.5 12.5V3.5h9l8 8a1.4 1.4 0 0 1 0 2Z" /><circle cx="8" cy="8" r="1.1" /></svg>
+                    </span>
                     <span class="flex-1">دسته‌ها و برچسب‌های بلاگ</span>
                     @if(request()->routeIs('admin.blog-terms.*'))
+                        <span class="h-1.5 w-1.5 rounded-full bg-[var(--admin-accent)]"></span>
+                    @endif
+                </a>
+
+                <a
+                    href="{{ route('admin.blog-appearance.edit') }}"
+                    @class([
+                        'group flex items-center gap-3 rounded-2xl px-3 py-3 text-xs font-medium transition',
+                        'bg-[var(--admin-accent-soft)] text-[var(--admin-accent-dark)]' => request()->routeIs('admin.blog-appearance.*'),
+                        'text-[var(--admin-text-soft)] hover:bg-[var(--admin-surface)] hover:text-[var(--admin-text)]' => !request()->routeIs('admin.blog-appearance.*'),
+                    ])
+                >
+                    <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[var(--admin-surface)] text-[var(--admin-muted)]" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4"><rect x="3" y="3" width="18" height="18" rx="2" /><circle cx="8.5" cy="8.5" r="1.5" /><path d="m21 15-5-5L5 21" /></svg>
+                    </span>
+                    <span class="flex-1">ظاهر و تصاویر مجله</span>
+                    @if(request()->routeIs('admin.blog-appearance.*'))
                         <span class="h-1.5 w-1.5 rounded-full bg-[var(--admin-accent)]"></span>
                     @endif
                 </a>
@@ -550,9 +569,7 @@
                         مشاهده فروشگاه
                     </span>
 
-                    <span class="text-[10px] text-[var(--admin-muted)]">
-                        ↗
-                    </span>
+                
 
                 </a>
 

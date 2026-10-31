@@ -340,8 +340,7 @@
                                     href="{{ route('account.orders.index') }}"
                                     class="text-sm font-medium text-[var(--livora-accent)]"
                                 >
-                                    مشاهده همه
-                                    <span class="mr-1">←</span>
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4 shrink-0" aria-hidden="true"><path d="M6 3h12v18l-3-1.8-3 1.8-3-1.8L6 21V3Z" /><path d="M9 8h6m-6 4h6m-6 4h3" /></svg> مشاهده همه
                                 </a>
 
                             </div>
@@ -421,9 +420,7 @@
 
                                             <span>
                                             مشاهده جزئیات
-                                            <span class="mr-1 transition-transform group-hover:-translate-x-1">
-                                                ←
-                                            </span>
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4 shrink-0" aria-hidden="true"><path d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6Z" /><circle cx="12" cy="12" r="2.5" /></svg>
                                         </span>
 
                                         </div>

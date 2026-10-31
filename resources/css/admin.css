@@ -1899,3 +1899,125 @@ p {
 .admin-blog-editor a { color: var(--admin-accent); text-decoration: underline; text-underline-offset: 3px; }
 .admin-blog-editor img { display: block; max-width: 100%; height: auto; margin-block: 1rem; border-radius: .85rem; }
 .admin-blog-editor:empty::before { content: 'متن مقاله را اینجا بنویسید…'; color: var(--admin-muted); pointer-events: none; }
+
+
+/* Compact, faithful previews for the dashboard-managed blog art direction. */
+.blog-design-preview {
+    position: relative;
+    isolation: isolate;
+    display: grid;
+    min-height: 18rem;
+    grid-template-columns: minmax(0, 1.15fr) minmax(9rem, .85fr);
+    align-items: center;
+    gap: 1rem;
+    overflow: hidden;
+    padding: clamp(1.25rem, 3vw, 2rem);
+    border: 1px solid var(--admin-border);
+    border-radius: 1.5rem;
+}
+.blog-design-preview--hero {
+    color: #f4f5f7;
+    background:
+        radial-gradient(circle at 75% 45%, rgba(255,255,255,.12), transparent 37%),
+        linear-gradient(145deg, #252831, #101216 75%);
+}
+.blog-design-preview--closing {
+    color: #191b20;
+    background:
+        radial-gradient(circle at 75% 45%, rgba(255,255,255,.75), transparent 38%),
+        linear-gradient(120deg, #e5e7eb, #b5bbc5);
+}
+.blog-design-preview__copy {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    min-width: 0;
+    flex-direction: column;
+    gap: .65rem;
+}
+.blog-design-preview__copy > span {
+    color: currentColor;
+    opacity: .62;
+    font-size: .52rem;
+    font-weight: 800;
+    letter-spacing: .14em;
+}
+.blog-design-preview__copy > strong {
+    max-width: 17rem;
+    font-size: clamp(1.05rem, 2.2vw, 1.65rem);
+    font-weight: 850;
+    line-height: 1.65;
+    letter-spacing: -.045em;
+}
+.blog-design-preview__copy > small {
+    color: currentColor;
+    opacity: .62;
+    font-size: .65rem;
+    line-height: 1.8;
+}
+.blog-design-preview__art {
+    position: relative;
+    display: grid;
+    width: min(100%, 15rem);
+    aspect-ratio: 1;
+    place-items: center;
+    justify-self: center;
+}
+.blog-design-preview__art img {
+    position: absolute;
+    z-index: 1;
+    inset: 13%;
+    width: 74%;
+    height: 74%;
+    overflow: hidden;
+    border: 1px solid rgba(255,255,255,.32);
+    border-radius: 1.25rem;
+    object-fit: cover;
+    box-shadow: 0 18px 42px rgba(0,0,0,.24);
+    transform-origin: center;
+    transition: transform .2s ease, object-position .2s ease;
+}
+.blog-design-preview__fallback {
+    display: grid;
+    width: 62%;
+    aspect-ratio: 1;
+    place-items: center;
+    border: 1px solid rgba(255,255,255,.24);
+    border-radius: 50%;
+    color: rgba(255,255,255,.86);
+    background: radial-gradient(circle at 35% 25%, #626873, #24262d 65%, #15161a);
+    box-shadow: 0 18px 42px rgba(0,0,0,.24);
+}
+.blog-design-preview__fallback span {
+    font-family: Georgia, serif;
+    font-size: clamp(3rem, 7vw, 5rem);
+}
+.blog-design-preview__ring {
+    position: absolute;
+    inset: 3%;
+    border: 1px solid currentColor;
+    border-radius: 50%;
+    opacity: .17;
+    pointer-events: none;
+}
+.blog-design-preview__ring::before,
+.blog-design-preview__ring::after {
+    position: absolute;
+    content: "";
+    border: 1px solid currentColor;
+    border-radius: 50%;
+}
+.blog-design-preview__ring::before { inset: 12%; }
+.blog-design-preview__ring::after { inset: 25%; }
+@media (max-width: 640px) {
+    .blog-design-preview {
+        min-height: 15rem;
+        grid-template-columns: minmax(0, 1fr) minmax(8rem, .8fr);
+        gap: .65rem;
+        padding: 1.15rem;
+    }
+    .blog-design-preview__art { width: min(100%, 10rem); }
+}
+@media (prefers-reduced-motion: reduce) {
+    .blog-design-preview__art img { transition: none; }
+}

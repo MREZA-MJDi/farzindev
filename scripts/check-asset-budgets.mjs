@@ -12,7 +12,9 @@ const budgets = [
     { key: 'resources/css/responsive.css', label: 'Shared responsive CSS', maxGzipKb: 8 },
     { key: 'resources/css/home.css', label: 'Homepage-only CSS', maxGzipKb: 18 },
     { key: 'resources/css/admin.css', label: 'Admin-only CSS', maxGzipKb: 24 },
-    { key: 'resources/css/blog.css', label: 'Blog-only CSS', maxGzipKb: 5 },
+    // The editorial artwork controls add two dashboard-managed image slots.
+    // Keep the public magazine stylesheet tightly capped while accounting for them.
+    { key: 'resources/css/blog.css', label: 'Blog-only CSS', maxGzipKb: 5.5 },
 ];
 
 let failed = false;

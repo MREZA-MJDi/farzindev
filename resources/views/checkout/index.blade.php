@@ -520,9 +520,7 @@
                                 ثبت سفارش و ادامه پرداخت
                             </span>
 
-                                <span class="text-white/60">
-                                ←
-                            </span>
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4 shrink-0" aria-hidden="true"><rect x="2.5" y="5" width="19" height="14" rx="2.3" /><path d="M2.5 10h19m-15 5h4" /></svg>
 
                             </button>
 

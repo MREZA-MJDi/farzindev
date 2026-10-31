@@ -82,8 +82,8 @@
                             <input data-image-editor-zoom type="range" min="1" max="3" step="0.05" value="1" class="mt-3 w-full">
                         </label>
                         <div class="flex flex-wrap items-end gap-2">
-                            <button type="button" data-image-editor-rotate="-90" class="admin-btn admin-btn-secondary">↶ چرخش</button>
-                            <button type="button" data-image-editor-rotate="90" class="admin-btn admin-btn-secondary">چرخش ↷</button>
+                            <button type="button" data-image-editor-rotate="-90" class="admin-btn admin-btn-secondary"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4" aria-hidden="true"><path d="M4 7v5h5" /><path d="M4.8 13.5A8 8 0 1 0 7 6.1L4 9" /></svg> چرخش به چپ</button>
+                            <button type="button" data-image-editor-rotate="90" class="admin-btn admin-btn-secondary"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4" aria-hidden="true"><path d="M20 7v5h-5" /><path d="M19.2 13.5A8 8 0 1 1 17 6.1L20 9" /></svg> چرخش به راست</button>
                             <button type="button" data-image-editor-reset class="admin-btn admin-btn-ghost">بازنشانی</button>
                         </div>
                     </div>
@@ -179,7 +179,7 @@
                                 <strong class="block text-sm text-[var(--admin-text)]">پیش‌نمایش موقعیت صفحه تماس</strong>
                                 <p id="contact-map-preview-status" class="mt-1 text-xs leading-6 text-[var(--admin-muted)]">با وارد کردن آدرس یا هر دو مختصات، لینک نقشه ساخته می‌شود.</p>
                             </div>
-                            <a id="contact-map-preview-link" href="https://maps.google.com/" target="_blank" rel="noopener noreferrer" class="admin-btn admin-btn-secondary" aria-disabled="true">باز کردن موقعیت در Google Maps ↗</a>
+                            <a id="contact-map-preview-link" href="https://maps.google.com/" target="_blank" rel="noopener noreferrer" class="admin-btn admin-btn-secondary" aria-disabled="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4" aria-hidden="true"><path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z" /><circle cx="12" cy="10" r="2.5" /></svg> باز کردن موقعیت در Google Maps</a>
                         </div>
                         <p id="contact-map-preview-query" class="mt-2 break-all text-xs text-[var(--admin-muted)]" dir="ltr"></p>
                     </div>

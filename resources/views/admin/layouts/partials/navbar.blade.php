@@ -37,6 +37,12 @@
         'admin.media.index' => 'رسانه',
         'admin.media.create' => 'افزودن رسانه',
 
+        'admin.blog-posts.index' => 'مقالات بلاگ',
+        'admin.blog-posts.create' => 'مقاله جدید',
+        'admin.blog-posts.edit' => 'ویرایش مقاله',
+        'admin.blog-terms.index' => 'دسته‌ها و برچسب‌های بلاگ',
+        'admin.blog-appearance.edit' => 'ظاهر و تصاویر مجله',
+
         'admin.contact-messages.index' => 'پیام‌های کاربران',
         'admin.contact-messages.show' => 'مشاهده پیام',
     ];
@@ -54,6 +60,9 @@
         ['title' => 'سفارش‌ها', 'url' => route('admin.orders.index'), 'terms' => 'orders sales'],
         ['title' => 'مشتریان', 'url' => route('admin.customers.index'), 'terms' => 'customers users'],
         ['title' => 'رسانه', 'url' => route('admin.media.index'), 'terms' => 'media uploads فایل آپلود'],
+        ['title' => 'مقالات بلاگ', 'url' => route('admin.blog-posts.index'), 'terms' => 'blog articles posts محتوا نوشته'],
+        ['title' => 'دسته‌ها و برچسب‌های بلاگ', 'url' => route('admin.blog-terms.index'), 'terms' => 'blog category tag موضوع'],
+        ['title' => 'ظاهر و تصاویر مجله', 'url' => route('admin.blog-appearance.edit'), 'terms' => 'blog design art hero image'],
         ['title' => 'پیام‌های کاربران', 'url' => route('admin.contact-messages.index'), 'terms' => 'contact messages support'],
     ];
 
@@ -207,9 +216,6 @@
 
                 فروشگاه
 
-                <span class="text-[9px] text-[var(--admin-muted)]">
-                    ↗
-                </span>
 
             </a>
 
@@ -269,7 +275,7 @@
                             class="block rounded-xl px-3 py-2.5 text-xs text-[var(--admin-text)] transition hover:bg-[var(--admin-surface)]"
                         >
                             <span x-text="page.title"></span>
-                            <span class="mr-2 text-[10px] text-[var(--admin-muted)]" aria-hidden="true">↗</span>
+
                         </a>
                     </template>
                     <p x-show="matches.length === 0" class="px-3 py-3 text-xs text-[var(--admin-muted)]">
@@ -335,7 +341,7 @@
                                 class="block rounded-xl px-3 py-3 text-sm text-[var(--admin-text)] transition hover:bg-[var(--admin-surface)]"
                             >
                                 <span x-text="page.title"></span>
-                                <span class="mr-2 text-xs text-[var(--admin-muted)]" aria-hidden="true">↗</span>
+
                             </a>
                         </template>
                         <p x-show="matches.length === 0" class="px-3 py-3 text-xs text-[var(--admin-muted)]">
@@ -688,7 +694,7 @@
                         >
 
                             <span class="flex h-7 w-7 items-center justify-center rounded-lg bg-[var(--admin-surface)]">
-                                ↗
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4" aria-hidden="true"><path d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6Z" /><circle cx="12" cy="12" r="2.5" /></svg>
                             </span>
 
                             مشاهده فروشگاه

@@ -129,7 +129,7 @@
                 </div>
 
                 <div class="mt-8">
-                    <a href="{{ route('blog.index') }}" class="inline-flex items-center gap-2 text-sm font-semibold text-[var(--livora-accent)]"><span aria-hidden="true">→</span> بازگشت به همه مقاله‌ها</a>
+                    <a href="{{ route('blog.index') }}" class="inline-flex min-h-11 items-center gap-2 text-sm font-semibold text-[var(--livora-accent)]"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4" aria-hidden="true"><path d="M12 7.5c-2.2-1.6-5-2.1-8.25-1.5v12c3.25-.6 6.05-.1 8.25 1.5m0-12c2.2-1.6 5-2.1 8.25-1.5v12c-3.25-.6-6.05-.1-8.25 1.5" /><path d="M12 7.5v12" /></svg> بازگشت به همه مقاله‌ها</a>
                 </div>
             </div>
 
@@ -138,7 +138,7 @@
                     <p class="text-[10px] font-semibold uppercase tracking-[0.18em] text-[var(--livora-accent)]">KEEP EXPLORING</p>
                     <h2 class="mt-3 text-lg font-semibold">راهنماهای بیشتر</h2>
                     <p class="mt-2 text-xs leading-7 text-[var(--livora-stone)]">برای انتخاب دقیق‌تر، مشخصات و مدل‌های موجود را کنار توصیه‌های مقاله بررسی کنید.</p>
-                    <a href="{{ route('categories.index') }}" class="mt-4 inline-flex text-sm font-semibold text-[var(--livora-accent)]">دسته‌بندی محصولات ←</a>
+                    <a href="{{ route('categories.index') }}" class="mt-4 inline-flex min-h-11 items-center gap-2 text-sm font-semibold text-[var(--livora-accent)]"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4" aria-hidden="true"><path d="M3.5 9h17l-1 11h-15l-1-11Z" /><path d="M8 9V6.5a4 4 0 0 1 8 0V9" /></svg> دسته‌بندی محصولات</a>
                 </div>
 
                 @if($relatedPosts->isNotEmpty())

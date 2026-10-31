@@ -2085,12 +2085,11 @@ footer a:hover { color: var(--livora-sage) !important; }
 .fz-contact-channel:hover { transform: translateY(-2px); border-color: var(--livora-accent); box-shadow: 0 10px 24px rgba(0,0,0,.18); }
 .fz-contact-channel__icon { display: grid; flex: 0 0 auto; place-items: center; width: 2.7rem; height: 2.7rem; border: 1px solid var(--livora-border); border-radius: .95rem; color: #a2a2a2; background: var(--livora-accent-soft); }
 .fz-contact-channel__icon svg { width: 1.25rem; height: 1.25rem; }
+.fz-contact-channel:hover .fz-contact-channel__icon { color: var(--livora-accent-dark); transform: scale(1.04); }
 .fz-contact-channel__copy { display: grid; min-width: 0; flex: 1; gap: .17rem; }
 .fz-contact-channel__copy small { color: var(--livora-stone); font-size: .55rem; letter-spacing: .04em; }
 .fz-contact-channel__copy strong { color: var(--livora-text); font-size: .76rem; font-weight: 850; }
 .fz-contact-channel__copy em { color: var(--livora-accent-dark); font-size: .71rem; font-style: normal; overflow-wrap: anywhere; }
-.fz-contact-channel__arrow { flex: 0 0 auto; color: #777777; font-size: .95rem; transition: transform .22s ease, color .22s ease; }
-.fz-contact-channel:hover .fz-contact-channel__arrow { color: var(--livora-accent); transform: translate(-2px, -2px); }
 .fz-contact-empty-channel { padding: .9rem; border: 1px dashed var(--livora-border); border-radius: 1rem; color: var(--livora-stone); font-size: .72rem; line-height: 1.9; }
 .fz-contact-social { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 1rem; margin: 1.15rem clamp(.85rem, 2vw, 1.35rem) 1.25rem; padding-top: 1rem; border-top: 1px solid var(--livora-border); }
 .fz-contact-social--empty { margin-top: 1rem; margin-bottom: 1.15rem; }
@@ -2101,7 +2100,6 @@ footer a:hover { color: var(--livora-sage) !important; }
 .fz-contact-social__link:hover { transform: translateY(-2px); border-color: #bcbcbc; box-shadow: 0 7px 16px rgba( 54, 54, 54, .07); }
 .fz-contact-social__link > span { display: grid; place-items: center; width: 1.45rem; height: 1.45rem; border-radius: 50%; color: #fff; background: var(--livora-accent-dark); font-weight: 900; }
 .fz-contact-social__link--instagram > span { background: linear-gradient(140deg, #717171, #6b6b6b 60%, #bcbcbc); }
-.fz-contact-social__link b { color: #999999; font-size: .75rem; }
 .fz-contact-form-panel { padding: 0 0 clamp(1.1rem, 2.4vw, 1.65rem); }
 .fz-contact-form-panel > .fz-contact-panel__header { padding-bottom: 1rem; }
 .fz-contact-form-panel__number { display: grid; flex: 0 0 auto; place-items: center; width: 2.8rem; height: 2.8rem; border: 1px solid var(--livora-border); border-radius: .95rem; color: #c5c5c5; background: var(--livora-accent-soft); font-size: .72rem; font-weight: 900; }

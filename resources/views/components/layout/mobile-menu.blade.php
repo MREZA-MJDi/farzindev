@@ -79,60 +79,72 @@
                     DISCOVER
                 </p>
 
-                <div class="mt-3 divide-y divide-[var(--livora-border)] rounded-3xl border border-[var(--livora-border)] bg-[var(--livora-white)]">
+                <div class="mt-3 divide-y divide-[var(--livora-border)] overflow-hidden rounded-3xl border border-[var(--livora-border)] bg-[var(--livora-white)]">
 
                     <a
                         href="{{ route('home') }}"
                         @click="mobileOpen = false"
-                        class="flex items-center justify-between px-4 py-4 text-sm font-medium"
+                        class="group flex min-h-[68px] items-center justify-between gap-4 px-4 py-3 text-sm font-semibold transition hover:bg-[var(--livora-surface)] focus-visible:relative focus-visible:z-10"
                     >
                         <span>خانه</span>
-                        <span class="text-[var(--livora-stone)]">←</span>
+                        <span class="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-[var(--livora-surface)] text-[var(--livora-text)] transition group-hover:bg-[var(--livora-ink)] group-hover:text-white" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" class="h-5 w-5"><path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1V10Z" /></svg>
+                        </span>
                     </a>
 
                     <a
                         href="{{ route('shop.index') }}"
                         @click="mobileOpen = false"
-                        class="flex items-center justify-between px-4 py-4 text-sm font-medium"
+                        class="group flex min-h-[68px] items-center justify-between gap-4 px-4 py-3 text-sm font-semibold transition hover:bg-[var(--livora-surface)] focus-visible:relative focus-visible:z-10"
                     >
                         <span>فروشگاه</span>
-                        <span class="text-[var(--livora-stone)]">←</span>
+                        <span class="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-[var(--livora-surface)] text-[var(--livora-text)] transition group-hover:bg-[var(--livora-ink)] group-hover:text-white" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" class="h-5 w-5"><path d="M3.5 9h17l-1 11h-15l-1-11Z" /><path d="M8 9V6.5a4 4 0 0 1 8 0V9" /></svg>
+                        </span>
                     </a>
 
                     <a
                         href="{{ route('categories.index') }}"
                         @click="mobileOpen = false"
-                        class="flex items-center justify-between px-4 py-4 text-sm font-medium"
+                        class="group flex min-h-[68px] items-center justify-between gap-4 px-4 py-3 text-sm font-semibold transition hover:bg-[var(--livora-surface)] focus-visible:relative focus-visible:z-10"
                     >
                         <span>دسته‌بندی‌ها</span>
-                        <span class="text-[var(--livora-stone)]">←</span>
+                        <span class="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-[var(--livora-surface)] text-[var(--livora-text)] transition group-hover:bg-[var(--livora-ink)] group-hover:text-white" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" class="h-5 w-5"><rect x="3.5" y="3.5" width="7" height="7" rx="1.3" /><rect x="13.5" y="3.5" width="7" height="7" rx="1.3" /><rect x="3.5" y="13.5" width="7" height="7" rx="1.3" /><rect x="13.5" y="13.5" width="7" height="7" rx="1.3" /></svg>
+                        </span>
                     </a>
 
                     <a
                         href="{{ route('blog.index') }}"
                         @click="mobileOpen = false"
-                        class="flex items-center justify-between px-4 py-4 text-sm font-medium"
+                        class="group flex min-h-[68px] items-center justify-between gap-4 px-4 py-3 text-sm font-semibold transition hover:bg-[var(--livora-surface)] focus-visible:relative focus-visible:z-10"
                     >
                         <span>بلاگ و راهنمای خرید</span>
-                        <span class="text-[var(--livora-stone)]">←</span>
+                        <span class="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-[var(--livora-surface)] text-[var(--livora-text)] transition group-hover:bg-[var(--livora-ink)] group-hover:text-white" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" class="h-5 w-5"><path d="M12 7.5c-2.2-1.6-5-2.1-8.25-1.5v12c3.25-.6 6.05-.1 8.25 1.5m0-12c2.2-1.6 5-2.1 8.25-1.5v12c-3.25-.6-6.05-.1-8.25 1.5" /><path d="M12 7.5v12" /></svg>
+                        </span>
                     </a>
 
                     <a
                         href="{{ route('about') }}"
                         @click="mobileOpen = false"
-                        class="flex items-center justify-between px-4 py-4 text-sm font-medium"
+                        class="group flex min-h-[68px] items-center justify-between gap-4 px-4 py-3 text-sm font-semibold transition hover:bg-[var(--livora-surface)] focus-visible:relative focus-visible:z-10"
                     >
                         <span>درباره فرزین</span>
-                        <span class="text-[var(--livora-stone)]">←</span>
+                        <span class="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-[var(--livora-surface)] text-[var(--livora-text)] transition group-hover:bg-[var(--livora-ink)] group-hover:text-white" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" class="h-5 w-5"><circle cx="12" cy="12" r="9" /><path d="M12 11v5m0-8h.01" /></svg>
+                        </span>
                     </a>
 
                     <a
                         href="{{ route('contact') }}"
                         @click="mobileOpen = false"
-                        class="flex items-center justify-between px-4 py-4 text-sm font-medium"
+                        class="group flex min-h-[68px] items-center justify-between gap-4 px-4 py-3 text-sm font-semibold transition hover:bg-[var(--livora-surface)] focus-visible:relative focus-visible:z-10"
                     >
                         <span>تماس با ما</span>
-                        <span class="text-[var(--livora-stone)]">←</span>
+                        <span class="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-[var(--livora-surface)] text-[var(--livora-text)] transition group-hover:bg-[var(--livora-ink)] group-hover:text-white" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" class="h-5 w-5"><path d="M5 4.5h3l1.4 3.7-2 1.4a15 15 0 0 0 7 7l1.4-2 3.7 1.4v3c0 .8-.7 1.5-1.5 1.5A14.5 14.5 0 0 1 3.5 6c0-.8.7-1.5 1.5-1.5Z" /></svg>
+                        </span>
                     </a>
 
                 </div>

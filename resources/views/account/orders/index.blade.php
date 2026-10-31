@@ -276,9 +276,7 @@
                                                 مشاهده جزئیات سفارش
                                             </span>
 
-                                                <span class="text-[var(--livora-text)] transition-transform group-hover:-translate-x-1">
-                                                ←
-                                            </span>
+                                                <span class="text-[var(--livora-accent)]"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4" aria-hidden="true"><path d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6Z" /><circle cx="12" cy="12" r="2.5" /></svg></span>
 
                                             </div>
 
