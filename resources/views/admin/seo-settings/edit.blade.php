@@ -114,6 +114,8 @@
                     ['key' => 'shop', 'label' => 'فروشگاه', 'route' => route('shop.index'), 'title' => 'seo_shop_title', 'description' => 'seo_shop_description'],
                     ['key' => 'categories', 'label' => 'فهرست دسته‌بندی‌ها', 'route' => route('categories.index'), 'title' => 'seo_categories_title', 'description' => 'seo_categories_description'],
                     ['key' => 'blog', 'label' => 'فهرست مقالات', 'route' => route('blog.index'), 'title' => 'seo_blog_title', 'description' => 'seo_blog_description'],
+                    ['key' => 'about', 'label' => 'درباره ما', 'route' => route('about'), 'title' => 'seo_about_title', 'description' => 'seo_about_description'],
+                    ['key' => 'contact', 'label' => 'تماس با ما', 'route' => route('contact'), 'title' => 'seo_contact_title', 'description' => 'seo_contact_description'],
                 ];
             @endphp
 
