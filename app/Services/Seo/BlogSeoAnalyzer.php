@@ -91,6 +91,12 @@ class BlogSeoAnalyzer
             'یک تصویر شاخص مرتبط و بهینه‌شده اضافه کنید.'
         );
         $checks[] = $this->check(
+            'image_alt',
+            'متن جایگزین تصویر',
+            filled($post->cover_image_alt),
+            'برای تصویر شاخص یک Alt توصیفی و مرتبط با محتوا بنویسید.'
+        );
+        $checks[] = $this->check(
             'excerpt',
             'خلاصه مقاله',
             filled($post->excerpt) && mb_strlen((string) $post->excerpt) >= 40,
