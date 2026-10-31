@@ -6,11 +6,26 @@
         $seoService = app(\App\Services\Seo\SeoSettings::class);
         $seoValues = $seoService->all();
 
+        $seoRouteName = request()->route()?->getName();
+        $seoStaticPage = match ($seoRouteName) {
+            'home' => ['title' => 'seo_home_title', 'description' => 'seo_home_description'],
+            'shop.index' => ['title' => 'seo_shop_title', 'description' => 'seo_shop_description'],
+            'categories.index' => ['title' => 'seo_categories_title', 'description' => 'seo_categories_description'],
+            'blog.index' => ['title' => 'seo_blog_title', 'description' => 'seo_blog_description'],
+            default => null,
+        };
+
         $seoTitle = trim((string) $__env->yieldContent('title'));
-        $seoTitle = $seoTitle !== '' ? $seoTitle : (string) $seoValues['seo_default_title'];
+        $seoPageTitle = $seoStaticPage ? trim((string) ($seoValues[$seoStaticPage['title']] ?? '')) : '';
+        $seoTitle = $seoPageTitle !== ''
+            ? $seoPageTitle
+            : ($seoTitle !== '' ? $seoTitle : (string) $seoValues['seo_default_title']);
 
         $seoDescription = trim((string) $__env->yieldContent('description'));
-        $seoDescription = $seoDescription !== '' ? $seoDescription : (string) $seoValues['seo_default_description'];
+        $seoPageDescription = $seoStaticPage ? trim((string) ($seoValues[$seoStaticPage['description']] ?? '')) : '';
+        $seoDescription = $seoPageDescription !== ''
+            ? $seoPageDescription
+            : ($seoDescription !== '' ? $seoDescription : (string) $seoValues['seo_default_description']);
 
         $seoKeywords = trim((string) $__env->yieldContent('keywords'));
         $seoKeywords = $seoKeywords !== '' ? $seoKeywords : trim((string) ($seoValues['seo_default_keywords'] ?? ''));
