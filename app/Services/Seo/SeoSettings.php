@@ -69,7 +69,7 @@ class SeoSettings
     public function robotsMeta(): string
     {
         $settings = $this->all();
-        $developmentMode = ($settings['seo_development_mode'] ?? '0') === '1';
+        $developmentMode = ($settings['seo_development_mode'] ?? '1') === '1';
         $shopFilterParameters = [
             'search', 'category', 'min_price', 'max_price',
             'in_stock', 'featured', 'new', 'installment', 'sort',
@@ -115,12 +115,22 @@ class SeoSettings
 
     public function sitemapEnabled(): bool
     {
-        return ($this->all()['seo_sitemap_enabled'] ?? '1') === '1';
+        $settings = $this->all();
+
+        return ($settings['seo_development_mode'] ?? '1') !== '1'
+            && ($settings['seo_sitemap_enabled'] ?? '1') === '1';
     }
 
     public function robotsTxt(): string
     {
         $settings = $this->all();
+
+        // Never block crawling during pre-launch: crawlers must be able to read
+        // the page-level noindex directive. Hide the sitemap until publication.
+        if (($settings['seo_development_mode'] ?? '1') === '1') {
+            return "User-agent: *\nAllow: /\n";
+        }
+
         $rules = trim(str_replace(["\r\n", "\r"], "\n", (string) $settings['seo_robots_txt_rules']));
         $lines = $rules === '' ? ['User-agent: *', 'Allow: /'] : explode("\n", $rules);
 
@@ -140,7 +150,9 @@ class SeoSettings
         $rows = $this->decodeStoredList($this->all()['seo_custom_meta_tags'] ?? '[]');
         $reserved = [
             'name' => [
-                'description', 'keywords', 'robots', 'google-site-verification',
+                'description', 'keywords', 'robots', 'googlebot', 'googlebot-news',
+                'googlebot-image', 'bingbot', 'yandex', 'slurp', 'duckduckbot',
+                'baiduspider', 'applebot', 'google-site-verification',
                 'msvalidate.01', 'viewport', 'referrer', 'twitter:title', 'twitter:description',
                 'twitter:card', 'twitter:image', 'twitter:site',
             ],
@@ -282,7 +294,7 @@ class SeoSettings
             'seo_custom_meta_tags' => '[]',
             'seo_custom_link_tags' => '[]',
             'seo_default_og_image' => null,
-            'seo_development_mode' => '0',
+            'seo_development_mode' => '1',
             'seo_robots_noindex' => '0',
             'seo_noindex_shop_filters' => '1',
             'seo_robots_nofollow' => '0',
