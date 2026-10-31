@@ -1873,6 +1873,27 @@ footer a:hover { color: var(--livora-sage) !important; }
     background-color: var(--livora-ink);
     border-top: 1px solid rgba(255, 255, 255, .12);
 }
+.farzin-site-footer--spaced {
+    margin-block-start: clamp(1.5rem, 3.2vw, 2.75rem);
+}
+.farzin-site-footer__heading {
+    display: block;
+    min-height: 1.25rem;
+    margin: 0;
+    color: rgba(255, 255, 255, .68);
+    font-size: .75rem;
+    font-weight: 650;
+    line-height: 1.25rem;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+}
+.farzin-site-footer__main {
+    align-items: start;
+}
+.farzin-site-footer__main > *,
+.farzin-site-footer__trust > * {
+    min-width: 0;
+}
 .farzin-site-footer a {
     text-decoration: none;
 }

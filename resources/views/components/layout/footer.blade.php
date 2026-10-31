@@ -1,4 +1,7 @@
-<footer class="farzin-site-footer border-t border-white/10 bg-[var(--livora-ink)] text-[var(--livora-text)]">
+<footer @class([
+    'farzin-site-footer border-t border-white/10 bg-[var(--livora-ink)] text-[var(--livora-text)]',
+    'farzin-site-footer--spaced' => request()->routeIs('home', 'shop.index'),
+])>
 
     <x-layout.container>
 
@@ -46,7 +49,7 @@
             {{-- Shop --}}
             <div>
 
-                <p class="text-xs font-semibold uppercase tracking-[0.14em] text-white/65">
+                <p class="farzin-site-footer__heading">
                     SHOP
                 </p>
 
@@ -105,7 +108,7 @@
             {{-- Customer --}}
             <div>
 
-                <p class="text-xs font-semibold uppercase tracking-[0.14em] text-white/65">
+                <p class="farzin-site-footer__heading">
                     CUSTOMER
                 </p>
 
@@ -190,7 +193,7 @@
             {{-- Contact / Newsletter --}}
             <div>
 
-                <p class="text-xs font-semibold uppercase tracking-[0.14em] text-white/65">
+                <p class="farzin-site-footer__heading">
                     CONTACT
                 </p>
 
@@ -220,7 +223,7 @@
 
             <div class="border-b border-white/10 py-5 md:border-b-0 md:border-l md:px-6 md:py-6">
 
-                <p class="text-xs font-medium uppercase tracking-[0.12em] text-white/60">
+                <p class="farzin-site-footer__heading">
                     PAYMENT
                 </p>
 
@@ -232,7 +235,7 @@
 
             <div class="border-b border-white/10 py-5 md:border-b-0 md:px-6 md:py-6">
 
-                <p class="text-xs font-medium uppercase tracking-[0.12em] text-white/60">
+                <p class="farzin-site-footer__heading">
                     SINKS
                 </p>
 
@@ -244,7 +247,7 @@
 
             <div class="py-5 md:px-6 md:py-6">
 
-                <p class="text-xs font-medium uppercase tracking-[0.12em] text-white/60">
+                <p class="farzin-site-footer__heading">
                     SUPPORT
                 </p>
 

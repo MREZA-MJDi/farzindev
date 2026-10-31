@@ -44,6 +44,15 @@ for (const viewport of viewports) {
                 const footerRect = footer.getBoundingClientRect();
                 const containerRect = container.getBoundingClientRect();
                 const mainStyle = window.getComputedStyle(main);
+                const footerHeadings = Array.from(footer.querySelectorAll('.farzin-site-footer__heading'));
+                const headingStyles = footerHeadings.map((heading) => {
+                    const style = window.getComputedStyle(heading);
+                    return [style.fontSize, style.fontWeight, style.lineHeight, style.letterSpacing].join('|');
+                });
+                const mainHeadingTops = Array.from(main.querySelectorAll('.farzin-site-footer__heading'))
+                    .map((heading) => heading.getBoundingClientRect().top);
+                const trustHeadingTops = Array.from(footer.querySelectorAll('.farzin-site-footer__trust .farzin-site-footer__heading'))
+                    .map((heading) => heading.getBoundingClientRect().top);
 
                 return {
                     footerWidth: footerRect.width,
@@ -54,6 +63,10 @@ for (const viewport of viewports) {
                     mainClientWidth: main.clientWidth,
                     mainScrollWidth: main.scrollWidth,
                     columns: mainStyle.gridTemplateColumns.trim().split(' ').filter(Boolean).length,
+                    footerHeadingCount: footerHeadings.length,
+                    footerHeadingStyleCount: new Set(headingStyles).size,
+                    mainHeadingTopSpread: mainHeadingTops.length ? Math.max(...mainHeadingTops) - Math.min(...mainHeadingTops) : 999,
+                    trustHeadingTopSpread: trustHeadingTops.length ? Math.max(...trustHeadingTops) - Math.min(...trustHeadingTops) : 999,
                 };
             });
 
@@ -79,6 +92,13 @@ for (const viewport of viewports) {
                 footerLayout.columns,
                 path + ' footer must use the expected responsive column count'
             ).toBe(expectedFooterColumns);
+
+            expect(footerLayout.footerHeadingCount, path + ' footer must expose all six aligned section headings').toBe(6);
+            expect(footerLayout.footerHeadingStyleCount, path + ' footer headings must share one typography scale').toBe(1);
+            if (viewport.width >= 1200) {
+                expect(footerLayout.mainHeadingTopSpread, path + ' desktop main footer headings must share one row').toBeLessThanOrEqual(1);
+                expect(footerLayout.trustHeadingTopSpread, path + ' desktop trust headings must share one row').toBeLessThanOrEqual(1);
+            }
 
             if (viewport.width < 1024) {
                 await expect(page.locator('.farzin-mobile-nav'), path + ' mobile navigation').toBeVisible();
@@ -212,6 +232,22 @@ test('homepage category GIF preview starts on hover and the first touch tap', as
     await expect(fixture).toHaveAttribute('data-farzin-preview-tapped', '1');
 });
 
+test('home and shop footer has consistent breathing room above the shared footer', async ({ page }) => {
+    await page.setViewportSize({ width: 1440, height: 960 });
+
+    for (const path of ['/', '/shop']) {
+        await page.goto(path, { waitUntil: 'domcontentloaded' });
+        const footer = page.locator('.farzin-site-footer');
+        await expect(footer).toHaveClass(/farzin-site-footer--spaced/);
+
+        const marginTop = await footer.evaluate((element) => (
+            Number.parseFloat(window.getComputedStyle(element).marginBlockStart)
+        ));
+
+        expect(marginTop, path + ' must separate the footer from the preceding content row').toBeGreaterThanOrEqual(24);
+    }
+});
+
 test('customer and admin endpoints redirect guests to login', async ({ page }) => {
     for (const path of ['/checkout', '/account', '/admin', '/admin/blog-posts']) {
         await page.goto(path, { waitUntil: 'domcontentloaded' });
@@ -237,6 +273,13 @@ test('guest navigation uses account icons without login or register text buttons
     await expect(mobileAccount.locator('span')).toHaveCount(0);
     await expect(page.locator('.farzin-site-header').getByText('ورود', { exact: true })).toHaveCount(0);
     await expect(page.locator('.farzin-site-header').getByText('ثبت‌نام', { exact: true })).toHaveCount(0);
+
+    await page.locator('.farzin-site-header button[aria-label="باز کردن منو"]').click();
+    const mobileMenu = page.locator('[data-farzin-mobile-menu-panel]');
+    await expect(mobileMenu).toBeVisible();
+    await expect(mobileMenu.getByText('ورود', { exact: true })).toHaveCount(0);
+    await expect(mobileMenu.getByText('ثبت‌نام', { exact: true })).toHaveCount(0);
+    await expect(mobileMenu.getByRole('link', { name: 'سبد خرید' })).toBeVisible();
 });
 
 test('homepage image and product sections stay within the loading budget', async ({ page }) => {

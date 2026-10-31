@@ -189,6 +189,23 @@ body {
     grid-template-columns: minmax(0, 1.25fr) repeat(2, minmax(0, .75fr)) minmax(0, 1fr);
     align-items: start;
 }
+.farzin-site-footer__main > :nth-child(1) { grid-area: brand; }
+.farzin-site-footer__main > :nth-child(2) { grid-area: shop; }
+.farzin-site-footer__main > :nth-child(3) { grid-area: customer; }
+.farzin-site-footer__main > :nth-child(4) { grid-area: contact; }
+
+@media (min-width: 1200px) {
+    .farzin-site-footer__main {
+        grid-template-areas: "brand shop customer contact";
+        grid-template-columns: minmax(0, 1.25fr) repeat(2, minmax(0, .75fr)) minmax(0, 1fr);
+        align-items: start;
+    }
+
+    .farzin-site-footer__main > :where(:nth-child(2), :nth-child(3), :nth-child(4)) {
+        align-self: start;
+        margin-block-start: 0;
+    }
+}
 
 .farzin-site-footer nav a,
 .farzin-site-footer p,
@@ -389,6 +406,9 @@ body {
 
 @media (min-width: 768px) and (max-width: 1199px) {
     .farzin-site-footer__main {
+        grid-template-areas:
+            "brand shop"
+            "customer contact";
         grid-template-columns: repeat(2, minmax(0, 1fr));
         gap: clamp(1.5rem, 3vw, 2.5rem);
     }
@@ -494,6 +514,11 @@ body {
     }
 
     .farzin-site-footer__main {
+        grid-template-areas:
+            "brand"
+            "shop"
+            "customer"
+            "contact";
         grid-template-columns: minmax(0, 1fr);
         gap: 1.75rem;
         padding-block: 2.5rem;
