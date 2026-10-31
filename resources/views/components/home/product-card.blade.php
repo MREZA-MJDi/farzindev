@@ -2,6 +2,7 @@
 
 @php
     $image = $product->images->first(fn ($candidate) => filled($candidate->url));
+    $imageSrcset = $image?->responsive_srcset;
 @endphp
 
 <article class="fz-product-card fz-reveal">
@@ -13,6 +14,7 @@
         @if($image)
             <img
                 src="{{ $image->url }}"
+                @if($imageSrcset) srcset="{{ $imageSrcset }}" sizes="(max-width: 639px) 46vw, (max-width: 1279px) 30vw, 320px" @endif
                 alt="{{ $image->alt ?: $product->name }}"
                 width="720"
                 height="900"
