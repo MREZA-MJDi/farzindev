@@ -142,6 +142,21 @@ class StorefrontPaginationAndSeoManagementTest extends TestCase
             ->assertNotFound();
     }
 
+    public function test_sitemap_segment_route_serves_xml_and_rejects_unknown_pages(): void
+    {
+        $this->get(route('sitemap.segment', ['type' => 'pages', 'page' => 1]))
+            ->assertOk()
+            ->assertHeader('content-type', 'application/xml; charset=UTF-8')
+            ->assertSee('<urlset', false)
+            ->assertSee('<loc>' . app(SeoSettings::class)->canonicalUrl('/', false) . '</loc>', false);
+
+        $this->get(route('sitemap.segment', ['type' => 'pages', 'page' => 2]))
+            ->assertNotFound();
+
+        $this->get('/sitemap/unknown/1.xml')
+            ->assertNotFound();
+    }
+
     public function test_seo_dashboard_values_override_real_titles_and_descriptions_for_main_pages(): void
     {
         $settings = [
