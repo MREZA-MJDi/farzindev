@@ -72,7 +72,7 @@ class SeoSettings
         $developmentMode = ($settings['seo_development_mode'] ?? '0') === '1';
         $shopFilterParameters = [
             'search', 'category', 'min_price', 'max_price',
-            'in_stock', 'featured', 'new', 'installment',
+            'in_stock', 'featured', 'new', 'installment', 'sort',
         ];
         $hasFilteredShopUrl = request()->routeIs('shop.index')
             && collect($shopFilterParameters)->contains(
