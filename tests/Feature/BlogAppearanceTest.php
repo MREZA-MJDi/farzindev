@@ -14,6 +14,20 @@ class BlogAppearanceTest extends TestCase
 {
     use RefreshDatabase;
 
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        app(BlogAppearance::class)->clearCache();
+    }
+
+    protected function tearDown(): void
+    {
+        app(BlogAppearance::class)->clearCache();
+
+        parent::tearDown();
+    }
+
     public function test_admin_can_update_blog_art_direction_and_container_width(): void
     {
         $admin = User::factory()->create(['role' => 'admin']);
