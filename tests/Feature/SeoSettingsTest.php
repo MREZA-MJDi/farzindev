@@ -28,7 +28,8 @@ class SeoSettingsTest extends TestCase
             ->assertSee('name="robots" content="noindex, nofollow, noarchive, nosnippet, noimageindex"', false)
             ->assertSee('rel="canonical" href="' . app(SeoSettings::class)->canonicalUrl('/', false) . '"', false)
             ->assertSee('property="og:title"', false)
-            ->assertSee('application/ld+json', false);
+            ->assertSee('application/ld+json', false)
+            ->assertHeader('X-Robots-Tag', 'noindex, nofollow, noarchive, nosnippet, noimageindex');
 
         $this->assertSame(1, substr_count((string) $response->getContent(), '"@type":"WebSite"'));
     }
@@ -46,7 +47,8 @@ class SeoSettingsTest extends TestCase
         ] as $url) {
             $this->get($url)
                 ->assertOk()
-                ->assertSee('name="robots" content="noindex, nofollow, noarchive, nosnippet, noimageindex"', false);
+                ->assertSee('name="robots" content="noindex, nofollow, noarchive, nosnippet, noimageindex"', false)
+                ->assertHeader('X-Robots-Tag', 'noindex, nofollow, noarchive, nosnippet, noimageindex');
         }
     }
 
@@ -58,7 +60,8 @@ class SeoSettingsTest extends TestCase
             ->assertSee('User-agent: *')
             ->assertSee('Allow: /')
             ->assertDontSee('Disallow: /')
-            ->assertDontSee('Sitemap:');
+            ->assertDontSee('Sitemap:')
+            ->assertHeader('X-Robots-Tag', 'noindex, nofollow, noarchive, nosnippet, noimageindex');
 
         StorefrontSetting::query()->updateOrCreate(
             ['key' => 'seo_development_mode'],
@@ -370,6 +373,7 @@ class SeoSettingsTest extends TestCase
     {
         $this->get('/__seo_nonexistent_path_for_test__')
             ->assertNotFound()
-            ->assertSee('name="robots" content="noindex, nofollow, noarchive, nosnippet, noimageindex"', false);
+            ->assertSee('name="robots" content="noindex, nofollow, noarchive, nosnippet, noimageindex"', false)
+            ->assertHeader('X-Robots-Tag', 'noindex, nofollow, noarchive, nosnippet, noimageindex');
     }
 }
