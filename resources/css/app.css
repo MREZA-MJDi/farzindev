@@ -1869,12 +1869,13 @@ footer a:hover { color: var(--livora-sage) !important; }
     position: relative;
     isolation: isolate;
     width: 100%;
+    margin-block-start: clamp(1.5rem, 3.2vw, 2.75rem);
     color: var(--livora-text);
     background-color: var(--livora-ink);
     border-top: 1px solid rgba(255, 255, 255, .12);
 }
-.farzin-site-footer--spaced {
-    margin-block-start: clamp(1.5rem, 3.2vw, 2.75rem);
+.farzin-site-footer nav a {
+    line-height: 1.7;
 }
 .farzin-site-footer__heading {
     display: block;
