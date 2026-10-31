@@ -9,6 +9,7 @@ use App\Services\Media\ResponsiveImageService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
 use Throwable;
 use Illuminate\View\View;
@@ -160,6 +161,7 @@ class StorefrontSettingController extends Controller
                     'is_active' => true,
                 ]);
                 $contact->save();
+                Cache::forget('storefront.seo-contact-location.v1');
             });
         } catch (Throwable $e) {
             // Keep the currently published image if the database update fails.
