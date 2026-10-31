@@ -173,6 +173,16 @@
                     <div id="map-coordinates-help" class="sm:col-span-2 rounded-xl bg-[var(--admin-surface-muted)] p-3 text-xs leading-6 text-[var(--admin-muted)]">
                         برای یافتن مختصات، <a href="https://maps.google.com/" target="_blank" rel="noopener noreferrer" class="font-semibold text-[var(--admin-text)] underline">Google Maps را باز کنید</a>، روی محل دقیق راست‌کلیک کنید و دو عدد نمایش‌داده‌شده را به‌ترتیب در Latitude و Longitude قرار دهید. هر دو فیلد را با هم وارد کنید؛ خالی گذاشتن هر دو یعنی استفاده از آدرس.
                     </div>
+                    <div id="contact-map-preview" class="sm:col-span-2 rounded-xl border border-[var(--admin-border)] bg-[var(--admin-surface-soft)] p-4">
+                        <div class="flex flex-wrap items-center justify-between gap-3">
+                            <div>
+                                <strong class="block text-sm text-[var(--admin-text)]">پیش‌نمایش موقعیت صفحه تماس</strong>
+                                <p id="contact-map-preview-status" class="mt-1 text-xs leading-6 text-[var(--admin-muted)]">با وارد کردن آدرس یا هر دو مختصات، لینک نقشه ساخته می‌شود.</p>
+                            </div>
+                            <a id="contact-map-preview-link" href="https://maps.google.com/" target="_blank" rel="noopener noreferrer" class="admin-btn admin-btn-secondary" aria-disabled="true">باز کردن موقعیت در Google Maps ↗</a>
+                        </div>
+                        <p id="contact-map-preview-query" class="mt-2 break-all text-xs text-[var(--admin-muted)]" dir="ltr"></p>
+                    </div>
                     <div>
                         <label for="whatsapp" class="admin-label">شماره واتساپ (اختیاری)</label>
                         <input id="whatsapp" name="whatsapp" type="text" dir="ltr" value="{{ old('whatsapp', $contact?->whatsapp) }}" class="admin-input" maxlength="30" placeholder="+98912...">
@@ -228,3 +238,75 @@
         </form>
     </div>
 @endsection
+
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const address = document.getElementById('address');
+    const latitude = document.getElementById('latitude');
+    const longitude = document.getElementById('longitude');
+    const link = document.getElementById('contact-map-preview-link');
+    const status = document.getElementById('contact-map-preview-status');
+    const queryText = document.getElementById('contact-map-preview-query');
+
+    if (!address || !latitude || !longitude || !link || !status || !queryText) return;
+
+    const syncMapPreview = function () {
+        const latValue = latitude.value.trim();
+        const lngValue = longitude.value.trim();
+        const lat = Number(latValue);
+        const lng = Number(lngValue);
+        const hasLatitude = latValue !== '';
+        const hasLongitude = lngValue !== '';
+        let query = '';
+
+        if (hasLatitude !== hasLongitude) {
+            link.setAttribute('aria-disabled', 'true');
+            link.href = 'https://maps.google.com/';
+            status.textContent = 'برای تعیین نقطه دقیق، Latitude و Longitude را هر دو وارد کنید.';
+            queryText.textContent = '';
+            return;
+        }
+
+        if (hasLatitude && hasLongitude) {
+            if (!Number.isFinite(lat) || !Number.isFinite(lng) || lat < -90 || lat > 90 || lng < -180 || lng > 180) {
+                link.setAttribute('aria-disabled', 'true');
+                link.href = 'https://maps.google.com/';
+                status.textContent = 'مختصات واردشده خارج از محدوده معتبر است.';
+                queryText.textContent = '';
+                return;
+            }
+            query = latValue + ',' + lngValue;
+            status.textContent = 'مختصات دقیق ثبت شده است؛ همین نقطه در صفحه تماس و مسیر‌یابی استفاده می‌شود.';
+        } else {
+            query = address.value.trim();
+            status.textContent = query
+                ? 'نقشه بر اساس آدرس واردشده باز می‌شود. برای دقت بیشتر، مختصات را هم ثبت کنید.'
+                : 'یک آدرس وارد کنید یا هر دو مختصات را تکمیل کنید.';
+        }
+
+        if (!query) {
+            link.setAttribute('aria-disabled', 'true');
+            link.href = 'https://maps.google.com/';
+            queryText.textContent = '';
+            return;
+        }
+
+        link.href = 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(query);
+        link.removeAttribute('aria-disabled');
+        queryText.textContent = query;
+    };
+
+    [address, latitude, longitude].forEach(function (input) {
+        input.addEventListener('input', syncMapPreview);
+        input.addEventListener('change', syncMapPreview);
+    });
+
+    link.addEventListener('click', function (event) {
+        if (link.getAttribute('aria-disabled') === 'true') event.preventDefault();
+    });
+
+    syncMapPreview();
+});
+</script>
+@endpush
