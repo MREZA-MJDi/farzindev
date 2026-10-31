@@ -83,11 +83,8 @@ class SitemapController extends Controller
     {
         return [
             'pages' => 6,
-            'categories' => Category::query()->active()->count(),
-            'products' => Product::query()
-                ->active()
-                ->whereHas('category', fn (Builder $query) => $query->where('is_active', true))
-                ->count(),
+            'categories' => $this->indexableCategories()->count(),
+            'products' => $this->indexableProducts()->count(),
             'blog' => $this->indexableBlogPosts()->count(),
             'blog-categories' => $this->indexableBlogTerms(BlogTerm::TYPE_CATEGORY)->count(),
             'blog-tags' => $this->indexableBlogTerms(BlogTerm::TYPE_TAG)->count(),
@@ -104,17 +101,39 @@ class SitemapController extends Controller
         return md5(json_encode([
             'counts' => $counts,
             'canonical' => $seoSettings->canonicalUrl('/', false),
-            'categories_updated_at' => Category::query()->active()->max('updated_at'),
-            'products_updated_at' => Product::query()
-                ->active()
-                ->whereHas('category', fn (Builder $query) => $query->where('is_active', true))
-                ->max('updated_at'),
+            'categories_updated_at' => $this->indexableCategories()->max('updated_at'),
+            'products_updated_at' => $this->indexableProducts()->max('updated_at'),
             'blog_updated_at' => $this->indexableBlogPosts()->max('updated_at'),
             'blog_terms_updated_at' => BlogTerm::query()
                 ->active()
                 ->whereIn('seo_robots', ['inherit', 'index,follow'])
                 ->max('updated_at'),
         ], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE));
+    }
+
+    private function indexableCategories(): Builder
+    {
+        return Category::query()
+            ->active()
+            ->whereIn('seo_robots', ['inherit', 'index,follow'])
+            ->where(function (Builder $query): void {
+                $query->whereNull('canonical_url')
+                    ->orWhere('canonical_url', '')
+                    ->orWhere('canonical_url', 'like', '/%');
+            });
+    }
+
+    private function indexableProducts(): Builder
+    {
+        return Product::query()
+            ->active()
+            ->whereHas('category', fn (Builder $query) => $query->where('is_active', true))
+            ->whereIn('seo_robots', ['inherit', 'index,follow'])
+            ->where(function (Builder $query): void {
+                $query->whereNull('canonical_url')
+                    ->orWhere('canonical_url', '')
+                    ->orWhere('canonical_url', 'like', '/%');
+            });
     }
 
     private function indexableBlogPosts(): Builder
@@ -197,14 +216,17 @@ class SitemapController extends Controller
         $items = $this->staticPages();
         $canonicalRoot = $seoSettings->canonicalUrl('/', false);
 
-        Category::query()
-            ->active()
+        $this->indexableCategories()
             ->orderBy('id')
-            ->select(['id', 'slug', 'updated_at'])
-            ->chunkById(1000, function ($categories) use ($items, $canonicalRoot): void {
+            ->select(['id', 'slug', 'canonical_url', 'updated_at'])
+            ->chunkById(1000, function ($categories) use ($items, $canonicalRoot, $seoSettings): void {
                 foreach ($categories as $category) {
+                    $canonical = filled($category->canonical_url)
+                        ? $seoSettings->canonicalOverride($category->canonical_url)
+                        : null;
+
                     $items->push([
-                        'url' => $this->canonicalPath(
+                        'url' => $canonical ?: $this->canonicalPath(
                             $canonicalRoot,
                             route('categories.show', $category->slug, false)
                         ),
@@ -213,15 +235,17 @@ class SitemapController extends Controller
                 }
             });
 
-        Product::query()
-            ->active()
-            ->whereHas('category', fn (Builder $query) => $query->where('is_active', true))
+        $this->indexableProducts()
             ->orderBy('id')
-            ->select(['id', 'slug', 'updated_at'])
-            ->chunkById(1000, function ($products) use ($items, $canonicalRoot): void {
+            ->select(['id', 'slug', 'canonical_url', 'updated_at'])
+            ->chunkById(1000, function ($products) use ($items, $canonicalRoot, $seoSettings): void {
                 foreach ($products as $product) {
+                    $canonical = filled($product->canonical_url)
+                        ? $seoSettings->canonicalOverride($product->canonical_url)
+                        : null;
+
                     $items->push([
-                        'url' => $this->canonicalPath(
+                        'url' => $canonical ?: $this->canonicalPath(
                             $canonicalRoot,
                             route('product.show', $product->slug, false)
                         ),
@@ -290,30 +314,39 @@ class SitemapController extends Controller
         }
 
         if ($type === 'categories') {
-            return Category::query()
-                ->active()
+            return $this->indexableCategories()
                 ->orderBy('id')
                 ->offset($offset)
                 ->limit($segmentSize)
-                ->get(['id', 'slug', 'updated_at'])
-                ->map(fn (Category $category): array => [
-                    'url' => $this->canonicalPath($canonicalRoot, route('categories.show', $category->slug, false)),
-                    'lastmod' => $category->updated_at?->toAtomString(),
-                ]);
+                ->get(['id', 'slug', 'canonical_url', 'updated_at'])
+                ->map(function (Category $category) use ($canonicalRoot, $seoSettings): array {
+                    $canonical = filled($category->canonical_url)
+                        ? $seoSettings->canonicalOverride($category->canonical_url)
+                        : null;
+
+                    return [
+                        'url' => $canonical ?: $this->canonicalPath($canonicalRoot, route('categories.show', $category->slug, false)),
+                        'lastmod' => $category->updated_at?->toAtomString(),
+                    ];
+                });
         }
 
         if ($type === 'products') {
-            return Product::query()
-                ->active()
-                ->whereHas('category', fn (Builder $query) => $query->where('is_active', true))
+            return $this->indexableProducts()
                 ->orderBy('id')
                 ->offset($offset)
                 ->limit($segmentSize)
-                ->get(['id', 'slug', 'updated_at'])
-                ->map(fn (Product $product): array => [
-                    'url' => $this->canonicalPath($canonicalRoot, route('product.show', $product->slug, false)),
-                    'lastmod' => $product->updated_at?->toAtomString(),
-                ]);
+                ->get(['id', 'slug', 'canonical_url', 'updated_at'])
+                ->map(function (Product $product) use ($canonicalRoot, $seoSettings): array {
+                    $canonical = filled($product->canonical_url)
+                        ? $seoSettings->canonicalOverride($product->canonical_url)
+                        : null;
+
+                    return [
+                        'url' => $canonical ?: $this->canonicalPath($canonicalRoot, route('product.show', $product->slug, false)),
+                        'lastmod' => $product->updated_at?->toAtomString(),
+                    ];
+                });
         }
 
         if ($type === 'blog') {
