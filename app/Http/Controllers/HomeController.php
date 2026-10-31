@@ -145,6 +145,7 @@ class HomeController extends Controller
 
                 return [
                     'url' => $image->url,
+                    'srcset' => $image->responsive_srcset,
                     'alt' => $image->alt ?: $product->name,
                     'product_url' => route('product.show', $product->slug),
                     'product_id' => $product->id,
