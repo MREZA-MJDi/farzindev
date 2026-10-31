@@ -86,6 +86,12 @@ if (document.querySelector('[data-image-editor-input]')) {
     });
 }
 
+if (document.querySelector('[data-blog-appearance]')) {
+    import('./admin-blog-appearance.js').catch((error) => {
+        console.error('Unable to initialize blog appearance previews.', error);
+    });
+}
+
 if (document.querySelector('[data-blog-rich-editor]')) {
     import('./admin-blog-editor.js').catch((error) => {
         console.error('Unable to load the blog editor.', error);
