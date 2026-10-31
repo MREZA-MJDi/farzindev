@@ -28,9 +28,17 @@
                 </span>
             </div>
             <p class="text-xs leading-6 text-[var(--admin-muted)]">
-                برای جلوگیری از پنهان‌شدن ناخواسته سایت، حالت آماده‌سازی و گزینه‌های noindex / nofollow به‌صورت پیش‌فرض خاموش هستند. فقط هنگام نیاز واقعی، آن‌ها را از همین صفحه روشن کنید.
-                نقشه سایت:
-                <a href="{{ route('sitemap') }}" target="_blank" rel="noopener noreferrer" class="font-semibold text-[var(--admin-accent)] underline">مشاهده sitemap.xml</a>
+                قفل پیش‌انتشار به‌صورت پیش‌فرض روشن است؛ بنابراین همه صفحات عمومی با
+                <span dir="ltr" class="font-mono">noindex, nofollow</span>
+                پاسخ می‌گیرند و نقشه سایت منتشر نمی‌شود. مسئول SEO می‌تواند پس از آماده‌شدن اطلاعات واقعی، قفل را از همین صفحه خاموش کند.
+                <span class="mx-1">·</span>
+                @if (($settings['seo_development_mode'] ?? '1') === '1')
+                    <span class="font-semibold text-amber-700">sitemap.xml تا زمان انتشار غیرفعال است.</span>
+                @elseif (($settings['seo_sitemap_enabled'] ?? '1') === '1')
+                    <a href="{{ route('sitemap') }}" target="_blank" rel="noopener noreferrer" class="font-semibold text-[var(--admin-accent)] underline">مشاهده sitemap.xml</a>
+                @else
+                    <span class="text-[var(--admin-muted)]">sitemap.xml خاموش است.</span>
+                @endif
                 · فایل ربات‌ها:
                 <a href="{{ route('robots') }}" target="_blank" rel="noopener noreferrer" class="font-semibold text-[var(--admin-accent)] underline">مشاهده robots.txt</a>
             </p>
@@ -180,14 +188,14 @@
             <section class="admin-card space-y-5 p-5 sm:p-7">
                 <div>
                     <h2 class="text-base font-bold text-[var(--admin-text)]">۳. کنترل ایندکس و robots.txt</h2>
-                    <p class="mt-2 text-xs leading-6 text-[var(--admin-muted)]">حالت آماده‌سازی، meta ربات‌ها را به noindex, nofollow, noarchive, nosnippet, noimageindex تغییر می‌دهد. فایل robots همچنان اجازهٔ Crawl می‌دهد تا خزنده بتواند meta noindex را بخواند.</p>
+                    <p class="mt-2 text-xs leading-6 text-[var(--admin-muted)]">قفل پیش‌انتشار همه صفحات عمومی را به noindex, nofollow, noarchive, nosnippet, noimageindex تبدیل می‌کند. robots.txt در این وضعیت عمداً اجازه Crawl می‌دهد تا خزنده بتواند meta noindex را بخواند؛ نقشه سایت نیز تا زمان انتشار از دسترس خارج است.</p>
                 </div>
 
                 <div class="grid gap-3 sm:grid-cols-2">
                     <label class="flex items-start gap-3 rounded-xl border border-amber-300 bg-amber-50 p-4 text-sm text-amber-950 sm:col-span-2">
                         <input type="hidden" name="seo_development_mode" value="0">
                         <input type="checkbox" name="seo_development_mode" value="1" @checked((string) old('seo_development_mode', $settings['seo_development_mode']) === '1') class="admin-checkbox mt-0.5 h-4 w-4">
-                        جلوگیری کامل از ایندکس عمومی تا زمان انتشار
+                        قفل انتشار: جلوگیری از ایندکس و دنبال‌کردن لینک‌ها تا تأیید مسئول SEO
                     </label>
 
                     <label class="flex items-start gap-3 rounded-xl border border-[var(--admin-border)] p-4 text-sm text-[var(--admin-text)] sm:col-span-2">
@@ -221,7 +229,7 @@
                 <label class="flex items-start gap-3 rounded-xl border border-[var(--admin-border)] p-4 text-sm text-[var(--admin-text)]">
                     <input type="hidden" name="seo_sitemap_enabled" value="0">
                     <input type="checkbox" name="seo_sitemap_enabled" value="1" @checked((string) old('seo_sitemap_enabled', $settings['seo_sitemap_enabled']) === '1') class="admin-checkbox mt-0.5 h-4 w-4">
-                    انتشار نقشهٔ سایت در مسیر sitemap.xml و معرفی آن به خزنده‌ها
+                    انتشار نقشهٔ سایت در مسیر sitemap.xml و معرفی آن به خزنده‌ها (فقط پس از خاموش‌کردن قفل پیش‌انتشار)
                 </label>
             </section>
 
