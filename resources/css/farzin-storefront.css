@@ -815,50 +815,8 @@ body.home-body {
     box-shadow: 0 12px 32px rgba(6,40,79,.07);
 }
 
-/* Shared footer: a deliberate dark anchor, not a full dark page. */
-.farzin-site-footer {
-    margin-block-start: clamp(2rem, 4vw, 3.5rem);
-    color: #FFFFFF;
-    background:
-        radial-gradient(ellipse at 90% 0%, rgba(68, 117, 167, .27), transparent 31rem),
-        linear-gradient(130deg, #041E3E 0%, #06284F 62%, #082E59 100%);
-    border-top: 1px solid rgba(255,255,255,.14);
-    font-family: var(--fz-font-ui);
-}
-
-.farzin-site-footer :where(h2, h3, p, a, span) {
-    color: inherit;
-}
-
-.farzin-site-footer nav a,
-.farzin-site-footer__intro,
-.farzin-site-footer__trust p:not(.farzin-site-footer__heading) {
-    color: rgba(255,255,255,.77);
-}
-
-.farzin-site-footer nav a:hover,
-.farzin-site-footer a:hover {
-    color: #FFFFFF;
-}
-
-.farzin-site-footer__brand-name,
-.farzin-site-footer__heading {
-    color: #FFFFFF;
-    font-family: var(--fz-font-heading);
-}
-
-.farzin-site-footer__brand-caption {
-    color: rgba(255,255,255,.66);
-}
-
-.farzin-site-footer__trust,
-.farzin-site-footer__bottom {
-    border-color: rgba(255,255,255,.16);
-}
-
-.farzin-site-footer__trust-item {
-    border-color: rgba(255,255,255,.14);
-}
+/* farzin-site-footer remains as a legacy DOM hook; visual styling lives in
+   the dedicated .fz-global-footer component rules below. */
 
 /* Mobile navigation is a bright, floating purchase aid. */
 .farzin-mobile-nav__inner {
