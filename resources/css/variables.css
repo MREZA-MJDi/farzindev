@@ -8,21 +8,21 @@
     --livora-chocolate-dark: #041E3E;
     --livora-chocolate-soft: #17436F;
 
-    --livora-cream: #F5F7FB;
+    --livora-cream: #F5F5F2;
     --livora-white: #FFFFFF;
-    --livora-surface: #EDF2F8;
-    --livora-sand: #E2EAF3;
-    --livora-stone: #71839A;
+    --livora-surface: #EEEEEA;
+    --livora-sand: #E5E5DF;
+    --livora-stone: #6E747A;
 
     --livora-accent: #7B0D1A;
     --livora-accent-dark: #5F0712;
-    --livora-accent-soft: #F8E9EC;
-    --livora-sage: #1C568A;
-    --livora-sage-dark: #123D68;
-    --livora-sage-soft: #EAF1F8;
+    --livora-accent-soft: #F0EEEA;
+    --livora-sage: #56616B;
+    --livora-sage-dark: #3C4650;
+    --livora-sage-soft: #EEEEEA;
 
-    --livora-border: #DCE5EF;
-    --livora-border-dark: #BBCADA;
+    --livora-border: #DEDED8;
+    --livora-border-dark: #C7C7C0;
 
     --livora-success: #268253;
     --livora-success-soft: #E7F5ED;
@@ -47,11 +47,11 @@
     --livora-duration-slow: 420ms;
     --livora-container: 1320px;
 
-    --livora-metal: #A8B8CA;
+    --livora-metal: #A9A9A2;
     --livora-sunset-burnt: #8B1C2A;
     --livora-sunset-coral: #7B0D1A;
-    --livora-sunset-amber: #D5E2EF;
-    --livora-silver: #A8B8CA;
+    --livora-sunset-amber: #DADAD3;
+    --livora-silver: #A9A9A2;
     --livora-glow: rgba(255, 255, 255, .12);
 }
 
