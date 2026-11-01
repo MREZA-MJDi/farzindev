@@ -40,7 +40,7 @@ done
 
 # Keep secrets private while allowing the PHP-FPM group to read .env.
 if [[ -f "$APP_ROOT/.env" && ! -L "$APP_ROOT/.env" ]]; then
-    chgrp "$FPM_GROUP" "$APP_ROOT/.env"
+    chown "$DEPLOY_USER:$FPM_GROUP" "$APP_ROOT/.env"
     chmod 0640 "$APP_ROOT/.env"
 fi
 
