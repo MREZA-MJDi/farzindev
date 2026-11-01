@@ -3574,3 +3574,700 @@ body,
 .storefront-content .farzin-product-detail-info .product-price__installment {
     border-radius: 10px !important;
 }
+
+
+/* ==========================================================================
+   FARZIN PUBLIC DESIGN SYSTEM — final cascade
+   Navy / white / burgundy / structured grey. No cream, pastel pink or pale blue.
+   ========================================================================== */
+:root {
+    --fz-page: #C8CAC8;
+    --fz-paper: #FFFFFF;
+    --fz-paper-soft: #DDDFDC;
+    --fz-ink: #06284F;
+    --fz-text: #26313B;
+    --fz-muted: #5F666D;
+    --fz-line: #AEB2AF;
+    --fz-accent: #7B0D1A;
+    --fz-accent-dark: #5F0712;
+    --fz-radius-card: 8px;
+    --fz-radius-panel: 10px;
+    --fz-radius-control: 8px;
+
+    --livora-ink: #06284F;
+    --livora-text: #26313B;
+    --livora-text-soft: #596168;
+    --livora-charcoal: #0A315F;
+    --livora-chocolate: #0B3565;
+    --livora-chocolate-dark: #041E3E;
+    --livora-chocolate-soft: #17436F;
+    --livora-cream: #C8CAC8;
+    --livora-white: #FFFFFF;
+    --livora-surface: #DDDFDC;
+    --livora-sand: #BFC3C0;
+    --livora-stone: #5F666D;
+    --livora-accent: #7B0D1A;
+    --livora-accent-dark: #5F0712;
+    --livora-accent-soft: #DDDFDC;
+    --livora-sage: #3F4952;
+    --livora-sage-dark: #303941;
+    --livora-sage-soft: #DDDFDC;
+    --livora-border: #AEB2AF;
+    --livora-border-dark: #969C98;
+    --livora-container: 1280px;
+}
+
+html,
+body,
+#app,
+#main-content,
+.storefront-content,
+body.home-body {
+    background-color: #C8CAC8;
+    color: #26313B;
+}
+html {
+    scroll-padding-top: 94px;
+    scrollbar-color: #858B87 #C8CAC8;
+}
+body,
+body.home-body,
+.storefront-content {
+    color: #26313B;
+    font-family: var(--fz-font-ui, "IRANYekanX FaNum", "Vazirmatn", sans-serif);
+}
+#app {
+    min-height: 100vh;
+    background: #C8CAC8;
+}
+#main-content.storefront-content {
+    min-width: 0;
+    flex: 1 0 auto;
+    background: #C8CAC8;
+}
+.storefront-content .livora-container,
+.farzin-site-header .livora-container,
+.farzin-site-footer .livora-container {
+    width: 100%;
+    max-width: 1280px;
+    margin-inline: auto;
+}
+.storefront-content :where(h1, h2, h3, h4, h5, h6) {
+    color: #06284F;
+    font-family: var(--fz-font-heading, var(--fz-font-ui));
+    font-weight: 800;
+    line-height: 1.55;
+    letter-spacing: -.025em;
+    text-wrap: pretty;
+}
+.storefront-content :where(p, li, dd, dt, label, small, figcaption) {
+    font-family: var(--fz-font-ui);
+    line-height: 1.9;
+}
+.storefront-content :where(p, li, dd, dt, figcaption) {
+    color: #555E65;
+}
+.storefront-content :where(strong, b) {
+    font-weight: 800;
+}
+.storefront-content :where(a, button, input, select, textarea) {
+    -webkit-tap-highlight-color: transparent;
+}
+.storefront-content :where(a, button) {
+    transition-property: color, background-color, border-color, box-shadow, transform;
+    transition-duration: .18s;
+    transition-timing-function: ease;
+}
+.storefront-content :where(a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible) {
+    outline: 2px solid rgba(123,13,26,.72);
+    outline-offset: 3px;
+}
+.storefront-content :where(input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]):not([type="file"]):not([type="submit"]):not([type="button"]):not([type="reset"]), select, textarea) {
+    min-height: 44px;
+    border: 1px solid #AEB2AF;
+    border-radius: 8px;
+    color: #26313B;
+    background: #FFFFFF;
+    box-shadow: none;
+}
+.storefront-content :where(input, select, textarea)::placeholder {
+    color: #737A7F;
+    opacity: 1;
+}
+.storefront-content :where(input, select, textarea):focus {
+    border-color: #7B0D1A;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(123,13,26,.12);
+}
+.storefront-content :where(button, [type="submit"]) {
+    font-family: var(--fz-font-ui);
+    font-weight: 750;
+}
+
+/* Replace light-tinted utility fills with the same neutral surface token.
+   Deep navy and burgundy controls are intentionally retained. */
+.storefront-content :where(
+    [class*="bg-blue-50"], [class*="bg-blue-100"], [class*="bg-blue-200"],
+    [class*="bg-sky-50"], [class*="bg-sky-100"], [class*="bg-sky-200"],
+    [class*="bg-indigo-50"], [class*="bg-indigo-100"], [class*="bg-indigo-200"],
+    [class*="bg-cyan-50"], [class*="bg-cyan-100"], [class*="bg-cyan-200"],
+    [class*="bg-pink-50"], [class*="bg-pink-100"], [class*="bg-pink-200"],
+    [class*="bg-rose-50"], [class*="bg-rose-100"], [class*="bg-rose-200"],
+    [class*="bg-red-50"], [class*="bg-red-100"], [class*="bg-red-200"],
+    [class*="bg-fuchsia-50"], [class*="bg-fuchsia-100"], [class*="bg-fuchsia-200"],
+    [class*="bg-violet-50"], [class*="bg-violet-100"], [class*="bg-violet-200"],
+    [class*="bg-purple-50"], [class*="bg-purple-100"], [class*="bg-purple-200"],
+    [class*="bg-amber-50"], [class*="bg-amber-100"], [class*="bg-orange-50"], [class*="bg-orange-100"],
+    [class*="bg-green-50"], [class*="bg-green-100"], [class*="bg-emerald-50"], [class*="bg-emerald-100"],
+    [class*="bg-gray-50"], [class*="bg-zinc-50"], [class*="bg-slate-50"]
+) {
+    background-color: #DDDFDC !important;
+}
+.storefront-content :where(
+    [class*="text-blue-"], [class*="text-sky-"], [class*="text-indigo-"], [class*="text-cyan-"]
+) {
+    color: #06284F !important;
+}
+.storefront-content :where(
+    [class*="text-pink-"], [class*="text-rose-"], [class*="text-red-"]
+) {
+    color: #7B0D1A !important;
+}
+.storefront-content :where(
+    [class*="border-blue-"], [class*="border-sky-"], [class*="border-indigo-"],
+    [class*="border-pink-"], [class*="border-rose-"], [class*="border-red-"]
+) {
+    border-color: #BFC3C0 !important;
+}
+
+/* A coherent radius scale: cards 8px, panels 10px, controls 8px.
+   Full pills remain only on tags, counters and intentionally circular icons. */
+.storefront-content :where(
+    .livora-card, .fz-contact-panel, .fz-empty-state, .qv__panel,
+    .farzin-filter-drawer__panel, .farzin-product-detail-info,
+    .farzin-product-information, .farzin-product-facts,
+    [class~="rounded-3xl"], [class~="rounded-[2rem]"]
+) {
+    border-radius: 10px !important;
+}
+.storefront-content :where(
+    .fz-product-card, .farzin-product-card, .farzin-shop-product-card,
+    .farzin-category-card, .farzin-product-gallery .product-gallery-shell,
+    .farzin-product-gallery .product-gallery-stage,
+    [class~="rounded-2xl"]
+) {
+    border-radius: 8px !important;
+}
+.storefront-content :where([class~="rounded-xl"], [class~="rounded-lg"]) {
+    border-radius: 8px !important;
+}
+.storefront-content :where(
+    .livora-card, .fz-contact-panel, .fz-empty-state,
+    .farzin-product-detail-info, .farzin-product-information,
+    .farzin-product-facts, .farzin-filter-drawer__panel,
+    .farzin-shop-catalog [class*="rounded-3xl"],
+    .farzin-shop-catalog [class*="rounded-[2rem]"]
+) {
+    border-color: #BFC3C0;
+    background-color: #FFFFFF;
+    box-shadow: 0 5px 18px rgba(6,40,79,.055);
+}
+.storefront-content :where(table, th, td) {
+    border-color: #BFC3C0;
+}
+.storefront-content :where(th) {
+    color: #06284F;
+    background: #DDDFDC;
+    font-weight: 800;
+}
+.storefront-content :where(td) {
+    color: #3C454D;
+}
+
+/* Header and desktop tabs: the underline uses the physical centre of the link.
+   No second offset is applied, so it stays directly under the text in RTL. */
+#app > .farzin-site-header {
+    position: sticky;
+    inset-block-start: 0;
+    z-index: 80;
+    min-height: 70px;
+    color: #26313B;
+    background: rgba(255,255,255,.97);
+    border-bottom: 1px solid #AEB2AF;
+    box-shadow: 0 4px 16px rgba(6,40,79,.075);
+    -webkit-backdrop-filter: blur(14px);
+    backdrop-filter: blur(14px);
+}
+.farzin-site-header .farzin-wordmark__main {
+    color: #06284F !important;
+    background: none;
+    -webkit-text-fill-color: #06284F;
+}
+.farzin-site-header .farzin-wordmark__caption {
+    color: #626A70;
+}
+.farzin-site-header__nav {
+    min-height: 70px;
+    gap: .25rem;
+}
+.farzin-site-header__nav-link {
+    position: relative;
+    display: inline-flex;
+    min-height: 46px;
+    align-items: center;
+    justify-content: center;
+    padding: .6rem .82rem .75rem;
+    border-radius: 8px;
+    color: #26313B;
+    background: transparent;
+    font-size: .82rem;
+    font-weight: 700;
+    line-height: 1.4;
+    white-space: nowrap;
+    transition: color .18s ease, background-color .18s ease;
+}
+.farzin-site-header__nav-link::after {
+    position: absolute;
+    inset-inline-start: auto;
+    left: 50%;
+    inset-block-end: 4px;
+    width: 0;
+    height: 2px;
+    border-radius: 2px;
+    background: #7B0D1A;
+    content: "";
+    transform: translateX(-50%);
+    transition: width .18s ease;
+}
+.farzin-site-header__nav-link:hover {
+    color: #06284F;
+    background: #E3E4E1;
+}
+.farzin-site-header__nav-link.is-active,
+.farzin-site-header__nav-link[aria-current="page"] {
+    color: #7B0D1A;
+    background: transparent;
+}
+.farzin-site-header__nav-link.is-active::after,
+.farzin-site-header__nav-link[aria-current="page"]::after {
+    inset-inline-start: auto;
+    left: 50%;
+    width: 20px;
+    transform: translateX(-50%);
+}
+.farzin-site-header__action {
+    width: 40px;
+    height: 40px;
+    border-radius: 8px !important;
+    color: #26313B;
+    background: transparent;
+}
+.farzin-site-header__action:hover,
+.farzin-site-header__action.is-active {
+    color: #7B0D1A;
+    background: #E3E4E1;
+}
+.farzin-site-header input[type="search"] {
+    min-height: 40px;
+    border: 1px solid #BFC3C0;
+    border-radius: 8px !important;
+    color: #26313B;
+    background: #E4E5E2;
+}
+.farzin-site-header input[type="search"]:focus {
+    border-color: #7B0D1A;
+    background: #FFFFFF;
+}
+.farzin-site-header :where(a, button):focus-visible {
+    outline: 2px solid #7B0D1A;
+    outline-offset: 3px;
+}
+
+/* Mobile menu and bottom navigation use the same current-page language. */
+.farzin-mobile-menu__link {
+    min-height: 54px;
+    border-radius: 8px !important;
+    color: #26313B;
+    background: #FFFFFF;
+}
+.farzin-mobile-menu__link:hover,
+.farzin-mobile-menu__link.is-active,
+.farzin-mobile-menu__link[aria-current="page"] {
+    color: #7B0D1A;
+    background: #E2E3E1;
+}
+.farzin-mobile-menu__link > span[aria-hidden="true"] {
+    border-radius: 8px !important;
+    background: #E2E3E1;
+}
+.farzin-mobile-nav {
+    z-index: 120;
+}
+.farzin-mobile-nav__inner {
+    max-width: 28rem;
+    padding: .35rem;
+    border: 1px solid #AEB2AF;
+    border-radius: 12px !important;
+    color: #26313B;
+    background: rgba(255,255,255,.97);
+    box-shadow: 0 8px 24px rgba(6,40,79,.16);
+    -webkit-backdrop-filter: blur(16px);
+    backdrop-filter: blur(16px);
+}
+.farzin-mobile-nav__inner > a,
+.farzin-mobile-nav__inner > button {
+    min-height: 3.15rem;
+    gap: .2rem;
+    border-radius: 8px !important;
+    color: #5F666D;
+    background: transparent;
+}
+.farzin-mobile-nav__inner > a:hover,
+.farzin-mobile-nav__inner > button:hover,
+.farzin-mobile-nav__inner > .is-active {
+    color: #7B0D1A;
+    background: #E2E3E1;
+}
+.farzin-mobile-nav__inner > .is-active span:not([data-cart-count]) {
+    color: #7B0D1A;
+    font-weight: 850;
+}
+.farzin-mobile-nav__inner [data-cart-count] {
+    color: #FFFFFF;
+    background: #7B0D1A;
+}
+
+/* The site shell is grey; content cards and forms are deliberate white surfaces. */
+.farzin-shop-banner,
+.farzin-shop-catalog,
+.fz-category-list,
+.fz-contact-workspace,
+.fz-contact-page,
+.blog-articles-section {
+    background-color: #C8CAC8;
+}
+.farzin-shop-banner,
+.fz-category-hero,
+.fz-contact-panel,
+.farzin-product-detail-info,
+.farzin-product-information,
+.farzin-product-facts,
+.farzin-product-gallery .product-gallery-shell,
+.farzin-product-gallery .product-gallery-stage {
+    border-color: #BFC3C0;
+}
+.farzin-shop-banner h1,
+.farzin-shop-banner h2 {
+    color: #06284F;
+}
+.farzin-shop-banner__content :where(h1, h2, h3, p, a, span) {
+    color: #FFFFFF;
+}
+.fz-contact-hero,
+.fz-category-hero {
+    color: #FFFFFF;
+    background-color: #06284F;
+}
+.fz-contact-hero :where(h1, h2, h3, p, span, a, small, strong),
+.fz-category-hero :where(h1, h2, h3, p, span, a, small, strong) {
+    color: #FFFFFF;
+}
+.fz-contact-workspace :where(.fz-contact-panel, .fz-contact-address, .fz-contact-hours, .fz-contact-map-frame) {
+    border-color: #BFC3C0;
+    background-color: #FFFFFF;
+}
+.fz-contact-workspace :where(h2, h3, h4) {
+    color: #06284F;
+}
+.fz-contact-workspace :where(p, li, small) {
+    color: #5F666D;
+}
+.farzin-product-detail-info,
+.farzin-product-information,
+.farzin-product-facts,
+.farzin-product-detail-info .product-price,
+.farzin-product-detail-info .product-price__installment,
+.farzin-product-facts__item {
+    border-color: #BFC3C0;
+    background: #FFFFFF;
+}
+.farzin-product-detail-info .product-price,
+.farzin-product-detail-info .product-price__installment {
+    border-radius: 8px !important;
+}
+.farzin-product-information h2,
+.farzin-product-facts h2,
+.farzin-product-detail-info h1,
+.farzin-product-detail-info h2 {
+    color: #06284F;
+}
+
+/* Home: bands alternate between white and neutral grey, never pastel. */
+.home-body {
+    background: #C8CAC8;
+}
+.home-body .fz-home-hero {
+    color: #26313B;
+    background: #FFFFFF;
+}
+.home-body .fz-home-hero__lead,
+.home-body .fz-home-hero__highlights {
+    color: #5F666D;
+}
+.home-body .fz-home-hero__highlights b {
+    color: #7B0D1A;
+    background: #DDDFDC;
+}
+.home-body .fz-home-hero__button--secondary {
+    color: #06284F !important;
+    border-color: #BFC3C0;
+    background: #FFFFFF;
+}
+.home-body .fz-category-section,
+.home-body .fz-new-section,
+.home-body .content--spacing,
+.home-body .fz-mosaic-intro,
+.home-body .fz-home-journal__aside {
+    background: #DDDFDC;
+    border-color: #BFC3C0;
+}
+.home-body .fz-home-featured-section,
+.home-body .content,
+.home-body .fz-home-journal,
+.home-body .fz-home-journal__featured {
+    background: #FFFFFF;
+    border-color: #BFC3C0;
+}
+.home-body .fz-home-featured-section__visual {
+    opacity: .055;
+    filter: grayscale(1);
+}
+.home-body .fz-home-featured-section__visual-shade {
+    background: linear-gradient(90deg, rgba(255,255,255,.25), rgba(255,255,255,.96));
+}
+.home-body .fz-category-card,
+.home-body .fz-product-card,
+.home-body .grid__item,
+.home-body .fz-home-journal__featured,
+.home-body .fz-home-journal__aside {
+    border: 1px solid #BFC3C0;
+    border-radius: 8px !important;
+    background: #FFFFFF;
+    box-shadow: 0 5px 16px rgba(6,40,79,.07);
+}
+.home-body .fz-product-card__cta,
+.home-body .fz-home-journal__all {
+    color: #7B0D1A;
+    border-color: #AEB2AF;
+    background: #E2E3E1;
+}
+.home-body .fz-product-card__cta:hover,
+.home-body .fz-home-journal__all:hover {
+    color: #FFFFFF;
+    border-color: #7B0D1A;
+    background: #7B0D1A;
+}
+.home-body .fz-home-journal__aside-heading,
+.home-body .fz-home-journal__story h3 {
+    color: #06284F;
+}
+.home-body .fz-home-journal__story {
+    border-color: #BFC3C0;
+}
+.home-body .fz-home-purchase-cta {
+    background: #C8CAC8;
+}
+.home-body .fz-home-purchase-cta__inner {
+    border-color: #AEB2AF;
+    border-radius: 10px !important;
+    background: #FFFFFF;
+}
+.home-body .fz-home-purchase-cta__copy {
+    background: #FFFFFF;
+}
+.home-body .fz-home-purchase-cta__copy h2 {
+    color: #06284F;
+}
+.home-body .fz-home-purchase-cta__copy > p:not(.fz-eyebrow) {
+    color: #5F666D;
+}
+
+/* Blog archive and article: editorial navy masthead, grey canvas, white cards. */
+.blog-shell,
+.blog-article-page {
+    color: #26313B;
+    background: #C8CAC8;
+}
+.blog-masthead,
+.blog-article-hero {
+    color: #FFFFFF;
+    background: #06284F;
+    border-color: #7B0D1A;
+}
+.blog-masthead :where(h1, h2, h3, p, a, span, small, strong),
+.blog-article-hero :where(h1, h2, h3, p, a, span, small, strong) {
+    color: inherit;
+}
+.blog-featured-section {
+    background: #FFFFFF;
+}
+.blog-articles-section {
+    background: #DDDFDC;
+    border-color: #BFC3C0;
+}
+.blog-featured-card,
+.blog-article-card,
+.blog-empty-state,
+.blog-article-panel,
+.blog-article-sidebar-card {
+    border: 1px solid #BFC3C0;
+    border-radius: 8px !important;
+    color: #26313B;
+    background: #FFFFFF;
+    box-shadow: 0 5px 18px rgba(6,40,79,.06);
+}
+.blog-featured-card h3,
+.blog-article-card h3,
+.blog-section-heading h2,
+.blog-article-content h2,
+.blog-article-content h3,
+.blog-article-sidebar-card h2 {
+    color: #06284F;
+}
+.blog-featured-card__excerpt,
+.blog-featured-card__meta,
+.blog-article-card__meta,
+.blog-article-card__body > p,
+.blog-section-heading > p,
+.blog-article-content {
+    color: #555E65;
+}
+.blog-article-card__media,
+.blog-featured-card__media {
+    border-radius: 0;
+}
+.blog-topic {
+    border-color: #AEB2AF;
+    border-radius: 7px;
+    color: #26313B;
+    background: #FFFFFF;
+}
+.blog-topic:hover {
+    color: #7B0D1A;
+    border-color: #7B0D1A;
+    background: #E2E3E1;
+}
+.blog-topic.is-active {
+    color: #FFFFFF;
+    border-color: #7B0D1A;
+    background: #7B0D1A;
+}
+.blog-article-page .blog-article-layout {
+    color: #26313B;
+}
+.blog-article-page .blog-article-content blockquote {
+    border-inline-start-color: #7B0D1A;
+    color: #4E575F;
+    background: #E2E3E1;
+}
+.blog-article-page .blog-article-sidebar-card > a,
+.blog-article-page .blog-article-back,
+.blog-article-card__read,
+.blog-featured-card__action {
+    color: #7B0D1A;
+}
+
+/* Shared footer: one neutral plane, legible navy text and restrained proportions. */
+#app > .farzin-site-footer.fz-global-footer {
+    margin-block-start: 0;
+    padding: 0;
+    border: 0;
+    border-top: 1px solid #AEB2AF;
+    color: #26313B;
+    background: #BFC2BF;
+}
+#app > .farzin-site-footer.fz-global-footer > .fz-global-footer__inner {
+    max-width: 1280px;
+    gap: .9rem;
+    padding: 1.25rem clamp(1rem, 3vw, 2.5rem) .8rem;
+}
+.fz-global-footer__wordmark > span {
+    color: #06284F !important;
+    font-size: 1.45rem;
+}
+.fz-global-footer__wordmark > small {
+    color: #7B0D1A;
+}
+.fz-global-footer__brand > p {
+    color: #4E575F;
+    font-size: .68rem;
+}
+.fz-global-footer__nav {
+    border-color: #AEB2AF;
+    padding-block: .15rem .55rem;
+}
+#app > .farzin-site-footer.fz-global-footer .fz-global-footer__nav a {
+    color: #26313B !important;
+    font-size: .7rem;
+}
+#app > .farzin-site-footer.fz-global-footer .fz-global-footer__nav a:hover {
+    color: #7B0D1A !important;
+}
+.fz-global-footer__bottom > p {
+    color: #4E575F;
+    font-size: .62rem;
+}
+.fz-global-footer__socials a {
+    width: 2rem;
+    height: 2rem;
+    border-color: #AEB2AF;
+    border-radius: 7px;
+    color: #06284F !important;
+    background: #FFFFFF;
+}
+.fz-global-footer__socials a:hover {
+    border-color: #7B0D1A;
+    color: #7B0D1A !important;
+    background: #FFFFFF;
+}
+
+/* Responsive rhythm and touch targets. */
+@media (max-width: 1023px) {
+    .farzin-site-header__nav {
+        display: none;
+    }
+    .farzin-site-header__action {
+        width: 40px;
+        height: 40px;
+    }
+}
+@media (max-width: 767px) {
+    .storefront-content :where(section) {
+        scroll-margin-top: 78px;
+    }
+    .storefront-content :where([class~="rounded-3xl"], [class~="rounded-[2rem]"]) {
+        border-radius: 8px !important;
+    }
+    .farzin-mobile-nav__inner {
+        width: min(100%, 28rem);
+    }
+    #app > .farzin-site-footer.fz-global-footer > .fz-global-footer__inner {
+        padding-block: 1.05rem .7rem;
+        gap: .7rem;
+    }
+    .fz-global-footer__nav {
+        gap: .2rem .75rem;
+    }
+}
+@media (prefers-reduced-motion: reduce) {
+    .farzin-site-header *,
+    .farzin-mobile-nav *,
+    .farzin-global-footer *,
+    .blog-shell *,
+    .blog-article-page * {
+        scroll-behavior: auto !important;
+        animation: none !important;
+        transition: none !important;
+    }
+}
+
