@@ -3,6 +3,14 @@
 @php
     $image = $product->images->first(fn ($candidate) => filled($candidate->url));
     $imageSrcset = $image?->responsive_srcset;
+    $price = (float) $product->price;
+    $compareAtPrice = $product->compare_at_price !== null
+        ? (float) $product->compare_at_price
+        : null;
+    $hasDiscount = $compareAtPrice !== null && $compareAtPrice > $price;
+    $discountPercent = $hasDiscount
+        ? (int) round((($compareAtPrice - $price) / $compareAtPrice) * 100)
+        : 0;
 @endphp
 
 <article class="fz-product-card fz-reveal">
@@ -30,6 +38,11 @@
         @if($product->is_new)
             <span class="fz-product-card__badge">تازه</span>
         @endif
+        @if($hasDiscount)
+            <span class="fz-product-card__badge fz-product-card__badge--discount">
+                {{ \App\Helpers\PersianNumberHelper::format($discountPercent) }}٪ تخفیف
+            </span>
+        @endif
         <span class="fz-product-card__open" aria-hidden="true">↗</span>
     </a>
 
@@ -44,10 +57,17 @@
         </h3>
 
         <div class="fz-product-card__bottom">
-            <p class="fz-product-card__price">
-                <strong>{{ \App\Helpers\PersianNumberHelper::format((float) $product->price) }}</strong>
-                <span>تومان</span>
-            </p>
+            <div class="fz-product-card__price-block">
+                @if($hasDiscount)
+                    <span class="fz-product-card__price-old">
+                        {{ \App\Helpers\PersianNumberHelper::format($compareAtPrice) }} تومان
+                    </span>
+                @endif
+                <p class="fz-product-card__price">
+                    <strong>{{ \App\Helpers\PersianNumberHelper::format($price) }}</strong>
+                    <span>تومان</span>
+                </p>
+            </div>
             <a
                 class="fz-product-card__cta"
                 href="{{ route('product.show', $product->slug) }}"
