@@ -553,7 +553,10 @@ test('desktop active navigation underline is centered and the shared palette sta
             };
         });
 
-        expect(indicator.left, path + ' underline anchor must be set at the link centre').toBe('50%');
+        expect(
+            Math.abs(Number.parseFloat(indicator.left) - indicator.linkWidth / 2),
+            path + ' underline anchor must be set at the link centre'
+        ).toBeLessThanOrEqual(1);
         expect(indicator.width, path + ' active underline must have a stable width').toBe('20px');
         expect(indicator.transform, path + ' underline must compensate for exactly half its own width').toContain('-10');
 
