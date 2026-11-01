@@ -419,6 +419,46 @@ test('admin mobile quick search and list filters remain reachable without horizo
     }
 });
 
+test('homepage journal uses published articles, responsive RTL columns and restrained card radii', async ({ page }) => {
+    for (const viewport of [
+        { width: 390, height: 844 },
+        { width: 768, height: 900 },
+        { width: 1440, height: 960 },
+    ]) {
+        await page.setViewportSize(viewport);
+        await page.goto('/', { waitUntil: 'domcontentloaded' });
+
+        const journal = page.locator('.fz-home-journal');
+        await expect(journal).toBeVisible();
+        await expect(journal.locator('.fz-home-journal__featured')).toBeVisible();
+        await expect(journal.locator('.fz-home-journal__featured-copy h3 a')).toHaveAttribute('href', /\/blog\//);
+        await expect(journal.locator('.fz-home-journal__aside')).toBeVisible();
+        await expect(journal.locator('.fz-home-journal__all')).toHaveAttribute('href', '/blog');
+
+        const layout = await journal.evaluate((section) => {
+            const grid = section.querySelector('.fz-home-journal__layout');
+            const featured = section.querySelector('.fz-home-journal__featured');
+            const style = window.getComputedStyle(grid);
+            const cardStyle = window.getComputedStyle(featured);
+            const columns = style.gridTemplateColumns.split(' ').length;
+
+            return {
+                direction: style.direction,
+                columns,
+                radius: Number.parseFloat(cardStyle.borderTopLeftRadius),
+                background: window.getComputedStyle(document.body).backgroundColor,
+                overflow: Math.max(document.documentElement.scrollWidth, document.body.scrollWidth)
+                    - document.documentElement.clientWidth,
+            };
+        });
+
+        expect(layout.direction, 'homepage journal must keep RTL reading order').toBe('rtl');
+        expect(layout.columns, 'journal becomes one column on mobile and two columns on desktop/tablet').toBe(viewport.width <= 767 ? 1 : 2);
+        expect(layout.radius, 'journal card corner radius must remain restrained').toBeLessThanOrEqual(12);
+        expect(layout.overflow, 'homepage journal must not cause horizontal overflow').toBeLessThanOrEqual(1);
+    }
+});
+
 test('blog archive renders the editorial magazine layout without horizontal overflow', async ({ page }) => {
     for (const viewport of [
         { width: 390, height: 844 },
