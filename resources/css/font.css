@@ -1,9 +1,11 @@
-/* =========================================================
-   LIVORA — IRANYEKANX FANUM
-   ========================================================= */
-
+/* Farzin storefront typography
+   * Brand font files are expected in the local font stack when supplied.
+   * Bundled fonts remain as dependable fallbacks until then.
+   */
 @import "../fonts/iranyekanx-fanum/font-face.css";
 
 :root {
-    --livora-font-family: "IRANYekanX FaNum", sans-serif;
+    --fz-font-ui: "Peyda Soft", "Vazirmatn", "IRANYekanX FaNum", sans-serif;
+    --fz-font-heading: "Bahman", "Rokh", "IRANYekanX FaNum", sans-serif;
+    --livora-font-family: var(--fz-font-ui);
 }
