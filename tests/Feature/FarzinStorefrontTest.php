@@ -280,15 +280,39 @@ class FarzinStorefrontTest extends TestCase
             ->assertSee('چک‌لیست ساده پیش از ثبت سفارش');
     }
 
-    public function test_homepage_uses_scroll_drawn_architecture_instead_of_a_product_hero_card(): void
+    public function test_homepage_uses_a_product_led_hero_and_removes_legacy_scroll_drawing(): void
     {
+        $category = $this->category([
+            'name' => 'هود منتخب',
+            'slug' => 'featured-hoods',
+        ]);
+
+        $product = $this->product($category, [
+            'name' => 'هود منتخب فرزین',
+            'slug' => 'featured-farzin-hood',
+            'sku' => 'FAR-HERO-001',
+            'price' => 12900000,
+            'is_featured' => true,
+        ]);
+
+        ProductImage::create([
+            'product_id' => $product->id,
+            'path' => 'https://cdn.example.test/farzin-hero-product.webp',
+            'alt' => 'تصویر هود منتخب فرزین',
+            'sort_order' => 0,
+            'is_primary' => true,
+        ]);
+
         $this->get(route('home'))
             ->assertOk()
-            ->assertSee('data-fz-scroll-hero', false)
-            ->assertSee('data-hero-drawing', false)
-            ->assertSee('SCROLL TO REVEAL')
-            ->assertDontSee('fz-hero-product', false)
-            ->assertDontSee('PREVIEW · 5 SEC');
+            ->assertSee('fz-hero-product', false)
+            ->assertSee('هود منتخب فرزین')
+            ->assertSee('پیشنهاد فرزین')
+            ->assertSee('مشاوره خرید')
+            ->assertSee('product-categories')
+            ->assertDontSee('data-fz-scroll-hero', false)
+            ->assertDontSee('data-hero-drawing', false)
+            ->assertDontSee('SCROLL TO REVEAL');
     }
 
     public function test_homepage_renders_category_video_and_gif_with_the_correct_media_elements(): void
