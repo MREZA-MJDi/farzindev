@@ -276,6 +276,7 @@ function initHomeProductSlider() {
 
     const updateToggle = () => {
         if (!toggle) return;
+        toggle.hidden = !motionAllowed;
         toggle.classList.toggle('is-paused', userPaused || !motionAllowed);
         const label = userPaused ? 'ادامه پخش' : 'مکث';
         if (toggleLabel) toggleLabel.textContent = label;

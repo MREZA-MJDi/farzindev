@@ -356,6 +356,8 @@ class FarzinStorefrontTest extends TestCase
             ->assertSee('data-home-slide-prev', false)
             ->assertSee('data-home-slide-toggle', false);
 
+        $this->assertSame(6, substr_count($response->getContent(), 'data-home-product-id='));
+
         foreach (array_slice($products, 2) as $product) {
             $response->assertSee('data-home-product-id="'.$product->id.'"', false)
                 ->assertSee($product->name);
