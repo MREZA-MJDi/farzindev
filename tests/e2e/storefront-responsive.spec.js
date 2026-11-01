@@ -531,6 +531,67 @@ test('blog actions are real touch targets and the magazine stays free of heavy m
     }
 });
 
+test('desktop active navigation underline is centered and the shared palette stays neutral', async ({ page }) => {
+    await page.setViewportSize({ width: 1440, height: 960 });
+
+    for (const path of ['/', '/shop', '/categories', '/blog', '/about', '/contact']) {
+        await page.goto(path, { waitUntil: 'domcontentloaded' });
+
+        const activeLink = page.locator('.farzin-site-header__nav-link[aria-current="page"]');
+        await expect(activeLink, path + ' must expose one current desktop navigation item').toHaveCount(1);
+
+        const indicator = await activeLink.evaluate((element) => {
+            const line = window.getComputedStyle(element, '::after');
+            const box = element.getBoundingClientRect();
+
+            return {
+                left: line.left,
+                width: line.width,
+                transform: line.transform,
+                background: line.backgroundColor,
+                linkWidth: box.width,
+            };
+        });
+
+        expect(indicator.left, path + ' underline anchor must be set at the link centre').toBe('50%');
+        expect(indicator.width, path + ' active underline must have a stable width').toBe('20px');
+        expect(indicator.transform, path + ' underline must compensate for exactly half its own width').toContain('-10');
+
+        const shell = await page.evaluate(() => ({
+            page: getComputedStyle(document.querySelector('#main-content')).backgroundColor,
+            header: getComputedStyle(document.querySelector('.farzin-site-header')).backgroundColor,
+            footer: getComputedStyle(document.querySelector('.farzin-site-footer')).backgroundColor,
+        }));
+
+        expect(shell.page, path + ' content shell must use the stronger neutral grey').toBe('rgb(200, 202, 200)');
+        expect(shell.header, path + ' header must remain a white surface').toBe('rgba(255, 255, 255, 0.97)');
+        expect(shell.footer, path + ' footer must use a neutral grey surface').toBe('rgb(191, 194, 191)');
+    }
+});
+
+test('mobile navigation marks only the current destination and search state', async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+
+    for (const item of [
+        { path: '/', label: 'خانه' },
+        { path: '/shop', label: 'فروشگاه' },
+        { path: '/cart', label: 'سبد' },
+        { path: '/login', label: 'حساب' },
+    ]) {
+        await page.goto(item.path, { waitUntil: 'domcontentloaded' });
+
+        const active = page.locator('.farzin-mobile-nav__item[aria-current="page"]');
+        await expect(active, item.path + ' must mark its matching mobile tab as current').toHaveCount(1);
+        await expect(active.locator('span').filter({ hasText: item.label })).toBeVisible();
+    }
+
+    await page.goto('/shop', { waitUntil: 'domcontentloaded' });
+    const search = page.locator('.farzin-mobile-nav__item[aria-label="جستجو"]');
+    await search.click();
+    await expect(search).toHaveAttribute('aria-expanded', 'true');
+    await expect(search).toHaveClass(/is-active/);
+});
+
 test('admin blog image workflows expose the cropper and saved media library', async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 });
     await page.goto('/login', { waitUntil: 'domcontentloaded' });
