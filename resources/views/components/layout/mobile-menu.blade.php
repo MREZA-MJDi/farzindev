@@ -65,7 +65,7 @@
                 @click="mobileOpen = false"
                 class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-[var(--livora-text)] transition hover:bg-[var(--livora-surface)] hover:text-[var(--livora-accent)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--livora-accent)]"
             >
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.7" stroke="currentColor" class="h-5 w-5" aria-hidden="true">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.7" stroke="currentColor" width="20" height="20" class="h-5 w-5" aria-hidden="true">
                     <path stroke-linecap="round" stroke-linejoin="round" d="m6 6 12 12M18 6 6 18"/>
                 </svg>
             </button>
@@ -88,7 +88,7 @@
                     >
                         <span>خانه</span>
                         <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-[var(--livora-surface)] text-[var(--livora-ink)] transition group-hover:bg-[var(--livora-ink)] group-hover:text-white" aria-hidden="true">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" class="h-5 w-5"><path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1V10Z"/></svg>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" width="20" height="20" class="h-5 w-5"><path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1V10Z"/></svg>
                         </span>
                     </a>
 
@@ -100,7 +100,7 @@
                     >
                         <span>فروشگاه</span>
                         <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-[var(--livora-surface)] text-[var(--livora-ink)] transition group-hover:bg-[var(--livora-ink)] group-hover:text-white" aria-hidden="true">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" class="h-5 w-5"><path d="M3.5 9h17l-1 11h-15l-1-11Z"/><path d="M8 9V6.5a4 4 0 0 1 8 0V9"/></svg>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" width="20" height="20" class="h-5 w-5"><path d="M3.5 9h17l-1 11h-15l-1-11Z"/><path d="M8 9V6.5a4 4 0 0 1 8 0V9"/></svg>
                         </span>
                     </a>
 
@@ -112,7 +112,7 @@
                     >
                         <span>دسته‌بندی‌ها</span>
                         <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-[var(--livora-surface)] text-[var(--livora-ink)] transition group-hover:bg-[var(--livora-ink)] group-hover:text-white" aria-hidden="true">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" class="h-5 w-5"><rect x="3.5" y="3.5" width="7" height="7" rx="1.3"/><rect x="13.5" y="3.5" width="7" height="7" rx="1.3"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.3"/><rect x="13.5" y="13.5" width="7" height="7" rx="1.3"/></svg>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" width="20" height="20" class="h-5 w-5"><rect x="3.5" y="3.5" width="7" height="7" rx="1.3"/><rect x="13.5" y="3.5" width="7" height="7" rx="1.3"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.3"/><rect x="13.5" y="13.5" width="7" height="7" rx="1.3"/></svg>
                         </span>
                     </a>
 
@@ -124,7 +124,7 @@
                     >
                         <span>بلاگ و راهنمای خرید</span>
                         <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-[var(--livora-surface)] text-[var(--livora-ink)] transition group-hover:bg-[var(--livora-ink)] group-hover:text-white" aria-hidden="true">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" class="h-5 w-5"><path d="M12 7.5c-2.2-1.6-5-2.1-8.25-1.5v12c3.25-.6 6.05-.1 8.25 1.5m0-12c2.2-1.6 5-2.1 8.25-1.5v12c-3.25-.6-6.05-.1-8.25 1.5"/><path d="M12 7.5v12"/></svg>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" width="20" height="20" class="h-5 w-5"><path d="M12 7.5c-2.2-1.6-5-2.1-8.25-1.5v12c3.25-.6 6.05-.1 8.25 1.5m0-12c2.2-1.6 5-2.1 8.25-1.5v12c-3.25-.6-6.05-.1-8.25 1.5"/><path d="M12 7.5v12"/></svg>
                         </span>
                     </a>
 
@@ -136,7 +136,7 @@
                     >
                         <span>درباره فرزین</span>
                         <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-[var(--livora-surface)] text-[var(--livora-ink)] transition group-hover:bg-[var(--livora-ink)] group-hover:text-white" aria-hidden="true">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" class="h-5 w-5"><circle cx="12" cy="12" r="9"/><path d="M12 11v5m0-8h.01"/></svg>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" width="20" height="20" class="h-5 w-5"><circle cx="12" cy="12" r="9"/><path d="M12 11v5m0-8h.01"/></svg>
                         </span>
                     </a>
 
@@ -148,7 +148,7 @@
                     >
                         <span>تماس با ما</span>
                         <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-[var(--livora-surface)] text-[var(--livora-ink)] transition group-hover:bg-[var(--livora-ink)] group-hover:text-white" aria-hidden="true">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" class="h-5 w-5"><path d="M5 4.5h3l1.4 3.7-2 1.4a15 15 0 0 0 7 7l1.4-2 3.7 1.4v3c0 .8-.7 1.5-1.5 1.5A14.5 14.5 0 0 1 3.5 6c0-.8.7-1.5 1.5-1.5Z"/></svg>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" width="20" height="20" class="h-5 w-5"><path d="M5 4.5h3l1.4 3.7-2 1.4a15 15 0 0 0 7 7l1.4-2 3.7 1.4v3c0 .8-.7 1.5-1.5 1.5A14.5 14.5 0 0 1 3.5 6c0-.8.7-1.5 1.5-1.5Z"/></svg>
                         </span>
                     </a>
                 </div>
@@ -167,7 +167,7 @@
                         class="rounded-2xl border border-[var(--livora-border)] bg-white p-4 transition hover:border-[var(--livora-accent)]"
                     >
                         <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-[var(--livora-accent-soft)] text-[var(--livora-accent)]" aria-hidden="true">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" class="h-5 w-5"><path stroke-linecap="round" stroke-linejoin="round" d="M3 3.75h1.6c.5 0 .94.35 1.06.84L6.3 7.5h13.1l-1.6 7.1H7.5L6.3 7.5M8.5 19.2a.9.9 0 1 1-1.8 0 .9.9 0 0 1 1.8 0Zm9.1 0a.9.9 0 1 1-1.8 0 .9.9 0 0 1 1.8 0Z"/></svg>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" width="20" height="20" class="h-5 w-5"><path stroke-linecap="round" stroke-linejoin="round" d="M3 3.75h1.6c.5 0 .94.35 1.06.84L6.3 7.5h13.1l-1.6 7.1H7.5L6.3 7.5M8.5 19.2a.9.9 0 1 1-1.8 0 .9.9 0 0 1 1.8 0Zm9.1 0a.9.9 0 1 1-1.8 0 .9.9 0 0 1 1.8 0Z"/></svg>
                         </span>
                         <span class="mt-3 block text-sm font-semibold text-[var(--livora-text)]">سبد خرید</span>
                         <span class="mt-1 block text-[11px] text-[var(--livora-stone)]">محصولات انتخاب‌شده</span>
@@ -177,7 +177,7 @@
                         @if(auth()->user()->isAdmin())
                             <a href="{{ route('admin.dashboard') }}" @click="mobileOpen = false" class="rounded-2xl border border-[var(--livora-border)] bg-white p-4 transition hover:border-[var(--livora-accent)]">
                                 <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-[var(--livora-surface)] text-[var(--livora-ink)]" aria-hidden="true">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" class="h-5 w-5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3 20 7v5c0 4.5-3.3 7.4-8 9-4.7-1.6-8-4.5-8-9V7z"/><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6M12 9v6"/></svg>
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" width="20" height="20" class="h-5 w-5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3 20 7v5c0 4.5-3.3 7.4-8 9-4.7-1.6-8-4.5-8-9V7z"/><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6M12 9v6"/></svg>
                                 </span>
                                 <span class="mt-3 block text-sm font-semibold text-[var(--livora-text)]">پنل مدیریت</span>
                                 <span class="mt-1 block text-[11px] text-[var(--livora-stone)]">مدیریت فروشگاه</span>
@@ -185,7 +185,7 @@
                         @else
                             <a href="{{ route('account.index') }}" @click="mobileOpen = false" class="rounded-2xl border border-[var(--livora-border)] bg-white p-4 transition hover:border-[var(--livora-accent)]">
                                 <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-[var(--livora-surface)] text-[var(--livora-ink)]" aria-hidden="true">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" class="h-5 w-5"><circle cx="12" cy="8" r="3.5"/><path stroke-linecap="round" stroke-linejoin="round" d="M5 20a7 7 0 0 1 14 0"/></svg>
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" width="20" height="20" class="h-5 w-5"><circle cx="12" cy="8" r="3.5"/><path stroke-linecap="round" stroke-linejoin="round" d="M5 20a7 7 0 0 1 14 0"/></svg>
                                 </span>
                                 <span class="mt-3 block text-sm font-semibold text-[var(--livora-text)]">حساب من</span>
                                 <span class="mt-1 block text-[11px] text-[var(--livora-stone)]">سفارش‌ها و علاقه‌مندی‌ها</span>
@@ -194,7 +194,7 @@
                     @else
                         <a href="{{ route('login') }}" @click="mobileOpen = false" class="rounded-2xl border border-[var(--livora-border)] bg-white p-4 transition hover:border-[var(--livora-accent)]">
                             <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-[var(--livora-surface)] text-[var(--livora-ink)]" aria-hidden="true">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" class="h-5 w-5"><circle cx="12" cy="8" r="3.5"/><path stroke-linecap="round" stroke-linejoin="round" d="M5 20a7 7 0 0 1 14 0"/></svg>
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" width="20" height="20" class="h-5 w-5"><circle cx="12" cy="8" r="3.5"/><path stroke-linecap="round" stroke-linejoin="round" d="M5 20a7 7 0 0 1 14 0"/></svg>
                             </span>
                             <span class="mt-3 block text-sm font-semibold text-[var(--livora-text)]">ورود / ثبت‌نام</span>
                             <span class="mt-1 block text-[11px] text-[var(--livora-stone)]">حساب کاربری فرزین</span>
