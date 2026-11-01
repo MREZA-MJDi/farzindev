@@ -58,7 +58,7 @@
                     </svg>
                 </a>
                 <a class="fz-home-hero__button fz-home-hero__button--secondary" href="{{ route('contact') }}">
-                    مشاوره انتخاب محصول
+                    مشاوره خرید
                 </a>
             </div>
 
