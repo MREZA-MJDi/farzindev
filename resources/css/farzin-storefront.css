@@ -748,7 +748,7 @@ body.home-body {
 
 .farzin-shop-hero__eyebrow-dot,
 .farzin-shop-hero__art-note-line {
-    background: #B53A49;
+    background: var(--fz-accent);
 }
 
 .farzin-shop-hero__button--primary {
@@ -4343,7 +4343,7 @@ body.home-body,
     --fz-accent-dark: #5F0712;
     --fz-charcoal: #27292C;
     --fz-charcoal-soft: #35383D;
-    --fz-accent-on-dark: #D04451;
+    --fz-accent-on-dark: #D7DCE2;
     --fz-radius-card: 8px;
     --fz-radius-panel: 10px;
     --fz-radius-control: 8px;
@@ -5435,7 +5435,7 @@ body.home-body,
     place-items: center;
     border-radius: .9rem;
     color: #80152D;
-    background: #F8EDEF;
+    background: var(--fz-paper-soft);
 }
 .home-body .fz-guide-card__icon svg { width: 1.35rem; height: 1.35rem; }
 .home-body .fz-guide-card__number { color: #A2B1C0; font-size: .72rem; font-weight: 800; }

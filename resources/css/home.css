@@ -491,7 +491,7 @@ body.home-body {
     text-align:right;
 }
 .fz-category-card__eyebrow {
-    color:#F0C1CA;
+    color:var(--fz-accent-on-dark);
     font-size:.6rem;
     font-weight:850;
     letter-spacing:.12em;
