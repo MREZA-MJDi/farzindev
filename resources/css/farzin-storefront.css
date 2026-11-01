@@ -1878,3 +1878,21 @@ body.home-body {
         line-height: 1.6;
     }
 }
+
+
+/* Keep the two main category choices prominent without letting them dominate the homepage. */
+.fz-category-card {
+    height: clamp(210px, 19vw, 270px);
+}
+
+@media (max-width: 767px) {
+    .fz-category-card {
+        height: clamp(180px, 32vw, 230px);
+    }
+}
+
+@media (max-width: 479px) {
+    .fz-category-card {
+        height: clamp(155px, 40vw, 190px);
+    }
+}
