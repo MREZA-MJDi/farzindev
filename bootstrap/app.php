@@ -13,6 +13,7 @@ use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 
@@ -122,6 +123,32 @@ return Application::configure(
             ], $status, ['X-Request-ID' => $requestId]);
         });
 
+
+        // An expired admin session/CSRF token should return the administrator
+        // to a clean login state. Do not disable CSRF or relax admin authorization.
+        $exceptions->render(function (Throwable $e, Request $request) {
+            $isExpiredSession = $e instanceof \\Illuminate\\Session\\TokenMismatchException
+                || ($e instanceof HttpExceptionInterface && $e->getStatusCode() === 419);
+
+            if (! $isExpiredSession || ! $request->is('admin', 'admin/*')) {
+                return null;
+            }
+
+            Auth::logout();
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
+
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'نشست مدیریت منقضی شده است؛ دوباره وارد شوید.',
+                ], 419);
+            }
+
+            return redirect()
+                ->route('login')
+                ->with('warning', 'نشست مدیریت منقضی شده است؛ برای ادامه دوباره وارد شوید.');
+        });
 
         /*
         |--------------------------------------------------------------------------
