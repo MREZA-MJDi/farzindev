@@ -1605,3 +1605,262 @@ body.home-body {
     .fz-category-card__content { padding:.9rem; }
     .fz-category-card__content strong { font-size:1rem; }
 }
+
+
+/* Final homepage: one static product-led hero and a six-item catalogue. */
+.fz-home-hero__layout {
+    direction: ltr;
+    grid-template-columns: minmax(0, .92fr) minmax(0, 1.08fr);
+    gap: clamp(1.5rem, 4vw, 4rem);
+}
+.fz-home-hero__copy,
+.fz-home-hero__showcase {
+    direction: rtl;
+}
+.fz-home-hero__showcase--static {
+    display: block;
+    width: 100%;
+    padding: clamp(.8rem, 1.5vw, 1.2rem);
+    border: 1px solid var(--fz-line);
+    border-radius: var(--fz-radius-panel);
+    color: var(--fz-text);
+    background: #FFFFFF;
+    box-shadow: var(--fz-shadow-sm);
+    text-decoration: none;
+}
+.fz-home-hero__showcase--static .fz-home-hero__showcase-heading {
+    padding: .2rem .25rem .8rem;
+}
+.fz-home-hero__showcase--static .fz-home-hero__showcase-heading strong,
+.fz-home-hero__showcase--static .fz-home-hero__showcase-heading small {
+    display: block;
+}
+.fz-home-hero__showcase--static .fz-home-hero__showcase-heading strong {
+    color: var(--fz-ink);
+    font-size: .92rem;
+    font-weight: 850;
+}
+.fz-home-hero__showcase--static .fz-home-hero__showcase-heading small {
+    margin-top: .2rem;
+    color: var(--fz-muted);
+    font-size: .68rem;
+}
+.fz-home-hero__showcase-label {
+    color: var(--fz-accent);
+    font-size: .68rem;
+    font-weight: 800;
+}
+.fz-home-hero__showcase--static .fz-home-hero__product-image {
+    min-height: 0;
+    aspect-ratio: 1.5 / 1;
+    background: var(--fz-paper-soft);
+    border-radius: var(--fz-radius-card);
+}
+.fz-home-hero__showcase--static .fz-home-hero__product-image img {
+    max-height: 420px;
+    mix-blend-mode: multiply;
+}
+.fz-home-hero__showcase--static .fz-home-hero__product-details {
+    padding: .95rem .2rem .2rem;
+}
+.fz-home-hero__showcase--static .fz-home-hero__product-details > strong {
+    color: var(--fz-ink);
+    font-size: clamp(1rem, 1.35vw, 1.2rem);
+    font-weight: 850;
+    line-height: 1.8;
+    white-space: normal;
+}
+.fz-home-hero__showcase--static .fz-home-hero__product-footer {
+    border-color: var(--fz-line);
+}
+.fz-home-hero__showcase--static .fz-home-hero__product-price {
+    color: var(--fz-accent);
+}
+.fz-home-hero__showcase--static .fz-home-hero__product-link {
+    color: var(--fz-ink);
+}
+.fz-home-buying-guides {
+    padding-block: clamp(2.3rem, 4vw, 3.6rem);
+    background: #FFFFFF;
+    border-block: 1px solid var(--fz-line);
+}
+.fz-home-buying-guides__heading {
+    margin-bottom: 1.25rem;
+}
+.fz-home-buying-guides__heading h2 {
+    margin-top: .4rem;
+    color: var(--fz-ink);
+    font-size: clamp(1.35rem, 2.1vw, 1.85rem);
+    font-weight: 850;
+}
+.fz-home-buying-guides__heading > div > p:last-child {
+    margin-top: .35rem;
+    color: var(--fz-muted);
+    font-size: .8rem;
+}
+.fz-home-buying-guides__grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: .9rem;
+}
+.fz-home-buying-guide {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: center;
+    gap: .9rem;
+    min-width: 0;
+    padding: 1.1rem 1.2rem;
+    border: 1px solid var(--fz-line);
+    border-radius: var(--fz-radius-panel);
+    color: var(--fz-text);
+    background: var(--fz-page);
+    transition: border-color .18s ease, background-color .18s ease, transform .18s ease;
+}
+.fz-home-buying-guide:hover {
+    border-color: var(--fz-line-strong);
+    background: #FFFFFF;
+    transform: translateY(-2px);
+}
+.fz-home-buying-guide__index {
+    display: grid;
+    width: 2.5rem;
+    height: 2.5rem;
+    place-items: center;
+    border-radius: var(--fz-radius-card);
+    color: #FFFFFF;
+    background: var(--fz-ink);
+    font-size: .78rem;
+    font-weight: 850;
+}
+.fz-home-buying-guide > span:nth-child(2) {
+    display: grid;
+    gap: .18rem;
+    min-width: 0;
+}
+.fz-home-buying-guide strong {
+    color: var(--fz-ink);
+    font-size: .92rem;
+    font-weight: 850;
+}
+.fz-home-buying-guide small {
+    color: var(--fz-muted);
+    font-size: .7rem;
+    line-height: 1.8;
+}
+.fz-home-buying-guide__action {
+    color: var(--fz-accent);
+    font-size: .72rem;
+    font-weight: 850;
+    white-space: nowrap;
+}
+.fz-home-featured-section {
+    padding-block: clamp(2.75rem, 5vw, 4.5rem);
+    background: var(--fz-page);
+}
+.fz-home-featured-section__visual {
+    display: none !important;
+}
+.fz-home-featured-section__heading h2 {
+    color: var(--fz-ink);
+    font-size: clamp(1.55rem, 2.8vw, 2.25rem);
+    font-weight: 900;
+}
+.fz-home-featured-section__heading p:not(.fz-eyebrow) {
+    color: var(--fz-muted);
+    font-size: .8rem;
+}
+.fz-home-featured-grid--six {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    align-items: stretch;
+    gap: clamp(.8rem, 1.5vw, 1.3rem);
+}
+.fz-home-contact-bridge {
+    padding-block: 1.3rem;
+    border-top: 1px solid var(--fz-line);
+    background: #FFFFFF;
+}
+.fz-home-contact-bridge__inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+}
+.fz-home-contact-bridge__inner p {
+    color: var(--fz-muted);
+    font-size: .76rem;
+}
+.fz-home-contact-bridge__inner a {
+    display: inline-flex;
+    min-height: 40px;
+    align-items: center;
+    justify-content: center;
+    padding: .55rem 1rem;
+    border: 1px solid var(--fz-line);
+    border-radius: var(--fz-radius-card);
+    color: var(--fz-ink);
+    background: var(--fz-paper-soft);
+    font-size: .72rem;
+    font-weight: 850;
+}
+.fz-home-contact-bridge__inner a:hover {
+    color: #FFFFFF;
+    border-color: var(--fz-accent);
+    background: var(--fz-accent);
+}
+@media (max-width: 900px) {
+    .fz-home-hero__layout {
+        grid-template-columns: minmax(0, 1fr);
+    }
+    .fz-home-hero__copy {
+        text-align: right;
+        margin-inline: 0;
+    }
+    .fz-home-hero__eyebrow,
+    .fz-home-hero__actions {
+        justify-content: flex-start;
+    }
+    .fz-home-hero__lead {
+        margin-inline: 0;
+    }
+    .fz-home-hero__highlights {
+        justify-content: flex-start;
+    }
+    .fz-home-hero__showcase--static {
+        width: min(100%, 48rem);
+        margin-inline: auto;
+    }
+}
+@media (max-width: 767px) {
+    .fz-home-buying-guides {
+        padding-block: 2rem;
+    }
+    .fz-home-buying-guides__grid {
+        grid-template-columns: minmax(0, 1fr);
+        gap: .65rem;
+    }
+    .fz-home-buying-guide {
+        grid-template-columns: auto minmax(0, 1fr);
+        padding: .9rem;
+    }
+    .fz-home-buying-guide__action {
+        grid-column: 2;
+        justify-self: start;
+    }
+    .fz-home-featured-grid--six {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: .7rem;
+    }
+    .fz-home-contact-bridge__inner {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+    .fz-home-hero__showcase--static .fz-home-hero__product-image {
+        aspect-ratio: 1.15 / 1;
+    }
+}
+@media (max-width: 380px) {
+    .fz-home-featured-grid--six {
+        gap: .5rem;
+    }
+}

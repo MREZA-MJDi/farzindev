@@ -3880,3 +3880,298 @@ body.home-body,
     }
 }
 
+
+
+/* Final public-shell contract: readable colours on every surface. */
+.storefront-content :where(
+    [class*="bg-[var(--livora-ink)]"],
+    [class*="bg-[var(--fz-ink)]"],
+    [class*="bg-[var(--fz-ink-deep)]"],
+    [class*="bg-[#06284F]"],
+    [class*="bg-[#092E50]"],
+    [class*="bg-slate-900"],
+    [class*="bg-gray-900"],
+    [class*="bg-neutral-900"],
+    .fz-contact-hero,
+    .fz-category-hero,
+    .blog-masthead,
+    .blog-article-hero,
+    .fz-contact-bottom
+) {
+    color: #FFFFFF !important;
+}
+.storefront-content :where(
+    [class*="bg-[var(--livora-ink)]"],
+    [class*="bg-[var(--fz-ink)]"],
+    [class*="bg-[var(--fz-ink-deep)]"],
+    [class*="bg-[#06284F]"],
+    [class*="bg-[#092E50]"],
+    [class*="bg-slate-900"],
+    [class*="bg-gray-900"],
+    [class*="bg-neutral-900"],
+    .fz-contact-hero,
+    .fz-category-hero,
+    .farzin-shop-banner__content,
+    .blog-masthead,
+    .blog-article-hero,
+    .fz-contact-bottom
+) :where(h1, h2, h3, h4, h5, h6, p, li, dd, dt, label, small, span, strong, b, a, em, figcaption) {
+    color: #FFFFFF !important;
+}
+
+/* Consistent typography scale across shop, category, contact and static pages. */
+.storefront-content :where(h1) {
+    font-size: clamp(1.8rem, 3.25vw, 2.8rem);
+    line-height: 1.45;
+    font-weight: 850;
+}
+.storefront-content :where(h2) {
+    font-size: clamp(1.3rem, 2.1vw, 1.85rem);
+    line-height: 1.55;
+    font-weight: 850;
+}
+.storefront-content :where(h3) {
+    font-size: clamp(1rem, 1.3vw, 1.15rem);
+    line-height: 1.65;
+    font-weight: 800;
+}
+.storefront-content :where(p, li, label, input, select, textarea) {
+    font-size: .875rem;
+    line-height: 1.9;
+}
+.storefront-content :where(small, figcaption) {
+    font-size: .72rem;
+    line-height: 1.8;
+}
+
+/* Header is one stable light surface; colour does not depend on page styles. */
+#app > .farzin-site-header {
+    color: var(--fz-text);
+    background: rgba(255,255,255,.98);
+}
+#app > .farzin-site-header .farzin-site-header__nav-link {
+    color: var(--fz-text) !important;
+    font-size: .82rem;
+    font-weight: 750;
+}
+#app > .farzin-site-header .farzin-site-header__nav-link:hover {
+    color: var(--fz-accent) !important;
+    background: var(--fz-paper-soft);
+}
+#app > .farzin-site-header .farzin-site-header__nav-link.is-active,
+#app > .farzin-site-header .farzin-site-header__nav-link[aria-current="page"] {
+    color: var(--fz-accent) !important;
+}
+#app > .farzin-site-header .farzin-site-header__action,
+#app > .farzin-site-header .farzin-site-header__action svg {
+    color: var(--fz-ink) !important;
+}
+#app > .farzin-site-header .farzin-site-header__action:hover,
+#app > .farzin-site-header .farzin-site-header__action.is-active {
+    color: var(--fz-accent) !important;
+    background: var(--fz-paper-soft);
+}
+#app > .farzin-site-header .farzin-site-header__search-input {
+    color: var(--fz-text) !important;
+    background: var(--fz-paper-soft) !important;
+}
+#app > .farzin-site-header .farzin-site-header__search-input::placeholder {
+    color: var(--fz-muted) !important;
+    opacity: 1;
+}
+
+/* Shop and category pages share the same content width and surface rhythm. */
+.farzin-shop-banner,
+.farzin-shop-catalog,
+.fz-category-hero,
+.fz-category-list,
+.fz-contact-workspace {
+    color: var(--fz-text);
+}
+.farzin-shop-banner,
+.farzin-shop-catalog,
+.fz-category-list,
+.fz-contact-workspace {
+    background: var(--fz-page);
+}
+.farzin-shop-banner .livora-container,
+.farzin-shop-catalog .livora-container,
+.fz-category-hero .livora-container,
+.fz-category-list .livora-container,
+.fz-contact-page .livora-container {
+    width: min(100%, var(--fz-container));
+}
+.farzin-shop-banner h1,
+.farzin-shop-banner h2,
+.fz-category-hero h1,
+.fz-category-hero h2 {
+    font-family: var(--fz-font-heading);
+    font-weight: 900;
+}
+.farzin-shop-catalog aside > div,
+.farzin-shop-catalog .shop-filter-panel,
+.farzin-shop-catalog .farzin-shop-filters,
+.farzin-shop-catalog .rounded-3xl,
+.fz-category-list .rounded-3xl {
+    border-color: var(--fz-line);
+    background: #FFFFFF;
+    box-shadow: var(--fz-shadow-sm);
+}
+.farzin-shop-catalog :where(input, select, button),
+.fz-category-list :where(input, select, button) {
+    min-height: 42px;
+    font-family: var(--fz-font-ui);
+}
+.fz-category-hero {
+    background: var(--fz-ink);
+}
+.fz-category-hero__title {
+    color: #FFFFFF !important;
+    font-size: clamp(1.8rem, 3.2vw, 2.65rem);
+    line-height: 1.45;
+}
+.fz-category-hero__description {
+    color: rgba(255,255,255,.78) !important;
+    font-size: .875rem;
+    line-height: 2;
+}
+.fz-category-hero__hint,
+.fz-category-hero__spec {
+    color: rgba(255,255,255,.62) !important;
+}
+
+/* Contact: one navy hero, bright panels, readable form controls. */
+.fz-contact-hero {
+    color: #FFFFFF;
+    background: var(--fz-ink);
+}
+.fz-contact-title,
+.fz-contact-title span {
+    color: #FFFFFF !important;
+}
+.fz-contact-lead,
+.fz-contact-hero__meta,
+.fz-contact-breadcrumb {
+    color: rgba(255,255,255,.76) !important;
+}
+.fz-contact-panel {
+    border-color: var(--fz-line);
+    border-radius: var(--fz-radius-panel);
+    background: #FFFFFF;
+    box-shadow: var(--fz-shadow-sm);
+}
+.fz-contact-panel__header h2,
+.fz-contact-social__heading h3 {
+    color: var(--fz-ink) !important;
+}
+.fz-contact-panel__header p:not(.fz-contact-kicker),
+.fz-contact-map-note,
+.fz-contact-map-empty p {
+    color: var(--fz-muted) !important;
+}
+.fz-contact-workspace :where(input, select, textarea) {
+    width: 100%;
+    min-height: 46px;
+    border: 1px solid var(--fz-line);
+    border-radius: var(--fz-radius-card);
+    color: var(--fz-text) !important;
+    background: #FFFFFF !important;
+}
+.fz-contact-workspace :where(input, select, textarea)::placeholder {
+    color: var(--fz-muted) !important;
+}
+.fz-contact-workspace :where(label) {
+    color: var(--fz-ink) !important;
+    font-size: .78rem;
+    font-weight: 750;
+}
+.fz-contact-submit {
+    min-height: 48px;
+    border-radius: var(--fz-radius-card);
+    color: #FFFFFF !important;
+    background: var(--fz-accent);
+}
+.fz-contact-submit:hover {
+    background: var(--fz-accent-dark);
+}
+@media (max-width: 1023px) {
+    .fz-contact-map-column {
+        position: static;
+    }
+    .fz-contact-grid {
+        grid-template-columns: minmax(0, 1fr);
+    }
+}
+@media (max-width: 767px) {
+    .fz-contact-hero__layout {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 1rem;
+        padding-block: 2.25rem;
+    }
+    .fz-contact-title {
+        max-width: 100%;
+        font-size: clamp(1.85rem, 8vw, 2.5rem);
+    }
+    .fz-contact-art {
+        min-height: 270px;
+    }
+    .fz-contact-map-frame,
+    .fz-contact-map-frame iframe {
+        min-height: 260px;
+    }
+    .fz-contact-form__row {
+        grid-template-columns: minmax(0, 1fr);
+    }
+}
+@media (max-width: 380px) {
+    .fz-contact-panel__header {
+        padding: .9rem;
+    }
+    .fz-contact-channel {
+        padding: .7rem;
+    }
+    .fz-contact-channel__copy em {
+        font-size: .65rem;
+    }
+}
+
+/* Shared card image mode used only by the homepage's six bestsellers. */
+.farzin-product-card--round-media .farzin-product-card__media {
+    display: grid;
+    min-height: 0;
+    place-items: center;
+    padding: clamp(.85rem, 1.7vw, 1.3rem);
+    background: transparent;
+}
+.farzin-product-card--round-media .farzin-product-card__image-link {
+    display: grid;
+    width: min(100%, 218px);
+    aspect-ratio: 1;
+    place-items: center;
+    border: 1px solid var(--fz-line);
+    border-radius: 50%;
+    background: #FFFFFF;
+}
+.farzin-product-card--round-media .farzin-product-card__image {
+    width: 100%;
+    height: 100%;
+    padding: 13%;
+    object-fit: contain;
+    mix-blend-mode: multiply;
+}
+.farzin-product-card--round-media .farzin-product-fallback {
+    min-height: 0;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    background: var(--fz-paper-soft);
+}
+.farzin-product-card--round-media .farzin-product-card__cta {
+    min-height: 40px;
+    justify-content: center;
+    border-radius: var(--fz-radius-card);
+    color: #FFFFFF !important;
+    background: var(--fz-ink);
+}
+.farzin-product-card--round-media .farzin-product-card__cta:hover {
+    background: var(--fz-accent);
+}
