@@ -25,7 +25,7 @@
                 </p>
 
                 <h1 id="fz-home-hero-title">
-                    انتخاب بهتر برای
+                    <span>انتخاب دقیق‌تر برای</span>
                     <strong>آشپزخانه‌ای هماهنگ‌تر</strong>
                 </h1>
 
@@ -35,13 +35,13 @@
 
                 <div class="fz-home-hero__actions">
                     <a class="fz-home-hero__button fz-home-hero__button--primary" href="{{ route('shop.index') }}">
-                        مشاهده محصولات
+                        مشاهده کاتالوگ محصولات
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                             <path d="M19 12H5m7 7-7-7 7-7" />
                         </svg>
                     </a>
                     <a class="fz-home-hero__button fz-home-hero__button--secondary" href="{{ route('contact') }}">
-                        مشاوره انتخاب محصول
+                        مشاوره خرید
                     </a>
                 </div>
 
@@ -161,12 +161,18 @@
                 </a>
             @endif
         </div>
+
+        <div class="fz-container fz-home-hero__bottom">
+            <span>FARZIN / KITCHEN EQUIPMENT</span>
+            <span>هود آشپزخانه <i>·</i> سینک ظرف‌شویی</span>
+            <a href="#product-categories">مشاهده دسته‌بندی‌ها <b aria-hidden="true">↓</b></a>
+        </div>
     </section>
 
     @if($categories->isNotEmpty())
         <section id="product-categories" class="fz-section fz-category-section" aria-labelledby="fz-category-heading">
             <div class="fz-container">
-                <div class="fz-section-heading fz-reveal">
+                <div class="fz-category-heading fz-reveal">
                     <div>
                         <p class="fz-eyebrow"><span></span> مسیر انتخاب</p>
                         <h2 id="fz-category-heading">از دسته‌ی مناسب شروع کنید.</h2>
@@ -176,8 +182,8 @@
                 </div>
 
                 <div class="fz-category-grid fz-category-grid--three">
-                    @foreach($categories as $category)
-                        <x-home.category-card :category="$category" />
+                    @foreach($categories as $index => $category)
+                        <x-home.category-card :category="$category" :index="$index" />
                     @endforeach
                 </div>
             </div>

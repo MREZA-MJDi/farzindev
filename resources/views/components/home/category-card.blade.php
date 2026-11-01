@@ -1,33 +1,41 @@
-@props(['category'])
+@props([
+    'category',
+    'index' => 0,
+])
 
 <a
     class="fz-category-card fz-category-card--editorial fz-reveal"
+    style="--fz-category-delay: {{ max(0, (int) $index) * 90 }}ms"
     href="{{ route('categories.show', $category) }}"
-    aria-label="مشاهده محصولات دسته {{ $category->name }}"
+    aria-label="مشاهده دسته‌بندی {{ $category->name }}، {{ \App\Helpers\PersianNumberHelper::format($category->products_count) }} محصول فعال"
 >
     <span class="fz-category-card__art">
         @if($category->homepage_image_url)
             <img
                 class="fz-category-card__image"
                 src="{{ $category->homepage_image_url }}"
-                @if($category->homepage_image_srcset) srcset="{{ $category->homepage_image_srcset }}" sizes="(max-width: 639px) 86vw, (max-width: 1023px) 46vw, 380px" @endif
-                alt=""
-                width="720"
-                height="560"
+                @if($category->homepage_image_srcset) srcset="{{ $category->homepage_image_srcset }}" sizes="(max-width: 639px) 88vw, (max-width: 1023px) 42vw, (max-width: 1279px) 28vw, 260px" @endif
+                alt="{{ $category->name }}"
+                width="640"
+                height="480"
                 loading="lazy"
                 decoding="async"
             >
         @else
-            <span class="fz-category-card__monogram" aria-hidden="true">FZ</span>
+            <span class="fz-category-card__monogram" aria-hidden="true">{{ $category->slug === 'sinks' ? 'S' : 'H' }}</span>
         @endif
-        <span class="fz-category-card__overlay" aria-hidden="true"></span>
-        <span class="fz-category-card__arrow" aria-hidden="true">↙</span>
+        <span class="fz-category-card__image-halo" aria-hidden="true"></span>
     </span>
+
     <span class="fz-category-card__content">
-        <span>
-            <strong>{{ $category->name }}</strong>
-            <small>{{ \App\Helpers\PersianNumberHelper::format($category->products_count) }} محصول فعال</small>
+        <span class="fz-category-card__eyebrow">FARZIN / CATEGORY</span>
+        <strong>{{ $category->name }}</strong>
+        <small>{{ \App\Helpers\PersianNumberHelper::format($category->products_count) }} محصول فعال</small>
+        <span class="fz-category-card__link">
+            مشاهده محصولات
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M19 12H5m7 7-7-7 7-7"/>
+            </svg>
         </span>
-        <span class="fz-category-card__discover">مشاهده مدل‌ها <b aria-hidden="true">←</b></span>
     </span>
 </a>
