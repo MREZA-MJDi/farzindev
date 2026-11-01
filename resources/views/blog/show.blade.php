@@ -32,6 +32,10 @@
 @section('og_title', $articleOgTitle)
 @section('og_description', $articleOgDescription)
 @section('twitter_card', $post->cover_image_url ? 'summary_large_image' : 'summary')
+
+@push('styles')
+    @vite('resources/css/blog.css')
+@endpush
 @if($post->cover_image_url)
     @section('og_image', $post->cover_image_url)
 @endif

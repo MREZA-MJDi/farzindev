@@ -1,5 +1,3 @@
-import '../css/blog.css';
-
 const root = document.querySelector('[data-blog-motion]');
 
 if (root && 'IntersectionObserver' in window) {
