@@ -185,11 +185,22 @@ class ProductionPreflightCommand extends Command
                 : 'Install or enable PHP GD with WebP support to generate responsive image variants. Original uploads will still work.'
         );
 
-        $manifestExists = is_file(public_path('build/manifest.json'));
+        $manifestPath = public_path('build/manifest.json');
+        $manifestExists = is_file($manifestPath);
+        $manifestPermissions = $manifestExists ? fileperms($manifestPath) : false;
+        $manifestSharedRead = $manifestPermissions !== false
+            && ($manifestPermissions & 0044) !== 0;
+        $manifestAccessible = $manifestExists
+            && is_readable($manifestPath)
+            && $manifestSharedRead;
         $add(
-            $manifestExists ? 'OK' : 'FAIL',
+            $manifestAccessible ? 'OK' : 'FAIL',
             'Compiled frontend assets',
-            $manifestExists ? 'Vite manifest exists.' : 'Missing public/build/manifest.json; build or deploy the compiled assets.'
+            ! $manifestExists
+                ? 'Missing public/build/manifest.json; build or deploy the compiled assets.'
+                : ($manifestAccessible
+                    ? 'Vite manifest exists and is readable by the PHP-FPM group.'
+                    : 'Vite manifest is not readable through the recommended PHP-FPM group. Set owner/group to deploy:www-data and permissions to 0640 (or use 0644), then run this preflight as www-data.')
         );
 
         $storageLinked = is_link(public_path('storage')) && file_exists(public_path('storage'));
