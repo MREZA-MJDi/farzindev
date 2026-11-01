@@ -4,6 +4,14 @@
    */
 @import "../fonts/iranyekanx-fanum/font-face.css";
 
+@font-face {
+    font-family: "Vazirmatn";
+    src: url("../fonts/vazirmatn/webfonts/Vazirmatn[wght].woff2") format("woff2");
+    font-style: normal;
+    font-weight: 100 900;
+    font-display: swap;
+}
+
 :root {
     --fz-font-ui: "Peyda Soft", "Vazirmatn", "IRANYekanX FaNum", sans-serif;
     --fz-font-heading: "Bahman", "Rokh", "IRANYekanX FaNum", sans-serif;
