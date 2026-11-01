@@ -147,7 +147,7 @@
             });
 
             if ([401, 419].includes(response.status) || response.redirected) {
-                window.location.assign(loginUrl + '?session_expired=1');
+                window.location.href = loginUrl + '?session_expired=1';
             }
         } catch (error) {
             // Network interruptions are transient; the next heartbeat retries.
