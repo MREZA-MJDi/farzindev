@@ -1846,3 +1846,35 @@ body.home-body {
         min-height: 2.8rem;
     }
 }
+
+
+/* Desktop trust strip: keep all three trust headings on a single aligned row. */
+@media (min-width: 1200px) {
+    .farzin-site-footer__trust {
+        display: flex;
+        align-items: flex-start;
+        gap: 0;
+    }
+
+    .farzin-site-footer__trust > .farzin-site-footer__trust-item {
+        flex: 1 1 0;
+        align-self: flex-start;
+        min-width: 0;
+        padding-block: .85rem;
+    }
+
+    .farzin-site-footer__trust > .farzin-site-footer__trust-item:first-child {
+        padding-inline-start: 0;
+    }
+
+    .farzin-site-footer__trust > .farzin-site-footer__trust-item:last-child {
+        padding-inline-end: 0;
+    }
+
+    .farzin-site-footer__trust .farzin-site-footer__heading {
+        display: block;
+        margin-block-start: 0;
+        margin-block-end: .35rem;
+        line-height: 1.6;
+    }
+}
