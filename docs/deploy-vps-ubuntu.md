@@ -198,6 +198,15 @@ php artisan about
 
 Verify that PHP-FPM can write to `storage/` and `bootstrap/cache/`. If a cache command fails, do not continue to live traffic until the error is resolved. The CI workflow checks these cache commands, but server permissions and environment values still need verification.
 
+Run production preflight as the same account that serves PHP requests. On the standard Ubuntu Nginx/PHP-FPM pool this is `www-data`; adjust it if the configured FPM pool uses a different user:
+
+```bash
+sudo -u www-data php artisan farzin:preflight
+```
+
+This check must confirm that `public/build/manifest.json` is readable by the PHP-FPM group. Do not run it only as `root`: root can read owner-only files such as mode `0600`, which the web worker cannot. With the recommended `deploy:www-data` ownership, keep the manifest at `0640` or more permissive. Build assets in CI and deploy the release archive; do not run `npm run build` as root on the live VPS.
+
+
 Invoke Laravel's scheduler every minute with this cron entry under the deployment/service account that can read the app and write its storage directories. The scheduler currently runs `orders:expire-unpaid --minutes=1440` hourly, so stale reservations can remain until the next hourly run; the cron itself must still invoke `schedule:run` every minute:
 
 ```cron
