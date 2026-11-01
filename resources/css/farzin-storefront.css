@@ -7,17 +7,17 @@
 */
 
 :root {
-    --fz-page: #F5F7FB;
+    --fz-page: #F5F5F2;
     --fz-paper: #FFFFFF;
-    --fz-paper-soft: #EDF2F8;
+    --fz-paper-soft: #EEEEEA;
     --fz-ink: #06284F;
-    --fz-text: #18324F;
-    --fz-muted: #71839A;
-    --fz-line: #DCE5EF;
+    --fz-text: #26313B;
+    --fz-muted: #6E747A;
+    --fz-line: #DEDED8;
     --fz-accent: #7B0D1A;
     --fz-accent-dark: #5F0712;
     --fz-sunset-light: #FFFFFF;
-    --fz-metal-silver: #B9C8D9;
+    --fz-metal-silver: #B9B9B2;
     --fz-sunset-burnt: #8B1C2A;
     --fz-shadow: 0 16px 42px rgba(6, 40, 79, .09);
     --fz-container: 1320px;
@@ -480,7 +480,7 @@ body.home-body {
 .fz-product-card__image,
 .farzin-product-card__media,
 .farzin-product-card__image-link {
-    background: linear-gradient(145deg, #FFFFFF 0%, #F1F5FA 100%);
+    background: linear-gradient(145deg, #FFFFFF 0%, #F0F0EC 100%);
 }
 
 .fz-product-card__image {
@@ -1855,13 +1855,13 @@ body.home-body {
 :root {
     --fz-font-ui: "IRANYekanX FaNum", "Vazirmatn", sans-serif;
     --fz-font-heading: "IRANYekanX FaNum", "Vazirmatn", sans-serif;
-    --fz-page: #F5F7FB;
+    --fz-page: #F5F5F2;
     --fz-paper: #FFFFFF;
-    --fz-paper-soft: #EDF2F8;
+    --fz-paper-soft: #EEEEEA;
     --fz-ink: #06284F;
-    --fz-text: #18324F;
-    --fz-muted: #71839A;
-    --fz-line: #DCE5EF;
+    --fz-text: #26313B;
+    --fz-muted: #6E747A;
+    --fz-line: #DEDED8;
     --fz-accent: #7B0D1A;
     --fz-accent-dark: #5F0712;
     --fz-blue-soft: #EAF1F8;
@@ -2511,7 +2511,7 @@ body {
     overflow: hidden;
     aspect-ratio: 1.12 / 1;
     padding: clamp(.65rem, 1.1vw, 1rem);
-    background: linear-gradient(145deg, #FFFFFF 0%, #F1F5FA 100%);
+    background: linear-gradient(145deg, #FFFFFF 0%, #F0F0EC 100%);
 }
 .home-body .fz-home-featured-section .fz-product-card__image img {
     display: block;
@@ -2674,7 +2674,7 @@ body {
     border: 1px solid rgba(123,13,26,.14);
     border-radius: .8rem;
     color: var(--fz-featured-burgundy);
-    background: #F9EEF0;
+    background: #F1F1ED;
     font-family: var(--fz-font-ui);
     font-size: .68rem;
     font-weight: 850;
@@ -3230,7 +3230,7 @@ body {
     color: #FFFFFF;
 }
 .home-body .fz-home-purchase-cta {
-    background: #FFFFFF;
+    background: #F1F1EE;
 }
 .home-body .fz-home-purchase-cta__copy {
     background: #FFFFFF;
@@ -3266,9 +3266,9 @@ body {
    Homepage purchase CTA — one clear next step, product image from catalogue
    ========================================================================== */
 .home-body .fz-bottom-cta.fz-home-purchase-cta {
-    padding-block: clamp(3rem, 5.5vw, 5rem) 0;
+    padding-block: clamp(3rem, 5vw, 4.25rem);
     border-block: 0;
-    background: #F5F5F2;
+    background: #F1F1EE;
 }
 .home-body .fz-home-purchase-cta__inner {
     display: grid;
