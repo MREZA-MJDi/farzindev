@@ -1698,7 +1698,7 @@ class FarzinStorefrontTest extends TestCase
             ->get(route('admin.session.heartbeat'))
             ->assertOk()
             ->assertJsonPath('ok', true)
-            ->assertHeader('Cache-Control', 'private, no-store');
+            ->assertHeader('Cache-Control', 'no-store, private');
 
         $this->actingAs($customer)
             ->get(route('admin.session.heartbeat'))
