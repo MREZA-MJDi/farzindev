@@ -86,7 +86,7 @@
                         aria-label="افزودن {{ $product->name }} به علاقه‌مندی‌ها"
                         class="farzin-product-card__wishlist flex h-10 w-10 items-center justify-center rounded-full"
                     >
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.6" stroke="currentColor" class="h-[18px] w-[18px]" aria-hidden="true">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.6" stroke="currentColor" width="18" height="18" class="h-[18px] w-[18px]" aria-hidden="true">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M21.75 8.25c0 6-9.75 11.25-9.75 11.25S2.25 14.25 2.25 8.25A5.25 5.25 0 0 1 12 5.58a5.25 5.25 0 0 1 9.75 2.67Z"/>
                         </svg>
                     </button>
