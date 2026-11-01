@@ -263,7 +263,7 @@
         @yield('content')
     </main>
 
-    <x-layout.footer />
+    <x-layout.footer :contact="$storefrontContact" />
 
     <x-layout.mobile-bottom-bar :cart-count="$storefrontCartCount" />
 
