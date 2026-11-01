@@ -5,14 +5,6 @@
 @section('canonical', route('home'))
 @section('body_class', 'home-body min-h-screen antialiased')
 
-@push('styles')
-    @vite(['resources/css/home.css'])
-@endpush
-
-@push('scripts')
-    @vite(['resources/js/home.js'])
-@endpush
-
 @section('content')
     <a class="fz-skip-link" href="#main-content">رفتن به محتوای اصلی</a>
 
@@ -362,7 +354,7 @@
 
                     <div class="fz-product-grid fz-home-featured-section__grid {{ match($featuredProducts->count()) { 1 => 'fz-product-grid--single', 2 => 'fz-product-grid--pair', 3 => 'fz-product-grid--triple', default => '' } }}">
                         @foreach($featuredProducts as $product)
-                            <x-home.product-card :product="$product" />
+                            <x-product.card :product="$product" />
                         @endforeach
                     </div>
                 </div>
@@ -381,7 +373,7 @@
                     </div>
                     <div class="fz-product-grid {{ match($newProducts->count()) { 1 => 'fz-product-grid--single', 2 => 'fz-product-grid--pair', default => '' } }}">
                         @foreach($newProducts as $product)
-                            <x-home.product-card :product="$product" />
+                            <x-product.card :product="$product" />
                         @endforeach
                     </div>
                 </div>
