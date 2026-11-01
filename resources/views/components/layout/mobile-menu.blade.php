@@ -237,6 +237,21 @@
             </div>
 
 
+
+            @if(filled(data_get($storefrontContact, 'phone')) || filled(data_get($storefrontContact, 'instagram_url')) || filled(data_get($storefrontContact, 'telegram_url')))
+                <div class="mt-5 flex flex-wrap items-center gap-x-4 gap-y-2 px-1 text-xs text-[var(--livora-text)]">
+                    @if(filled(data_get($storefrontContact, 'phone')))
+                        <a href="tel:{{ preg_replace('/[^0-9+]/', '', (string) data_get($storefrontContact, 'phone')) }}" dir="ltr" class="font-semibold">{{ data_get($storefrontContact, 'phone') }}</a>
+                    @endif
+                    @if(filled(data_get($storefrontContact, 'instagram_url')))
+                        <a href="{{ data_get($storefrontContact, 'instagram_url') }}" target="_blank" rel="noopener noreferrer">Instagram</a>
+                    @endif
+                    @if(filled(data_get($storefrontContact, 'telegram_url')))
+                        <a href="{{ data_get($storefrontContact, 'telegram_url') }}" target="_blank" rel="noopener noreferrer">Telegram</a>
+                    @endif
+                </div>
+            @endif
+
             {{-- Installment Highlight --}}
             <div class="mt-8 rounded-3xl bg-[var(--livora-ink)] p-5 text-white">
 

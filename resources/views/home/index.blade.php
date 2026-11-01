@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('title', 'فرزین | تولید هود و سینک آشپزخانه')
-@section('description', 'آشنایی با فرزین و تجهیزات آشپزخانه؛ هود و سینک را ببینید، مشخصات محصولات را مقایسه کنید و برای انتخابی متناسب با فضای نصب راهنمایی بگیرید.')
+@section('description', 'تجهیزات آشپزخانه فرزین؛ تصاویر واقعی محصولات، مقایسه مشخصات هود و سینک و راهنمای انتخاب متناسب با فضای نصب.')
 @section('canonical', route('home'))
 @section('body_class', 'home-body min-h-screen antialiased')
 
@@ -16,394 +16,273 @@
 @section('content')
     <a class="fz-skip-link" href="#main-content">رفتن به محتوای اصلی</a>
 
-@php
-    $mosaicTitles = [
-        ['eyebrow' => 'AIR / 01', 'title' => 'هوای بهتر، شروع یک آشپزخانه‌ی دقیق‌تر.', 'text' => 'فرم، اندازه و جای نصب هود را در کنار فضای پخت‌وپز ببینید.'],
-        ['eyebrow' => 'STEEL / 02', 'title' => 'جزئیات کوچک، استفاده‌ی روزمره را می‌سازند.', 'text' => 'در انتخاب سینک، عمق لگن، ابعاد و شیوه‌ی نگهداری را در نظر بگیرید.'],
-        ['eyebrow' => 'FORM / 03', 'title' => 'طراحی وقتی خوب است که کار هم بکند.', 'text' => 'ظاهر محصول بخشی از تصمیم است؛ تناسب با کاربری و محل نصب را فراموش نکنید.'],
-        ['eyebrow' => 'DETAIL / 04', 'title' => 'از نمای نزدیک، دقیق‌تر انتخاب کنید.', 'text' => 'تصاویر محصولات را ببینید و مشخصات هر مدل را در صفحه‌ی خودش بررسی کنید.'],
-        ['eyebrow' => 'FIT / 05', 'title' => 'تناسب با فضا، مهم‌تر از انتخاب عجولانه است.', 'text' => 'اندازه‌ی کابینت، سطح کار و فضای حرکت را پیش از خرید اندازه‌گیری کنید.'],
-        ['eyebrow' => 'FARZIN / 06', 'title' => 'تجهیزات آشپزخانه؛ با نگاه کاربردی.', 'text' => 'کاتالوگ فرزین برای شناخت محصولات و پیدا کردن مسیر انتخاب طراحی شده است.'],
-    ];
-@endphp
+    <section class="fz-home-hero fz-home-hero--meraki" aria-labelledby="fz-home-hero-title">
+        <div class="fz-container fz-home-hero__layout">
+            <div class="fz-home-hero__copy">
+                <p class="fz-home-hero__eyebrow">
+                    <span class="fz-home-hero__eyebrow-mark" aria-hidden="true"></span>
+                    تجهیزات آشپزخانه فرزین
+                </p>
 
-<section class="fz-home-hero" aria-labelledby="fz-home-hero-title">
-    <div class="fz-home-hero__ambient" aria-hidden="true">
-        <span class="fz-home-hero__ambient-orb fz-home-hero__ambient-orb--one"></span>
-        <span class="fz-home-hero__ambient-orb fz-home-hero__ambient-orb--two"></span>
-        <span class="fz-home-hero__ambient-grid"></span>
-    </div>
+                <h1 id="fz-home-hero-title">
+                    انتخاب بهتر برای
+                    <strong>آشپزخانه‌ای هماهنگ‌تر</strong>
+                </h1>
 
-    <div class="fz-container fz-home-hero__layout">
-        <div class="fz-home-hero__copy">
-            <p class="fz-home-hero__eyebrow">
-                <span class="fz-home-hero__eyebrow-mark" aria-hidden="true"></span>
-                تجهیزات آشپزخانه فرزین
-            </p>
+                <p class="fz-home-hero__lead">
+                    هود و سینک مناسب فضای خود را پیدا کنید؛ تصاویر واقعی محصولات را ببینید، مشخصات را مقایسه کنید و با آگاهی بیشتری تصمیم بگیرید.
+                </p>
 
-            <h1 id="fz-home-hero-title">
-                <span>انتخاب دقیق‌تر برای</span>
-                <strong>آشپزخانه‌ای هماهنگ‌تر</strong>
-            </h1>
-
-            <p class="fz-home-hero__lead">
-                مدل‌های هود و سینک را ببینید، تصاویر و مشخصات را مقایسه کنید و محصولی متناسب با فضای نصب و نیاز روزمره‌تان انتخاب کنید.
-            </p>
-
-            <div class="fz-home-hero__actions">
-                <a class="fz-home-hero__button fz-home-hero__button--primary" href="{{ route('shop.index') }}">
-                    مشاهده کاتالوگ محصولات
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                        <path d="M19 12H5m7 7-7-7 7-7" />
-                    </svg>
-                </a>
-                <a class="fz-home-hero__button fz-home-hero__button--secondary" href="{{ route('contact') }}">
-                    مشاوره انتخاب محصول
-                </a>
-            </div>
-
-            <div class="fz-home-hero__highlights" aria-label="راهنمای انتخاب محصول">
-                <span><b aria-hidden="true">01</b> بررسی ابعاد و نصب</span>
-                <span><b aria-hidden="true">02</b> مقایسه مشخصات</span>
-                <span><b aria-hidden="true">03</b> انتخاب متناسب با فضا</span>
-            </div>
-        </div>
-
-        @if($heroProducts->isNotEmpty())
-            <div
-                class="fz-home-hero__showcase"
-                data-farzin-home-slider
-                data-autoplay-ms="4000"
-                role="region"
-                aria-label="تازه‌ترین محصولات فرزین"
-                aria-roledescription="carousel"
-            >
-                <div class="fz-home-hero__showcase-heading">
-                    <div>
-                        <p>تازه‌ترین محصولات</p>
-                        <span>مدل‌های تازه‌اضافه‌شده به کاتالوگ فرزین</span>
-                    </div>
-                    <span class="fz-home-hero__counter" data-home-slide-count aria-live="off">
-                        {{ \App\Helpers\PersianNumberHelper::format(1) }}
-                        <i>/</i>
-                        {{ \App\Helpers\PersianNumberHelper::format($heroProducts->count()) }}
-                    </span>
+                <div class="fz-home-hero__actions">
+                    <a class="fz-home-hero__button fz-home-hero__button--primary" href="{{ route('shop.index') }}">
+                        مشاهده محصولات
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M19 12H5m7 7-7-7 7-7" />
+                        </svg>
+                    </a>
+                    <a class="fz-home-hero__button fz-home-hero__button--secondary" href="{{ route('contact') }}">
+                        مشاوره انتخاب محصول
+                    </a>
                 </div>
 
-                <div class="fz-home-hero__slide-stage" data-home-slide-track>
-                    @foreach($heroProducts as $index => $product)
-                        @php
-                            $heroImage = $product->images->first(fn ($image) => filled($image->url));
-                        @endphp
-                        @if($heroImage)
-                            <a
-                                href="{{ route('product.show', $product->slug) }}"
-                                class="fz-home-hero__slide"
-                                data-home-slide
-                                data-home-product-id="{{ $product->id }}"
-                                role="group"
-                                aria-roledescription="اسلاید"
-                                aria-label="{{ \App\Helpers\PersianNumberHelper::format($index + 1) }} از {{ \App\Helpers\PersianNumberHelper::format($heroProducts->count()) }}: {{ $product->name }}"
-                                @if($index === 0) aria-hidden="false" @else hidden aria-hidden="true" @endif
-                            >
-                                <span class="fz-home-hero__product-image">
-                                    <img
-                                        src="{{ $heroImage->url }}"
-                                        @if($heroImage->responsive_srcset) srcset="{{ $heroImage->responsive_srcset }}" sizes="(max-width: 767px) 92vw, 52vw" @endif
-                                        alt="{{ $heroImage->alt ?: $product->name }}"
-                                        width="960"
-                                        height="720"
-                                        decoding="async"
-                                        @if($index === 0)
-                                            fetchpriority="high"
-                                            loading="eager"
-                                        @else
-                                            loading="lazy"
-                                        @endif
-                                    >
-                                    <span class="fz-home-hero__product-badge">تازه در فروشگاه</span>
-                                    <span class="fz-home-hero__product-open" aria-hidden="true">↗</span>
-                                </span>
-
-                                <span class="fz-home-hero__product-details">
-                                    <span class="fz-home-hero__product-category">{{ $product->category?->name ?? 'محصول فرزین' }}</span>
-                                    <strong>{{ $product->name }}</strong>
-                                    <span class="fz-home-hero__product-footer">
-                                        <span class="fz-home-hero__product-price">
-                                            {{ \App\Helpers\PersianNumberHelper::format((float) $product->price) }}
-                                            <small>تومان</small>
-                                        </span>
-                                        <span class="fz-home-hero__product-link">مشاهده مشخصات</span>
-                                    </span>
-                                </span>
-                            </a>
-                        @endif
-                    @endforeach
-                </div>
-
-                @if($heroProducts->count() > 1)
-                    <div class="fz-home-hero__slider-controls" data-home-slider-controls>
-                        <div class="fz-home-hero__slider-dots" role="group" aria-label="انتخاب محصول">
-                            @foreach($heroProducts as $index => $product)
-                                <button
-                                    type="button"
-                                    class="fz-home-hero__slider-dot {{ $index === 0 ? 'is-active' : '' }}"
-                                    data-home-slide-to="{{ $index }}"
-                                    aria-label="نمایش محصول {{ \App\Helpers\PersianNumberHelper::format($index + 1) }}"
-                                    aria-pressed="{{ $index === 0 ? 'true' : 'false' }}"
-                                ></button>
-                            @endforeach
-                        </div>
-
-                        <div class="fz-home-hero__slider-actions">
-                            <button type="button" data-home-slide-prev aria-label="محصول قبلی">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                                    <path d="M19 12H5m7 7-7-7 7-7" />
-                                </svg>
-                            </button>
-                            <button type="button" data-home-slide-next aria-label="محصول بعدی">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                                    <path d="M5 12h14m-7-7 7 7-7 7" />
-                                </svg>
-                            </button>
-                            <button
-                                type="button"
-                                class="fz-home-hero__slider-toggle"
-                                data-home-slide-toggle
-                                aria-label="توقف پخش خودکار"
-                                title="توقف پخش خودکار"
-                            >
-                                <span data-home-slide-toggle-label>مکث</span>
-                                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                                    <path d="M8 5h3v14H8zM14 5h3v14h-3z" />
-                                </svg>
-                            </button>
-                        </div>
-                    </div>
-                @endif
-            </div>
-        @else
-            <div class="fz-home-hero__showcase fz-home-hero__showcase--empty">
-                <span class="fz-home-hero__empty-mark" aria-hidden="true">FZ</span>
-                <div>
-                    <p>کاتالوگ محصولات فرزین</p>
-                    <strong>مدل‌های هود و سینک را یک‌جا ببینید.</strong>
-                    <span>برای نمایش تصویر در این بخش، محصول فعال همراه با تصویر در فروشگاه منتشر کنید.</span>
-                    <a href="{{ route('shop.index') }}">رفتن به فروشگاه</a>
+                <div class="fz-home-hero__highlights" aria-label="مزیت‌های انتخاب آگاهانه">
+                    <span><b aria-hidden="true">۰۱</b> بررسی ابعاد و نصب</span>
+                    <span><b aria-hidden="true">۰۲</b> مقایسه مشخصات</span>
+                    <span><b aria-hidden="true">۰۳</b> انتخاب متناسب با فضا</span>
                 </div>
             </div>
-        @endif
-    </div>
 
-    <div class="fz-container fz-home-hero__bottom">
-        <span>FARZIN / KITCHEN EQUIPMENT</span>
-        <span>هود آشپزخانه <i>·</i> سینک ظرف‌شویی</span>
-        <a href="#product-categories">مشاهده دسته‌بندی‌ها <b aria-hidden="true">↓</b></a>
-    </div>
-</section>
-
-        @if($categories->isNotEmpty())
-            <section id="product-categories" class="fz-section fz-category-section" aria-labelledby="fz-category-heading">
-                <div class="fz-container">
-                    <div class="fz-section-heading fz-reveal">
+            @if($heroProducts->isNotEmpty())
+                <div
+                    class="fz-home-hero__showcase fz-home-hero__showcase--product"
+                    data-farzin-home-slider
+                    data-autoplay-ms="4500"
+                    role="region"
+                    aria-label="تصاویر محصولات فرزین"
+                    aria-roledescription="carousel"
+                >
+                    <div class="fz-home-hero__showcase-heading">
                         <div>
-                            <p class="fz-eyebrow"><span></span> مسیر انتخاب</p>
-                            <h2 id="fz-category-heading">از دسته‌ی مناسب شروع کنید.</h2>
-                            <p>برای رسیدن سریع‌تر به محصول موردنیاز، دسته‌بندی را انتخاب کنید.</p>
+                            <p>محصولات فرزین</p>
+                            <span>تصویر و مشخصات مدل‌های منتخب</span>
                         </div>
-                        <a class="fz-text-link" href="{{ route('categories.index') }}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4" aria-hidden="true"><rect x="3.5" y="3.5" width="7" height="7" rx="1.3" /><rect x="13.5" y="3.5" width="7" height="7" rx="1.3" /><rect x="3.5" y="13.5" width="7" height="7" rx="1.3" /><rect x="13.5" y="13.5" width="7" height="7" rx="1.3" /></svg> تمام دسته‌ها</a>
+                        <span class="fz-home-hero__counter" data-home-slide-count aria-live="off">
+                            {{ \App\Helpers\PersianNumberHelper::format(1) }}
+                            <i>/</i>
+                            {{ \App\Helpers\PersianNumberHelper::format($heroProducts->count()) }}
+                        </span>
                     </div>
-                    <div class="fz-category-grid">
-                        @foreach($categories as $category)
-                            <a class="fz-category-card fz-reveal" href="{{ route('categories.show', $category) }}" @if($category->hoverMedia?->url) data-farzin-gif-card @endif>
-                                <span class="fz-category-card__art">
-                                    @if($category->homepage_image_url)
-                                        <img class="fz-category-card__image" src="{{ $category->homepage_image_url }}" @if($category->homepage_image_srcset) srcset="{{ $category->homepage_image_srcset }}" sizes="(max-width: 639px) 85vw, (max-width: 1023px) 45vw, 320px" @endif alt="" width="640" height="480" loading="lazy" decoding="async">
-                                    @else
-                                        <span class="fz-category-card__monogram">{{ $category->slug === 'sinks' ? 'S' : 'H' }}</span>
-                                    @endif
-                                    @if($category->hoverMedia?->is_video)
-                                        <video
-                                            data-farzin-category-video
-                                            data-farzin-video-src="{{ $category->hoverMedia->url }}"
-                                            class="fz-category-card__gif"
-                                            muted
-                                            loop
-                                            playsinline
-                                            preload="none"
-                                            aria-hidden="true"
-                                            tabindex="-1"
-                                        ></video>
-                                    @elseif($category->hoverMedia?->mime_type === 'image/gif')
+
+                    <div class="fz-home-hero__slide-stage" data-home-slide-track>
+                        @foreach($heroProducts as $index => $product)
+                            @php
+                                $heroImage = $product->images->first(fn ($image) => filled($image->url));
+                            @endphp
+                            @if($heroImage)
+                                <a
+                                    href="{{ route('product.show', $product->slug) }}"
+                                    class="fz-home-hero__slide"
+                                    data-home-slide
+                                    data-home-product-id="{{ $product->id }}"
+                                    role="group"
+                                    aria-roledescription="اسلاید"
+                                    aria-label="{{ \App\Helpers\PersianNumberHelper::format($index + 1) }} از {{ \App\Helpers\PersianNumberHelper::format($heroProducts->count()) }}: {{ $product->name }}"
+                                    @if($index === 0) aria-hidden="false" @else hidden aria-hidden="true" @endif
+                                >
+                                    <span class="fz-home-hero__product-image">
                                         <img
-                                            data-farzin-category-gif
-                                            data-farzin-gif-src="{{ $category->hoverMedia->url }}"
-                                            class="fz-category-card__gif"
-                                            alt=""
-                                            aria-hidden="true"
-                                            loading="lazy"
+                                            src="{{ $heroImage->url }}"
+                                            @if($heroImage->responsive_srcset) srcset="{{ $heroImage->responsive_srcset }}" sizes="(max-width: 767px) 92vw, 48vw" @endif
+                                            alt="{{ $heroImage->alt ?: $product->name }}"
+                                            width="960"
+                                            height="720"
                                             decoding="async"
+                                            @if($index === 0)
+                                                fetchpriority="high"
+                                                loading="eager"
+                                            @else
+                                                loading="lazy"
+                                            @endif
                                         >
-                                    @endif
-                                    <span class="fz-category-card__arrow" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4" aria-hidden="true"><path d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6Z" /><circle cx="12" cy="12" r="2.5" /></svg></span>
-                                </span>
-                                <span class="fz-category-card__content"><strong>{{ $category->name }}</strong><small>{{ \App\Helpers\PersianNumberHelper::format($category->products_count) }} محصول فعال</small></span>
-                            </a>
+                                        <span class="fz-home-hero__product-open" aria-hidden="true">↗</span>
+                                    </span>
+                                    <span class="fz-home-hero__product-details">
+                                        <span class="fz-home-hero__product-category">{{ $product->category?->name ?? 'محصول فرزین' }}</span>
+                                        <strong>{{ $product->name }}</strong>
+                                        <span class="fz-home-hero__product-footer">
+                                            <span class="fz-home-hero__product-price">
+                                                {{ \App\Helpers\PersianNumberHelper::format((float) $product->price) }}
+                                                <small>تومان</small>
+                                            </span>
+                                            <span class="fz-home-hero__product-link">مشاهده مشخصات</span>
+                                        </span>
+                                    </span>
+                                </a>
+                            @endif
                         @endforeach
                     </div>
-                </div>
-            </section>
-        @endif
 
-        @if($featuredProducts->isNotEmpty())
-            <section class="fz-section fz-product-section" aria-labelledby="fz-products-heading">
-                <div class="fz-container">
-                    <div class="fz-section-heading fz-reveal">
-                        <div>
-                            <p class="fz-eyebrow"><span></span> کاتالوگ محصولات</p>
-                            <h2 id="fz-products-heading">{{ $hasBestSellerSales ? 'پرفروش‌ترین محصولات' : 'مدل‌های منتخب فرزین' }}</h2>
-                            <p>
-                                @if($hasBestSellerSales)
-                                    بر اساس تعداد محصولات ثبت‌شده در سفارش‌های پرداخت‌شده؛ برای مشخصات کامل، صفحه‌ی هر محصول را باز کنید.
-                                @else
-                                    سفارش پرداخت‌شده‌ای برای رتبه‌بندی ثبت نشده است؛ مدل‌های منتخب فرزین را بررسی کنید.
-                                @endif
-                            </p>
-                        </div>
-                        <a class="fz-text-link" href="{{ route('shop.index') }}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4" aria-hidden="true"><path d="M3.5 9h17l-1 11h-15l-1-11Z" /><path d="M8 9V6.5a4 4 0 0 1 8 0V9" /></svg> مشاهده همه محصولات</a>
-                    </div>
-                    <div class="fz-product-grid {{ match($featuredProducts->count()) { 1 => 'fz-product-grid--single', 2 => 'fz-product-grid--pair', 3 => 'fz-product-grid--triple', default => '' } }}">
-                        @foreach($featuredProducts as $product)
-                            <x-home.product-card :product="$product" />
-                        @endforeach
-                    </div>
-                </div>
-            </section>
-        @endif
-
-        @if($newProducts->isNotEmpty())
-            <section class="fz-section fz-new-section" aria-labelledby="fz-new-heading">
-                <div class="fz-container">
-                    <div class="fz-section-heading fz-reveal">
-                        <div>
-                            <p class="fz-eyebrow"><span></span> تازه‌های کاتالوگ</p>
-                            <h2 id="fz-new-heading">تازه اضافه‌شده‌ها</h2>
-                            <p>محصولاتی که در پنل مدیریت به‌عنوان محصول جدید علامت‌گذاری شده‌اند.</p>
-                        </div>
-                        <a class="fz-text-link" href="{{ route('shop.index', ['sort' => 'newest']) }}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4" aria-hidden="true"><circle cx="12" cy="12" r="9" /><path d="M12 7v5l3 2" /></svg> جدیدترین‌ها</a>
-                    </div>
-                    <div class="fz-product-grid {{ match($newProducts->count()) { 1 => 'fz-product-grid--single', 2 => 'fz-product-grid--pair', default => '' } }}">
-                        @foreach($newProducts as $product)
-                            <x-home.product-card :product="$product" />
-                        @endforeach
-                    </div>
-                </div>
-            </section>
-        @endif
-
-        @if($demoImages->isNotEmpty())
-            <section class="fz-mosaic-intro">
-                <div class="fz-container fz-mosaic-intro__inner fz-reveal">
-                    <p class="fz-eyebrow"><span></span> نگاه نزدیک / گالری محصول</p>
-                    <h2>از نمای کلی تا جزئیات محصول.</h2>
-                    <p>تصاویر زیر از محصولات منتشرشده در پنل مدیریت می‌آیند. روی هر تصویر بزنید تا اطلاعات همان محصول را ببینید.</p>
-                    <span class="fz-mosaic-intro__count">{{ \App\Helpers\PersianNumberHelper::format($galleryCount) }} <small>تصویر در گالری</small></span>
-                </div>
-            </section>
-
-            @foreach($gridGroups as $index => $group)
-                @if($group->isNotEmpty())
-                    <section class="content {{ $index % 2 ? 'content--spacing' : '' }}" aria-label="تصاویر محصولات فرزین، بخش {{ $index + 1 }}">
-                        <div class="fz-container content__heading">
-                            <div>
-                                <p class="fz-eyebrow"><span></span> {{ $mosaicTitles[$index % count($mosaicTitles)]['eyebrow'] }}</p>
-                                <h2 class="content__title">{{ $mosaicTitles[$index % count($mosaicTitles)]['title'] }}</h2>
-                            </div>
-                            <p class="content__description">{{ $mosaicTitles[$index % count($mosaicTitles)]['text'] }}</p>
-                        </div>
-                        <div class="grid grid--{{ ($index % 6) + 1 }}" data-grid-index="{{ $index }}">
-                            <div class="grid-wrap {{ $group->count() <= 2 ? 'grid-wrap--compact' : '' }}">
-                                @foreach($group as $item)
-                                    <div class="grid__item">
-                                        <a
-                                            class="grid__item-inner"
-                                            href="{{ $item['product_url'] }}"
-                                            aria-label="مشاهده {{ $item['product_name'] }}"
-                                            data-product-id="{{ $item['product_id'] }}"
-                                            data-product-name="{{ $item['product_name'] }}"
-                                            data-product-price="{{ $item['product_price'] }}"
-                                            data-product-image="{{ $item['url'] }}"
-                                            data-product-category="{{ $item['category_name'] }}"
-                                            data-product-stock="{{ $item['product_stock'] }}"
-                                            data-cart-url="{{ $item['cart_url'] }}"
-                                        >
-                                            <img class="grid__image" src="{{ $item['url'] }}" @if(!empty($item['srcset'])) srcset="{{ $item['srcset'] }}" sizes="(max-width: 639px) 48vw, (max-width: 1023px) 32vw, 24vw" @endif alt="{{ $item['alt'] }}" width="720" height="900" loading="lazy" decoding="async">
-                                            <span class="grid__item-caption"><small>{{ $item['category_name'] }}</small><strong>{{ $item['product_name'] }}</strong></span>
-                                        </a>
-                                    </div>
+                    @if($heroProducts->count() > 1)
+                        <div class="fz-home-hero__slider-controls" data-home-slider-controls>
+                            <div class="fz-home-hero__slider-dots" role="group" aria-label="انتخاب محصول">
+                                @foreach($heroProducts as $index => $product)
+                                    <button
+                                        type="button"
+                                        class="fz-home-hero__slider-dot {{ $index === 0 ? 'is-active' : '' }}"
+                                        data-home-slide-to="{{ $index }}"
+                                        aria-label="نمایش محصول {{ \App\Helpers\PersianNumberHelper::format($index + 1) }}"
+                                        aria-pressed="{{ $index === 0 ? 'true' : 'false' }}"
+                                    ></button>
                                 @endforeach
                             </div>
+
+                            <div class="fz-home-hero__slider-actions">
+                                <button type="button" data-home-slide-prev aria-label="محصول قبلی">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5m7 7-7-7 7-7" /></svg>
+                                </button>
+                                <button type="button" data-home-slide-next aria-label="محصول بعدی">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14m-7-7 7 7-7 7" /></svg>
+                                </button>
+                                <button type="button" class="fz-home-hero__slider-toggle" data-home-slide-toggle aria-label="توقف پخش خودکار" title="توقف پخش خودکار">
+                                    <span data-home-slide-toggle-label>مکث</span>
+                                    <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5h3v14H8zM14 5h3v14h-3z" /></svg>
+                                </button>
+                            </div>
                         </div>
-                    </section>
-                @endif
-            @endforeach
-        @else
-            <section class="fz-section fz-empty-catalog">
-                <div class="fz-container fz-empty-state fz-reveal">
-                    <span class="fz-empty-state__mark" aria-hidden="true">F</span>
+                    @endif
+                </div>
+            @else
+                <a class="fz-home-hero__showcase fz-home-hero__showcase--empty" href="{{ route('shop.index') }}">
+                    <span class="fz-home-hero__empty-mark" aria-hidden="true">FZ</span>
+                    <span>
+                        <strong>کاتالوگ محصولات فرزین</strong>
+                        <small>برای دیدن تصاویر، محصولات فعال همراه تصویر را در فروشگاه منتشر کنید.</small>
+                    </span>
+                </a>
+            @endif
+        </div>
+    </section>
+
+    @if($categories->isNotEmpty())
+        <section id="product-categories" class="fz-section fz-category-section" aria-labelledby="fz-category-heading">
+            <div class="fz-container">
+                <div class="fz-section-heading fz-reveal">
                     <div>
-                        <p class="fz-eyebrow"><span></span> کاتالوگ فرزین</p>
-                        <h2>{{ $catalogCount > 0 ? 'گالری تصویری در حال تکمیل است.' : 'محصول فعالی برای نمایش منتشر نشده است.' }}</h2>
-                        <p>{{ $catalogCount > 0 ? 'محصولات فعال در فهرست کارت‌های پایین نمایش داده می‌شوند. برای حضور در گالری موزاییکی، یک تصویر معتبر برای محصول در پنل ثبت کنید.' : 'از پنل مدیریت، یک محصول ایجاد و وضعیت آن را فعال کنید تا در کاتالوگ عمومی نمایش داده شود.' }}</p>
-                        <a class="fz-button fz-button--primary" href="{{ route('shop.index') }}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4" aria-hidden="true"><path d="M3.5 9h17l-1 11h-15l-1-11Z" /><path d="M8 9V6.5a4 4 0 0 1 8 0V9" /></svg> مشاهده فروشگاه</a>
+                        <p class="fz-eyebrow"><span></span> مسیر انتخاب</p>
+                        <h2 id="fz-category-heading">از دسته‌ی مناسب شروع کنید.</h2>
+                        <p>دسته‌بندی موردنظرتان را انتخاب کنید و مدل‌ها را با هم مقایسه کنید.</p>
                     </div>
+                    <a class="fz-text-link" href="{{ route('categories.index') }}">همه دسته‌بندی‌ها <span aria-hidden="true">←</span></a>
                 </div>
-            </section>
-        @endif
 
-        <section class="fz-maker" aria-labelledby="fz-maker-heading">
-            <div class="fz-container fz-maker__layout">
-                <div class="fz-maker__copy fz-reveal">
-                    <p class="fz-eyebrow fz-eyebrow--light"><span></span> فرزین / تجهیزات آشپزخانه</p>
-                    <h2 id="fz-maker-heading">محصول کاربردی، از تصمیم‌های دقیق ساخته می‌شود.</h2>
-                    <p>انتخاب هود و سینک فقط به رنگ و فرم محدود نیست. هماهنگی با کابینت، فضای نصب، نظافت و نیاز روزانه بخشی از تجربه‌ی بهتر آشپزخانه‌اند.</p>
-                    <a class="fz-button fz-button--light" href="{{ route('about') }}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4" aria-hidden="true"><circle cx="12" cy="12" r="9" /><path d="M12 11v5m0-8h.01" /></svg> درباره مجموعه</a>
-                </div>
-                <div class="fz-maker__specs">
-                    <article class="fz-maker__spec fz-reveal"><span>01 / SPACE</span><h3>تناسب با فضا</h3><p>ابعاد و جای نصب را با محصول نهایی تطبیق دهید.</p></article>
-                    <article class="fz-maker__spec fz-reveal"><span>02 / MATERIAL</span><h3>جنس و نگهداری</h3><p>روش نظافت و شرایط استفاده را در تصمیم‌گیری دخیل کنید.</p></article>
-                    <article class="fz-maker__spec fz-reveal"><span>03 / FUNCTION</span><h3>کارایی روزمره</h3><p>مشخصات فنی و کارکردهای محصول را قبل از انتخاب بخوانید.</p></article>
+                <div class="fz-category-grid fz-category-grid--three">
+                    @foreach($categories as $category)
+                        <x-home.category-card :category="$category" />
+                    @endforeach
                 </div>
             </div>
-            <div class="fz-maker__watermark" aria-hidden="true">FZ</div>
         </section>
+    @endif
 
-        <section class="fz-bottom-cta">
-            <div class="fz-container fz-bottom-cta__inner fz-reveal">
+    @if($featuredProducts->isNotEmpty())
+        <section class="fz-section fz-product-section" aria-labelledby="fz-products-heading">
+            <div class="fz-container">
+                <div class="fz-section-heading fz-reveal">
+                    <div>
+                        <p class="fz-eyebrow"><span></span> انتخاب مشتریان</p>
+                        <h2 id="fz-products-heading">{{ $hasBestSellerSales ? 'پرفروش‌ترین محصولات' : 'مدل‌های منتخب فرزین' }}</h2>
+                        <p>
+                            @if($hasBestSellerSales)
+                                رتبه‌بندی بر اساس سفارش‌های پرداخت‌شده؛ برای جزئیات هر مدل وارد صفحه محصول شوید.
+                            @else
+                                تا زمان ثبت سفارش پرداخت‌شده، محصولات منتخب‌شده در پنل مدیریت را بررسی کنید.
+                            @endif
+                        </p>
+                    </div>
+                    <a class="fz-text-link" href="{{ route('shop.index') }}">مشاهده همه محصولات <span aria-hidden="true">←</span></a>
+                </div>
+                <div class="fz-product-grid fz-product-grid--home">
+                    @foreach($featuredProducts as $product)
+                        <x-home.product-card :product="$product" />
+                    @endforeach
+                </div>
+            </div>
+        </section>
+    @endif
+
+    <section class="fz-section fz-buying-guide" aria-labelledby="fz-guide-heading">
+        <div class="fz-container">
+            <div class="fz-section-heading fz-reveal">
                 <div>
-                    <p class="fz-eyebrow"><span></span> گام بعدی</p>
-                    <h2>مدل متناسب با آشپزخانه‌تان را پیدا کنید.</h2>
-                    <p>کاتالوگ را ببینید یا برای دریافت راهنمایی، با فرزین در تماس باشید.</p>
-                </div>
-                <div class="fz-hero__actions">
-                    <a class="fz-button fz-button--primary" href="{{ route('shop.index') }}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4" aria-hidden="true"><path d="M3.5 9h17l-1 11h-15l-1-11Z" /><path d="M8 9V6.5a4 4 0 0 1 8 0V9" /></svg> ورود به فروشگاه</a>
-                    <a class="fz-button fz-button--secondary" href="{{ route('contact') }}">تماس با فرزین</a>
+                    <p class="fz-eyebrow"><span></span> راهنمای خرید</p>
+                    <h2 id="fz-guide-heading">قبل از انتخاب، این سه نکته را بررسی کنید.</h2>
+                    <p>چند معیار ساده کمک می‌کند محصول مناسب‌تری برای فضای آشپزخانه انتخاب کنید.</p>
                 </div>
             </div>
-        </section>
 
-    <div id="quick-view-modal" class="qv" aria-hidden="true">
-        <button class="qv__backdrop" type="button" data-qv-close aria-label="بستن نمای سریع"></button>
-        <section class="qv__panel" role="dialog" aria-modal="true" aria-labelledby="qv-name">
-            <button class="qv__close unbutton" data-qv-close type="button" aria-label="بستن">×</button>
-            <div class="qv__image" data-qv-image></div>
-            <div class="qv__body">
-                <p class="qv__category" data-qv-category></p>
-                <h2 class="qv__name" id="qv-name" data-qv-name></h2>
-                <p class="qv__price"><span data-qv-price></span> <small>تومان</small></p>
-                <div class="qv__actions"><a class="qv__btn qv__btn--primary" data-qv-link href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4" aria-hidden="true"><path d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6Z" /><circle cx="12" cy="12" r="2.5" /></svg> جزئیات کامل محصول</a><button class="qv__btn qv__btn--ghost" data-qv-add type="button">افزودن به سبد خرید</button></div>
+            <div class="fz-guide-grid">
+                <x-home.feature-card
+                    number="۰۱"
+                    title="ابعاد و محل نصب"
+                    description="عرض کابینت، فضای برش، فاصله از اجاق و مسیر خروجی را پیش از انتخاب اندازه بگیرید."
+                    href="{{ route('categories.index') }}"
+                    action="بررسی دسته‌بندی‌ها"
+                    icon="ruler"
+                />
+                <x-home.feature-card
+                    number="۰۲"
+                    title="جنس و نگهداری"
+                    description="جنس بدنه، عمق لگن و روش نظافت را با میزان استفاده روزانه و شرایط آشپزخانه تطبیق دهید."
+                    href="{{ route('shop.index') }}"
+                    action="مقایسه محصولات"
+                    icon="layers"
+                />
+                <x-home.feature-card
+                    number="۰۳"
+                    title="مشخصات و مشاوره"
+                    description="مشخصات فنی هر مدل را بخوانید؛ اگر برای انتخاب تردید دارید از تیم فرزین راهنمایی بگیرید."
+                    href="{{ route('contact') }}"
+                    action="دریافت راهنمایی"
+                    icon="messages"
+                />
+            </div>
+        </div>
+    </section>
+
+    @if($blogPosts->isNotEmpty())
+        <section class="fz-section fz-home-journal" aria-labelledby="fz-journal-heading">
+            <div class="fz-container">
+                <div class="fz-section-heading fz-reveal">
+                    <div>
+                        <p class="fz-eyebrow"><span></span> مجله فرزین</p>
+                        <h2 id="fz-journal-heading">راهنماهایی برای انتخاب آگاهانه‌تر.</h2>
+                        <p>نوشته‌های منتشرشده درباره انتخاب، نصب و نگهداری تجهیزات آشپزخانه.</p>
+                    </div>
+                    <a class="fz-text-link" href="{{ route('blog.index') }}">رفتن به مجله <span aria-hidden="true">←</span></a>
+                </div>
+
+                <div class="fz-journal-grid">
+                    @foreach($blogPosts as $post)
+                        <x-home.article-card :post="$post" />
+                    @endforeach
+                </div>
             </div>
         </section>
-    </div>
+    @endif
+
+    <section class="fz-bottom-cta" aria-labelledby="fz-bottom-cta-title">
+        <div class="fz-container fz-bottom-cta__inner fz-reveal">
+            <div>
+                <p class="fz-eyebrow"><span></span> قدم بعدی</p>
+                <h2 id="fz-bottom-cta-title">برای آشپزخانه‌تان انتخاب دقیق‌تری داشته باشید.</h2>
+                <p>محصولات را بررسی کنید یا برای راهنمایی درباره مشخصات و شرایط خرید با ما در تماس باشید.</p>
+            </div>
+            <div class="fz-hero__actions">
+                <a class="fz-button fz-button--primary" href="{{ route('shop.index') }}">مشاهده محصولات</a>
+                <a class="fz-button fz-button--secondary" href="{{ route('contact') }}">تماس با فرزین</a>
+            </div>
+        </div>
+    </section>
+
     <div id="toast-root" class="toast-root" aria-live="polite" aria-atomic="true"></div>
 @endsection

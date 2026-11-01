@@ -241,7 +241,7 @@
                                 @endif
                             </div>
 
-                            @if($whatsappDigits !== '' || filled($contactSetting?->instagram_url))
+                            @if($whatsappDigits !== '' || filled($contactSetting?->instagram_url) || filled($contactSetting?->telegram_url))
                                 <div class="fz-contact-social">
                                     <div class="fz-contact-social__heading">
                                         <span class="fz-contact-kicker">SOCIAL / ONLINE</span>
@@ -258,6 +258,11 @@
                                                 <span aria-hidden="true">◎</span> اینستاگرام
                                             </a>
                                         @endif
+                                        @if(filled($contactSetting?->telegram_url))
+                                            <a href="{{ $contactSetting->telegram_url }}" target="_blank" rel="noopener noreferrer" class="fz-contact-social__link fz-contact-social__link--telegram">
+                                                <span aria-hidden="true">✈</span> تلگرام
+                                            </a>
+                                        @endif
                                     </div>
                                 </div>
                             @else
@@ -265,7 +270,7 @@
                                     <div class="fz-contact-social__heading">
                                         <span class="fz-contact-kicker">SOCIAL / ONLINE</span>
                                         <h3>شبکه‌های اجتماعی فرزین</h3>
-                                        <p>لینک‌های واتساپ و اینستاگرام پس از ثبت در تنظیمات تماس همین‌جا قرار می‌گیرند.</p>
+                                        <p>لینک‌های شبکه‌های اجتماعی پس از ثبت در تنظیمات تماس همین‌جا قرار می‌گیرند.</p>
                                     </div>
                                 </div>
                             @endif
