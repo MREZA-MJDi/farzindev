@@ -448,6 +448,114 @@
             </section>
         @endif
 
+        @if($blogPosts->isNotEmpty())
+            @php
+                $homeFeaturedArticle = $blogPosts->first();
+                $homeJournalStories = $blogPosts->skip(1);
+                $homeFeaturedCategory = $homeFeaturedArticle->terms->firstWhere('type', 'category');
+                $homeFeaturedArticleImage = $homeFeaturedArticle->cover_image_url ?: $homeCtaImageUrl;
+                $homeFeaturedArticleImageAlt = $homeFeaturedArticle->cover_image_url
+                    ? ($homeFeaturedArticle->cover_image_alt ?: $homeFeaturedArticle->title)
+                    : 'تصویر محصولات فرزین';
+            @endphp
+
+            <section class="fz-home-journal" aria-labelledby="fz-home-journal-heading">
+                <div class="fz-container fz-home-journal__container">
+                    <header class="fz-home-journal__heading">
+                        <div>
+                            <p class="fz-eyebrow"><span></span> مجله فرزین / دانستنی‌های کاربردی</p>
+                            <h2 id="fz-home-journal-heading">قبل از انتخاب، آگاهانه‌تر ببینید.</h2>
+                            <p>نکته‌ها و مقاله‌های مرتبط با هود و سینک؛ کوتاه، کاربردی و از دل تجربه‌ی تجهیزات آشپزخانه.</p>
+                        </div>
+                        <a class="fz-home-journal__all" href="{{ route('blog.index') }}">
+                            همه مقاله‌ها
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <path d="M19 12H5m7 7-7-7 7-7"/>
+                            </svg>
+                        </a>
+                    </header>
+
+                    <div class="fz-home-journal__layout">
+                        <article class="fz-home-journal__featured">
+                            <a class="fz-home-journal__image" href="{{ route('blog.show', $homeFeaturedArticle->slug) }}" aria-label="مطالعه {{ $homeFeaturedArticle->title }}">
+                                @if($homeFeaturedArticleImage)
+                                    <img
+                                        src="{{ $homeFeaturedArticleImage }}"
+                                        @if($homeFeaturedArticle->cover_image_url && $homeFeaturedArticle->cover_image_srcset) srcset="{{ $homeFeaturedArticle->cover_image_srcset }}" sizes="(max-width: 767px) 100vw, 70vw" @endif
+                                        alt="{{ $homeFeaturedArticleImageAlt }}"
+                                        width="1200"
+                                        height="760"
+                                        loading="lazy"
+                                        decoding="async"
+                                    >
+                                @else
+                                    <span class="fz-home-journal__image-fallback" aria-hidden="true">F.</span>
+                                @endif
+                                <span class="fz-home-journal__image-mark">FARZIN / JOURNAL</span>
+                            </a>
+
+                            <div class="fz-home-journal__featured-copy">
+                                <div class="fz-home-journal__meta">
+                                    @if($homeFeaturedCategory)
+                                        <a href="{{ route('blog.category', $homeFeaturedCategory->slug) }}">{{ $homeFeaturedCategory->name }}</a>
+                                    @else
+                                        <span>مجله فرزین</span>
+                                    @endif
+                                    <span aria-hidden="true">·</span>
+                                    <time datetime="{{ $homeFeaturedArticle->published_at?->toAtomString() }}">{{ $homeFeaturedArticle->published_at?->format('Y/m/d') }}</time>
+                                    <span aria-hidden="true">·</span>
+                                    <span>{{ \App\Helpers\PersianNumberHelper::format($homeFeaturedArticle->reading_time) }} دقیقه مطالعه</span>
+                                </div>
+
+                                <h3><a href="{{ route('blog.show', $homeFeaturedArticle->slug) }}">{{ $homeFeaturedArticle->title }}</a></h3>
+
+                                @if($homeFeaturedArticle->excerpt)
+                                    <p>{{ $homeFeaturedArticle->excerpt }}</p>
+                                @endif
+
+                                <a class="fz-home-journal__read" href="{{ route('blog.show', $homeFeaturedArticle->slug) }}">
+                                    خواندن مقاله
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                        <path d="M19 12H5m7 7-7-7 7-7"/>
+                                    </svg>
+                                </a>
+                            </div>
+                        </article>
+
+                        <aside class="fz-home-journal__aside" aria-label="مقاله‌های بیشتر مجله فرزین">
+                            <div class="fz-home-journal__aside-heading">
+                                <span>بیشتر بخوانید</span>
+                                <span>F / JOURNAL</span>
+                            </div>
+
+                            @forelse($homeJournalStories as $story)
+                                @php
+                                    $storyCategory = $story->terms->firstWhere('type', 'category');
+                                @endphp
+                                <article class="fz-home-journal__story">
+                                    <a href="{{ route('blog.show', $story->slug) }}">
+                                        @if($storyCategory)
+                                            <span class="fz-home-journal__story-category">{{ $storyCategory->name }}</span>
+                                        @endif
+                                        <h3>{{ $story->title }}</h3>
+                                        <span class="fz-home-journal__story-meta">
+                                            <time datetime="{{ $story->published_at?->toAtomString() }}">{{ $story->published_at?->format('Y/m/d') }}</time>
+                                            <span aria-hidden="true">·</span>
+                                            {{ \App\Helpers\PersianNumberHelper::format($story->reading_time) }} دقیقه
+                                        </span>
+                                    </a>
+                                </article>
+                            @empty
+                                <p class="fz-home-journal__aside-empty">مقاله‌های بیشتری را در مجله فرزین دنبال کنید.</p>
+                            @endforelse
+
+                            <a class="fz-home-journal__aside-all" href="{{ route('blog.index') }}">رفتن به آرشیو مجله <span aria-hidden="true">←</span></a>
+                        </aside>
+                    </div>
+                </div>
+            </section>
+        @endif
+
         <section class="fz-bottom-cta fz-home-purchase-cta" aria-labelledby="fz-home-purchase-heading">
             <div class="fz-container fz-bottom-cta__inner fz-home-purchase-cta__inner fz-reveal">
                 <div class="fz-home-purchase-cta__visual" aria-hidden="true">
