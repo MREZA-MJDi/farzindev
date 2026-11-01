@@ -3077,6 +3077,9 @@ body {
     width: 100%;
 }
 @media (max-width: 900px) {
+    .home-body .fz-home-hero__layout {
+        grid-template-columns: minmax(0, 1fr);
+    }
     .home-body .fz-home-hero__copy {
         max-width: 48rem;
         margin-inline: 0;
