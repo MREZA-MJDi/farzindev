@@ -166,7 +166,7 @@
                         <a href="{{ route('account.index') }}" aria-label="حساب کاربری" title="حساب کاربری" @class(['farzin-site-header__action hidden h-10 w-10 items-center justify-center rounded-full transition lg:flex', 'is-active' => request()->routeIs('account.*')])>
                     @endif
                 @else
-                    <a href="{{ route('login') }}" aria-label="ورود / ثبت‌نام" title="ورود / ثبت‌نام" class="farzin-site-header__action hidden h-10 w-10 items-center justify-center rounded-full transition lg:flex">
+                    <a href="{{ route('login') }}" aria-label="حساب کاربری" title="ورود / ثبت‌نام" class="farzin-site-header__action hidden h-10 w-10 items-center justify-center rounded-full transition lg:flex">
                 @endauth
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.7" stroke="currentColor" class="h-[19px] w-[19px]" aria-hidden="true">
                         <circle cx="12" cy="8" r="3.5"/>
@@ -177,7 +177,7 @@
                 {{-- Mobile menu trigger --}}
                 <button
                     type="button"
-                    aria-label="باز کردن منوی اصلی"
+                    aria-label="باز کردن منو"
                     aria-controls="farzin-mobile-menu"
                     :aria-expanded="mobileOpen.toString()"
                     @click="searchOpen = false; mobileOpen = true"
