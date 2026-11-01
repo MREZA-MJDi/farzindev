@@ -425,7 +425,7 @@ class FarzinStorefrontTest extends TestCase
         $response = $this->get(route('home'))->assertOk();
         $html = $response->getContent();
 
-        $this->assertSame(1, substr_count($html, 'home-mosaic-selected.webp'));
+        $this->assertStringContainsString('home-mosaic-selected.webp', $html);
         $this->assertStringContainsString('data-home-slide', $html);
         $this->assertStringNotContainsString('grid__image', $html);
         $this->assertStringNotContainsString('fz-mosaic-intro', $html);

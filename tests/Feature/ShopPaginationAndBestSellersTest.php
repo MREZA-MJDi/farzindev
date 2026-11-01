@@ -215,7 +215,9 @@ class ShopPaginationAndBestSellersTest extends TestCase
     {
         $category = $this->category();
 
-        // Curated gallery flags no longer create a second, duplicate product gallery.
+        // Gallery-selected products remain eligible for the six-item hero, but no longer
+        // create an additional mosaic/grid entry below the primary catalogue section.
+        $heroGalleryProductIds = [];
         for ($index = 1; $index <= 2; $index++) {
             $galleryProduct = $this->product($category, [
                 'name' => 'Retired Gallery Product '.$index,
@@ -230,6 +232,7 @@ class ShopPaginationAndBestSellersTest extends TestCase
                 'sort_order' => 0,
                 'is_primary' => true,
             ]);
+            $heroGalleryProductIds[] = $galleryProduct->id;
         }
 
         $order = $this->paidOrder();
@@ -257,7 +260,13 @@ class ShopPaginationAndBestSellersTest extends TestCase
         $this->assertSame(4, substr_count($html, 'fz-product-card--clickable'));
         $this->assertStringNotContainsString('fz-new-section', $html);
         $this->assertStringNotContainsString('grid__image', $html);
-        $this->assertStringNotContainsString('Retired Gallery Product', $html);
+        foreach ($heroGalleryProductIds as $productId) {
+            $this->assertSame(
+                1,
+                substr_count($html, 'data-home-product-id="'.$productId.'"'),
+                'Each image-backed product should appear once in the hero and not in a duplicate mosaic.'
+            );
+        }
 
         for ($index = 1; $index <= 4; $index++) {
             $response->assertSee('Homepage Bestseller '.$index);
