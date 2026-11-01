@@ -265,7 +265,8 @@ class FarzinStorefrontTest extends TestCase
         $this->get(route('home'))
             ->assertOk()
             ->assertSee('فرزین')
-            ->assertSee('هود آشپزخانه');
+            ->assertSee('هود آشپزخانه')
+            ->assertSee('fz-home-journal', false);
 
         $this->get(route('about'))
             ->assertOk()
@@ -274,7 +275,7 @@ class FarzinStorefrontTest extends TestCase
 
         $this->get(route('blog.index'))
             ->assertOk()
-            ->assertSee('بلاگ فرزین')
+            ->assertSee('مجله فرزین')
             ->assertSee('تازه‌های مجله')
             ->assertSee('قبل از خرید هود آشپزخانه چه چیزهایی را بررسی کنیم؟')
             ->assertSee('چک‌لیست ساده پیش از ثبت سفارش');
