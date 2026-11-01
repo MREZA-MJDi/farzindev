@@ -17,14 +17,28 @@
     <a class="fz-skip-link" href="#main-content">رفتن به محتوای اصلی</a>
 
 @php
-    $mosaicTitles = [
-        ['eyebrow' => 'AIR / 01', 'title' => 'هوای بهتر، شروع یک آشپزخانه‌ی دقیق‌تر.', 'text' => 'فرم، اندازه و جای نصب هود را در کنار فضای پخت‌وپز ببینید.'],
-        ['eyebrow' => 'STEEL / 02', 'title' => 'جزئیات کوچک، استفاده‌ی روزمره را می‌سازند.', 'text' => 'در انتخاب سینک، عمق لگن، ابعاد و شیوه‌ی نگهداری را در نظر بگیرید.'],
-        ['eyebrow' => 'FORM / 03', 'title' => 'طراحی وقتی خوب است که کار هم بکند.', 'text' => 'ظاهر محصول بخشی از تصمیم است؛ تناسب با کاربری و محل نصب را فراموش نکنید.'],
-        ['eyebrow' => 'DETAIL / 04', 'title' => 'از نمای نزدیک، دقیق‌تر انتخاب کنید.', 'text' => 'تصاویر محصولات را ببینید و مشخصات هر مدل را در صفحه‌ی خودش بررسی کنید.'],
-        ['eyebrow' => 'FIT / 05', 'title' => 'تناسب با فضا، مهم‌تر از انتخاب عجولانه است.', 'text' => 'اندازه‌ی کابینت، سطح کار و فضای حرکت را پیش از خرید اندازه‌گیری کنید.'],
-        ['eyebrow' => 'FARZIN / 06', 'title' => 'تجهیزات آشپزخانه؛ با نگاه کاربردی.', 'text' => 'کاتالوگ فرزین برای شناخت محصولات و پیدا کردن مسیر انتخاب طراحی شده است.'],
-    ];
+    $homeCtaCategory = $categories->first(
+        fn ($category) => filled($category->homepage_image_url)
+    );
+
+    $homeCtaProduct = collect([
+        $featuredProducts->first(),
+        $newProducts->first(),
+        $heroProducts->first(),
+    ])->filter()->first(
+        fn ($product) => $product->images->contains(
+            fn ($image) => filled($image->url)
+        )
+    );
+
+    $homeCtaProductImage = $homeCtaProduct?->images->first(
+        fn ($image) => filled($image->url)
+    );
+
+    $homeCtaImageUrl = $homeCtaCategory?->homepage_image_url
+        ?? $homeCtaProductImage?->url;
+    $homeCtaImageSrcset = $homeCtaCategory?->homepage_image_srcset
+        ?? $homeCtaProductImage?->responsive_srcset;
 @endphp
 
 <section class="fz-home-hero" aria-labelledby="fz-home-hero-title">
@@ -57,15 +71,12 @@
                         <path d="M19 12H5m7 7-7-7 7-7" />
                     </svg>
                 </a>
-                <a class="fz-home-hero__button fz-home-hero__button--secondary" href="{{ route('contact') }}">
-                    مشاوره خرید
-                </a>
             </div>
 
-            <div class="fz-home-hero__highlights" aria-label="راهنمای انتخاب محصول">
-                <span><b aria-hidden="true">01</b> بررسی ابعاد و نصب</span>
-                <span><b aria-hidden="true">02</b> مقایسه مشخصات</span>
-                <span><b aria-hidden="true">03</b> انتخاب متناسب با فضا</span>
+            <div class="fz-home-hero__highlights" aria-label="مزیت‌های خرید از کاتالوگ فرزین">
+                <span><b aria-hidden="true">✓</b> هود و سینک در یک کاتالوگ</span>
+                <span><b aria-hidden="true">✓</b> تصویر و مشخصات هر مدل</span>
+                <span><b aria-hidden="true">✓</b> ثبت سفارش آنلاین</span>
             </div>
         </div>
 
@@ -367,7 +378,6 @@
                             <h2 id="fz-new-heading">تازه اضافه‌شده‌ها</h2>
                             <p>محصولاتی که در پنل مدیریت به‌عنوان محصول جدید علامت‌گذاری شده‌اند.</p>
                         </div>
-                        <a class="fz-text-link" href="{{ route('shop.index', ['sort' => 'newest']) }}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4" aria-hidden="true"><circle cx="12" cy="12" r="9" /><path d="M12 7v5l3 2" /></svg> جدیدترین‌ها</a>
                     </div>
                     <div class="fz-product-grid {{ match($newProducts->count()) { 1 => 'fz-product-grid--single', 2 => 'fz-product-grid--pair', default => '' } }}">
                         @foreach($newProducts as $product)
@@ -382,8 +392,8 @@
             <section class="fz-mosaic-intro">
                 <div class="fz-container fz-mosaic-intro__inner fz-reveal">
                     <p class="fz-eyebrow"><span></span> نگاه نزدیک / گالری محصول</p>
-                    <h2>از نمای کلی تا جزئیات محصول.</h2>
-                    <p>تصاویر زیر از محصولات منتشرشده در پنل مدیریت می‌آیند. روی هر تصویر بزنید تا اطلاعات همان محصول را ببینید.</p>
+                    <h2>محصولات منتخب فرزین، از نزدیک.</h2>
+                    <p>تصاویر واقعی مدل‌های منتخب؛ برای دیدن قیمت و مشخصات هر محصول، تصویر آن را باز کنید.</p>
                     <span class="fz-mosaic-intro__count">{{ \App\Helpers\PersianNumberHelper::format($galleryCount) }} <small>تصویر در گالری</small></span>
                 </div>
             </section>
@@ -393,10 +403,10 @@
                     <section class="content {{ $index % 2 ? 'content--spacing' : '' }}" aria-label="تصاویر محصولات فرزین، بخش {{ $index + 1 }}">
                         <div class="fz-container content__heading">
                             <div>
-                                <p class="fz-eyebrow"><span></span> {{ $mosaicTitles[$index % count($mosaicTitles)]['eyebrow'] }}</p>
-                                <h2 class="content__title">{{ $mosaicTitles[$index % count($mosaicTitles)]['title'] }}</h2>
+                                <p class="fz-eyebrow"><span></span> FARZIN / PRODUCT DETAIL</p>
+                                <h2 class="content__title">جزئیات مدل‌ها را از نزدیک ببینید.</h2>
                             </div>
-                            <p class="content__description">{{ $mosaicTitles[$index % count($mosaicTitles)]['text'] }}</p>
+                            <p class="content__description">برای بررسی قیمت، موجودی و مشخصات کامل، محصول موردنظر را انتخاب کنید.</p>
                         </div>
                         <div class="grid grid--{{ ($index % 6) + 1 }}" data-grid-index="{{ $index }}">
                             <div class="grid-wrap {{ $group->count() <= 2 ? 'grid-wrap--compact' : '' }}">
@@ -438,33 +448,36 @@
             </section>
         @endif
 
-        <section class="fz-maker" aria-labelledby="fz-maker-heading">
-            <div class="fz-container fz-maker__layout">
-                <div class="fz-maker__copy fz-reveal">
-                    <p class="fz-eyebrow fz-eyebrow--light"><span></span> فرزین / تجهیزات آشپزخانه</p>
-                    <h2 id="fz-maker-heading">محصول کاربردی، از تصمیم‌های دقیق ساخته می‌شود.</h2>
-                    <p>انتخاب هود و سینک فقط به رنگ و فرم محدود نیست. هماهنگی با کابینت، فضای نصب، نظافت و نیاز روزانه بخشی از تجربه‌ی بهتر آشپزخانه‌اند.</p>
-                    <a class="fz-button fz-button--light" href="{{ route('about') }}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4" aria-hidden="true"><circle cx="12" cy="12" r="9" /><path d="M12 11v5m0-8h.01" /></svg> درباره مجموعه</a>
+        <section class="fz-bottom-cta fz-home-purchase-cta" aria-labelledby="fz-home-purchase-heading">
+            <div class="fz-container fz-bottom-cta__inner fz-home-purchase-cta__inner fz-reveal">
+                <div class="fz-home-purchase-cta__visual" aria-hidden="true">
+                    @if($homeCtaImageUrl)
+                        <img
+                            src="{{ $homeCtaImageUrl }}"
+                            @if($homeCtaImageSrcset) srcset="{{ $homeCtaImageSrcset }}" sizes="(max-width: 767px) 100vw, 50vw" @endif
+                            alt=""
+                            width="1200"
+                            height="900"
+                            loading="lazy"
+                            decoding="async"
+                        >
+                    @else
+                        <span class="fz-home-purchase-cta__fallback">FARZIN</span>
+                    @endif
+                    <span class="fz-home-purchase-cta__shade"></span>
+                    <span class="fz-home-purchase-cta__image-label">FARZIN / KITCHEN EQUIPMENT</span>
                 </div>
-                <div class="fz-maker__specs">
-                    <article class="fz-maker__spec fz-reveal"><span>01 / SPACE</span><h3>تناسب با فضا</h3><p>ابعاد و جای نصب را با محصول نهایی تطبیق دهید.</p></article>
-                    <article class="fz-maker__spec fz-reveal"><span>02 / MATERIAL</span><h3>جنس و نگهداری</h3><p>روش نظافت و شرایط استفاده را در تصمیم‌گیری دخیل کنید.</p></article>
-                    <article class="fz-maker__spec fz-reveal"><span>03 / FUNCTION</span><h3>کارایی روزمره</h3><p>مشخصات فنی و کارکردهای محصول را قبل از انتخاب بخوانید.</p></article>
-                </div>
-            </div>
-            <div class="fz-maker__watermark" aria-hidden="true">FZ</div>
-        </section>
 
-        <section class="fz-bottom-cta">
-            <div class="fz-container fz-bottom-cta__inner fz-reveal">
-                <div>
-                    <p class="fz-eyebrow"><span></span> گام بعدی</p>
-                    <h2>مدل متناسب با آشپزخانه‌تان را پیدا کنید.</h2>
-                    <p>کاتالوگ را ببینید یا برای دریافت راهنمایی، با فرزین در تماس باشید.</p>
-                </div>
-                <div class="fz-hero__actions">
-                    <a class="fz-button fz-button--primary" href="{{ route('shop.index') }}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4" aria-hidden="true"><path d="M3.5 9h17l-1 11h-15l-1-11Z" /><path d="M8 9V6.5a4 4 0 0 1 8 0V9" /></svg> ورود به فروشگاه</a>
-                    <a class="fz-button fz-button--secondary" href="{{ route('contact') }}">تماس با فرزین</a>
+                <div class="fz-home-purchase-cta__copy">
+                    <p class="fz-eyebrow"><span></span> کاتالوگ محصولات فرزین</p>
+                    <h2 id="fz-home-purchase-heading">انتخاب مدل مناسب آشپزخانه‌تان را از همین‌جا شروع کنید.</h2>
+                    <p>مدل‌های هود و سینک را ببینید، قیمت و مشخصات هر محصول را بررسی کنید و سفارش‌تان را آنلاین ثبت کنید.</p>
+                    <a class="fz-home-purchase-cta__button" href="{{ route('shop.index') }}">
+                        مشاهده محصولات و قیمت‌ها
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M19 12H5m7 7-7-7 7-7"/>
+                        </svg>
+                    </a>
                 </div>
             </div>
         </section>
