@@ -167,6 +167,52 @@
             </section>
         @endif
 
+        @if($featuredProducts->isNotEmpty())
+            <section class="fz-section fz-product-section" aria-labelledby="fz-products-heading">
+                <div class="fz-container">
+                    <div class="fz-section-heading fz-reveal">
+                        <div>
+                            <p class="fz-eyebrow"><span></span> کاتالوگ محصولات</p>
+                            <h2 id="fz-products-heading">{{ $hasBestSellerSales ? 'پرفروش‌ترین محصولات' : 'مدل‌های منتخب فرزین' }}</h2>
+                            <p>
+                                @if($hasBestSellerSales)
+                                    بر اساس تعداد محصولات ثبت‌شده در سفارش‌های پرداخت‌شده؛ برای مشخصات کامل، صفحه‌ی هر محصول را باز کنید.
+                                @else
+                                    سفارش پرداخت‌شده‌ای برای رتبه‌بندی ثبت نشده است؛ مدل‌های منتخب فرزین را بررسی کنید.
+                                @endif
+                            </p>
+                        </div>
+                        <a class="fz-text-link" href="{{ route('shop.index') }}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4" aria-hidden="true"><path d="M3.5 9h17l-1 11h-15l-1-11Z" /><path d="M8 9V6.5a4 4 0 0 1 8 0V9" /></svg> مشاهده همه محصولات</a>
+                    </div>
+                    <div class="fz-product-grid {{ match($featuredProducts->count()) { 1 => 'fz-product-grid--single', 2 => 'fz-product-grid--pair', 3 => 'fz-product-grid--triple', default => '' } }}">
+                        @foreach($featuredProducts as $product)
+                            <x-home.product-card :product="$product" />
+                        @endforeach
+                    </div>
+                </div>
+            </section>
+        @endif
+
+        @if($newProducts->isNotEmpty())
+            <section class="fz-section fz-new-section" aria-labelledby="fz-new-heading">
+                <div class="fz-container">
+                    <div class="fz-section-heading fz-reveal">
+                        <div>
+                            <p class="fz-eyebrow"><span></span> تازه‌های کاتالوگ</p>
+                            <h2 id="fz-new-heading">تازه اضافه‌شده‌ها</h2>
+                            <p>محصولاتی که در پنل مدیریت به‌عنوان محصول جدید علامت‌گذاری شده‌اند.</p>
+                        </div>
+                        <a class="fz-text-link" href="{{ route('shop.index', ['sort' => 'newest']) }}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4" aria-hidden="true"><circle cx="12" cy="12" r="9" /><path d="M12 7v5l3 2" /></svg> جدیدترین‌ها</a>
+                    </div>
+                    <div class="fz-product-grid {{ match($newProducts->count()) { 1 => 'fz-product-grid--single', 2 => 'fz-product-grid--pair', default => '' } }}">
+                        @foreach($newProducts as $product)
+                            <x-home.product-card :product="$product" />
+                        @endforeach
+                    </div>
+                </div>
+            </section>
+        @endif
+
         @if($demoImages->isNotEmpty())
             <section class="fz-mosaic-intro">
                 <div class="fz-container fz-mosaic-intro__inner fz-reveal">
@@ -222,52 +268,6 @@
                         <h2>{{ $catalogCount > 0 ? 'گالری تصویری در حال تکمیل است.' : 'محصول فعالی برای نمایش منتشر نشده است.' }}</h2>
                         <p>{{ $catalogCount > 0 ? 'محصولات فعال در فهرست کارت‌های پایین نمایش داده می‌شوند. برای حضور در گالری موزاییکی، یک تصویر معتبر برای محصول در پنل ثبت کنید.' : 'از پنل مدیریت، یک محصول ایجاد و وضعیت آن را فعال کنید تا در کاتالوگ عمومی نمایش داده شود.' }}</p>
                         <a class="fz-button fz-button--primary" href="{{ route('shop.index') }}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4" aria-hidden="true"><path d="M3.5 9h17l-1 11h-15l-1-11Z" /><path d="M8 9V6.5a4 4 0 0 1 8 0V9" /></svg> مشاهده فروشگاه</a>
-                    </div>
-                </div>
-            </section>
-        @endif
-
-        @if($featuredProducts->isNotEmpty())
-            <section class="fz-section fz-product-section" aria-labelledby="fz-products-heading">
-                <div class="fz-container">
-                    <div class="fz-section-heading fz-reveal">
-                        <div>
-                            <p class="fz-eyebrow"><span></span> کاتالوگ محصولات</p>
-                            <h2 id="fz-products-heading">{{ $hasBestSellerSales ? 'پرفروش‌ترین محصولات' : 'مدل‌های منتخب فرزین' }}</h2>
-                            <p>
-                                @if($hasBestSellerSales)
-                                    بر اساس تعداد محصولات ثبت‌شده در سفارش‌های پرداخت‌شده؛ برای مشخصات کامل، صفحه‌ی هر محصول را باز کنید.
-                                @else
-                                    سفارش پرداخت‌شده‌ای برای رتبه‌بندی ثبت نشده است؛ مدل‌های منتخب فرزین را بررسی کنید.
-                                @endif
-                            </p>
-                        </div>
-                        <a class="fz-text-link" href="{{ route('shop.index') }}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4" aria-hidden="true"><path d="M3.5 9h17l-1 11h-15l-1-11Z" /><path d="M8 9V6.5a4 4 0 0 1 8 0V9" /></svg> مشاهده همه محصولات</a>
-                    </div>
-                    <div class="fz-product-grid {{ match($featuredProducts->count()) { 1 => 'fz-product-grid--single', 2 => 'fz-product-grid--pair', 3 => 'fz-product-grid--triple', default => '' } }}">
-                        @foreach($featuredProducts as $product)
-                            <x-home.product-card :product="$product" />
-                        @endforeach
-                    </div>
-                </div>
-            </section>
-        @endif
-
-        @if($newProducts->isNotEmpty())
-            <section class="fz-section fz-new-section" aria-labelledby="fz-new-heading">
-                <div class="fz-container">
-                    <div class="fz-section-heading fz-reveal">
-                        <div>
-                            <p class="fz-eyebrow"><span></span> تازه‌های کاتالوگ</p>
-                            <h2 id="fz-new-heading">تازه اضافه‌شده‌ها</h2>
-                            <p>محصولاتی که در پنل مدیریت به‌عنوان محصول جدید علامت‌گذاری شده‌اند.</p>
-                        </div>
-                        <a class="fz-text-link" href="{{ route('shop.index', ['sort' => 'newest']) }}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4" aria-hidden="true"><circle cx="12" cy="12" r="9" /><path d="M12 7v5l3 2" /></svg> جدیدترین‌ها</a>
-                    </div>
-                    <div class="fz-product-grid {{ match($newProducts->count()) { 1 => 'fz-product-grid--single', 2 => 'fz-product-grid--pair', default => '' } }}">
-                        @foreach($newProducts as $product)
-                            <x-home.product-card :product="$product" />
-                        @endforeach
                     </div>
                 </div>
             </section>
