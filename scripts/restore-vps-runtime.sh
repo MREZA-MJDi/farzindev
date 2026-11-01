@@ -28,4 +28,4 @@ bash "$APP_ROOT/scripts/artisan-as-deploy.sh" view:cache
 echo "[6/6] Running production preflight..."
 bash "$APP_ROOT/scripts/artisan-as-deploy.sh" farzin:preflight
 
-echo "Farzin runtime recovery completed. No migrations, seeders, payment actions or database writes were run."
+echo "Farzin runtime recovery completed. No migrations, seeders, payment actions or business-data changes were run; Laravel cache entries were cleared and rebuilt."
