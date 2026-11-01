@@ -2540,7 +2540,7 @@ body {
     text-decoration: none;
 }
 #app > .farzin-site-footer.fz-global-footer > .home-body #app > .farzin-site-footer.fz-global-footer {
-    margin-block-start: 0;
+    margin-block-start: 24px;
 }
 .fz-global-footer__inner {
     display: grid;
@@ -4075,6 +4075,7 @@ body.home-body,
     border-color: #BFC3C0;
 }
 .home-body .fz-home-purchase-cta {
+    padding-block-end: 44px;
     background: #C8CAC8;
 }
 .home-body .fz-home-purchase-cta__inner {
@@ -4262,7 +4263,7 @@ body.home-body,
 @media (prefers-reduced-motion: reduce) {
     .farzin-site-header *,
     .farzin-mobile-nav *,
-    .farzin-global-footer *,
+    .fz-global-footer *,
     .blog-shell *,
     .blog-article-page * {
         scroll-behavior: auto !important;
