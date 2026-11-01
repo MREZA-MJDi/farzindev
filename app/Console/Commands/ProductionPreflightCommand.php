@@ -204,6 +204,43 @@ class ProductionPreflightCommand extends Command
                     : 'Vite manifest is not readable through the recommended PHP-FPM group. Set owner/group to deploy:www-data and permissions to 0640 (or use 0644), then run this preflight as www-data.')
         );
 
+        // Laravel reads these generated manifests before application providers
+        // are registered. Root-owned 0600/0700 files can prevent the web worker
+        // from loading packages.php/services.php and surface misleading
+        // "Target class [request|view] does not exist" exceptions.
+        $bootstrapCachePath = base_path('bootstrap/cache');
+        $bootstrapCacheWritable = is_dir($bootstrapCachePath) && is_writable($bootstrapCachePath);
+        $bootstrapCacheFiles = collect([
+            'packages.php',
+            'services.php',
+            'config.php',
+            'events.php',
+            'routes-v7.php',
+        ])->map(fn (string $file): string => $bootstrapCachePath . DIRECTORY_SEPARATOR . $file)
+            ->filter(static fn (string $file): bool => is_file($file));
+        $unreadableBootstrapCacheFiles = $bootstrapCacheFiles
+            ->filter(static function (string $file): bool {
+                clearstatcache(true, $file);
+                $permissions = fileperms($file);
+
+                return ! is_readable($file)
+                    || $permissions === false
+                    || ($permissions & 0044) === 0;
+            })
+            ->map(static fn (string $file): string => basename($file))
+            ->values()
+            ->all();
+        $bootstrapCacheReady = $bootstrapCacheWritable && $unreadableBootstrapCacheFiles === [];
+        $add(
+            $bootstrapCacheReady ? 'OK' : 'FAIL',
+            'Laravel bootstrap cache permissions',
+            ! $bootstrapCacheWritable
+                ? 'bootstrap/cache is not writable by this PHP process. Run bash scripts/repair-vps-permissions.sh, then use bash scripts/artisan-as-fpm.sh for Artisan commands.'
+                : ($bootstrapCacheReady
+                    ? 'Existing Laravel package, service, config, event and route manifests are readable by the PHP-FPM group.'
+                    : 'PHP-FPM cannot reliably read: ' . implode(', ', $unreadableBootstrapCacheFiles) . '. Run bash scripts/repair-vps-permissions.sh and use bash scripts/artisan-as-fpm.sh so root-only cache files are not recreated.')
+        );
+
         $storageLinked = is_link(public_path('storage')) && file_exists(public_path('storage'));
         $add(
             $storageLinked ? 'OK' : ($isProduction ? 'FAIL' : 'WARN'),
