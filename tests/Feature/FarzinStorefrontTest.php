@@ -310,8 +310,10 @@ class FarzinStorefrontTest extends TestCase
             ->assertSee('data-home-product-id="'.$product->id.'"', false)
             ->assertSee('هود منتخب فرزین')
             ->assertSee('تازه در فروشگاه')
-            ->assertSee('مشاوره خرید')
             ->assertSee('product-categories')
+            ->assertSee('fz-home-purchase-cta', false)
+            ->assertSee('مشاهده محصولات و قیمت‌ها')
+            ->assertDontSee('مشاوره خرید')
             ->assertDontSee('data-fz-scroll-hero', false)
             ->assertDontSee('data-hero-drawing', false)
             ->assertDontSee('SCROLL TO REVEAL');
