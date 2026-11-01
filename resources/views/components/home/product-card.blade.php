@@ -35,12 +35,16 @@
             <span class="fz-product-card__fallback-label">تصویر محصول ثبت نشده</span>
         @endif
 
-        @if($product->is_new)
-            <span class="fz-product-card__badge">تازه</span>
-        @endif
-        @if($hasDiscount)
-            <span class="fz-product-card__badge fz-product-card__badge--discount">
-                {{ \App\Helpers\PersianNumberHelper::format($discountPercent) }}٪ تخفیف
+        @if($product->is_new || $hasDiscount)
+            <span class="fz-product-card__badges">
+                @if($product->is_new)
+                    <span class="fz-product-card__badge">تازه</span>
+                @endif
+                @if($hasDiscount)
+                    <span class="fz-product-card__badge fz-product-card__badge--discount">
+                        {{ \App\Helpers\PersianNumberHelper::format($discountPercent) }}٪ تخفیف
+                    </span>
+                @endif
             </span>
         @endif
         <span class="fz-product-card__open" aria-hidden="true">↗</span>
