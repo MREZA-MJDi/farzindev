@@ -2,7 +2,7 @@
 set -Eeuo pipefail
 
 APP_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd -P)"
-FPM_USER="${FPM_USER:-www-data}"
+DEPLOY_USER="${DEPLOY_USER:-deploy}"
 FPM_GROUP="${FPM_GROUP:-www-data}"
 
 if [[ "${EUID}" -ne 0 ]]; then
@@ -10,8 +10,8 @@ if [[ "${EUID}" -ne 0 ]]; then
     exit 1
 fi
 
-if ! getent passwd "$FPM_USER" >/dev/null; then
-    echo "PHP-FPM user '$FPM_USER' does not exist." >&2
+if ! getent passwd "$DEPLOY_USER" >/dev/null; then
+    echo "Deployment user '$DEPLOY_USER' does not exist. Create it or set DEPLOY_USER." >&2
     exit 1
 fi
 
@@ -49,13 +49,13 @@ fi
 # manifests readable by PHP-FPM without exposing them to other users.
 for relative_path in storage bootstrap/cache; do
     path="$APP_ROOT/$relative_path"
-    install -d -o "$FPM_USER" -g "$FPM_GROUP" -m 2770 "$path"
-    find "$path" -type d -exec chown "$FPM_USER:$FPM_GROUP" {} +
-    find "$path" -type f -exec chown "$FPM_USER:$FPM_GROUP" {} +
+    install -d -o "$DEPLOY_USER" -g "$FPM_GROUP" -m 2770 "$path"
+    find "$path" -type d -exec chown "$DEPLOY_USER:$FPM_GROUP" {} +
+    find "$path" -type f -exec chown "$DEPLOY_USER:$FPM_GROUP" {} +
     find "$path" -type d -exec chmod 2770 {} +
     find "$path" -type f -exec chmod 0660 {} +
 done
 
-echo "Farzin runtime permissions repaired for $FPM_USER:$FPM_GROUP."
+echo "Farzin runtime permissions repaired for $DEPLOY_USER:$FPM_GROUP."
 echo "Application source: group-readable; .env: 0640; storage/bootstrap/cache: 2770 dirs, 0660 files."
 echo "Project: $APP_ROOT"
