@@ -748,7 +748,10 @@ class FarzinStorefrontTest extends TestCase
             ->assertSee('InStock')
             ->assertSee('وابسته به ویژگی انتخاب‌شده')
             ->assertSee('max="4"', false)
-            ->assertSee('موجود در انبار');
+            ->assertSee('موجود در انبار')
+            ->assertSee('farzin-product-detail-info', false)
+            ->assertSee('data-stock-available="true"', false)
+            ->assertSee('روش پرداخت در مرحله ثبت سفارش');
     }
 
     public function test_customer_can_add_product_to_cart_and_repeated_adds_merge(): void
