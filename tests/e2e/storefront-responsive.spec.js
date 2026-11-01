@@ -219,26 +219,25 @@ test('homepage CTA meets the shared footer at the same spacing used by interior 
         await expect(page.locator('.farzin-site-footer')).toBeVisible();
 
         const homeSpacing = await page.evaluate(() => {
-            const cta = document.querySelector('.fz-bottom-cta');
             const ctaPanel = document.querySelector('.fz-bottom-cta__inner');
+            const bridge = document.querySelector('.fz-home-contact-bridge');
             const footer = document.querySelector('.farzin-site-footer');
-            const ctaStyle = window.getComputedStyle(cta);
             const footerStyle = window.getComputedStyle(footer);
 
             return {
-                ctaPaddingBottom: Number.parseFloat(ctaStyle.paddingBlockEnd),
-                panelToFooter: footer.getBoundingClientRect().top - ctaPanel.getBoundingClientRect().bottom,
+                panelToBridge: bridge.getBoundingClientRect().top - ctaPanel.getBoundingClientRect().bottom,
+                bridgeToFooter: footer.getBoundingClientRect().top - bridge.getBoundingClientRect().bottom,
                 footerMarginTop: Number.parseFloat(footerStyle.marginBlockStart),
             };
         });
 
         expect(
-            homeSpacing.ctaPaddingBottom,
-            'homepage purchase panel must have a deliberate lower breathing space'
+            homeSpacing.panelToBridge,
+            'homepage CTA must have a deliberate transition into the footer bridge'
         ).toBeGreaterThanOrEqual(40);
         expect(
-            Math.abs(homeSpacing.panelToFooter - homeSpacing.ctaPaddingBottom - homeSpacing.footerMarginTop),
-            'homepage CTA-to-footer gap must equal the CTA spacing plus the shared footer margin'
+            Math.abs(homeSpacing.bridgeToFooter - homeSpacing.footerMarginTop),
+            'the bridge-to-footer gap must use the shared footer spacing'
         ).toBeLessThanOrEqual(2);
 
         await page.goto('/shop', { waitUntil: 'domcontentloaded' });
@@ -390,14 +389,16 @@ test('homepage image and product sections stay within the loading budget', async
         await page.goto('/', { waitUntil: 'domcontentloaded' });
 
         expect(await page.locator('.fz-category-card').count()).toBeLessThanOrEqual(4);
-        expect(await page.locator('.grid__image').count()).toBeLessThanOrEqual(2);
-        expect(await page.locator('.fz-product-section .farzin-product-card').count()).toBeLessThanOrEqual(4);
-        expect(await page.locator('.fz-new-section .farzin-product-card').count()).toBeLessThanOrEqual(2);
+        expect(await page.locator('.fz-home-buying-guide').count()).toBe(2);
+        expect(await page.locator('.fz-home-featured-grid--six .farzin-product-card').count()).toBeLessThanOrEqual(6);
+        await expect(page.locator('.fz-new-section')).toHaveCount(0);
+        await expect(page.locator('.fz-mosaic-intro')).toHaveCount(0);
+        await expect(page.locator('[data-farzin-home-slider]')).toHaveCount(0);
 
-        const homepageProductCards = await page.locator('.fz-product-section .farzin-product-card, .fz-new-section .farzin-product-card').count();
-        expect(homepageProductCards, 'homepage shows at most six full product cards').toBeLessThanOrEqual(6);
-        const homepageProductEntries = await page.locator('.grid__item-inner[data-product-id], .fz-product-section .farzin-product-card, .fz-new-section .farzin-product-card').count();
-        expect(homepageProductEntries, 'homepage keeps no more than eight unique catalog entries').toBeLessThanOrEqual(8);
+        const homepageProductCards = await page.locator('.fz-home-featured-grid--six .farzin-product-card').count();
+        expect(homepageProductCards, 'homepage shows one compact grid of up to six real products').toBeLessThanOrEqual(6);
+        const homepageProductEntries = await page.locator('.fz-home-hero__showcase--static, .fz-home-featured-grid--six .farzin-product-card').count();
+        expect(homepageProductEntries, 'homepage shows one hero item and no more than six featured cards').toBeLessThanOrEqual(7);
         await expect(page.locator('.fz-category-section .fz-text-link')).toHaveAttribute('href', /\/categories(?:\?|$)/);
         await expect(page.locator('.fz-product-section .fz-text-link')).toHaveAttribute('href', /\/shop(?:\?|$)/);
     }

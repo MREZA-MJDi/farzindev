@@ -334,11 +334,11 @@ class FarzinStorefrontTest extends TestCase
             'The homepage should display one consistent grid of six featured products.'
         );
 
-        foreach (array_slice($products, 0, 2) as $product) {
+        foreach (array_slice($products, 0, 1) as $product) {
             $response->assertDontSee($product->name);
         }
 
-        foreach (array_slice($products, 2) as $product) {
+        foreach (array_slice($products, 1) as $product) {
             $response->assertSee($product->name);
         }
     }

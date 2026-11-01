@@ -54,11 +54,6 @@ class HomeController extends Controller
                 fn ($image) => filled($image->url)
             ));
 
-        $catalogCount = Product::query()
-            ->active()
-            ->whereHas('category', fn ($query) => $query->where('is_active', true))
-            ->count();
-
         // Rank by paid, non-cancelled order quantity. Featured and recently
         // updated products are tie-breakers when sales data is equal.
         $featuredProducts = Product::query()
@@ -101,7 +96,6 @@ class HomeController extends Controller
             'heroProduct' => $heroProduct,
             'featuredProducts' => $featuredProducts,
             'hasBestSellerSales' => $hasBestSellerSales,
-            'catalogCount' => $catalogCount,
             'blogPosts' => $blogPosts,
         ]);
     }
