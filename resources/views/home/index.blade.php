@@ -73,7 +73,7 @@
             <div
                 class="fz-home-hero__showcase"
                 data-farzin-home-slider
-                data-autoplay-ms="4000"
+                data-autoplay-ms="3600"
                 role="region"
                 aria-label="تازه‌ترین محصولات فرزین"
                 aria-roledescription="carousel"
