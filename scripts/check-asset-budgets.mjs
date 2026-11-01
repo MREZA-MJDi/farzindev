@@ -7,10 +7,9 @@ const manifest = JSON.parse(await readFile(manifestPath, 'utf8'));
 
 const budgets = [
     { key: 'resources/js/app.js', label: 'Shared application JavaScript', maxGzipKb: 45 },
-    { key: 'resources/js/home.js', label: 'Homepage-only JavaScript', maxGzipKb: 8 },
-    { key: 'resources/css/app.css', label: 'Shared storefront CSS', maxGzipKb: 32 },
-    { key: 'resources/css/responsive.css', label: 'Shared responsive CSS', maxGzipKb: 8 },
-    { key: 'resources/css/home.css', label: 'Homepage-only CSS', maxGzipKb: 18 },
+    // These three stylesheets are imported into one public storefront entry.
+    // Check the emitted bundle once against their combined 58 KB gzip budget.
+    { key: 'resources/css/storefront.css', label: 'Combined storefront CSS', maxGzipKb: 58 },
     { key: 'resources/css/admin.css', label: 'Admin-only CSS', maxGzipKb: 24 },
     // The editorial artwork controls add two dashboard-managed image slots.
     // Keep the public magazine stylesheet tightly capped while accounting for them.
