@@ -274,7 +274,7 @@ class FarzinStorefrontTest extends TestCase
 
         $this->get(route('blog.index'))
             ->assertOk()
-            ->assertSee('بلاگ فرزین')
+            ->assertSee('مجله فرزین')
             ->assertSee('تازه‌های مجله')
             ->assertSee('قبل از خرید هود آشپزخانه چه چیزهایی را بررسی کنیم؟')
             ->assertSee('چک‌لیست ساده پیش از ثبت سفارش');
@@ -312,6 +312,9 @@ class FarzinStorefrontTest extends TestCase
             ->assertSee('مشاوره انتخاب محصول')
             ->assertSee('مشاهده محصولات')
             ->assertSee('product-categories')
+            ->assertSee('fz-home-purchase-cta', false)
+            ->assertSee('مشاهده محصولات و قیمت‌ها')
+            ->assertDontSee('مشاوره خرید')
             ->assertDontSee('data-fz-scroll-hero', false)
             ->assertDontSee('data-hero-drawing', false)
             ->assertDontSee('SCROLL TO REVEAL');

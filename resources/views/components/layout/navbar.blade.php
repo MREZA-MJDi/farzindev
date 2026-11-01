@@ -20,7 +20,7 @@
             </a>
 
             {{-- Desktop navigation --}}
-            <div class="hidden min-w-0 flex-1 items-center justify-center gap-1 lg:flex xl:gap-2">
+            <div class="farzin-site-header__nav hidden min-w-0 flex-1 items-center justify-center gap-1 lg:flex xl:gap-2">
                 <a
                     href="{{ route('home') }}"
                     @class(['farzin-site-header__nav-link', 'is-active' => request()->routeIs('home')])
@@ -102,6 +102,7 @@
                     :aria-expanded="searchOpen.toString()"
                     @click="openSearch($event.currentTarget)"
                     class="farzin-site-header__action hidden h-10 w-10 items-center justify-center rounded-full transition lg:flex xl:hidden"
+                    :class="{ 'is-active': searchOpen }"
                 >
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.7" stroke="currentColor" class="h-[19px] w-[19px]" aria-hidden="true">
                         <circle cx="11" cy="11" r="6.5"/>
@@ -142,7 +143,7 @@
                     href="{{ route('cart.index') }}"
                     aria-label="سبد خرید"
                     title="سبد خرید"
-                    class="farzin-site-header__action group relative hidden h-10 w-10 items-center justify-center rounded-full transition lg:flex"
+                    @class(['farzin-site-header__action group relative hidden h-10 w-10 items-center justify-center rounded-full transition lg:flex', 'is-active' => request()->routeIs('cart.*', 'checkout.*')])
                 >
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.7" stroke="currentColor" class="h-[19px] w-[19px] transition group-hover:scale-105" aria-hidden="true">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M3 3.75h1.6c.5 0 .94.35 1.06.84L6.3 7.5h13.1l-1.6 7.1H7.5L6.3 7.5M8.5 19.2a.9.9 0 1 1-1.8 0 .9.9 0 0 1 1.8 0Zm9.1 0a.9.9 0 1 1-1.8 0 .9.9 0 0 1 1.8 0Z"/>
@@ -166,7 +167,7 @@
                         <a href="{{ route('account.index') }}" aria-label="حساب کاربری" title="حساب کاربری" @class(['farzin-site-header__action hidden h-10 w-10 items-center justify-center rounded-full transition lg:flex', 'is-active' => request()->routeIs('account.*')])>
                     @endif
                 @else
-                    <a href="{{ route('login') }}" aria-label="ورود / ثبت‌نام" title="ورود / ثبت‌نام" class="farzin-site-header__action hidden h-10 w-10 items-center justify-center rounded-full transition lg:flex">
+                    <a href="{{ route('login') }}" aria-label="حساب کاربری" title="ورود / ثبت‌نام" @class(['farzin-site-header__action hidden h-10 w-10 items-center justify-center rounded-full transition lg:flex', 'is-active' => request()->routeIs('login', 'register')]) @if(request()->routeIs('login', 'register')) aria-current="page" @endif>
                 @endauth
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.7" stroke="currentColor" class="h-[19px] w-[19px]" aria-hidden="true">
                         <circle cx="12" cy="8" r="3.5"/>
@@ -177,7 +178,7 @@
                 {{-- Mobile menu trigger --}}
                 <button
                     type="button"
-                    aria-label="باز کردن منوی اصلی"
+                    aria-label="باز کردن منو"
                     aria-controls="farzin-mobile-menu"
                     :aria-expanded="mobileOpen.toString()"
                     @click="searchOpen = false; mobileOpen = true"

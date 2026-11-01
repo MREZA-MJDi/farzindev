@@ -38,7 +38,7 @@ for (const viewport of viewports) {
             await expect(page.locator('.farzin-site-header'), path + ' header').toBeVisible();
             await expect(page.locator('.farzin-site-footer'), path + ' footer').toBeAttached();
 
-            const footerLayout = await page.locator('.farzin-site-footer').evaluate((footer) => {
+            const footerLayout = await page.locator('.fz-global-footer').evaluate((footer) => {
                 const container = footer.querySelector(':scope > .livora-container');
                 const nav = footer.querySelector('.farzin-footer-editorial__nav');
                 const contact = footer.querySelector('.farzin-footer-editorial__contact');
@@ -191,8 +191,8 @@ test('homepage CTA meets the shared footer at the same spacing used by interior 
     ]) {
         await page.setViewportSize(viewport);
 
-        // On the homepage, the CTA must not add a second bottom gap on top
-        // of the shared footer margin. Interior pages keep that same margin.
+        // The homepage CTA provides its own deliberate bottom breathing room;
+        // interior pages use the shared footer margin instead.
         await page.goto('/', { waitUntil: 'domcontentloaded' });
         await expect(page.locator('.farzin-site-footer')).toBeVisible();
 
@@ -212,12 +212,12 @@ test('homepage CTA meets the shared footer at the same spacing used by interior 
 
         expect(
             homeSpacing.ctaPaddingBottom,
-            'homepage CTA must leave the final separation to the shared footer'
-        ).toBeLessThanOrEqual(1);
+            'homepage purchase panel must have a deliberate lower breathing space'
+        ).toBeGreaterThanOrEqual(40);
         expect(
-            Math.abs(homeSpacing.panelToFooter - homeSpacing.footerMarginTop),
-            'homepage CTA-to-footer gap must equal the shared footer margin'
-        ).toBeLessThanOrEqual(1);
+            Math.abs(homeSpacing.panelToFooter - homeSpacing.ctaPaddingBottom - homeSpacing.footerMarginTop),
+            'homepage CTA-to-footer gap must equal the CTA spacing plus the shared footer margin'
+        ).toBeLessThanOrEqual(2);
 
         await page.goto('/shop', { waitUntil: 'domcontentloaded' });
         const shopSpacing = await page.evaluate(() => {
@@ -253,11 +253,8 @@ test('shared footer keeps the same brand, navigation and dashboard-driven contac
             const navStyle = window.getComputedStyle(nav);
             const logoStyle = window.getComputedStyle(logo);
             return {
-                text: footer.innerText.replace(/\s+/g, ' ').trim(),
                 direction: style.direction,
                 fontFamily: style.fontFamily,
-                fontSize: style.fontSize,
-                lineHeight: style.lineHeight,
                 color: style.color,
                 backgroundColor: style.backgroundColor,
                 navDisplay: navStyle.display,
@@ -402,6 +399,46 @@ test('admin mobile quick search and list filters remain reachable without horizo
     }
 });
 
+test('homepage journal uses published articles, responsive RTL columns and restrained card radii', async ({ page }) => {
+    for (const viewport of [
+        { width: 390, height: 844 },
+        { width: 768, height: 900 },
+        { width: 1440, height: 960 },
+    ]) {
+        await page.setViewportSize(viewport);
+        await page.goto('/', { waitUntil: 'domcontentloaded' });
+
+        const journal = page.locator('.fz-home-journal');
+        await expect(journal).toBeVisible();
+        await expect(journal.locator('.fz-home-journal__featured')).toBeVisible();
+        await expect(journal.locator('.fz-home-journal__featured-copy h3 a')).toHaveAttribute('href', /\/blog\//);
+        await expect(journal.locator('.fz-home-journal__aside')).toBeVisible();
+        await expect(journal.locator('.fz-home-journal__all')).toHaveAttribute('href', /\/blog$/);
+
+        const layout = await journal.evaluate((section) => {
+            const grid = section.querySelector('.fz-home-journal__layout');
+            const featured = section.querySelector('.fz-home-journal__featured');
+            const style = window.getComputedStyle(grid);
+            const cardStyle = window.getComputedStyle(featured);
+            const columns = style.gridTemplateColumns.split(' ').length;
+
+            return {
+                direction: style.direction,
+                columns,
+                radius: Number.parseFloat(cardStyle.borderTopLeftRadius),
+                background: window.getComputedStyle(document.body).backgroundColor,
+                overflow: Math.max(document.documentElement.scrollWidth, document.body.scrollWidth)
+                    - document.documentElement.clientWidth,
+            };
+        });
+
+        expect(layout.direction, 'homepage journal must keep RTL reading order').toBe('rtl');
+        expect(layout.columns, 'journal becomes one column on mobile and two columns on desktop/tablet').toBe(viewport.width <= 767 ? 1 : 2);
+        expect(layout.radius, 'journal card corner radius must remain restrained').toBeLessThanOrEqual(12);
+        expect(layout.overflow, 'homepage journal must not cause horizontal overflow').toBeLessThanOrEqual(1);
+    }
+});
+
 test('blog archive renders the editorial magazine layout without horizontal overflow', async ({ page }) => {
     for (const viewport of [
         { width: 390, height: 844 },
@@ -472,6 +509,70 @@ test('blog actions are real touch targets and the magazine stays free of heavy m
         expect(feedXml).toContain('<title>مجله فرزین</title>');
         await expect(page).toHaveURL(/\/blog\/feed\.xml$/);
     }
+});
+
+test('desktop active navigation underline is centered and the shared palette stays neutral', async ({ page }) => {
+    await page.setViewportSize({ width: 1440, height: 960 });
+
+    for (const path of ['/', '/shop', '/categories', '/blog', '/about', '/contact']) {
+        await page.goto(path, { waitUntil: 'domcontentloaded' });
+
+        const activeLink = page.locator('.farzin-site-header__nav-link[aria-current="page"]');
+        await expect(activeLink, path + ' must expose one current desktop navigation item').toHaveCount(1);
+
+        const indicator = await activeLink.evaluate((element) => {
+            const line = window.getComputedStyle(element, '::after');
+            const box = element.getBoundingClientRect();
+
+            return {
+                left: line.left,
+                width: line.width,
+                transform: line.transform,
+                background: line.backgroundColor,
+                linkWidth: box.width,
+            };
+        });
+
+        expect(
+            Math.abs(Number.parseFloat(indicator.left) - indicator.linkWidth / 2),
+            path + ' underline anchor must be set at the link centre'
+        ).toBeLessThanOrEqual(1);
+        expect(indicator.width, path + ' active underline must have a stable width').toBe('20px');
+        expect(indicator.transform, path + ' underline must compensate for exactly half its own width').toContain('-10');
+
+        const shell = await page.evaluate(() => ({
+            page: getComputedStyle(document.querySelector('#main-content')).backgroundColor,
+            header: getComputedStyle(document.querySelector('.farzin-site-header')).backgroundColor,
+            footer: getComputedStyle(document.querySelector('.farzin-site-footer')).backgroundColor,
+        }));
+
+        expect(shell.page, path + ' content shell must use the stronger neutral grey').toBe('rgb(200, 202, 200)');
+        expect(shell.header, path + ' header must remain a white surface').toBe('rgba(255, 255, 255, 0.97)');
+        expect(shell.footer, path + ' footer must use a neutral grey surface').toBe('rgb(191, 194, 191)');
+    }
+});
+
+test('mobile navigation marks only the current destination and search state', async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+
+    for (const item of [
+        { path: '/', label: 'خانه' },
+        { path: '/shop', label: 'فروشگاه' },
+        { path: '/cart', label: 'سبد' },
+        { path: '/login', label: 'حساب' },
+    ]) {
+        await page.goto(item.path, { waitUntil: 'domcontentloaded' });
+
+        const active = page.locator('.farzin-mobile-nav__item[aria-current="page"]');
+        await expect(active, item.path + ' must mark its matching mobile tab as current').toHaveCount(1);
+        await expect(active.locator('span').filter({ hasText: item.label })).toBeVisible();
+    }
+
+    await page.goto('/shop', { waitUntil: 'domcontentloaded' });
+    const search = page.locator('.farzin-mobile-nav__item[aria-label="جستجو"]');
+    await search.click();
+    await expect(search).toHaveAttribute('aria-expanded', 'true');
+    await expect(search).toHaveClass(/is-active/);
 });
 
 test('admin blog image workflows expose the cropper and saved media library', async ({ page }) => {

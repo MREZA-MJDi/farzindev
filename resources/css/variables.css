@@ -1,37 +1,37 @@
 :root {
     /* Farzin storefront — navy / burgundy / porcelain */
     --livora-ink: #06284F;
-    --livora-text: #18324F;
-    --livora-text-soft: #526B86;
+    --livora-text: #26313B;
+    --livora-text-soft: #596168;
     --livora-charcoal: #0A315F;
     --livora-chocolate: #0B3565;
     --livora-chocolate-dark: #041E3E;
     --livora-chocolate-soft: #17436F;
 
-    --livora-cream: #F5F7FB;
+    --livora-cream: #D1D2D0;
     --livora-white: #FFFFFF;
-    --livora-surface: #EDF2F8;
-    --livora-sand: #E2EAF3;
-    --livora-stone: #71839A;
+    --livora-surface: #E2E3E1;
+    --livora-sand: #C9CBC8;
+    --livora-stone: #5F666D;
 
     --livora-accent: #7B0D1A;
     --livora-accent-dark: #5F0712;
-    --livora-accent-soft: #F8E9EC;
-    --livora-sage: #1C568A;
-    --livora-sage-dark: #123D68;
-    --livora-sage-soft: #EAF1F8;
+    --livora-accent-soft: #E3E4E1;
+    --livora-sage: #3F4952;
+    --livora-sage-dark: #303941;
+    --livora-sage-soft: #E2E3E1;
 
-    --livora-border: #DCE5EF;
-    --livora-border-dark: #BBCADA;
+    --livora-border: #BFC1BE;
+    --livora-border-dark: #AEB1AE;
 
     --livora-success: #268253;
-    --livora-success-soft: #E7F5ED;
+    --livora-success-soft: #E2E3E1;
     --livora-warning: #A66A17;
-    --livora-warning-soft: #FBF2E2;
+    --livora-warning-soft: #E2E3E1;
     --livora-danger: #B42332;
-    --livora-danger-soft: #FBEAEC;
+    --livora-danger-soft: #E2E3E1;
     --livora-info: #1E6598;
-    --livora-info-soft: #E8F2FA;
+    --livora-info-soft: #E2E3E1;
 
     --livora-shadow-sm: 0 4px 16px rgba(6, 40, 79, .055);
     --livora-shadow-md: 0 12px 30px rgba(6, 40, 79, .095);
@@ -45,13 +45,13 @@
     --livora-duration-fast: 160ms;
     --livora-duration: 240ms;
     --livora-duration-slow: 420ms;
-    --livora-container: 1320px;
+    --livora-container: 1280px;
 
-    --livora-metal: #A8B8CA;
+    --livora-metal: #A9A9A2;
     --livora-sunset-burnt: #8B1C2A;
     --livora-sunset-coral: #7B0D1A;
-    --livora-sunset-amber: #D5E2EF;
-    --livora-silver: #A8B8CA;
+    --livora-sunset-amber: #DADAD3;
+    --livora-silver: #A9A9A2;
     --livora-glow: rgba(255, 255, 255, .12);
 }
 

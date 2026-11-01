@@ -20,6 +20,7 @@ class BlogController extends Controller
             'posts' => $posts,
             'term' => null,
             'appearance' => $appearance->all(),
+            'topics' => $this->activeCategories(),
         ]);
     }
 
@@ -52,6 +53,7 @@ class BlogController extends Controller
             'posts' => $posts,
             'term' => $term,
             'appearance' => $appearance->all(),
+            'topics' => $this->activeCategories(),
         ]);
     }
 
@@ -116,6 +118,24 @@ class BlogController extends Controller
             ->view('blog.feed', compact('posts'))
             ->header('Content-Type', 'application/rss+xml; charset=UTF-8')
             ->header('Cache-Control', 'public, max-age=900');
+    }
+
+    /**
+     * Returns the public blog categories for the archive navigation.
+     */
+    private function activeCategories()
+    {
+        return BlogTerm::query()
+            ->active()
+            ->ofType(BlogTerm::TYPE_CATEGORY)
+            ->whereHas('posts', fn ($query) => $query->published())
+            ->withCount([
+                'posts' => fn ($query) => $query->published(),
+            ])
+            ->orderBy('sort_order')
+            ->orderBy('name')
+            ->limit(8)
+            ->get();
     }
 
     private function publishedPosts()
