@@ -1232,8 +1232,10 @@
 }
 .blog-rss-quiet {
     display: inline-flex;
-    min-height: 2rem;
+    min-width: 44px;
+    min-height: 44px;
     align-items: center;
+    padding-inline: .35rem;
     color: rgba(255,255,255,.78);
     font-size: .68rem;
     font-weight: 700;
