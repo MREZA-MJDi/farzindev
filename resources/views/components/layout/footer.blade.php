@@ -42,7 +42,7 @@
     }
 @endphp
 
-<footer class="fz-global-footer" aria-label="پاورقی وب‌سایت فرزین">
+<footer class="farzin-site-footer fz-global-footer" aria-label="پاورقی وب‌سایت فرزین">
     <x-layout.container class="fz-global-footer__inner">
         <div class="fz-global-footer__brand">
             <a href="{{ route('home') }}" class="fz-global-footer__wordmark" aria-label="فرزین، صفحه اصلی">
