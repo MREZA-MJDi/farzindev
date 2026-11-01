@@ -186,6 +186,7 @@ class ProductionPreflightCommand extends Command
         );
 
         $manifestPath = public_path('build/manifest.json');
+        clearstatcache(true, $manifestPath);
         $manifestExists = is_file($manifestPath);
         $manifestPermissions = $manifestExists ? fileperms($manifestPath) : false;
         $manifestSharedRead = $manifestPermissions !== false
