@@ -255,6 +255,7 @@ class FarzinStorefrontTest extends TestCase
         $this->get(route('categories.index'))
             ->assertOk()
             ->assertSee('fz-category-hero__visual', false)
+            ->assertSee('farzin-category-index-banner', false)
             ->assertSee('data-category-hero', false)
             ->assertSee('id="category-list"', false)
             ->assertSee('انتخاب دسته‌بندی');
@@ -504,6 +505,7 @@ class FarzinStorefrontTest extends TestCase
 
         $this->get(route('categories.show', $category->slug))
             ->assertOk()
+            ->assertSee('farzin-category-detail-banner', false)
             ->assertSee('<meta property="og:title"', false)
             ->assertSee(route('categories.show', $category->slug), false)
             ->assertDontSee('name }} | فرزین')
@@ -526,6 +528,8 @@ class FarzinStorefrontTest extends TestCase
 
         $this->get(route('product.show', $product->slug))
             ->assertOk()
+            ->assertSee('farzin-product-hero', false)
+            ->assertSee('farzin-product-detail-info__title', false)
             ->assertSee('<meta property="product:price:amount"', false)
             ->assertSee('<script type="application/ld+json">', false)
             ->assertSee('"@context":"https://schema.org"', false)

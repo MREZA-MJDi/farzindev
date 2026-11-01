@@ -8,6 +8,9 @@
     --fz-paper-soft: #EEF1F4;
     --fz-ink: #06284F;
     --fz-ink-deep: #041E3E;
+    --fz-charcoal: #27292C;
+    --fz-charcoal-soft: #35383D;
+    --fz-accent-on-dark: #D04451;
     --fz-ink-soft: #17436F;
     --fz-text: #26313B;
     --fz-muted: #647080;
@@ -15,13 +18,13 @@
     --fz-line-strong: #CBD3DD;
     --fz-accent: #7B0D1A;
     --fz-accent-dark: #5F0712;
-    --fz-accent-soft: #F4E8EA;
+    --fz-accent-soft: #EEF1F4;
     --fz-success: #268253;
     --fz-success-soft: #E8F4EE;
     --fz-warning: #A66A17;
     --fz-warning-soft: #F8F0E3;
     --fz-danger: #B42332;
-    --fz-danger-soft: #F8E9EB;
+    --fz-danger-soft: #F0ECEE;
     --fz-info: #1E6598;
     --fz-info-soft: #E8F1F7;
     --fz-metal-silver: #B9C1CA;

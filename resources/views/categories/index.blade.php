@@ -16,7 +16,7 @@
     <div class="overflow-hidden bg-[var(--livora-cream)]">
 
         {{-- HERO --}}
-        <section class="fz-category-hero border-b border-[var(--livora-border)] bg-[var(--livora-white)]">
+        <section class="fz-category-hero farzin-category-index-banner border-b border-[var(--livora-border)] bg-[var(--livora-white)]">
 
             <x-layout.container>
 

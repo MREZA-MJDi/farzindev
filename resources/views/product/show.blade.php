@@ -281,11 +281,11 @@
         {{-- =========================================================
              PRODUCT HERO
         ========================================================== --}}
-        <section>
+        <section class="farzin-product-hero">
 
             <x-layout.container class="product-detail-container">
 
-                <div class="product-detail-grid grid items-start gap-8 py-8 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] lg:gap-12 lg:py-12 xl:gap-16">
+                <div class="farzin-product-hero__layout product-detail-grid grid items-start gap-8 py-8 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] lg:gap-12 lg:py-12 xl:gap-16">
 
                     {{-- Gallery --}}
                     <div class="min-w-0">
@@ -316,7 +316,7 @@
 
                             @if($product->is_featured)
 
-                                <span class="rounded-full border border-[var(--livora-border)] bg-[var(--livora-white)] px-3 py-1.5 text-[10px] font-medium text-[var(--livora-text)]">
+                                <span class="farzin-product-detail-info__badge rounded-full border border-[var(--livora-border)] bg-[var(--livora-white)] px-3 py-1.5 text-[10px] font-medium text-[var(--livora-text)]">
                                 منتخب فرزین
                             </span>
 
@@ -324,7 +324,7 @@
 
                             @if($installmentEnabled)
 
-                                <span class="rounded-full border border-[var(--livora-border)] bg-[var(--livora-white)] px-3 py-1.5 text-[10px] font-medium text-[var(--livora-accent)]">
+                                <span class="farzin-product-detail-info__badge farzin-product-detail-info__badge--installment rounded-full border border-[var(--livora-border)] bg-[var(--livora-white)] px-3 py-1.5 text-[10px] font-medium text-[var(--livora-accent)]">
                                 خرید اقساطی
                             </span>
 
@@ -336,7 +336,7 @@
                         {{-- Category --}}
                         @if($product->category)
 
-                            <p class="mt-6 text-[10px] font-medium uppercase tracking-[0.22em] text-[var(--livora-accent)]">
+                            <p class="farzin-product-detail-info__category mt-6 text-[10px] font-medium uppercase tracking-[0.22em] text-[var(--livora-accent)]">
                                 {{ $product->category->name }}
                             </p>
 
@@ -344,7 +344,7 @@
 
 
                         {{-- Title --}}
-                        <h1 class="mt-3 text-3xl font-semibold leading-tight tracking-tight text-[var(--livora-text)] sm:text-4xl xl:text-5xl">
+                        <h1 class="farzin-product-detail-info__title mt-3 text-3xl font-semibold leading-tight tracking-tight text-[var(--livora-text)] sm:text-4xl xl:text-5xl">
                             {{ $product->name }}
                         </h1>
 

@@ -773,7 +773,7 @@
     direction: ltr;
 }
 .blog-article-kicker span {
-    color: #B44A55;
+    color: var(--blog-burgundy);
 }
 .blog-article-title {
     margin: .7rem 0 0;
