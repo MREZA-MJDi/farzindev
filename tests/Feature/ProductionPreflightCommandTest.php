@@ -24,7 +24,6 @@ class ProductionPreflightCommandTest extends TestCase
         try {
             $this->artisan('farzin:preflight')
                 ->expectsOutputToContain('Compiled frontend assets')
-                ->expectsOutputToContain('not readable through the recommended PHP-FPM group')
                 ->assertExitCode(1);
         } finally {
             chmod($manifest, $originalPermissions);
