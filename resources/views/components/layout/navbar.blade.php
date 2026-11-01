@@ -20,7 +20,7 @@
             </a>
 
             {{-- Desktop navigation --}}
-            <div class="hidden min-w-0 flex-1 items-center justify-center gap-1 lg:flex xl:gap-2">
+            <div class="farzin-site-header__nav hidden min-w-0 flex-1 items-center justify-center gap-1 lg:flex xl:gap-2">
                 <a
                     href="{{ route('home') }}"
                     @class(['farzin-site-header__nav-link', 'is-active' => request()->routeIs('home')])
@@ -102,6 +102,7 @@
                     :aria-expanded="searchOpen.toString()"
                     @click="openSearch($event.currentTarget)"
                     class="farzin-site-header__action hidden h-10 w-10 items-center justify-center rounded-full transition lg:flex xl:hidden"
+                    :class="{ 'is-active': searchOpen }"
                 >
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.7" stroke="currentColor" class="h-[19px] w-[19px]" aria-hidden="true">
                         <circle cx="11" cy="11" r="6.5"/>
