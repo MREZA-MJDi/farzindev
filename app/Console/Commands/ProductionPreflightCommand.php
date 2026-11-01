@@ -241,7 +241,7 @@ class ProductionPreflightCommand extends Command
             $bootstrapCacheReady ? 'OK' : 'FAIL',
             'Laravel bootstrap cache permissions',
             ! $bootstrapCacheWritable
-                ? 'bootstrap/cache is not writable by this PHP process. Run bash scripts/repair-vps-permissions.sh, then use bash scripts/artisan-as-deploy.sh for Artisan commands.'
+                ? 'bootstrap/cache is not writable and searchable by the PHP-FPM group. Run bash scripts/repair-vps-permissions.sh, then use bash scripts/artisan-as-deploy.sh for Artisan commands.'
                 : ($bootstrapCacheReady
                     ? 'Existing Laravel package, service, config, event and route manifests are readable by the PHP-FPM group.'
                     : 'PHP-FPM cannot reliably read: ' . implode(', ', $unreadableBootstrapCacheFiles) . '. Run bash scripts/repair-vps-permissions.sh and use bash scripts/artisan-as-deploy.sh so root-only cache files are not recreated.')
