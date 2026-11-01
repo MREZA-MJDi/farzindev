@@ -31,6 +31,12 @@
                     </div>
 
 
+                    @if(session('warning'))
+                        <div class="mt-6 rounded-2xl border border-amber-200 bg-amber-50 p-4 text-xs leading-7 text-amber-900" role="status">
+                            {{ session('warning') }}
+                        </div>
+                    @endif
+
                     @if($errors->any())
                         <div class="mt-6 rounded-2xl border border-red-200 bg-red-50 p-4">
                             <ul class="space-y-1 text-xs leading-6 text-red-700">
