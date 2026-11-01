@@ -2539,9 +2539,6 @@ body {
 #app > .farzin-site-footer.fz-global-footer a {
     text-decoration: none;
 }
-#app > .farzin-site-footer.fz-global-footer > .home-body #app > .farzin-site-footer.fz-global-footer {
-    margin-block-start: 24px;
-}
 .fz-global-footer__inner {
     display: grid;
     width: 100%;
@@ -4180,7 +4177,7 @@ body.home-body,
 
 /* Shared footer: one neutral plane, legible navy text and restrained proportions. */
 #app > .farzin-site-footer.fz-global-footer {
-    margin-block-start: 0;
+    margin-block-start: 24px;
     padding: 0;
     border: 0;
     border-top: 1px solid #AEB2AF;
