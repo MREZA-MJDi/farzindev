@@ -1674,6 +1674,34 @@ class FarzinStorefrontTest extends TestCase
         $this->actingAs($owner)
             ->get(route('checkout.payment', $order))
             ->assertOk();
+
+        // An unconfigured gateway is a customer-facing preparation state, not a 403.
+        $this->actingAs($owner)
+            ->get(route('checkout.provider-status', ['order' => $order, 'gateway' => 'digipay']))
+            ->assertOk()
+            ->assertSee('اتصال درگاه در حال آماده‌سازی است')
+            ->assertSee('در حال حاضر پرداختی آغاز نشده است');
+
+        // Keep order ownership checks intact; the preview is not public order data.
+        $this->actingAs($otherCustomer)
+            ->get(route('checkout.provider-status', ['order' => $order, 'gateway' => 'digipay']))
+            ->assertForbidden();
+    }
+
+    public function test_admin_dashboard_heartbeat_requires_admin_and_returns_no_store_success(): void
+    {
+        $admin = $this->admin();
+        $customer = $this->customer();
+
+        $this->actingAs($admin)
+            ->get(route('admin.session.heartbeat'))
+            ->assertOk()
+            ->assertJsonPath('ok', true)
+            ->assertHeader('Cache-Control', 'private, no-store');
+
+        $this->actingAs($customer)
+            ->get(route('admin.session.heartbeat'))
+            ->assertForbidden();
     }
 
     public function test_unknown_payment_callback_gateway_is_rejected(): void
