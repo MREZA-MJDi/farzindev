@@ -1,58 +1,58 @@
 :root {
-    /* Ink / pearl monochrome design system */
-    --livora-ink: #08090B;
-    --livora-text: #F3F4F6;
-    --livora-text-soft: #C4C7CE;
-    --livora-charcoal: #17181D;
-    --livora-chocolate: #1B1C21;
-    --livora-chocolate-dark: #08090B;
-    --livora-chocolate-soft: #25272D;
+    /* Farzin storefront — navy / burgundy / porcelain */
+    --livora-ink: #06284F;
+    --livora-text: #18324F;
+    --livora-text-soft: #526B86;
+    --livora-charcoal: #0A315F;
+    --livora-chocolate: #0B3565;
+    --livora-chocolate-dark: #041E3E;
+    --livora-chocolate-soft: #17436F;
 
-    --livora-cream: #0D0E12;
-    --livora-white: #191A1F;
-    --livora-surface: #222329;
-    --livora-sand: #303239;
-    --livora-stone: #A2A5AD;
+    --livora-cream: #F5F7FB;
+    --livora-white: #FFFFFF;
+    --livora-surface: #EDF2F8;
+    --livora-sand: #E2EAF3;
+    --livora-stone: #71839A;
 
-    --livora-accent: #C4C7CE;
-    --livora-accent-dark: #747881;
-    --livora-accent-soft: #292B31;
-    --livora-sage: #D7D9DE;
-    --livora-sage-dark: #9DA1AA;
-    --livora-sage-soft: #24262C;
+    --livora-accent: #7B0D1A;
+    --livora-accent-dark: #5F0712;
+    --livora-accent-soft: #F8E9EC;
+    --livora-sage: #1C568A;
+    --livora-sage-dark: #123D68;
+    --livora-sage-soft: #EAF1F8;
 
-    --livora-border: #35373F;
-    --livora-border-dark: #555962;
+    --livora-border: #DCE5EF;
+    --livora-border-dark: #BBCADA;
 
-    --livora-success: #65A879;
-    --livora-success-soft: #203326;
-    --livora-warning: #D6A45A;
-    --livora-warning-soft: #352A1A;
-    --livora-danger: #D37A70;
-    --livora-danger-soft: #351F1C;
-    --livora-info: #78AFC4;
-    --livora-info-soft: #1C2A32;
+    --livora-success: #268253;
+    --livora-success-soft: #E7F5ED;
+    --livora-warning: #A66A17;
+    --livora-warning-soft: #FBF2E2;
+    --livora-danger: #B42332;
+    --livora-danger-soft: #FBEAEC;
+    --livora-info: #1E6598;
+    --livora-info-soft: #E8F2FA;
 
-    --livora-shadow-sm: 0 3px 12px rgba(0, 0, 0, .22);
-    --livora-shadow-md: 0 10px 28px rgba(0, 0, 0, .30);
-    --livora-shadow-lg: 0 20px 50px rgba(0, 0, 0, .38);
+    --livora-shadow-sm: 0 4px 16px rgba(6, 40, 79, .055);
+    --livora-shadow-md: 0 12px 30px rgba(6, 40, 79, .095);
+    --livora-shadow-lg: 0 24px 56px rgba(6, 40, 79, .14);
 
-    --livora-radius-sm: .55rem;
-    --livora-radius-md: .8rem;
-    --livora-radius-lg: 1.1rem;
-    --livora-radius-xl: 1.35rem;
+    --livora-radius-sm: .625rem;
+    --livora-radius-md: .875rem;
+    --livora-radius-lg: 1.125rem;
+    --livora-radius-xl: 1.375rem;
 
     --livora-duration-fast: 160ms;
-    --livora-duration: 260ms;
-    --livora-duration-slow: 480ms;
-    --livora-container: 1280px;
+    --livora-duration: 240ms;
+    --livora-duration-slow: 420ms;
+    --livora-container: 1320px;
 
-    --livora-metal: #8A8E97;
-    --livora-sunset-burnt: #747881;
-    --livora-sunset-coral: #C4C7CE;
-    --livora-sunset-amber: #E4E6EB;
-    --livora-silver: #A2A6AE;
-    --livora-glow: rgba(236, 238, 242, .06);
+    --livora-metal: #A8B8CA;
+    --livora-sunset-burnt: #8B1C2A;
+    --livora-sunset-coral: #7B0D1A;
+    --livora-sunset-amber: #D5E2EF;
+    --livora-silver: #A8B8CA;
+    --livora-glow: rgba(255, 255, 255, .12);
 }
 
 /* Shared responsive container */
