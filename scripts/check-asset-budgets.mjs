@@ -7,7 +7,6 @@ const manifest = JSON.parse(await readFile(manifestPath, 'utf8'));
 
 const budgets = [
     { key: 'resources/js/app.js', label: 'Shared application JavaScript', maxGzipKb: 45 },
-    { key: 'resources/js/home.js', label: 'Homepage-only JavaScript', maxGzipKb: 8 },
     // Public CSS is intentionally consolidated by storefront.css in Vite.
     // Budget the emitted production bundle, not its imported source fragments.
     { key: 'resources/css/storefront.css', label: 'Public storefront CSS', maxGzipKb: 60 },

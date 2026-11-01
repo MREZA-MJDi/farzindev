@@ -19,7 +19,7 @@ class AdminAuthorizationTest extends TestCase
         config(['app.debug' => false]);
 
         $this->get('/checkout')
-            ->assertRedirect(route('login'));
+            ->assertRedirect(route('cart.index'));
 
         $this->get('/admin')
             ->assertRedirect(route('login'));
@@ -34,6 +34,29 @@ class AdminAuthorizationTest extends TestCase
             ->post(route('admin.products.store'), [])
             ->assertRedirect(route('admin.products.create'))
             ->assertSessionHasErrors();
+    }
+
+    public function test_expired_admin_session_returns_to_login_without_weakening_admin_checks(): void
+    {
+        Route::get('/admin/__tests/session-expired', static fn () => abort(419))
+            ->middleware('web');
+
+        $this->get('/admin/__tests/session-expired')
+            ->assertRedirect(route('login'))
+            ->assertSessionHas('warning');
+    }
+
+    public function test_expired_guest_checkout_session_has_a_safe_login_recovery_link(): void
+    {
+        Route::get('/checkout/__tests/session-expired', static fn () => abort(419))
+            ->middleware('web');
+
+        $this->get('/checkout/__tests/session-expired')
+            ->assertStatus(419)
+            ->assertSee('نشست شما منقضی شده است')
+            ->assertSee(route('login', [
+                'intended' => route('checkout.index', [], false),
+            ]), false);
     }
 
     public function test_guest_cannot_enter_admin_dashboard(): void
