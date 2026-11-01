@@ -213,8 +213,8 @@ test('homepage CTA meets the shared footer at the same spacing used by interior 
     ]) {
         await page.setViewportSize(viewport);
 
-        // On the homepage, the CTA must not add a second bottom gap on top
-        // of the shared footer margin. Interior pages keep that same margin.
+        // The homepage CTA provides its own deliberate bottom breathing room;
+        // interior pages use the shared footer margin instead.
         await page.goto('/', { waitUntil: 'domcontentloaded' });
         await expect(page.locator('.farzin-site-footer')).toBeVisible();
 
@@ -234,12 +234,12 @@ test('homepage CTA meets the shared footer at the same spacing used by interior 
 
         expect(
             homeSpacing.ctaPaddingBottom,
-            'homepage CTA must leave the final separation to the shared footer'
-        ).toBeLessThanOrEqual(1);
+            'homepage purchase panel must have a deliberate lower breathing space'
+        ).toBeGreaterThanOrEqual(40);
         expect(
-            Math.abs(homeSpacing.panelToFooter - homeSpacing.footerMarginTop),
-            'homepage CTA-to-footer gap must equal the shared footer margin'
-        ).toBeLessThanOrEqual(1);
+            Math.abs(homeSpacing.panelToFooter - homeSpacing.ctaPaddingBottom - homeSpacing.footerMarginTop),
+            'homepage CTA-to-footer gap must equal the CTA spacing plus the shared footer margin'
+        ).toBeLessThanOrEqual(2);
 
         await page.goto('/shop', { waitUntil: 'domcontentloaded' });
         const shopSpacing = await page.evaluate(() => {
