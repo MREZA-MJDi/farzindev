@@ -436,6 +436,18 @@
                         </div>
 
 
+                        @if($enabledGateways->isEmpty() && ! $isPaid)
+                            <div class="mt-6 flex flex-col gap-4 rounded-3xl border border-amber-200 bg-amber-50 p-5 text-amber-950 sm:flex-row sm:items-center sm:justify-between" role="status">
+                                <div class="min-w-0">
+                                    <p class="text-sm font-bold">درگاه پرداخت هنوز به‌صورت رسمی متصل نشده است.</p>
+                                    <p class="mt-1 text-xs leading-7">این صفحه در حالت پیش‌نمایش قرار دارد؛ سفارش شما ثبت شده، اما تا زمان تأیید اتصال بانکی هیچ پرداختی آغاز یا مبلغی کسر نمی‌شود.</p>
+                                </div>
+                                <a href="{{ route('checkout.provider-status', ['order' => $order, 'gateway' => 'shaparak']) }}" class="inline-flex shrink-0 items-center justify-center rounded-xl border border-amber-300 bg-white px-4 py-2.5 text-xs font-bold text-amber-950 transition hover:bg-amber-100">
+                                    مشاهده وضعیت اتصال
+                                </a>
+                            </div>
+                        @endif
+
                         @if($enabledGateways->isNotEmpty())
 
                             <div class="mt-6">

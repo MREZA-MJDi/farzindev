@@ -418,6 +418,11 @@ Route::middleware(['auth', 'admin'])
         Route::delete('seo-redirects/{seoRedirect}', [AdminSeoRedirectController::class, 'destroy'])
             ->name('seo-redirects.destroy');
 
+        Route::get('session/heartbeat', fn () => response()
+            ->json(['ok' => true])
+            ->header('Cache-Control', 'private, no-store')
+        )->name('session.heartbeat');
+
         /*
         |--------------------------------------------------------------------------
         | Dashboard

@@ -33,7 +33,7 @@
     <div class="farzin-product-card__media relative overflow-hidden">
         <a
             href="{{ route('product.show', $product->slug) }}"
-            class="farzin-product-card__image-link block overflow-hidden"
+            class="farzin-product-card__image-link block overflow-hidden {{ $variant === 'round' ? 'farzin-product-card__image-link--round' : '' }}"
             aria-label="مشاهده {{ $product->name }}"
         >
             @if($image)

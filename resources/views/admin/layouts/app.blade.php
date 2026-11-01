@@ -117,6 +117,53 @@
 {{-- =========================================================
      SCRIPTS
 ========================================================== --}}
+<script>
+(() => {
+    const heartbeatUrl = @json(route('admin.session.heartbeat'));
+    const loginUrl = @json(route('login'));
+    const idleLimit = 10 * 60 * 1000;
+    let lastInteraction = Date.now();
+
+    ['pointerdown', 'keydown', 'touchstart', 'click', 'scroll'].forEach((eventName) => {
+        document.addEventListener(eventName, () => {
+            lastInteraction = Date.now();
+        }, { passive: true });
+    });
+
+    const refreshSession = async () => {
+        if (document.visibilityState !== 'visible' || Date.now() - lastInteraction > idleLimit) {
+            return;
+        }
+
+        try {
+            const response = await fetch(heartbeatUrl, {
+                method: 'GET',
+                credentials: 'same-origin',
+                cache: 'no-store',
+                headers: {
+                    'Accept': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest',
+                },
+            });
+
+            if ([401, 419].includes(response.status) || response.redirected) {
+                window.location.href = loginUrl + '?session_expired=1';
+            }
+        } catch (error) {
+            // Network interruptions are transient; the next heartbeat retries.
+        }
+    };
+
+    window.setInterval(refreshSession, 4 * 60 * 1000);
+    document.addEventListener('visibilitychange', () => {
+        if (document.visibilityState === 'visible') {
+            lastInteraction = Date.now();
+            refreshSession();
+        }
+    });
+})();
+</script>
+
 @stack('scripts')
 
 @includeIf(

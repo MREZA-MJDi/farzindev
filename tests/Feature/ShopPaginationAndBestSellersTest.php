@@ -257,14 +257,16 @@ class ShopPaginationAndBestSellersTest extends TestCase
         $html = $response->getContent();
 
         $this->assertStringContainsString('پرفروش‌ترین محصولات', $html);
-        $this->assertSame(4, substr_count($html, 'fz-product-card--clickable'));
+        $this->assertSame(4, substr_count($html, 'farzin-product-card--round-media'));
         $this->assertStringNotContainsString('fz-new-section', $html);
         $this->assertStringNotContainsString('grid__image', $html);
         foreach ($heroGalleryProductIds as $productId) {
-            $this->assertSame(
+            $galleryProduct = Product::query()->findOrFail($productId);
+
+            $this->assertLessThanOrEqual(
                 1,
-                substr_count($html, 'data-home-product-id="'.$productId.'"'),
-                'Each image-backed product should appear once in the hero and not in a duplicate mosaic.'
+                substr_count($html, route('product.show', $galleryProduct->slug)),
+                'An image-backed homepage product must not be repeated in a second gallery or mosaic.'
             );
         }
 

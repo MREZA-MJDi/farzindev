@@ -8,9 +8,9 @@ const manifest = JSON.parse(await readFile(manifestPath, 'utf8'));
 const budgets = [
     { key: 'resources/js/app.js', label: 'Shared application JavaScript', maxGzipKb: 45 },
     { key: 'resources/js/home.js', label: 'Homepage-only JavaScript', maxGzipKb: 8 },
-    { key: 'resources/css/app.css', label: 'Shared storefront CSS', maxGzipKb: 32 },
-    { key: 'resources/css/responsive.css', label: 'Shared responsive CSS', maxGzipKb: 8 },
-    { key: 'resources/css/home.css', label: 'Homepage-only CSS', maxGzipKb: 18 },
+    // Public CSS is intentionally consolidated by storefront.css in Vite.
+    // Budget the emitted production bundle, not its imported source fragments.
+    { key: 'resources/css/storefront.css', label: 'Public storefront CSS', maxGzipKb: 60 },
     { key: 'resources/css/admin.css', label: 'Admin-only CSS', maxGzipKb: 24 },
     // The editorial artwork controls add two dashboard-managed image slots.
     // Keep the public magazine stylesheet tightly capped while accounting for them.
