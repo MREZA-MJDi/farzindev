@@ -27,8 +27,8 @@
     --admin-success-bg: #EAF5ED;
     --admin-warning: #8A5A18;
     --admin-warning-bg: #FBF2E3;
-    --admin-danger: #A43C35;
-    --admin-danger-bg: #F9EAE8;
+    --admin-danger: #7B0D1A;
+    --admin-danger-bg: #EEF1F4;
     --admin-info: #315F7D;
     --admin-info-bg: #EAF2F7;
 
@@ -508,11 +508,11 @@ p {
 }
 
 .admin-input-error {
-    border-color: #fca5a5 !important;
+    border-color: var(--admin-danger) !important;
 
     box-shadow:
         0 0 0 3px
-        rgba(185, 28, 28, 0.05);
+        rgba(123, 13, 26, 0.08);
 }
 
 .admin-error {
@@ -894,9 +894,9 @@ p {
 }
 
 .admin-alert-danger {
-    border-color: #fecaca;
+    border-color: var(--admin-danger);
     background: var(--admin-danger-bg);
-    color: #991b1b;
+    color: var(--admin-danger);
 }
 
 .admin-alert-info {
