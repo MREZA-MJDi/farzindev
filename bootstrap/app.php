@@ -127,7 +127,7 @@ return Application::configure(
         // An expired admin session/CSRF token should return the administrator
         // to a clean login state. Do not disable CSRF or relax admin authorization.
         $exceptions->render(function (Throwable $e, Request $request) {
-            $isExpiredSession = $e instanceof \\Illuminate\\Session\\TokenMismatchException
+            $isExpiredSession = $e instanceof \Illuminate\Session\TokenMismatchException
                 || ($e instanceof HttpExceptionInterface && $e->getStatusCode() === 419);
 
             if (! $isExpiredSession || ! $request->is('admin', 'admin/*')) {
