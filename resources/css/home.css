@@ -2,7 +2,7 @@
     color-scheme: light;
     --fz-page: #F2F2F2;
     --fz-paper: #FFFFFF;
-    --fz-paper-soft: #EEEEEA;
+    --fz-paper-soft: #EEEEEE;
     --fz-ink: #06284F;
     --fz-text: #26313B;
     --fz-muted: #6E747A;
@@ -1392,7 +1392,7 @@ body.home-body {
     min-width: 0;
     overflow: hidden;
     border-radius: 1.25rem;
-    background: #F0F0EC;
+    background: #EEEEEE;
 }
 .fz-home-hero__slide[hidden] { display: none !important; }
 .fz-home-hero__slide {
@@ -1412,7 +1412,7 @@ body.home-body {
     aspect-ratio: 1.48 / 1;
     place-items: center;
     overflow: hidden;
-    background: radial-gradient(ellipse at 50% 46%, #FFFFFF 0%, #F6F6F2 48%, #ECECE7 100%);
+    background: radial-gradient(ellipse at 50% 46%, #FFFFFF 0%, #F6F6F6 48%, #E8E8E8 100%);
 }
 .fz-home-hero__product-image img {
     display: block;
