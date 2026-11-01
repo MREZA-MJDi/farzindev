@@ -86,7 +86,11 @@ body.home-body {
     -webkit-tap-highlight-color: transparent;
 }
 
-.storefront-content :where(input, textarea, select) {
+.storefront-content :where(
+    input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]):not([type="file"]):not([type="submit"]):not([type="button"]):not([type="reset"]),
+    textarea,
+    select
+) {
     min-height: 46px;
     border-color: var(--livora-border);
     border-radius: 12px;
@@ -94,7 +98,11 @@ body.home-body {
     background-color: #FFFFFF;
 }
 
-.storefront-content :where(input, textarea, select):focus {
+.storefront-content :where(
+    input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]):not([type="file"]):not([type="submit"]):not([type="button"]):not([type="reset"]),
+    textarea,
+    select
+):focus {
     border-color: var(--livora-accent);
     box-shadow: 0 0 0 3px rgba(123, 13, 26, .10);
 }
@@ -1524,28 +1532,6 @@ body.home-body {
     .fz-hero-product__media {
         min-height: 230px;
     }
-}
-
-/* The shared form token must not turn checkboxes/radios into full-height text fields. */
-.storefront-content :where(
-    input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]):not([type="file"]):not([type="submit"]):not([type="button"]):not([type="reset"]),
-    textarea,
-    select
-) {
-    min-height: 46px;
-    border-color: var(--livora-border);
-    border-radius: 12px;
-    color: var(--livora-text);
-    background-color: #FFFFFF;
-}
-
-.storefront-content :where(
-    input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]):not([type="file"]):not([type="submit"]):not([type="button"]):not([type="reset"]),
-    textarea,
-    select
-):focus {
-    border-color: var(--livora-accent);
-    box-shadow: 0 0 0 3px rgba(123, 13, 26, .10);
 }
 
 /* Blog pages share the Farzin palette instead of carrying the retired dark theme. */
