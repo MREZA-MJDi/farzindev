@@ -81,6 +81,14 @@ class HomeController extends Controller
             fn (Product $product): bool => (int) ($product->sold_quantity ?? 0) > 0
         );
 
+        // Never label zero-sale catalogue items as best sellers. Keep the
+        // six-product editorial fallback only when the store has no paid sales.
+        if ($hasBestSellerSales) {
+            $featuredProducts = $featuredProducts
+                ->filter(fn (Product $product): bool => (int) ($product->sold_quantity ?? 0) > 0)
+                ->values();
+        }
+
         $blogPosts = BlogPost::query()
             ->published()
             ->indexable()
