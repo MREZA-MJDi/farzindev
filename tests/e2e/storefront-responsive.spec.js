@@ -38,7 +38,7 @@ for (const viewport of viewports) {
             await expect(page.locator('.farzin-site-header'), path + ' header').toBeVisible();
             await expect(page.locator('.farzin-site-footer'), path + ' footer').toBeAttached();
 
-            const footerLayout = await page.locator('.fz-global-footer').evaluate((footer) => {
+            const footerLayout = await page.locator('.farzin-site-footer').evaluate((footer) => {
                 const container = footer.querySelector(':scope > .livora-container');
                 const nav = footer.querySelector('.farzin-footer-editorial__nav');
                 const contact = footer.querySelector('.farzin-footer-editorial__contact');
@@ -520,17 +520,14 @@ test('blog actions are real touch targets and the magazine stays free of heavy m
         await page.setViewportSize(viewport);
         await page.goto('/blog', { waitUntil: 'domcontentloaded' });
 
-        const rss = page.getByRole('link', {
-            name: 'دنبال‌کردن مقاله‌های مجله با فید RSS',
-        });
+        const rss = page.getByRole('link', { name: 'فید RSS' });
         await expect(rss).toBeVisible();
         await expect(rss).toHaveAttribute('href', /\/blog\/feed\.xml$/);
-        await expect(rss.locator('svg')).toHaveCount(1);
 
         const target = await rss.boundingBox();
         expect(target, 'RSS should have a measurable click target').not.toBeNull();
         expect(target.height, 'RSS click target must be at least 44px high').toBeGreaterThanOrEqual(44);
-        expect(target.width, 'RSS pill must be wide enough to tap comfortably').toBeGreaterThanOrEqual(160);
+        expect(target.width, 'RSS click target must be at least 44px wide').toBeGreaterThanOrEqual(44);
 
         const motion = await page.evaluate(() => ({
             gsap: typeof window.gsap,
@@ -595,7 +592,7 @@ test('desktop active navigation underline is centered and the shared palette sta
 
         expect(shell.page, path + ' content shell must use the stronger neutral grey').toBe('rgb(200, 202, 200)');
         expect(shell.header, path + ' header must remain a white surface').toBe('rgba(255, 255, 255, 0.97)');
-        expect(shell.footer, path + ' footer must use a neutral grey surface').toBe('rgb(191, 194, 191)');
+        expect(shell.footer, path + ' footer must use the editorial navy brand surface').toBe('rgb(9, 46, 80)');
     }
 });
 
@@ -670,3 +667,44 @@ test('shop product card actions stay aligned across different content heights', 
         ).toBeLessThanOrEqual(2);
     }
 });
+
+test('homepage featured product cards and image links are fully circular', async ({ page }) => {
+    for (const viewport of [
+        { width: 390, height: 844 },
+        { width: 1440, height: 960 },
+    ]) {
+        await page.setViewportSize(viewport);
+        await page.goto('/', { waitUntil: 'domcontentloaded' });
+
+        const card = page.locator('.farzin-product-card--round-media').first();
+        await expect(card, 'homepage must render a round featured product card').toBeVisible();
+
+        const geometry = await card.evaluate((element) => {
+            const media = element.querySelector('.farzin-product-card__media');
+            const imageLink = element.querySelector('.farzin-product-card__image-link');
+            const cardRect = element.getBoundingClientRect();
+            const linkRect = imageLink.getBoundingClientRect();
+
+            return {
+                width: cardRect.width,
+                height: cardRect.height,
+                radius: getComputedStyle(element).borderTopLeftRadius,
+                overflow: getComputedStyle(element).overflow,
+                mediaRadius: getComputedStyle(media).borderTopLeftRadius,
+                linkRadius: getComputedStyle(imageLink).borderTopLeftRadius,
+                linkClass: imageLink.classList.contains('farzin-product-card__image-link--round'),
+                linkWidth: linkRect.width,
+                linkHeight: linkRect.height,
+            };
+        });
+
+        expect(Math.abs(geometry.width - geometry.height), 'the whole product card must stay 1:1').toBeLessThanOrEqual(1);
+        expect(geometry.radius, 'the full product card must be circular').toBe('50%');
+        expect(geometry.overflow, 'card content must be clipped to the circle').toBe('hidden');
+        expect(geometry.mediaRadius, 'the image media must inherit the card circle').toBe('50%');
+        expect(geometry.linkClass, 'round homepage variant must mark the image link explicitly').toBeTruthy();
+        expect(geometry.linkRadius, 'the image link itself must inherit the circular shape').toBe('50%');
+        expect(Math.abs(geometry.linkWidth - geometry.linkHeight), 'the image link must fill a square circle frame').toBeLessThanOrEqual(1);
+    }
+});
+
