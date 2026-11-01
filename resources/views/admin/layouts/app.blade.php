@@ -156,7 +156,10 @@
 
     window.setInterval(refreshSession, 4 * 60 * 1000);
     document.addEventListener('visibilitychange', () => {
-        if (document.visibilityState === 'visible') refreshSession();
+        if (document.visibilityState === 'visible') {
+            lastInteraction = Date.now();
+            refreshSession();
+        }
     });
 })();
 </script>
