@@ -74,8 +74,8 @@ Create `.env` only on a fresh installation:
 
 ```bash
 cd /var/www/farzin
-cp .env.example .env
-nano .env
+sudo -u deploy cp .env.example .env
+sudo -u deploy nano .env
 ```
 
 Set at least these values using the real domain and database credentials:
@@ -124,10 +124,12 @@ The release artifact includes Composer's production dependencies and compiled Vi
 
 ```bash
 cd /var/www/farzin
-composer install --no-dev --prefer-dist --no-interaction --optimize-autoloader
-[ -n "$(grep '^APP_KEY=' .env | cut -d '=' -f2-)" ] || php artisan key:generate
-php artisan migrate --force
-php artisan storage:link
+# The CI release archive already contains production vendor/ and public/build/.
+# Do not run Composer or npm builds as root on the live VPS.
+sudo bash scripts/repair-vps-permissions.sh
+[ -n "$(grep '^APP_KEY=' .env | cut -d '=' -f2-)" ] || bash scripts/artisan-as-deploy.sh key:generate
+bash scripts/artisan-as-deploy.sh migrate --force
+bash scripts/artisan-as-deploy.sh storage:link
 ```
 
 Run `php artisan key:generate` only when `APP_KEY` is blank for a new installation. For a database that already has real data, back it up first and run migrations only after reviewing them.
@@ -189,28 +191,30 @@ After environment values, migrations and the initial seeding are complete:
 
 ```bash
 cd /var/www/farzin
-php artisan optimize:clear
-php artisan config:cache
-php artisan route:cache
-php artisan view:cache
-php artisan about
+bash scripts/artisan-as-deploy.sh optimize:clear
+bash scripts/artisan-as-deploy.sh config:cache
+bash scripts/artisan-as-deploy.sh route:cache
+bash scripts/artisan-as-deploy.sh view:cache
+bash scripts/artisan-as-deploy.sh about
 ```
 
 Verify that PHP-FPM can write to `storage/` and `bootstrap/cache/`. If a cache command fails, do not continue to live traffic until the error is resolved. The CI workflow checks these cache commands, but server permissions and environment values still need verification.
 
-Run production preflight as the same account that serves PHP requests. On the standard Ubuntu Nginx/PHP-FPM pool this is `www-data`; adjust it if the configured FPM pool uses a different user:
+Run production preflight through the deployment wrapper:
 
 ```bash
-sudo -u www-data php artisan farzin:preflight
+bash scripts/artisan-as-deploy.sh farzin:preflight
 ```
 
-This check must confirm that `public/build/manifest.json` is readable by the PHP-FPM group. Do not run it only as `root`: root can read owner-only files such as mode `0600`, which the web worker cannot. With the recommended `deploy:www-data` ownership, keep the manifest at `0640` or more permissive. Build assets in CI and deploy the release archive; do not run `npm run build` as root on the live VPS.
+The preflight checks both Vite's manifest and Laravel's generated `bootstrap/cache/packages.php`, `services.php`, config, event and route manifests. It fails when an existing manifest is owner-only or the cache directory is not writable. This catches the common outage caused by running `php artisan` as root with a restrictive umask: Laravel creates `root:root 0700` cache files, then PHP-FPM cannot register providers and pages fail with misleading `Target class [request|view] does not exist` errors.
+
+**Never run Artisan directly as root.** Use `bash scripts/artisan-as-deploy.sh <command>`; it switches to `deploy` when invoked by root and sets `umask 0007`, so new cache files inherit the `www-data` group and stay readable by PHP-FPM. The CI release already contains Composer's production dependencies and compiled frontend assets; install/build them in CI, not as root on the VPS.
 
 
 Invoke Laravel's scheduler every minute with this cron entry under the deployment/service account that can read the app and write its storage directories. The scheduler currently runs `orders:expire-unpaid --minutes=1440` hourly, so stale reservations can remain until the next hourly run; the cron itself must still invoke `schedule:run` every minute:
 
 ```cron
-* * * * * cd /var/www/farzin && /usr/bin/php artisan schedule:run >> /dev/null 2>&1
+* * * * * cd /var/www/farzin && /bin/bash scripts/artisan-as-deploy.sh schedule:run >> /dev/null 2>&1
 ```
 
 The app currently uses the synchronous queue in this recommended configuration. If you change `QUEUE_CONNECTION` to `database` or `redis`, provision and supervise a queue worker rather than assuming queued jobs run automatically.
