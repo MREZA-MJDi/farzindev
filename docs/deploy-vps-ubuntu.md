@@ -40,33 +40,26 @@ Store the real database password only in the server's private `.env` file. Do no
 
 ## 2. Upload the release
 
-Wait for the relevant GitHub Actions run to finish successfully, then download its **`farzin-vps-release`** artifact. Upload the archive to the VPS over SSH/SCP, for example:
+Create a dedicated non-root deployment account once (replace `deploy` consistently if you use another account), and add it to the PHP-FPM group:
+
+```bash
+id deploy >/dev/null 2>&1 || sudo adduser --disabled-password --gecos "" deploy
+sudo usermod -aG www-data deploy
+```
+
+Upload the successful GitHub Actions `farzin-vps-release` archive and extract it into the app directory:
 
 ```bash
 scp farzin-vps-release.zip deploy@YOUR_SERVER:/tmp/
-```
-
-Create the application directory and extract it. Use your own non-root deployment account for file ownership:
-
-```bash
 sudo mkdir -p /var/www/farzin
 sudo unzip -q /tmp/farzin-vps-release.zip -d /var/www/farzin
 sudo chown -R deploy:www-data /var/www/farzin
-sudo find /var/www/farzin -type d -exec chmod 0750 {} \;
-sudo find /var/www/farzin -type f -exec chmod 0640 {} \;
-sudo install -d -o deploy -g www-data -m 2770 \
-  /var/www/farzin/storage/app/public \
-  /var/www/farzin/storage/framework/cache/data \
-  /var/www/farzin/storage/framework/sessions \
-  /var/www/farzin/storage/framework/views \
-  /var/www/farzin/storage/logs \
-  /var/www/farzin/bootstrap/cache
-sudo chown -R deploy:www-data /var/www/farzin/storage /var/www/farzin/bootstrap/cache
-sudo chmod -R ug+rwX /var/www/farzin/storage /var/www/farzin/bootstrap/cache
-sudo chmod -R g+s /var/www/farzin/storage /var/www/farzin/bootstrap/cache
+sudo find /var/www/farzin -type d -exec chmod 0750 {} \\;
+sudo find /var/www/farzin -type f -exec chmod 0640 {} \\;
+sudo bash /var/www/farzin/scripts/repair-vps-permissions.sh
 ```
 
-If this is a later release, preserve the existing `.env` and uploaded files under `storage/app/public`; do not blindly extract a new archive over them. Back up the database and uploads before changing the existing release.
+For later releases, preserve the existing `.env` and uploaded files under `storage/app/public`; do not blindly extract over them. Back up the database and uploads before changing the existing release. Run the repair script after each extraction or root-owned Git update. It only operates inside this Farzin project, does not follow the `public/storage` symlink, makes source files readable by the FPM group, keeps `.env` at `0640`, and sets `storage/` plus `bootstrap/cache/` to `deploy:www-data` with setgid directories (`2770`) and group-writable files (`0660`).
 
 ## 3. Configure the environment
 
@@ -120,7 +113,7 @@ Set `ADMIN_NAME`, `ADMIN_EMAIL` and a unique `ADMIN_PASSWORD` only if this is a 
 
 ## 4. Install, migrate and seed carefully
 
-The release artifact includes Composer's production dependencies and compiled Vite assets; these commands verify/rebuild dependencies for the target PHP runtime and prepare Laravel:
+The CI release artifact already contains Composer's production dependencies and compiled Vite assets. Keep dependency installation and frontend builds in CI; do not run Composer or npm as root on the live VPS. After configuring `.env`, repair permissions and use the deployment wrapper for all Artisan commands:
 
 ```bash
 cd /var/www/farzin
@@ -134,7 +127,7 @@ bash scripts/artisan-as-deploy.sh storage:link
 
 Run `php artisan key:generate` only when `APP_KEY` is blank for a new installation. For a database that already has real data, back it up first and run migrations only after reviewing them.
 
-On a **new, empty** production database only, run `php artisan db:seed --force` after setting `ADMIN_EMAIL` and a unique `ADMIN_PASSWORD`. In production the seeder creates the configured administrator and core categories; it intentionally does **not** run `ProductSeeder` or create preview products. Add verified commercial products through the admin or an approved import. After the initial admin has been created, remove `ADMIN_PASSWORD` from `.env` and rerun `php artisan config:cache` so the one-time credential is also removed from cached configuration.
+On a **new, empty** production database only, run `bash scripts/artisan-as-deploy.sh db:seed --force` after setting `ADMIN_EMAIL` and a unique `ADMIN_PASSWORD`. In production the seeder creates the configured administrator and core categories; it intentionally does **not** run `ProductSeeder` or create preview products. Add verified commercial products through the admin or an approved import. After the initial admin has been created, remove `ADMIN_PASSWORD` from `.env` and rerun `bash scripts/artisan-as-deploy.sh config:cache` so the one-time credential is also removed from cached configuration.
 
 Set upload limits in the PHP-FPM configuration to at least `upload_max_filesize=26M` and `post_max_size=28M` to support the application's 20 MB image limit. Reload PHP-FPM after changing these settings.
 
@@ -217,7 +210,7 @@ Invoke Laravel's scheduler every minute with this cron entry under the deploymen
 * * * * * cd /var/www/farzin && /bin/bash scripts/artisan-as-deploy.sh schedule:run >> /dev/null 2>&1
 ```
 
-The app currently uses the synchronous queue in this recommended configuration. If you change `QUEUE_CONNECTION` to `database` or `redis`, provision and supervise a queue worker rather than assuming queued jobs run automatically.
+Run the cron entry as the `deploy` account. The wrapper sets the safe umask and invokes Artisan as that account. The app currently uses the synchronous queue in this recommended configuration. If you change `QUEUE_CONNECTION` to `database` or `redis`, provision and supervise a queue worker rather than assuming queued jobs run automatically.
 
 ## Hosting several independent projects on this VPS
 
