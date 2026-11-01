@@ -2042,7 +2042,7 @@ footer:not(.fz-global-footer) a:hover { color: var(--livora-sage) !important; }
 .fz-contact-alert p { margin: 0; }
 .fz-contact-alert--success { grid-template-columns: auto 1fr; color: #92C5A1; border: 1px solid #355C41; background: #203326; }
 .fz-contact-alert--success > span { font-size: 1.15rem; }
-.fz-contact-alert--error { color: #E0ADA5; border: 1px solid #3d3d3d; background: #2B1E1B; }
+.fz-contact-alert--error { color: #E7E9EC; border: 1px solid #3d3d3d; background: #2B1E1B; }
 .fz-contact-alert ul { margin: .25rem 0 0; padding-inline-start: 1.25rem; list-style: disc; }
 .fz-contact-bottom { padding-block: 0 clamp(2.5rem, 5vw, 4.5rem); background: var(--livora-cream); }
 .fz-contact-bottom__inner { display: flex; align-items: center; justify-content: space-between; gap: 2rem; padding: clamp(1.5rem, 3.5vw, 2.8rem); border: 1px solid rgba( 162, 162, 162, .16); border-radius: 1.65rem; background: var(--livora-white); box-shadow: var(--livora-shadow-sm); }

@@ -29,7 +29,7 @@
         {{-- =========================================================
              CATEGORY HERO
         ========================================================== --}}
-        <section class="border-b border-[var(--livora-border)] bg-[var(--livora-white)]">
+        <section class="farzin-category-detail-banner border-b border-[var(--livora-border)] bg-[var(--livora-white)]">
 
             <x-layout.container>
 
@@ -69,17 +69,17 @@
 
                         <div class="max-w-3xl">
 
-                            <p class="text-[10px] font-medium uppercase tracking-[0.22em] text-[var(--livora-accent)]">
+                            <p class="farzin-category-detail__eyebrow text-[10px] font-medium uppercase tracking-[0.22em] text-[var(--livora-accent)]">
                                 COLLECTION
                             </p>
 
-                            <h1 class="mt-3 text-4xl font-semibold tracking-tight sm:text-5xl">
+                            <h1 class="farzin-category-detail__title mt-3 text-4xl font-semibold tracking-tight sm:text-5xl">
                                 {{ $category->name }}
                             </h1>
 
                             @if($category->description)
 
-                                <div class="mt-5 max-w-2xl text-sm leading-8 text-[var(--livora-stone)]">
+                                <div class="farzin-category-detail__description mt-5 max-w-2xl text-sm leading-8 text-[var(--livora-stone)]">
                                     {{ $category->description }}
                                 </div>
 
