@@ -751,7 +751,10 @@ class FarzinStorefrontTest extends TestCase
             ->assertSee('موجود در انبار')
             ->assertSee('farzin-product-detail-info', false)
             ->assertSee('data-stock-available="true"', false)
-            ->assertSee('روش پرداخت در مرحله ثبت سفارش');
+            ->assertSee('روش پرداخت در مرحله ثبت سفارش')
+            ->assertSee(':type="$type"', false)
+            ->assertSee('@touchstart.passive="startTouch($event)"', false)
+            ->assertSee('@touchend.passive="endTouch($event)"', false);
     }
 
     public function test_customer_can_add_product_to_cart_and_repeated_adds_merge(): void
