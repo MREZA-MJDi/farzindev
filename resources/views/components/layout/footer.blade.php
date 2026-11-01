@@ -1,3 +1,5 @@
+@props(['storefrontContact' => []])
+
 <footer class="farzin-site-footer farzin-site-footer--editorial">
     <x-layout.container class="farzin-site-footer__container">
         @php

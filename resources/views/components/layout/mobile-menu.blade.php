@@ -1,3 +1,5 @@
+@props(['storefrontContact' => []])
+
 <div
     x-show="mobileOpen"
     x-cloak
