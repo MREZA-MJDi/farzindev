@@ -143,7 +143,7 @@
                     href="{{ route('cart.index') }}"
                     aria-label="سبد خرید"
                     title="سبد خرید"
-                    class="farzin-site-header__action group relative hidden h-10 w-10 items-center justify-center rounded-full transition lg:flex"
+                    @class(['farzin-site-header__action group relative hidden h-10 w-10 items-center justify-center rounded-full transition lg:flex', 'is-active' => request()->routeIs('cart.*', 'checkout.*')])
                 >
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.7" stroke="currentColor" class="h-[19px] w-[19px] transition group-hover:scale-105" aria-hidden="true">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M3 3.75h1.6c.5 0 .94.35 1.06.84L6.3 7.5h13.1l-1.6 7.1H7.5L6.3 7.5M8.5 19.2a.9.9 0 1 1-1.8 0 .9.9 0 0 1 1.8 0Zm9.1 0a.9.9 0 1 1-1.8 0 .9.9 0 0 1 1.8 0Z"/>
