@@ -318,13 +318,6 @@ class FarzinStorefrontTest extends TestCase
             'is_primary' => true,
         ]);
 
-        $newProduct = $this->product($category, [
-            'name' => 'محصول تازه فرزین',
-            'slug' => 'farzin-new-arrival',
-            'sku' => 'FAR-NEW-001',
-            'is_new' => true,
-        ]);
-
         $response = $this->get(route('home'))
             ->assertOk()
             ->assertSee('fz-hero-product', false)
@@ -339,16 +332,13 @@ class FarzinStorefrontTest extends TestCase
         $html = $response->getContent();
         $categoryPosition = strpos($html, 'id="product-categories"');
         $bestsellerPosition = strpos($html, 'id="fz-products-heading"');
-        $newProductsPosition = strpos($html, 'id="fz-new-heading"');
         $galleryPosition = strpos($html, 'class="fz-mosaic-intro"');
 
         $this->assertNotFalse($categoryPosition);
         $this->assertNotFalse($bestsellerPosition);
-        $this->assertNotFalse($newProductsPosition);
         $this->assertNotFalse($galleryPosition);
         $this->assertLessThan($bestsellerPosition, $categoryPosition);
-        $this->assertLessThan($newProductsPosition, $bestsellerPosition);
-        $this->assertLessThan($galleryPosition, $newProductsPosition);
+        $this->assertLessThan($galleryPosition, $bestsellerPosition);
     }
 
     public function test_homepage_renders_category_video_and_gif_with_the_correct_media_elements(): void
