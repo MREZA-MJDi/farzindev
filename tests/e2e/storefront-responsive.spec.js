@@ -38,21 +38,14 @@ for (const viewport of viewports) {
             await expect(page.locator('.farzin-site-header'), path + ' header').toBeVisible();
             await expect(page.locator('.farzin-site-footer'), path + ' footer').toBeAttached();
 
-            const footerLayout = await page.locator('.farzin-site-footer').evaluate((footer) => {
+            const footerLayout = await page.locator('.fz-global-footer').evaluate((footer) => {
                 const container = footer.querySelector(':scope > .livora-container');
-                const main = footer.querySelector('.farzin-site-footer__main');
+                const brand = footer.querySelector('.fz-global-footer__wordmark > span');
+                const nav = footer.querySelector('.fz-global-footer__nav');
+                const bottom = footer.querySelector('.fz-global-footer__bottom');
+                const socials = Array.from(footer.querySelectorAll('.fz-global-footer__socials a'));
                 const footerRect = footer.getBoundingClientRect();
                 const containerRect = container.getBoundingClientRect();
-                const mainStyle = window.getComputedStyle(main);
-                const footerHeadings = Array.from(footer.querySelectorAll('.farzin-site-footer__heading'));
-                const headingStyles = footerHeadings.map((heading) => {
-                    const style = window.getComputedStyle(heading);
-                    return [style.fontSize, style.fontWeight, style.lineHeight, style.letterSpacing].join('|');
-                });
-                const mainHeadingTops = Array.from(main.querySelectorAll('.farzin-site-footer__heading'))
-                    .map((heading) => heading.getBoundingClientRect().top);
-                const trustHeadingTops = Array.from(footer.querySelectorAll('.farzin-site-footer__trust .farzin-site-footer__heading'))
-                    .map((heading) => heading.getBoundingClientRect().top);
 
                 return {
                     footerWidth: footerRect.width,
@@ -60,53 +53,25 @@ for (const viewport of viewports) {
                     containerWidth: containerRect.width,
                     containerLeft: containerRect.left,
                     containerRight: containerRect.right,
-                    mainClientWidth: main.clientWidth,
-                    mainScrollWidth: main.scrollWidth,
-                    mainPaddingBlock: [Number.parseFloat(mainStyle.paddingTop), Number.parseFloat(mainStyle.paddingBottom)],
-                    trustPaddingBlock: (() => {
-                        const trust = footer.querySelector('.farzin-site-footer__trust');
-                        const trustStyle = window.getComputedStyle(trust);
-                        return [Number.parseFloat(trustStyle.paddingTop), Number.parseFloat(trustStyle.paddingBottom)];
-                    })(),
-                    columns: mainStyle.gridTemplateColumns.trim().split(' ').filter(Boolean).length,
-                    footerHeadingCount: footerHeadings.length,
-                    footerHeadingStyleCount: new Set(headingStyles).size,
-                    mainHeadingTopSpread: mainHeadingTops.length ? Math.max(...mainHeadingTops) - Math.min(...mainHeadingTops) : 999,
-                    trustHeadingTopSpread: trustHeadingTops.length ? Math.max(...trustHeadingTops) - Math.min(...trustHeadingTops) : 999,
+                    containerClientWidth: container.clientWidth,
+                    containerScrollWidth: container.scrollWidth,
+                    brandText: brand.textContent.trim(),
+                    navLinkCount: nav.querySelectorAll('a').length,
+                    socialLinkCount: socials.length,
+                    socialLinksAreIconOnly: socials.every((link) => link.textContent.trim() === '' && Boolean(link.querySelector('svg')) && Boolean(link.getAttribute('aria-label'))),
+                    bottomDirection: window.getComputedStyle(bottom).flexDirection,
                 };
             });
 
-            expect(
-                Math.abs(footerLayout.footerWidth - footerLayout.viewportWidth),
-                path + ' footer surface must span the viewport'
-            ).toBeLessThanOrEqual(1);
-            expect(
-                footerLayout.containerWidth,
-                path + ' footer content must stay within the shared 1280px grid'
-            ).toBeLessThanOrEqual(1281);
-            expect(
-                Math.abs(footerLayout.containerLeft - (footerLayout.viewportWidth - footerLayout.containerRight)),
-                path + ' footer content must remain horizontally centered'
-            ).toBeLessThanOrEqual(1);
-            expect(
-                footerLayout.mainScrollWidth - footerLayout.mainClientWidth,
-                path + ' footer columns must not overflow their grid'
-            ).toBeLessThanOrEqual(1);
-
-            const expectedFooterColumns = viewport.width < 768 ? 1 : (viewport.width < 1200 ? 2 : 4);
-            expect(
-                footerLayout.columns,
-                path + ' footer must use the expected responsive column count'
-            ).toBe(expectedFooterColumns);
-
-            expect(footerLayout.footerHeadingCount, path + ' footer must expose all six aligned section headings').toBe(6);
-            expect(Math.max(...footerLayout.mainPaddingBlock), path + ' footer main section must use the shared compact vertical scale').toBeLessThanOrEqual(52);
-            expect(Math.max(...footerLayout.trustPaddingBlock), path + ' footer trust strip must not add excessive vertical space').toBeLessThanOrEqual(16);
-            expect(footerLayout.footerHeadingStyleCount, path + ' footer headings must share one typography scale').toBe(1);
-            if (viewport.width >= 1200) {
-                expect(footerLayout.mainHeadingTopSpread, path + ' desktop main footer headings must share one row').toBeLessThanOrEqual(1);
-                expect(footerLayout.trustHeadingTopSpread, path + ' desktop trust headings must share one row').toBeLessThanOrEqual(1);
-            }
+            expect(Math.abs(footerLayout.footerWidth - footerLayout.viewportWidth), path + ' footer surface must span the viewport').toBeLessThanOrEqual(1);
+            expect(footerLayout.containerWidth, path + ' footer content must stay within the shared 1280px grid').toBeLessThanOrEqual(1281);
+            expect(Math.abs(footerLayout.containerLeft - (footerLayout.viewportWidth - footerLayout.containerRight)), path + ' footer content must remain horizontally centered').toBeLessThanOrEqual(1);
+            expect(footerLayout.containerScrollWidth - footerLayout.containerClientWidth, path + ' footer content must not overflow horizontally').toBeLessThanOrEqual(1);
+            expect(footerLayout.brandText, path + ' footer must retain the Farzin wordmark').toBe('فرزین');
+            expect(footerLayout.navLinkCount, path + ' footer must expose six primary links').toBe(6);
+            expect(footerLayout.socialLinkCount, path + ' footer must show no more than three configured social links').toBeLessThanOrEqual(3);
+            expect(footerLayout.socialLinksAreIconOnly, path + ' social links must be accessible icon-only controls').toBe(true);
+            expect(footerLayout.bottomDirection, path + ' footer bottom row must stack on phones').toBe(viewport.width <= 640 ? 'column-reverse' : 'row');
 
             if (viewport.width < 1024) {
                 await expect(page.locator('.farzin-mobile-nav'), path + ' mobile navigation').toBeVisible();
