@@ -49,10 +49,13 @@
                 <span>تومان</span>
             </p>
             <a
-                class="fz-product-card__arrow"
+                class="fz-product-card__cta"
                 href="{{ route('product.show', $product->slug) }}"
                 aria-label="مشاهده {{ $product->name }}"
-            >←</a>
+            >
+                <span>مشاهده محصول</span>
+                <span class="fz-product-card__arrow" aria-hidden="true">←</span>
+            </a>
         </div>
     </div>
 </article>
