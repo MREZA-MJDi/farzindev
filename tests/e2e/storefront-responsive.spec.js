@@ -159,62 +159,28 @@ test('shop mobile filters apply together, scroll safely and preserve the selecte
     await expect(page).toHaveURL(/installment=1/);
 });
 
-test('homepage category GIF preview starts on hover and the first touch tap', async ({ page }) => {
+test('homepage category cards link to their category without autoplay media', async ({ page }) => {
     await page.goto('/', { waitUntil: 'domcontentloaded' });
 
-    // Deterministic, network-free animated-media fixture. Load the same preview
-    // module used by Vite after the fixture exists so this test checks real
-    // pointer/touch event behavior rather than only checking the Blade markup.
-    await page.evaluate(() => {
-        const card = document.createElement('a');
-        card.id = 'category-preview-test-fixture';
-        card.href = '/categories';
-        card.className = 'fz-category-card';
-        card.setAttribute('data-farzin-gif-card', '');
-        card.innerHTML = `
-            <span class="fz-category-card__art">
-                <img class="fz-category-card__image" alt="Category cover">
-                <img
-                    data-farzin-category-gif
-                    data-farzin-gif-src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs="
-                    alt=""
-                >
-            </span>
-        `;
-        document.body.appendChild(card);
-    });
-    const fixture = page.locator('#category-preview-test-fixture');
+    const cards = page.locator('.fz-category-card--editorial');
+    const count = await cards.count();
 
-    await page.addScriptTag({ path: resolve(process.cwd(), 'resources/js/category-gif-preview.js') });
+    expect(count).toBeLessThanOrEqual(3);
+    expect(count).toBeGreaterThan(0);
 
-    await page.evaluate(() => {
-        document.querySelector('#category-preview-test-fixture').dispatchEvent(new PointerEvent('pointerenter', {
-            bubbles: false,
-            pointerType: 'mouse',
-        }));
-    });
+    const categoryCards = await cards.evaluateAll((items) => items.map((card) => ({
+        href: card.getAttribute('href'),
+        hasVideo: Boolean(card.querySelector('video')),
+        hasAnimatedImage: Boolean(card.querySelector('[data-farzin-category-gif], [data-farzin-category-video]')),
+        hasLegacyPreviewHandler: card.hasAttribute('data-farzin-gif-card'),
+    })));
 
-    await expect(fixture).toHaveClass(/is-gif-previewing/);
-
-    // Reset the preview and exercise the mobile interaction: first tap arms
-    // the preview; a second tap is allowed to follow the category link.
-    await page.evaluate(() => {
-        const card = document.querySelector('#category-preview-test-fixture');
-        card.dispatchEvent(new Event('pointerleave'));
-        card.dataset.farzinPreviewTapped = '';
-        card.dispatchEvent(new PointerEvent('pointerdown', {
-            bubbles: true,
-            pointerType: 'touch',
-        }));
-        card.dispatchEvent(new MouseEvent('click', {
-            bubbles: true,
-            cancelable: true,
-            detail: 1,
-        }));
-    });
-
-    await expect(fixture).toHaveClass(/is-gif-previewing/);
-    await expect(fixture).toHaveAttribute('data-farzin-preview-tapped', '1');
+    for (const card of categoryCards) {
+        expect(card.href).toMatch(/^\/categories\/[^/]+$/);
+        expect(card.hasVideo).toBe(false);
+        expect(card.hasAnimatedImage).toBe(false);
+        expect(card.hasLegacyPreviewHandler).toBe(false);
+    }
 });
 
 test('homepage CTA meets the shared footer at the same spacing used by interior pages', async ({ page }) => {
