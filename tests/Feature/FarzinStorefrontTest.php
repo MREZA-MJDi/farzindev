@@ -721,7 +721,7 @@ class FarzinStorefrontTest extends TestCase
             'stock' => 0,
         ]);
 
-        ProductVariant::create([
+        $colorVariant = ProductVariant::create([
             'product_id' => $product->id,
             'type' => 'color',
             'name' => 'رنگ',
@@ -731,6 +731,16 @@ class FarzinStorefrontTest extends TestCase
             'stock' => 4,
             'is_active' => true,
         ]);
+
+        $variantImage = ProductImage::create([
+            'product_id' => $product->id,
+            'path' => 'https://cdn.example.test/variant-black.webp',
+            'alt' => 'تصویر نمونه رنگ مشکی هود',
+            'sort_order' => 1,
+            'is_primary' => false,
+        ]);
+
+        $colorVariant->images()->attach($variantImage->id, ['sort_order' => 0]);
         ProductVariant::create([
             'product_id' => $product->id,
             'type' => 'size',
@@ -748,7 +758,14 @@ class FarzinStorefrontTest extends TestCase
             ->assertSee('InStock')
             ->assertSee('وابسته به ویژگی انتخاب‌شده')
             ->assertSee('max="4"', false)
-            ->assertSee('موجود در انبار');
+            ->assertSee('موجود در انبار')
+            ->assertSee('farzin-product-detail-info', false)
+            ->assertSee('data-stock-available="true"', false)
+            ->assertSee('روش پرداخت در مرحله ثبت سفارش')
+            ->assertSee('@touchstart.passive="startTouch($event)"', false)
+            ->assertSee('@touchend.passive="endTouch($event)"', false)
+            ->assertSee('https://cdn.example.test/variant-black.webp', false)
+            ->assertSee('w-[86px]', false);
     }
 
     public function test_customer_can_add_product_to_cart_and_repeated_adds_merge(): void

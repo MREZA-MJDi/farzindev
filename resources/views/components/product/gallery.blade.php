@@ -57,6 +57,9 @@
         active: 0,
         zoom: false,
         selectedVariantId: null,
+        touchStartX: 0,
+        touchStartY: 0,
+        swiped: false,
         variantImageMap: @js($variantImageMap),
 
         images: @js(
@@ -86,6 +89,31 @@
             this.active =
                 (this.active - 1 + this.images.length)
                 % this.images.length;
+        },
+
+        startTouch(event) {
+            this.swiped = false;
+            this.touchStartX = Number(event.changedTouches?.[0]?.screenX ?? 0);
+            this.touchStartY = Number(event.changedTouches?.[0]?.screenY ?? 0);
+        },
+
+        endTouch(event) {
+            const touch = event.changedTouches?.[0];
+            if (!touch) return;
+
+            const deltaX = Number(touch.screenX) - this.touchStartX;
+            const deltaY = Number(touch.screenY) - this.touchStartY;
+
+            if (Math.abs(deltaX) < 48 || Math.abs(deltaX) <= Math.abs(deltaY)) {
+                return;
+            }
+
+            this.swiped = true;
+            if (deltaX < 0) {
+                this.next();
+            } else {
+                this.previous();
+            }
         },
 
         selectVariant(event) {
@@ -130,7 +158,7 @@
         }
     }"
     @product-variant-selected.window="selectVariant($event)"
-    class="w-full"
+    class="farzin-product-gallery w-full"
 >
 
 
@@ -144,7 +172,16 @@
 
             <div
                 class="product-gallery-stage relative aspect-square w-full cursor-zoom-in overflow-hidden sm:aspect-[4/5] lg:aspect-auto lg:h-[clamp(500px,calc(100svh-220px),720px)]"
-                @click="zoom = true"
+                role="button"
+                tabindex="0"
+                aria-label="نمایش بزرگ‌نمایی تصویر محصول"
+                @click="if (!swiped) zoom = true; swiped = false"
+                @keydown.enter.prevent="zoom = true"
+                @keydown.space.prevent="zoom = true"
+                @keydown.arrow-left.prevent="next()"
+                @keydown.arrow-right.prevent="previous()"
+                @touchstart.passive="startTouch($event)"
+                @touchend.passive="endTouch($event)"
             >
 
                 {{-- Images --}}
@@ -172,7 +209,7 @@
 
                     <div class="absolute right-4 top-4 z-10">
 
-                        <span class="rounded-full border border-white/20 bg-black/30 px-3 py-1.5 text-[10px] text-white backdrop-blur-xl">
+                        <span class="farzin-gallery-counter rounded-full border px-3 py-1.5 text-[10px] text-white backdrop-blur-xl">
 
                             <span x-text="active + 1"></span>
 
@@ -194,7 +231,7 @@
                         type="button"
                         aria-label="تصویر قبلی"
                         @click.stop="previous()"
-                        class="absolute right-4 top-1/2 z-10 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-white/20 bg-black/30 text-white shadow-sm backdrop-blur-xl transition hover:bg-[var(--livora-white)] hover:text-[var(--livora-text)] focus-visible:bg-white focus-visible:text-[var(--livora-text)] sm:opacity-85"
+                        class="farzin-gallery-arrow absolute right-4 top-1/2 z-10 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border text-white shadow-sm backdrop-blur-xl transition sm:opacity-100"
                     >
 
                         <svg
@@ -222,7 +259,7 @@
                         type="button"
                         aria-label="تصویر بعدی"
                         @click.stop="next()"
-                        class="absolute left-4 top-1/2 z-10 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-white/20 bg-black/30 text-white shadow-sm backdrop-blur-xl transition hover:bg-[var(--livora-white)] hover:text-[var(--livora-text)] focus-visible:bg-white focus-visible:text-[var(--livora-text)] sm:opacity-85"
+                        class="farzin-gallery-arrow absolute left-4 top-1/2 z-10 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border text-white shadow-sm backdrop-blur-xl transition sm:opacity-100"
                     >
 
                         <svg
@@ -248,11 +285,11 @@
 
 
                 {{-- Gradient --}}
-                <div class="pointer-events-none absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-black/25 to-transparent"></div>
+                <div class="farzin-gallery-gradient pointer-events-none absolute inset-x-0 bottom-0 h-32"></div>
 
 
                 {{-- Zoom --}}
-                <div class="absolute bottom-4 right-4 z-10 flex items-center gap-2 rounded-full border border-white/20 bg-black/25 px-3 py-2 text-[10px] text-white backdrop-blur-xl">
+                <div class="farzin-gallery-zoom absolute bottom-4 right-4 z-10 flex items-center gap-2 rounded-full border px-3 py-2 text-[10px] text-white backdrop-blur-xl">
 
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -323,7 +360,7 @@
                     class="group relative h-20 w-16 shrink-0 overflow-hidden rounded-2xl bg-[var(--livora-surface)] transition sm:h-24 sm:w-20"
                     :class="
                         active === {{ $index }}
-                        ? 'ring-2 ring-[var(--livora-ink)] ring-offset-2 ring-offset-[var(--livora-cream)]'
+                        ? 'ring-2 ring-[var(--livora-accent)] ring-offset-2 ring-offset-[var(--livora-cream)]'
                         : 'opacity-60 hover:opacity-100'
 "
                 >
@@ -457,7 +494,7 @@
             x-show="zoom"
             x-cloak
             x-transition.opacity
-            class="fixed inset-0 z-[100] bg-black/85 p-4 backdrop-blur-md sm:p-8"
+            class="farzin-gallery-lightbox fixed inset-0 z-[100] p-4 backdrop-blur-md sm:p-8"
             @keydown.escape.window="zoom = false"
         >
 
@@ -466,7 +503,7 @@
                 type="button"
                 aria-label="بستن تصویر"
                 @click="zoom = false"
-                class="absolute right-4 top-4 z-20 flex h-11 w-11 items-center justify-center rounded-full border border-white/20 bg-white/10 text-white backdrop-blur-xl transition hover:bg-[var(--livora-white)] hover:text-[var(--livora-text)] sm:right-7 sm:top-7"
+                class="farzin-gallery-lightbox-close absolute right-4 top-4 z-20 flex h-11 w-11 items-center justify-center rounded-full border text-white backdrop-blur-xl transition sm:right-7 sm:top-7"
             >
 
                 <svg
@@ -518,7 +555,7 @@
                             type="button"
                             aria-label="تصویر قبلی"
                             @click="previous()"
-                            class="absolute right-3 top-1/2 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-white/20 bg-black/30 text-white backdrop-blur-xl transition hover:bg-[var(--livora-white)] hover:text-[var(--livora-text)] sm:right-5"
+                            class="farzin-gallery-lightbox-arrow absolute right-3 top-1/2 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border text-white backdrop-blur-xl transition sm:right-5"
                         >
 
                             <svg
@@ -545,7 +582,7 @@
                             type="button"
                             aria-label="تصویر بعدی"
                             @click="next()"
-                            class="absolute left-3 top-1/2 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-white/20 bg-black/30 text-white backdrop-blur-xl transition hover:bg-[var(--livora-white)] hover:text-[var(--livora-text)] sm:left-5"
+                            class="farzin-gallery-lightbox-arrow absolute left-3 top-1/2 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border text-white backdrop-blur-xl transition sm:left-5"
                         >
 
                             <svg

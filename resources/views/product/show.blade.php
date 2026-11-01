@@ -301,7 +301,7 @@
 
 
                     {{-- Product Details --}}
-                    <div class="min-w-0">
+                    <div class="min-w-0 farzin-product-detail-info">
 
                         {{-- Labels --}}
                         <div class="flex flex-wrap items-center gap-2">
@@ -605,6 +605,7 @@
                                                 :title="$variants->first()->name"
                                                 :options="$variants"
                                                 :name="$type"
+                                                :type="$type"
                                             />
 
                                         @endforeach
@@ -687,8 +688,11 @@
                                     STOCK
                                 </p>
 
-                                <p class="mt-2 text-xs font-medium">
-                                    {{ $product->stock > 0 ? 'موجود' : 'ناموجود' }}
+                                <p
+                                    class="farzin-product-stock-status mt-2 text-xs font-semibold"
+                                    data-stock-available="{{ $canPurchase ? 'true' : 'false' }}"
+                                >
+                                    {{ $canPurchase ? 'موجود' : 'ناموجود' }}
                                 </p>
 
                             </div>
@@ -700,7 +704,7 @@
                                 </p>
 
                                 <p class="mt-2 text-xs font-medium">
-                                    {{ $installmentEnabled ? 'نقدی و اقساطی' : 'پرداخت آنلاین' }}
+                                    {{ $installmentEnabled ? 'نقدی و اقساطی طبق شرایط محصول' : 'روش پرداخت در مرحله ثبت سفارش' }}
                                 </p>
 
                             </div>
@@ -731,7 +735,7 @@
         {{-- =========================================================
              PRODUCT INFORMATION
         ========================================================== --}}
-        <section class="border-t border-[var(--livora-border)] bg-[var(--livora-white)]">
+        <section class="farzin-product-information border-t border-[var(--livora-border)] bg-[var(--livora-white)]">
 
             <x-layout.container>
 
@@ -781,7 +785,7 @@
         {{-- =========================================================
              PRODUCT FACTS
         ========================================================== --}}
-        <section class="border-t border-[var(--livora-border)]">
+        <section class="farzin-product-facts border-t border-[var(--livora-border)] bg-[var(--livora-cream)]">
 
             <x-layout.container>
 
@@ -799,9 +803,9 @@
 
                     </div>
 
-                    <div class="grid grid-cols-2 gap-3 lg:grid-cols-4">
+                    <div class="farzin-product-facts__grid grid grid-cols-2 gap-3 lg:grid-cols-4">
 
-                        <div class="rounded-3xl border border-[var(--livora-border)] bg-[var(--livora-white)] p-5">
+                        <div class="farzin-product-facts__item rounded-3xl border border-[var(--livora-border)] bg-[var(--livora-white)] p-5">
 
                             <p class="text-[10px] uppercase tracking-[0.16em] text-[var(--livora-stone)]">
                                 CATEGORY
@@ -813,7 +817,7 @@
 
                         </div>
 
-                        <div class="rounded-3xl border border-[var(--livora-border)] bg-[var(--livora-white)] p-5">
+                        <div class="farzin-product-facts__item rounded-3xl border border-[var(--livora-border)] bg-[var(--livora-white)] p-5">
 
                             <p class="text-[10px] uppercase tracking-[0.16em] text-[var(--livora-stone)]">
                                 SKU
@@ -825,7 +829,7 @@
 
                         </div>
 
-                        <div class="rounded-3xl border border-[var(--livora-border)] bg-[var(--livora-white)] p-5">
+                        <div class="farzin-product-facts__item rounded-3xl border border-[var(--livora-border)] bg-[var(--livora-white)] p-5">
 
                             <p class="text-[10px] uppercase tracking-[0.16em] text-[var(--livora-stone)]">
                                 AVAILABILITY
@@ -837,7 +841,7 @@
 
                         </div>
 
-                        <div class="rounded-3xl border border-[var(--livora-border)] bg-[var(--livora-white)] p-5">
+                        <div class="farzin-product-facts__item rounded-3xl border border-[var(--livora-border)] bg-[var(--livora-white)] p-5">
 
                             <p class="text-[10px] uppercase tracking-[0.16em] text-[var(--livora-stone)]">
                                 PAYMENT
