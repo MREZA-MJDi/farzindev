@@ -1914,11 +1914,11 @@ body.home-body {
     z-index: 1;
     inset-inline: 0;
     inset-block-end: 0;
-    min-height: 43%;
+    min-height: 50%;
     justify-content: flex-end;
     align-items: center;
     gap: .2rem;
-    padding: 17% 12% 12%;
+    padding: 13% 12% 10%;
     text-align: center;
     background: linear-gradient(180deg, rgba(255,255,255,0) 0%, rgba(255,255,255,.84) 27%, rgba(255,255,255,.98) 58%, #FFFFFF 100%);
 }
@@ -1970,8 +1970,8 @@ body.home-body {
 }
 @media (max-width: 767px) {
     .home-body .farzin-product-card--round-media .farzin-product-card__content {
-        min-height: 42%;
-        padding: 18% 10% 12%;
+        min-height: 52%;
+        padding: 11% 10% 10%;
     }
     .home-body .farzin-product-card--round-media .farzin-product-card__meta {
         display: none;
