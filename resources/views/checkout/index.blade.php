@@ -150,17 +150,33 @@
                 @endif
 
 
+                @if($checkoutPreview)
+                    <div class="mb-6 flex items-start gap-4 rounded-2xl border border-[var(--fz-line)] bg-white p-5" role="status">
+                        <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[var(--fz-paper-soft)] text-lg text-[var(--fz-accent)]" aria-hidden="true">i</span>
+                        <div class="min-w-0">
+                            <p class="text-sm font-semibold text-[var(--fz-ink)]">پیش‌نمایش تسویه حساب</p>
+                            <p class="mt-1 text-xs leading-7 text-[var(--fz-muted)]">
+                                سبد فعلی شما و مراحل تحویل را می‌بینید. برای ثبت سفارش باید با حساب مشتری وارد شوید.
+                                تا زمان اتصال و تأیید درگاه واقعی، هیچ پرداختی از این صفحه انجام نمی‌شود.
+                            </p>
+                        </div>
+                    </div>
+                @endif
+
                 {{-- =================================================
                      FORM
                 ================================================== --}}
 
-                <form
-                    action="{{ route('checkout.place') }}"
-                    method="POST"
-                    class="grid gap-6 lg:grid-cols-[minmax(0,1fr)_380px]"
-                >
-
-                    @csrf
+                @if($checkoutPreview)
+                    <div data-checkout-preview class="grid gap-6 lg:grid-cols-[minmax(0,1fr)_380px]">
+                @else
+                    <form
+                        action="{{ route('checkout.place') }}"
+                        method="POST"
+                        class="grid gap-6 lg:grid-cols-[minmax(0,1fr)_380px]"
+                    >
+                        @csrf
+                @endif
 
 
                     {{-- =================================================
@@ -168,6 +184,9 @@
                     ================================================== --}}
 
                     <div class="space-y-6">
+                        @if($checkoutPreview)
+                            <fieldset disabled class="contents" aria-label="پیش‌نمایش اطلاعات تحویل">
+                        @endif
 
                         {{-- Contact --}}
                         <section class="rounded-[2rem] border border-[var(--livora-border)] bg-[var(--livora-white)] p-5 sm:p-7">
@@ -220,7 +239,7 @@
                                     type="email"
                                     name="email"
                                     label="ایمیل"
-                                    value="{{ old('email', auth()->user()->email) }}"
+                                    value="{{ old('email', auth()->user()?->email) }}"
                                     error="{{ $errors->first('email') }}"
                                     required
                                 />
@@ -330,6 +349,9 @@
 
                         </section>
 
+                        @if($checkoutPreview)
+                            </fieldset>
+                        @endif
                     </div>
 
 
@@ -510,19 +532,26 @@
                             </div>
 
 
-                            {{-- Submit --}}
-                            <button
-                                type="submit"
-                                class="mt-6 flex w-full items-center justify-center gap-3 rounded-2xl bg-[var(--livora-ink)] px-6 py-4 text-sm font-medium text-white transition hover:bg-[var(--livora-accent)]"
-                            >
-
-                            <span>
-                                ثبت سفارش و ادامه پرداخت
-                            </span>
-
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4 shrink-0" aria-hidden="true"><rect x="2.5" y="5" width="19" height="14" rx="2.3" /><path d="M2.5 10h19m-15 5h4" /></svg>
-
-                            </button>
+                            {{-- Continue only after customer authentication. --}}
+                            @if($checkoutPreview)
+                                @if(auth()->check())
+                                    <a href="{{ route('home') }}" class="mt-6 flex w-full items-center justify-center rounded-2xl bg-[var(--fz-ink)] px-6 py-4 text-sm font-semibold text-white transition hover:bg-[var(--fz-accent)]">
+                                        بازگشت به فروشگاه
+                                    </a>
+                                @else
+                                    <a href="{{ route('login', ['intended' => route('checkout.index', [], false)]) }}" class="mt-6 flex w-full items-center justify-center rounded-2xl bg-[var(--fz-ink)] px-6 py-4 text-sm font-semibold text-white transition hover:bg-[var(--fz-accent)]">
+                                        ورود به حساب و ادامه خرید
+                                    </a>
+                                @endif
+                            @else
+                                <button
+                                    type="submit"
+                                    class="mt-6 flex w-full items-center justify-center gap-3 rounded-2xl bg-[var(--livora-ink)] px-6 py-4 text-sm font-medium text-white transition hover:bg-[var(--livora-accent)]"
+                                >
+                                    <span>ثبت سفارش و ادامه پرداخت</span>
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4 shrink-0" aria-hidden="true"><rect x="2.5" y="5" width="19" height="14" rx="2.3" /><path d="M2.5 10h19m-15 5h4" /></svg>
+                                </button>
+                            @endif
 
 
                             <div class="mt-4 flex items-start gap-3 rounded-2xl border border-[var(--livora-border)] bg-[var(--livora-surface)] p-4">
@@ -542,7 +571,11 @@
 
                     </aside>
 
-                </form>
+                @if($checkoutPreview)
+                    </div>
+                @else
+                    </form>
+                @endif
 
             </div>
 
