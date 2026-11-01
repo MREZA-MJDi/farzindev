@@ -86,6 +86,12 @@ if (document.querySelector('[data-image-editor-input]')) {
     });
 }
 
+if (document.body.classList.contains('home-body')) {
+    import('./home.js').catch((error) => {
+        console.error('Unable to initialize homepage interactions.', error);
+    });
+}
+
 if (document.querySelector('[data-blog-appearance]')) {
     import('./admin-blog-appearance.js').catch((error) => {
         console.error('Unable to initialize blog appearance previews.', error);

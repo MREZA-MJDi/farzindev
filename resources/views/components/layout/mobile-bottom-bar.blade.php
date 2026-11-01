@@ -7,14 +7,14 @@
     <div class="farzin-mobile-nav__inner mx-auto grid w-full max-w-md grid-cols-5 items-center gap-1 rounded-xl border border-[var(--livora-border)] bg-[color:var(--livora-white)]/95 p-1.5 shadow-[0_8px_24px_rgba(0,0,0,.28)] backdrop-blur-md">
 
         <a href="{{ route('home') }}" @class(['farzin-mobile-nav__item flex min-w-0 flex-col items-center justify-center gap-1 rounded-xl px-1 py-2.5 transition', 'is-active' => request()->routeIs('home')]) @if(request()->routeIs('home')) aria-current="page" @endif aria-label="خانه">
-            <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+            <svg width="20" height="20" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
                 <path stroke-linecap="round" stroke-linejoin="round" d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/>
             </svg>
             <span class="whitespace-nowrap text-[10px] font-medium">خانه</span>
         </a>
 
         <a href="{{ route('shop.index') }}" @class(['farzin-mobile-nav__item flex min-w-0 flex-col items-center justify-center gap-1 rounded-xl px-1 py-2.5 transition', 'is-active' => request()->routeIs('shop.*', 'product.show')]) @if(request()->routeIs('shop.*', 'product.show')) aria-current="page" @endif aria-label="فروشگاه">
-            <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+            <svg width="20" height="20" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M6 8h12l1.5 12h-15zM8 8a4 4 0 0 1 8 0"/>
             </svg>
             <span class="whitespace-nowrap text-[10px] font-medium">فروشگاه</span>
@@ -28,7 +28,7 @@
             :aria-expanded="searchOpen.toString()"
             :aria-pressed="searchOpen.toString()"
         >
-            <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+            <svg width="20" height="20" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
                 <circle cx="11" cy="11" r="6.5"/>
                 <path stroke-linecap="round" stroke-linejoin="round" d="m16 16 4.2 4.2"/>
             </svg>
@@ -36,7 +36,7 @@
         </button>
 
         <a href="{{ route('cart.index') }}" @class(['farzin-mobile-nav__item relative flex min-w-0 flex-col items-center justify-center gap-1 rounded-xl px-1 py-2.5 transition', 'is-active' => request()->routeIs('cart.*', 'checkout.*')]) @if(request()->routeIs('cart.*', 'checkout.*')) aria-current="page" @endif aria-label="سبد خرید">
-            <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+            <svg width="20" height="20" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M3 4h1.5l1.5 10h11l2-7H6M9 19.5a1 1 0 1 1-2 0m10 0a1 1 0 1 1-2 0"/>
             </svg>
             <span
@@ -54,7 +54,7 @@
         @auth
             @if(auth()->user()->isAdmin())
                 <a href="{{ route('admin.dashboard') }}" class="flex min-w-0 flex-col items-center justify-center gap-1 rounded-xl px-1 py-2.5 text-[var(--livora-text)] transition" aria-label="پنل مدیریت">
-                    <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+                    <svg width="20" height="20" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 3 20 7v5c0 4.5-3.3 7.4-8 9-4.7-1.6-8-4.5-8-9V7z"/>
                         <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6M12 9v6"/>
                     </svg>
@@ -62,7 +62,7 @@
                 </a>
             @elseif(auth()->user()->isCustomer())
                 <a href="{{ route('account.index') }}" @class(['farzin-mobile-nav__item flex min-w-0 flex-col items-center justify-center gap-1 rounded-xl px-1 py-2.5 transition', 'is-active' => request()->routeIs('account.*')]) @if(request()->routeIs('account.*')) aria-current="page" @endif aria-label="حساب کاربری">
-                    <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+                    <svg width="20" height="20" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
                         <circle cx="12" cy="8" r="3.5"/>
                         <path stroke-linecap="round" stroke-linejoin="round" d="M5 20a7 7 0 0 1 14 0"/>
                     </svg>
@@ -70,7 +70,7 @@
                 </a>
             @else
                 <a href="{{ route('login') }}" @class(['farzin-mobile-nav__item flex min-w-0 flex-col items-center justify-center gap-1 rounded-xl px-1 py-2.5 transition', 'is-active' => request()->routeIs('login', 'register')]) @if(request()->routeIs('login', 'register')) aria-current="page" @endif aria-label="حساب کاربری">
-                    <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+                    <svg width="20" height="20" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
                         <circle cx="12" cy="8" r="3.5"/>
                         <path stroke-linecap="round" stroke-linejoin="round" d="M5 20a7 7 0 0 1 14 0"/>
                     </svg>
@@ -78,7 +78,7 @@
             @endif
         @else
             <a href="{{ route('login') }}" @class(['farzin-mobile-nav__item flex min-w-0 flex-col items-center justify-center gap-1 rounded-xl px-1 py-2.5 transition', 'is-active' => request()->routeIs('login', 'register')]) @if(request()->routeIs('login', 'register')) aria-current="page" @endif aria-label="حساب کاربری">
-                <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+                <svg width="20" height="20" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
                     <circle cx="12" cy="8" r="3.5"/>
                     <path stroke-linecap="round" stroke-linejoin="round" d="M5 20a7 7 0 0 1 14 0"/>
                 </svg>

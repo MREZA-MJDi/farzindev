@@ -32,6 +32,10 @@
 @section('og_title', $articleOgTitle)
 @section('og_description', $articleOgDescription)
 @section('twitter_card', $post->cover_image_url ? 'summary_large_image' : 'summary')
+
+@push('styles')
+    @vite('resources/css/blog.css')
+@endpush
 @if($post->cover_image_url)
     @section('og_image', $post->cover_image_url)
 @endif
@@ -59,12 +63,8 @@
 ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT) !!}</script>
 @endpush
 
-@push('styles')
-    @vite(['resources/css/blog.css'])
-@endpush
-
 @section('content')
-<article class="blog-article-page">
+<article class="blog-article-page" data-blog-motion>
     <header class="blog-article-hero">
         <x-layout.container>
             <div class="blog-article-hero__inner">
