@@ -11,6 +11,7 @@ class ContactSetting extends Model
         'email',
         'whatsapp',
         'instagram_url',
+        'telegram_url',
         'address',
         'latitude',
         'longitude',

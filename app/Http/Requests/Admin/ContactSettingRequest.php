@@ -26,6 +26,9 @@ class ContactSettingRequest extends FormRequest
                 'max:255',
             ],
 
+            'instagram_url' => ['nullable', 'url', 'max:255'],
+            'telegram_url' => ['nullable', 'url', 'max:255'],
+
             'address' => [
                 'nullable',
                 'string',
@@ -96,6 +99,8 @@ class ContactSettingRequest extends FormRequest
         return [
             'phone' => 'شماره تماس',
             'email' => 'ایمیل',
+            'instagram_url' => 'لینک اینستاگرام',
+            'telegram_url' => 'لینک تلگرام',
             'address' => 'آدرس',
             'latitude' => 'عرض جغرافیایی (Latitude)',
             'longitude' => 'طول جغرافیایی (Longitude)',

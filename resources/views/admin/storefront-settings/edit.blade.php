@@ -140,7 +140,7 @@
             <section class="admin-card p-5 sm:p-7">
                 <div class="mb-6">
                     <h2 class="text-base font-bold text-[var(--admin-text)]">اطلاعات تماس واقعی</h2>
-                    <p class="mt-2 text-xs leading-6 text-[var(--admin-muted)]">شماره تماس، آدرس و مختصات این بخش در صفحه «تماس با ما» استفاده می‌شود. اگر Latitude و Longitude را وارد کنید، نقشه دقیقاً روی همان نقطه باز می‌شود؛ در غیر این صورت از آدرس کمک می‌گیرد.</p>
+                    <p class="mt-2 text-xs leading-6 text-[var(--admin-muted)]">شماره موبایل و راه‌های ارتباطی این بخش در فوتر تمام صفحات سایت استفاده می‌شوند. لینک شبکه‌های اجتماعی فقط در صورت ثبت مقدار معتبر نمایش داده خواهد شد.</p>
                 </div>
 
                 @php($contact = $contactSetting)
@@ -192,6 +192,11 @@
                         <label for="instagram_url" class="admin-label">لینک اینستاگرام (اختیاری)</label>
                         <input id="instagram_url" name="instagram_url" type="url" dir="ltr" value="{{ old('instagram_url', $contact?->instagram_url) }}" class="admin-input" maxlength="255" placeholder="https://instagram.com/your-page">
                         @error('instagram_url')<p class="mt-2 text-xs text-[var(--admin-danger)]">{{ $message }}</p>@enderror
+                    </div>
+                    <div>
+                        <label for="telegram_url" class="admin-label">لینک تلگرام (اختیاری)</label>
+                        <input id="telegram_url" name="telegram_url" type="url" dir="ltr" value="{{ old('telegram_url', $contact?->telegram_url) }}" class="admin-input" maxlength="255" placeholder="https://t.me/your_channel">
+                        @error('telegram_url')<p class="mt-2 text-xs text-[var(--admin-danger)]">{{ $message }}</p>@enderror
                     </div>
                     <div>
                         <label for="hours" class="admin-label">ساعات کاری</label>
