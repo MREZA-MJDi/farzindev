@@ -409,8 +409,8 @@ body.home-body {
 
 /* The homepage category canvas is owned by home.css; only the catalogue canvas is shared here. */
 .fz-product-section {
-    background: #F1F5FA;
-    border-block-color: #E1E8F0;
+    background: #F3F3EF;
+    border-block-color: #E0E0DA;
 }
 
 .fz-section {
@@ -688,7 +688,7 @@ body.home-body {
 
 .farzin-shop-catalog {
     padding-block: clamp(1.25rem, 3vw, 2rem);
-    background: #F5F7FB;
+    background: #F5F5F2;
 }
 
 .farzin-shop-catalog :where(aside, [class*="filter"], [class*="Filter"]) {
@@ -806,7 +806,7 @@ body.home-body {
 .farzin-mobile-nav__inner a:hover,
 .farzin-mobile-nav__inner button:hover {
     color: var(--fz-accent);
-    background: #F8E9EC;
+    background: #EFEFEB;
 }
 
 .farzin-mobile-nav__inner [data-cart-count] {
@@ -828,7 +828,7 @@ body.home-body {
 
 .storefront-content :where(th) {
     color: #173452;
-    background: #EDF2F8;
+    background: #F0F0EC;
     font-weight: 700;
 }
 
@@ -1059,7 +1059,7 @@ body.home-body {
     border: 1px solid rgba(123, 13, 26, .12);
     border-radius: 12px;
     color: var(--fz-accent);
-    background: #F8EDEF;
+    background: #F1F1ED;
     font-family: var(--fz-font-ui);
     font-size: .72rem;
     font-weight: 700;
@@ -1212,8 +1212,8 @@ body.home-body {
     place-items: center;
     overflow: hidden;
     background:
-        radial-gradient(ellipse at 50% 58%, rgba(215,226,239,.68), transparent 62%),
-        linear-gradient(145deg, #FFFFFF, #EDF3F9);
+        radial-gradient(ellipse at 50% 58%, rgba(224,224,218,.68), transparent 62%),
+        linear-gradient(145deg, #FFFFFF, #F0F0EC);
 }
 
 .fz-hero-product__media::before {
@@ -1619,7 +1619,7 @@ body.home-body {
     --fz-line: #DEDED8;
     --fz-accent: #7B0D1A;
     --fz-accent-dark: #5F0712;
-    --fz-blue-soft: #EAF1F8;
+    --fz-blue-soft: #EEEEEA;
 }
 
 html,
@@ -1706,7 +1706,7 @@ body {
     padding: clamp(1rem, 1.8vw, 1.4rem);
     border: 1px solid #E1E8F0;
     border-radius: 18px;
-    background: linear-gradient(145deg, #FFFFFF 0%, #F5F8FC 100%);
+    background: linear-gradient(145deg, #FFFFFF 0%, #F0F0EC 100%);
 }
 
 .farzin-product-detail-info .product-price__main {
@@ -1734,7 +1734,7 @@ body {
 .farzin-product-detail-info .product-price__installment {
     border-color: #DCE5EF;
     border-radius: 15px;
-    background: #EDF3F9;
+    background: #F0F0EC;
 }
 
 .farzin-product-detail-info .product-price__installment-row {
@@ -1778,7 +1778,7 @@ body {
 }
 
 .farzin-product-detail-info .farzin-product-stock-status[data-stock-available="false"] {
-    background: #F8E9EC;
+    background: #EFEFEB;
 }
 
 .farzin-product-information {
@@ -1791,7 +1791,7 @@ body {
 }
 
 .farzin-product-facts {
-    background: #F5F7FB;
+    background: #F5F5F2;
 }
 
 .farzin-product-facts__grid {
@@ -1931,7 +1931,7 @@ body {
 }
 
 .farzin-shop-catalog {
-    background: #F5F7FB;
+    background: #F5F5F2;
 }
 
 .farzin-shop-catalog aside > div,
@@ -1992,7 +1992,7 @@ body {
 
 .storefront-content :where(th) {
     color: #173452;
-    background: #EDF2F8;
+    background: #F0F0EC;
     font-weight: 750;
 }
 
