@@ -82,7 +82,8 @@
                     <circle cx="12" cy="8" r="3.5"/>
                     <path stroke-linecap="round" stroke-linejoin="round" d="M5 20a7 7 0 0 1 14 0"/>
                 </svg>
-            </a>
+                    <span class="whitespace-nowrap text-[10px] font-medium">حساب</span>
+                </a>
         @endauth
 
     </div>
