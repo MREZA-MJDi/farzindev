@@ -335,7 +335,7 @@ test('storefront sections never disappear while entrance motion initializes', as
 });
 
 test('customer and admin endpoints redirect guests to login', async ({ page }) => {
-    for (const path of ['/checkout', '/account', '/admin', '/admin/blog-posts']) {
+    for (const path of ['/account', '/admin', '/admin/blog-posts']) {
         await page.goto(path, { waitUntil: 'domcontentloaded' });
         await expect(page).toHaveURL(/\/login(?:\?.*)?$/);
     }
@@ -387,6 +387,25 @@ test('homepage image and product sections stay within the loading budget', async
             });
             expect(imageIsLeftOfCopy, 'desktop hero product image must sit physically to the left of the copy').toBeTruthy();
         }
+
+        const hiddenCategoryCards = await page.locator('.fz-category-card').evaluateAll((elements) => (
+            elements.filter((element) => {
+                const style = window.getComputedStyle(element);
+                return style.opacity !== '1' || style.visibility !== 'visible' || style.filter.includes('blur');
+            }).length
+        ));
+        expect(hiddenCategoryCards, 'homepage category cards must render without a delayed blur or fade').toBe(0);
+
+        const circularCards = await page.locator('.fz-home-featured-grid--six .farzin-product-card--round-media').evaluateAll((elements) => (
+            elements.every((element) => {
+                const rect = element.getBoundingClientRect();
+                const style = window.getComputedStyle(element);
+                return Math.abs(rect.width - rect.height) <= 2
+                    && style.borderTopLeftRadius.includes('50%')
+                    && style.borderTopRightRadius.includes('50%');
+            })
+        ));
+        expect(circularCards, 'the entire homepage bestseller card body must be circular').toBeTruthy();
 
         expect(await page.locator('.fz-category-card').count()).toBeLessThanOrEqual(4);
         expect(await page.locator('.fz-home-buying-guide').count()).toBe(2);
@@ -500,8 +519,13 @@ test('blog archive renders the editorial magazine layout without horizontal over
         await expect(page.locator('.blog-featured-card')).toBeVisible();
         await expect(page.locator('.blog-article-card').first()).toBeVisible();
 
-        await page.locator('.blog-featured-card').scrollIntoViewIfNeeded();
-        await expect(page.locator('.blog-featured-card')).toHaveClass(/is-visible/);
+        const hiddenBlogContent = await page.locator('[data-blog-reveal]').evaluateAll((elements) => (
+            elements.filter((element) => {
+                const style = window.getComputedStyle(element);
+                return style.opacity !== '1' || style.visibility !== 'visible';
+            }).length
+        ));
+        expect(hiddenBlogContent, 'blog copy and cards must be visible without waiting for scroll JavaScript').toBe(0);
 
         const overflow = await page.evaluate(() => (
             Math.max(document.documentElement.scrollWidth, document.body.scrollWidth)

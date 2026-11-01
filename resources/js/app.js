@@ -77,18 +77,12 @@ window.addEventListener('product-variant-selected', () => {
 });
 
 /*
- * Load optional code only on pages that use it. Admin list pages no longer
- * download the image editor or GSAP animation runtime.
+ * Load only behavioral features on pages that need them. Storefront content
+ * is server-rendered and no longer waits for entrance-motion JavaScript.
  */
 if (document.querySelector('[data-image-editor-input]')) {
     import('./admin-image-editor.js').catch((error) => {
         console.error('Unable to load the product image editor.', error);
-    });
-}
-
-if (document.body.classList.contains('home-body')) {
-    import('./home.js').catch((error) => {
-        console.error('Unable to initialize homepage interactions.', error);
     });
 }
 
@@ -110,24 +104,3 @@ if (document.querySelector('[data-farzin-gif-card]')) {
     });
 }
 
-if (document.querySelector('[data-blog-motion]')) {
-    import('./blog-motion.js').catch((error) => {
-        console.error('Unable to initialize blog reveal animations.', error);
-    });
-}
-
-// Lightweight IntersectionObserver/Web Animations enhancement. It is loaded
-// only where explicit motion targets exist; the blog has its own tiny observer
-// module and never downloads this storefront enhancement.
-const hasStorefrontMotionTargets = document.querySelector(
-    '[data-category-hero], [data-farzin-shop-hero], [data-farzin-reveal], [data-fz-reveal]'
-);
-
-if (
-    !document.body.classList.contains('home-body')
-    && hasStorefrontMotionTargets
-) {
-    import('./storefront-motion.js').catch((error) => {
-        console.error('Unable to load optional storefront motion.', error);
-    });
-}

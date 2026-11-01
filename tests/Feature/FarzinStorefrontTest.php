@@ -3774,6 +3774,59 @@ class FarzinStorefrontTest extends TestCase
         ]);
     }
 
+    public function test_guest_can_preview_checkout_with_their_session_cart_without_creating_an_order(): void
+    {
+        $this->get(route('cart.index'))->assertOk();
+        $sessionId = $this->app['session.store']->getId();
+
+        $category = $this->category([
+            'name' => 'دسته پیش‌نمایش تسویه',
+            'slug' => 'checkout-preview-category',
+        ]);
+        $product = $this->product($category, [
+            'name' => 'محصول پیش‌نمایش تسویه',
+            'slug' => 'checkout-preview-product',
+            'sku' => 'FAR-CHECKOUT-PREVIEW',
+        ]);
+
+        $cart = Cart::query()->firstOrCreate(
+            [
+                'session_id' => $sessionId,
+                'status' => 'active',
+            ],
+            [
+                'user_id' => null,
+            ]
+        );
+
+        CartItem::create([
+            'cart_id' => $cart->id,
+            'product_id' => $product->id,
+            'product_variant_id' => null,
+            'variant_key' => 'base',
+            'variant_options' => null,
+            'quantity' => 2,
+            'unit_price' => $product->price,
+        ]);
+
+        $this->get(route('checkout.index'))
+            ->assertOk()
+            ->assertSee('پیش‌نمایش تسویه حساب')
+            ->assertSee('محصول پیش‌نمایش تسویه')
+            ->assertSee('ورود به حساب و ادامه خرید')
+            ->assertSee(route('login', [
+                'intended' => route('checkout.index', [], false),
+            ]), false)
+            ->assertDontSee('action="' . route('checkout.place') . '"', false);
+
+        $this->post(route('checkout.place'), [])
+            ->assertRedirect(route('login'));
+
+        $this->assertDatabaseMissing('orders', [
+            'user_id' => null,
+        ]);
+    }
+
     private function category(array $attributes = []): Category
     {
         return Category::create(array_merge([

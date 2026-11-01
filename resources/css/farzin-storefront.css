@@ -5732,3 +5732,106 @@ body.home-body,
         grid-template-areas: "copy" "showcase";
     }
 }
+
+/* Homepage bestseller cards: the complete card is circular, not a square
+   thumbnail nested inside a round frame. */
+.home-body .farzin-product-card--round-media {
+    display: grid;
+    width: 100%;
+    height: auto;
+    min-width: 0;
+    min-height: 0;
+    aspect-ratio: 1 / 1;
+    grid-template-rows: minmax(0, 1fr) auto;
+    gap: .35rem;
+    padding: clamp(.7rem, 1.25vw, 1.1rem);
+    overflow: hidden;
+    border: 1px solid var(--fz-line);
+    border-radius: 50%;
+    color: var(--fz-text);
+    background: radial-gradient(circle at 50% 22%, #FFFFFF 0%, var(--fz-paper-soft) 100%);
+    box-shadow: 0 12px 30px rgba(6, 40, 79, .065);
+    text-align: center;
+    transition: border-color .2s ease, box-shadow .2s ease, transform .2s ease;
+}
+.home-body .farzin-product-card--round-media:hover {
+    border-color: var(--fz-accent);
+    box-shadow: 0 16px 36px rgba(6, 40, 79, .11);
+    transform: translateY(-3px);
+}
+.home-body .farzin-product-card--round-media .farzin-product-card__media {
+    display: grid; min-height: 0; height: 100%; padding: 0; overflow: visible;
+    place-items: center; background: transparent;
+}
+.home-body .farzin-product-card--round-media .farzin-product-card__image-link {
+    display: grid; width: 100%; height: 100%; max-width: none; aspect-ratio: auto;
+    padding: 0; place-items: center; overflow: hidden;
+    border: 0; border-radius: 0; background: transparent;
+}
+.home-body .farzin-product-card--round-media .farzin-product-card__image {
+    display: block; width: 100%; height: 100%; padding: 3%;
+    object-fit: contain; mix-blend-mode: multiply;
+}
+.home-body .farzin-product-card--round-media .farzin-product-fallback {
+    display: grid; width: 100%; height: 100%; min-height: 0; aspect-ratio: auto;
+    place-content: center; gap: .25rem; border-radius: 0; background: transparent;
+}
+.home-body .farzin-product-card--round-media .farzin-product-fallback__monogram {
+    color: var(--fz-accent); font-size: 1.8rem; font-weight: 900;
+}
+.home-body .farzin-product-card--round-media .farzin-product-fallback__label {
+    color: var(--fz-muted); font-size: .58rem;
+}
+.home-body .farzin-product-card--round-media .farzin-product-card__content {
+    display: flex; min-width: 0; min-height: 0; flex: none;
+    align-items: center; justify-content: center; gap: .2rem;
+    padding: 0 .25rem .25rem; overflow: hidden; text-align: center;
+}
+.home-body .farzin-product-card--round-media .farzin-product-card__meta {
+    display: flex; min-height: 0; width: 100%; justify-content: center; gap: .25rem;
+}
+.home-body .farzin-product-card--round-media .farzin-product-card__category {
+    max-width: 100%; color: var(--fz-muted); font-size: .57rem; line-height: 1.35;
+}
+.home-body .farzin-product-card--round-media .farzin-product-card__sku,
+.home-body .farzin-product-card--round-media .farzin-product-card__installment-slot { display: none; }
+.home-body .farzin-product-card--round-media .farzin-product-card__content > a:not(.farzin-product-card__cta) {
+    width: 100%; margin-top: 0;
+}
+.home-body .farzin-product-card--round-media .farzin-product-card__title {
+    display: -webkit-box; max-height: 2.85em; overflow: hidden;
+    color: var(--fz-ink); font-size: clamp(.68rem, .9vw, .82rem);
+    font-weight: 850; line-height: 1.42; text-align: center;
+    -webkit-box-orient: vertical; -webkit-line-clamp: 2;
+}
+.home-body .farzin-product-card--round-media .farzin-product-card__price-row {
+    display: flex; min-height: 0; width: 100%; justify-content: center;
+    gap: .25rem; margin-top: 0; flex-wrap: nowrap;
+}
+.home-body .farzin-product-card--round-media .farzin-product-card__price-current {
+    color: var(--fz-accent); font-size: clamp(.68rem, .82vw, .78rem);
+    font-weight: 900; white-space: nowrap;
+}
+.home-body .farzin-product-card--round-media .farzin-product-card__price-current span { font-size: .55rem; }
+.home-body .farzin-product-card--round-media .farzin-product-card__price-old { display: none; }
+.home-body .farzin-product-card--round-media .farzin-product-card__cta {
+    display: inline-flex; width: auto; min-height: 1.8rem; margin-top: .05rem;
+    padding: .35rem .75rem; border-radius: 999px; color: #FFFFFF !important;
+    background: var(--fz-ink); font-size: .59rem; line-height: 1.2;
+}
+.home-body .farzin-product-card--round-media .farzin-product-card__cta:hover { background: var(--fz-accent); }
+.home-body .farzin-product-card--round-media .farzin-product-badge {
+    padding: .24rem .42rem; border-radius: 999px; font-size: .5rem;
+}
+.home-body .farzin-product-card--round-media .farzin-product-card__wishlist {
+    width: 1.75rem; height: 1.75rem; background: #FFFFFF;
+    box-shadow: 0 3px 10px rgba(6, 40, 79, .1);
+}
+@media (max-width: 767px) {
+    .home-body .farzin-product-card--round-media { padding: .65rem; gap: .2rem; }
+    .home-body .farzin-product-card--round-media .farzin-product-card__title { font-size: .67rem; }
+    .home-body .farzin-product-card--round-media .farzin-product-card__price-current { font-size: .67rem; }
+    .home-body .farzin-product-card--round-media .farzin-product-card__cta {
+        min-height: 1.65rem; padding: .3rem .65rem; font-size: .56rem;
+    }
+}

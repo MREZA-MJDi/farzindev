@@ -540,26 +540,6 @@ body.home-body {
 .fz-category-card:focus-visible .fz-category-card__link svg {
     transform:translateX(-3px);
 }
-@media (prefers-reduced-motion:no-preference) {
-    .js .fz-category-card.is-entering {
-        animation:fz-category-card-enter .88s var(--fz-motion) both;
-        animation-delay:var(--fz-category-delay,0ms);
-    }
-}
-@keyframes fz-category-card-enter {
-    from {
-        opacity:0;
-        filter:blur(5px);
-        transform:translateY(34px) scale(.96) rotateX(3deg);
-    }
-    to {
-        opacity:1;
-        filter:blur(0);
-        transform:translateY(0) scale(1) rotateX(0);
-    }
-}
-
-
 /* Six static editorial compositions, using real, unique product images. */
 .fz-mosaic-intro { padding-block:clamp(3rem,6vw,5rem) 1rem; }
 .fz-mosaic-intro__inner { position:relative; display:grid; grid-template-columns:minmax(0,1fr) auto; align-items:end; gap:.4rem 2rem; }
@@ -624,13 +604,16 @@ body.home-body {
 .toast--success { border-color:rgba(74,222,128,.5); }
 .toast--error { border-color:rgba(248,113,113,.55); }
 
-/* Motion only enhances visible content; no global hiding or load-blocking layer. */
-.fz-reveal { opacity:1; transform:none; }
-@media (prefers-reduced-motion:no-preference) {
-    .js .fz-reveal.is-entering { animation: fz-fade-up .58s var(--fz-motion) both; }
-    .js .fz-reveal--delay.is-entering { animation-delay:.08s; }
+/* Immediate storefront rendering: no entrance animation or opacity gate. */
+.fz-reveal,
+.fz-reveal.is-entering,
+.fz-category-card.is-entering {
+    opacity: 1;
+    visibility: visible;
+    filter: none;
+    transform: none;
+    animation: none;
 }
-@keyframes fz-fade-up { from { transform:translateY(10px); } to { transform:translateY(0); } }
 @media (prefers-reduced-motion:reduce) {
     html { scroll-behavior:auto; }
     *,*::before,*::after { animation-duration:.01ms!important; animation-iteration-count:1!important; scroll-behavior:auto!important; transition-duration:.01ms!important; }

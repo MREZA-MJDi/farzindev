@@ -210,6 +210,20 @@ Route::match(
     [CheckoutController::class, 'paymentCallback']
 )->name('checkout.payment.callback');
 
+/*
+|--------------------------------------------------------------------------
+| Checkout preview
+|--------------------------------------------------------------------------
+|
+| Guests may see their own session cart and the checkout layout. Only order
+| creation and payment endpoints remain behind customer authentication.
+|
+*/
+Route::get(
+    '/checkout',
+    [CheckoutController::class, 'index']
+)->name('checkout.index');
+
 
 /*
 |--------------------------------------------------------------------------
@@ -228,11 +242,6 @@ Route::middleware(['auth', 'customer'])->group(function () {
     Route::prefix('checkout')
         ->name('checkout.')
         ->group(function () {
-
-            Route::get(
-                '/',
-                [CheckoutController::class, 'index']
-            )->name('index');
 
             Route::post(
                 '/',

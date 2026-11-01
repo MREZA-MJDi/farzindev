@@ -19,9 +19,28 @@ class CheckoutController extends Controller
     /**
      * Show checkout page.
      */
-    public function index(): View
+    public function index(Request $request): View|RedirectResponse
     {
-        $cart = $this->getActiveCart();
+        $user = Auth::user();
+        $checkoutPreview = ! $user || ! $user->isCustomer();
+
+        if ($user) {
+            $cart = $this->getActiveCart();
+        } else {
+            // Guests may preview their own session cart, but cannot submit an
+            // order or start a payment until they authenticate as a customer.
+            $cart = Cart::query()->firstOrCreate(
+                [
+                    'session_id' => $request->session()->getId(),
+                    'status' => 'active',
+                ],
+                [
+                    'user_id' => null,
+                ]
+            );
+
+            $request->session()->put('guest_cart_id', (int) $cart->id);
+        }
 
         $cart->load([
             'items.product.category',
@@ -32,19 +51,20 @@ class CheckoutController extends Controller
             'items.variant',
         ]);
 
-        abort_if(
-            $cart->items->isEmpty(),
-            404,
-            'سبد خرید خالی است.'
-        );
+        if ($cart->items->isEmpty()) {
+            return redirect()
+                ->route('cart.index')
+                ->with('error', 'سبد خرید شما خالی است. ابتدا محصولی به سبد اضافه کنید.');
+        }
 
-        $defaultAddress = Auth::user()
-            ->defaultAddress()
-            ->first();
+        $defaultAddress = ! $checkoutPreview
+            ? $user->defaultAddress()->first()
+            : null;
 
         return view('checkout.index', [
             'cart' => $cart,
             'defaultAddress' => $defaultAddress,
+            'checkoutPreview' => $checkoutPreview,
         ]);
     }
 
