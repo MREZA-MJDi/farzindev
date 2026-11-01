@@ -1,332 +1,97 @@
-<footer class="farzin-site-footer border-t border-white/10 bg-[var(--livora-ink)] text-[var(--livora-text)]">
+@props(['contact' => []])
 
-    <x-layout.container class="farzin-site-footer__container">
+@php
+    $safeWebUrl = static function ($value): ?string {
+        $url = trim((string) $value);
 
-        {{-- =========================================================
-             MAIN FOOTER
-        ========================================================== --}}
-        <div class="farzin-site-footer__main">
+        if ($url === '' || ! filter_var($url, FILTER_VALIDATE_URL)) {
+            return null;
+        }
 
-            {{-- Brand --}}
-            <div class="max-w-md">
+        $scheme = strtolower((string) parse_url($url, PHP_URL_SCHEME));
 
-                <a
-                    href="{{ route('home') }}"
-                    aria-label="فرزین"
-                    class="inline-flex items-center"
-                >
-                    <span class="farzin-site-footer__brand-name transition hover:text-[var(--livora-text)]">
-                        فرزین
-                    </span>
-                </a>
+        return in_array($scheme, ['http', 'https'], true) ? $url : null;
+    };
 
-                <p class="farzin-site-footer__brand-caption">تجهیزات تخصصی آشپزخانه</p>
-                <p class="farzin-site-footer__intro">
-                    هود و سینک آشپزخانه فرزین؛ برای انتخابی هماهنگ با فضای نصب، کاربری و نیاز روزمره.
-                </p>
+    $instagramUrl = $safeWebUrl($contact['instagram_url'] ?? null);
+    $telegramUrl = $safeWebUrl($contact['telegram_url'] ?? null);
 
-                <div class="mt-7 flex flex-wrap gap-2">
+    $whatsappValue = trim((string) ($contact['whatsapp'] ?? ''));
+    $whatsappUrl = null;
 
-                    <span class="rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-xs text-white/75">
-                        HOODS
-                    </span>
+    if ($whatsappValue !== '' && filter_var($whatsappValue, FILTER_VALIDATE_URL)) {
+        $whatsappHost = strtolower((string) parse_url($whatsappValue, PHP_URL_HOST));
 
-                    <span class="rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-xs text-white/75">
-                        KITCHEN
-                    </span>
+        if (in_array($whatsappHost, ['wa.me', 'www.wa.me', 'api.whatsapp.com'], true)) {
+            $whatsappUrl = $whatsappValue;
+        }
+    }
 
-                    <span class="rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-xs text-white/75">
-                        SINKS
-                    </span>
+    if ($whatsappUrl === null) {
+        $whatsappNumber = preg_replace('/\D+/', '', $whatsappValue !== '' ? $whatsappValue : (string) ($contact['phone'] ?? ''));
 
-                </div>
+        if (str_starts_with($whatsappNumber, '00')) {
+            $whatsappNumber = substr($whatsappNumber, 2);
+        } elseif (str_starts_with($whatsappNumber, '0')) {
+            $whatsappNumber = '98' . substr($whatsappNumber, 1);
+        }
 
-            </div>
+        if (strlen($whatsappNumber) >= 8) {
+            $whatsappUrl = 'https://wa.me/' . $whatsappNumber;
+        }
+    }
+@endphp
 
-
-            {{-- Shop --}}
-            <div>
-
-                <h2 class="farzin-site-footer__heading">
-                    محصولات و دسته‌بندی‌ها
-                </h2>
-
-                <nav
-                    aria-label="لینک‌های فروشگاه"
-                    class="mt-5 flex flex-col gap-3"
-                >
-
-                    <a
-                        href="{{ route('shop.index') }}"
-                        class="text-sm text-white/75 transition hover:text-white"
-                    >
-                        همه محصولات
-                    </a>
-
-                    <a
-                        href="{{ route('categories.index') }}"
-                        class="text-sm text-white/75 transition hover:text-white"
-                    >
-                        دسته‌بندی‌ها
-                    </a>
-
-                    <a
-                        href="{{ route('blog.index') }}"
-                        class="text-sm text-white/75 transition hover:text-white"
-                    >
-                        بلاگ و راهنمای خرید
-                    </a>
-
-                    <a
-                        href="{{ route('shop.index', ['sort' => 'newest']) }}"
-                        class="text-sm text-white/75 transition hover:text-white"
-                    >
-                        تازه‌ها
-                    </a>
-
-                    <a
-                        href="{{ route('shop.index', ['sort' => 'popular']) }}"
-                        class="text-sm text-white/75 transition hover:text-white"
-                    >
-                        پرفروش‌ترین محصولات
-                    </a>
-
-                    <a
-                        href="{{ route('cart.index') }}"
-                        class="text-sm text-white/75 transition hover:text-white"
-                    >
-                        سبد خرید
-                    </a>
-
-                </nav>
-
-            </div>
-
-
-            {{-- Customer --}}
-            <div>
-
-                <h2 class="farzin-site-footer__heading">
-                    خدمات مشتریان
-                </h2>
-
-                <nav
-                    aria-label="لینک‌های مشتریان"
-                    class="mt-5 flex flex-col gap-3"
-                >
-
-                    @auth
-
-                        @if(auth()->user()->isCustomer())
-
-                            <a
-                                href="{{ route('account.index') }}"
-                                class="text-sm text-white/75 transition hover:text-white"
-                            >
-                                حساب کاربری
-                            </a>
-
-                            <a
-                                href="{{ route('account.orders.index') }}"
-                                class="text-sm text-white/75 transition hover:text-white"
-                            >
-                                سفارش‌های من
-                            </a>
-
-                            <a
-                                href="{{ route('account.wishlist.index') }}"
-                                class="text-sm text-white/75 transition hover:text-white"
-                            >
-                                علاقه‌مندی‌ها
-                            </a>
-
-                            <a
-                                href="{{ route('account.addresses.index') }}"
-                                class="text-sm text-white/75 transition hover:text-white"
-                            >
-                                آدرس‌ها
-                            </a>
-
-                        @elseif(auth()->user()->isAdmin())
-
-                            <a
-                                href="{{ route('admin.dashboard') }}"
-                                class="text-sm text-white/75 transition hover:text-white"
-                            >
-                                پنل مدیریت
-                            </a>
-
-                        @endif
-
-                    @else
-
-                        <a
-                            href="{{ route('login') }}"
-                            class="text-sm text-white/75 transition hover:text-white"
-                        >
-                            ورود
-                        </a>
-
-                        <a
-                            href="{{ route('register') }}"
-                            class="text-sm text-white/75 transition hover:text-white"
-                        >
-                            ثبت‌نام
-                        </a>
-
-                    @endauth
-
-                    <a
-                        href="{{ route('contact') }}"
-                        class="text-sm text-white/75 transition hover:text-white"
-                    >
-                        تماس با ما
-                    </a>
-
-                </nav>
-
-            </div>
-
-
-            {{-- Contact / Newsletter --}}
-            <div>
-
-                <h2 class="farzin-site-footer__heading">
-                    ارتباط با فرزین
-                </h2>
-
-                <p class="farzin-site-footer__intro">
-                    برای مشاوره انتخاب هود و سینک، بررسی مشخصات یا پیگیری سفارش با فرزین در ارتباط باشید.
-                </p>
-
-
-                {{-- Contact CTA --}}
-                <a
-                    href="{{ route('contact') }}"
-                    class="mt-6 inline-flex min-h-[52px] items-center gap-3 rounded-2xl border border-white/10 bg-white/5 px-4 py-2.5 text-sm font-semibold text-white transition hover:border-white/25 hover:bg-white/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
-                >
-                    ارتباط با فرزین
-                    <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white/10 text-white" aria-hidden="true">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" class="h-5 w-5"><path d="M5 4.5h3l1.4 3.7-2 1.4a15 15 0 0 0 7 7l1.4-2 3.7 1.4v3c0 .8-.7 1.5-1.5 1.5A14.5 14.5 0 0 1 3.5 6c0-.8.7-1.5 1.5-1.5Z" /></svg>
-                    </span>
-                </a>
-
-            </div>
-
+<footer class="fz-global-footer" aria-label="پاورقی وب‌سایت فرزین">
+    <x-layout.container class="fz-global-footer__inner">
+        <div class="fz-global-footer__brand">
+            <a href="{{ route('home') }}" class="fz-global-footer__wordmark" aria-label="فرزین، صفحه اصلی">
+                <span>فرزین</span>
+                <small>FARZIN / KITCHEN EQUIPMENT</small>
+            </a>
+            <p>تجهیزات آشپزخانه فرزین؛ انتخاب آگاهانه برای خانه‌ای هماهنگ‌تر.</p>
         </div>
 
+        <nav class="fz-global-footer__nav" aria-label="پیوندهای پایین صفحه">
+            <a href="{{ route('home') }}">خانه</a>
+            <a href="{{ route('shop.index') }}">فروشگاه</a>
+            <a href="{{ route('categories.index') }}">دسته‌بندی‌ها</a>
+            <a href="{{ route('blog.index') }}">راهنمای خرید</a>
+            <a href="{{ route('about') }}">درباره ما</a>
+            <a href="{{ route('contact') }}">تماس با ما</a>
+        </nav>
 
-        {{-- =========================================================
-             TRUST STRIP
-        ========================================================== --}}
-        <div class="farzin-site-footer__trust grid border-t border-white/10 md:grid-cols-3">
+        <div class="fz-global-footer__bottom">
+            <p>© {{ \App\Helpers\JalaliHelper::format(now(), 'Y') }} فرزین. تمامی حقوق محفوظ است.</p>
 
-            <div class="farzin-site-footer__trust-item border-b border-white/10 md:border-b-0 md:border-l">
+            <div class="fz-global-footer__socials" aria-label="شبکه‌های اجتماعی">
+                @if($instagramUrl)
+                    <a href="{{ $instagramUrl }}" target="_blank" rel="noopener noreferrer" aria-label="Instagram" title="Instagram">
+                        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                            <rect x="3" y="3" width="18" height="18" rx="5" stroke="currentColor" stroke-width="1.8"/>
+                            <circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="1.8"/>
+                            <circle cx="17.6" cy="6.6" r="1.1" fill="currentColor"/>
+                        </svg>
+                    </a>
+                @endif
 
-                <h2 class="farzin-site-footer__heading">
-                    روش‌های خرید
-                </h2>
+                @if($whatsappUrl)
+                    <a href="{{ $whatsappUrl }}" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp" title="WhatsApp">
+                        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                            <path d="M20.2 11.7a8.2 8.2 0 0 1-12.1 7.2L3.2 20l1.1-4.7a8.2 8.2 0 1 1 15.9-3.6Z" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M8.4 7.8c.2-.4.4-.4.7-.4h.5c.2 0 .4.1.5.4l.8 1.8c.1.2.1.4-.1.6l-.6.7c-.2.2-.2.4-.1.6.5.9 1.3 1.7 2.2 2.2.2.1.4.1.6-.1l.8-.9c.2-.2.4-.2.6-.1l1.7.8c.3.1.4.3.4.5 0 .5-.2 1-.6 1.3-.5.4-1.1.6-1.8.5-1.1-.2-2.4-.9-3.6-2-1.2-1.1-2-2.5-2.2-3.5-.2-.8 0-1.6.3-2.1Z" fill="currentColor"/>
+                        </svg>
+                    </a>
+                @endif
 
-                <p class="mt-2 text-sm leading-6 text-white/70">
-                    روش‌های پرداخت و شرایط خرید هر محصول را پیش از ثبت سفارش بررسی کنید.
-                </p>
-
+                @if($telegramUrl)
+                    <a href="{{ $telegramUrl }}" target="_blank" rel="noopener noreferrer" aria-label="Telegram" title="Telegram">
+                        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                            <path d="m21 3-3.2 18-6.1-5.1-3.2 3 .5-5.7L19 5.2 7.8 11.9l-4.8-1.6L21 3Z" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </a>
+                @endif
             </div>
-
-            <div class="farzin-site-footer__trust-item border-b border-white/10 md:border-b-0">
-
-                <h2 class="farzin-site-footer__heading">
-                    مشخصات محصول
-                </h2>
-
-                <p class="mt-2 text-sm leading-6 text-white/70">
-                    ابعاد، جنس و شیوه نصب را با فضای آشپزخانه و نیاز روزمره تطبیق دهید.
-                </p>
-
-            </div>
-
-            <div class="farzin-site-footer__trust-item">
-
-                <h2 class="farzin-site-footer__heading">
-                    پشتیبانی خرید
-                </h2>
-
-                <p class="mt-2 text-sm leading-6 text-white/70">
-                    برای انتخاب محصول، دریافت راهنمایی یا پیگیری سفارش کنار شما هستیم.
-                </p>
-
-            </div>
-
         </div>
-
-
-        {{-- =========================================================
-             BOTTOM
-        ========================================================== --}}
-        <div class="farzin-site-footer__bottom flex flex-col gap-4 border-t border-white/10 py-5 md:flex-row md:items-center md:justify-between md:gap-5 md:py-6">
-
-            <div>
-
-                <p class="text-xs text-white/70">
-                    © {{ \App\Helpers\JalaliHelper::format(now(), 'Y') }} فرزین.
-                    تمامی حقوق محفوظ است.
-                </p>
-
-            </div>
-
-
-            <div class="flex flex-wrap items-center gap-4 sm:gap-6">
-
-                <a
-                    href="{{ route('about') }}"
-                    class="text-xs text-white/70 transition hover:text-white"
-                >
-                    درباره ما
-                </a>
-
-                <a
-                    href="{{ route('contact') }}"
-                    class="text-xs text-white/70 transition hover:text-white"
-                >
-                    تماس
-                </a>
-
-                @auth
-
-                    @if(auth()->user()->isCustomer())
-
-                        <a
-                            href="{{ route('account.index') }}"
-                            class="text-xs text-white/70 transition hover:text-white"
-                        >
-                            حساب من
-                        </a>
-
-                    @endif
-
-                @endauth
-
-                {{-- Social --}}
-                <a
-                    href="#"
-                    aria-label="Instagram"
-                    class="text-xs text-white/70 transition hover:text-white"
-                >
-                    Instagram
-                </a>
-
-                <a
-                    href="#"
-                    aria-label="Telegram"
-                    class="text-xs text-white/70 transition hover:text-white"
-                >
-                    Telegram
-                </a>
-
-            </div>
-
-        </div>
-
     </x-layout.container>
-
 </footer>
