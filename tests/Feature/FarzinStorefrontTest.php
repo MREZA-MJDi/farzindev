@@ -1673,7 +1673,8 @@ class FarzinStorefrontTest extends TestCase
 
         $this->actingAs($owner)
             ->get(route('checkout.payment', $order))
-            ->assertOk();
+            ->assertOk()
+            ->assertSee('درگاه پرداخت هنوز به‌صورت رسمی متصل نشده است');
 
         // An unconfigured gateway is a customer-facing preparation state, not a 403.
         $this->actingAs($owner)
