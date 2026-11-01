@@ -341,7 +341,7 @@
                             </p>
                         </div>
 
-                        <a class="fz-home-featured-section__all-link" href="{{ route('shop.index') }}">
+                        <a class="fz-home-featured-section__all-link fz-text-link" href="{{ route('shop.index') }}">
                             <span>مشاهده همه محصولات</span>
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                                 <path d="M19 12H5m7 7-7-7 7-7"/>
