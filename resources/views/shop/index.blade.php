@@ -25,7 +25,7 @@
         <section class="farzin-shop-banner border-b border-[var(--livora-border)] bg-[var(--livora-white)]">
             <x-layout.container>
                 <div class="py-7 sm:py-9">
-                    <nav aria-label="مسیر صفحه" class="flex flex-wrap items-center gap-2 text-[11px] text-[var(--livora-stone)]">
+                    <nav aria-label="مسیر صفحه" class="farzin-shop-banner__breadcrumb flex flex-wrap items-center gap-2 text-[11px] text-[var(--livora-stone)]">
                         <a href="{{ route('home') }}" class="transition hover:text-[var(--livora-text)]">خانه</a>
                         <span aria-hidden="true">/</span>
                         <span aria-current="page" class="text-[var(--livora-text)]">فروشگاه</span>
@@ -45,22 +45,22 @@
                             >
                             <div class="absolute inset-0 bg-gradient-to-l from-black/75 via-black/25 to-transparent"></div>
                             <div class="farzin-shop-banner__content absolute inset-y-0 right-0 flex max-w-2xl flex-col justify-center p-6 text-white sm:p-10 lg:p-14">
-                                <p class="text-[10px] font-medium uppercase tracking-[0.22em] text-white/70">FARZIN / CATALOG</p>
-                                <h1 class="mt-3 text-3xl font-semibold leading-tight sm:text-4xl lg:text-5xl">{{ $shopBanner['title'] }}</h1>
+                                <p class="farzin-shop-banner__eyebrow text-[10px] font-medium uppercase tracking-[0.22em] text-white/70">FARZIN / CATALOG</p>
+                                <h1 class="farzin-shop-banner__title mt-3 text-3xl font-semibold leading-tight sm:text-4xl lg:text-5xl">{{ $shopBanner['title'] }}</h1>
                                 @if (filled($shopBanner['subtitle']))
-                                    <p class="mt-4 max-w-xl text-sm leading-8 text-white/80 sm:text-base">{{ $shopBanner['subtitle'] }}</p>
+                                    <p class="farzin-shop-banner__description mt-4 max-w-xl text-sm leading-8 text-white/80 sm:text-base">{{ $shopBanner['subtitle'] }}</p>
                                 @endif
-                                <a href="#shop-catalog" class="mt-6 inline-flex min-h-11 w-fit items-center gap-2 rounded-xl border border-white/40 bg-white/10 px-5 py-3 text-sm font-medium text-white backdrop-blur-sm transition hover:bg-white/20"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4 shrink-0" aria-hidden="true"><rect x="3.5" y="3.5" width="7" height="7" rx="1.3" /><rect x="13.5" y="3.5" width="7" height="7" rx="1.3" /><rect x="3.5" y="13.5" width="7" height="7" rx="1.3" /><rect x="13.5" y="13.5" width="7" height="7" rx="1.3" /></svg> مشاهده کاتالوگ</a>
+                                <a href="#shop-catalog" class="farzin-shop-banner__action mt-6 inline-flex min-h-11 w-fit items-center gap-2 rounded-xl border border-white/40 bg-white/10 px-5 py-3 text-sm font-medium text-white backdrop-blur-sm transition hover:bg-white/20"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4 shrink-0" aria-hidden="true"><rect x="3.5" y="3.5" width="7" height="7" rx="1.3" /><rect x="13.5" y="3.5" width="7" height="7" rx="1.3" /><rect x="3.5" y="13.5" width="7" height="7" rx="1.3" /><rect x="13.5" y="13.5" width="7" height="7" rx="1.3" /></svg> مشاهده کاتالوگ</a>
                             </div>
                         </div>
                     @else
                         <div class="mt-6 flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
                             <div>
-                                <p class="text-[10px] font-medium uppercase tracking-[0.22em] text-[var(--livora-accent)]">FARZIN / CATALOG</p>
-                                <h1 class="mt-3 text-3xl font-semibold tracking-tight sm:text-4xl">فروشگاه فرزین</h1>
-                                <p class="mt-3 max-w-2xl text-sm leading-8 text-[var(--livora-stone)]">{{ $shopBanner['subtitle'] }}</p>
+                                <p class="farzin-shop-banner__eyebrow text-[10px] font-medium uppercase tracking-[0.22em] text-[var(--livora-accent)]">FARZIN / CATALOG</p>
+                                <h1 class="farzin-shop-banner__title mt-3 text-3xl font-semibold tracking-tight sm:text-4xl">فروشگاه فرزین</h1>
+                                <p class="farzin-shop-banner__description mt-3 max-w-2xl text-sm leading-8 text-[var(--livora-stone)]">{{ $shopBanner['subtitle'] }}</p>
                             </div>
-                            <a href="#shop-catalog" class="inline-flex min-h-11 w-fit shrink-0 items-center gap-2 rounded-xl bg-[var(--livora-ink)] px-5 py-3 text-sm font-medium text-white transition hover:bg-[var(--livora-accent)]"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4 shrink-0" aria-hidden="true"><path d="M3.5 9h17l-1 11h-15l-1-11Z" /><path d="M8 9V6.5a4 4 0 0 1 8 0V9" /></svg> مشاهده محصولات</a>
+                            <a href="#shop-catalog" class="farzin-shop-banner__action inline-flex min-h-11 w-fit shrink-0 items-center gap-2 rounded-xl bg-[var(--livora-ink)] px-5 py-3 text-sm font-medium text-white transition hover:bg-[var(--livora-accent)]"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4 shrink-0" aria-hidden="true"><path d="M3.5 9h17l-1 11h-15l-1-11Z" /><path d="M8 9V6.5a4 4 0 0 1 8 0V9" /></svg> مشاهده محصولات</a>
                         </div>
                     @endif
                 </div>

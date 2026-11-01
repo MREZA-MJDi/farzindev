@@ -16,7 +16,7 @@
     <div class="overflow-hidden bg-[var(--livora-cream)]">
 
         {{-- HERO --}}
-        <section class="fz-category-hero border-b border-[var(--livora-border)] bg-[var(--livora-white)]">
+        <section class="fz-category-hero farzin-category-index-banner border-b border-[var(--livora-border)] bg-[var(--livora-white)]">
 
             <x-layout.container>
 
@@ -75,14 +75,14 @@
                                                 <stop stop-color="#F5F3EF"/>
                                                 <stop offset=".42" stop-color="#B8BDC4"/>
                                                 <stop offset=".75" stop-color="#555A61"/>
-                                                <stop offset="1" stop-color="#E57852"/>
+                                                <stop offset="1" stop-color="#7B0D1A"/>
                                             </linearGradient>
                                         </defs>
                                         <path d="M94 12h92v35l25 18v18H69V65l25-18V12Z" fill="url(#fzHoodMetal)" fill-opacity=".96" stroke="#F5F3EF" stroke-opacity=".8" stroke-width="1.2"/>
                                         <path d="M80 84h120v12H80z" fill="#111316" stroke="#C7CBD0" stroke-opacity=".8"/>
                                         <path d="M91 88h98M95 92h90M99 96h82" stroke="#77777D" stroke-width="1.7" stroke-linecap="round"/>
                                         <path d="M108 19h64M108 25h64" stroke="#fff" stroke-opacity=".45" stroke-width="1.4" stroke-linecap="round"/>
-                                        <path d="M112 102v7m14-7v7m14-7v7m14-7v7m14-7v7" stroke="#F0B568" stroke-opacity=".85" stroke-width="1.5" stroke-linecap="round"/>
+                                        <path d="M112 102v7m14-7v7m14-7v7m14-7v7m14-7v7" stroke="#7B0D1A" stroke-opacity=".85" stroke-width="1.5" stroke-linecap="round"/>
                                         <path d="M42 116h196" stroke="#C7CBD0" stroke-opacity=".25" stroke-width="1"/>
                                     </svg>
                                 </div>
@@ -102,14 +102,14 @@
                                                 <stop stop-color="#FAF9F6"/>
                                                 <stop offset=".5" stop-color="#AEB4BB"/>
                                                 <stop offset=".82" stop-color="#555A61"/>
-                                                <stop offset="1" stop-color="#F0B568"/>
+                                                <stop offset="1" stop-color="#7B0D1A"/>
                                             </linearGradient>
                                         </defs>
                                         <rect x="42" y="20" width="196" height="86" rx="13" fill="url(#fzSinkMetal)" stroke="#FCFBF8" stroke-opacity=".8" stroke-width="1.2"/>
                                         <rect x="55" y="31" width="170" height="64" rx="8" fill="#292D32" stroke="#D8DCE0" stroke-opacity=".75" stroke-width="1.2"/>
                                         <rect x="68" y="41" width="144" height="44" rx="5" fill="#202328" stroke="#77777D" stroke-width="1"/>
                                         <path d="M140 41v44" stroke="#90959B" stroke-opacity=".6"/>
-                                        <circle cx="201" cy="50" r="3" fill="#F0B568"/>
+                                        <circle cx="201" cy="50" r="3" fill="#7B0D1A"/>
                                         <path d="M182 20V10c0-5-4-8-9-8h-9" stroke="#F5F3EF" stroke-width="5" stroke-linecap="round"/>
                                         <path d="M164 2h-7" stroke="#C7CBD0" stroke-width="5" stroke-linecap="round"/>
                                         <path d="M73 113h134" stroke="#C7CBD0" stroke-opacity=".3"/>
