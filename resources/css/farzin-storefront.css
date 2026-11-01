@@ -6,27 +6,6 @@
 | customer journey. This layer is loaded after the legacy page styles.
 */
 
-:root {
-    --fz-page: #F2F2F2;
-    --fz-paper: #FFFFFF;
-    --fz-paper-soft: #EEEEEE;
-    --fz-ink: #06284F;
-    --fz-text: #26313B;
-    --fz-muted: #6E747A;
-    --fz-line: #DEDED8;
-    --fz-accent: #7B0D1A;
-    --fz-accent-dark: #5F0712;
-    --fz-sunset-light: #FFFFFF;
-    --fz-metal-silver: #B9B9B2;
-    --fz-sunset-burnt: #8B1C2A;
-    --fz-shadow: 0 16px 42px rgba(6, 40, 79, .09);
-    --fz-container: 1320px;
-    --fz-header-height: 76px;
-    --fz-motion: cubic-bezier(.22, 1, .36, 1);
-    --fz-font-ui: "Peyda Soft", "Vazirmatn", "IRANYekanX FaNum", sans-serif;
-    --fz-font-heading: "Bahman", "Rokh", "IRANYekanX FaNum", sans-serif;
-}
-
 html {
     background: var(--fz-page);
     color: var(--fz-text);
@@ -463,7 +442,7 @@ body.home-body {
     flex-direction: column;
     overflow: hidden;
     border: 1px solid #DEE6F0;
-    border-radius: 12px;
+    border-radius: var(--fz-radius-card);
     background: #FFFFFF;
     box-shadow: 0 7px 24px rgba(6, 40, 79, .07);
     transition: transform 240ms var(--fz-motion), box-shadow 240ms ease, border-color 240ms ease;
@@ -478,8 +457,8 @@ body.home-body {
     position: relative;
     flex: 0 0 auto;
     overflow: hidden;
-    border-radius: 11px 11px 0 0;
-    background: linear-gradient(145deg, #FFFFFF 0%, #EEEEEE 100%);
+    border-radius: var(--fz-radius-card) var(--fz-radius-card) 0 0;
+    background: linear-gradient(145deg, #FFFFFF 0%, var(--fz-paper-soft) 100%);
 }
 .farzin-product-card__image-link {
     display: block;
@@ -596,7 +575,7 @@ body.home-body {
     margin-top: auto;
     padding: .55rem .7rem;
     border: 1px solid #E4EAF1;
-    border-radius: 9px;
+    border-radius: var(--fz-radius-control);
     color: #FFFFFF;
     background: var(--fz-ink);
     font-size: .78rem;
@@ -793,7 +772,7 @@ body.home-body {
 
 .farzin-shop-catalog {
     padding-block: clamp(1.25rem, 3vw, 2rem);
-    background: #F2F2F2;
+    background: var(--fz-page);
 }
 
 .farzin-shop-catalog :where(aside, [class*="filter"], [class*="Filter"]) {
@@ -1563,21 +1542,6 @@ body.home-body {
    intentional brand anchors, not content cards or product specifications.
    ========================================================================== */
 
-:root {
-    --fz-font-ui: "IRANYekanX FaNum", "Vazirmatn", sans-serif;
-    --fz-font-heading: "IRANYekanX FaNum", "Vazirmatn", sans-serif;
-    --fz-page: #F2F2F2;
-    --fz-paper: #FFFFFF;
-    --fz-paper-soft: #EEEEEE;
-    --fz-ink: #06284F;
-    --fz-text: #26313B;
-    --fz-muted: #6E747A;
-    --fz-line: #DEDED8;
-    --fz-accent: #7B0D1A;
-    --fz-accent-dark: #5F0712;
-    --fz-blue-soft: #EEEEEE;
-}
-
 html,
 body {
     font-family: var(--fz-font-ui);
@@ -1747,7 +1711,7 @@ body {
 }
 
 .farzin-product-facts {
-    background: #F2F2F2;
+    background: var(--fz-page);
 }
 
 .farzin-product-facts__grid {
@@ -1887,7 +1851,7 @@ body {
 }
 
 .farzin-shop-catalog {
-    background: #F2F2F2;
+    background: var(--fz-page);
 }
 
 .farzin-shop-catalog aside > div,
@@ -1918,7 +1882,7 @@ body {
 }
 
 .storefront-content :where(.bg-\[var\(--livora-cream\)\]) {
-    background-color: #F2F2F2;
+    background-color: var(--fz-page);
 }
 
 .storefront-content :where(.bg-\[var\(--livora-surface\)\]) {
@@ -2006,7 +1970,7 @@ body {
     --fz-featured-burgundy: #7B0D1A;
     --fz-featured-burgundy-deep: #5F0712;
     --fz-featured-muted: #64768C;
-    --fz-featured-line: #DFE7F0;
+    --fz-featured-line: var(--fz-line);
     position: relative;
     isolation: isolate;
     overflow: hidden;
@@ -2479,7 +2443,7 @@ body {
    ========================================================================== */
 .home-body {
     --fz-home-surface: #FFFFFF;
-    --fz-home-surface-soft: #F2F2F2;
+    --fz-home-surface-soft: var(--fz-page);
     --fz-home-surface-alt: #EEEEEE;
     --fz-home-line: #DEDED8;
     --fz-home-text: #26313B;
@@ -2518,7 +2482,7 @@ body {
     border-color: #E3E3DE;
 }
 .home-body .fz-category-section {
-    background: #F2F2F2;
+    background: var(--fz-page);
     border-block: 1px solid #E1E1DC;
 }
 .home-body .fz-category-heading {
@@ -2554,7 +2518,7 @@ body {
     color: #686D72;
 }
 .home-body .fz-new-section {
-    background: #F2F2F2;
+    background: var(--fz-page);
     border-block: 1px solid #E1E1DC;
 }
 .home-body .fz-category-section .fz-category-card {
@@ -2582,7 +2546,7 @@ body {
     border: 0;
 }
 .home-body .content--spacing {
-    background: #F2F2F2;
+    background: var(--fz-page);
     border-block: 1px solid #E1E1DC;
 }
 .home-body .content__heading {
@@ -2776,7 +2740,7 @@ body {
     margin-top: 1.55rem;
     padding: .78rem 1.25rem;
     border: 1px solid #7B0D1A;
-    border-radius: 10px;
+    border-radius: var(--fz-radius-panel);
     color: #FFFFFF !important;
     background: #7B0D1A;
     box-shadow: 0 9px 22px rgba(123,13,26,.16);
@@ -2859,18 +2823,13 @@ body {
 }
 
 
-/* Farzin fit-and-finish: restrained radii, a true neutral shell and one card scale. */
-:root {
-    --fz-radius-card: 10px;
-    --fz-radius-panel: 12px;
-    --fz-radius-control: 8px;
-}
+/* Farzin fit-and-finish: shared surfaces use the canonical radius tokens. */
 html,
 body,
 #app,
 #main-content,
 .storefront-content {
-    background-color: #F2F2F2;
+    background-color: var(--fz-page);
 }
 
 /* Common commerce surfaces */
@@ -3221,7 +3180,7 @@ body,
 .blog-article-panel,
 .blog-article-sidebar-card,
 .blog-empty-state {
-    border-radius: 10px !important;
+    border-radius: var(--fz-radius-panel) !important;
 }
 .home-body .fz-home-hero__showcase,
 .home-body .fz-home-purchase-cta__inner,
@@ -3238,13 +3197,13 @@ body,
     border-radius: 12px;
 }
 .storefront-content :where(.product-price, .product-price__installment, .farzin-product-facts__item) {
-    border-radius: 10px;
+    border-radius: var(--fz-radius-panel);
 }
 
 
 /* Product-led hero art and commercial panels share the same restrained radius. */
 .home-body .fz-home-hero__slide-stage {
-    border-radius: 10px !important;
+    border-radius: var(--fz-radius-panel) !important;
 }
 .home-body .fz-home-hero__showcase {
     border-radius: 12px !important;
@@ -3261,7 +3220,7 @@ body,
 }
 .storefront-content .farzin-product-detail-info .product-price,
 .storefront-content .farzin-product-detail-info .product-price__installment {
-    border-radius: 10px !important;
+    border-radius: var(--fz-radius-panel) !important;
 }
 
 
@@ -3269,55 +3228,18 @@ body,
    FARZIN PUBLIC DESIGN SYSTEM — final cascade
    Navy / white / burgundy / structured grey. No cream, pastel pink or pale blue.
    ========================================================================== */
-:root {
-    --fz-page: #C8CAC8;
-    --fz-paper: #FFFFFF;
-    --fz-paper-soft: #DDDFDC;
-    --fz-ink: #06284F;
-    --fz-text: #26313B;
-    --fz-muted: #5F666D;
-    --fz-line: #AEB2AF;
-    --fz-accent: #7B0D1A;
-    --fz-accent-dark: #5F0712;
-    --fz-radius-card: 8px;
-    --fz-radius-panel: 10px;
-    --fz-radius-control: 8px;
-
-    --livora-ink: #06284F;
-    --livora-text: #26313B;
-    --livora-text-soft: #596168;
-    --livora-charcoal: #0A315F;
-    --livora-chocolate: #0B3565;
-    --livora-chocolate-dark: #041E3E;
-    --livora-chocolate-soft: #17436F;
-    --livora-cream: #C8CAC8;
-    --livora-white: #FFFFFF;
-    --livora-surface: #DDDFDC;
-    --livora-sand: #BFC3C0;
-    --livora-stone: #5F666D;
-    --livora-accent: #7B0D1A;
-    --livora-accent-dark: #5F0712;
-    --livora-accent-soft: #DDDFDC;
-    --livora-sage: #3F4952;
-    --livora-sage-dark: #303941;
-    --livora-sage-soft: #DDDFDC;
-    --livora-border: #AEB2AF;
-    --livora-border-dark: #969C98;
-    --livora-container: 1280px;
-}
-
 html,
 body,
 #app,
 #main-content,
 .storefront-content,
 body.home-body {
-    background-color: #C8CAC8;
+    background-color: var(--fz-page);
     color: #26313B;
 }
 html {
     scroll-padding-top: 94px;
-    scrollbar-color: #858B87 #C8CAC8;
+    scrollbar-color: var(--fz-muted) var(--fz-page);
 }
 body,
 body.home-body,
@@ -3327,12 +3249,12 @@ body.home-body,
 }
 #app {
     min-height: 100vh;
-    background: #C8CAC8;
+    background: var(--fz-page);
 }
 #main-content.storefront-content {
     min-width: 0;
     flex: 1 0 auto;
-    background: #C8CAC8;
+    background: var(--fz-page);
 }
 .storefront-content .livora-container,
 .farzin-site-header .livora-container,
@@ -3354,7 +3276,7 @@ body.home-body,
     line-height: 1.9;
 }
 .storefront-content :where(p, li, dd, dt, figcaption) {
-    color: #555E65;
+    color: var(--fz-muted);
 }
 .storefront-content :where(strong, b) {
     font-weight: 800;
@@ -3373,14 +3295,14 @@ body.home-body,
 }
 .storefront-content :where(input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]):not([type="file"]):not([type="submit"]):not([type="button"]):not([type="reset"]), select, textarea) {
     min-height: 44px;
-    border: 1px solid #AEB2AF;
-    border-radius: 8px;
+    border: 1px solid var(--fz-line);
+    border-radius: var(--fz-radius-control);
     color: #26313B;
     background: #FFFFFF;
     box-shadow: none;
 }
 .storefront-content :where(input, select, textarea)::placeholder {
-    color: #737A7F;
+    color: var(--fz-muted);
     opacity: 1;
 }
 .storefront-content :where(input, select, textarea):focus {
@@ -3410,7 +3332,7 @@ body.home-body,
     [class*="bg-green-50"], [class*="bg-green-100"], [class*="bg-emerald-50"], [class*="bg-emerald-100"],
     [class*="bg-gray-50"], [class*="bg-zinc-50"], [class*="bg-slate-50"]
 ) {
-    background-color: #DDDFDC !important;
+    background-color: var(--fz-paper-soft) !important;
 }
 .storefront-content :where(
     [class*="text-blue-"], [class*="text-sky-"], [class*="text-indigo-"], [class*="text-cyan-"]
@@ -3426,7 +3348,7 @@ body.home-body,
     [class*="border-blue-"], [class*="border-sky-"], [class*="border-indigo-"],
     [class*="border-pink-"], [class*="border-rose-"], [class*="border-red-"]
 ) {
-    border-color: #BFC3C0 !important;
+    border-color: var(--fz-line) !important;
 }
 
 /* A coherent radius scale: cards 8px, panels 10px, controls 8px.
@@ -3437,7 +3359,7 @@ body.home-body,
     .farzin-product-information, .farzin-product-facts,
     [class~="rounded-3xl"], [class~="rounded-[2rem]"]
 ) {
-    border-radius: 10px !important;
+    border-radius: var(--fz-radius-panel) !important;
 }
 .storefront-content :where(
     .farzin-product-card, .farzin-product-card, .farzin-shop-product-card,
@@ -3445,10 +3367,10 @@ body.home-body,
     .farzin-product-gallery .product-gallery-stage,
     [class~="rounded-2xl"]
 ) {
-    border-radius: 8px !important;
+    border-radius: var(--fz-radius-card) !important;
 }
 .storefront-content :where([class~="rounded-xl"], [class~="rounded-lg"]) {
-    border-radius: 8px !important;
+    border-radius: var(--fz-radius-card) !important;
 }
 .storefront-content :where(
     .livora-card, .fz-contact-panel, .fz-empty-state,
@@ -3457,16 +3379,16 @@ body.home-body,
     .farzin-shop-catalog [class*="rounded-3xl"],
     .farzin-shop-catalog [class*="rounded-[2rem]"]
 ) {
-    border-color: #BFC3C0;
+    border-color: var(--fz-line);
     background-color: #FFFFFF;
     box-shadow: 0 5px 18px rgba(6,40,79,.055);
 }
 .storefront-content :where(table, th, td) {
-    border-color: #BFC3C0;
+    border-color: var(--fz-line);
 }
 .storefront-content :where(th) {
     color: #06284F;
-    background: #DDDFDC;
+    background: var(--fz-paper-soft);
     font-weight: 800;
 }
 .storefront-content :where(td) {
@@ -3482,7 +3404,7 @@ body.home-body,
     min-height: 70px;
     color: #26313B;
     background: rgba(255,255,255,.97);
-    border-bottom: 1px solid #AEB2AF;
+    border-bottom: 1px solid var(--fz-line);
     box-shadow: 0 4px 16px rgba(6,40,79,.075);
     -webkit-backdrop-filter: blur(14px);
     backdrop-filter: blur(14px);
@@ -3506,7 +3428,7 @@ body.home-body,
     align-items: center;
     justify-content: center;
     padding: .6rem .82rem .75rem;
-    border-radius: 8px;
+    border-radius: var(--fz-radius-control);
     color: #26313B;
     background: transparent;
     font-size: .82rem;
@@ -3530,7 +3452,7 @@ body.home-body,
 }
 .farzin-site-header__nav-link:hover {
     color: #06284F;
-    background: #E3E4E1;
+    background: var(--fz-paper-soft);
 }
 .farzin-site-header__nav-link.is-active,
 .farzin-site-header__nav-link[aria-current="page"] {
@@ -3547,21 +3469,21 @@ body.home-body,
 .farzin-site-header__action {
     width: 40px;
     height: 40px;
-    border-radius: 8px !important;
+    border-radius: var(--fz-radius-card) !important;
     color: #26313B;
     background: transparent;
 }
 .farzin-site-header__action:hover,
 .farzin-site-header__action.is-active {
     color: #7B0D1A;
-    background: #E3E4E1;
+    background: var(--fz-paper-soft);
 }
 .farzin-site-header input[type="search"] {
     min-height: 40px;
-    border: 1px solid #BFC3C0;
-    border-radius: 8px !important;
+    border: 1px solid var(--fz-line);
+    border-radius: var(--fz-radius-card) !important;
     color: #26313B;
-    background: #E4E5E2;
+    background: var(--fz-paper-soft);
 }
 .farzin-site-header input[type="search"]:focus {
     border-color: #7B0D1A;
@@ -3575,7 +3497,7 @@ body.home-body,
 /* Mobile menu and bottom navigation use the same current-page language. */
 .farzin-mobile-menu__link {
     min-height: 54px;
-    border-radius: 8px !important;
+    border-radius: var(--fz-radius-card) !important;
     color: #26313B;
     background: #FFFFFF;
 }
@@ -3583,11 +3505,11 @@ body.home-body,
 .farzin-mobile-menu__link.is-active,
 .farzin-mobile-menu__link[aria-current="page"] {
     color: #7B0D1A;
-    background: #E2E3E1;
+    background: var(--fz-paper-soft);
 }
 .farzin-mobile-menu__link > span[aria-hidden="true"] {
-    border-radius: 8px !important;
-    background: #E2E3E1;
+    border-radius: var(--fz-radius-card) !important;
+    background: var(--fz-paper-soft);
 }
 .farzin-mobile-nav {
     z-index: 120;
@@ -3595,7 +3517,7 @@ body.home-body,
 .farzin-mobile-nav__inner {
     max-width: 28rem;
     padding: .35rem;
-    border: 1px solid #AEB2AF;
+    border: 1px solid var(--fz-line);
     border-radius: 12px !important;
     color: #26313B;
     background: rgba(255,255,255,.97);
@@ -3607,15 +3529,15 @@ body.home-body,
 .farzin-mobile-nav__inner > button {
     min-height: 3.15rem;
     gap: .2rem;
-    border-radius: 8px !important;
-    color: #5F666D;
+    border-radius: var(--fz-radius-card) !important;
+    color: var(--fz-muted);
     background: transparent;
 }
 .farzin-mobile-nav__inner > a:hover,
 .farzin-mobile-nav__inner > button:hover,
 .farzin-mobile-nav__inner > .is-active {
     color: #7B0D1A;
-    background: #E2E3E1;
+    background: var(--fz-paper-soft);
 }
 .farzin-mobile-nav__inner > .is-active span:not([data-cart-count]) {
     color: #7B0D1A;
@@ -3633,7 +3555,7 @@ body.home-body,
 .fz-contact-workspace,
 .fz-contact-page,
 .blog-articles-section {
-    background-color: #C8CAC8;
+    background-color: var(--fz-page);
 }
 .farzin-shop-banner,
 .fz-category-hero,
@@ -3643,7 +3565,7 @@ body.home-body,
 .farzin-product-facts,
 .farzin-product-gallery .product-gallery-shell,
 .farzin-product-gallery .product-gallery-stage {
-    border-color: #BFC3C0;
+    border-color: var(--fz-line);
 }
 .farzin-shop-banner h1,
 .farzin-shop-banner h2 {
@@ -3662,14 +3584,14 @@ body.home-body,
     color: #FFFFFF;
 }
 .fz-contact-workspace :where(.fz-contact-panel, .fz-contact-address, .fz-contact-hours, .fz-contact-map-frame) {
-    border-color: #BFC3C0;
+    border-color: var(--fz-line);
     background-color: #FFFFFF;
 }
 .fz-contact-workspace :where(h2, h3, h4) {
     color: #06284F;
 }
 .fz-contact-workspace :where(p, li, small) {
-    color: #5F666D;
+    color: var(--fz-muted);
 }
 .farzin-product-detail-info,
 .farzin-product-information,
@@ -3677,12 +3599,12 @@ body.home-body,
 .farzin-product-detail-info .product-price,
 .farzin-product-detail-info .product-price__installment,
 .farzin-product-facts__item {
-    border-color: #BFC3C0;
+    border-color: var(--fz-line);
     background: #FFFFFF;
 }
 .farzin-product-detail-info .product-price,
 .farzin-product-detail-info .product-price__installment {
-    border-radius: 8px !important;
+    border-radius: var(--fz-radius-card) !important;
 }
 .farzin-product-information h2,
 .farzin-product-facts h2,
@@ -3693,7 +3615,7 @@ body.home-body,
 
 /* Home: bands alternate between white and neutral grey, never pastel. */
 .home-body {
-    background: #C8CAC8;
+    background: var(--fz-page);
 }
 .home-body .fz-home-hero {
     color: #26313B;
@@ -3701,15 +3623,15 @@ body.home-body,
 }
 .home-body .fz-home-hero__lead,
 .home-body .fz-home-hero__highlights {
-    color: #5F666D;
+    color: var(--fz-muted);
 }
 .home-body .fz-home-hero__highlights b {
     color: #7B0D1A;
-    background: #DDDFDC;
+    background: var(--fz-paper-soft);
 }
 .home-body .fz-home-hero__button--secondary {
     color: #06284F !important;
-    border-color: #BFC3C0;
+    border-color: var(--fz-line);
     background: #FFFFFF;
 }
 .home-body .fz-category-section,
@@ -3717,15 +3639,15 @@ body.home-body,
 .home-body .content--spacing,
 .home-body .fz-mosaic-intro,
 .home-body .fz-home-journal__aside {
-    background: #DDDFDC;
-    border-color: #BFC3C0;
+    background: var(--fz-paper-soft);
+    border-color: var(--fz-line);
 }
 .home-body .fz-home-featured-section,
 .home-body .content,
 .home-body .fz-home-journal,
 .home-body .fz-home-journal__featured {
     background: #FFFFFF;
-    border-color: #BFC3C0;
+    border-color: var(--fz-line);
 }
 .home-body .fz-home-featured-section__visual {
     opacity: .055;
@@ -3738,15 +3660,15 @@ body.home-body,
 .home-body .grid__item,
 .home-body .fz-home-journal__featured,
 .home-body .fz-home-journal__aside {
-    border: 1px solid #BFC3C0;
-    border-radius: 8px !important;
+    border: 1px solid var(--fz-line);
+    border-radius: var(--fz-radius-card) !important;
     background: #FFFFFF;
     box-shadow: 0 5px 16px rgba(6,40,79,.07);
 }
 .home-body .fz-home-journal__all {
     color: #7B0D1A;
-    border-color: #AEB2AF;
-    background: #E2E3E1;
+    border-color: var(--fz-line);
+    background: var(--fz-paper-soft);
 }
 .home-body .fz-home-journal__all:hover {
     color: #FFFFFF;
@@ -3758,15 +3680,15 @@ body.home-body,
     color: #06284F;
 }
 .home-body .fz-home-journal__story {
-    border-color: #BFC3C0;
+    border-color: var(--fz-line);
 }
 .home-body .fz-home-purchase-cta {
     padding-block-end: 44px;
-    background: #C8CAC8;
+    background: var(--fz-page);
 }
 .home-body .fz-home-purchase-cta__inner {
-    border-color: #AEB2AF;
-    border-radius: 10px !important;
+    border-color: var(--fz-line);
+    border-radius: var(--fz-radius-panel) !important;
     background: #FFFFFF;
 }
 .home-body .fz-home-purchase-cta__copy {
@@ -3776,14 +3698,14 @@ body.home-body,
     color: #06284F;
 }
 .home-body .fz-home-purchase-cta__copy > p:not(.fz-eyebrow) {
-    color: #5F666D;
+    color: var(--fz-muted);
 }
 
 /* Blog archive and article: editorial navy masthead, grey canvas, white cards. */
 .blog-shell,
 .blog-article-page {
     color: #26313B;
-    background: #C8CAC8;
+    background: var(--fz-page);
 }
 .blog-masthead,
 .blog-article-hero {
@@ -3799,16 +3721,16 @@ body.home-body,
     background: #FFFFFF;
 }
 .blog-articles-section {
-    background: #DDDFDC;
-    border-color: #BFC3C0;
+    background: var(--fz-paper-soft);
+    border-color: var(--fz-line);
 }
 .blog-featured-card,
 .blog-article-card,
 .blog-empty-state,
 .blog-article-panel,
 .blog-article-sidebar-card {
-    border: 1px solid #BFC3C0;
-    border-radius: 8px !important;
+    border: 1px solid var(--fz-line);
+    border-radius: var(--fz-radius-card) !important;
     color: #26313B;
     background: #FFFFFF;
     box-shadow: 0 5px 18px rgba(6,40,79,.06);
@@ -3827,14 +3749,14 @@ body.home-body,
 .blog-article-card__body > p,
 .blog-section-heading > p,
 .blog-article-content {
-    color: #555E65;
+    color: var(--fz-muted);
 }
 .blog-article-card__media,
 .blog-featured-card__media {
     border-radius: 0;
 }
 .blog-topic {
-    border-color: #AEB2AF;
+    border-color: var(--fz-line);
     border-radius: 7px;
     color: #26313B;
     background: #FFFFFF;
@@ -3842,7 +3764,7 @@ body.home-body,
 .blog-topic:hover {
     color: #7B0D1A;
     border-color: #7B0D1A;
-    background: #E2E3E1;
+    background: var(--fz-paper-soft);
 }
 .blog-topic.is-active {
     color: #FFFFFF;
@@ -3855,7 +3777,7 @@ body.home-body,
 .blog-article-page .blog-article-content blockquote {
     border-inline-start-color: #7B0D1A;
     color: #4E575F;
-    background: #E2E3E1;
+    background: var(--fz-paper-soft);
 }
 .blog-article-page .blog-article-sidebar-card > a,
 .blog-article-page .blog-article-back,
@@ -3869,7 +3791,7 @@ body.home-body,
     margin-block-start: 24px;
     padding: 0;
     border: 0;
-    border-top: 1px solid #AEB2AF;
+    border-top: 1px solid var(--fz-line);
     color: #26313B;
     background: #BFC2BF;
 }
@@ -3890,7 +3812,7 @@ body.home-body,
     font-size: .68rem;
 }
 .fz-global-footer__nav {
-    border-color: #AEB2AF;
+    border-color: var(--fz-line);
     padding-block: .15rem .55rem;
 }
 #app > .farzin-site-footer.fz-global-footer .fz-global-footer__nav a {
@@ -3907,7 +3829,7 @@ body.home-body,
 .fz-global-footer__socials a {
     width: 2rem;
     height: 2rem;
-    border-color: #AEB2AF;
+    border-color: var(--fz-line);
     border-radius: 7px;
     color: #06284F !important;
     background: #FFFFFF;
@@ -3933,7 +3855,7 @@ body.home-body,
         scroll-margin-top: 78px;
     }
     .storefront-content :where([class~="rounded-3xl"], [class~="rounded-[2rem]"]) {
-        border-radius: 8px !important;
+        border-radius: var(--fz-radius-card) !important;
     }
     .farzin-mobile-nav__inner {
         width: min(100%, 28rem);
