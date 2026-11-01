@@ -257,7 +257,7 @@ class ShopPaginationAndBestSellersTest extends TestCase
         $html = $response->getContent();
 
         $this->assertStringContainsString('پرفروش‌ترین محصولات', $html);
-        $this->assertSame(4, substr_count($html, 'farzin-product-card--round-media'));
+        $this->assertSame(6, substr_count($html, 'farzin-product-card--round-media'));
         $this->assertStringNotContainsString('fz-new-section', $html);
         $this->assertStringNotContainsString('grid__image', $html);
         foreach ($heroGalleryProductIds as $productId) {
