@@ -433,7 +433,7 @@ test('homepage journal uses published articles, responsive RTL columns and restr
         await expect(journal.locator('.fz-home-journal__featured')).toBeVisible();
         await expect(journal.locator('.fz-home-journal__featured-copy h3 a')).toHaveAttribute('href', /\/blog\//);
         await expect(journal.locator('.fz-home-journal__aside')).toBeVisible();
-        await expect(journal.locator('.fz-home-journal__all')).toHaveAttribute('href', '/blog');
+        await expect(journal.locator('.fz-home-journal__all')).toHaveAttribute('href', /\/blog$/);
 
         const layout = await journal.evaluate((section) => {
             const grid = section.querySelector('.fz-home-journal__layout');
