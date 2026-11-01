@@ -3803,6 +3803,53 @@ class FarzinStorefrontTest extends TestCase
         ]);
     }
 
+    public function test_guest_can_preview_checkout_with_their_session_cart_without_creating_an_order(): void
+    {
+        $category = $this->category([
+            'name' => 'دسته پیش‌نمایش تسویه',
+            'slug' => 'checkout-preview-category',
+        ]);
+        $product = $this->product($category, [
+            'name' => 'محصول پیش‌نمایش تسویه',
+            'slug' => 'checkout-preview-product',
+            'sku' => 'FAR-CHECKOUT-PREVIEW',
+            'stock' => 8,
+        ]);
+
+        // Use the real cart endpoint so the test exercises the same session ID
+        // and ownership binding as a customer browser.
+        $this->postJson(route('cart.add', $product), ['quantity' => 2])
+            ->assertOk()
+            ->assertJsonPath('cart_count', 2);
+
+        $cart = Cart::query()
+            ->whereNull('user_id')
+            ->where('status', 'active')
+            ->latest('id')
+            ->firstOrFail();
+
+        // Laravel's test client does not automatically replay the session cookie.
+        $this->withCookie(config('session.cookie'), $cart->session_id)
+            ->withSession(['guest_cart_id' => $cart->id]);
+
+        $this->get(route('checkout.index'))
+            ->assertOk()
+            ->assertSee('پیش‌نمایش تسویه حساب')
+            ->assertSee('محصول پیش‌نمایش تسویه')
+            ->assertSee('ورود به حساب و ادامه خرید')
+            ->assertSee(route('login', [
+                'intended' => route('checkout.index', [], false),
+            ]), false)
+            ->assertDontSee('action="' . route('checkout.place') . '"', false);
+
+        $this->post(route('checkout.place'), [])
+            ->assertRedirect(route('login'));
+
+        $this->assertDatabaseMissing('orders', [
+            'user_id' => null,
+        ]);
+    }
+
     private function category(array $attributes = []): Category
     {
         return Category::create(array_merge([
