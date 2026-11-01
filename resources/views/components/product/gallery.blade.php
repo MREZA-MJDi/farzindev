@@ -57,6 +57,9 @@
         active: 0,
         zoom: false,
         selectedVariantId: null,
+        touchStartX: 0,
+        touchStartY: 0,
+        swiped: false,
         variantImageMap: @js($variantImageMap),
 
         images: @js(
@@ -86,6 +89,31 @@
             this.active =
                 (this.active - 1 + this.images.length)
                 % this.images.length;
+        },
+
+        startTouch(event) {
+            this.swiped = false;
+            this.touchStartX = Number(event.changedTouches?.[0]?.screenX ?? 0);
+            this.touchStartY = Number(event.changedTouches?.[0]?.screenY ?? 0);
+        },
+
+        endTouch(event) {
+            const touch = event.changedTouches?.[0];
+            if (!touch) return;
+
+            const deltaX = Number(touch.screenX) - this.touchStartX;
+            const deltaY = Number(touch.screenY) - this.touchStartY;
+
+            if (Math.abs(deltaX) < 48 || Math.abs(deltaX) <= Math.abs(deltaY)) {
+                return;
+            }
+
+            this.swiped = true;
+            if (deltaX < 0) {
+                this.next();
+            } else {
+                this.previous();
+            }
         },
 
         selectVariant(event) {
@@ -144,7 +172,16 @@
 
             <div
                 class="product-gallery-stage relative aspect-square w-full cursor-zoom-in overflow-hidden sm:aspect-[4/5] lg:aspect-auto lg:h-[clamp(500px,calc(100svh-220px),720px)]"
-                @click="zoom = true"
+                role="button"
+                tabindex="0"
+                aria-label="نمایش بزرگ‌نمایی تصویر محصول"
+                @click="if (!swiped) zoom = true; swiped = false"
+                @keydown.enter.prevent="zoom = true"
+                @keydown.space.prevent="zoom = true"
+                @keydown.arrow-left.prevent="next()"
+                @keydown.arrow-right.prevent="previous()"
+                @touchstart.passive="startTouch($event)"
+                @touchend.passive="endTouch($event)"
             >
 
                 {{-- Images --}}
