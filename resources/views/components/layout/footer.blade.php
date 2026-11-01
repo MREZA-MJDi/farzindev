@@ -66,7 +66,7 @@
 
             <div class="fz-global-footer__socials" aria-label="شبکه‌های اجتماعی">
                 @if($instagramUrl)
-                    <a href="{{ $instagramUrl }}" target="_blank" rel="noopener noreferrer" aria-label="Instagram" title="Instagram">
+                    <a href="{{ $instagramUrl }}" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
                         <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
                             <rect x="3" y="3" width="18" height="18" rx="5" stroke="currentColor" stroke-width="1.8"/>
                             <circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="1.8"/>
@@ -76,7 +76,7 @@
                 @endif
 
                 @if($whatsappUrl)
-                    <a href="{{ $whatsappUrl }}" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp" title="WhatsApp">
+                    <a href="{{ $whatsappUrl }}" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp">
                         <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
                             <path d="M20.2 11.7a8.2 8.2 0 0 1-12.1 7.2L3.2 20l1.1-4.7a8.2 8.2 0 1 1 15.9-3.6Z" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
                             <path d="M8.4 7.8c.2-.4.4-.4.7-.4h.5c.2 0 .4.1.5.4l.8 1.8c.1.2.1.4-.1.6l-.6.7c-.2.2-.2.4-.1.6.5.9 1.3 1.7 2.2 2.2.2.1.4.1.6-.1l.8-.9c.2-.2.4-.2.6-.1l1.7.8c.3.1.4.3.4.5 0 .5-.2 1-.6 1.3-.5.4-1.1.6-1.8.5-1.1-.2-2.4-.9-3.6-2-1.2-1.1-2-2.5-2.2-3.5-.2-.8 0-1.6.3-2.1Z" fill="currentColor"/>
@@ -85,7 +85,7 @@
                 @endif
 
                 @if($telegramUrl)
-                    <a href="{{ $telegramUrl }}" target="_blank" rel="noopener noreferrer" aria-label="Telegram" title="Telegram">
+                    <a href="{{ $telegramUrl }}" target="_blank" rel="noopener noreferrer" aria-label="Telegram">
                         <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
                             <path d="m21 3-3.2 18-6.1-5.1-3.2 3 .5-5.7L19 5.2 7.8 11.9l-4.8-1.6L21 3Z" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
                         </svg>
