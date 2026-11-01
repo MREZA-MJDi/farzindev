@@ -146,7 +146,7 @@
                 },
             });
 
-            if (!response.ok || response.redirected) {
+            if ([401, 419].includes(response.status) || response.redirected) {
                 window.location.assign(loginUrl + '?session_expired=1');
             }
         } catch (error) {
