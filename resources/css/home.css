@@ -1895,15 +1895,15 @@ body.home-body {
     background: radial-gradient(circle at 50% 34%, #FFFFFF 0%, #F5F6F7 66%, #E9EDF0 100%);
 }
 .home-body .farzin-product-card--round-media .farzin-product-card__image-link {
-.home-body .farzin-product-card--round-media .farzin-product-card__image-link--round {
-    border-radius: inherit;
-    overflow: hidden;
-}
     display: grid;
     width: 100%;
     height: 100%;
     aspect-ratio: auto;
     place-items: center;
+}
+.home-body .farzin-product-card--round-media .farzin-product-card__image-link--round {
+    border-radius: inherit;
+    overflow: hidden;
 }
 .home-body .farzin-product-card--round-media .farzin-product-card__image {
     width: 100%;
