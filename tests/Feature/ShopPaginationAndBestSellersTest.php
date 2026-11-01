@@ -211,21 +211,21 @@ class ShopPaginationAndBestSellersTest extends TestCase
             'total' => $product->price * $quantity,
         ]);
     }
-    public function test_homepage_shows_four_best_sellers_and_two_new_arrivals_with_a_separate_two_image_mosaic(): void
+    public function test_homepage_uses_one_best_seller_grid_and_removes_duplicate_gallery_and_arrival_sections(): void
     {
         $category = $this->category();
 
+        // Curated gallery flags no longer create a second, duplicate product gallery.
         for ($index = 1; $index <= 2; $index++) {
             $galleryProduct = $this->product($category, [
-                'name' => 'Editorial Gallery Product '.$index,
-                'slug' => 'editorial-gallery-product-'.$index,
-                'sku' => 'FAR-EDITORIAL-GALLERY-'.$index,
+                'name' => 'Retired Gallery Product '.$index,
+                'slug' => 'retired-gallery-product-'.$index,
+                'sku' => 'FAR-RETIRED-GALLERY-'.$index,
                 'show_in_home_gallery' => true,
             ]);
-
             ProductImage::create([
                 'product_id' => $galleryProduct->id,
-                'path' => 'https://cdn.example.test/editorial-gallery-'.$index.'.webp',
+                'path' => 'https://cdn.example.test/retired-gallery-'.$index.'.webp',
                 'alt' => $galleryProduct->name,
                 'sort_order' => 0,
                 'is_primary' => true,
@@ -242,28 +242,26 @@ class ShopPaginationAndBestSellersTest extends TestCase
             ]);
             $this->addOrderItem($order, $bestSeller, 10 - $index);
 
-            if ($index <= 2) {
-                $this->product($category, [
-                    'name' => 'Homepage New Arrival '.$index,
-                    'slug' => 'homepage-new-arrival-'.$index,
-                    'sku' => 'FAR-HOMEPAGE-NEW-'.$index,
-                    'is_new' => true,
-                ]);
-            }
+            $this->product($category, [
+                'name' => 'Homepage New Arrival '.$index,
+                'slug' => 'homepage-new-arrival-'.$index,
+                'sku' => 'FAR-HOMEPAGE-NEW-'.$index,
+                'is_new' => true,
+            ]);
         }
 
         $response = $this->get(route('home'))->assertOk();
         $html = $response->getContent();
 
-        $this->assertSame(2, substr_count($html, 'class="grid__image"'));
-        $this->assertSame(6, substr_count($html, 'class="fz-product-card fz-reveal"'));
+        $this->assertStringContainsString('پرفروش‌ترین محصولات', $html);
+        $this->assertSame(4, substr_count($html, 'fz-product-card--clickable'));
+        $this->assertStringNotContainsString('fz-new-section', $html);
+        $this->assertStringNotContainsString('grid__image', $html);
+        $this->assertStringNotContainsString('Retired Gallery Product', $html);
 
-        for ($index = 1; $index <= 2; $index++) {
-            $response->assertSee('Editorial Gallery Product '.$index)
-                ->assertSee('Homepage New Arrival '.$index);
-        }
         for ($index = 1; $index <= 4; $index++) {
             $response->assertSee('Homepage Bestseller '.$index);
+            $response->assertDontSee('Homepage New Arrival '.$index);
         }
     }
 

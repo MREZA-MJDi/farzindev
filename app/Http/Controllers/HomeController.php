@@ -83,9 +83,6 @@ class HomeController extends Controller
             ->orderByDesc('updated_at')
             ->limit(30)
             ->get()
-            ->filter(fn (Product $product) => $product->images->contains(
-                fn ($image) => filled($image->url)
-            ))
             ->values();
 
         $hasBestSellerSales = $rankedProducts->contains(
@@ -111,9 +108,6 @@ class HomeController extends Controller
                 ->orderByDesc('id')
                 ->limit(20)
                 ->get()
-                ->filter(fn (Product $product) => $product->images->contains(
-                    fn ($image) => filled($image->url)
-                ))
                 ->take(4)
                 ->values();
         }

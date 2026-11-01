@@ -2957,7 +2957,7 @@ body {
     font-size: .74rem;
     font-weight: 850;
 }
-.farzin-site-footer--editorial { margin-top: 0; color: #FFFFFF; background: #092E50; }
+.farzin-site-footer--editorial { margin-block-start: clamp(2rem, 4vw, 3.5rem); color: #FFFFFF; background: #092E50; }
 .farzin-footer-editorial__brand { display: grid; justify-items: center; gap: .55rem; padding-block: clamp(2.2rem,5vw,3.6rem) 1.6rem; text-align: center; }
 .farzin-footer-editorial__logo { color: #FFFFFF; font-size: 2rem; font-weight: 900; letter-spacing: 0; }
 .farzin-footer-editorial__brand p { color: rgba(255,255,255,.7); font-size: .82rem; }

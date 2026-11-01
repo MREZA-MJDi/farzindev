@@ -265,7 +265,7 @@ class FarzinStorefrontTest extends TestCase
         $this->get(route('home'))
             ->assertOk()
             ->assertSee('فرزین')
-            ->assertSee('هود آشپزخانه');
+            ->assertSee('هود و سینک');
 
         $this->get(route('about'))
             ->assertOk()
@@ -309,8 +309,8 @@ class FarzinStorefrontTest extends TestCase
             ->assertSee('data-farzin-home-slider', false)
             ->assertSee('data-home-product-id="'.$product->id.'"', false)
             ->assertSee('هود منتخب فرزین')
-            ->assertSee('تازه در فروشگاه')
-            ->assertSee('مشاوره خرید')
+            ->assertSee('مشاوره انتخاب محصول')
+            ->assertSee('مشاهده محصولات')
             ->assertSee('product-categories')
             ->assertDontSee('data-fz-scroll-hero', false)
             ->assertDontSee('data-hero-drawing', false)
@@ -369,51 +369,42 @@ class FarzinStorefrontTest extends TestCase
         }
     }
 
-    public function test_homepage_renders_category_video_and_gif_with_the_correct_media_elements(): void
+    public function test_homepage_uses_three_static_category_cards_even_when_old_hover_media_exists(): void
     {
-        $videoCategory = $this->category([
-            'name' => 'هود با پیش‌نمایش ویدیویی',
-            'slug' => 'video-preview-hoods',
-            'sort_order' => 1,
-        ]);
-        $video = \App\Models\Media::create([
-            'disk' => 'public',
-            'path' => 'media/hood-preview.mp4',
-            'filename' => 'hood-preview.mp4',
-            'original_name' => 'hood-preview.mp4',
-            'mime_type' => 'video/mp4',
-            'extension' => 'mp4',
-            'size' => 1024,
-        ]);
-        $videoCategory->update(['hover_media_id' => $video->id]);
+        foreach (range(1, 4) as $index) {
+            $category = $this->category([
+                'name' => 'دسته صفحه اصلی '.$index,
+                'slug' => 'homepage-category-'.$index,
+                'sort_order' => $index,
+            ]);
 
-        $gifCategory = $this->category([
-            'name' => 'سینک با پیش‌نمایش GIF',
-            'slug' => 'gif-preview-sinks',
-            'sort_order' => 2,
-        ]);
-        $gif = \App\Models\Media::create([
-            'disk' => 'public',
-            'path' => 'media/sink-preview.gif',
-            'filename' => 'sink-preview.gif',
-            'original_name' => 'sink-preview.gif',
-            'mime_type' => 'image/gif',
-            'extension' => 'gif',
-            'size' => 1024,
-        ]);
-        $gifCategory->update(['hover_media_id' => $gif->id]);
+            if ($index === 1) {
+                $video = \App\Models\Media::create([
+                    'disk' => 'public',
+                    'path' => 'media/legacy-category-preview.mp4',
+                    'filename' => 'legacy-category-preview.mp4',
+                    'original_name' => 'legacy-category-preview.mp4',
+                    'mime_type' => 'video/mp4',
+                    'extension' => 'mp4',
+                    'size' => 1024,
+                ]);
+                $category->update(['hover_media_id' => $video->id]);
+            }
+        }
 
-        $this->get(route('home'))
+        $html = $this->get(route('home'))
             ->assertOk()
-            ->assertSee('data-farzin-gif-card', false)
-            ->assertSee('data-farzin-category-video', false)
-            ->assertSee('data-farzin-video-src=', false)
-            ->assertSee('playsinline', false)
-            ->assertSee('data-farzin-category-gif', false)
-            ->assertDontSee('PREVIEW · 5 SEC');
+            ->assertSee('fz-category-card--editorial', false)
+            ->assertDontSee('data-farzin-gif-card', false)
+            ->assertDontSee('data-farzin-category-video', false)
+            ->assertDontSee('data-farzin-category-gif', false)
+            ->getContent();
+
+        $this->assertSame(3, substr_count($html, 'fz-category-card--editorial'));
+        $this->assertStringNotContainsString('دسته صفحه اصلی 4', $html);
     }
 
-    public function test_homepage_mosaic_uses_products_selected_in_the_admin_editor(): void
+    public function test_homepage_does_not_render_the_retired_product_mosaic(): void
     {
         $category = $this->category(['slug' => 'homepage-mosaic-control']);
         $product = $this->product($category, [
@@ -431,14 +422,16 @@ class FarzinStorefrontTest extends TestCase
             'is_primary' => true,
         ]);
 
-        $this->get(route('home'))
-            ->assertOk()
-            ->assertSee('۱ <small>تصویر در گالری</small>', false)
-            ->assertSee('data-product-id="'.$product->id.'"', false)
-            ->assertSee('https://cdn.example.test/home-mosaic-selected.webp', false);
+        $response = $this->get(route('home'))->assertOk();
+        $html = $response->getContent();
+
+        $this->assertSame(1, substr_count($html, 'home-mosaic-selected.webp'));
+        $this->assertStringContainsString('data-home-slide', $html);
+        $this->assertStringNotContainsString('grid__image', $html);
+        $this->assertStringNotContainsString('fz-mosaic-intro', $html);
     }
 
-    public function test_homepage_lists_active_products_even_without_uploaded_images(): void
+    public function test_products_without_images_remain_available_in_shop_without_breaking_homepage(): void
     {
         $category = $this->category();
         $product = $this->product($category, [
@@ -448,8 +441,11 @@ class FarzinStorefrontTest extends TestCase
 
         $this->get(route('home'))
             ->assertOk()
-            ->assertSee($product->name)
-            ->assertSee('تصویر محصول ثبت نشده');
+            ->assertDontSee($product->name);
+
+        $this->get(route('shop.index'))
+            ->assertOk()
+            ->assertSee($product->name);
     }
 
     public function test_sitemap_lists_public_pages_and_only_active_catalog_items(): void
