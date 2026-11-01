@@ -356,6 +356,31 @@ test('guest navigation uses account icons without login or register text buttons
     await expect(mobileMenu.getByRole('link', { name: 'سبد خرید' })).toBeVisible();
 });
 
+test('shop product card actions stay aligned across different content heights', async ({ page }) => {
+    for (const viewport of [
+        { width: 390, height: 844 },
+        { width: 1440, height: 960 },
+    ]) {
+        await page.setViewportSize(viewport);
+        await page.goto('/shop', { waitUntil: 'domcontentloaded' });
+
+        const cards = page.locator('.farzin-product-card');
+        await expect(cards.nth(0)).toBeVisible();
+        await expect(cards.nth(1)).toBeVisible();
+
+        const ctaTops = await Promise.all([0, 1].map((index) => (
+            cards.nth(index)
+                .locator('.farzin-product-card__cta')
+                .evaluate((element) => element.getBoundingClientRect().top)
+        )));
+
+        expect(
+            Math.abs(ctaTops[0] - ctaTops[1]),
+            'the first product row must keep purchase actions aligned'
+        ).toBeLessThanOrEqual(2);
+    }
+});
+
 test('homepage image and product sections stay within the loading budget', async ({ page }) => {
     for (const viewport of [
         { width: 390, height: 844 },
@@ -566,9 +591,9 @@ test('desktop active navigation underline is centered and the shared palette sta
             footer: getComputedStyle(document.querySelector('.farzin-site-footer')).backgroundColor,
         }));
 
-        expect(shell.page, path + ' content shell must use the stronger neutral grey').toBe('rgb(200, 202, 200)');
+        expect(shell.page, path + ' content shell must use the canonical page token').toBe('rgb(245, 246, 248)');
         expect(shell.header, path + ' header must remain a white surface').toBe('rgba(255, 255, 255, 0.97)');
-        expect(shell.footer, path + ' footer must use a neutral grey surface').toBe('rgb(191, 194, 191)');
+        expect(shell.footer, path + ' footer must use the canonical soft surface token').toBe('rgb(238, 241, 244)');
     }
 });
 

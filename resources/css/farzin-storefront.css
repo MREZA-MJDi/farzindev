@@ -3793,7 +3793,7 @@ body.home-body,
     border: 0;
     border-top: 1px solid var(--fz-line);
     color: #26313B;
-    background: #BFC2BF;
+    background: var(--fz-paper-soft);
 }
 #app > .farzin-site-footer.fz-global-footer > .fz-global-footer__inner {
     max-width: 1280px;
