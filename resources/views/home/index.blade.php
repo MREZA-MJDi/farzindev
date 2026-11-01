@@ -17,100 +17,188 @@
     <a class="fz-skip-link" href="#main-content">رفتن به محتوای اصلی</a>
 
 @php
-            $mosaicTitles = [
-                ['eyebrow' => 'AIR / 01', 'title' => 'هوای بهتر، شروع یک آشپزخانه‌ی دقیق‌تر.', 'text' => 'فرم، اندازه و جای نصب هود را در کنار فضای پخت‌وپز ببینید.'],
-                ['eyebrow' => 'STEEL / 02', 'title' => 'جزئیات کوچک، استفاده‌ی روزمره را می‌سازند.', 'text' => 'در انتخاب سینک، عمق لگن، ابعاد و شیوه‌ی نگهداری را در نظر بگیرید.'],
-                ['eyebrow' => 'FORM / 03', 'title' => 'طراحی وقتی خوب است که کار هم بکند.', 'text' => 'ظاهر محصول بخشی از تصمیم است؛ تناسب با کاربری و محل نصب را فراموش نکنید.'],
-                ['eyebrow' => 'DETAIL / 04', 'title' => 'از نمای نزدیک، دقیق‌تر انتخاب کنید.', 'text' => 'تصاویر محصولات را ببینید و مشخصات هر مدل را در صفحه‌ی خودش بررسی کنید.'],
-                ['eyebrow' => 'FIT / 05', 'title' => 'تناسب با فضا، مهم‌تر از انتخاب عجولانه است.', 'text' => 'اندازه‌ی کابینت، سطح کار و فضای حرکت را پیش از خرید اندازه‌گیری کنید.'],
-                ['eyebrow' => 'FARZIN / 06', 'title' => 'تجهیزات آشپزخانه؛ با نگاه کاربردی.', 'text' => 'کاتالوگ فرزین برای شناخت محصولات و پیدا کردن مسیر انتخاب طراحی شده است.'],
-            ];
+    $mosaicTitles = [
+        ['eyebrow' => 'AIR / 01', 'title' => 'هوای بهتر، شروع یک آشپزخانه‌ی دقیق‌تر.', 'text' => 'فرم، اندازه و جای نصب هود را در کنار فضای پخت‌وپز ببینید.'],
+        ['eyebrow' => 'STEEL / 02', 'title' => 'جزئیات کوچک، استفاده‌ی روزمره را می‌سازند.', 'text' => 'در انتخاب سینک، عمق لگن، ابعاد و شیوه‌ی نگهداری را در نظر بگیرید.'],
+        ['eyebrow' => 'FORM / 03', 'title' => 'طراحی وقتی خوب است که کار هم بکند.', 'text' => 'ظاهر محصول بخشی از تصمیم است؛ تناسب با کاربری و محل نصب را فراموش نکنید.'],
+        ['eyebrow' => 'DETAIL / 04', 'title' => 'از نمای نزدیک، دقیق‌تر انتخاب کنید.', 'text' => 'تصاویر محصولات را ببینید و مشخصات هر مدل را در صفحه‌ی خودش بررسی کنید.'],
+        ['eyebrow' => 'FIT / 05', 'title' => 'تناسب با فضا، مهم‌تر از انتخاب عجولانه است.', 'text' => 'اندازه‌ی کابینت، سطح کار و فضای حرکت را پیش از خرید اندازه‌گیری کنید.'],
+        ['eyebrow' => 'FARZIN / 06', 'title' => 'تجهیزات آشپزخانه؛ با نگاه کاربردی.', 'text' => 'کاتالوگ فرزین برای شناخت محصولات و پیدا کردن مسیر انتخاب طراحی شده است.'],
+    ];
+@endphp
 
-            // Use the already eager-loaded featured catalogue product in the hero.
-            // This keeps the first screen product-led without adding another query.
-            $heroProduct = $featuredProducts->first(
-                fn ($product) => $product->images->contains(fn ($image) => filled($image->url))
-            );
-            $heroImage = $heroProduct?->images?->first(
-                fn ($image) => filled($image->url)
-            );
-        @endphp
+<section class="fz-home-hero" aria-labelledby="fz-home-hero-title">
+    <div class="fz-home-hero__ambient" aria-hidden="true">
+        <span class="fz-home-hero__ambient-orb fz-home-hero__ambient-orb--one"></span>
+        <span class="fz-home-hero__ambient-orb fz-home-hero__ambient-orb--two"></span>
+        <span class="fz-home-hero__ambient-grid"></span>
+    </div>
 
-<section class="fz-hero" aria-labelledby="fz-hero-title">
-    <div class="fz-hero__stage">
-        <div class="fz-hero__backdrop" aria-hidden="true">
-            <span class="fz-hero__blueprint-grid"></span>
-            <span class="fz-hero__backdrop-shade"></span>
-        </div>
+    <div class="fz-container fz-home-hero__layout">
+        <div class="fz-home-hero__copy">
+            <p class="fz-home-hero__eyebrow">
+                <span class="fz-home-hero__eyebrow-mark" aria-hidden="true"></span>
+                تجهیزات آشپزخانه فرزین
+            </p>
 
-        <div class="fz-container fz-hero__layout">
-            <div class="fz-hero__copy">
-                <p class="fz-eyebrow fz-hero__eyebrow"><span></span> FARZIN / KITCHEN STORE</p>
-                <h1 id="fz-hero-title">
-                    <span class="fz-hero__brand-name">انتخابی مطمئن برای آشپزخانه شما</span>
-                    <span class="fz-hero__brand-claim">هود و سینک فرزین؛ ترکیب زیبایی و کارایی</span>
-                </h1>
-                <p class="fz-hero__lead">مدل‌های هود و سینک را ببینید، تصاویر و مشخصات را مقایسه کنید و متناسب با فضای آشپزخانه‌تان انتخاب کنید.</p>
+            <h1 id="fz-home-hero-title">
+                <span>انتخاب دقیق‌تر برای</span>
+                <strong>آشپزخانه‌ای هماهنگ‌تر</strong>
+            </h1>
 
-                <div class="fz-hero__actions">
-                    <a class="fz-button fz-button--primary" href="{{ route('shop.index') }}">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4" aria-hidden="true"><path d="M3.5 9h17l-1 11h-15l-1-11Z" /><path d="M8 9V6.5a4 4 0 0 1 8 0V9" /></svg>
-                        مشاهده محصولات
-                    </a>
-                    <a class="fz-button fz-button--secondary" href="{{ route('contact') }}">مشاوره خرید</a>
-                </div>
+            <p class="fz-home-hero__lead">
+                مدل‌های هود و سینک را ببینید، تصاویر و مشخصات را مقایسه کنید و محصولی متناسب با فضای نصب و نیاز روزمره‌تان انتخاب کنید.
+            </p>
 
-                <div class="fz-hero__facts" aria-label="مزیت‌های انتخاب فرزین">
-                    <div><span class="fz-hero__fact-icon" aria-hidden="true">01</span><span><strong>هود آشپزخانه</strong><small>مدل‌ها و مشخصات</small></span></div>
-                    <div><span class="fz-hero__fact-icon" aria-hidden="true">02</span><span><strong>سینک ظرف‌شویی</strong><small>جنس، ابعاد و کاربری</small></span></div>
-                    <div><span class="fz-hero__fact-icon" aria-hidden="true">03</span><span><strong>راهنمای انتخاب</strong><small>پیش از ثبت سفارش</small></span></div>
-                </div>
+            <div class="fz-home-hero__actions">
+                <a class="fz-home-hero__button fz-home-hero__button--primary" href="{{ route('shop.index') }}">
+                    مشاهده کاتالوگ محصولات
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M19 12H5m7 7-7-7 7-7" />
+                    </svg>
+                </a>
+                <a class="fz-home-hero__button fz-home-hero__button--secondary" href="{{ route('contact') }}">
+                    مشاوره انتخاب محصول
+                </a>
             </div>
 
-            <div class="fz-hero__visual">
-                @if($heroProduct && $heroImage)
-                    <a href="{{ route('product.show', $heroProduct->slug) }}" class="fz-hero-product" aria-label="مشاهده {{ $heroProduct->name }}">
-                        <span class="fz-hero-product__media">
-                            <img
-                                src="{{ $heroImage->url }}"
-                                @if($heroImage->responsive_srcset) srcset="{{ $heroImage->responsive_srcset }}" sizes="(max-width: 767px) 92vw, 48vw" @endif
-                                alt="{{ $heroImage->alt ?: $heroProduct->name }}"
-                                width="1000"
-                                height="820"
-                                fetchpriority="high"
-                                loading="eager"
-                                decoding="async"
+            <div class="fz-home-hero__highlights" aria-label="راهنمای انتخاب محصول">
+                <span><b aria-hidden="true">01</b> بررسی ابعاد و نصب</span>
+                <span><b aria-hidden="true">02</b> مقایسه مشخصات</span>
+                <span><b aria-hidden="true">03</b> انتخاب متناسب با فضا</span>
+            </div>
+        </div>
+
+        @if($heroProducts->isNotEmpty())
+            <div
+                class="fz-home-hero__showcase"
+                data-farzin-home-slider
+                data-autoplay-ms="4000"
+                role="region"
+                aria-label="تازه‌ترین محصولات فرزین"
+                aria-roledescription="carousel"
+            >
+                <div class="fz-home-hero__showcase-heading">
+                    <div>
+                        <p>تازه‌ترین محصولات</p>
+                        <span>مدل‌های تازه‌اضافه‌شده به کاتالوگ فرزین</span>
+                    </div>
+                    <span class="fz-home-hero__counter" data-home-slide-count aria-live="off">
+                        {{ \App\Helpers\PersianNumberHelper::format(1) }}
+                        <i>/</i>
+                        {{ \App\Helpers\PersianNumberHelper::format($heroProducts->count()) }}
+                    </span>
+                </div>
+
+                <div class="fz-home-hero__slide-stage" data-home-slide-track>
+                    @foreach($heroProducts as $index => $product)
+                        @php
+                            $heroImage = $product->images->first(fn ($image) => filled($image->url));
+                        @endphp
+                        @if($heroImage)
+                            <a
+                                href="{{ route('product.show', $product->slug) }}"
+                                class="fz-home-hero__slide"
+                                data-home-slide
+                                data-home-product-id="{{ $product->id }}"
+                                role="group"
+                                aria-roledescription="اسلاید"
+                                aria-label="{{ \App\Helpers\PersianNumberHelper::format($index + 1) }} از {{ \App\Helpers\PersianNumberHelper::format($heroProducts->count()) }}: {{ $product->name }}"
+                                @if($index === 0) aria-hidden="false" @else hidden aria-hidden="true" @endif
                             >
-                            <span class="fz-hero-product__badge">پیشنهاد فرزین</span>
-                        </span>
-                        <span class="fz-hero-product__details">
-                            <span class="fz-hero-product__category">{{ $heroProduct->category?->name ?? 'محصول فرزین' }}</span>
-                            <strong>{{ $heroProduct->name }}</strong>
-                            <span class="fz-hero-product__footer">
-                                <span class="fz-hero-product__price">{{ \App\Helpers\PersianNumberHelper::format((float) $heroProduct->price) }} <small>تومان</small></span>
-                                <span class="fz-hero-product__link">مشاهده جزئیات <b aria-hidden="true">←</b></span>
-                            </span>
-                        </span>
-                    </a>
-                @else
-                    <div class="fz-hero-product fz-hero-product--fallback" aria-label="کاتالوگ محصولات فرزین">
-                        <span class="fz-hero-product__fallback-mark" aria-hidden="true">FZ</span>
-                        <strong>تجهیزات آشپزخانه فرزین</strong>
-                        <span>هود و سینک؛ مدل‌ها، تصاویر و مشخصات</span>
-                        <a href="{{ route('shop.index') }}" class="fz-hero-product__link">مشاهده کاتالوگ <b aria-hidden="true">←</b></a>
+                                <span class="fz-home-hero__product-image">
+                                    <img
+                                        src="{{ $heroImage->url }}"
+                                        @if($heroImage->responsive_srcset) srcset="{{ $heroImage->responsive_srcset }}" sizes="(max-width: 767px) 92vw, 52vw" @endif
+                                        alt="{{ $heroImage->alt ?: $product->name }}"
+                                        width="960"
+                                        height="720"
+                                        decoding="async"
+                                        @if($index === 0)
+                                            fetchpriority="high"
+                                            loading="eager"
+                                        @else
+                                            loading="lazy"
+                                        @endif
+                                    >
+                                    <span class="fz-home-hero__product-badge">تازه در فروشگاه</span>
+                                    <span class="fz-home-hero__product-open" aria-hidden="true">↗</span>
+                                </span>
+
+                                <span class="fz-home-hero__product-details">
+                                    <span class="fz-home-hero__product-category">{{ $product->category?->name ?? 'محصول فرزین' }}</span>
+                                    <strong>{{ $product->name }}</strong>
+                                    <span class="fz-home-hero__product-footer">
+                                        <span class="fz-home-hero__product-price">
+                                            {{ \App\Helpers\PersianNumberHelper::format((float) $product->price) }}
+                                            <small>تومان</small>
+                                        </span>
+                                        <span class="fz-home-hero__product-link">مشاهده مشخصات</span>
+                                    </span>
+                                </span>
+                            </a>
+                        @endif
+                    @endforeach
+                </div>
+
+                @if($heroProducts->count() > 1)
+                    <div class="fz-home-hero__slider-controls" data-home-slider-controls>
+                        <div class="fz-home-hero__slider-dots" role="group" aria-label="انتخاب محصول">
+                            @foreach($heroProducts as $index => $product)
+                                <button
+                                    type="button"
+                                    class="fz-home-hero__slider-dot {{ $index === 0 ? 'is-active' : '' }}"
+                                    data-home-slide-to="{{ $index }}"
+                                    aria-label="نمایش محصول {{ \App\Helpers\PersianNumberHelper::format($index + 1) }}"
+                                    aria-pressed="{{ $index === 0 ? 'true' : 'false' }}"
+                                ></button>
+                            @endforeach
+                        </div>
+
+                        <div class="fz-home-hero__slider-actions">
+                            <button type="button" data-home-slide-prev aria-label="محصول قبلی">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                    <path d="M19 12H5m7 7-7-7 7-7" />
+                                </svg>
+                            </button>
+                            <button type="button" data-home-slide-next aria-label="محصول بعدی">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                    <path d="M5 12h14m-7-7 7 7-7 7" />
+                                </svg>
+                            </button>
+                            <button
+                                type="button"
+                                class="fz-home-hero__slider-toggle"
+                                data-home-slide-toggle
+                                aria-label="توقف پخش خودکار"
+                                title="توقف پخش خودکار"
+                            >
+                                <span data-home-slide-toggle-label>مکث</span>
+                                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                                    <path d="M8 5h3v14H8zM14 5h3v14h-3z" />
+                                </svg>
+                            </button>
+                        </div>
                     </div>
                 @endif
             </div>
-        </div>
+        @else
+            <div class="fz-home-hero__showcase fz-home-hero__showcase--empty">
+                <span class="fz-home-hero__empty-mark" aria-hidden="true">FZ</span>
+                <div>
+                    <p>کاتالوگ محصولات فرزین</p>
+                    <strong>مدل‌های هود و سینک را یک‌جا ببینید.</strong>
+                    <span>برای نمایش تصویر در این بخش، محصول فعال همراه با تصویر در فروشگاه منتشر کنید.</span>
+                    <a href="{{ route('shop.index') }}">رفتن به فروشگاه</a>
+                </div>
+            </div>
+        @endif
+    </div>
 
-        <div class="fz-hero__bottom">
-            <span>FARZIN / KITCHEN EQUIPMENT</span>
-            <span>هود · سینک · انتخاب آگاهانه</span>
-            <a class="fz-hero__scroll-cue" href="#product-categories">
-                <span>دسته‌بندی محصولات</span>
-                <b aria-hidden="true">↓</b>
-            </a>
-        </div>
+    <div class="fz-container fz-home-hero__bottom">
+        <span>FARZIN / KITCHEN EQUIPMENT</span>
+        <span>هود آشپزخانه <i>·</i> سینک ظرف‌شویی</span>
+        <a href="#product-categories">مشاهده دسته‌بندی‌ها <b aria-hidden="true">↓</b></a>
     </div>
 </section>
 

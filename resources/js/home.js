@@ -229,7 +229,156 @@ function initGridLayouts() {
  * No scroll-bound SVG drawing or animation loop is needed.
  */
 
+
+function initHomeProductSlider() {
+    const slider = document.querySelector('[data-farzin-home-slider]');
+    if (!slider) return;
+
+    const slides = [...slider.querySelectorAll('[data-home-slide]')];
+    if (slides.length < 2) return;
+
+    const dots = [...slider.querySelectorAll('[data-home-slide-to]')];
+    const count = slider.querySelector('[data-home-slide-count]');
+    const previous = slider.querySelector('[data-home-slide-prev]');
+    const next = slider.querySelector('[data-home-slide-next]');
+    const toggle = slider.querySelector('[data-home-slide-toggle]');
+    const toggleLabel = slider.querySelector('[data-home-slide-toggle-label]');
+    const interval = Math.max(3000, Number(slider.dataset.autoplayMs) || 4000);
+
+    let activeIndex = 0;
+    let timer = null;
+    let hovered = false;
+    let focused = false;
+    let inViewport = true;
+    let userPaused = false;
+    let motionAllowed = !reduceMotion;
+
+    const formatNumber = (value) => new Intl.NumberFormat('fa-IR', {
+        minimumIntegerDigits: 2,
+        useGrouping: false,
+    }).format(value);
+
+    const stopTimer = () => {
+        if (timer !== null) {
+            window.clearTimeout(timer);
+            timer = null;
+        }
+    };
+
+    const canAutoplay = () => (
+        motionAllowed
+        && !userPaused
+        && !hovered
+        && !focused
+        && inViewport
+        && document.visibilityState === 'visible'
+    );
+
+    const updateToggle = () => {
+        if (!toggle) return;
+        toggle.hidden = !motionAllowed;
+        toggle.classList.toggle('is-paused', userPaused || !motionAllowed);
+        const label = userPaused ? 'ادامه پخش' : 'مکث';
+        if (toggleLabel) toggleLabel.textContent = label;
+        toggle.setAttribute('aria-label', userPaused ? 'ادامه پخش خودکار' : 'توقف پخش خودکار');
+        toggle.title = userPaused ? 'ادامه پخش خودکار' : 'توقف پخش خودکار';
+        const icon = toggle.querySelector('svg');
+        if (icon) {
+            icon.replaceChildren();
+            const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+            path.setAttribute('d', userPaused ? 'M8 5l11 7-11 7z' : 'M8 5h3v14H8zM14 5h3v14h-3z');
+            icon.append(path);
+        }
+    };
+
+    const render = (index) => {
+        activeIndex = (index + slides.length) % slides.length;
+
+        slides.forEach((slide, slideIndex) => {
+            const active = slideIndex === activeIndex;
+            slide.hidden = !active;
+            slide.setAttribute('aria-hidden', active ? 'false' : 'true');
+        });
+
+        dots.forEach((dot, dotIndex) => {
+            const active = dotIndex === activeIndex;
+            dot.classList.toggle('is-active', active);
+            dot.setAttribute('aria-pressed', active ? 'true' : 'false');
+        });
+
+        if (count) {
+            count.textContent = formatNumber(activeIndex + 1) + ' / ' + formatNumber(slides.length);
+        }
+    };
+
+    const schedule = () => {
+        stopTimer();
+        if (!canAutoplay()) return;
+
+        timer = window.setTimeout(() => {
+            render(activeIndex + 1);
+            schedule();
+        }, interval);
+    };
+
+    const navigate = (index) => {
+        render(index);
+        schedule();
+    };
+
+    previous?.addEventListener('click', () => navigate(activeIndex - 1));
+    next?.addEventListener('click', () => navigate(activeIndex + 1));
+    dots.forEach((dot) => {
+        dot.addEventListener('click', () => navigate(Number(dot.dataset.homeSlideTo) || 0));
+    });
+
+    toggle?.addEventListener('click', () => {
+        userPaused = !userPaused;
+        updateToggle();
+        schedule();
+    });
+
+    slider.addEventListener('mouseenter', () => {
+        hovered = true;
+        stopTimer();
+    });
+    slider.addEventListener('mouseleave', () => {
+        hovered = false;
+        schedule();
+    });
+    slider.addEventListener('focusin', () => {
+        focused = true;
+        stopTimer();
+    });
+    slider.addEventListener('focusout', (event) => {
+        if (event.relatedTarget instanceof Node && slider.contains(event.relatedTarget)) return;
+        focused = false;
+        schedule();
+    });
+
+    document.addEventListener('visibilitychange', schedule);
+
+    if ('IntersectionObserver' in window) {
+        const observer = new IntersectionObserver(([entry]) => {
+            inViewport = Boolean(entry?.isIntersecting);
+            schedule();
+        }, { threshold: 0.15 });
+        observer.observe(slider);
+    }
+
+    reduceMotionQuery.addEventListener?.('change', (event) => {
+        motionAllowed = !event.matches;
+        if (!motionAllowed) stopTimer();
+        updateToggle();
+        schedule();
+    });
+
+    updateToggle();
+    schedule();
+}
+
 function bootHomeMotion() {
+    initHomeProductSlider();
     initRevealAnimations();
     initGridLayouts();
 }

@@ -217,6 +217,27 @@
 >
 
     @php
+        // Shared, short-lived public contact payload for the global footer.
+        $storefrontContact = \Illuminate\Support\Facades\Cache::remember(
+            'storefront.public-contact.v1',
+            now()->addMinutes(10),
+            static function (): array {
+                $contact = \App\Models\ContactSetting::query()
+                    ->where('is_active', true)
+                    ->first(['phone', 'email', 'whatsapp', 'instagram_url', 'telegram_url', 'address', 'hours']);
+
+                return [
+                    'phone' => $contact?->phone,
+                    'email' => $contact?->email,
+                    'whatsapp' => $contact?->whatsapp,
+                    'instagram_url' => $contact?->instagram_url,
+                    'telegram_url' => $contact?->telegram_url,
+                    'address' => $contact?->address,
+                    'hours' => $contact?->hours,
+                ];
+            }
+        );
+
         // One aggregate query feeds both responsive cart counters.
         // Avoid loading every cart-item row twice from separate layout components.
         $storefrontCartCount = 0;

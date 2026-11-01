@@ -61,6 +61,7 @@ class StorefrontSettingController extends Controller
             'email' => ['nullable', 'email:rfc', 'max:255'],
             'whatsapp' => ['nullable', 'string', 'max:30', 'regex:/^[+0-9()\-\s]+$/'],
             'instagram_url' => ['nullable', 'url', 'max:255'],
+            'telegram_url' => ['nullable', 'url', 'max:255'],
             'address' => ['nullable', 'string', 'max:2000'],
             'latitude' => ['nullable', 'required_with:longitude', 'numeric', 'between:-90,90'],
             'longitude' => ['nullable', 'required_with:latitude', 'numeric', 'between:-180,180'],
@@ -80,6 +81,7 @@ class StorefrontSettingController extends Controller
             'email.email' => 'فرمت ایمیل معتبر نیست.',
             'whatsapp.regex' => 'شماره واتساپ را فقط با رقم و علامت‌های متداول وارد کنید.',
             'instagram_url.url' => 'لینک اینستاگرام معتبر نیست.',
+            'telegram_url.url' => 'لینک تلگرام معتبر نیست.',
             'latitude.required_with' => 'برای ثبت مختصات نقشه، طول و عرض جغرافیایی را هر دو وارد کنید.',
             'longitude.required_with' => 'برای ثبت مختصات نقشه، طول و عرض جغرافیایی را هر دو وارد کنید.',
             'latitude.numeric' => 'عرض جغرافیایی باید عددی باشد.',
@@ -148,6 +150,7 @@ class StorefrontSettingController extends Controller
                     'email' => $data['email'] ?? null,
                     'whatsapp' => $data['whatsapp'] ?? null,
                     'instagram_url' => $data['instagram_url'] ?? null,
+                    'telegram_url' => $data['telegram_url'] ?? null,
                     'address' => $data['address'] ?? null,
                     'latitude' => $data['latitude'] ?? null,
                     'longitude' => $data['longitude'] ?? null,
@@ -162,6 +165,7 @@ class StorefrontSettingController extends Controller
                 ]);
                 $contact->save();
                 Cache::forget('storefront.seo-contact-location.v1');
+                Cache::forget('storefront.public-contact.v1');
             });
         } catch (Throwable $e) {
             // Keep the currently published image if the database update fails.
