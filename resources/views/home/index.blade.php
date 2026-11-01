@@ -266,7 +266,7 @@
                                         >
                                     @endif
 
-                                    <span class="fz-category-card__image-halo" aria-hidden="true"></span>
+                                    
                                 </span>
 
                                 <span class="fz-category-card__content">
