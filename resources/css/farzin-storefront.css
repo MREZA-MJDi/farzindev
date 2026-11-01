@@ -2520,7 +2520,8 @@ body {
     width: 100%;
     max-width: 100%;
     min-width: 0;
-    margin: 0;
+    margin-block: clamp(1.5rem, 3vw, 2.25rem) 0;
+    margin-inline: 0;
     padding: 0;
     border: 0;
     border-top: 1px solid #D8D8D3;
@@ -2538,7 +2539,10 @@ body {
 #app > .farzin-site-footer.fz-global-footer a {
     text-decoration: none;
 }
-#app > .farzin-site-footer.fz-global-footer > .fz-global-footer__inner {
+#app > .farzin-site-footer.fz-global-footer > .home-body #app > .farzin-site-footer.fz-global-footer {
+    margin-block-start: 0;
+}
+.fz-global-footer__inner {
     display: grid;
     width: 100%;
     max-width: 1280px;
