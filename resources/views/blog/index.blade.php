@@ -55,9 +55,6 @@
 @section('content')
 <div class="blog-shell" data-blog-motion style="--blog-container-width: {{ $appearance['container_width'] }}px;">
     <section class="blog-masthead" aria-labelledby="blog-page-title">
-        <div class="blog-masthead__grid" aria-hidden="true"></div>
-        <div class="blog-masthead__glow blog-masthead__glow--one" aria-hidden="true"></div>
-        <div class="blog-masthead__glow blog-masthead__glow--two" aria-hidden="true"></div>
 
         <x-layout.container>
             <div class="blog-masthead__top">
@@ -114,7 +111,6 @@
                 </div>
 
                 <div class="blog-masthead__visual" data-blog-reveal aria-hidden="true">
-                    <div class="blog-orbit blog-orbit--outer"></div>
                     <div class="blog-orbit blog-orbit--middle"></div>
                     <div class="blog-orbit blog-orbit--inner"></div>
                     @if($appearance['hero']['image_url'])
@@ -132,15 +128,6 @@
                     @else
                         <div class="blog-orbit__core"><span>F</span></div>
                     @endif
-                    <div class="blog-visual-note blog-visual-note--top">
-                        <span class="blog-visual-note__spark"></span>
-                        <span>DESIGN YOUR EVERYDAY</span>
-                    </div>
-                    <div class="blog-visual-note blog-visual-note--bottom">
-                        <strong>01—25</strong>
-                        <span>IDEAS FOR BETTER LIVING</span>
-                    </div>
-                    <span class="blog-visual-index">F / J</span>
                 </div>
             </div>
 
