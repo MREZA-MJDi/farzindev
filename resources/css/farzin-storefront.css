@@ -9,7 +9,7 @@
 :root {
     --fz-page: #F2F2F2;
     --fz-paper: #FFFFFF;
-    --fz-paper-soft: #EEEEEA;
+    --fz-paper-soft: #EEEEEE;
     --fz-ink: #06284F;
     --fz-text: #26313B;
     --fz-muted: #6E747A;
@@ -409,7 +409,7 @@ body.home-body {
 
 /* The homepage category canvas is owned by home.css; only the catalogue canvas is shared here. */
 .fz-product-section {
-    background: #F3F3EF;
+    background: #F1F1F1;
     border-block-color: #E0E0DA;
 }
 
@@ -480,7 +480,7 @@ body.home-body {
 .fz-product-card__image,
 .farzin-product-card__media,
 .farzin-product-card__image-link {
-    background: linear-gradient(145deg, #FFFFFF 0%, #F0F0EC 100%);
+    background: linear-gradient(145deg, #FFFFFF 0%, #EEEEEE 100%);
 }
 
 .fz-product-card__image {
@@ -828,7 +828,7 @@ body.home-body {
 
 .storefront-content :where(th) {
     color: #173452;
-    background: #F0F0EC;
+    background: #EEEEEE;
     font-weight: 700;
 }
 
@@ -1213,7 +1213,7 @@ body.home-body {
     overflow: hidden;
     background:
         radial-gradient(ellipse at 50% 58%, rgba(224,224,218,.68), transparent 62%),
-        linear-gradient(145deg, #FFFFFF, #F0F0EC);
+        linear-gradient(145deg, #FFFFFF, #EEEEEE);
 }
 
 .fz-hero-product__media::before {
@@ -1612,14 +1612,14 @@ body.home-body {
     --fz-font-heading: "IRANYekanX FaNum", "Vazirmatn", sans-serif;
     --fz-page: #F2F2F2;
     --fz-paper: #FFFFFF;
-    --fz-paper-soft: #EEEEEA;
+    --fz-paper-soft: #EEEEEE;
     --fz-ink: #06284F;
     --fz-text: #26313B;
     --fz-muted: #6E747A;
     --fz-line: #DEDED8;
     --fz-accent: #7B0D1A;
     --fz-accent-dark: #5F0712;
-    --fz-blue-soft: #EEEEEA;
+    --fz-blue-soft: #EEEEEE;
 }
 
 html,
@@ -1706,7 +1706,7 @@ body {
     padding: clamp(1rem, 1.8vw, 1.4rem);
     border: 1px solid #E1E8F0;
     border-radius: 18px;
-    background: linear-gradient(145deg, #FFFFFF 0%, #F0F0EC 100%);
+    background: linear-gradient(145deg, #FFFFFF 0%, #EEEEEE 100%);
 }
 
 .farzin-product-detail-info .product-price__main {
@@ -1734,7 +1734,7 @@ body {
 .farzin-product-detail-info .product-price__installment {
     border-color: #DCE5EF;
     border-radius: 15px;
-    background: #F0F0EC;
+    background: #EEEEEE;
 }
 
 .farzin-product-detail-info .product-price__installment-row {
@@ -1992,7 +1992,7 @@ body {
 
 .storefront-content :where(th) {
     color: #173452;
-    background: #F0F0EC;
+    background: #EEEEEE;
     font-weight: 750;
 }
 
@@ -2211,7 +2211,7 @@ body {
     overflow: hidden;
     aspect-ratio: 1.12 / 1;
     padding: clamp(.65rem, 1.1vw, 1rem);
-    background: linear-gradient(145deg, #FFFFFF 0%, #F0F0EC 100%);
+    background: linear-gradient(145deg, #FFFFFF 0%, #EEEEEE 100%);
 }
 .home-body .fz-home-featured-section .fz-product-card__image img {
     display: block;
@@ -2526,7 +2526,7 @@ body {
     border: 0;
     border-top: 1px solid #D8D8D3;
     color: #26313B;
-    background: #F1F1EE;
+    background: #F1F1F1;
     font-family: var(--fz-font-ui);
     font-size: .875rem;
     line-height: 1.8;
@@ -2786,7 +2786,7 @@ body {
 .home-body {
     --fz-home-surface: #FFFFFF;
     --fz-home-surface-soft: #F2F2F2;
-    --fz-home-surface-alt: #EEEEEA;
+    --fz-home-surface-alt: #EEEEEE;
     --fz-home-line: #DEDED8;
     --fz-home-text: #26313B;
     --fz-home-muted: #686D72;
@@ -2878,7 +2878,7 @@ body {
 .home-body .fz-mosaic-intro__count {
     border-color: #DADAD4;
     color: #06284F;
-    background: #F2F2EE;
+    background: #F0F0F0;
 }
 .home-body .content {
     isolation: isolate;
@@ -2910,16 +2910,16 @@ body {
 .home-body .grid__item {
     border-color: #DDDDD7;
     border-radius: 12px;
-    background: #F3F3EF;
+    background: #F1F1F1;
     box-shadow: 0 6px 20px rgba(15,23,35,.07);
 }
 .home-body .grid__item-inner {
     color: #26313B !important;
-    background: #F3F3EF;
+    background: #F1F1F1;
 }
 .home-body .grid__image {
     padding: clamp(.45rem, 1.2vw, .95rem);
-    background: #F3F3EF;
+    background: #F1F1F1;
     filter: none;
     object-fit: contain;
 }
@@ -2934,7 +2934,7 @@ body {
     color: #FFFFFF;
 }
 .home-body .fz-home-purchase-cta {
-    background: #F1F1EE;
+    background: #F1F1F1;
 }
 .home-body .fz-home-purchase-cta__copy {
     background: #FFFFFF;
@@ -2972,7 +2972,7 @@ body {
 .home-body .fz-bottom-cta.fz-home-purchase-cta {
     padding-block: clamp(3rem, 5vw, 4.25rem);
     border-block: 0;
-    background: #F1F1EE;
+    background: #F1F1F1;
 }
 .home-body .fz-home-purchase-cta__inner {
     display: grid;
@@ -2992,7 +2992,7 @@ body {
     min-width: 0;
     min-height: 360px;
     overflow: hidden;
-    background: #EEEEEA;
+    background: #EEEEEE;
 }
 .home-body .fz-home-purchase-cta__visual img {
     display: block;
@@ -3550,4 +3550,27 @@ body,
 }
 .storefront-content :where(.product-price, .product-price__installment, .farzin-product-facts__item) {
     border-radius: 10px;
+}
+
+
+/* Product-led hero art and commercial panels share the same restrained radius. */
+.home-body .fz-home-hero__slide-stage {
+    border-radius: 10px !important;
+}
+.home-body .fz-home-hero__showcase {
+    border-radius: 12px !important;
+}
+.storefront-content .farzin-product-detail-info,
+.storefront-content .farzin-product-information,
+.storefront-content .farzin-product-facts,
+.storefront-content .farzin-product-detail-info .product-price,
+.storefront-content .farzin-product-detail-info .product-price__installment,
+.storefront-content .farzin-product-detail-info .farzin-product-facts__item,
+.storefront-content .farzin-product-gallery .product-gallery-shell,
+.storefront-content .farzin-product-gallery .product-gallery-stage {
+    border-radius: 12px !important;
+}
+.storefront-content .farzin-product-detail-info .product-price,
+.storefront-content .farzin-product-detail-info .product-price__installment {
+    border-radius: 10px !important;
 }
