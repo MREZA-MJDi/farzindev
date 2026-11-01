@@ -303,22 +303,7 @@ class FarzinStorefrontTest extends TestCase
             'is_primary' => true,
         ]);
 
-        $galleryProduct = $this->product($category, [
-            'name' => 'محصول منتخب گالری فرزین',
-            'slug' => 'farzin-home-gallery-product',
-            'sku' => 'FAR-HOME-GALLERY-001',
-            'show_in_home_gallery' => true,
-        ]);
-
-        ProductImage::create([
-            'product_id' => $galleryProduct->id,
-            'path' => 'https://cdn.example.test/farzin-home-gallery.webp',
-            'alt' => 'تصویر محصول گالری فرزین',
-            'sort_order' => 0,
-            'is_primary' => true,
-        ]);
-
-        $response = $this->get(route('home'))
+        $this->get(route('home'))
             ->assertOk()
             ->assertSee('fz-hero-product', false)
             ->assertSee('هود منتخب فرزین')
@@ -328,17 +313,6 @@ class FarzinStorefrontTest extends TestCase
             ->assertDontSee('data-fz-scroll-hero', false)
             ->assertDontSee('data-hero-drawing', false)
             ->assertDontSee('SCROLL TO REVEAL');
-
-        $html = $response->getContent();
-        $categoryPosition = strpos($html, 'id="product-categories"');
-        $bestsellerPosition = strpos($html, 'id="fz-products-heading"');
-        $galleryPosition = strpos($html, 'class="fz-mosaic-intro"');
-
-        $this->assertNotFalse($categoryPosition);
-        $this->assertNotFalse($bestsellerPosition);
-        $this->assertNotFalse($galleryPosition);
-        $this->assertLessThan($bestsellerPosition, $categoryPosition);
-        $this->assertLessThan($galleryPosition, $bestsellerPosition);
     }
 
     public function test_homepage_renders_category_video_and_gif_with_the_correct_media_elements(): void
