@@ -157,9 +157,8 @@ class BlogAppearanceTest extends TestCase
         $this->get(route('blog.index'))
             ->assertOk()
             ->assertSee('href="' . route('blog.feed') . '"', false)
-            ->assertSee('دنبال‌کردن مقاله‌ها')
-            ->assertSee('دریافت خودکار نوشته‌های تازه')
-            ->assertSee('blog-rss-link__icon', false);
+            ->assertSee('class="blog-rss-quiet"', false)
+            ->assertSee('فید RSS');
 
         $this->get(route('blog.feed'))
             ->assertOk();
