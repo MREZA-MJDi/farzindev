@@ -2282,10 +2282,6 @@ body {
     background-color: #06284F;
 }
 
-.storefront-content :where(.hover\\:bg-\\[var\\(--livora-accent\\)\\]:hover) {
-    background-color: #7B0D1A;
-}
-
 .storefront-content :where(table) {
     border-color: #DCE5EF;
     background: #FFFFFF;
