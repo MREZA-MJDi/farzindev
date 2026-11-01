@@ -187,7 +187,7 @@ cd /var/www/farzin
 sudo bash scripts/restore-vps-runtime.sh
 ```
 
-It repairs this project's permissions, clears and rebuilds Laravel's config/route/view caches as `deploy`, then runs `farzin:preflight`. It does not run migrations, seeders, payment actions or modify database records. Use it only after the production `.env` and database are already configured.
+It repairs this project's permissions, clears and rebuilds Laravel's config/route/view caches as `deploy`, then runs `farzin:preflight`. It does not run migrations or seeders and does not modify business data; clearing the configured Laravel cache store may invalidate application cache entries. Use it only after the production `.env` and database are already configured.
 
 After environment values, migrations and the initial seeding are complete:
 
