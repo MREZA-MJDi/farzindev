@@ -205,23 +205,43 @@
         @if($categories->isNotEmpty())
             <section id="product-categories" class="fz-section fz-category-section" aria-labelledby="fz-category-heading">
                 <div class="fz-container">
-                    <div class="fz-section-heading fz-reveal">
-                        <div>
-                            <p class="fz-eyebrow"><span></span> مسیر انتخاب</p>
-                            <h2 id="fz-category-heading">از دسته‌ی مناسب شروع کنید.</h2>
-                            <p>برای رسیدن سریع‌تر به محصول موردنیاز، دسته‌بندی را انتخاب کنید.</p>
-                        </div>
-                        <a class="fz-text-link" href="{{ route('categories.index') }}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4" aria-hidden="true"><rect x="3.5" y="3.5" width="7" height="7" rx="1.3" /><rect x="13.5" y="3.5" width="7" height="7" rx="1.3" /><rect x="3.5" y="13.5" width="7" height="7" rx="1.3" /><rect x="13.5" y="13.5" width="7" height="7" rx="1.3" /></svg> تمام دسته‌ها</a>
+                    <div class="fz-category-heading fz-reveal">
+                        <p class="fz-eyebrow"><span></span> دسته‌بندی محصولات فرزین</p>
+                        <h2 id="fz-category-heading">از دسته‌ی مناسب شروع کنید.</h2>
+                        <p>هود و سینک موردنیازتان را از میان دسته‌بندی‌های محصولات فرزین پیدا کنید.</p>
+                        <a class="fz-category-heading__link" href="{{ route('categories.index') }}">
+                            مشاهده همه دسته‌بندی‌ها
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <path d="M19 12H5m7 7-7-7 7-7"/>
+                            </svg>
+                        </a>
                     </div>
+
                     <div class="fz-category-grid">
-                        @foreach($categories as $category)
-                            <a class="fz-category-card fz-reveal" href="{{ route('categories.show', $category) }}" @if($category->hoverMedia?->url) data-farzin-gif-card @endif>
+                        @foreach($categories as $index => $category)
+                            <a
+                                class="fz-category-card fz-reveal"
+                                style="--fz-category-delay: {{ $index * 90 }}ms"
+                                href="{{ route('categories.show', $category) }}"
+                                @if($category->hoverMedia?->url) data-farzin-gif-card @endif
+                                aria-label="مشاهده دسته‌بندی {{ $category->name }}، {{ \App\Helpers\PersianNumberHelper::format($category->products_count) }} محصول فعال"
+                            >
                                 <span class="fz-category-card__art">
                                     @if($category->homepage_image_url)
-                                        <img class="fz-category-card__image" src="{{ $category->homepage_image_url }}" @if($category->homepage_image_srcset) srcset="{{ $category->homepage_image_srcset }}" sizes="(max-width: 639px) 85vw, (max-width: 1023px) 45vw, 320px" @endif alt="" width="640" height="480" loading="lazy" decoding="async">
+                                        <img
+                                            class="fz-category-card__image"
+                                            src="{{ $category->homepage_image_url }}"
+                                            @if($category->homepage_image_srcset) srcset="{{ $category->homepage_image_srcset }}" sizes="(max-width: 639px) 88vw, (max-width: 1023px) 42vw, (max-width: 1279px) 28vw, 260px" @endif
+                                            alt="{{ $category->name }}"
+                                            width="640"
+                                            height="480"
+                                            loading="lazy"
+                                            decoding="async"
+                                        >
                                     @else
-                                        <span class="fz-category-card__monogram">{{ $category->slug === 'sinks' ? 'S' : 'H' }}</span>
+                                        <span class="fz-category-card__monogram" aria-hidden="true">{{ $category->slug === 'sinks' ? 'S' : 'H' }}</span>
                                     @endif
+
                                     @if($category->hoverMedia?->is_video)
                                         <video
                                             data-farzin-category-video
@@ -245,9 +265,21 @@
                                             decoding="async"
                                         >
                                     @endif
-                                    <span class="fz-category-card__arrow" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4" aria-hidden="true"><path d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6Z" /><circle cx="12" cy="12" r="2.5" /></svg></span>
+
+                                    <span class="fz-category-card__image-halo" aria-hidden="true"></span>
                                 </span>
-                                <span class="fz-category-card__content"><strong>{{ $category->name }}</strong><small>{{ \App\Helpers\PersianNumberHelper::format($category->products_count) }} محصول فعال</small></span>
+
+                                <span class="fz-category-card__content">
+                                    <span class="fz-category-card__eyebrow">FARZIN / CATEGORY</span>
+                                    <strong>{{ $category->name }}</strong>
+                                    <small>{{ \App\Helpers\PersianNumberHelper::format($category->products_count) }} محصول فعال</small>
+                                    <span class="fz-category-card__link">
+                                        مشاهده محصولات
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                            <path d="M19 12H5m7 7-7-7 7-7"/>
+                                        </svg>
+                                    </span>
+                                </span>
                             </a>
                         @endforeach
                     </div>
