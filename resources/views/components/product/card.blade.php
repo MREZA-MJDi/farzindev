@@ -1,6 +1,7 @@
 @props([
     'product',
     'reveal' => true,
+    'variant' => 'default',
 ])
 
 @php
@@ -26,7 +27,7 @@
 @endphp
 
 <article
-    class="farzin-product-card group relative flex h-full min-w-0 flex-col"
+    class="farzin-product-card group relative flex h-full min-w-0 flex-col {{ $variant === 'round' ? 'farzin-product-card--round-media' : '' }}"
     @if($reveal) data-farzin-reveal @endif
 >
     <div class="farzin-product-card__media relative overflow-hidden">
@@ -149,8 +150,7 @@
             class="farzin-product-card__cta mt-auto inline-flex items-center justify-between gap-3"
             aria-label="بررسی مشخصات {{ $product->name }}"
         >
-            <span>بررسی مشخصات</span>
-            <span class="farzin-product-card__arrow" aria-hidden="true">↙</span>
+            <span>مشاهده مشخصات</span>
         </a>
     </div>
 </article>
