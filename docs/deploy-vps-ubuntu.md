@@ -54,8 +54,8 @@ scp farzin-vps-release.zip deploy@YOUR_SERVER:/tmp/
 sudo mkdir -p /var/www/farzin
 sudo unzip -q /tmp/farzin-vps-release.zip -d /var/www/farzin
 sudo chown -R deploy:www-data /var/www/farzin
-sudo find /var/www/farzin -type d -exec chmod 0750 {} \\;
-sudo find /var/www/farzin -type f -exec chmod 0640 {} \\;
+sudo find /var/www/farzin -type d -exec chmod 0750 {} \;
+sudo find /var/www/farzin -type f -exec chmod 0640 {} \;
 sudo bash /var/www/farzin/scripts/repair-vps-permissions.sh
 ```
 
