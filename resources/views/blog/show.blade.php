@@ -64,39 +64,44 @@
 @endpush
 
 @section('content')
-<article class="bg-[var(--livora-cream)]">
-    <header class="bg-[var(--livora-ink)] text-white">
+<article class="blog-article-page">
+    <header class="blog-article-hero">
         <x-layout.container>
-            <div class="mx-auto max-w-4xl py-12 sm:py-16">
-                <nav aria-label="مسیر صفحه" class="flex flex-wrap items-center gap-2 text-xs text-white/55">
-                    <a href="{{ route('home') }}" class="hover:text-white">خانه</a>
-                    <span>/</span>
-                    <a href="{{ route('blog.index') }}" class="hover:text-white">بلاگ</a>
+            <div class="blog-article-hero__inner">
+                <nav aria-label="مسیر صفحه" class="blog-article-breadcrumb">
+                    <a href="{{ route('home') }}">خانه</a>
+                    <span aria-hidden="true">/</span>
+                    <a href="{{ route('blog.index') }}">مجله فرزین</a>
                     @foreach($post->terms->where('type', 'category') as $categoryTerm)
-                        <span>/</span>
-                        <a href="{{ route('blog.category', $categoryTerm->slug) }}" class="hover:text-white">{{ $categoryTerm->name }}</a>
+                        <span aria-hidden="true">/</span>
+                        <a href="{{ route('blog.category', $categoryTerm->slug) }}">{{ $categoryTerm->name }}</a>
                     @endforeach
-                    <span>/</span><span class="text-white/80">{{ $post->title }}</span>
                 </nav>
 
-                <p class="mt-9 text-[10px] font-semibold uppercase tracking-[0.22em] text-[#b7c9cb]">FARZIN / ARTICLE</p>
-                <h1 class="mt-4 text-3xl font-semibold leading-tight sm:text-5xl">{{ $post->title }}</h1>
+                <p class="blog-article-kicker">FARZIN JOURNAL <span>/</span> ARTICLE</p>
+                <h1 class="blog-article-title">{{ $post->title }}</h1>
+
                 @if($post->excerpt)
-                    <p class="mt-5 max-w-3xl text-sm leading-8 text-white/70 sm:text-base">{{ $post->excerpt }}</p>
+                    <p class="blog-article-excerpt">{{ $post->excerpt }}</p>
                 @endif
-                <div class="mt-5 flex flex-wrap items-center gap-3 text-xs text-white/50">
+
+                <div class="blog-article-meta">
                     <time datetime="{{ $post->published_at?->toAtomString() }}">انتشار: {{ $post->published_at?->format('Y/m/d') }}</time>
                     <span aria-hidden="true">·</span>
-                    <span>{{ $post->reading_time }} دقیقه مطالعه</span>
-                    @if($post->author)<span aria-hidden="true">·</span><span>{{ $post->author->name }}</span>@endif
+                    <span>{{ \App\Helpers\PersianNumberHelper::format($post->reading_time) }} دقیقه مطالعه</span>
+                    @if($post->author)
+                        <span aria-hidden="true">·</span>
+                        <span>{{ $post->author->name }}</span>
+                    @endif
                 </div>
+
                 @if($post->terms->isNotEmpty())
-                    <div class="mt-6 flex flex-wrap gap-2">
+                    <div class="blog-article-terms" aria-label="موضوع‌های مقاله">
                         @foreach($post->categories as $categoryTerm)
-                            <a href="{{ route('blog.category', $categoryTerm->slug) }}" class="rounded-full border border-white/20 px-3 py-1.5 text-[11px] text-white/80 hover:bg-white/10">{{ $categoryTerm->name }}</a>
+                            <a href="{{ route('blog.category', $categoryTerm->slug) }}">{{ $categoryTerm->name }}</a>
                         @endforeach
                         @foreach($post->terms->where('type', 'tag') as $tagTerm)
-                            <a href="{{ route('blog.tag', $tagTerm->slug) }}" class="rounded-full bg-white/10 px-3 py-1.5 text-[11px] text-white/75 hover:bg-white/20">#{{ $tagTerm->name }}</a>
+                            <a href="{{ route('blog.tag', $tagTerm->slug) }}">#{{ $tagTerm->name }}</a>
                         @endforeach
                     </div>
                 @endif
@@ -105,8 +110,8 @@
     </header>
 
     <x-layout.container>
-        <div class="mx-auto grid max-w-6xl gap-10 py-10 sm:py-14 lg:grid-cols-[minmax(0,1fr)_280px]">
-            <div class="min-w-0">
+        <div class="blog-article-layout">
+            <main class="blog-article-main">
                 @if($post->cover_image_url)
                     <img
                         src="{{ $post->cover_image_url }}"
@@ -116,43 +121,51 @@
                         height="675"
                         fetchpriority="high"
                         decoding="async"
-                        class="mb-9 aspect-[16/9] w-full rounded-[1.75rem] object-cover"
+                        class="blog-article-cover"
                     >
                 @endif
 
-                <div class="rounded-[1.75rem] border border-[var(--livora-border)] bg-[var(--livora-white)] p-6 sm:p-10">
+                <div class="blog-article-panel">
                     @if(filled($post->body_html))
-                        <div class="blog-article-content break-words text-sm leading-9 text-[var(--livora-text)] sm:text-base">{!! $post->body_html !!}</div>
+                        <div class="blog-article-content">{!! $post->body_html !!}</div>
                     @else
-                        <div class="whitespace-pre-line break-words text-sm leading-9 text-[var(--livora-text)] sm:text-base">{{ $post->body }}</div>
+                        <div class="blog-article-content blog-article-content--plain">{{ $post->body }}</div>
                     @endif
                 </div>
 
-                <div class="mt-8">
-                    <a href="{{ route('blog.index') }}" class="inline-flex min-h-11 items-center gap-2 text-sm font-semibold text-[var(--livora-accent)]"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4" aria-hidden="true"><path d="M12 7.5c-2.2-1.6-5-2.1-8.25-1.5v12c3.25-.6 6.05-.1 8.25 1.5m0-12c2.2-1.6 5-2.1 8.25-1.5v12c-3.25-.6-6.05-.1-8.25 1.5" /><path d="M12 7.5v12" /></svg> بازگشت به همه مقاله‌ها</a>
-                </div>
-            </div>
+                <a href="{{ route('blog.index') }}" class="blog-article-back">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M19 12H5m7 7-7-7 7-7"/>
+                    </svg>
+                    بازگشت به مجله
+                </a>
+            </main>
 
-            <aside class="space-y-5">
-                <div class="rounded-[1.5rem] border border-[var(--livora-border)] bg-[var(--livora-white)] p-6">
-                    <p class="text-[10px] font-semibold uppercase tracking-[0.18em] text-[var(--livora-accent)]">KEEP EXPLORING</p>
-                    <h2 class="mt-3 text-lg font-semibold">راهنماهای بیشتر</h2>
-                    <p class="mt-2 text-xs leading-7 text-[var(--livora-stone)]">برای انتخاب دقیق‌تر، مشخصات و مدل‌های موجود را کنار توصیه‌های مقاله بررسی کنید.</p>
-                    <a href="{{ route('categories.index') }}" class="mt-4 inline-flex min-h-11 items-center gap-2 text-sm font-semibold text-[var(--livora-accent)]"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4" aria-hidden="true"><path d="M3.5 9h17l-1 11h-15l-1-11Z" /><path d="M8 9V6.5a4 4 0 0 1 8 0V9" /></svg> دسته‌بندی محصولات</a>
-                </div>
+            <aside class="blog-article-sidebar">
+                <section class="blog-article-sidebar-card">
+                    <p class="blog-section-kicker">FARZIN / CATALOG</p>
+                    <h2>حالا مدل‌ها را ببینید.</h2>
+                    <p>برای بررسی قیمت، تصاویر و مشخصات هود و سینک، وارد کاتالوگ محصولات شوید.</p>
+                    <a href="{{ route('shop.index') }}">
+                        مشاهده محصولات
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M19 12H5m7 7-7-7 7-7"/>
+                        </svg>
+                    </a>
+                </section>
 
                 @if($relatedPosts->isNotEmpty())
-                    <div class="rounded-[1.5rem] border border-[var(--livora-border)] bg-[var(--livora-white)] p-6">
-                        <h2 class="text-base font-semibold">مقاله‌های مرتبط</h2>
-                        <div class="mt-4 space-y-4">
+                    <section class="blog-article-sidebar-card">
+                        <h2>مقاله‌های مرتبط</h2>
+                        <div class="blog-related-list">
                             @foreach($relatedPosts as $related)
-                                <a href="{{ route('blog.show', $related->slug) }}" class="block border-b border-[var(--livora-border)] pb-4 last:border-0 last:pb-0">
-                                    <span class="text-sm font-medium leading-6 transition hover:text-[var(--livora-accent)]">{{ $related->title }}</span>
-                                    <span class="mt-1 block text-[10px] text-[var(--livora-stone)]">{{ $related->published_at?->format('Y/m/d') }}</span>
+                                <a href="{{ route('blog.show', $related->slug) }}">
+                                    <span>{{ $related->title }}</span>
+                                    <small>{{ $related->published_at?->format('Y/m/d') }}</small>
                                 </a>
                             @endforeach
                         </div>
-                    </div>
+                    </section>
                 @endif
             </aside>
         </div>
