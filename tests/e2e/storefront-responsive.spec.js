@@ -261,29 +261,30 @@ test('homepage CTA meets the shared footer at the same spacing used by interior 
     }
 });
 
-test('shared footer keeps the same typography, content and grid on every storefront page', async ({ page }) => {
+test('shared footer keeps the same typography, navigation and icon controls on every storefront page', async ({ page }) => {
     const snapshots = [];
 
     for (const path of ['/', '/shop', '/categories/hoods', '/contact']) {
         await page.goto(path, { waitUntil: 'domcontentloaded' });
 
-        snapshots.push(await page.locator('.farzin-site-footer').evaluate((footer) => {
-            const main = footer.querySelector('.farzin-site-footer__main');
-            const heading = footer.querySelector('.farzin-site-footer__heading');
+        snapshots.push(await page.locator('.fz-global-footer').evaluate((footer) => {
+            const wordmark = footer.querySelector('.fz-global-footer__wordmark > span');
+            const nav = footer.querySelector('.fz-global-footer__nav');
+            const socials = Array.from(footer.querySelectorAll('.fz-global-footer__socials a'));
             const style = window.getComputedStyle(footer);
-            const headingStyle = window.getComputedStyle(heading);
+            const wordmarkStyle = window.getComputedStyle(wordmark);
+
             return {
-                text: footer.innerText.replace(/\s+/g, ' ').trim(),
                 direction: style.direction,
                 fontFamily: style.fontFamily,
-                fontSize: style.fontSize,
-                lineHeight: style.lineHeight,
                 color: style.color,
                 backgroundColor: style.backgroundColor,
-                columns: window.getComputedStyle(main).gridTemplateColumns,
-                headingFont: headingStyle.font,
-                headingColor: headingStyle.color,
-                headingCount: footer.querySelectorAll('.farzin-site-footer__heading').length,
+                wordmark: wordmark.textContent.trim(),
+                wordmarkFont: wordmarkStyle.fontFamily,
+                wordmarkColor: wordmarkStyle.color,
+                navLinkCount: nav.querySelectorAll('a').length,
+                socialLinkCount: socials.length,
+                socialsAreIconOnly: socials.every((link) => link.textContent.trim() === '' && Boolean(link.querySelector('svg')) && Boolean(link.getAttribute('aria-label'))),
             };
         }));
     }
@@ -291,7 +292,10 @@ test('shared footer keeps the same typography, content and grid on every storefr
     for (const snapshot of snapshots.slice(1)) {
         expect(snapshot).toEqual(snapshots[0]);
     }
-    expect(snapshots[0].headingCount).toBe(6);
+    expect(snapshots[0].wordmark).toBe('فرزین');
+    expect(snapshots[0].navLinkCount).toBe(6);
+    expect(snapshots[0].socialLinkCount).toBeLessThanOrEqual(3);
+    expect(snapshots[0].socialsAreIconOnly).toBe(true);
 });
 
 test('storefront sections never disappear while entrance motion initializes', async ({ page }) => {
