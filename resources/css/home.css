@@ -632,27 +632,7 @@ body.home-body {
 .fz-empty-state p { margin:.35rem 0 0; color:var(--fz-muted); font-size:.78rem; line-height:1.9; }
 .fz-empty-state .fz-button { margin-top:1rem; }
 
-/* Technical story panel */
-.fz-maker { position:relative; isolation:isolate; overflow:hidden; padding-block:clamp(3.5rem,7vw,7rem); color:var(--fz-text); background:linear-gradient(120deg,#F7F5F0,#EEECE6 58%,#E8E5DD); }
-.fz-maker::before { content:""; position:absolute; z-index:-1; inset:0; background:radial-gradient(circle at 83% 22%,rgba(65, 62, 54, .045),transparent 24rem),radial-gradient(circle at 8% 100%,rgba(65, 62, 54, .035),transparent 30rem); }
-.fz-maker__layout { position:relative; display:grid; grid-template-columns:minmax(0,1fr) minmax(320px,.9fr); gap:clamp(2rem,6vw,6rem); align-items:center; }
-.fz-eyebrow--light { color:#77756F; }
-.fz-maker__copy h2 { max-width:650px; margin:1rem 0 0; color:#20201D; font-size:clamp(1.9rem,3.4vw,3.6rem); line-height:1.45; letter-spacing:-.045em; font-weight:850; text-wrap:balance; }
-.fz-maker__copy>p:not(.fz-eyebrow) { max-width:600px; margin:1.2rem 0 0; color:#6F6D67; font-size:.88rem; line-height:2.05; }
-.fz-maker__copy .fz-button { margin-top:1.7rem; }
-.fz-maker__specs { display:grid; gap:.75rem; }
-.fz-maker__spec { display:grid; grid-template-columns:110px minmax(0,1fr); gap:.4rem 1rem; padding:1.2rem 1.25rem; border:1px solid rgba(74,70,62,.14); border-radius:1rem; background:rgba(255,255,255,.7); box-shadow:0 6px 22px rgba(35,32,27,.035); }
-.fz-maker__spec>span { grid-row:1/span 2; align-self:start; color:#817D74; font-size:.6rem; font-weight:850; letter-spacing:.08em; }
-.fz-maker__spec h3 { margin:0; color:#22221F; font-size:.95rem; font-weight:850; }
-.fz-maker__spec p { margin:.2rem 0 0; color:#77756F; font-size:.72rem; line-height:1.85; }
-.fz-maker__watermark { position:absolute; z-index:-1; inset-inline-start:-.05em; inset-block-end:-.45em; color:rgba(55,52,45,.045); font-size:clamp(12rem,28vw,28rem); line-height:1; font-weight:950; letter-spacing:-.11em; pointer-events:none; user-select:none; }
-
-/* Closing call to action. The shared footer owns the final page-to-footer gap. */
-.fz-bottom-cta { padding-block:clamp(3.5rem,6vw,6rem); }
-.home-body .fz-bottom-cta { padding-block-end: 0; }
-.fz-bottom-cta__inner { display:flex; align-items:center; justify-content:space-between; gap:2rem; padding:clamp(1.5rem,4vw,3.2rem); border:1px solid var(--fz-line); border-radius:1rem; background:#FFFFFF; box-shadow:0 10px 34px rgba(35,32,27,.035); }
-.fz-bottom-cta__inner h2 { max-width:680px; font-size:clamp(1.55rem,2.7vw,2.55rem); }
-.fz-bottom-cta__inner .fz-hero__actions { margin-top:0; flex:0 0 auto; }
+/* Closing conversion panel is styled in the shared Farzin storefront layer. */
 /* Quick view dialog and concise feedback */
 .unbutton { padding:0; border:0; background:none; }
 .qv { position:fixed; z-index:2000; inset:0; display:grid; place-items:center; padding:1rem; visibility:hidden; opacity:0; transition:opacity .22s ease,visibility .22s ease; }
@@ -738,11 +718,6 @@ body.home-body {
     .fz-product-card h3 { font-size:.79rem; min-height:3.4em; }
     .fz-product-card__price strong { font-size:.78rem; }
     .fz-product-card__arrow { width:29px; height:29px; }
-    .fz-maker__layout { grid-template-columns:1fr; gap:2rem; }
-    .fz-maker__copy h2 { font-size:clamp(1.8rem,7vw,2.8rem); }
-    .fz-maker__spec { grid-template-columns:90px minmax(0,1fr); padding:1rem; }
-    .fz-bottom-cta__inner { align-items:flex-start; flex-direction:column; gap:1.25rem; padding:1.35rem; border-radius:1.25rem; }
-    .fz-bottom-cta__inner .fz-button { flex:1 1 145px; }
     .qv__panel { grid-template-columns:1fr; width:min(520px,100%); max-height:88svh; border-radius:1.15rem; }
     .qv__image { min-height:0; aspect-ratio:5/3.5; }
     .qv__body { padding:1.1rem; }
