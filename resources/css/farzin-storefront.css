@@ -3935,9 +3935,12 @@ body.home-body,
     line-height: 1.65;
     font-weight: 800;
 }
-.storefront-content :where(p, li, label, input, select, textarea) {
-    font-size: .875rem;
+.storefront-content :where(p, li) {
     line-height: 1.9;
+}
+.storefront-content :where(label, input, select, textarea) {
+    font-size: .875rem;
+    line-height: 1.75;
 }
 .storefront-content :where(small, figcaption) {
     font-size: .72rem;
