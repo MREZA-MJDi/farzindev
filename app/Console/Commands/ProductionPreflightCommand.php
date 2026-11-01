@@ -201,7 +201,50 @@ class ProductionPreflightCommand extends Command
                 ? 'Missing public/build/manifest.json; build or deploy the compiled assets.'
                 : ($manifestAccessible
                     ? 'Vite manifest exists and is readable by the PHP-FPM group.'
-                    : 'Vite manifest is not readable through the recommended PHP-FPM group. Set owner/group to deploy:www-data and permissions to 0640 (or use 0644), then run this preflight as www-data.')
+                    : 'Vite manifest is not readable through the PHP-FPM group. Set owner/group to deploy:www-data and permissions to 0640 (or use 0644), then rerun via bash scripts/artisan-as-deploy.sh farzin:preflight.')
+        );
+
+        // Laravel reads these generated manifests before application providers
+        // are registered. Root-owned 0600/0700 files can prevent the web worker
+        // from loading packages.php/services.php and surface misleading
+        // "Target class [request|view] does not exist" exceptions.
+        $bootstrapCachePath = base_path('bootstrap/cache');
+        clearstatcache(true, $bootstrapCachePath);
+        $bootstrapCachePermissions = is_dir($bootstrapCachePath) ? fileperms($bootstrapCachePath) : false;
+        $bootstrapCacheSharedAccess = $bootstrapCachePermissions !== false
+            && ($bootstrapCachePermissions & 0070) === 0070;
+        $bootstrapCacheWritable = is_dir($bootstrapCachePath)
+            && is_writable($bootstrapCachePath)
+            && $bootstrapCacheSharedAccess;
+        $bootstrapCacheFiles = collect([
+            'packages.php',
+            'services.php',
+            'config.php',
+            'events.php',
+            'routes-v7.php',
+        ])->map(fn (string $file): string => $bootstrapCachePath . DIRECTORY_SEPARATOR . $file)
+            ->filter(static fn (string $file): bool => is_file($file));
+        $unreadableBootstrapCacheFiles = $bootstrapCacheFiles
+            ->filter(static function (string $file): bool {
+                clearstatcache(true, $file);
+                $permissions = fileperms($file);
+
+                return ! is_readable($file)
+                    || $permissions === false
+                    || ($permissions & 0044) === 0;
+            })
+            ->map(static fn (string $file): string => basename($file))
+            ->values()
+            ->all();
+        $bootstrapCacheReady = $bootstrapCacheWritable && $unreadableBootstrapCacheFiles === [];
+        $add(
+            $bootstrapCacheReady ? 'OK' : 'FAIL',
+            'Laravel bootstrap cache permissions',
+            ! $bootstrapCacheWritable
+                ? 'bootstrap/cache is not writable and searchable by the PHP-FPM group. Run bash scripts/repair-vps-permissions.sh, then use bash scripts/artisan-as-deploy.sh for Artisan commands.'
+                : ($bootstrapCacheReady
+                    ? 'Existing Laravel package, service, config, event and route manifests are readable by the PHP-FPM group.'
+                    : 'PHP-FPM cannot reliably read: ' . implode(', ', $unreadableBootstrapCacheFiles) . '. Run bash scripts/repair-vps-permissions.sh and use bash scripts/artisan-as-deploy.sh so root-only cache files are not recreated.')
         );
 
         $storageLinked = is_link(public_path('storage')) && file_exists(public_path('storage'));

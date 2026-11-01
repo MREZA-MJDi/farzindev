@@ -47,6 +47,11 @@ jobs:
       - name: Build production assets
         run: npm run build
 
+      - name: Validate VPS deployment helpers
+        run: |
+          bash -n scripts/repair-vps-permissions.sh scripts/artisan-as-deploy.sh scripts/restore-vps-runtime.sh
+          chmod 2770 bootstrap/cache
+
       - name: Run Laravel tests
         run: php artisan test
 

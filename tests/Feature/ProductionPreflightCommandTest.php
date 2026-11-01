@@ -10,6 +10,19 @@ class ProductionPreflightCommandTest extends TestCase
 {
     use RefreshDatabase;
 
+    public function test_preflight_passes_with_php_fpm_shared_bootstrap_cache_permissions(): void
+    {
+        $cacheDirectory = base_path('bootstrap/cache');
+        $originalPermissions = fileperms($cacheDirectory) & 0777;
+        chmod($cacheDirectory, 02770);
+
+        try {
+            $this->artisan('farzin:preflight')->assertExitCode(0);
+        } finally {
+            chmod($cacheDirectory, $originalPermissions);
+        }
+    }
+
     public function test_preflight_rejects_an_owner_only_vite_manifest(): void
     {
         $manifest = public_path('build/manifest.json');
@@ -24,6 +37,26 @@ class ProductionPreflightCommandTest extends TestCase
         try {
             $this->artisan('farzin:preflight')
                 ->expectsOutputToContain('Compiled frontend assets')
+                ->assertExitCode(1);
+        } finally {
+            chmod($manifest, $originalPermissions);
+        }
+    }
+
+    public function test_preflight_rejects_an_owner_only_laravel_bootstrap_manifest(): void
+    {
+        $manifest = base_path('bootstrap/cache/packages.php');
+
+        if (! is_file($manifest)) {
+            $this->markTestSkipped('Composer package discovery must create the bootstrap manifest first.');
+        }
+
+        $originalPermissions = fileperms($manifest) & 0777;
+        chmod($manifest, 0600);
+
+        try {
+            $this->artisan('farzin:preflight')
+                ->expectsOutputToContain('Laravel bootstrap cache permissions')
                 ->assertExitCode(1);
         } finally {
             chmod($manifest, $originalPermissions);
