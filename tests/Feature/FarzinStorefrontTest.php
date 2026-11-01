@@ -305,14 +305,66 @@ class FarzinStorefrontTest extends TestCase
 
         $this->get(route('home'))
             ->assertOk()
-            ->assertSee('fz-hero-product', false)
+            ->assertSee('fz-home-hero', false)
+            ->assertSee('data-farzin-home-slider', false)
+            ->assertSee('data-home-product-id="'.$product->id.'"', false)
             ->assertSee('هود منتخب فرزین')
-            ->assertSee('پیشنهاد فرزین')
+            ->assertSee('تازه در فروشگاه')
             ->assertSee('مشاوره خرید')
             ->assertSee('product-categories')
             ->assertDontSee('data-fz-scroll-hero', false)
             ->assertDontSee('data-hero-drawing', false)
             ->assertDontSee('SCROLL TO REVEAL');
+    }
+
+    public function test_homepage_hero_carousel_shows_only_the_six_latest_image_products(): void
+    {
+        $category = $this->category([
+            'name' => 'دسته اسلایدر هوم',
+            'slug' => 'homepage-slider-products',
+        ]);
+
+        $products = [];
+        foreach (range(1, 8) as $index) {
+            $product = $this->product($category, [
+                'name' => 'محصول اسلایدر '.$index,
+                'slug' => 'homepage-slider-product-'.$index,
+                'sku' => 'FAR-HOME-SLIDER-'.$index,
+            ]);
+
+            $product->forceFill([
+                'created_at' => now()->subDays(8 - $index),
+                'updated_at' => now()->subDays(8 - $index),
+            ])->save();
+
+            ProductImage::create([
+                'product_id' => $product->id,
+                'path' => 'https://cdn.example.test/home-slider-'.$index.'.webp',
+                'alt' => 'تصویر محصول اسلایدر '.$index,
+                'sort_order' => 0,
+                'is_primary' => true,
+            ]);
+
+            $products[] = $product;
+        }
+
+        $response = $this->get(route('home'));
+
+        $response->assertOk()
+            ->assertSee('data-farzin-home-slider', false)
+            ->assertSee('data-home-slide-next', false)
+            ->assertSee('data-home-slide-prev', false)
+            ->assertSee('data-home-slide-toggle', false);
+
+        foreach (array_slice($products, 2) as $product) {
+            $response->assertSee('data-home-product-id="'.$product->id.'"', false)
+                ->assertSee($product->name);
+        }
+
+        foreach (array_slice($products, 0, 2) as $product) {
+            $response->assertDontSee('data-home-product-id="'.$product->id.'"', false)
+                ->assertDontSee($product->name);
+        }
     }
 
     public function test_homepage_renders_category_video_and_gif_with_the_correct_media_elements(): void

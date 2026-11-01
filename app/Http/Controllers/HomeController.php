@@ -29,6 +29,32 @@ class HomeController extends Controller
             ->limit(4)
             ->get();
 
+        // Hero carousel: six most recently created active products with a usable image.
+        // Images and categories are eager-loaded; no per-slide database lookup is required.
+        $heroProducts = Product::query()
+            ->active()
+            ->whereHas('category', fn ($query) => $query->where('is_active', true))
+            ->whereHas('images')
+            ->with([
+                'category:id,name',
+                'images' => fn ($query) => $query
+                    ->select(['id', 'product_id', 'media_id', 'path', 'alt', 'sort_order', 'is_primary'])
+                    ->orderByDesc('is_primary')
+                    ->orderBy('sort_order')
+                    ->orderBy('id')
+                    ->limit(1),
+                'images.media:id,path',
+            ])
+            ->orderByDesc('created_at')
+            ->orderByDesc('id')
+            ->limit(18)
+            ->get()
+            ->filter(fn (Product $product) => $product->images->contains(
+                fn ($image) => filled($image->url)
+            ))
+            ->take(6)
+            ->values();
+
         // Keep the home page to eight distinct catalog products: two editorial images,
         // four bestsellers and two new arrivals. All others remain in the paginated shop.
         $catalogCount = Product::query()
@@ -161,6 +187,7 @@ class HomeController extends Controller
 
         return view('home.index', [
             'categories' => $categories,
+            'heroProducts' => $heroProducts,
             'demoImages' => $demoImages,
             'gridGroups' => $demoImages->chunk(6)->values(),
             'featuredProducts' => $featuredProducts,
