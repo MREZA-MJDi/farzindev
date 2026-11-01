@@ -288,23 +288,68 @@
         @endif
 
         @if($featuredProducts->isNotEmpty())
-            <section class="fz-section fz-product-section" aria-labelledby="fz-products-heading">
-                <div class="fz-container">
-                    <div class="fz-section-heading fz-reveal">
-                        <div>
-                            <p class="fz-eyebrow"><span></span> کاتالوگ محصولات</p>
-                            <h2 id="fz-products-heading">{{ $hasBestSellerSales ? 'پرفروش‌ترین محصولات' : 'مدل‌های منتخب فرزین' }}</h2>
+            @php
+                $featuredBackdropCategory = $categories->first(
+                    fn ($category) => filled($category->homepage_image_url)
+                );
+                $featuredBackdropProductImage = $featuredProducts->first()?->images->first(
+                    fn ($image) => filled($image->url)
+                );
+                $featuredBackdropImage = $featuredBackdropCategory?->homepage_image_url
+                    ?? $featuredBackdropProductImage?->url;
+                $featuredBackdropSrcset = $featuredBackdropCategory?->homepage_image_srcset
+                    ?? $featuredBackdropProductImage?->responsive_srcset;
+            @endphp
+
+            <section
+                class="fz-section fz-product-section fz-home-featured-section"
+                aria-labelledby="fz-products-heading"
+            >
+                <div class="fz-home-featured-section__visual" aria-hidden="true">
+                    @if($featuredBackdropImage)
+                        <img
+                            src="{{ $featuredBackdropImage }}"
+                            @if($featuredBackdropSrcset) srcset="{{ $featuredBackdropSrcset }}" sizes="(min-width: 1280px) 36vw, (min-width: 768px) 42vw, 100vw" @endif
+                            alt=""
+                            width="1200"
+                            height="900"
+                            loading="lazy"
+                            decoding="async"
+                        >
+                    @endif
+                    <span class="fz-home-featured-section__visual-shade"></span>
+                </div>
+
+                <div class="fz-container fz-home-featured-section__inner">
+                    <header class="fz-home-featured-section__heading fz-reveal">
+                        <div class="fz-home-featured-section__heading-copy">
+                            <p class="fz-eyebrow">
+                                <span aria-hidden="true"></span>
+                                کاتالوگ محصولات فرزین
+                            </p>
+
+                            <h2 id="fz-products-heading">
+                                {{ $hasBestSellerSales ? 'پرفروش‌ترین محصولات' : 'مدل‌های منتخب فرزین' }}
+                            </h2>
+
                             <p>
                                 @if($hasBestSellerSales)
-                                    بر اساس تعداد محصولات ثبت‌شده در سفارش‌های پرداخت‌شده؛ برای مشخصات کامل، صفحه‌ی هر محصول را باز کنید.
+                                    انتخاب‌ها بر اساس تعداد محصولات ثبت‌شده در سفارش‌های پرداخت‌شده مرتب شده‌اند؛ مشخصات هر مدل را بررسی کنید.
                                 @else
-                                    سفارش پرداخت‌شده‌ای برای رتبه‌بندی ثبت نشده است؛ مدل‌های منتخب فرزین را بررسی کنید.
+                                    مدل‌های منتخب فرزین را ببینید و برای مقایسه مشخصات و انتخاب متناسب با آشپزخانه، وارد صفحه هر محصول شوید.
                                 @endif
                             </p>
                         </div>
-                        <a class="fz-text-link" href="{{ route('shop.index') }}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4" aria-hidden="true"><path d="M3.5 9h17l-1 11h-15l-1-11Z" /><path d="M8 9V6.5a4 4 0 0 1 8 0V9" /></svg> مشاهده همه محصولات</a>
-                    </div>
-                    <div class="fz-product-grid {{ match($featuredProducts->count()) { 1 => 'fz-product-grid--single', 2 => 'fz-product-grid--pair', 3 => 'fz-product-grid--triple', default => '' } }}">
+
+                        <a class="fz-home-featured-section__all-link" href="{{ route('shop.index') }}">
+                            <span>مشاهده همه محصولات</span>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <path d="M19 12H5m7 7-7-7 7-7"/>
+                            </svg>
+                        </a>
+                    </header>
+
+                    <div class="fz-product-grid fz-home-featured-section__grid {{ match($featuredProducts->count()) { 1 => 'fz-product-grid--single', 2 => 'fz-product-grid--pair', 3 => 'fz-product-grid--triple', default => '' } }}">
                         @foreach($featuredProducts as $product)
                             <x-home.product-card :product="$product" />
                         @endforeach
