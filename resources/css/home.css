@@ -1044,9 +1044,15 @@ body.home-body {
 .fz-home-hero__layout {
     position: relative;
     display: grid;
+    /* Physical order: copy on the left, latest-product showcase on the right. */
+    direction: ltr;
     grid-template-columns: minmax(0, .88fr) minmax(0, 1.12fr);
     align-items: center;
     gap: clamp(1.5rem, 4.4vw, 4.5rem);
+}
+.fz-home-hero__copy,
+.fz-home-hero__showcase {
+    direction: rtl;
 }
 .fz-home-hero__copy {
     min-width: 0;
