@@ -1,17 +1,17 @@
 :root {
     color-scheme: light;
-    --fz-page: #F4F6F8;
+    --fz-page: #F5F5F2;
     --fz-paper: #FFFFFF;
-    --fz-paper-soft: #EEF2F6;
-    --fz-ink: #092E50;
-    --fz-text: #142B42;
-    --fz-muted: #66788A;
-    --fz-line: #DEE5EC;
-    --fz-accent: #80152D;
-    --fz-accent-dark: #5E1024;
-    --fz-sunset-light: #B83B55;
-    --fz-metal-silver: #BCC7D2;
-    --fz-sunset-burnt: #8294A7;
+    --fz-paper-soft: #EEEEEA;
+    --fz-ink: #06284F;
+    --fz-text: #26313B;
+    --fz-muted: #6E747A;
+    --fz-line: #DEDED8;
+    --fz-accent: #7B0D1A;
+    --fz-accent-dark: #5F0712;
+    --fz-sunset-light: #7B0D1A;
+    --fz-metal-silver: #B9B9B2;
+    --fz-sunset-burnt: #8C8C85;
     --fz-shadow: 0 16px 38px rgba(32, 29, 24, .09);
     --fz-motion: cubic-bezier(.22, 1, .36, 1);
     --fz-container: 1280px;
@@ -1343,7 +1343,7 @@ body.home-body {
     place-items: center;
     border-radius: .48rem;
     color: var(--fz-home-burgundy);
-    background: #F7EDEF;
+    background: #EEEEEA;
     font-size: .58rem;
 }
 .fz-home-hero__showcase {
@@ -1392,7 +1392,7 @@ body.home-body {
     min-width: 0;
     overflow: hidden;
     border-radius: 1.25rem;
-    background: #F1F4F7;
+    background: #F0F0EC;
 }
 .fz-home-hero__slide[hidden] { display: none !important; }
 .fz-home-hero__slide {
@@ -1412,7 +1412,7 @@ body.home-body {
     aspect-ratio: 1.48 / 1;
     place-items: center;
     overflow: hidden;
-    background: radial-gradient(ellipse at 50% 46%, #FFFFFF 0%, #F8FAFC 46%, #E9EEF3 100%);
+    background: radial-gradient(ellipse at 50% 46%, #FFFFFF 0%, #F6F6F2 48%, #ECECE7 100%);
 }
 .fz-home-hero__product-image img {
     display: block;
@@ -1546,7 +1546,7 @@ body.home-body {
 .fz-home-hero__slider-actions button:hover {
     color: var(--fz-home-burgundy);
     border-color: rgba(128,21,45,.25);
-    background: #FBF6F7;
+    background: #F5F5F2;
 }
 .fz-home-hero__slider-actions svg { width: 1rem; height: 1rem; }
 .fz-home-hero__slider-toggle {
@@ -1561,7 +1561,7 @@ body.home-body {
     align-items: center;
     gap: 1.2rem;
     padding: clamp(1.3rem, 3vw, 2.5rem);
-    background: linear-gradient(145deg, #F9FAFC, #EAF0F5);
+    background: linear-gradient(145deg, #FFFFFF, #EEEEEA);
 }
 .fz-home-hero__empty-mark {
     display: grid;
