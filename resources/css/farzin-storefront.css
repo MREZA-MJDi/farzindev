@@ -23,8 +23,8 @@
     --fz-container: 1320px;
     --fz-header-height: 76px;
     --fz-motion: cubic-bezier(.22, 1, .36, 1);
-    --fz-font-ui: "IRANYekanX FaNum", "Vazirmatn", sans-serif;
-    --fz-font-heading: "IRANYekanX FaNum", "Vazirmatn", sans-serif;
+    --fz-font-ui: "Peyda Soft", "Vazirmatn", "IRANYekanX FaNum", sans-serif;
+    --fz-font-heading: "Bahman", "Rokh", "IRANYekanX FaNum", sans-serif;
 }
 
 html {
@@ -132,48 +132,131 @@ body.home-body {
     inset-block-start: 0;
     z-index: 80;
     min-height: 68px;
-    color: #FFFFFF;
-    background: rgba(6, 40, 79, .97);
-    border-bottom: 1px solid rgba(255, 255, 255, .13);
-    box-shadow: 0 5px 20px rgba(3, 29, 62, .12);
+    color: var(--livora-text);
+    background: rgba(255, 255, 255, .97);
+    border-bottom: 1px solid var(--livora-border);
+    box-shadow: 0 6px 24px rgba(6, 40, 79, .07);
     -webkit-backdrop-filter: blur(18px);
     backdrop-filter: blur(18px);
 }
 
 .farzin-site-header :where(a, button, .farzin-wordmark, .farzin-wordmark__main) {
-    color: #FFFFFF;
+    color: var(--livora-text);
+}
+
+.farzin-site-header .farzin-wordmark {
+    display: inline-flex;
+    flex-direction: column;
+    gap: 2px;
+    line-height: 1.15;
 }
 
 .farzin-site-header .farzin-wordmark__main {
-    background: linear-gradient(110deg, #FFFFFF 0%, #D6E2EF 70%, #FFFFFF 100%);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-    -webkit-text-fill-color: transparent;
+    background: none;
+    color: var(--livora-ink);
+    -webkit-text-fill-color: var(--livora-ink);
     font-family: var(--fz-font-heading);
-    font-weight: 700;
+    font-size: 1.55rem;
+    font-weight: 800;
+    letter-spacing: -.04em;
+}
+
+.farzin-site-header .farzin-wordmark__caption {
+    color: var(--livora-stone);
+    font-size: .57rem;
+    font-weight: 500;
+    letter-spacing: 0;
+    white-space: nowrap;
 }
 
 .farzin-site-header :where(a, button):hover {
-    color: #FFFFFF;
+    color: var(--livora-accent);
 }
 
 .farzin-site-header :where(a, button):focus-visible {
-    outline-color: #FFFFFF;
+    outline-color: var(--livora-accent);
+}
+
+.farzin-site-header__nav-link {
+    position: relative;
+    display: inline-flex;
+    min-height: 42px;
+    align-items: center;
+    justify-content: center;
+    border-radius: 999px;
+    padding: .55rem .78rem;
+    color: var(--livora-text);
+    font-size: .82rem;
+    font-weight: 600;
+    white-space: nowrap;
+    transition: color .2s ease, background-color .2s ease;
+}
+
+.farzin-site-header__nav-link::after {
+    position: absolute;
+    inset-inline-start: 50%;
+    inset-block-end: .2rem;
+    width: 0;
+    height: 2px;
+    border-radius: 999px;
+    background: var(--livora-accent);
+    content: "";
+    transform: translateX(50%);
+    transition: width .2s ease, inset-inline-start .2s ease;
+}
+
+.farzin-site-header__nav-link:hover {
+    background: var(--livora-cream);
+    color: var(--livora-accent);
+}
+
+.farzin-site-header__nav-link.is-active {
+    color: var(--livora-accent);
+    background: var(--livora-accent-soft);
+}
+
+.farzin-site-header__nav-link.is-active::after {
+    inset-inline-start: calc(50% - 9px);
+    width: 18px;
+}
+
+.farzin-site-header__action {
+    color: var(--livora-text);
+}
+
+.farzin-site-header__action:hover,
+.farzin-site-header__action.is-active {
+    background: var(--livora-surface);
+    color: var(--livora-accent);
 }
 
 .farzin-site-header input[type="search"] {
-    color: #18324F;
-    background: #FFFFFF;
-    border-color: rgba(255, 255, 255, .25);
+    color: var(--livora-text);
+    background: var(--livora-cream);
+    border-color: var(--livora-border);
 }
 
 .farzin-site-header input[type="search"]::placeholder {
-    color: #71839A;
+    color: var(--livora-stone);
+}
+
+.farzin-site-header input[type="search"]:focus {
+    border-color: var(--livora-accent);
+    box-shadow: 0 0 0 3px rgba(123, 13, 26, .1);
 }
 
 .farzin-site-header a span[class*="absolute"][class*="bg-"] {
-    background: #D88A94;
+    background: var(--livora-accent);
+}
+
+.farzin-mobile-menu__link {
+    color: var(--livora-text);
+}
+
+.farzin-mobile-menu__link:hover,
+.farzin-mobile-menu__link.is-active {
+    color: var(--livora-accent);
+    background: var(--livora-accent-soft);
 }
 
 /* A white catalogue canvas makes the products, not the chrome, do the selling. */
@@ -2390,21 +2473,7 @@ body {
     }
 }
 
-
 /* Meraki-inspired product-first hero and reusable homepage components. */
-:root {
-    --fz-font-ui: "IRANYekanX FaNum", "Vazirmatn", sans-serif;
-    --fz-font-heading: "IRANYekanX FaNum", "Vazirmatn", sans-serif;
-}
-.farzin-site-header {
-    background: rgba(9, 46, 80, .97);
-    border-bottom-color: rgba(255,255,255,.12);
-    box-shadow: 0 8px 30px rgba(9,46,80,.10);
-}
-.farzin-site-header .farzin-wordmark__main {
-    font-family: var(--fz-font-heading);
-    letter-spacing: 0;
-}
 .home-body .fz-home-hero--meraki {
     position: relative;
     isolation: isolate;

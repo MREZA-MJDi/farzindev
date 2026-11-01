@@ -1,142 +1,73 @@
 @props(['cartCount' => 0])
 
 <nav
-    x-data
     aria-label="ناوبری اصلی فرزین"
-    class="farzin-site-header sticky top-0 z-50 w-full border-b border-[var(--livora-border)] bg-[var(--livora-ink)]/95 text-[var(--livora-text)] backdrop-blur-xl"
+    class="farzin-site-header sticky top-0 z-[80] w-full border-b border-[var(--livora-border)] bg-white text-[var(--livora-text)]"
 >
     <x-layout.container>
+        <div class="flex min-h-[70px] items-center justify-between gap-3 py-3 lg:min-h-[78px] lg:gap-6 lg:py-0">
 
-        <div class="flex min-h-[68px] items-center justify-between gap-3 py-3 lg:h-[76px] lg:gap-6 lg:py-0">
+            {{-- Brand --}}
+            <a
+                href="{{ route('home') }}"
+                class="farzin-site-header__brand group inline-flex min-w-0 shrink-0 items-center"
+                aria-label="فرزین، صفحه اصلی"
+            >
+                <span class="farzin-wordmark">
+                    <span class="farzin-wordmark__main">فرزین</span>
+                    <span class="farzin-wordmark__caption">تجهیزات مدرن آشپزخانه</span>
+                </span>
+            </a>
 
-            {{-- =========================================================
-                BRAND
-            ========================================================== --}}
-            <div class="flex items-center">
-
+            {{-- Desktop navigation --}}
+            <div class="hidden min-w-0 flex-1 items-center justify-center gap-1 lg:flex xl:gap-2">
                 <a
                     href="{{ route('home') }}"
-                    class="group inline-flex items-center"
-                    aria-label="فرزین"
-                >
-                    <span class="farzin-wordmark" aria-hidden="true">
-                        <span class="farzin-wordmark__main">فرزین</span>
-                    </span>
-                </a>
-
-            </div>
-
-
-            {{-- =========================================================
-                DESKTOP NAVIGATION
-            ========================================================== --}}
-            <div class="hidden min-w-0 items-center gap-3 lg:flex xl:gap-8">
-
-                <a
-                    href="{{ route('home') }}"
-                    @class([
-                        'relative py-2 text-sm font-medium transition duration-300',
-                        'text-[var(--livora-text)]' => request()->routeIs('home'),
-                        'text-[var(--livora-stone)] hover:text-[var(--livora-text)]' => !request()->routeIs('home'),
-                    ])
-                >
-                    خانه
-
-                    @if(request()->routeIs('home'))
-                        <span class="absolute inset-x-0 -bottom-1 mx-auto h-px w-5 bg-[var(--livora-accent)]"></span>
-                    @endif
-                </a>
+                    @class(['farzin-site-header__nav-link', 'is-active' => request()->routeIs('home')])
+                    @if(request()->routeIs('home')) aria-current="page" @endif
+                >خانه</a>
 
                 <a
                     href="{{ route('shop.index') }}"
-                    @class([
-                        'relative py-2 text-sm font-medium transition duration-300',
-                        'text-[var(--livora-text)]' => request()->routeIs('shop.index', 'product.show'),
-                        'text-[var(--livora-stone)] hover:text-[var(--livora-text)]' => !request()->routeIs('shop.index', 'product.show'),
-                    ])
-                >
-                    فروشگاه
-
-                    @if(request()->routeIs('shop.index', 'product.show'))
-                        <span class="absolute inset-x-0 -bottom-1 mx-auto h-px w-5 bg-[var(--livora-accent)]"></span>
-                    @endif
-                </a>
+                    @class(['farzin-site-header__nav-link', 'is-active' => request()->routeIs('shop.index', 'product.show')])
+                    @if(request()->routeIs('shop.index', 'product.show')) aria-current="page" @endif
+                >فروشگاه</a>
 
                 <a
                     href="{{ route('categories.index') }}"
-                    @class([
-                        'relative py-2 text-sm font-medium transition duration-300',
-                        'text-[var(--livora-text)]' => request()->routeIs('categories.*'),
-                        'text-[var(--livora-stone)] hover:text-[var(--livora-text)]' => !request()->routeIs('categories.*'),
-                    ])
-                >
-                    دسته‌بندی‌ها
-
-                    @if(request()->routeIs('categories.*'))
-                        <span class="absolute inset-x-0 -bottom-1 mx-auto h-px w-5 bg-[var(--livora-accent)]"></span>
-                    @endif
-                </a>
+                    @class(['farzin-site-header__nav-link', 'is-active' => request()->routeIs('categories.*')])
+                    @if(request()->routeIs('categories.*')) aria-current="page" @endif
+                >دسته‌بندی‌ها</a>
 
                 <a
                     href="{{ route('blog.index') }}"
-                    @class([
-                        'relative py-2 text-sm font-medium transition duration-300',
-                        'text-[var(--livora-text)]' => request()->routeIs('blog.*'),
-                        'text-[var(--livora-stone)] hover:text-[var(--livora-text)]' => !request()->routeIs('blog.*'),
-                    ])
-                >
-                    بلاگ
-
-                    @if(request()->routeIs('blog.*'))
-                        <span class="absolute inset-x-0 -bottom-1 mx-auto h-px w-5 bg-[var(--livora-accent)]"></span>
-                    @endif
-                </a>
+                    @class(['farzin-site-header__nav-link', 'is-active' => request()->routeIs('blog.*')])
+                    @if(request()->routeIs('blog.*')) aria-current="page" @endif
+                >بلاگ</a>
 
                 <a
                     href="{{ route('about') }}"
-                    @class([
-                        'relative py-2 text-sm font-medium transition duration-300',
-                        'text-[var(--livora-text)]' => request()->routeIs('about'),
-                        'text-[var(--livora-stone)] hover:text-[var(--livora-text)]' => !request()->routeIs('about'),
-                    ])
-                >
-                    درباره ما
-
-                    @if(request()->routeIs('about'))
-                        <span class="absolute inset-x-0 -bottom-1 mx-auto h-px w-5 bg-[var(--livora-accent)]"></span>
-                    @endif
-                </a>
+                    @class(['farzin-site-header__nav-link', 'is-active' => request()->routeIs('about')])
+                    @if(request()->routeIs('about')) aria-current="page" @endif
+                >درباره ما</a>
 
                 <a
                     href="{{ route('contact') }}"
-                    @class([
-                        'relative py-2 text-sm font-medium transition duration-300',
-                        'text-[var(--livora-text)]' => request()->routeIs('contact'),
-                        'text-[var(--livora-stone)] hover:text-[var(--livora-text)]' => !request()->routeIs('contact'),
-                    ])
-                >
-                    تماس
-
-                    @if(request()->routeIs('contact'))
-                        <span class="absolute inset-x-0 -bottom-1 mx-auto h-px w-5 bg-[var(--livora-accent)]"></span>
-                    @endif
-                </a>
-
+                    @class(['farzin-site-header__nav-link', 'is-active' => request()->routeIs('contact')])
+                    @if(request()->routeIs('contact')) aria-current="page" @endif
+                >تماس</a>
             </div>
 
+            {{-- Search, customer actions and mobile menu --}}
+            <div class="flex shrink-0 items-center gap-1 sm:gap-1.5">
 
-            {{-- =========================================================
-                RIGHT ACTIONS
-            ========================================================== --}}
-            <div class="flex min-w-0 items-center gap-1">
-
-                {{-- Compact desktop search for the real Farzin catalogue --}}
+                {{-- Full search field on wide screens --}}
                 <form
                     action="{{ route('shop.index') }}"
                     method="GET"
                     role="search"
                     aria-label="جستجوی محصولات فرزین"
-                    class="hidden xl:block xl:w-[clamp(13rem,18vw,17rem)]"
+                    class="hidden xl:block xl:w-[clamp(12rem,17vw,16rem)]"
                 >
                     <label for="navbar-product-search" class="sr-only">جستجوی هود، سینک یا دسته‌بندی</label>
                     <div class="relative">
@@ -147,14 +78,14 @@
                             value="{{ request('search', '') }}"
                             autocomplete="off"
                             enterkeyhint="search"
-                            placeholder="جستجوی محصول یا دسته..."
-                            class="w-full min-w-0 rounded-full border border-[var(--livora-border)] bg-[var(--livora-white)] py-2.5 pl-10 pr-4 text-xs text-[var(--livora-text)] placeholder:text-[var(--livora-stone)] transition focus:border-[var(--livora-accent)] focus:outline-none focus:ring-2 focus:ring-[var(--livora-accent)]/20"
+                            placeholder="جستجوی محصول..."
+                            class="farzin-site-header__search-input w-full rounded-full border border-[var(--livora-border)] bg-[var(--livora-cream)] py-2.5 pl-10 pr-4 text-xs text-[var(--livora-text)] placeholder:text-[var(--livora-stone)] transition focus:border-[var(--livora-accent)] focus:outline-none focus:ring-2 focus:ring-[var(--livora-accent)]/15"
                         >
                         <button
                             type="submit"
                             aria-label="جستجو"
                             title="جستجو"
-                            class="absolute left-1 top-1/2 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full text-[var(--livora-stone)] transition hover:bg-[var(--livora-surface)] hover:text-[var(--livora-text)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[var(--livora-accent)]"
+                            class="absolute left-1 top-1/2 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full text-[var(--livora-stone)] transition hover:bg-white hover:text-[var(--livora-accent)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[var(--livora-accent)]"
                         >
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.7" stroke="currentColor" class="h-4 w-4" aria-hidden="true">
                                 <circle cx="11" cy="11" r="6.5"/>
@@ -164,146 +95,58 @@
                     </div>
                 </form>
 
-                {{-- Mobile menu --}}
+                {{-- Search icon for tablet and compact desktop --}}
                 <button
                     type="button"
-                    aria-label="باز کردن منو"
-                    :aria-expanded="mobileOpen.toString()"
-                    @click="searchOpen = false; mobileOpen = true"
-                    class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-[var(--livora-text)] transition hover:bg-[var(--livora-white)] lg:hidden"
-                >
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.7" stroke="currentColor" class="h-5 w-5" aria-hidden="true">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
-                    </svg>
-                </button>
-
-                {{-- Search --}}
-                <button
-                    type="button"
-                    aria-label="جستجو"
+                    aria-label="جستجوی محصولات"
                     :aria-expanded="searchOpen.toString()"
                     @click="openSearch($event.currentTarget)"
-                    class="group hidden h-10 w-10 items-center justify-center rounded-full text-[var(--livora-text)] transition duration-300 hover:bg-[var(--livora-white)] lg:flex xl:hidden"
+                    class="farzin-site-header__action hidden h-10 w-10 items-center justify-center rounded-full transition lg:flex xl:hidden"
                 >
-                    <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke-width="1.5"
-                        stroke="currentColor"
-                        class="h-[19px] w-[19px] transition duration-300 group-hover:scale-105"
-                    >
-                        <path
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            d="m21 21-4.35-4.35m1.35-5.4a6.75 6.75 0 1 1-13.5 0 6.75 6.75 0 0 1 13.5 0Z"
-                        />
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.7" stroke="currentColor" class="h-[19px] w-[19px]" aria-hidden="true">
+                        <circle cx="11" cy="11" r="6.5"/>
+                        <path stroke-linecap="round" stroke-linejoin="round" d="m16 16 4.2 4.2"/>
                     </svg>
                 </button>
-
 
                 {{-- Wishlist --}}
                 @auth
-
                     @if(auth()->user()->isCustomer())
-
                         <a
                             href="{{ route('account.wishlist.index') }}"
                             aria-label="علاقه‌مندی‌ها"
-                            @class([
-                                'group hidden h-10 w-10 items-center justify-center rounded-full transition duration-300 lg:flex',
-                                'bg-[var(--livora-white)] text-[var(--livora-accent)]' => request()->routeIs('account.wishlist.*'),
-                                'text-[var(--livora-text)] hover:bg-[var(--livora-white)]' => !request()->routeIs('account.wishlist.*'),
-                            ])
+                            title="علاقه‌مندی‌ها"
+                            @class(['farzin-site-header__action hidden h-10 w-10 items-center justify-center rounded-full transition lg:flex', 'is-active' => request()->routeIs('account.wishlist.*')])
                         >
-                            <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                stroke-width="1.5"
-                                stroke="currentColor"
-                                class="h-[19px] w-[19px] transition duration-300 group-hover:scale-105"
-                            >
-                                <path
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                    d="M21.75 8.25c0 6-9.75 11.25-9.75 11.25S2.25 14.25 2.25 8.25A5.25 5.25 0 0 1 12 5.58a5.25 5.25 0 0 1 9.75 2.67Z"
-                                />
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.7" stroke="currentColor" class="h-[19px] w-[19px]" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M20.8 8.8c0 5.3-8.8 10.1-8.8 10.1S3.2 14.1 3.2 8.8a4.8 4.8 0 0 1 8.8-2.6 4.8 4.8 0 0 1 8.8 2.6Z"/>
                             </svg>
                         </a>
-
                     @else
-
-                        <a
-                            href="{{ route('login') }}"
-                            aria-label="ورود برای مشاهده علاقه‌مندی‌ها"
-                            class="group hidden h-10 w-10 items-center justify-center rounded-full text-[var(--livora-text)] transition duration-300 hover:bg-[var(--livora-white)] lg:flex"
-                        >
-                            <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                stroke-width="1.5"
-                                stroke="currentColor"
-                                class="h-[19px] w-[19px] transition duration-300 group-hover:scale-105"
-                            >
-                                <path
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                    d="M21.75 8.25c0 6-9.75 11.25-9.75 11.25S2.25 14.25 2.25 8.25A5.25 5.25 0 0 1 12 5.58a5.25 5.25 0 0 1 9.75 2.67Z"
-                                />
+                        <a href="{{ route('login') }}" aria-label="ورود برای مشاهده علاقه‌مندی‌ها" title="علاقه‌مندی‌ها" class="farzin-site-header__action hidden h-10 w-10 items-center justify-center rounded-full transition lg:flex">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.7" stroke="currentColor" class="h-[19px] w-[19px]" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M20.8 8.8c0 5.3-8.8 10.1-8.8 10.1S3.2 14.1 3.2 8.8a4.8 4.8 0 0 1 8.8-2.6 4.8 4.8 0 0 1 8.8 2.6Z"/>
                             </svg>
                         </a>
-
                     @endif
-
                 @else
-
-                    <a
-                        href="{{ route('login') }}"
-                        aria-label="ورود برای مشاهده علاقه‌مندی‌ها"
-                        class="group hidden h-10 w-10 items-center justify-center rounded-full text-[var(--livora-text)] transition duration-300 hover:bg-[var(--livora-white)] lg:flex"
-                    >
-                        <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke-width="1.5"
-                            stroke="currentColor"
-                            class="h-[19px] w-[19px] transition duration-300 group-hover:scale-105"
-                        >
-                            <path
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                                d="M21.75 8.25c0 6-9.75 11.25-9.75 11.25S2.25 14.25 2.25 8.25A5.25 5.25 0 0 1 12 5.58a5.25 5.25 0 0 1 9.75 2.67Z"
-                            />
+                    <a href="{{ route('login') }}" aria-label="ورود برای مشاهده علاقه‌مندی‌ها" title="علاقه‌مندی‌ها" class="farzin-site-header__action hidden h-10 w-10 items-center justify-center rounded-full transition lg:flex">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.7" stroke="currentColor" class="h-[19px] w-[19px]" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M20.8 8.8c0 5.3-8.8 10.1-8.8 10.1S3.2 14.1 3.2 8.8a4.8 4.8 0 0 1 8.8-2.6 4.8 4.8 0 0 1 8.8 2.6Z"/>
                         </svg>
                     </a>
-
                 @endauth
-                {{-- =====================================================
-                    CART
-                ====================================================== --}}
+
+                {{-- Cart --}}
                 <a
                     href="{{ route('cart.index') }}"
                     aria-label="سبد خرید"
-                    class="group relative hidden h-10 w-10 items-center justify-center rounded-full text-[var(--livora-text)] transition duration-300 hover:bg-[var(--livora-white)] lg:flex"
+                    title="سبد خرید"
+                    class="farzin-site-header__action group relative hidden h-10 w-10 items-center justify-center rounded-full transition lg:flex"
                 >
-                    <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke-width="1.5"
-                        stroke="currentColor"
-                        class="h-[19px] w-[19px] transition duration-300 group-hover:scale-105"
-                    >
-                        <path
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            d="M2.25 3h1.386c.51 0 .955.343 1.087.836L5.75 7.5h13.5l1.125-4.5M5.75 7.5l1.5 6h9.5l1.5-6M8.25 19.5a.75.75 0 1 1-1.5 0Zm9.75 0a.75.75 0 1 1-1.5 0Z"
-                        />
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.7" stroke="currentColor" class="h-[19px] w-[19px] transition group-hover:scale-105" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M3 3.75h1.6c.5 0 .94.35 1.06.84L6.3 7.5h13.1l-1.6 7.1H7.5L6.3 7.5M8.5 19.2a.9.9 0 1 1-1.8 0 .9.9 0 0 1 1.8 0Zm9.1 0a.9.9 0 1 1-1.8 0 .9.9 0 0 1 1.8 0Z"/>
                     </svg>
-
                     <span
                         data-cart-count
                         @class([
@@ -313,97 +156,42 @@
                         aria-live="polite"
                         aria-atomic="true"
                     >{{ $cartCount }}</span>
-
                 </a>
 
-
-                {{-- =====================================================
-                    ACCOUNT
-                ====================================================== --}}
+                {{-- Account --}}
                 @auth
-
                     @if(auth()->user()->isAdmin())
-
-                        <a
-                            href="{{ route('admin.dashboard') }}"
-                            aria-label="پنل مدیریت"
-                            class="group hidden h-10 w-10 items-center justify-center rounded-full text-[var(--livora-text)] transition duration-300 hover:bg-[var(--livora-white)] lg:flex"
-                        >
-                            <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                stroke-width="1.5"
-                                stroke="currentColor"
-                                class="h-[19px] w-[19px] transition duration-300 group-hover:scale-105"
-                            >
-                                <path
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                    d="M15.75 6a3.75 3.75 0 1 1-7.5 0A3.75 3.75 0 0 1 15.75 6ZM4.5 20.25a8.25 8.25 0 0 1 15 0"
-                                />
-                            </svg>
-                        </a>
-
+                        <a href="{{ route('admin.dashboard') }}" aria-label="پنل مدیریت" title="پنل مدیریت" class="farzin-site-header__action hidden h-10 w-10 items-center justify-center rounded-full transition lg:flex">
                     @else
-
-                        <a
-                            href="{{ route('account.index') }}"
-                            aria-label="حساب کاربری"
-                            @class([
-                                'group hidden h-10 w-10 items-center justify-center rounded-full transition duration-300 lg:flex',
-                                'bg-[var(--livora-white)] text-[var(--livora-accent)]' => request()->routeIs('account.*'),
-                                'text-[var(--livora-text)] hover:bg-[var(--livora-white)]' => !request()->routeIs('account.*'),
-                            ])
-                        >
-                            <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                stroke-width="1.5"
-                                stroke="currentColor"
-                                class="h-[19px] w-[19px] transition duration-300 group-hover:scale-105"
-                            >
-                                <path
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                    d="M15.75 6a3.75 3.75 0 1 1-7.5 0A3.75 3.75 0 0 1 15.75 6ZM4.5 20.25a8.25 8.25 0 0 1 15 0"
-                                />
-                            </svg>
-                        </a>
-
+                        <a href="{{ route('account.index') }}" aria-label="حساب کاربری" title="حساب کاربری" @class(['farzin-site-header__action hidden h-10 w-10 items-center justify-center rounded-full transition lg:flex', 'is-active' => request()->routeIs('account.*')])>
                     @endif
-
                 @else
-
-                    <a
-                        href="{{ route('login') }}"
-                        aria-label="حساب کاربری"
-                        class="group hidden h-10 w-10 items-center justify-center rounded-full text-[var(--livora-text)] transition duration-300 hover:bg-[var(--livora-white)] lg:flex"
-                    >
-                        <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke-width="1.5"
-                            stroke="currentColor"
-                            class="h-[19px] w-[19px] transition duration-300 group-hover:scale-105"
-                        >
-                            <path
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                                d="M15.75 6a3.75 3.75 0 1 1-7.5 0A3.75 3.75 0 0 1 15.75 6ZM4.5 20.25a8.25 8.25 0 0 1 15 0"
-                            />
-                        </svg>
-                    </a>
-
+                    <a href="{{ route('login') }}" aria-label="ورود / ثبت‌نام" title="ورود / ثبت‌نام" class="farzin-site-header__action hidden h-10 w-10 items-center justify-center rounded-full transition lg:flex">
                 @endauth
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.7" stroke="currentColor" class="h-[19px] w-[19px]" aria-hidden="true">
+                        <circle cx="12" cy="8" r="3.5"/>
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M5 20a7 7 0 0 1 14 0"/>
+                    </svg>
+                </a>
 
+                {{-- Mobile menu trigger --}}
+                <button
+                    type="button"
+                    aria-label="باز کردن منوی اصلی"
+                    aria-controls="farzin-mobile-menu"
+                    :aria-expanded="mobileOpen.toString()"
+                    @click="searchOpen = false; mobileOpen = true"
+                    class="farzin-site-header__action flex h-10 w-10 shrink-0 items-center justify-center rounded-full transition lg:hidden"
+                >
+                    <svg x-show="!mobileOpen" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.7" stroke="currentColor" class="h-6 w-6" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"/>
+                    </svg>
+                    <svg x-show="mobileOpen" x-cloak xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.7" stroke="currentColor" class="h-6 w-6" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="m6 6 12 12M18 6 6 18"/>
+                    </svg>
+                </button>
 
             </div>
-
         </div>
-
     </x-layout.container>
-
 </nav>

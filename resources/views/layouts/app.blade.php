@@ -213,6 +213,7 @@
             });
         }
     }"
+    x-effect="document.body.classList.toggle('overflow-hidden', mobileOpen || searchOpen)"
     class="min-h-screen flex flex-col pb-24 lg:pb-0"
 >
 
