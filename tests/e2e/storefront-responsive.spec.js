@@ -160,6 +160,9 @@ test('shop mobile filters apply together, scroll safely and preserve the selecte
 });
 
 test('homepage category GIF preview starts on hover and the first touch tap', async ({ page }) => {
+    // This test validates the interaction itself; other tests cover the
+    // reduced-motion experience separately.
+    await page.emulateMedia({ reducedMotion: 'no-preference' });
     await page.goto('/', { waitUntil: 'domcontentloaded' });
 
     // Deterministic, network-free animated-media fixture. Load the same preview
