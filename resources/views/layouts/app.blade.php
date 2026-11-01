@@ -181,13 +181,11 @@
     @stack('seo')
 
     @vite([
-        'resources/css/app.css',
+        'resources/css/storefront.css',
         'resources/js/app.js',
     ])
 
     @stack('styles')
-    @vite(['resources/css/responsive.css'])
-    @vite(['resources/css/farzin-storefront.css'])
 </head>
 
 <body class="@yield('body_class', 'min-h-screen antialiased')">

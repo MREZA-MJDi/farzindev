@@ -188,7 +188,7 @@ document.addEventListener('keydown', (event) => {
  * native scrolling stays in control and no perpetual animation loop is used.
  */
 function initRevealAnimations() {
-    const elements = [...document.querySelectorAll('.fz-reveal')];
+    const elements = [...document.querySelectorAll('.fz-reveal, [data-farzin-reveal]')];
     if (!elements.length || reduceMotion || !('IntersectionObserver' in window)) return;
 
     const observer = new IntersectionObserver((entries) => {
@@ -390,7 +390,7 @@ if (document.readyState === 'loading') {
 }
 
 // If images fail, keep their card surface and visible product name intact.
-document.querySelectorAll('.grid__image, .fz-product-card__image img').forEach((image) => {
+document.querySelectorAll('.grid__image, .farzin-product-card__image').forEach((image) => {
     image.addEventListener('error', () => {
         image.classList.add('image-unavailable');
         image.removeAttribute('src');

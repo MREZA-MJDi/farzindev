@@ -313,6 +313,8 @@ class FarzinStorefrontTest extends TestCase
             ->assertSee('تازه در فروشگاه')
             ->assertSee('product-categories')
             ->assertSee('fz-home-purchase-cta', false)
+            ->assertSee('farzin-product-card', false)
+            ->assertDontSee('class="fz-product-card', false)
             ->assertSee('مشاهده محصولات و قیمت‌ها')
             ->assertDontSee('مشاوره خرید')
             ->assertDontSee('data-fz-scroll-hero', false)
