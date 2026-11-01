@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\PersianNumberHelper;
+use App\Models\BlogPost;
 use App\Models\Category;
 use App\Models\Product;
 use Illuminate\Contracts\View\View;
@@ -163,6 +164,21 @@ class HomeController extends Controller
             ->get();
 
 
+        // Keep the homepage journal compact: one lead story and up to three
+        // recent related reads. Only public, indexable posts enter the query.
+        $blogPosts = BlogPost::query()
+            ->published()
+            ->indexable()
+            ->with([
+                'author:id,name',
+                'terms:id,type,name,slug',
+            ])
+            ->orderByDesc('is_featured')
+            ->orderByDesc('published_at')
+            ->orderByDesc('id')
+            ->limit(4)
+            ->get();
+
         $demoImages = $galleryProducts
             ->map(function (Product $product, int $index): array {
                 $image = $product->images->first(
@@ -195,6 +211,7 @@ class HomeController extends Controller
             'newProducts' => $newProducts,
             'catalogCount' => $catalogCount,
             'galleryCount' => $demoImages->count(),
+            'blogPosts' => $blogPosts,
         ]);
     }
 }
