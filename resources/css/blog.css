@@ -1022,16 +1022,13 @@
     font-size: .6rem;
 }
 
-/* Motion is optional; the content is visible when scripting is unavailable. */
-.blog-reveal-ready {
-    opacity: 0;
-    transform: translate3d(0, 12px, 0);
-    transition: opacity .42s ease, transform .42s ease;
-    transition-delay: var(--blog-delay, 0ms);
-}
+/* Editorial content is visible immediately; no scroll observer is required. */
+.blog-reveal-ready,
 .blog-reveal-ready.is-visible {
     opacity: 1;
-    transform: translate3d(0, 0, 0);
+    visibility: visible;
+    transform: none;
+    transition: none;
 }
 .blog-shell :where(a, button):focus-visible,
 .blog-article-page :where(a, button):focus-visible {
