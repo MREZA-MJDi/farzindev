@@ -190,38 +190,6 @@
         </section>
 
         @if($featuredProducts->isNotEmpty())
-            @php
-                $featuredBackdropCategory = $categories->first(
-                    fn ($category) => filled($category->homepage_image_url)
-                );
-                $featuredBackdropProductImage = $featuredProducts->first()?->images->first(
-                    fn ($image) => filled($image->url)
-                );
-                $featuredBackdropImage = $featuredBackdropCategory?->homepage_image_url
-                    ?? $featuredBackdropProductImage?->url;
-                $featuredBackdropSrcset = $featuredBackdropCategory?->homepage_image_srcset
-                    ?? $featuredBackdropProductImage?->responsive_srcset;
-            @endphp
-
-            <section
-                class="fz-section fz-product-section fz-home-featured-section"
-                aria-labelledby="fz-products-heading"
-            >
-                <div class="fz-home-featured-section__visual" aria-hidden="true">
-                    @if($featuredBackdropImage)
-                        <img
-                            src="{{ $featuredBackdropImage }}"
-                            @if($featuredBackdropSrcset) srcset="{{ $featuredBackdropSrcset }}" sizes="(min-width: 1280px) 36vw, (min-width: 768px) 42vw, 100vw" @endif
-                            alt=""
-                            width="1200"
-                            height="900"
-                            loading="lazy"
-                            decoding="async"
-                        >
-                    @endif
-                    <span class="fz-home-featured-section__visual-shade"></span>
-                </div>
-
                 <div class="fz-container fz-home-featured-section__inner">
                     <header class="fz-home-featured-section__heading fz-reveal">
                         <div class="fz-home-featured-section__heading-copy">
