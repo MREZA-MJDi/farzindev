@@ -281,60 +281,20 @@ class FarzinStorefrontTest extends TestCase
             ->assertSee('چک‌لیست ساده پیش از ثبت سفارش');
     }
 
-    public function test_homepage_uses_a_product_led_hero_and_removes_legacy_scroll_drawing(): void
+    public function test_homepage_uses_a_static_hero_buying_guides_and_one_six_product_grid(): void
     {
         $category = $this->category([
-            'name' => 'هود منتخب',
-            'slug' => 'featured-hoods',
-        ]);
-
-        $product = $this->product($category, [
-            'name' => 'هود منتخب فرزین',
-            'slug' => 'featured-farzin-hood',
-            'sku' => 'FAR-HERO-001',
-            'price' => 12900000,
-            'is_featured' => true,
-        ]);
-
-        ProductImage::create([
-            'product_id' => $product->id,
-            'path' => 'https://cdn.example.test/farzin-hero-product.webp',
-            'alt' => 'تصویر هود منتخب فرزین',
-            'sort_order' => 0,
-            'is_primary' => true,
-        ]);
-
-        $this->get(route('home'))
-            ->assertOk()
-            ->assertSee('fz-home-hero', false)
-            ->assertSee('data-farzin-home-slider', false)
-            ->assertSee('data-home-product-id="'.$product->id.'"', false)
-            ->assertSee('هود منتخب فرزین')
-            ->assertSee('تازه در فروشگاه')
-            ->assertSee('product-categories')
-            ->assertSee('fz-home-purchase-cta', false)
-            ->assertSee('farzin-product-card', false)
-            ->assertDontSee('class="fz-product-card', false)
-            ->assertSee('مشاهده محصولات و قیمت‌ها')
-            ->assertDontSee('مشاوره خرید')
-            ->assertDontSee('data-fz-scroll-hero', false)
-            ->assertDontSee('data-hero-drawing', false)
-            ->assertDontSee('SCROLL TO REVEAL');
-    }
-
-    public function test_homepage_hero_carousel_shows_only_the_six_latest_image_products(): void
-    {
-        $category = $this->category([
-            'name' => 'دسته اسلایدر هوم',
-            'slug' => 'homepage-slider-products',
+            'name' => 'هودهای منتخب',
+            'slug' => 'hoods',
         ]);
 
         $products = [];
         foreach (range(1, 8) as $index) {
             $product = $this->product($category, [
-                'name' => 'محصول اسلایدر '.$index,
-                'slug' => 'homepage-slider-product-'.$index,
-                'sku' => 'FAR-HOME-SLIDER-'.$index,
+                'name' => 'مدل هود فرزین '.$index,
+                'slug' => 'farzin-home-hood-'.$index,
+                'sku' => 'FAR-HOME-UX-'.$index,
+                'price' => 10000000 + ($index * 100000),
             ]);
 
             $product->forceFill([
@@ -344,8 +304,8 @@ class FarzinStorefrontTest extends TestCase
 
             ProductImage::create([
                 'product_id' => $product->id,
-                'path' => 'https://cdn.example.test/home-slider-'.$index.'.webp',
-                'alt' => 'تصویر محصول اسلایدر '.$index,
+                'path' => 'https://cdn.example.test/farzin-home-hood-'.$index.'.webp',
+                'alt' => 'تصویر مدل هود '.$index,
                 'sort_order' => 0,
                 'is_primary' => true,
             ]);
@@ -356,21 +316,30 @@ class FarzinStorefrontTest extends TestCase
         $response = $this->get(route('home'));
 
         $response->assertOk()
-            ->assertSee('data-farzin-home-slider', false)
-            ->assertSee('data-home-slide-next', false)
-            ->assertSee('data-home-slide-prev', false)
-            ->assertSee('data-home-slide-toggle', false);
+            ->assertSee('fz-home-hero__showcase--static', false)
+            ->assertSee('fz-home-buying-guides', false)
+            ->assertSee('راهنمای انتخاب هود')
+            ->assertSee('راهنمای انتخاب سینک')
+            ->assertSee('fz-home-featured-grid--six', false)
+            ->assertSee('fz-home-contact-bridge', false)
+            ->assertSee('fz-home-journal', false)
+            ->assertDontSee('data-farzin-home-slider', false)
+            ->assertDontSee('data-home-slide', false)
+            ->assertDontSee('fz-mosaic-intro', false)
+            ->assertDontSee('quick-view-modal', false);
 
-        $this->assertSame(6, substr_count($response->getContent(), 'data-home-product-id='));
-
-        foreach (array_slice($products, 2) as $product) {
-            $response->assertSee('data-home-product-id="'.$product->id.'"', false)
-                ->assertSee($product->name);
-        }
+        $this->assertSame(
+            6,
+            substr_count($response->getContent(), 'farzin-product-card--round-media'),
+            'The homepage should display one consistent grid of six featured products.'
+        );
 
         foreach (array_slice($products, 0, 2) as $product) {
-            $response->assertDontSee('data-home-product-id="'.$product->id.'"', false)
-                ->assertDontSee($product->name);
+            $response->assertDontSee($product->name);
+        }
+
+        foreach (array_slice($products, 2) as $product) {
+            $response->assertSee($product->name);
         }
     }
 
@@ -416,31 +385,6 @@ class FarzinStorefrontTest extends TestCase
             ->assertSee('playsinline', false)
             ->assertSee('data-farzin-category-gif', false)
             ->assertDontSee('PREVIEW · 5 SEC');
-    }
-
-    public function test_homepage_mosaic_uses_products_selected_in_the_admin_editor(): void
-    {
-        $category = $this->category(['slug' => 'homepage-mosaic-control']);
-        $product = $this->product($category, [
-            'name' => 'محصول منتخب گالری صفحه اصلی',
-            'slug' => 'selected-homepage-mosaic-product',
-            'sku' => 'FAR-HOME-MOSAIC-SELECTED',
-            'show_in_home_gallery' => true,
-        ]);
-
-        ProductImage::create([
-            'product_id' => $product->id,
-            'path' => 'https://cdn.example.test/home-mosaic-selected.webp',
-            'alt' => 'Homepage mosaic selected image',
-            'sort_order' => 0,
-            'is_primary' => true,
-        ]);
-
-        $this->get(route('home'))
-            ->assertOk()
-            ->assertSee('۱ <small>تصویر در گالری</small>', false)
-            ->assertSee('data-product-id="'.$product->id.'"', false)
-            ->assertSee('https://cdn.example.test/home-mosaic-selected.webp', false);
     }
 
     public function test_homepage_lists_active_products_even_without_uploaded_images(): void
