@@ -30,6 +30,26 @@ class ProductionPreflightCommandTest extends TestCase
         }
     }
 
+    public function test_preflight_rejects_an_owner_only_laravel_bootstrap_manifest(): void
+    {
+        $manifest = base_path('bootstrap/cache/packages.php');
+
+        if (! is_file($manifest)) {
+            $this->markTestSkipped('Composer package discovery must create the bootstrap manifest first.');
+        }
+
+        $originalPermissions = fileperms($manifest) & 0777;
+        chmod($manifest, 0600);
+
+        try {
+            $this->artisan('farzin:preflight')
+                ->expectsOutputToContain('Laravel bootstrap cache permissions')
+                ->assertExitCode(1);
+        } finally {
+            chmod($manifest, $originalPermissions);
+        }
+    }
+
     public function test_preflight_marks_a_missing_variant_gallery_pivot_as_a_critical_blocker(): void
     {
         Schema::dropIfExists('product_variant_images');
