@@ -255,7 +255,7 @@
 
     <x-layout.navbar :cart-count="$storefrontCartCount" />
 
-    <x-layout.mobile-menu />
+    <x-layout.mobile-menu :storefront-contact="$storefrontContact" />
 
     <x-layout.search-overlay />
 
@@ -263,7 +263,7 @@
         @yield('content')
     </main>
 
-    <x-layout.footer :contact="$storefrontContact" />
+    <x-layout.footer :storefront-contact="$storefrontContact" />
 
     <x-layout.mobile-bottom-bar :cart-count="$storefrontCartCount" />
 

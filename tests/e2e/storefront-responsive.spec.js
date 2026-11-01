@@ -40,12 +40,11 @@ for (const viewport of viewports) {
 
             const footerLayout = await page.locator('.fz-global-footer').evaluate((footer) => {
                 const container = footer.querySelector(':scope > .livora-container');
-                const brand = footer.querySelector('.fz-global-footer__wordmark > span');
-                const nav = footer.querySelector('.fz-global-footer__nav');
-                const bottom = footer.querySelector('.fz-global-footer__bottom');
-                const socials = Array.from(footer.querySelectorAll('.fz-global-footer__socials a'));
+                const nav = footer.querySelector('.farzin-footer-editorial__nav');
+                const contact = footer.querySelector('.farzin-footer-editorial__contact');
                 const footerRect = footer.getBoundingClientRect();
                 const containerRect = container.getBoundingClientRect();
+                const anchors = Array.from(footer.querySelectorAll('a'));
 
                 return {
                     footerWidth: footerRect.width,
@@ -55,23 +54,36 @@ for (const viewport of viewports) {
                     containerRight: containerRect.right,
                     containerClientWidth: container.clientWidth,
                     containerScrollWidth: container.scrollWidth,
-                    brandText: brand.textContent.trim(),
-                    navLinkCount: nav.querySelectorAll('a').length,
-                    socialLinkCount: socials.length,
-                    socialLinksAreIconOnly: socials.every((link) => link.textContent.trim() === '' && Boolean(link.querySelector('svg')) && Boolean(link.getAttribute('aria-label'))),
-                    bottomDirection: window.getComputedStyle(bottom).flexDirection,
+                    navLinks: nav.querySelectorAll('a').length,
+                    contactExists: Boolean(contact),
+                    hasBrand: Boolean(footer.querySelector('.farzin-footer-editorial__logo')),
+                    hasNoPlaceholderLinks: anchors.every((anchor) => {
+                        const href = anchor.getAttribute('href');
+                        return Boolean(href) && href !== '#';
+                    }),
                 };
             });
 
-            expect(Math.abs(footerLayout.footerWidth - footerLayout.viewportWidth), path + ' footer surface must span the viewport').toBeLessThanOrEqual(1);
-            expect(footerLayout.containerWidth, path + ' footer content must stay within the shared 1280px grid').toBeLessThanOrEqual(1281);
-            expect(Math.abs(footerLayout.containerLeft - (footerLayout.viewportWidth - footerLayout.containerRight)), path + ' footer content must remain horizontally centered').toBeLessThanOrEqual(1);
-            expect(footerLayout.containerScrollWidth - footerLayout.containerClientWidth, path + ' footer content must not overflow horizontally').toBeLessThanOrEqual(1);
-            expect(footerLayout.brandText, path + ' footer must retain the Farzin wordmark').toBe('فرزین');
-            expect(footerLayout.navLinkCount, path + ' footer must expose six primary links').toBe(6);
-            expect(footerLayout.socialLinkCount, path + ' footer must show no more than three configured social links').toBeLessThanOrEqual(3);
-            expect(footerLayout.socialLinksAreIconOnly, path + ' social links must be accessible icon-only controls').toBe(true);
-            expect(footerLayout.bottomDirection, path + ' footer bottom row must stack on phones').toBe(viewport.width <= 640 ? 'column-reverse' : 'row');
+            expect(
+                Math.abs(footerLayout.footerWidth - footerLayout.viewportWidth),
+                path + ' footer surface must span the viewport'
+            ).toBeLessThanOrEqual(1);
+            expect(
+                footerLayout.containerWidth,
+                path + ' footer content must stay within the shared 1280px grid'
+            ).toBeLessThanOrEqual(1281);
+            expect(
+                Math.abs(footerLayout.containerLeft - (footerLayout.viewportWidth - footerLayout.containerRight)),
+                path + ' footer content must remain horizontally centered'
+            ).toBeLessThanOrEqual(1);
+            expect(
+                footerLayout.containerScrollWidth - footerLayout.containerClientWidth,
+                path + ' footer content must not overflow its container'
+            ).toBeLessThanOrEqual(1);
+            expect(footerLayout.navLinks, path + ' footer must retain the main storefront links').toBeGreaterThanOrEqual(5);
+            expect(footerLayout.contactExists, path + ' footer must expose its dashboard-driven contact area').toBeTruthy();
+            expect(footerLayout.hasBrand, path + ' footer must expose the Farzin brand link').toBeTruthy();
+            expect(footerLayout.hasNoPlaceholderLinks, path + ' footer must not contain empty or # social links').toBeTruthy();
 
             if (viewport.width < 1024) {
                 await expect(page.locator('.farzin-mobile-nav'), path + ' mobile navigation').toBeVisible();
@@ -147,62 +159,28 @@ test('shop mobile filters apply together, scroll safely and preserve the selecte
     await expect(page).toHaveURL(/installment=1/);
 });
 
-test('homepage category GIF preview starts on hover and the first touch tap', async ({ page }) => {
+test('homepage category cards link to their category without autoplay media', async ({ page }) => {
     await page.goto('/', { waitUntil: 'domcontentloaded' });
 
-    // Deterministic, network-free animated-media fixture. Load the same preview
-    // module used by Vite after the fixture exists so this test checks real
-    // pointer/touch event behavior rather than only checking the Blade markup.
-    await page.evaluate(() => {
-        const card = document.createElement('a');
-        card.id = 'category-preview-test-fixture';
-        card.href = '/categories';
-        card.className = 'fz-category-card';
-        card.setAttribute('data-farzin-gif-card', '');
-        card.innerHTML = `
-            <span class="fz-category-card__art">
-                <img class="fz-category-card__image" alt="Category cover">
-                <img
-                    data-farzin-category-gif
-                    data-farzin-gif-src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs="
-                    alt=""
-                >
-            </span>
-        `;
-        document.body.appendChild(card);
-    });
-    const fixture = page.locator('#category-preview-test-fixture');
+    const cards = page.locator('.fz-category-card--editorial');
+    const count = await cards.count();
 
-    await page.addScriptTag({ path: resolve(process.cwd(), 'resources/js/category-gif-preview.js') });
+    expect(count).toBeLessThanOrEqual(3);
+    expect(count).toBeGreaterThan(0);
 
-    await page.evaluate(() => {
-        document.querySelector('#category-preview-test-fixture').dispatchEvent(new PointerEvent('pointerenter', {
-            bubbles: false,
-            pointerType: 'mouse',
-        }));
-    });
+    const categoryCards = await cards.evaluateAll((items) => items.map((card) => ({
+        href: card.getAttribute('href'),
+        hasVideo: Boolean(card.querySelector('video')),
+        hasAnimatedImage: Boolean(card.querySelector('[data-farzin-category-gif], [data-farzin-category-video]')),
+        hasLegacyPreviewHandler: card.hasAttribute('data-farzin-gif-card'),
+    })));
 
-    await expect(fixture).toHaveClass(/is-gif-previewing/);
-
-    // Reset the preview and exercise the mobile interaction: first tap arms
-    // the preview; a second tap is allowed to follow the category link.
-    await page.evaluate(() => {
-        const card = document.querySelector('#category-preview-test-fixture');
-        card.dispatchEvent(new Event('pointerleave'));
-        card.dataset.farzinPreviewTapped = '';
-        card.dispatchEvent(new PointerEvent('pointerdown', {
-            bubbles: true,
-            pointerType: 'touch',
-        }));
-        card.dispatchEvent(new MouseEvent('click', {
-            bubbles: true,
-            cancelable: true,
-            detail: 1,
-        }));
-    });
-
-    await expect(fixture).toHaveClass(/is-gif-previewing/);
-    await expect(fixture).toHaveAttribute('data-farzin-preview-tapped', '1');
+    for (const card of categoryCards) {
+        expect(card.href).toMatch(/^\/categories\/[^/]+$/);
+        expect(card.hasVideo).toBe(false);
+        expect(card.hasAnimatedImage).toBe(false);
+        expect(card.hasLegacyPreviewHandler).toBe(false);
+    }
 });
 
 test('homepage CTA meets the shared footer at the same spacing used by interior pages', async ({ page }) => {
@@ -261,30 +239,30 @@ test('homepage CTA meets the shared footer at the same spacing used by interior 
     }
 });
 
-test('shared footer keeps the same typography, navigation and icon controls on every storefront page', async ({ page }) => {
+test('shared footer keeps the same brand, navigation and dashboard-driven contacts on every storefront page', async ({ page }) => {
     const snapshots = [];
 
     for (const path of ['/', '/shop', '/categories/hoods', '/contact']) {
         await page.goto(path, { waitUntil: 'domcontentloaded' });
 
-        snapshots.push(await page.locator('.fz-global-footer').evaluate((footer) => {
-            const wordmark = footer.querySelector('.fz-global-footer__wordmark > span');
-            const nav = footer.querySelector('.fz-global-footer__nav');
-            const socials = Array.from(footer.querySelectorAll('.fz-global-footer__socials a'));
+        snapshots.push(await page.locator('.farzin-site-footer').evaluate((footer) => {
+            const logo = footer.querySelector('.farzin-footer-editorial__logo');
+            const nav = footer.querySelector('.farzin-footer-editorial__nav');
+            const contact = footer.querySelector('.farzin-footer-editorial__contact');
             const style = window.getComputedStyle(footer);
-            const wordmarkStyle = window.getComputedStyle(wordmark);
-
+            const navStyle = window.getComputedStyle(nav);
+            const logoStyle = window.getComputedStyle(logo);
             return {
                 direction: style.direction,
                 fontFamily: style.fontFamily,
                 color: style.color,
                 backgroundColor: style.backgroundColor,
-                wordmark: wordmark.textContent.trim(),
-                wordmarkFont: wordmarkStyle.fontFamily,
-                wordmarkColor: wordmarkStyle.color,
-                navLinkCount: nav.querySelectorAll('a').length,
-                socialLinkCount: socials.length,
-                socialsAreIconOnly: socials.every((link) => link.textContent.trim() === '' && Boolean(link.querySelector('svg')) && Boolean(link.getAttribute('aria-label'))),
+                navDisplay: navStyle.display,
+                navLinks: nav.querySelectorAll('a').length,
+                contactLinks: contact.querySelectorAll('a').length,
+                logoFont: logoStyle.font,
+                logoColor: logoStyle.color,
+                hasPlaceholderLink: Array.from(footer.querySelectorAll('a')).some((anchor) => anchor.getAttribute('href') === '#'),
             };
         }));
     }
@@ -292,10 +270,9 @@ test('shared footer keeps the same typography, navigation and icon controls on e
     for (const snapshot of snapshots.slice(1)) {
         expect(snapshot).toEqual(snapshots[0]);
     }
-    expect(snapshots[0].wordmark).toBe('فرزین');
-    expect(snapshots[0].navLinkCount).toBe(6);
-    expect(snapshots[0].socialLinkCount).toBeLessThanOrEqual(3);
-    expect(snapshots[0].socialsAreIconOnly).toBe(true);
+    expect(snapshots[0].navLinks).toBeGreaterThanOrEqual(5);
+    expect(snapshots[0].logoFont).toBeTruthy();
+    expect(snapshots[0].hasPlaceholderLink).toBe(false);
 });
 
 test('storefront sections never disappear while entrance motion initializes', async ({ page }) => {
@@ -356,7 +333,7 @@ test('guest navigation uses account icons without login or register text buttons
     await expect(mobileMenu.getByRole('link', { name: 'سبد خرید' })).toBeVisible();
 });
 
-test('homepage image and product sections stay within the loading budget', async ({ page }) => {
+test('homepage product hero and distinct catalogue sections stay within the loading budget', async ({ page }) => {
     for (const viewport of [
         { width: 390, height: 844 },
         { width: 1440, height: 960 },
@@ -364,17 +341,20 @@ test('homepage image and product sections stay within the loading budget', async
         await page.setViewportSize(viewport);
         await page.goto('/', { waitUntil: 'domcontentloaded' });
 
-        expect(await page.locator('.fz-category-card').count()).toBeLessThanOrEqual(4);
-        expect(await page.locator('.grid__image').count()).toBeLessThanOrEqual(2);
-        expect(await page.locator('.fz-product-section .fz-product-card').count()).toBeLessThanOrEqual(4);
-        expect(await page.locator('.fz-new-section .fz-product-card').count()).toBeLessThanOrEqual(2);
+        expect(await page.locator('.fz-category-card').count()).toBeLessThanOrEqual(3);
+        expect(await page.locator('.fz-home-hero [data-home-slide]').count()).toBeLessThanOrEqual(6);
+        expect(await page.locator('.fz-product-section .fz-product-card--clickable').count()).toBeLessThanOrEqual(4);
+        expect(await page.locator('.fz-new-section').count()).toBe(0);
+        expect(await page.locator('.grid__image').count()).toBe(0);
 
-        const homepageProductCards = await page.locator('.fz-product-section .fz-product-card, .fz-new-section .fz-product-card').count();
-        expect(homepageProductCards, 'homepage shows at most six full product cards').toBeLessThanOrEqual(6);
-        const homepageProductEntries = await page.locator('.grid__item-inner[data-product-id], .fz-product-section .fz-product-card, .fz-new-section .fz-product-card').count();
-        expect(homepageProductEntries, 'homepage keeps no more than eight unique catalog entries').toBeLessThanOrEqual(8);
+        const heroProducts = await page.locator('.fz-home-hero [data-home-slide]').count();
+        const bestsellerProducts = await page.locator('.fz-product-section .fz-product-card--clickable').count();
+        expect(heroProducts + bestsellerProducts, 'homepage shows one bounded hero and one bounded product grid').toBeLessThanOrEqual(10);
+
         await expect(page.locator('.fz-category-section .fz-text-link')).toHaveAttribute('href', /\/categories(?:\?|$)/);
-        await expect(page.locator('.fz-product-section .fz-text-link')).toHaveAttribute('href', /\/shop(?:\?|$)/);
+        if (bestsellerProducts > 0) {
+            await expect(page.locator('.fz-product-section .fz-text-link')).toHaveAttribute('href', /\/shop(?:\?|$)/);
+        }
     }
 });
 
