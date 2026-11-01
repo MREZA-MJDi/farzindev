@@ -1,24 +1,20 @@
 @props([
     'product',
     'reveal' => true,
+    'variant' => 'default',
 ])
 
 @php
     $imageModel = $product->images?->first();
     $image = $imageModel?->url;
+    $imageAlt = $imageModel?->alt ?: $product->name;
     $imageSrcset = $imageModel?->responsive_srcset;
 
-    $hasDiscount =
-        $product->compare_at_price !== null
+    $hasDiscount = $product->compare_at_price !== null
         && (float) $product->compare_at_price > (float) $product->price;
 
     $discountPercent = $hasDiscount
-        ? round(
-            (
-                ((float) $product->compare_at_price - (float) $product->price)
-                / (float) $product->compare_at_price
-            ) * 100
-        )
+        ? (int) round((((float) $product->compare_at_price - (float) $product->price) / (float) $product->compare_at_price) * 100)
         : 0;
 
     $installmentEnabled = (bool) $product->installment_enabled;
@@ -27,28 +23,29 @@
     $cashAmount = $installmentEnabled && $cashPercent > 0
         ? round((float) $product->price * ($cashPercent / 100), 2)
         : 0;
+    $showInstallment = $cashAmount > 0;
 @endphp
 
 <article
-    class="farzin-product-card group relative flex h-full min-w-0 flex-col"
+    class="farzin-product-card group relative flex h-full min-w-0 flex-col {{ $variant === 'round' ? 'farzin-product-card--round-media' : '' }}"
     @if($reveal) data-farzin-reveal @endif
 >
-    <div class="farzin-product-card__media relative overflow-hidden rounded-[1.25rem]">
+    <div class="farzin-product-card__media relative overflow-hidden">
         <a
             href="{{ route('product.show', $product->slug) }}"
-            class="farzin-product-card__image-link block aspect-[4/5] overflow-hidden"
+            class="farzin-product-card__image-link block overflow-hidden"
             aria-label="مشاهده {{ $product->name }}"
         >
             @if($image)
                 <img
                     src="{{ $image }}"
                     @if($imageSrcset) srcset="{{ $imageSrcset }}" sizes="(max-width: 639px) 46vw, (max-width: 1279px) 30vw, 320px" @endif
-                    alt="{{ $product->name }}"
-                    width="640"
-                    height="480"
+                    alt="{{ $imageAlt }}"
+                    width="720"
+                    height="900"
                     loading="lazy"
                     decoding="async"
-                    class="farzin-product-card__image h-full w-full object-cover"
+                    class="farzin-product-card__image h-full w-full object-contain"
                 >
             @else
                 <div class="farzin-product-fallback flex h-full min-h-[210px] w-full flex-col items-center justify-center gap-3">
@@ -63,7 +60,6 @@
             @if($product->is_new)
                 <span class="farzin-product-badge farzin-product-badge--light">تازه‌وارد</span>
             @endif
-
             @if($hasDiscount)
                 <span class="farzin-product-badge farzin-product-badge--accent">
                     {{ \App\Helpers\PersianNumberHelper::format($discountPercent) }}٪ تخفیف
@@ -71,7 +67,7 @@
             @endif
         </div>
 
-        @if($installmentEnabled)
+        @if($showInstallment)
             <div class="absolute right-3 top-3 z-10">
                 <span class="farzin-product-badge farzin-product-badge--dark">خرید اقساطی</span>
             </div>
@@ -90,7 +86,7 @@
                         aria-label="افزودن {{ $product->name }} به علاقه‌مندی‌ها"
                         class="farzin-product-card__wishlist flex h-10 w-10 items-center justify-center rounded-full"
                     >
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.6" stroke="currentColor" class="h-[18px] w-[18px]" aria-hidden="true">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.6" stroke="currentColor" width="18" height="18" class="h-[18px] w-[18px]" aria-hidden="true">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M21.75 8.25c0 6-9.75 11.25-9.75 11.25S2.25 14.25 2.25 8.25A5.25 5.25 0 0 1 12 5.58a5.25 5.25 0 0 1 9.75 2.67Z"/>
                         </svg>
                     </button>
@@ -99,51 +95,46 @@
         @endauth
     </div>
 
-    <div class="flex flex-1 flex-col px-1 pb-1 pt-4">
-        <div class="flex min-h-5 items-center gap-2">
-            @if($product->category)
-                <span class="farzin-product-card__category-dot" aria-hidden="true"></span>
-                <p class="line-clamp-1 text-[11px] font-medium text-[var(--livora-stone)]">
-                    {{ $product->category->name }}
-                </p>
+    <div class="farzin-product-card__content flex min-w-0 flex-1 flex-col px-4 pb-4 pt-3">
+        <div class="farzin-product-card__meta flex min-h-5 min-w-0 items-center justify-between gap-2">
+            <span class="farzin-product-card__category min-w-0 truncate">
+                {{ $product->category?->name ?? 'فرزین' }}
+            </span>
+            @if(filled($product->sku))
+                <span class="farzin-product-card__sku shrink-0" dir="ltr">{{ $product->sku }}</span>
             @endif
         </div>
 
-        <a href="{{ route('product.show', $product->slug) }}" class="mt-2 block">
+        <a href="{{ route('product.show', $product->slug) }}" class="mt-2 block min-w-0">
             <h3 class="farzin-product-card__title line-clamp-2 text-sm font-semibold leading-7 sm:text-[15px]">
                 {{ $product->name }}
             </h3>
         </a>
 
-        <div class="mt-3 flex min-h-10 flex-wrap items-center gap-x-2 gap-y-1">
+        <div class="farzin-product-card__price-row mt-3 flex min-h-10 min-w-0 flex-wrap items-center gap-x-2 gap-y-1">
+            <p class="farzin-product-card__price-current">
+                {{ \App\Helpers\PersianNumberHelper::format((float) $product->price) }}
+                <span>تومان</span>
+            </p>
             @if($hasDiscount)
-                <span class="text-base font-bold tracking-tight text-[var(--livora-text)]">
-                    {{ \App\Helpers\PersianNumberHelper::format((float) $product->price) }}
-                    <span class="text-[10px] font-normal text-[var(--livora-stone)]">تومان</span>
+                <span class="farzin-product-card__price-old">
+                    {{ \App\Helpers\PersianNumberHelper::format((float) $product->compare_at_price) }} تومان
                 </span>
-                <span class="text-xs text-[var(--livora-stone)] line-through">
-                    {{ \App\Helpers\PersianNumberHelper::format((float) $product->compare_at_price) }}
-                </span>
-            @else
-                <p class="text-base font-bold tracking-tight text-[var(--livora-text)]">
-                    {{ \App\Helpers\PersianNumberHelper::format((float) $product->price) }}
-                    <span class="text-[10px] font-normal text-[var(--livora-stone)]">تومان</span>
-                </p>
             @endif
         </div>
 
-        @if($installmentEnabled && $cashAmount > 0)
-            <div class="farzin-product-card__installment mt-3 rounded-xl p-3">
-                <div class="flex items-center justify-between gap-3">
-                    <div>
+        <div class="farzin-product-card__installment-slot mt-3">
+            @if($showInstallment)
+                <div class="farzin-product-card__installment flex w-full items-center justify-between gap-3 rounded-xl p-3">
+                    <div class="min-w-0">
                         <p class="text-[10px] text-[var(--livora-stone)]">پیش‌پرداخت</p>
-                        <p class="mt-1 text-xs font-semibold text-[var(--livora-text)]">
+                        <p class="farzin-product-card__installment-value mt-1 text-xs font-semibold text-[var(--livora-text)]">
                             {{ \App\Helpers\PersianNumberHelper::format($cashAmount) }} تومان
                         </p>
                     </div>
-                    <div class="text-left">
+                    <div class="min-w-0 text-left">
                         <p class="text-[10px] text-[var(--livora-stone)]">شرایط</p>
-                        <p class="mt-1 text-xs font-semibold text-[var(--livora-accent)]">
+                        <p class="farzin-product-card__installment-value mt-1 text-xs font-semibold text-[var(--livora-accent)]">
                             {{ \App\Helpers\PersianNumberHelper::format($cashPercent) }}٪
                             @if($chequeCount)
                                 + {{ \App\Helpers\PersianNumberHelper::format($chequeCount) }} چک
@@ -151,15 +142,15 @@
                         </p>
                     </div>
                 </div>
-            </div>
-        @endif
+            @endif
+        </div>
 
         <a
             href="{{ route('product.show', $product->slug) }}"
             class="farzin-product-card__cta mt-auto inline-flex items-center justify-between gap-3"
+            aria-label="بررسی مشخصات {{ $product->name }}"
         >
-            <span>بررسی مشخصات</span>
-            <span class="farzin-product-card__arrow" aria-hidden="true">↙</span>
+            <span>مشاهده مشخصات</span>
         </a>
     </div>
 </article>

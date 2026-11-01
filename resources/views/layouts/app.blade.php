@@ -181,13 +181,11 @@
     @stack('seo')
 
     @vite([
-        'resources/css/app.css',
+        'resources/css/storefront.css',
         'resources/js/app.js',
     ])
 
     @stack('styles')
-    @vite(['resources/css/responsive.css'])
-    @vite(['resources/css/farzin-storefront.css'])
 </head>
 
 <body class="@yield('body_class', 'min-h-screen antialiased')">
@@ -255,7 +253,7 @@
 
     <x-layout.navbar :cart-count="$storefrontCartCount" />
 
-    <x-layout.mobile-menu :storefront-contact="$storefrontContact" />
+    <x-layout.mobile-menu />
 
     <x-layout.search-overlay />
 
@@ -263,7 +261,7 @@
         @yield('content')
     </main>
 
-    <x-layout.footer :storefront-contact="$storefrontContact" />
+    <x-layout.footer :contact="$storefrontContact" />
 
     <x-layout.mobile-bottom-bar :cart-count="$storefrontCartCount" />
 

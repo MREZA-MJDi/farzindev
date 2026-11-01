@@ -26,6 +26,10 @@
 @section('og_title', $archiveTitle)
 @section('og_description', $archiveDescription)
 
+@push('styles')
+    @vite('resources/css/blog.css')
+@endpush
+
 @push('seo')
 <script type="application/ld+json">{!! json_encode([
     '@context' => 'https://schema.org',
@@ -40,10 +44,6 @@
         'url' => route('home'),
     ],
 ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT) !!}</script>
-@endpush
-
-@push('styles')
-    @vite(['resources/css/blog.css'])
 @endpush
 
 @section('content')
@@ -61,18 +61,7 @@
                     @endif
                 </nav>
 
-                <a href="{{ route('blog.feed') }}" class="blog-rss-link" aria-label="دنبال‌کردن مقاله‌های مجله با فید RSS">
-                    <span class="blog-rss-link__icon" aria-hidden="true">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="blog-action-icon">
-                            <circle cx="5" cy="19" r="1.25" fill="currentColor" stroke="none" />
-                            <path d="M4.5 11a8.5 8.5 0 0 1 8.5 8.5M4.5 5a14.5 14.5 0 0 1 14.5 14.5" />
-                        </svg>
-                    </span>
-                    <span class="blog-rss-link__copy">
-                        <strong>دنبال‌کردن مقاله‌ها</strong>
-                        <small>دریافت خودکار نوشته‌های تازه · RSS</small>
-                    </span>
-                </a>
+                <a href="{{ route('blog.feed') }}" class="blog-rss-quiet">فید RSS</a>
             </div>
 
             <div class="blog-masthead__layout">

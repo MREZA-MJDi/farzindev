@@ -1,57 +1,102 @@
 :root {
-    /* Farzin storefront — navy / burgundy / porcelain */
-    --livora-ink: #06284F;
-    --livora-text: #26313B;
-    --livora-text-soft: #596168;
-    --livora-charcoal: #0A315F;
-    --livora-chocolate: #0B3565;
-    --livora-chocolate-dark: #041E3E;
-    --livora-chocolate-soft: #17436F;
+    /*
+     * Farzin public design tokens.
+     * This is the single source of truth for storefront colors, borders and surfaces.
+     */
+    --fz-page: #F5F6F8;
+    --fz-paper: #FFFFFF;
+    --fz-paper-soft: #EEF1F4;
+    --fz-ink: #06284F;
+    --fz-ink-deep: #041E3E;
+    --fz-charcoal: #27292C;
+    --fz-charcoal-soft: #35383D;
+    --fz-accent-on-dark: #D04451;
+    --fz-ink-soft: #17436F;
+    --fz-text: #26313B;
+    --fz-muted: #647080;
+    --fz-line: #E1E5EB;
+    --fz-line-strong: #CBD3DD;
+    --fz-accent: #7B0D1A;
+    --fz-accent-dark: #5F0712;
+    --fz-accent-soft: #EEF1F4;
+    --fz-success: #268253;
+    --fz-success-soft: #E8F4EE;
+    --fz-warning: #A66A17;
+    --fz-warning-soft: #F8F0E3;
+    --fz-danger: #B42332;
+    --fz-danger-soft: #F0ECEE;
+    --fz-info: #1E6598;
+    --fz-info-soft: #E8F1F7;
+    --fz-metal-silver: #B9C1CA;
+    --fz-sunset-light: #FFFFFF;
+    --fz-sunset-burnt: #8B1C2A;
+    --fz-blue-soft: #EEF3F8;
 
-    --livora-cream: #D1D2D0;
-    --livora-white: #FFFFFF;
-    --livora-surface: #E2E3E1;
-    --livora-sand: #C9CBC8;
-    --livora-stone: #5F666D;
+    --fz-shadow: 0 16px 42px rgba(6, 40, 79, .09);
+    --fz-shadow-sm: 0 4px 16px rgba(6, 40, 79, .055);
+    --fz-shadow-md: 0 12px 30px rgba(6, 40, 79, .095);
+    --fz-shadow-lg: 0 24px 56px rgba(6, 40, 79, .14);
 
-    --livora-accent: #7B0D1A;
-    --livora-accent-dark: #5F0712;
-    --livora-accent-soft: #E3E4E1;
-    --livora-sage: #3F4952;
-    --livora-sage-dark: #303941;
-    --livora-sage-soft: #E2E3E1;
+    --fz-radius-card: 8px;
+    --fz-radius-panel: 10px;
+    --fz-radius-control: 8px;
+    --fz-radius-sm: .625rem;
+    --fz-radius-md: .875rem;
+    --fz-radius-lg: 1.125rem;
+    --fz-radius-xl: 1.375rem;
 
-    --livora-border: #BFC1BE;
-    --livora-border-dark: #AEB1AE;
+    --fz-duration-fast: 160ms;
+    --fz-duration: 240ms;
+    --fz-duration-slow: 420ms;
+    --fz-motion: cubic-bezier(.22, 1, .36, 1);
+    --fz-container: 1320px;
+    --fz-header-height: 76px;
 
-    --livora-success: #268253;
-    --livora-success-soft: #E2E3E1;
-    --livora-warning: #A66A17;
-    --livora-warning-soft: #E2E3E1;
-    --livora-danger: #B42332;
-    --livora-danger-soft: #E2E3E1;
-    --livora-info: #1E6598;
-    --livora-info-soft: #E2E3E1;
-
-    --livora-shadow-sm: 0 4px 16px rgba(6, 40, 79, .055);
-    --livora-shadow-md: 0 12px 30px rgba(6, 40, 79, .095);
-    --livora-shadow-lg: 0 24px 56px rgba(6, 40, 79, .14);
-
-    --livora-radius-sm: .625rem;
-    --livora-radius-md: .875rem;
-    --livora-radius-lg: 1.125rem;
-    --livora-radius-xl: 1.375rem;
-
-    --livora-duration-fast: 160ms;
-    --livora-duration: 240ms;
-    --livora-duration-slow: 420ms;
-    --livora-container: 1280px;
-
-    --livora-metal: #A9A9A2;
-    --livora-sunset-burnt: #8B1C2A;
-    --livora-sunset-coral: #7B0D1A;
-    --livora-sunset-amber: #DADAD3;
-    --livora-silver: #A9A9A2;
+    /* Compatibility aliases: legacy components read the same canonical values. */
+    --livora-ink: var(--fz-ink);
+    --livora-text: var(--fz-text);
+    --livora-text-soft: var(--fz-muted);
+    --livora-charcoal: var(--fz-ink);
+    --livora-chocolate: var(--fz-ink-soft);
+    --livora-chocolate-dark: var(--fz-ink-deep);
+    --livora-chocolate-soft: var(--fz-ink-soft);
+    --livora-cream: var(--fz-page);
+    --livora-white: var(--fz-paper);
+    --livora-surface: var(--fz-paper-soft);
+    --livora-sand: var(--fz-line);
+    --livora-stone: var(--fz-muted);
+    --livora-accent: var(--fz-accent);
+    --livora-accent-dark: var(--fz-accent-dark);
+    --livora-accent-soft: var(--fz-accent-soft);
+    --livora-sage: var(--fz-muted);
+    --livora-sage-dark: var(--fz-text);
+    --livora-sage-soft: var(--fz-paper-soft);
+    --livora-border: var(--fz-line);
+    --livora-border-dark: var(--fz-line-strong);
+    --livora-success: var(--fz-success);
+    --livora-success-soft: var(--fz-success-soft);
+    --livora-warning: var(--fz-warning);
+    --livora-warning-soft: var(--fz-warning-soft);
+    --livora-danger: var(--fz-danger);
+    --livora-danger-soft: var(--fz-danger-soft);
+    --livora-info: var(--fz-info);
+    --livora-info-soft: var(--fz-info-soft);
+    --livora-shadow-sm: var(--fz-shadow-sm);
+    --livora-shadow-md: var(--fz-shadow-md);
+    --livora-shadow-lg: var(--fz-shadow-lg);
+    --livora-radius-sm: var(--fz-radius-sm);
+    --livora-radius-md: var(--fz-radius-md);
+    --livora-radius-lg: var(--fz-radius-lg);
+    --livora-radius-xl: var(--fz-radius-xl);
+    --livora-duration-fast: var(--fz-duration-fast);
+    --livora-duration: var(--fz-duration);
+    --livora-duration-slow: var(--fz-duration-slow);
+    --livora-container: var(--fz-container);
+    --livora-metal: var(--fz-metal-silver);
+    --livora-sunset-burnt: var(--fz-sunset-burnt);
+    --livora-sunset-coral: var(--fz-accent);
+    --livora-sunset-amber: var(--fz-metal-silver);
+    --livora-silver: var(--fz-metal-silver);
     --livora-glow: rgba(255, 255, 255, .12);
 }
 

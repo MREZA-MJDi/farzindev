@@ -6,14 +6,10 @@ export default defineConfig({
     plugins: [
         laravel({
             input: [
-                'resources/css/app.css',
+                'resources/css/storefront.css',
+                'resources/css/blog.css',
                 'resources/css/admin.css',
                 'resources/js/app.js',
-                'resources/css/home.css',
-                'resources/js/home.js',
-                'resources/css/responsive.css',
-                'resources/css/farzin-storefront.css',
-                'resources/css/blog.css',
             ],
             refresh: true,
         }),

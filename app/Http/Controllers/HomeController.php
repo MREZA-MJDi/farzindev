@@ -13,21 +13,21 @@ class HomeController extends Controller
     {
         $categories = Category::query()
             ->active()
-            ->withCount(['products' => fn ($query) => $query->active()])
             ->with([
+                'hoverMedia:id,path,mime_type,original_name,extension,size',
                 'latestActiveProduct.images' => fn ($query) => $query
                     ->select(['id', 'product_id', 'media_id', 'path', 'alt', 'sort_order', 'is_primary'])
-                    ->orderByDesc('is_primary')
-                    ->orderBy('sort_order')
                     ->limit(1),
                 'latestActiveProduct.images.media:id,path',
             ])
+            ->withCount([
+                'products' => fn ($query) => $query->active(),
+            ])
             ->orderBy('sort_order')
-            ->orderBy('name')
-            ->limit(3)
+            ->limit(4)
             ->get();
 
-        $imageRelations = [
+        $productRelations = [
             'category:id,name',
             'images' => fn ($query) => $query
                 ->select(['id', 'product_id', 'media_id', 'path', 'alt', 'sort_order', 'is_primary'])
@@ -38,37 +38,29 @@ class HomeController extends Controller
             'images.media:id,path',
         ];
 
-        // The hero is a real-product carousel, never a remote illustration.
-        $heroProducts = Product::query()
+        // One real catalogue product in the hero. No carousel or duplicate
+        // editorial gallery is needed for the first decision.
+        $heroProduct = Product::query()
             ->active()
             ->whereHas('category', fn ($query) => $query->where('is_active', true))
             ->whereHas('images')
-            ->with($imageRelations)
-            ->orderByDesc('created_at')
+            ->with($productRelations)
+            ->orderByDesc('is_featured')
+            ->orderByDesc('updated_at')
             ->orderByDesc('id')
-            ->limit(18)
+            ->limit(12)
             ->get()
-            ->filter(fn (Product $product) => $product->images->contains(
+            ->first(fn (Product $product) => $product->images->contains(
                 fn ($image) => filled($image->url)
-            ))
-            ->take(6)
-            ->values();
+            ));
 
-        $heroProductIds = $heroProducts->pluck('id')->all();
-
-        $catalogCount = Product::query()
+        // Rank by paid, non-cancelled order quantity. Featured and recently
+        // updated products are tie-breakers when sales data is equal.
+        $featuredProducts = Product::query()
             ->active()
+            ->when($heroProduct, fn ($query) => $query->whereKeyNot($heroProduct->id))
             ->whereHas('category', fn ($query) => $query->where('is_active', true))
-            ->count();
-
-        // Rank from actual paid orders only; do not repeat the hero products below.
-        $rankedProducts = Product::query()
-            ->active()
-            ->whereHas('category', fn ($query) => $query->where('is_active', true))
-            ->when($heroProductIds !== [], fn ($query) => $query->whereNotIn('id', $heroProductIds))
-            ->with($imageRelations)
-            ->withCount('variants')
-            ->withSum('variants as active_variants_stock', 'stock')
+            ->with($productRelations)
             ->withSum([
                 'orderItems as sold_quantity' => function ($orderItemQuery): void {
                     $orderItemQuery->whereHas('order', function ($orderQuery): void {
@@ -81,39 +73,17 @@ class HomeController extends Controller
             ->orderByDesc('sold_quantity')
             ->orderByDesc('is_featured')
             ->orderByDesc('updated_at')
-            ->limit(30)
-            ->get()
-            ->values();
+            ->orderByDesc('id')
+            ->limit(6)
+            ->get();
 
-        $hasBestSellerSales = $rankedProducts->contains(
-            fn (Product $product) => (int) ($product->sold_quantity ?? 0) > 0
+        $hasBestSellerSales = $featuredProducts->contains(
+            fn (Product $product): bool => (int) ($product->sold_quantity ?? 0) > 0
         );
-
-        if ($hasBestSellerSales) {
-            $featuredProducts = $rankedProducts
-                ->filter(fn (Product $product) => (int) ($product->sold_quantity ?? 0) > 0)
-                ->take(4)
-                ->values();
-        } else {
-            // When there are no paid orders yet, fall back to admin-curated products.
-            $featuredProducts = Product::query()
-                ->active()
-                ->where('is_featured', true)
-                ->whereHas('category', fn ($query) => $query->where('is_active', true))
-                ->when($heroProductIds !== [], fn ($query) => $query->whereNotIn('id', $heroProductIds))
-                ->with($imageRelations)
-                ->withCount('variants')
-                ->withSum('variants as active_variants_stock', 'stock')
-                ->orderByDesc('updated_at')
-                ->orderByDesc('id')
-                ->limit(20)
-                ->get()
-                ->take(4)
-                ->values();
-        }
 
         $blogPosts = BlogPost::query()
             ->published()
+            ->indexable()
             ->with(['author:id,name', 'terms:id,type,name,slug'])
             ->orderByDesc('is_featured')
             ->orderByDesc('published_at')
@@ -123,11 +93,10 @@ class HomeController extends Controller
 
         return view('home.index', [
             'categories' => $categories,
-            'heroProducts' => $heroProducts,
+            'heroProduct' => $heroProduct,
             'featuredProducts' => $featuredProducts,
             'hasBestSellerSales' => $hasBestSellerSales,
             'blogPosts' => $blogPosts,
-            'catalogCount' => $catalogCount,
         ]);
     }
 }

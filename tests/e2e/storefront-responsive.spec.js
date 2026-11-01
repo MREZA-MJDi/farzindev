@@ -159,29 +159,64 @@ test('shop mobile filters apply together, scroll safely and preserve the selecte
     await expect(page).toHaveURL(/installment=1/);
 });
 
-test('homepage category cards link to their category without autoplay media', async ({ page }) => {
+test('homepage category GIF preview starts on hover and the first touch tap', async ({ page }) => {
     await page.goto('/', { waitUntil: 'domcontentloaded' });
 
-    const cards = page.locator('.fz-category-card--editorial');
-    const count = await cards.count();
+    // Deterministic, network-free animated-media fixture. Load the same preview
+    // module used by Vite after the fixture exists so this test checks real
+    // pointer/touch event behavior rather than only checking the Blade markup.
+    await page.evaluate(() => {
+        const card = document.createElement('a');
+        card.id = 'category-preview-test-fixture';
+        card.href = '/categories';
+        card.className = 'fz-category-card';
+        card.setAttribute('data-farzin-gif-card', '');
+        card.innerHTML = `
+            <span class="fz-category-card__art">
+                <img class="fz-category-card__image" alt="Category cover">
+                <img
+                    data-farzin-category-gif
+                    data-farzin-gif-src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs="
+                    alt=""
+                >
+            </span>
+        `;
+        document.body.appendChild(card);
+    });
+    const fixture = page.locator('#category-preview-test-fixture');
 
-    expect(count).toBeLessThanOrEqual(3);
-    expect(count).toBeGreaterThan(0);
+    await page.addScriptTag({ path: resolve(process.cwd(), 'resources/js/category-gif-preview.js') });
 
-    const categoryCards = await cards.evaluateAll((items) => items.map((card) => ({
-        href: card.getAttribute('href'),
-        hasVideo: Boolean(card.querySelector('video')),
-        hasAnimatedImage: Boolean(card.querySelector('[data-farzin-category-gif], [data-farzin-category-video]')),
-        hasLegacyPreviewHandler: card.hasAttribute('data-farzin-gif-card'),
-    })));
+    await page.evaluate(() => {
+        document.querySelector('#category-preview-test-fixture').dispatchEvent(new PointerEvent('pointerenter', {
+            bubbles: false,
+            pointerType: 'mouse',
+        }));
+    });
 
-    for (const card of categoryCards) {
-        expect(card.href).toMatch(/^\/categories\/[^/]+$/);
-        expect(card.hasVideo).toBe(false);
-        expect(card.hasAnimatedImage).toBe(false);
-        expect(card.hasLegacyPreviewHandler).toBe(false);
-    }
+    await expect(fixture).toHaveClass(/is-gif-previewing/);
+
+    // Reset the preview and exercise the mobile interaction: first tap arms
+    // the preview; a second tap is allowed to follow the category link.
+    await page.evaluate(() => {
+        const card = document.querySelector('#category-preview-test-fixture');
+        card.dispatchEvent(new Event('pointerleave'));
+        card.dataset.farzinPreviewTapped = '';
+        card.dispatchEvent(new PointerEvent('pointerdown', {
+            bubbles: true,
+            pointerType: 'touch',
+        }));
+        card.dispatchEvent(new MouseEvent('click', {
+            bubbles: true,
+            cancelable: true,
+            detail: 1,
+        }));
+    });
+
+    await expect(fixture).toHaveClass(/is-gif-previewing/);
+    await expect(fixture).toHaveAttribute('data-farzin-preview-tapped', '1');
 });
+
 
 test('homepage CTA meets the shared footer at the same spacing used by interior pages', async ({ page }) => {
     for (const viewport of [
@@ -197,26 +232,25 @@ test('homepage CTA meets the shared footer at the same spacing used by interior 
         await expect(page.locator('.farzin-site-footer')).toBeVisible();
 
         const homeSpacing = await page.evaluate(() => {
-            const cta = document.querySelector('.fz-bottom-cta');
-            const ctaPanel = document.querySelector('.fz-bottom-cta__inner');
+            const ctaPanel = document.querySelector('.fz-home-purchase-cta__inner');
+            const bridge = document.querySelector('.fz-home-contact-bridge');
             const footer = document.querySelector('.farzin-site-footer');
-            const ctaStyle = window.getComputedStyle(cta);
             const footerStyle = window.getComputedStyle(footer);
 
             return {
-                ctaPaddingBottom: Number.parseFloat(ctaStyle.paddingBlockEnd),
-                panelToFooter: footer.getBoundingClientRect().top - ctaPanel.getBoundingClientRect().bottom,
+                panelToBridge: bridge.getBoundingClientRect().top - ctaPanel.getBoundingClientRect().bottom,
+                bridgeToFooter: footer.getBoundingClientRect().top - bridge.getBoundingClientRect().bottom,
                 footerMarginTop: Number.parseFloat(footerStyle.marginBlockStart),
             };
         });
 
         expect(
-            homeSpacing.ctaPaddingBottom,
-            'homepage purchase panel must have a deliberate lower breathing space'
+            homeSpacing.panelToBridge,
+            'homepage CTA must have a deliberate transition into the footer bridge'
         ).toBeGreaterThanOrEqual(40);
         expect(
-            Math.abs(homeSpacing.panelToFooter - homeSpacing.ctaPaddingBottom - homeSpacing.footerMarginTop),
-            'homepage CTA-to-footer gap must equal the CTA spacing plus the shared footer margin'
+            Math.abs(homeSpacing.bridgeToFooter - homeSpacing.footerMarginTop),
+            'the bridge-to-footer gap must use the shared footer spacing'
         ).toBeLessThanOrEqual(2);
 
         await page.goto('/shop', { waitUntil: 'domcontentloaded' });
@@ -238,6 +272,7 @@ test('homepage CTA meets the shared footer at the same spacing used by interior 
         expect(shopSpacing.footerMarginTop).toBeGreaterThanOrEqual(24);
     }
 });
+
 
 test('shared footer keeps the same brand, navigation and dashboard-driven contacts on every storefront page', async ({ page }) => {
     const snapshots = [];
@@ -333,7 +368,7 @@ test('guest navigation uses account icons without login or register text buttons
     await expect(mobileMenu.getByRole('link', { name: 'سبد خرید' })).toBeVisible();
 });
 
-test('homepage product hero and distinct catalogue sections stay within the loading budget', async ({ page }) => {
+test('homepage image and product sections stay within the loading budget', async ({ page }) => {
     for (const viewport of [
         { width: 390, height: 844 },
         { width: 1440, height: 960 },
@@ -341,22 +376,34 @@ test('homepage product hero and distinct catalogue sections stay within the load
         await page.setViewportSize(viewport);
         await page.goto('/', { waitUntil: 'domcontentloaded' });
 
-        expect(await page.locator('.fz-category-card').count()).toBeLessThanOrEqual(3);
-        expect(await page.locator('.fz-home-hero [data-home-slide]').count()).toBeLessThanOrEqual(6);
-        expect(await page.locator('.fz-product-section .fz-product-card--clickable').count()).toBeLessThanOrEqual(4);
-        expect(await page.locator('.fz-new-section').count()).toBe(0);
-        expect(await page.locator('.grid__image').count()).toBe(0);
-
-        const heroProducts = await page.locator('.fz-home-hero [data-home-slide]').count();
-        const bestsellerProducts = await page.locator('.fz-product-section .fz-product-card--clickable').count();
-        expect(heroProducts + bestsellerProducts, 'homepage shows one bounded hero and one bounded product grid').toBeLessThanOrEqual(10);
-
-        await expect(page.locator('.fz-category-section .fz-text-link')).toHaveAttribute('href', /\/categories(?:\?|$)/);
-        if (bestsellerProducts > 0) {
-            await expect(page.locator('.fz-product-section .fz-text-link')).toHaveAttribute('href', /\/shop(?:\?|$)/);
+        if (viewport.width >= 1024) {
+            const imageIsLeftOfCopy = await page.evaluate(() => {
+                const image = document.querySelector('.fz-home-hero__showcase');
+                const copy = document.querySelector('.fz-home-hero__copy');
+                if (!image || !copy) return false;
+                const imageRect = image.getBoundingClientRect();
+                const copyRect = copy.getBoundingClientRect();
+                return imageRect.left < copyRect.left && imageRect.right <= copyRect.left + 1;
+            });
+            expect(imageIsLeftOfCopy, 'desktop hero product image must sit physically to the left of the copy').toBeTruthy();
         }
+
+        expect(await page.locator('.fz-category-card').count()).toBeLessThanOrEqual(4);
+        expect(await page.locator('.fz-home-buying-guide').count()).toBe(2);
+        expect(await page.locator('.fz-home-featured-grid--six .farzin-product-card').count()).toBeLessThanOrEqual(6);
+        await expect(page.locator('.fz-new-section')).toHaveCount(0);
+        await expect(page.locator('.fz-mosaic-intro')).toHaveCount(0);
+        await expect(page.locator('[data-farzin-home-slider]')).toHaveCount(0);
+
+        const homepageProductCards = await page.locator('.fz-home-featured-grid--six .farzin-product-card').count();
+        expect(homepageProductCards, 'homepage shows one compact grid of up to six real products').toBeLessThanOrEqual(6);
+        const homepageProductEntries = await page.locator('.fz-home-hero__showcase--static, .fz-home-featured-grid--six .farzin-product-card').count();
+        expect(homepageProductEntries, 'homepage shows one hero item and no more than six featured cards').toBeLessThanOrEqual(7);
+        await expect(page.locator('.fz-category-section .fz-text-link')).toHaveAttribute('href', /\/categories(?:\?|$)/);
+        await expect(page.locator('.fz-product-section .fz-text-link')).toHaveAttribute('href', /\/shop(?:\?|$)/);
     }
 });
+
 
 
 test('admin mobile quick search and list filters remain reachable without horizontal overflow', async ({ page }) => {
@@ -596,4 +643,30 @@ test('admin blog image workflows expose the cropper and saved media library', as
         '16:9'
     );
     await expect(page.locator('[data-editor-media-picker] summary')).toBeVisible();
+});
+
+
+test('shop product card actions stay aligned across different content heights', async ({ page }) => {
+    for (const viewport of [
+        { width: 390, height: 844 },
+        { width: 1440, height: 960 },
+    ]) {
+        await page.setViewportSize(viewport);
+        await page.goto('/shop', { waitUntil: 'domcontentloaded' });
+
+        const cards = page.locator('.farzin-product-card');
+        await expect(cards.nth(0)).toBeVisible();
+        await expect(cards.nth(1)).toBeVisible();
+
+        const ctaTops = await Promise.all([0, 1].map((index) => (
+            cards.nth(index)
+                .locator('.farzin-product-card__cta')
+                .evaluate((element) => element.getBoundingClientRect().top)
+        )));
+
+        expect(
+            Math.abs(ctaTops[0] - ctaTops[1]),
+            'the first product row must keep purchase actions aligned'
+        ).toBeLessThanOrEqual(2);
+    }
 });
