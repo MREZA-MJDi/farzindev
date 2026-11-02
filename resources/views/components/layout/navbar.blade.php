@@ -1,7 +1,7 @@
 @props(['cartCount' => 0, 'brandName' => 'فرزین', 'brandLogo' => null])
 
 <nav
-    aria-label="ناوبری اصلی فرزین"
+    aria-label="ناوبری اصلی {{ $brandName }}"
     class="farzin-site-header sticky top-0 z-[80] w-full border-b border-[var(--livora-border)] bg-white text-[var(--livora-text)]"
 >
     <x-layout.container>
