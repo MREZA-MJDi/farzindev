@@ -10,7 +10,7 @@
 }
 
 :root {
-    --fz-font-ui: "IRANYekanX FaNum", "Vazirmatn", sans-serif;
-    --fz-font-heading: "IRANYekanX FaNum", "Vazirmatn", sans-serif;
+    --fz-font-ui: "IRANYekanX FaNum", "IRANYekanX", "Vazirmatn", system-ui, sans-serif;
+    --fz-font-heading: "IRANYekanX FaNum", "IRANYekanX", "Vazirmatn", system-ui, sans-serif;
     --livora-font-family: var(--fz-font-ui);
 }
