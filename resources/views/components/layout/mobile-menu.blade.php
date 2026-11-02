@@ -136,7 +136,7 @@
                         @class(['farzin-mobile-menu__link group flex min-h-[62px] items-center justify-between gap-4 px-4 py-3 text-sm font-semibold transition', 'is-active' => request()->routeIs('about')])
                         @if(request()->routeIs('about')) aria-current="page" @endif
                     >
-                        <span>درباره فرزین</span>
+                        <span>درباره {{ $brandName }}</span>
                         <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-[var(--livora-surface)] text-[var(--livora-ink)] transition group-hover:bg-[var(--livora-ink)] group-hover:text-white" aria-hidden="true">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" class="h-5 w-5" width="20" height="20"><circle cx="12" cy="12" r="9"/><path d="M12 11v5m0-8h.01"/></svg>
                         </span>
@@ -208,7 +208,7 @@
             {{-- Buying guide --}}
             <div class="mt-7 rounded-3xl bg-[var(--livora-ink)] p-5 text-white">
                 <p class="text-[10px] font-semibold uppercase tracking-[0.18em] text-white/60">
-                    راهنمای خرید فرزین
+                    راهنمای خرید {{ $brandName }}
                 </p>
                 <h2 class="mt-3 text-base font-bold leading-8 text-white">
                     هود و سینک مناسب آشپزخانه‌ات را آگاهانه انتخاب کن.
