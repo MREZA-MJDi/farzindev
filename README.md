@@ -15,7 +15,7 @@ cd farzindev
 composer install
 ```
 
-Copy `.env.example` to `.env` (Windows CMD: `copy .env.example .env`), configure the database, and set a strong local `ADMIN_PASSWORD`. Never commit the real `.env` file or production credentials.
+Copy `.env.example` to `.env` (Windows CMD: `copy .env.example .env`), configure the database, and set `ADMIN_EMAIL` plus a strong local `ADMIN_PASSWORD` (at least 12 characters). Never commit the real `.env` file or production credentials.
 
 ```bash
 php artisan key:generate
