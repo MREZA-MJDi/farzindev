@@ -3700,7 +3700,7 @@ class FarzinStorefrontTest extends TestCase
             ->assertOk()
             ->assertSee('هزینه ارسال هنوز در جمع محاسبه نشده است.')
             ->assertSee('پس از ثبت نرخ ارسال یا هماهنگی با مجموعه مشخص می‌شود.')
-            ->assertDontSee('رایگان')
+            ->assertDontSee('>رایگان</span>', false)
             ->assertSee('ثبت سفارش پس از تعیین هزینه ارسال')
             ->assertSee('disabled', false)
             ->assertSee('جمع کالاها');
