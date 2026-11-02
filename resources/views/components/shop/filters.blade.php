@@ -287,13 +287,24 @@
             </p>
 
             <h3 class="mt-2 text-sm font-semibold">
-                محصولات ویژه
+                وضعیت موجودی و محصولات ویژه
             </h3>
 
         </div>
 
 
         <div class="mt-5 space-y-2">
+            <label class="flex cursor-pointer items-center gap-3 rounded-2xl bg-[var(--livora-surface)] px-4 py-3">
+                <input
+                    type="checkbox"
+                    name="in_stock"
+                    value="1"
+                    @checked(request()->boolean('in_stock'))
+                    @if(!$mobile) @change="$el.form.submit()" @endif
+                    class="h-4 w-4 rounded border-[var(--livora-border)] text-[var(--livora-text)] focus:ring-[var(--livora-ink)]"
+                >
+                <span class="text-xs">فقط محصولات موجود</span>
+            </label>
 
             {{-- FEATURED --}}
 
