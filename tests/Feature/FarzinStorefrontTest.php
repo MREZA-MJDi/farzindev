@@ -1572,24 +1572,55 @@ class FarzinStorefrontTest extends TestCase
             ->assertSee('admin-products-table', false);
     }
 
-    public function test_public_contact_form_persists_a_new_unread_message(): void
+    public function test_public_contact_form_persists_product_guidance_and_private_photo_attachment(): void
     {
+        Storage::fake('local');
+
+        $photo = UploadedFile::fake()->image('kitchen-installation.jpg', 1200, 800);
+
         $this->post(route('contact.store'), [
             'name' => 'مشتری فرزین',
             'phone' => '09123456789',
             'email' => 'buyer@farzin.test',
             'subject' => 'product',
+            'product_model' => 'هود مخفی H105',
+            'width_cm' => '70',
+            'callback_requested' => '1',
+            'photo' => $photo,
             'message' => 'برای انتخاب هود مناسب آشپزخانه راهنمایی می‌خواهم.',
         ])->assertRedirect(route('contact'))
             ->assertSessionHas('success');
 
+        $message = ContactMessage::query()
+            ->where('name', 'مشتری فرزین')
+            ->firstOrFail();
+
+        $this->assertSame('هود مخفی H105', $message->product_model);
+        $this->assertSame(70, $message->width_cm);
+        $this->assertTrue($message->callback_requested);
+        $this->assertNotEmpty($message->attachment_path);
+        Storage::disk('local')->assertExists($message->attachment_path);
+        Storage::disk('public')->assertMissing($message->attachment_path);
+
         $this->assertDatabaseHas('contact_messages', [
+            'id' => $message->id,
             'name' => 'مشتری فرزین',
             'email' => 'buyer@farzin.test',
             'subject' => 'product',
             'status' => 'unread',
             'user_id' => null,
+            'product_model' => 'هود مخفی H105',
+            'width_cm' => 70,
+            'callback_requested' => true,
         ]);
+
+        // The uploaded photo is available only to an authenticated administrator.
+        $this->get(route('admin.contact-messages.attachment', $message))
+            ->assertRedirect(route('admin.login'));
+
+        $this->actingAs($this->admin())
+            ->get(route('admin.contact-messages.attachment', $message))
+            ->assertOk();
     }
 
     public function test_admin_can_create_a_product_with_an_uploaded_image_visible_on_the_storefront(): void
