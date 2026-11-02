@@ -4276,6 +4276,14 @@ class FarzinStorefrontTest extends TestCase
             ->where('sku', 'FAR-HOME-SELECTED-01')
             ->firstOrFail();
 
+        ProductImage::create([
+            'product_id' => $selected->id,
+            'path' => 'https://cdn.example.test/homepage-selected-product.webp',
+            'alt' => $selected->name,
+            'sort_order' => 0,
+            'is_primary' => true,
+        ]);
+
         $hiddenResponse = $this->actingAs($admin, 'admin')
             ->post(route('admin.products.store'), [
                 'category_id' => $category->id,
@@ -4299,6 +4307,14 @@ class FarzinStorefrontTest extends TestCase
         $shopOnly = Product::query()
             ->where('sku', 'FAR-SHOP-ONLY-01')
             ->firstOrFail();
+
+        ProductImage::create([
+            'product_id' => $shopOnly->id,
+            'path' => 'https://cdn.example.test/shop-only-product.webp',
+            'alt' => $shopOnly->name,
+            'sort_order' => 0,
+            'is_primary' => true,
+        ]);
 
         $this->get(route('home'))
             ->assertOk()
