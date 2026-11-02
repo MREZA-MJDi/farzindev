@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Models\User;
+use App\Support\AdminEnvironment;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Hash;
 use Throwable;
