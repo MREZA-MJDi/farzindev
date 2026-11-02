@@ -4,13 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="robots" content="noindex,nofollow">
-    <title>ورود مدیریت | فرزین</title>
+    <title>ورود مدیریت | {{ $storefrontBrandName }}</title>
     @vite(['resources/css/admin.css', 'resources/js/app.js'])
 </head>
 <body class="min-h-screen bg-[var(--admin-bg,#f4f5f3)] text-[var(--admin-text,#18211f)] antialiased">
     <main class="mx-auto flex min-h-screen w-full max-w-md items-center px-5 py-10">
         <section class="w-full rounded-3xl border border-[var(--admin-border,#e2e7e4)] bg-white p-7 shadow-xl sm:p-9">
-            <a href="{{ route('home') }}" class="mb-8 inline-flex items-center gap-2 text-lg font-black" aria-label="بازگشت به فروشگاه">فرزین</a>
+            <a href="{{ route('home') }}" class="mb-8 inline-flex items-center gap-2 text-lg font-black" aria-label="بازگشت به فروشگاه">{{ $storefrontBrandName }}</a>
             <p class="mb-2 text-sm font-semibold text-[var(--admin-accent,#147b69)]">دسترسی امن</p>
             <h1 class="text-2xl font-black">ورود به مدیریت</h1>
             <p class="mt-3 text-sm leading-7 text-slate-600">این بخش فقط برای کاربران مجاز مدیریت است.</p>
