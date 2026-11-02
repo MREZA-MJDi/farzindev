@@ -36,7 +36,7 @@
     $hasShippingInfo = $hasShippingFlatRate || $hasFreeShippingThreshold;
 
     $productTabs = [];
-    if ($safeDescription || $safeShortDescription) {
+    if ($safeDescription) {
         $productTabs[] = 'description';
     }
     if ($installmentPlan) {
@@ -272,7 +272,7 @@
 
                         @if($tab === 'description')
                             @php
-                                $descriptionText = $safeDescription ?: $safeShortDescription;
+                                $descriptionText = $safeDescription;
                                 $descriptionPreview = \Illuminate\Support\Str::limit($descriptionText, 420);
                                 $hasMoreDescription = mb_strlen($descriptionText) > 420;
                             @endphp
