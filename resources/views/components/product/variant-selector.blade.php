@@ -115,8 +115,9 @@
                     data-label="{{ $optionLabel }}"
                     data-variant-type="{{ $name }}"
                     data-stock="{{ $optionStock ?? 0 }}"
+                    data-price-adjustment="{{ (float) ($option->price_adjustment ?? 0) }}"
                     x-model="selected"
-                    @change="window.dispatchEvent(new CustomEvent('product-variant-selected', { detail: { id: {{ $optionId }}, type: @js($name), label: @js($optionLabel), stock: {{ $optionStock ?? 0 }} } }))"
+                    @change="window.dispatchEvent(new CustomEvent('product-variant-selected', { detail: { id: {{ $optionId }}, type: @js($name), label: @js($optionLabel), stock: {{ $optionStock ?? 0 }}, priceAdjustment: {{ (float) ($option->price_adjustment ?? 0) }} } }))"
                     class="sr-only"
                     @disabled($isUnavailable)
                     @if($isUnavailable)
