@@ -11,9 +11,10 @@ class CategoryController extends Controller
     {
         $categories = Category::query()
             ->active()
+            ->whereHas('products', fn ($query) => $query->active()->publicCatalogue())
             ->with('hoverMedia')
             ->withCount([
-                'products' => fn ($query) => $query->active(),
+                'products' => fn ($query) => $query->active()->publicCatalogue(),
             ])
             ->orderBy('sort_order')
             ->orderBy('id')
@@ -32,6 +33,7 @@ class CategoryController extends Controller
         $products = $category
             ->products()
             ->active()
+            ->publicCatalogue()
             ->with([
                 'category',
                 // Product cards only render the first image; avoid loading full galleries for 12 rows.
@@ -41,6 +43,7 @@ class CategoryController extends Controller
                 'images.media:id,path',
                 'variants:id,product_id,stock',
             ])
+            ->orderByAvailability()
             ->latest()
             ->paginate(12)
             ->withQueryString();
