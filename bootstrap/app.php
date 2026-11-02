@@ -154,7 +154,7 @@ return Application::configure(
             }
 
             return redirect()
-                ->route('login')
+                ->route('admin.login')
                 ->with('warning', 'نشست مدیریت منقضی شده است؛ برای ادامه دوباره وارد شوید.');
         });
 
