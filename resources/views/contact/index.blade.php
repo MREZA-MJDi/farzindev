@@ -162,7 +162,7 @@
                         <section class="fz-contact-panel fz-contact-channels" data-fz-reveal>
                             <div class="fz-contact-panel__header">
                                 <div>
-                                    <p class="fz-contact-kicker"></p>
+                                    
                                     <h2>راه‌های ارتباطی</h2>
                                     <p>مسیر مناسب خودتان را انتخاب کنید.</p>
                                 </div>
