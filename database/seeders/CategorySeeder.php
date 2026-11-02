@@ -11,7 +11,11 @@ class CategorySeeder extends Seeder
     {
         // Hide only the known demo categories from the old furniture catalogue.
         Category::query()
-            ->whereIn('slug', ['furniture', 'chairs', 'tables', 'decor', 'accessories'])
+            ->where(function ($query): void {
+                $query
+                    ->whereIn('slug', ['furniture', 'chairs', 'tables', 'decor', 'accessories'])
+                    ->orWhere('name', 'like', '%میز%');
+            })
             ->update(['is_active' => false]);
 
         $categories = [
