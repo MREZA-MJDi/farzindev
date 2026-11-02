@@ -15,13 +15,16 @@ class ProductSeeder extends Seeder
      * These are placeholders for staff to complete with verified details and
      * real product photography in the admin dashboard.
      *
-     * Local/staging: activate new records so storefront flows can be tested.
-     * Production: create new records as drafts with zero stock for review.
+     * Local only: activate demo records so storefront flows can be tested.
      * Existing products, staff edits, customer products and order history are
      * preserved when this seeder is rerun.
      */
     public function run(): void
     {
+        if (! app()->environment('local')) {
+            return;
+        }
+
         Product::query()
             ->where('sku', 'like', 'LIV-%')
             ->update([
@@ -29,10 +32,6 @@ class ProductSeeder extends Seeder
                 'is_featured' => false,
                 'is_new' => false,
             ]);
-
-        if (app()->environment('testing')) {
-            return;
-        }
 
         $hoods = Category::query()->where('slug', 'hoods')->first();
         $sinks = Category::query()->where('slug', 'sinks')->first();
@@ -53,7 +52,7 @@ class ProductSeeder extends Seeder
             $image->delete();
         }
 
-        $publishPreview = app()->environment(['local', 'staging']);
+        $publishPreview = true;
 
         $hoodModels = [
             ['هود مورب شیشه‌ای', 90, 14900000],
