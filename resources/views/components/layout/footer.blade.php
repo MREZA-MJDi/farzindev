@@ -21,9 +21,9 @@
                     @if(filled(data_get($contact, 'instagram_url')))<a href="{{ data_get($contact, 'instagram_url') }}" target="_blank" rel="noopener noreferrer" aria-label="اینستاگرام {{ $footerBrandName }}">اینستاگرام</a>@endif
                     @if(filled(data_get($contact, 'telegram_url')))<a href="{{ data_get($contact, 'telegram_url') }}" target="_blank" rel="noopener noreferrer" aria-label="تلگرام {{ $footerBrandName }}">تلگرام</a>@endif
                     @if($footerWhatsapp !== '')<a href="https://wa.me/{{ $footerWhatsapp }}" target="_blank" rel="noopener noreferrer" aria-label="واتساپ {{ $footerBrandName }}">واتساپ</a>@endif
+                    @if(filled(data_get($settings, 'eitaa_url')))<a href="{{ data_get($settings, 'eitaa_url') }}" target="_blank" rel="noopener noreferrer" aria-label="ایتا {{ $footerBrandName }}">ایتا</a>@endif
+                    @if(filled(data_get($settings, 'bale_url')))<a href="{{ data_get($settings, 'bale_url') }}" target="_blank" rel="noopener noreferrer" aria-label="بله {{ $footerBrandName }}">بله</a>@endif
                 </div>
-                @if(filled(data_get($settings, 'eitaa_url')))<a href="{{ data_get($settings, 'eitaa_url') }}" target="_blank" rel="noopener noreferrer">ایتا</a>@endif
-                @if(filled(data_get($settings, 'bale_url')))<a href="{{ data_get($settings, 'bale_url') }}" target="_blank" rel="noopener noreferrer">بله</a>@endif
             </div>
             <nav class="fz-store-footer__column farzin-footer-editorial__nav" aria-label="پیوندهای اصلی">
                 <h2>فروشگاه</h2><a href="{{ route('home') }}">خانه</a><a href="{{ route('shop.index') }}">همه محصولات</a><a href="{{ route('categories.index') }}">دسته‌بندی‌ها</a><a href="{{ route('blog.index') }}">راهنمای خرید و مجله</a><a href="{{ route('about') }}">درباره {{ $footerBrandName }}</a><a href="{{ route('contact') }}">تماس با ما</a>
@@ -43,7 +43,7 @@
                 @if($footerEmail !== '')<a href="mailto:{{ $footerEmail }}">{{ $footerEmail }}</a>@endif
                 @if($footerAddress !== '')<p>{{ $footerAddress }}</p>@endif
                 @if($footerHours !== '')<p class="fz-store-footer__hours">ساعات پاسخ‌گویی: {{ $footerHours }}</p>@endif
-                @if($footerPhone === '' && $footerEmail === '' && $footerAddress === '' && $footerWhatsapp === '')<p>برای ارسال پرسش، از فرم تماس با فرزین استفاده کنید.</p>@endif
+                @if($footerPhone === '' && $footerEmail === '' && $footerAddress === '' && $footerWhatsapp === '')<p>برای ارسال پرسش، از فرم تماس با {{ $footerBrandName }} استفاده کنید.</p>@endif
                 <a class="fz-store-footer__contact-link" href="{{ route('contact') }}">رفتن به صفحه تماس <span aria-hidden="true">←</span></a>
             </div>
         </div>
