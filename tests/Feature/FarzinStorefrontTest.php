@@ -2853,6 +2853,10 @@ class FarzinStorefrontTest extends TestCase
             ->assertRedirect(route('admin.products.edit', $product))
             ->assertSessionHas('success');
 
+        $this->get('/product/original-hood')
+            ->assertRedirect('/product/updated-farzin-hood')
+            ->assertStatus(301);
+
         $product->refresh();
 
         $this->assertSame('Updated Farzin Hood', $product->name);
@@ -2870,6 +2874,19 @@ class FarzinStorefrontTest extends TestCase
 
         $this->assertSoftDeleted('products', ['id' => $product->id]);
         $this->get(route('product.show', $product->slug))->assertNotFound();
+    }
+
+    public function test_new_product_editor_defaults_to_publication_not_draft(): void
+    {
+        $admin = $this->admin();
+
+        $response = $this->actingAs($admin, 'admin')
+            ->get(route('admin.products.create'))
+            ->assertOk();
+
+        $html = $response->getContent();
+        $this->assertMatchesRegularExpression('/<option[^>]*value="active"[^>]*selected/', $html);
+        $this->assertDoesNotMatchRegularExpression('/<option[^>]*value="draft"[^>]*selected/', $html);
     }
 
     public function test_admin_can_update_and_delete_an_empty_category(): void
@@ -2897,6 +2914,10 @@ class FarzinStorefrontTest extends TestCase
             'slug' => 'built-in-hoods',
             'sort_order' => 2,
         ]);
+
+        $this->get('/categories/temporary-category')
+            ->assertRedirect('/categories/built-in-hoods')
+            ->assertStatus(301);
 
         $this->delete(route('admin.categories.destroy', $category->refresh()))
             ->assertRedirect(route('admin.categories.index'))
