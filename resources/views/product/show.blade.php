@@ -355,7 +355,7 @@
                 </div>
                 <div class="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
                     @foreach($relatedProducts as $relatedProduct)
-                        <x-product.card :product="$relatedProduct" />
+                        <x-product.card :product="$relatedProduct" :show-availability="false" />
                     @endforeach
                 </div>
             </section>
