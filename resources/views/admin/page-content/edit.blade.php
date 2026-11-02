@@ -66,9 +66,9 @@
                         $heroImageValue = trim((string) ($values['page_home_hero_image_url'] ?? ''));
                         $heroImagePreview = '';
                         if ($heroImageValue !== '') {
-                            $heroImagePreview = \\Illuminate\\Support\\Str::startsWith($heroImageValue, ['http://', 'https://', '//'])
+                            $heroImagePreview = \Illuminate\\Support\\Str::startsWith($heroImageValue, ['http://', 'https://', '//'])
                                 ? $heroImageValue
-                                : \\Illuminate\\Support\\Facades\\Storage::disk('public')->url(
+                                : \Illuminate\\Support\\Facades\\Storage::disk('public')->url(
                                     preg_replace('#^(public/|storage/)#', '', ltrim($heroImageValue, '/')) ?? $heroImageValue
                                 );
                         }
