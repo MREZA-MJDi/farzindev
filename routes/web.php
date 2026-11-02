@@ -601,6 +601,11 @@ Route::middleware(['auth', 'admin'])
             [ContactMessageController::class, 'show']
         )->name('contact-messages.show');
 
+        Route::get(
+            '/contact-messages/{contactMessage}/attachment',
+            [ContactMessageController::class, 'attachment']
+        )->name('contact-messages.attachment');
+
         Route::patch(
             '/contact-messages/{contactMessage}/read',
             [ContactMessageController::class, 'markAsRead']
