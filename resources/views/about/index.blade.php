@@ -63,7 +63,7 @@
                         <div class="max-w-4xl">
 
                             <p class="text-[10px] font-medium uppercase tracking-[0.24em] text-[var(--livora-accent)]">
-                                ABOUT FARZIN
+                                درباره فرزین
                             </p>
 
                             <h1 class="mt-5 text-5xl font-semibold leading-[1.02] tracking-tight sm:text-6xl lg:text-7xl">
@@ -112,7 +112,7 @@
                     <div>
 
                         <p class="text-[10px] font-medium uppercase tracking-[0.22em] text-[var(--livora-accent)]">
-                            THE MAKER AND THE WORK
+                            مجموعه و مسیر تولید
                         </p>
 
                         <h2 class="mt-4 text-3xl font-semibold tracking-tight sm:text-4xl">
@@ -151,7 +151,7 @@
             <x-layout.container>
                 <div class="relative grid gap-10 py-16 sm:py-20 lg:grid-cols-[0.85fr_1.15fr] lg:items-end lg:py-24">
                     <div>
-                        <p class="text-[10px] font-semibold uppercase tracking-[0.24em] text-[#b7c9cb]">FACTORY & PROCESS</p>
+                        <p class="text-[10px] font-semibold uppercase tracking-[0.24em] text-[#b7c9cb]">کارگاه و فرایند تولید</p>
                         <h2 class="mt-5 text-3xl font-semibold leading-tight sm:text-4xl lg:text-5xl">
                             پشت محصول را هم بشناسید.
                         </h2>
@@ -186,7 +186,7 @@
                     <div class="max-w-2xl">
 
                         <p class="text-[10px] font-medium uppercase tracking-[0.22em] text-[var(--livora-accent)]">
-OUR FOCUS
+رویکرد فرزین
                         </p>
 
                         <h2 class="mt-4 text-3xl font-semibold tracking-tight sm:text-4xl">
