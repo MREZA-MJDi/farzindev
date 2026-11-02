@@ -227,7 +227,7 @@
             static function (): array {
                 $contact = \App\Models\ContactSetting::query()
                     ->where('is_active', true)
-                    ->first(['phone', 'email', 'whatsapp', 'instagram_url', 'telegram_url', 'address', 'hours']);
+                    ->first(['phone', 'email', 'whatsapp', 'instagram_url', 'telegram_url', 'eitaa_url', 'address', 'hours', 'warranty_summary', 'shipping_summary', 'installation_summary']);
 
                 return [
                     'phone' => $contact?->phone,
@@ -235,8 +235,12 @@
                     'whatsapp' => $contact?->whatsapp,
                     'instagram_url' => $contact?->instagram_url,
                     'telegram_url' => $contact?->telegram_url,
+                    'eitaa_url' => $contact?->eitaa_url,
                     'address' => $contact?->address,
                     'hours' => $contact?->hours,
+                    'warranty_summary' => $contact?->warranty_summary,
+                    'shipping_summary' => $contact?->shipping_summary,
+                    'installation_summary' => $contact?->installation_summary,
                 ];
             }
         );
@@ -266,6 +270,8 @@
     </main>
 
     <x-layout.footer :contact="$storefrontContact" />
+
+    <x-layout.floating-contact :contact="$storefrontContact" />
 
     <x-layout.mobile-bottom-bar :cart-count="$storefrontCartCount" />
 
