@@ -54,9 +54,8 @@
                 @if(filled(data_get($settings, 'installation_text')))<div><p><strong>نصب و خدمات</strong><small>{{ data_get($settings, 'installation_text') }}</small></p></div>@endif
                 @if(filled(data_get($settings, 'returns_text')))<div><p><strong>مرجوعی</strong><small>{{ data_get($settings, 'returns_text') }}</small></p></div>@endif
             </div>
-        @endif            <div><span aria-hidden="true">02</span><p><strong>سبد خرید شخصی</strong><small>سبد مهمان پس از ورود به حساب منتقل می‌شود</small></p></div>
-            <div><span aria-hidden="true">03</span><p><strong>سوابق سفارش</strong><small>دسترسی به سفارش‌ها در حساب کاربری</small></p></div>
-        </div>
+        @endif
+
         <div class="fz-store-footer__bottom"><span>© {{ \App\Helpers\JalaliHelper::format(now(), 'Y') }} {{ $footerBrandName }} · تمامی حقوق محفوظ است.</span><span>طراحی‌شده برای انتخاب بهتر تجهیزات آشپزخانه</span></div>
     </x-layout.container>
 </footer>
