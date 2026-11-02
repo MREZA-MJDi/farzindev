@@ -131,8 +131,83 @@
         <section class="fz-contact-workspace" aria-label="راه‌های ارتباط و فرم تماس">
             <x-layout.container>
                 <div class="fz-contact-grid">
-                    {{-- Right column in RTL: location and map --}}
+                    {{-- The map remains the first grid column in RTL. Its content follows the existing contact-setting record. --}}
+                    <aside class="fz-contact-map-column" data-fz-reveal>
+                        <div class="fz-contact-panel fz-contact-map-panel">
+                            <div class="fz-contact-panel__header">
+                                <div>
+                                    <p class="fz-contact-kicker">موقعیت مجموعه</p>
+                                    <h2>موقعیت ما روی نقشه</h2>
+                                    <p>آدرس مجموعه را ببینید و مسیر رسیدن را باز کنید.</p>
+                                </div>
+                                <span class="fz-contact-panel__badge" aria-hidden="true">
+                                    <svg viewBox="0 0 24 24" fill="none"><path d="M19 10c0 5-7 11-7 11S5 15 5 10a7 7 0 1 1 14 0Z" stroke="currentColor" stroke-width="1.7"/><circle cx="12" cy="10" r="2.4" stroke="currentColor" stroke-width="1.7"/></svg>
+                                </span>
+                            </div>
 
+                            @if($mapAddress !== '' || $hasMapCoordinates)
+                                <div class="fz-contact-map-frame">
+                                    <iframe
+                                        title="نقشه موقعیت مجموعه فرزین"
+                                        src="https://www.google.com/maps?q={{ urlencode($mapQuery) }}&amp;z=15&amp;output=embed"
+                                        loading="lazy"
+                                        referrerpolicy="no-referrer-when-downgrade"
+                                        allowfullscreen
+                                    ></iframe>
+                                    <span class="fz-contact-map-frame__corner fz-contact-map-frame__corner--one" aria-hidden="true"></span>
+                                    <span class="fz-contact-map-frame__corner fz-contact-map-frame__corner--two" aria-hidden="true"></span>
+                                </div>
+
+                                <div class="fz-contact-address">
+                                    <span class="fz-contact-address__icon" aria-hidden="true">
+                                        <svg viewBox="0 0 24 24" fill="none"><path d="M19 10c0 5-7 11-7 11S5 15 5 10a7 7 0 1 1 14 0Z" stroke="currentColor" stroke-width="1.7"/><circle cx="12" cy="10" r="2.4" stroke="currentColor" stroke-width="1.7"/></svg>
+                                    </span>
+                                    <div>
+                                        @if($mapAddress !== '')
+                                            <span>آدرس ثبت‌شده</span>
+                                            <p>{{ $mapAddress }}</p>
+                                        @else
+                                            <span>مختصات ثبت‌شده</span>
+                                            <p dir="ltr">{{ $mapLatitude }}, {{ $mapLongitude }}</p>
+                                        @endif
+                                    </div>
+                                </div>
+
+                                @if($hasMapCoordinates)
+                                    <p class="fz-contact-coordinates">مختصات ثبت‌شده: <span dir="ltr">{{ $mapLatitude }}, {{ $mapLongitude }}</span></p>
+                                @endif
+
+                                <a
+                                    href="https://www.google.com/maps/dir/?api=1&amp;destination={{ urlencode($mapQuery) }}"
+                                    class="fz-contact-directions"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                >مسیریابی در Google Maps <span aria-hidden="true">↗</span></a>
+                            @else
+                                <div class="fz-contact-map-empty" role="status">
+                                    <div class="fz-contact-map-empty__rings" aria-hidden="true"><span></span><i></i></div>
+                                    <strong>هنوز موقعیتی ثبت نشده</strong>
+                                    <p>پس از ثبت آدرس یا مختصات مجموعه در تنظیمات فروشگاه پنل مدیریت، نقشه در همین بخش نمایش داده می‌شود.</p>
+                                </div>
+                                <div class="fz-contact-address fz-contact-address--pending">
+                                    <span class="fz-contact-address__icon" aria-hidden="true">⌖</span>
+                                    <div><span>موقعیت مجموعه</span><p>آدرس یا مختصات از تنظیمات واقعی فروشگاه خوانده می‌شود.</p></div>
+                                </div>
+                            @endif
+
+                            @if(filled($contactSetting?->hours))
+                                <div class="fz-contact-hours">
+                                    <span class="fz-contact-hours__icon" aria-hidden="true">◷</span>
+                                    <div><span>ساعات پاسخ‌گویی</span><p>{{ $contactSetting->hours }}</p></div>
+                                </div>
+                            @endif
+                        </div>
+
+                        <div class="fz-contact-map-note">
+                            <span class="fz-contact-map-note__pulse" aria-hidden="true"></span>
+                            <p>پیش از مراجعه حضوری، برای هماهنگی با تیم فرزین تماس بگیرید.</p>
+                        </div>
+                    </aside>
 
                     {{-- Left column in RTL: direct contact, social channels and message form --}}
                     <div class="fz-contact-left-column">
@@ -278,29 +353,6 @@
                             </form>
                         </section>
                     </div>
-                    @if($mapAddress !== '' || $hasMapCoordinates || filled($contactSetting?->hours))
-                        <aside class="fz-contact-map-column" data-fz-reveal>
-                            <div class="fz-contact-panel fz-contact-map-panel">
-                                @if($mapAddress !== '' || $hasMapCoordinates)
-                                    <div class="fz-contact-panel__header">
-                                        <div>
-                                            <h2>نشانی مجموعه</h2>
-                                            @if($mapAddress !== '')<p>{{ $mapAddress }}</p>@endif
-                                        </div>
-                                    </div>
-                                    @if($hasMapCoordinates)
-                                        <p class="fz-contact-coordinates">مختصات ثبت‌شده: {{ $contactSetting->latitude }}, {{ $contactSetting->longitude }}</p>
-                                    @endif
-                                @endif
-                                @if(filled($contactSetting?->hours))
-                                    <div class="fz-contact-hours">
-                                        <span class="fz-contact-hours__icon" aria-hidden="true">◷</span>
-                                        <div><span>ساعات پاسخ‌گویی</span><p>{{ $contactSetting->hours }}</p></div>
-                                    </div>
-                                @endif
-                            </div>
-                        </aside>
-                    @endif
                 </div>
             </x-layout.container>
         </section>
