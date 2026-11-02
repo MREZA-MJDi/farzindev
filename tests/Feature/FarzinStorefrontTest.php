@@ -3665,7 +3665,7 @@ class FarzinStorefrontTest extends TestCase
 
         $this->get(route('contact'))
             ->assertOk()
-            ->assertSee('نقشه موقعیت مجموعه فرزین')
+            ->assertSee('نشانی مجموعه')
             ->assertSee('fz-contact-map-column', false)
             ->assertSee('fz-contact-left-column', false)
             ->assertSee('name="message"', false)
@@ -3693,12 +3693,12 @@ class FarzinStorefrontTest extends TestCase
         $this->assertEqualsWithDelta(35.6892, (float) $contact->latitude, 0.0000001);
         $this->assertEqualsWithDelta(51.3890, (float) $contact->longitude, 0.0000001);
 
-        $coordinateQuery = urlencode((string) $contact->latitude.','.(string) $contact->longitude);
-
         $this->get(route('contact'))
             ->assertOk()
-            ->assertSee("https://www.google.com/maps?q={$coordinateQuery}&amp;z=15&amp;output=embed", false)
-            ->assertSee("https://www.google.com/maps/dir/?api=1&amp;destination={$coordinateQuery}", false)
+            ->assertSee('مختصات ثبت‌شده')
+            ->assertSee('35.6892')
+            ->assertSee('51.389')
+            ->assertDontSee('google.com/maps')
             ->assertSee('آدرس تستی که نباید جای مختصات استفاده شود');
     }
 
