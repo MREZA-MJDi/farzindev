@@ -490,16 +490,19 @@
 
                                 </div>
 
-                                <div class="mt-3 flex items-center justify-between text-xs">
-
-                                <span class="text-[var(--livora-stone)]">
-                                    ارسال
-                                </span>
-
-                                    <span class="font-semibold">
-                                    رایگان
-                                </span>
-
+                                <div class="mt-3 flex items-start justify-between gap-4 text-xs">
+                                    <span class="text-[var(--livora-stone)]">هزینه ارسال</span>
+                                    @if($shippingCostPreview === null)
+                                        <span class="max-w-[65%] text-left text-[11px] font-semibold leading-6 text-amber-700">
+                                            پس از ثبت نرخ ارسال یا هماهنگی با مجموعه مشخص می‌شود.
+                                        </span>
+                                    @elseif($shippingCostPreview === 0)
+                                        <span class="font-semibold text-emerald-700">رایگان</span>
+                                    @else
+                                        <span class="font-semibold">
+                                            {{ \App\Helpers\PersianNumberHelper::format($shippingCostPreview) }} تومان
+                                        </span>
+                                    @endif
                                 </div>
 
 
@@ -510,11 +513,11 @@
                                         <div>
 
                                             <p class="text-sm font-semibold">
-                                                مبلغ نهایی
+                                                {{ $shippingCostPreview === null ? 'جمع کالاها' : 'مبلغ سفارش با ارسال' }}
                                             </p>
 
-                                            <p class="mt-1 text-[10px] text-[var(--livora-stone)]">
-                                                قبل از انتخاب روش پرداخت
+                                            <p class="mt-1 text-[10px] leading-5 text-[var(--livora-stone)]">
+                                                {{ $shippingCostPreview === null ? 'هزینه ارسال هنوز در جمع محاسبه نشده است.' : 'بر اساس نرخ ثبت‌شده در تنظیمات فروشگاه' }}
                                             </p>
 
                                         </div>
@@ -522,7 +525,7 @@
                                         <div class="text-left">
 
                                             <p class="text-2xl font-bold tracking-tight">
-                                                {{ \App\Helpers\PersianNumberHelper::format($cart->subtotal()) }}
+                                                {{ \App\Helpers\PersianNumberHelper::format($checkoutTotalPreview) }}
                                             </p>
 
                                             <p class="mt-1 text-[10px] text-[var(--livora-stone)]">
@@ -550,13 +553,22 @@
                                     </a>
                                 @endif
                             @else
+                                @if($shippingCostPreview === null)
+                                    <div class="mt-6 rounded-2xl border border-amber-200 bg-amber-50 p-4 text-xs leading-7 text-amber-900" role="status">
+                                        تا وقتی هزینه ارسال در تنظیمات فروشگاه ثبت نشود یا با شما هماهنگ نشود، امکان نهایی‌کردن سفارش وجود ندارد. مبلغ ارسال را رایگان فرض نکرده‌ایم.
+                                    </div>
+                                    <button type="submit" disabled class="mt-4 flex w-full cursor-not-allowed items-center justify-center rounded-2xl bg-[var(--livora-surface)] px-6 py-4 text-sm font-semibold text-[var(--livora-stone)] opacity-70">
+                                        ثبت سفارش پس از تعیین هزینه ارسال
+                                    </button>
+                                @else
                                 <button
                                     type="submit"
                                     class="mt-6 flex w-full items-center justify-center gap-3 rounded-2xl bg-[var(--livora-ink)] px-6 py-4 text-sm font-medium text-white transition hover:bg-[var(--livora-accent)]"
                                 >
-                                    <span>ثبت سفارش و ادامه پرداخت</span>
+                                    <span>ثبت سفارش و مشاهده مرحله بعد</span>
                                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4 shrink-0" aria-hidden="true"><rect x="2.5" y="5" width="19" height="14" rx="2.3" /><path d="M2.5 10h19m-15 5h4" /></svg>
                                 </button>
+                                @endif
                             @endif
 
 
@@ -567,8 +579,7 @@
                             </span>
 
                                 <p class="text-[10px] leading-6 text-[var(--livora-stone)]">
-                                    پس از ثبت سفارش، به صفحه انتخاب روش پرداخت
-                                    منتقل می‌شوید.
+                                    پس از ثبت سفارش، خلاصه سفارش و وضعیت روش‌های پرداخت فعال نمایش داده می‌شود.
                                 </p>
 
                             </div>
