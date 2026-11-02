@@ -39,17 +39,31 @@
     <div class="fz-container fz-home-hero__layout">
         <div class="fz-home-hero__copy">
             <p class="fz-home-hero__eyebrow"><span class="fz-home-hero__eyebrow-mark" aria-hidden="true"></span> تجهیزات آشپزخانه فرزین</p>
-            <h1 id="fz-home-hero-title"><span>برای آشپزخانه‌ای</span><strong>هماهنگ با نیاز شما</strong></h1>
-            <p class="fz-home-hero__lead">هود و سینک را با تصویر، قیمت و مشخصات واقعی مقایسه کنید؛ انتخاب را از مدل مناسب فضای خودتان شروع کنید.</p>
+            <h1 id="fz-home-hero-title"><span>تولید تخصصی</span><strong>هود و سینک آشپزخانه</strong></h1>
+            <p class="fz-home-hero__lead">مدل‌های هود و سینک فرزین را بررسی کنید؛ ابعاد، مشخصات و قیمت هر محصول را با فضای آشپزخانه‌تان تطبیق دهید.</p>
             <div class="fz-home-hero__actions">
-                <a class="fz-home-hero__button fz-home-hero__button--primary" href="{{ route('shop.index') }}">مشاهده محصولات</a>
-                <a class="fz-home-hero__button fz-home-hero__button--secondary" href="#product-categories">انتخاب دسته‌بندی</a>
+                <a class="fz-home-hero__button fz-home-hero__button--primary" href="{{ $hoodCategory ? route('categories.show', $hoodCategory) : route('shop.index') }}">مشاهده هودها</a>
+                <a class="fz-home-hero__button fz-home-hero__button--secondary" href="{{ route('contact') }}">درخواست راهنمایی</a>
             </div>
-            <div class="fz-home-hero__highlights" aria-label="امکانات کاتالوگ فرزین">
-                <span><b aria-hidden="true">✓</b> تصاویر واقعی محصولات</span>
-                <span><b aria-hidden="true">✓</b> قیمت و مشخصات هر مدل</span>
-                <span><b aria-hidden="true">✓</b> ثبت سفارش آنلاین</span>
-            </div>
+            @php
+                $homeServiceHighlights = collect([
+                    ['label' => 'گارانتی', 'value' => data_get($storefrontContact ?? [], 'warranty_summary')],
+                    ['label' => 'ارسال', 'value' => data_get($storefrontContact ?? [], 'shipping_summary')],
+                    ['label' => 'نصب', 'value' => data_get($storefrontContact ?? [], 'installation_summary')],
+                ])->filter(fn ($item) => filled($item['value']));
+                $homeInstallmentAvailable = $featuredProducts->contains(fn ($product) => (bool) $product->installment_enabled)
+                    || (bool) ($heroProduct?->installment_enabled);
+            @endphp
+            @if($homeServiceHighlights->isNotEmpty() || $homeInstallmentAvailable)
+                <div class="fz-home-hero__highlights" aria-label="خدمات ثبت‌شده فرزین">
+                    @foreach($homeServiceHighlights as $service)
+                        <span><b aria-hidden="true">✓</b> {{ $service['label'] }}: {{ $service['value'] }}</span>
+                    @endforeach
+                    @if($homeInstallmentAvailable)
+                        <span><b aria-hidden="true">✓</b> امکان خرید اقساطی برای محصولات منتخب</span>
+                    @endif
+                </div>
+            @endif
         </div>
         @if($heroProduct && $heroImage)
             <a class="fz-home-hero__showcase fz-home-hero__showcase--static" href="{{ route('product.show', $heroProduct->slug) }}" aria-label="مشاهده {{ $heroProduct->name }}">
@@ -76,7 +90,7 @@
         @endif
     </div>
     <div class="fz-container fz-home-hero__bottom">
-        <span>FARZIN / KITCHEN EQUIPMENT</span><span>هود آشپزخانه · سینک ظرف‌شویی</span><a href="#product-categories">شروع انتخاب</a>
+        <span>تولید هود و سینک آشپزخانه</span><span>هود آشپزخانه · سینک ظرف‌شویی</span><a href="#product-categories">شروع انتخاب</a>
     </div>
 </section>
 
@@ -255,15 +269,13 @@
             </div>
         </section>
 
-        @if($blogPosts->isNotEmpty())
+        @if($blogPosts->count() >= 3)
             @php
                 $homeFeaturedArticle = $blogPosts->first();
                 $homeJournalStories = $blogPosts->skip(1);
                 $homeFeaturedCategory = $homeFeaturedArticle->terms->firstWhere('type', 'category');
-                $homeFeaturedArticleImage = $homeFeaturedArticle->cover_image_url ?: $homeCtaImageUrl;
-                $homeFeaturedArticleImageAlt = $homeFeaturedArticle->cover_image_url
-                    ? ($homeFeaturedArticle->cover_image_alt ?: $homeFeaturedArticle->title)
-                    : 'تصویر محصولات فرزین';
+                $homeFeaturedArticleImage = $homeFeaturedArticle->cover_image_url;
+                $homeFeaturedArticleImageAlt = $homeFeaturedArticle->cover_image_alt ?: $homeFeaturedArticle->title;
             @endphp
 
             <section class="fz-home-journal" aria-labelledby="fz-home-journal-heading">
@@ -298,7 +310,7 @@
                                 @else
                                     <span class="fz-home-journal__image-fallback" aria-hidden="true">F.</span>
                                 @endif
-                                <span class="fz-home-journal__image-mark">FARZIN / JOURNAL</span>
+                                <span class="fz-home-journal__image-mark">مجله فرزین</span>
                             </a>
 
                             <div class="fz-home-journal__featured-copy">
@@ -309,7 +321,7 @@
                                         <span>مجله فرزین</span>
                                     @endif
                                     <span aria-hidden="true">·</span>
-                                    <time datetime="{{ $homeFeaturedArticle->published_at?->toAtomString() }}">{{ $homeFeaturedArticle->published_at?->format('Y/m/d') }}</time>
+                                    <time datetime="{{ $homeFeaturedArticle->published_at?->toAtomString() }}">{{ \App\Helpers\PersianNumberHelper::format(\App\Helpers\JalaliHelper::format($homeFeaturedArticle->published_at, 'Y/m/d')) }}</time>
                                     <span aria-hidden="true">·</span>
                                     <span>{{ \App\Helpers\PersianNumberHelper::format($homeFeaturedArticle->reading_time) }} دقیقه مطالعه</span>
                                 </div>
@@ -332,7 +344,7 @@
                         <aside class="fz-home-journal__aside" aria-label="مقاله‌های بیشتر مجله فرزین">
                             <div class="fz-home-journal__aside-heading">
                                 <span>بیشتر بخوانید</span>
-                                <span>F / JOURNAL</span>
+                                <span>مجله فرزین</span>
                             </div>
 
                             @forelse($homeJournalStories as $story)
