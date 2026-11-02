@@ -82,17 +82,19 @@
                             @endif
                         </div>
 
-                        <div class="fz-contact-hero__meta" aria-label="راه‌های ارتباط">
-                            <span><i aria-hidden="true"></i> مشاوره محصول</span>
+                        <div class="fz-contact-hero__meta" aria-label="موضوع‌های پشتیبانی">
+                            <span><i aria-hidden="true"></i> راهنمای انتخاب محصول</span>
                             <span><i aria-hidden="true"></i> پیگیری سفارش</span>
-                            <span><i aria-hidden="true"></i> ارتباط آنلاین</span>
+                            @if($hasSocialChannels)
+                                <span><i aria-hidden="true"></i> ارتباط آنلاین</span>
+                            @endif
                         </div>
                     </div>
 
                     <div class="fz-contact-art" data-fz-reveal aria-label="تصویرسازی ارتباط با فرزین">
                         <div class="fz-contact-art__orbit fz-contact-art__orbit--outer" aria-hidden="true"></div>
                         <div class="fz-contact-art__orbit fz-contact-art__orbit--inner" aria-hidden="true"></div>
-                        <div class="fz-contact-art__topline"><span>FZ</span><i aria-hidden="true"></i><span>CARE / 01</span></div>
+                        <div class="fz-contact-art__topline"><span>فرزین</span><i aria-hidden="true"></i><span>پشتیبانی</span></div>
                         <div class="fz-contact-art__device">
                             <div class="fz-contact-art__device-top"><span></span><span></span><span></span></div>
                             <svg viewBox="0 0 360 260" role="img" aria-label="نماد ارتباط با تیم فرزین">
@@ -127,10 +129,12 @@
                             <span class="fz-contact-art__floating-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4" aria-hidden="true"><path d="M20 11.5a7.5 7.5 0 0 1-7.5 7.5H6l-3 2v-9.5A7.5 7.5 0 0 1 10.5 4h2A7.5 7.5 0 0 1 20 11.5Z" /><path d="M8 11h8m-8 3h5" /></svg></span>
                             <span><b>گفت‌وگو با ما</b><small>پاسخ‌گویی به پرسش شما</small></span>
                         </div>
+                        @if($hasMap)
                         <div class="fz-contact-art__floating fz-contact-art__floating--pin">
                             <span class="fz-contact-art__pin-dot" aria-hidden="true"></span>
                             <span><b>موقعیت</b><small>نقشه و آدرس مجموعه</small></span>
                         </div>
+                        @endif
                     </div>
                 </div>
             </x-layout.container>
