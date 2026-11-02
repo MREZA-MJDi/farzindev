@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'admin_path' => trim((string) env('ADMIN_PATH', 'admin'), '/'),
+    'admin_path' => (trim((string) env('ADMIN_PATH', 'admin'), '/') ?: 'admin'),
 
     /*
     |--------------------------------------------------------------------------
