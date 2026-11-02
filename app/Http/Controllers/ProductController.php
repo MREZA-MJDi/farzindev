@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Product;
+use App\Models\ContactSetting;
 use Illuminate\Contracts\View\View;
 
 class ProductController extends Controller
@@ -37,11 +38,18 @@ class ProductController extends Controller
             ->where('category_id', $product->category_id)
             ->whereHas('category', fn ($categoryQuery) => $categoryQuery
                 ->where('is_active', true))
+            ->publicCatalogue()
+            ->orderByAvailability()
             ->latest()
             ->limit(4)
             ->get();
 
+        $publicContactSettings = ContactSetting::query()
+            ->where('is_active', true)
+            ->first(['warranty_summary', 'shipping_summary', 'installation_summary']);
+
         return view('product.show', [
+            'publicContactSettings' => $publicContactSettings,
             'product' => $product,
             'relatedProducts' => $relatedProducts,
         ]);
