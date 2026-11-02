@@ -104,6 +104,7 @@ class Category extends Model
     {
         return $this->hasOne(Product::class)
             ->where('status', 'active')
+            ->publicCatalogue()
             ->latestOfMany('updated_at');
     }
 
