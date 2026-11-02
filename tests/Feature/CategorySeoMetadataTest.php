@@ -63,7 +63,8 @@ class CategorySeoMetadataTest extends TestCase
 
         $this->get(route('home'))
             ->assertOk()
-            ->assertSee('دسته فعال بدون محصول');
+            ->assertSee('دسته فعال بدون محصول')
+            ->assertSee('href="/categories/active-empty-category"', false);
 
         $this->get(route('categories.index'))
             ->assertOk()
@@ -73,6 +74,22 @@ class CategorySeoMetadataTest extends TestCase
             ->assertOk()
             ->assertSee('دسته فعال بدون محصول')
             ->assertSee('محصولی در این دسته پیدا نشد');
+    }
+
+    public function test_homepage_category_card_uses_the_slug_route_parameter(): void
+    {
+        Category::create([
+            'name' => 'دسته لینک عمومی',
+            'slug' => 'public-category-link',
+            'description' => 'آزمون لینک صفحه دسته‌بندی',
+            'is_active' => true,
+            'sort_order' => 1,
+        ]);
+
+        $this->get(route('home'))
+            ->assertOk()
+            ->assertSee('href="/categories/public-category-link"', false)
+            ->assertDontSee('href="/categories/1"', false);
     }
 
     public function test_admin_can_create_persian_category_without_manual_slug_and_it_is_public(): void
