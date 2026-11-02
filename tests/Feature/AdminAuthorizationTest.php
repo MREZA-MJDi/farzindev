@@ -42,7 +42,7 @@ class AdminAuthorizationTest extends TestCase
             ->middleware('web');
 
         $this->get('/admin/__tests/session-expired')
-            ->assertRedirect(route('login'))
+            ->assertRedirect(route('admin.login'))
             ->assertSessionHas('warning');
     }
 
