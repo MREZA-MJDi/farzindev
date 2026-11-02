@@ -32,16 +32,22 @@ final class StorefrontContact
         ]);
         $digits = preg_replace('/\D/u', '', $ascii) ?? '';
 
+        if (strlen($digits) < 10 || strlen($digits) > 15 || count(array_unique(str_split($digits))) < 2) {
+            return null;
+        }
+
+        // Reject obvious placeholder numbers without excluding legitimate
+        // phone numbers merely because they use a small set of digits.
         if (
-            strlen($digits) < 8
-            || strlen($digits) > 15
-            || count(array_unique(str_split($digits))) < 4
+            preg_match('/^09(\\d)\\1{8}$/', $digits)
+            || preg_match('/^0\\d{2}(\\d)\\1{7}$/', $digits)
+            || preg_match('/^98(?:9(\\d)\\1{8}|\\d{2}(\\d)\\2{7})$/', $digits)
         ) {
             return null;
         }
 
         return [
-            'display' => $display,
+            'display' => \\App\\Helpers\\JalaliHelper::persianDigits($display),
             'href' => 'tel:+' . (str_starts_with($digits, '0') ? '98' . substr($digits, 1) : $digits),
         ];
     }
