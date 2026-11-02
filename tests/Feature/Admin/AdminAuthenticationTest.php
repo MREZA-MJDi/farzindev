@@ -17,6 +17,9 @@ class AdminAuthenticationTest extends TestCase
             'password' => 'password',
         ]);
 
+        $customer = User::factory()->create(['role' => 'customer']);
+        $this->actingAs($customer, 'web');
+
         $response = $this->post(route('admin.login.store'), [
             'email' => $admin->email,
             'password' => 'password',
@@ -46,6 +49,29 @@ class AdminAuthenticationTest extends TestCase
 
         $this->assertAuthenticatedAs($admin, 'admin');
         $this->assertGuest('web');
+    }
+
+    public function test_customer_login_clears_an_existing_admin_guard(): void
+    {
+        $admin = User::factory()->create([
+            'role' => 'admin',
+            'password' => 'password',
+        ]);
+        $customer = User::factory()->create([
+            'role' => 'customer',
+            'password' => 'password',
+        ]);
+
+        $this->actingAs($admin, 'admin');
+
+        $response = $this->post(route('login.store'), [
+            'phone' => $customer->phone,
+            'password' => 'password',
+        ]);
+
+        $response->assertRedirect(route('account.index'));
+        $this->assertAuthenticatedAs($customer, 'web');
+        $this->assertGuest('admin');
     }
 
     public function test_customer_guard_cannot_access_admin_routes(): void
