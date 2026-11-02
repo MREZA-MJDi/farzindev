@@ -2377,7 +2377,6 @@ body.home-body {
 }
 .fz-home-proof-card h3 { margin-top: 1rem; color: var(--fz-home-ink); font-size: .9rem; font-weight: 900; }
 .fz-home-proof-card p { margin-top: .5rem; color: var(--fz-home-muted); font-size: .72rem; line-height: 2; }
-.fz-home-proof-card small { display: block; margin-top: .55rem; color: #778394; font-size: .64rem; line-height: 1.9; }
 .fz-home-proof-card a {
     display: inline-flex;
     max-width: 100%;
@@ -2388,7 +2387,6 @@ body.home-body {
     font-weight: 900;
     overflow-wrap: anywhere;
 }
-.fz-home-proof-card a:hover { color: var(--fz-accent, #7b0d1a); }
 
 /* One merged guide area for both product families. */
 .fz-home-guide-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
@@ -2447,7 +2445,6 @@ body.home-body {
 }
 .fz-home-article-card__media img { width: 100%; height: 100%; object-fit: cover; transition: transform .35s var(--fz-motion); }
 .fz-home-article-card:hover .fz-home-article-card__media img { transform: scale(1.035); }
-.fz-home-article-card__fallback { color: #8a99a9; font-size: .65rem; font-weight: 900; letter-spacing: .18em; }
 .fz-home-article-card__body { display: flex; flex: 1; flex-direction: column; padding: 1.1rem; }
 .fz-home-article-card__meta { display: flex; flex-wrap: wrap; justify-content: space-between; gap: .4rem; color: var(--fz-home-muted); font-size: .63rem; }
 .fz-home-article-card__meta span:first-child { color: var(--fz-accent-dark, #5f0712); font-weight: 850; }
@@ -2472,9 +2469,7 @@ body.home-body {
         linear-gradient(120deg, #041e3e, #06284f 58%, #17436f);
     box-shadow: 0 24px 56px rgba(6, 40, 79, .18);
 }
-.fz-home-final__panel .fz-home-eyebrow { color: #c9d7e7; }
 .fz-home-final__panel h2 { max-width: 18ch; margin-top: .65rem; color: #fff; font-size: clamp(1.35rem, 2.6vw, 2.15rem); font-weight: 950; line-height: 1.6; }
-.fz-home-final__panel p:not(.fz-home-eyebrow) { max-width: 46rem; margin-top: .55rem; color: rgba(255,255,255,.72); font-size: .8rem; line-height: 2; }
 .fz-home-final__actions { display: flex; flex: 0 0 auto; flex-wrap: wrap; gap: .65rem; }
 .fz-sales-button--light { color: var(--fz-home-ink) !important; background: #fff; }
 .fz-sales-button--outline { border-color: rgba(255,255,255,.3); color: #fff !important; background: rgba(255,255,255,.08); }
