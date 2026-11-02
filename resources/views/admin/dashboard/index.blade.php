@@ -160,6 +160,23 @@
             </a>
         @endif
 
+        <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
+            <a href="{{ route('admin.products.index', ['completeness' => 'incomplete']) }}" class="admin-card flex min-h-28 items-center justify-between gap-4 p-5 transition hover:border-[var(--admin-accent)] focus:outline-none focus:ring-2 focus:ring-[var(--admin-accent)]">
+                <div>
+                    <p class="text-sm font-bold text-[var(--admin-text)]">محصولات نیازمند تکمیل</p>
+                    <p class="mt-1 text-xs leading-6 text-[var(--admin-muted)]">محصولات بدون توضیحات کافی، تصویر دارای متن جایگزین یا دارای شناسه آزمایشی</p>
+                </div>
+                <span class="shrink-0 text-2xl font-black tabular-nums text-[var(--admin-text)]">{{ \\App\\Helpers\\PersianNumberHelper::format($incompleteProducts) }}</span>
+            </a>
+            <a href="{{ route('admin.contact-messages.index') }}" class="admin-card flex min-h-28 items-center justify-between gap-4 p-5 transition hover:border-[var(--admin-accent)] focus:outline-none focus:ring-2 focus:ring-[var(--admin-accent)]">
+                <div>
+                    <p class="text-sm font-bold text-[var(--admin-text)]">پیام‌های خوانده‌نشده</p>
+                    <p class="mt-1 text-xs leading-6 text-[var(--admin-muted)]">پیام‌هایی که هنوز بررسی نشده‌اند</p>
+                </div>
+                <span class="shrink-0 text-2xl font-black tabular-nums text-[var(--admin-text)]">{{ \\App\\Helpers\\PersianNumberHelper::format($unreadContactMessages) }}</span>
+            </a>
+        </div>
+
         {{-- =========================================================
              KPI CARDS
         ========================================================== --}}
