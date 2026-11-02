@@ -16,10 +16,17 @@ class StoreCategoryRequest extends FormRequest
 
     protected function prepareForValidation(): void
     {
+        $requestedSlug = trim((string) $this->input('slug', ''));
+        $slug = Str::slug($requestedSlug !== '' ? $requestedSlug : (string) $this->input('name', ''));
+
+        // Persian titles may not transliterate on every production image.
+        // Always produce a stable ASCII URL instead of failing category creation.
+        if ($slug === '') {
+            $slug = 'category-' . now()->format('YmdHis') . '-' . Str::lower(Str::random(6));
+        }
+
         $this->merge([
-            'slug' => $this->slug
-                ? Str::slug($this->slug)
-                : Str::slug($this->name),
+            'slug' => $slug,
             'is_active' => $this->boolean('is_active'),
             'sort_order' => $this->sort_order ?? 0,
         ]);
