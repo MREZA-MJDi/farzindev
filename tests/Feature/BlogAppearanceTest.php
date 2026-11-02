@@ -32,7 +32,7 @@ class BlogAppearanceTest extends TestCase
     {
         $admin = User::factory()->create(['role' => 'admin']);
 
-        $this->actingAs($admin)
+        $this->actingAs($admin, 'admin')
             ->put(route('admin.blog-appearance.update'), [
                 'hero_art_alt' => 'تصویر شاخص مجله',
                 'hero_art_fit' => 'contain',
@@ -75,11 +75,11 @@ class BlogAppearanceTest extends TestCase
     public function test_blog_appearance_and_article_image_editor_are_admin_only_and_crop_ready(): void
     {
         $this->get(route('admin.blog-appearance.edit'))
-            ->assertRedirect(route('login'));
+            ->assertRedirect(route('admin.login'));
 
         $admin = User::factory()->create(['role' => 'admin']);
 
-        $this->actingAs($admin)
+        $this->actingAs($admin, 'admin')
             ->get(route('admin.blog-appearance.edit'))
             ->assertOk()
             ->assertSee('data-blog-appearance', false)
@@ -109,7 +109,7 @@ class BlogAppearanceTest extends TestCase
             'alt' => 'تصویر نمونه درون مقاله',
         ]);
 
-        $this->actingAs($admin)
+        $this->actingAs($admin, 'admin')
             ->get(route('admin.blog-posts.create'))
             ->assertOk()
             ->assertSee('data-editor-media-image', false)

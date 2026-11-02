@@ -13,7 +13,7 @@ class CustomerMiddleware
         Closure $next
     ): Response {
         abort_unless(
-            $request->user()?->isCustomer(),
+            $request->user('web')?->isCustomer(),
             403
         );
 

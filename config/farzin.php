@@ -1,6 +1,8 @@
 <?php
 
 return [
+    'admin_path' => (preg_replace('/[^A-Za-z0-9_-]/', '', trim((string) env('ADMIN_PATH', 'admin'), '/')) ?: 'admin'),
+
     /*
     |--------------------------------------------------------------------------
     | Initial administrator

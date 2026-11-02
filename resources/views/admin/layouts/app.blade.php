@@ -120,7 +120,7 @@
 <script>
 (() => {
     const heartbeatUrl = @json(route('admin.session.heartbeat'));
-    const loginUrl = @json(route('login'));
+    const loginUrl = @json(route('admin.login'));
     const idleLimit = 10 * 60 * 1000;
     let lastInteraction = Date.now();
 

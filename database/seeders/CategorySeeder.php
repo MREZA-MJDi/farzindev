@@ -9,6 +9,10 @@ class CategorySeeder extends Seeder
 {
     public function run(): void
     {
+        if (! app()->environment('local')) {
+            return;
+        }
+
         // Hide only the known demo categories from the old furniture catalogue.
         Category::query()
             ->whereIn('slug', ['furniture', 'chairs', 'tables', 'decor', 'accessories'])

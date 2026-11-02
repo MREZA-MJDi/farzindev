@@ -123,7 +123,7 @@ class StorefrontPaginationAndSeoManagementTest extends TestCase
                 ]);
         }
 
-        $this->actingAs($admin)
+        $this->actingAs($admin, 'admin')
             ->get(route('admin.customers.show', $customer))
             ->assertOk()
             ->assertSee('11')
@@ -131,7 +131,7 @@ class StorefrontPaginationAndSeoManagementTest extends TestCase
             ->assertDontSee('FAR-CUSTOMER-HISTORY-00011')
             ->assertSee('orders_page=2', false);
 
-        $this->actingAs($admin)
+        $this->actingAs($admin, 'admin')
             ->get(route('admin.customers.show', ['customer' => $customer->id, 'orders_page' => 2]))
             ->assertOk()
             ->assertSee('FAR-CUSTOMER-HISTORY-00011')
@@ -237,7 +237,7 @@ class StorefrontPaginationAndSeoManagementTest extends TestCase
     {
         $admin = User::factory()->create(['role' => 'admin']);
 
-        $this->actingAs($admin)
+        $this->actingAs($admin, 'admin')
             ->get(route('admin.seo-settings.edit'))
             ->assertOk()
             ->assertSee('سئوی اختصاصی صفحه‌های اصلی')

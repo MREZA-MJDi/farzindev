@@ -66,7 +66,7 @@ class AuthController extends Controller
         // Capture the guest cart key before the session guard rotates the session ID.
         $guestCartSessionId = $request->session()->getId();
 
-        if (! Auth::attempt([
+        if (! Auth::guard('web')->attempt([
             $loginField => $identifier,
             'password' => $credentials['password'],
         ], $credentials['remember'] ?? false)) {
@@ -84,24 +84,25 @@ class AuthController extends Controller
                 ]);
         }
 
+        if (Auth::guard('web')->user()?->isAdmin()) {
+            Auth::guard('web')->logout();
+            Auth::guard('admin')->logout();
+            Auth::shouldUse('web');
+            RateLimiter::hit($throttleKey, 60);
+            $request->session()->regenerate();
+
+            return back()
+                ->withInput($request->only('phone'))
+                ->withErrors([
+                    'phone' => 'شماره موبایل یا رمز عبور صحیح نیست.',
+                ]);
+        }
+
         RateLimiter::clear($throttleKey);
+        Auth::guard('admin')->logout();
+        Auth::shouldUse('web');
 
         $request->session()->regenerate();
-
-        /*
-        |--------------------------------------------------------------------------
-        | Role Based Redirect
-        |--------------------------------------------------------------------------
-        */
-
-        if ($request->user()->isAdmin()) {
-            return redirect()
-                ->route('admin.dashboard')
-                ->with(
-                    'success',
-                    'به پنل مدیریت خوش آمدید.'
-                );
-        }
 
         // Customer cart migration is unrelated to admin access; keep admin login independent of it.
         $this->mergeGuestCartIntoUserCart($request, $guestCartSessionId);
@@ -174,21 +175,14 @@ class AuthController extends Controller
         // Login rotates the session ID, so keep the guest cart's original key.
         $guestCartSessionId = $request->session()->getId();
 
-        Auth::login($user);
+        Auth::guard('web')->login($user);
+        Auth::guard('admin')->logout();
+        Auth::shouldUse('web');
 
         $request->session()->regenerate();
 
         $this->mergeGuestCartIntoUserCart($request, $guestCartSessionId);
 
-
-        if ($request->user()->isAdmin()) {
-            return redirect()
-                ->route('admin.dashboard')
-                ->with(
-                    'success',
-                    'به پنل مدیریت خوش آمدید.'
-                );
-        }
 
         return redirect()
             ->intended(route('account.index'))

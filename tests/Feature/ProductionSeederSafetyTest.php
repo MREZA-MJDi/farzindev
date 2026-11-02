@@ -25,8 +25,7 @@ class ProductionSeederSafetyTest extends TestCase
         $this->app->make(DatabaseSeeder::class)->run();
 
         $this->assertDatabaseCount('products', 0);
-        $this->assertDatabaseHas('categories', ['slug' => 'hoods']);
-        $this->assertDatabaseHas('categories', ['slug' => 'sinks']);
+        $this->assertDatabaseCount('categories', 0);
         $this->assertDatabaseHas('users', [
             'email' => 'deploy-test-admin@example.test',
             'role' => 'admin',

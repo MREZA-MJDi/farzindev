@@ -80,7 +80,7 @@ class AdminDashboardMetricsTest extends TestCase
             'author_id' => $admin->id,
         ]);
 
-        $response = $this->actingAs($admin)
+        $response = $this->actingAs($admin, 'admin')
             ->get(route('admin.dashboard'))
             ->assertOk();
 

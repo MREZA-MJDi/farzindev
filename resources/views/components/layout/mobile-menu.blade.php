@@ -1,4 +1,4 @@
-@props(['storefrontContact' => []])
+@props(['brandName' => 'فرزین', 'brandLogo' => null, 'storefrontContact' => []])
 
 <div
     id="farzin-mobile-menu"
@@ -42,7 +42,7 @@
         "
         role="dialog"
         aria-modal="true"
-        aria-label="منوی اصلی فرزین"
+        aria-label="منوی اصلی {{ $brandName }}"
         tabindex="-1"
         data-farzin-mobile-menu-panel
         class="absolute right-0 top-0 flex h-full h-[100dvh] min-h-0 w-[min(88%,26rem)] max-w-md flex-col overflow-hidden border-l border-[var(--livora-border)] bg-[var(--livora-cream)] pb-[env(safe-area-inset-bottom)] shadow-2xl"
@@ -54,9 +54,9 @@
                 href="{{ route('home') }}"
                 @click="mobileOpen = false"
                 class="farzin-wordmark"
-                aria-label="فرزین، صفحه اصلی"
+                aria-label="{{ $brandName }}، صفحه اصلی"
             >
-                <span class="farzin-wordmark__main">فرزین</span>
+                @if($brandLogo)<img src="{{ $brandLogo }}" alt="{{ $brandName }}" class="max-h-11 max-w-36 object-contain">@else<span class="farzin-wordmark__main">{{ $brandName }}</span>@endif
                 <span class="farzin-wordmark__caption">تجهیزات مدرن آشپزخانه</span>
             </a>
 
@@ -136,7 +136,7 @@
                         @class(['farzin-mobile-menu__link group flex min-h-[62px] items-center justify-between gap-4 px-4 py-3 text-sm font-semibold transition', 'is-active' => request()->routeIs('about')])
                         @if(request()->routeIs('about')) aria-current="page" @endif
                     >
-                        <span>درباره فرزین</span>
+                        <span>درباره {{ $brandName }}</span>
                         <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-[var(--livora-surface)] text-[var(--livora-ink)] transition group-hover:bg-[var(--livora-ink)] group-hover:text-white" aria-hidden="true">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" class="h-5 w-5" width="20" height="20"><circle cx="12" cy="12" r="9"/><path d="M12 11v5m0-8h.01"/></svg>
                         </span>
@@ -199,7 +199,7 @@
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" class="h-5 w-5" width="20" height="20"><circle cx="12" cy="8" r="3.5"/><path stroke-linecap="round" stroke-linejoin="round" d="M5 20a7 7 0 0 1 14 0"/></svg>
                             </span>
                             <span class="mt-3 block text-sm font-semibold text-[var(--livora-text)]">ورود / ثبت‌نام</span>
-                            <span class="mt-1 block text-[11px] text-[var(--livora-stone)]">حساب کاربری فرزین</span>
+                            <span class="mt-1 block text-[11px] text-[var(--livora-stone)]">حساب کاربری {{ $brandName }}</span>
                         </a>
                     @endauth
                 </div>
@@ -208,7 +208,7 @@
             {{-- Buying guide --}}
             <div class="mt-7 rounded-3xl bg-[var(--livora-ink)] p-5 text-white">
                 <p class="text-[10px] font-semibold uppercase tracking-[0.18em] text-white/60">
-                    راهنمای خرید فرزین
+                    راهنمای خرید {{ $brandName }}
                 </p>
                 <h2 class="mt-3 text-base font-bold leading-8 text-white">
                     هود و سینک مناسب آشپزخانه‌ات را آگاهانه انتخاب کن.
@@ -230,7 +230,7 @@
         <div class="shrink-0 border-t border-[var(--livora-border)] bg-white px-5 py-4">
             <div class="flex items-center justify-between gap-4">
                 <div>
-                    <p class="text-sm font-bold text-[var(--livora-ink)]">فرزین</p>
+                    <p class="text-sm font-bold text-[var(--livora-ink)]">{{ $brandName }}</p>
                     <p class="mt-0.5 text-[10px] text-[var(--livora-stone)]">تجهیزات مدرن آشپزخانه</p>
                 </div>
                 <a
@@ -248,10 +248,10 @@
                         <a href="https://wa.me/{{ preg_replace('/\D+/', '', (string) data_get($storefrontContact, 'whatsapp')) }}" target="_blank" rel="noopener noreferrer" class="text-[var(--livora-text)]">واتساپ</a>
                     @endif
                     @if(filled(data_get($storefrontContact, 'instagram_url')))
-                        <a href="{{ data_get($storefrontContact, 'instagram_url') }}" target="_blank" rel="noopener noreferrer" class="text-[var(--livora-text)]">Instagram</a>
+                        <a href="{{ data_get($storefrontContact, 'instagram_url') }}" target="_blank" rel="noopener noreferrer" class="text-[var(--livora-text)]">اینستاگرام</a>
                     @endif
                     @if(filled(data_get($storefrontContact, 'telegram_url')))
-                        <a href="{{ data_get($storefrontContact, 'telegram_url') }}" target="_blank" rel="noopener noreferrer" class="text-[var(--livora-text)]">Telegram</a>
+                        <a href="{{ data_get($storefrontContact, 'telegram_url') }}" target="_blank" rel="noopener noreferrer" class="text-[var(--livora-text)]">تلگرام</a>
                     @endif
                 </div>
             @endif

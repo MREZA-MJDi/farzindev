@@ -22,7 +22,7 @@
 </head>
 <body>
     <main>
-        <div class="brand">FARZIN / فرزین</div>
+        <div class="brand">{{ $storefrontBrandName ?? config('app.name', 'فرزین') }}</div>
         <div class="code">@yield('code')</div>
         <h1>@yield('heading')</h1>
         <p>@yield('message')</p>

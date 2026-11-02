@@ -41,6 +41,18 @@ return Application::configure(
         |--------------------------------------------------------------------------
         */
 
+        $middleware->redirectGuestsTo(fn (Request $request) =>
+            str_starts_with((string) $request->route()?->getName(), 'admin.')
+                ? route('admin.login')
+                : route('login')
+        );
+
+        $middleware->redirectUsersTo(fn (Request $request) =>
+            str_starts_with((string) $request->route()?->getName(), 'admin.')
+                ? route('admin.dashboard')
+                : route('home')
+        );
+
         $middleware->alias([
             'admin' => AdminMiddleware::class,
             'customer' => CustomerMiddleware::class,
@@ -130,11 +142,13 @@ return Application::configure(
             $isExpiredSession = $e instanceof \Illuminate\Session\TokenMismatchException
                 || ($e instanceof HttpExceptionInterface && $e->getStatusCode() === 419);
 
-            if (! $isExpiredSession || ! $request->is('admin', 'admin/*')) {
+            $adminPath = trim((string) config('farzin.admin_path', 'admin'), '/');
+
+            if (! $isExpiredSession || ! $request->is($adminPath, $adminPath . '/*')) {
                 return null;
             }
 
-            Auth::logout();
+            Auth::guard('admin')->logout();
             $request->session()->invalidate();
             $request->session()->regenerateToken();
 
@@ -146,7 +160,7 @@ return Application::configure(
             }
 
             return redirect()
-                ->route('login')
+                ->route('admin.login')
                 ->with('warning', 'نشست مدیریت منقضی شده است؛ برای ادامه دوباره وارد شوید.');
         });
 

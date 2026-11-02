@@ -145,20 +145,33 @@ class Product extends Model
 
     public function scopeActive($query)
     {
-        return $query->where('status', 'active');
+        $query->where('status', 'active');
+
+        if (! app()->environment(['local', 'testing'])) {
+            $query->where(function ($skuQuery): void {
+                $skuQuery->whereNull('sku')
+                    ->orWhere(function ($realProductQuery): void {
+                        $realProductQuery
+                            ->where('sku', 'not like', 'FZ-SEED-%')
+                            ->where('sku', 'not like', 'LIV-%');
+                    });
+            });
+        }
+
+        return $query;
     }
 
     public function scopeFeatured($query)
     {
         return $query
-            ->where('status', 'active')
+            ->active()
             ->where('is_featured', true);
     }
 
     public function scopeNew($query)
     {
         return $query
-            ->where('status', 'active')
+            ->active()
             ->where('is_new', true);
     }
 

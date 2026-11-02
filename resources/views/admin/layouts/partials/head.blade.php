@@ -25,14 +25,14 @@
 ========================================================= --}}
 
 <title>
-    @yield('title', 'داشبورد مدیریت') | فرزین
+    @yield('title', 'داشبورد مدیریت') | {{ $storefrontBrandName ?? 'فرزین' }}
 </title>
 
 <meta
     name="description"
     content="@yield(
         'meta_description',
-        'پنل مدیریت فروشگاه فرزین'
+        'پنل مدیریت فروشگاه ' . ($storefrontBrandName ?? 'فرزین')
     )"
 />
 

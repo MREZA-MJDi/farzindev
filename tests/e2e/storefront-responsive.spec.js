@@ -413,10 +413,10 @@ test('homepage image and product sections stay within the loading budget', async
 
 test('admin mobile quick search and list filters remain reachable without horizontal overflow', async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 });
-    await page.goto('/login', { waitUntil: 'domcontentloaded' });
+    await page.goto('/admin/login', { waitUntil: 'domcontentloaded' });
 
-    const loginForm = page.locator('form').filter({ has: page.locator('input[name="phone"]') });
-    await loginForm.locator('input[name="phone"]').fill('browser-admin@example.test');
+    const loginForm = page.locator('form').filter({ has: page.locator('input[name="email"]') });
+    await loginForm.locator('input[name="email"]').fill('browser-admin@example.test');
     await loginForm.locator('input[name="password"]').fill('browser-smoke-password');
     await loginForm.locator('button[type="submit"]').click();
     await expect(page).toHaveURL(/\/admin(?:\/dashboard)?(?:\?.*)?$/);
@@ -631,10 +631,10 @@ test('mobile navigation marks only the current destination and search state', as
 
 test('admin blog image workflows expose the cropper and saved media library', async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 });
-    await page.goto('/login', { waitUntil: 'domcontentloaded' });
+    await page.goto('/admin/login', { waitUntil: 'domcontentloaded' });
 
-    const loginForm = page.locator('form').filter({ has: page.locator('input[name="phone"]') });
-    await loginForm.locator('input[name="phone"]').fill('browser-admin@example.test');
+    const loginForm = page.locator('form').filter({ has: page.locator('input[name="email"]') });
+    await loginForm.locator('input[name="email"]').fill('browser-admin@example.test');
     await loginForm.locator('input[name="password"]').fill('browser-smoke-password');
     await loginForm.locator('button[type="submit"]').click();
     await expect(page).toHaveURL(/\/admin(?:\/dashboard)?(?:\?.*)?$/);

@@ -31,8 +31,8 @@ class DatabaseSeeder extends Seeder
             }
 
             // The one-time password is required only when no admin exists.
-            // Existing administrators can safely re-run idempotent catalogue seeds
-            // after ADMIN_PASSWORD has been removed from the environment.
+            // Existing administrators can safely re-run UserSeeder after
+            // ADMIN_PASSWORD has been removed from the environment.
             if (! $existingAdmin && blank(config('farzin.admin.password'))) {
                 throw new \RuntimeException(
                     'Set ADMIN_PASSWORD before creating the initial production administrator.'
@@ -40,14 +40,16 @@ class DatabaseSeeder extends Seeder
             }
         }
 
-        $this->call([
-            CategorySeeder::class,
-        ]);
+        if (app()->environment('local')) {
+            $this->call([
+                CategorySeeder::class,
+            ]);
+        }
 
         // ProductSeeder creates preview catalogue records whose specifications
         // and prices still require staff verification. Never create them in
         // the production database; publish verified products through the admin.
-        if (! app()->environment('production')) {
+        if (app()->environment('local')) {
             $this->call(ProductSeeder::class);
         }
 
@@ -56,7 +58,7 @@ class DatabaseSeeder extends Seeder
         ]);
 
         // The former demo carts/orders referenced retired furniture records
-        // and an unseeded Livora customer. Keep normal seeding deterministic:
-        // only the Farzin catalogue and the configured admin are created.
+        // and an unseeded Livora customer. Local-only runs create preview
+        // catalogue data; production seeding only provisions the configured admin.
     }
 }

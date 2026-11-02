@@ -102,9 +102,21 @@ class Category extends Model
      */
     public function latestActiveProduct(): HasOne
     {
-        return $this->hasOne(Product::class)
-            ->where('status', 'active')
-            ->latestOfMany('updated_at');
+        $query = $this->hasOne(Product::class)
+            ->where('status', 'active');
+
+        if (! app()->environment(['local', 'testing'])) {
+            $query->where(function ($skuQuery): void {
+                $skuQuery->whereNull('sku')
+                    ->orWhere(function ($realProductQuery): void {
+                        $realProductQuery
+                            ->where('sku', 'not like', 'FZ-SEED-%')
+                            ->where('sku', 'not like', 'LIV-%');
+                    });
+            });
+        }
+
+        return $query->latestOfMany('updated_at');
     }
 
     public function getHomepageImageUrlAttribute(): ?string
@@ -128,8 +140,14 @@ class Category extends Model
 
     public function scopeActive($query)
     {
-        return $query
-            ->where('is_active', true)
-            ->orderBy('sort_order');
+        $query->where('is_active', true);
+
+        if (! app()->environment(['local', 'testing'])) {
+            $query
+                ->whereNotIn('slug', ['furniture', 'chairs', 'tables', 'decor', 'accessories'])
+                ->whereHas('products', fn ($productQuery) => $productQuery->active());
+        }
+
+        return $query->orderBy('sort_order');
     }
 }

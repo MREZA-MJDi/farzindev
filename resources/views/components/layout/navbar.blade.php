@@ -1,7 +1,7 @@
-@props(['cartCount' => 0])
+@props(['cartCount' => 0, 'brandName' => 'فرزین', 'brandLogo' => null])
 
 <nav
-    aria-label="ناوبری اصلی فرزین"
+    aria-label="ناوبری اصلی {{ $brandName }}"
     class="farzin-site-header sticky top-0 z-[80] w-full border-b border-[var(--livora-border)] bg-white text-[var(--livora-text)]"
 >
     <x-layout.container>
@@ -11,10 +11,10 @@
             <a
                 href="{{ route('home') }}"
                 class="farzin-site-header__brand group inline-flex min-w-0 shrink-0 items-center"
-                aria-label="فرزین، صفحه اصلی"
+                aria-label="{{ $brandName }}، صفحه اصلی"
             >
                 <span class="farzin-wordmark">
-                    <span class="farzin-wordmark__main">فرزین</span>
+                    @if($brandLogo)<img src="{{ $brandLogo }}" alt="{{ $brandName }}" class="max-h-11 max-w-36 object-contain">@else<span class="farzin-wordmark__main">{{ $brandName }}</span>@endif
                     <span class="farzin-wordmark__caption">تجهیزات مدرن آشپزخانه</span>
                 </span>
             </a>

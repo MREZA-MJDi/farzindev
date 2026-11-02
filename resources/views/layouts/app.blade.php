@@ -17,12 +17,16 @@
             default => null,
         };
 
+        $storefrontBrandName = $storefrontBrandName ?? config('app.name', 'فرزین');
         $seoTitle = trim((string) $__env->yieldContent('title'));
+        $seoTitle = str_replace('فرزین', $storefrontBrandName, $seoTitle);
         $seoPageTitle = $seoStaticPage ? trim((string) ($seoValues[$seoStaticPage['title']] ?? '')) : '';
+        $seoPageTitle = str_replace('فرزین', $storefrontBrandName, $seoPageTitle);
         $seoTitle = $seoPageTitle !== ''
             ? $seoPageTitle
             : ($seoTitle !== '' ? $seoTitle : (string) $seoValues['seo_default_title']);
 
+        $seoTitle = str_replace('فرزین', $storefrontBrandName, $seoTitle);
         $seoDescription = trim((string) $__env->yieldContent('description'));
         $seoPageDescription = $seoStaticPage ? trim((string) ($seoValues[$seoStaticPage['description']] ?? '')) : '';
         $seoDescription = $seoPageDescription !== ''
@@ -50,9 +54,7 @@
         $seoOrganizationSchema = [
             '@context' => 'https://schema.org',
             '@type' => 'Organization',
-            'name' => filled($seoValues['seo_organization_name'] ?? null)
-                ? $seoValues['seo_organization_name']
-                : $seoValues['seo_site_name'],
+            'name' => $storefrontBrandName,
             'url' => $seoBaseUrl,
         ];
 
@@ -101,7 +103,6 @@
                 'latitude' => (float) $seoContactLocation['latitude'],
                 'longitude' => (float) $seoContactLocation['longitude'],
             ];
-            $seoOrganizationSchema['hasMap'] = 'https://www.google.com/maps/search/?api=1&query=' . urlencode($coordinates);
 
             if (! filled($seoValues['seo_organization_address'] ?? null) && filled($seoContactLocation['address'] ?? null)) {
                 $seoOrganizationSchema['address'] = [
@@ -114,7 +115,7 @@
         $seoWebsiteSchema = [
             '@context' => 'https://schema.org',
             '@type' => 'WebSite',
-            'name' => $seoValues['seo_site_name'],
+            'name' => $storefrontBrandName,
             'url' => $seoBaseUrl,
             'inLanguage' => 'fa-IR',
             'description' => $seoValues['seo_default_description'],
@@ -144,7 +145,7 @@
     <link rel="canonical" href="{{ $seoCanonical }}">
 
     <meta property="og:type" content="{{ $seoOgType }}">
-    <meta property="og:site_name" content="{{ $seoValues['seo_site_name'] }}">
+    <meta property="og:site_name" content="{{ $storefrontBrandName }}">
     <meta property="og:title" content="{{ $seoOgTitle }}">
     <meta property="og:description" content="{{ $seoOgDescription }}">
     <meta property="og:url" content="{{ $seoCanonical }}">
@@ -255,9 +256,9 @@
         }
     @endphp
 
-    <x-layout.navbar :cart-count="$storefrontCartCount" />
+    <x-layout.navbar :cart-count="$storefrontCartCount" :brand-name="$storefrontBrandName" :brand-logo="$storefrontBrandLogoUrl" />
 
-    <x-layout.mobile-menu />
+    <x-layout.mobile-menu :brand-name="$storefrontBrandName" :brand-logo="$storefrontBrandLogoUrl" />
 
     <x-layout.search-overlay />
 
@@ -265,9 +266,34 @@
         @yield('content')
     </main>
 
-    <x-layout.footer :contact="$storefrontContact" />
+    <x-layout.footer :contact="$storefrontContact" :settings="$storefrontPublicSettings" :brand-logo-url="$storefrontBrandLogoUrl" />
 
     <x-layout.mobile-bottom-bar :cart-count="$storefrontCartCount" />
+
+    @php
+        $floatingPhone = preg_replace('/[^0-9+]/', '', (string) data_get($storefrontContact, 'phone', ''));
+        $floatingWhatsapp = preg_replace('/\D+/', '', (string) data_get($storefrontContact, 'whatsapp', ''));
+        if (str_starts_with($floatingWhatsapp, '0098')) {
+            $floatingWhatsapp = substr($floatingWhatsapp, 2);
+        } elseif ($floatingWhatsapp !== '' && str_starts_with($floatingWhatsapp, '0')) {
+            $floatingWhatsapp = '98' . substr($floatingWhatsapp, 1);
+        } elseif ($floatingWhatsapp !== '' && ! str_starts_with($floatingWhatsapp, '98')) {
+            $floatingWhatsapp = '98' . $floatingWhatsapp;
+        }
+    @endphp
+    @if(($storefrontPublicSettings['floating_contact_enabled'] ?? '0') === '1')
+        <div class="fixed bottom-24 left-4 z-[75] flex flex-col gap-2 lg:bottom-6" aria-label="راه‌های ارتباط سریع">
+            @if($floatingWhatsapp !== '')
+                <a href="https://wa.me/{{ $floatingWhatsapp }}" target="_blank" rel="noopener noreferrer" class="rounded-full bg-emerald-700 px-4 py-3 text-sm font-bold text-white shadow-xl">واتساپ</a>
+            @endif
+            @if($floatingPhone !== '')
+                <a href="tel:{{ $floatingPhone }}" class="rounded-full bg-slate-900 px-4 py-3 text-sm font-bold text-white shadow-xl">تماس با ما</a>
+            @endif
+            <a href="{{ route('contact') }}#contact-form" class="rounded-full border border-slate-300 bg-white px-4 py-3 text-sm font-bold text-slate-900 shadow-xl">پرسش</a>
+        </div>
+    @endif
+
+
 
 </div>
 

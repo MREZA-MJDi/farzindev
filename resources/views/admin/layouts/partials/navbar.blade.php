@@ -1,5 +1,5 @@
 @php
-    $adminUser = auth()->user();
+    $adminUser = auth('admin')->user();
 
     $currentRouteName = request()->route()?->getName();
 
@@ -152,7 +152,7 @@
                 <div class="hidden items-center gap-2 text-[9px] text-[var(--admin-muted)] sm:flex">
 
                     <span>
-                        فرزین
+                        {{ $storefrontBrandName ?? config('app.name', 'فرزین') }}
                     </span>
 
                     <span>
@@ -160,7 +160,7 @@
                     </span>
 
                     <span>
-                        ADMIN
+                        مدیریت
                     </span>
 
                 </div>
@@ -707,7 +707,7 @@
                     <div class="border-t border-[var(--admin-border)] p-2">
 
                         <form
-                            action="{{ route('logout') }}"
+                            action="{{ route('admin.logout') }}"
                             method="POST"
                         >
 
