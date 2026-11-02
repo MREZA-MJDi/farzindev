@@ -135,6 +135,18 @@ class AdminAuthorizationTest extends TestCase
         $this->assertAuthenticatedAs($admin);
     }
 
+    public function test_admin_login_is_separate_and_noindex_even_when_public_indexing_is_enabled(): void
+    {
+        $this->get(route('admin.login'))
+            ->assertOk()
+            ->assertHeader('X-Robots-Tag', 'noindex, nofollow, noarchive, nosnippet, noimageindex')
+            ->assertSee('ورود به مدیریت');
+
+        $this->get(route('login'))
+            ->assertOk()
+            ->assertHeader('X-Robots-Tag', 'noindex, nofollow, noarchive, nosnippet, noimageindex');
+    }
+
     public function test_authenticated_customer_cannot_open_admin_sections(): void
     {
         $customer = User::factory()->create([
