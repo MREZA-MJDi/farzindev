@@ -160,14 +160,14 @@ class Product extends Model
     public function scopeFeatured($query)
     {
         return $query
-            ->where('status', 'active')
+            ->active()
             ->where('is_featured', true);
     }
 
     public function scopeNew($query)
     {
         return $query
-            ->where('status', 'active')
+            ->active()
             ->where('is_new', true);
     }
 
