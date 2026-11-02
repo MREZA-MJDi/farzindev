@@ -8,6 +8,7 @@ use App\Http\Requests\Admin\Product\UpdateProductRequest;
 use App\Models\Category;
 use App\Models\Product;
 use App\Models\ProductImage;
+use App\Models\SeoRedirect;
 use App\Models\Media;
 use App\Services\Catalog\ProductMediaLibrary;
 use App\Services\Media\ResponsiveImageService;
@@ -328,7 +329,28 @@ class ProductController extends Controller
                     ->lockForUpdate()
                     ->firstOrFail();
 
+                $oldSlug = (string) $lockedProduct->slug;
                 $lockedProduct->update($data);
+
+                if ($oldSlug !== $lockedProduct->slug) {
+                    $oldPath = route('product.show', $oldSlug, false);
+                    $newPathUrl = route('product.show', $lockedProduct->slug, false);
+
+                    // Keep prior aliases direct to the newest canonical product URL.
+                    SeoRedirect::query()
+                        ->where('target_url', $oldPath)
+                        ->update(['target_url' => $newPathUrl]);
+
+                    SeoRedirect::query()->updateOrCreate(
+                        ['source_path' => $oldPath],
+                        [
+                            'target_url' => $newPathUrl,
+                            'status_code' => 301,
+                            'is_active' => true,
+                            'notes' => 'تغییر خودکار مسیر محصول ' . $lockedProduct->id,
+                        ]
+                    );
+                }
 
                 if ($newPath === null && $primaryMediaId === null) {
                     return;
