@@ -676,7 +676,7 @@ class FarzinStorefrontTest extends TestCase
         Storage::fake('public');
         $admin = $this->admin();
 
-        $values = collect(app(\\App\\Services\\StorefrontPageContent::class)->defaults())
+        $values = collect(app(\App\Services\StorefrontPageContent::class)->defaults())
             ->filter(fn ($value, $key) => str_starts_with($key, 'page_home_'))
             ->all();
 
