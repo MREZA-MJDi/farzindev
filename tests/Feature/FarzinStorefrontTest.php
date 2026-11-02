@@ -679,7 +679,7 @@ class FarzinStorefrontTest extends TestCase
             'In-stock homepage products must precede unavailable products.'
         );
         $this->assertStringContainsString('is-unavailable', $html);
-        $this->assertStringContainsString('موجود و آماده سفارش', $html);
+        $this->assertStringContainsString('is-available', $html);
     }
 
     public function test_homepage_cms_shows_live_hero_crop_and_the_same_real_offer_card(): void

@@ -142,7 +142,10 @@ class HomeController extends Controller
             ->take(12)
             ->values();
 
+        $displayedProductIds = $discountProducts->modelKeys();
+
         $newestProducts = $baseProducts()
+            ->whereNotIn('id', $displayedProductIds)
             ->where('is_new', true)
             ->orderByDesc('created_at')
             ->orderByDesc('id')
@@ -153,7 +156,10 @@ class HomeController extends Controller
             ->take(12)
             ->values();
 
+        $displayedProductIds = array_merge($displayedProductIds, $newestProducts->modelKeys());
+
         $bestSellingProducts = $baseProducts()
+            ->whereNotIn('id', $displayedProductIds)
             ->withSum([
                 'orderItems as sold_quantity' => static function (Builder $items): void {
                     $items->whereHas('order', static function (Builder $orders): void {
@@ -178,8 +184,12 @@ class HomeController extends Controller
             ->take(12)
             ->values();
 
-        // Retain the existing editorial selection from the admin product form.
+        // Keep the editor-selected shelf unique: a product already visible in
+        // discounts, newest, or best sellers is not repeated a second time.
+        $displayedProductIds = array_merge($displayedProductIds, $bestSellingProducts->modelKeys());
+
         $selectedProducts = $baseProducts()
+            ->whereNotIn('id', $displayedProductIds)
             ->where('show_in_home_gallery', true)
             ->withSum([
                 'orderItems as sold_quantity' => static function (Builder $items): void {
