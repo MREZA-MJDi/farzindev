@@ -43,6 +43,7 @@ class HomeController extends Controller
         // editorial gallery is needed for the first decision.
         $heroProduct = Product::query()
             ->active()
+            ->where('show_in_home_gallery', true)
             ->whereHas('category', fn ($query) => $query->where('is_active', true))
             ->whereHas('images')
             ->with($productRelations)
@@ -59,6 +60,7 @@ class HomeController extends Controller
         // updated products are tie-breakers when sales data is equal.
         $featuredProducts = Product::query()
             ->active()
+            ->where('show_in_home_gallery', true)
             ->when($heroProduct, fn ($query) => $query->whereKeyNot($heroProduct->id))
             ->whereHas('category', fn ($query) => $query->where('is_active', true))
             ->with($productRelations)
