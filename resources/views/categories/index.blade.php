@@ -152,6 +152,7 @@
                                     :motion-media="$category->hoverMedia"
                                     :href="route('categories.show', $category->slug)"
                                     :count="$category->products_count"
+                                    :starting-price="$category->starting_price"
                                 />
 
                             @endforeach
