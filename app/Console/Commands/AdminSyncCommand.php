@@ -15,9 +15,17 @@ class AdminSyncCommand extends Command
 
     public function handle(): int
     {
-        $email = mb_strtolower(trim((string) config('farzin.admin.email', '')));
-        $password = (string) config('farzin.admin.password', '');
-        $name = trim((string) config('farzin.admin.name', 'Farzin Admin'));
+        try {
+            $credentials = AdminEnvironment::credentials();
+        } catch (Throwable $exception) {
+            $this->error($exception->getMessage());
+
+            return self::FAILURE;
+        }
+
+        $email = $credentials['email'];
+        $password = $credentials['password'];
+        $name = $credentials['name'];
 
         if ($email === '' || ! filter_var($email, FILTER_VALIDATE_EMAIL) || $password === '') {
             $this->error('ADMIN_EMAIL و ADMIN_PASSWORD باید در محیط برنامه تنظیم شده باشند.');
