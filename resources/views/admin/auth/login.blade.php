@@ -31,11 +31,20 @@
                 @csrf
                 <div>
                     <label for="admin-email" class="mb-2 block text-sm font-bold">ایمیل مدیریت</label>
-                    <input id="admin-email" name="email" type="email" value="{{ old('email') }}" dir="ltr" autocomplete="username" required autofocus class="w-full rounded-xl border border-slate-300 px-4 py-3 text-left outline-none focus:border-emerald-700 focus:ring-2 focus:ring-emerald-100">
+                    <input id="admin-email" name="email" type="email" value="{{ old('email') }}" dir="ltr" autocomplete="username" autocapitalize="none" spellcheck="false" required autofocus class="w-full rounded-xl border border-slate-300 px-4 py-3 text-left outline-none focus:border-emerald-700 focus:ring-2 focus:ring-emerald-100">
                 </div>
                 <div>
                     <label for="admin-password" class="mb-2 block text-sm font-bold">رمز عبور</label>
-                    <input id="admin-password" name="password" type="password" autocomplete="current-password" required class="w-full rounded-xl border border-slate-300 px-4 py-3 outline-none focus:border-emerald-700 focus:ring-2 focus:ring-emerald-100">
+                    <div class="relative">
+                        <input id="admin-password" name="password" type="password" autocomplete="current-password" required class="w-full rounded-xl border border-slate-300 px-4 py-3 pl-20 outline-none focus:border-emerald-700 focus:ring-2 focus:ring-emerald-100">
+                        <button
+                            type="button"
+                            id="admin-password-toggle"
+                            aria-controls="admin-password"
+                            aria-pressed="false"
+                            class="absolute inset-y-0 left-2 my-2 rounded-lg px-3 text-xs font-semibold text-slate-600 transition hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-emerald-600"
+                        >نمایش رمز</button>
+                    </div>
                 </div>
                 <label class="flex items-center gap-2 text-sm text-slate-600">
                     <input type="checkbox" name="remember" value="1" class="rounded border-slate-300">
@@ -46,5 +55,21 @@
             <a href="{{ route('home') }}" class="mt-6 block text-center text-sm text-slate-500 hover:text-slate-900">بازگشت به فروشگاه</a>
         </section>
     </main>
+<script>
+    (() => {
+        const button = document.getElementById('admin-password-toggle');
+        const input = document.getElementById('admin-password');
+
+        if (!button || !input) return;
+
+        button.addEventListener('click', () => {
+            const reveal = input.type === 'password';
+            input.type = reveal ? 'text' : 'password';
+            button.textContent = reveal ? 'پنهان کردن رمز' : 'نمایش رمز';
+            button.setAttribute('aria-pressed', reveal ? 'true' : 'false');
+        });
+    })();
+</script>
+
 </body>
 </html>
