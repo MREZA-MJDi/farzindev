@@ -23,6 +23,7 @@
         $mapQuery = $hasMapCoordinates
             ? (string) $mapLatitude . ',' . (string) $mapLongitude
             : $mapAddress;
+        $hasMap = $hasMapCoordinates || $mapAddress !== '';
         $whatsappDigits = preg_replace('/\D+/', '', (string) ($contactSetting?->whatsapp ?? ''));
 
         if ($whatsappDigits !== '') {
@@ -32,6 +33,13 @@
                 $whatsappDigits = '98' . $whatsappDigits;
             }
         }
+
+        $hasSocialChannels = $whatsappDigits !== ''
+            || filled($contactSetting?->instagram_url)
+            || filled($contactSetting?->telegram_url)
+            || filled($contactSetting?->eitaa_url);
+        $hasDirectChannels = filled($contactSetting?->phone) || filled($contactSetting?->email);
+        $hasPublicContact = $hasSocialChannels || $hasDirectChannels || filled($contactSetting?->hours);
     @endphp
 
     <div class="fz-contact-page">
@@ -49,7 +57,7 @@
 
                 <div class="fz-contact-hero__layout">
                     <div class="fz-contact-copy" data-fz-reveal>
-                        <p class="fz-contact-eyebrow"><span aria-hidden="true"></span> FARZIN / LET'S CONNECT</p>
+                        <p class="fz-contact-eyebrow"><span aria-hidden="true"></span> راه‌های ارتباط با مجموعه
                         <h1 id="contact-hero-title" class="fz-contact-title">
                             ارتباط خوب،<br>
                             <span>از یک گفت‌وگو شروع می‌شود.</span>
@@ -130,8 +138,9 @@
 
         <section class="fz-contact-workspace" aria-label="راه‌های ارتباط و فرم تماس">
             <x-layout.container>
-                <div class="fz-contact-grid">
+                <div class="fz-contact-grid {{ $hasMap ? '' : 'fz-contact-grid--single' }}">
                     {{-- Right column in RTL: location and map --}}
+                    @if($hasMap)
                     <aside class="fz-contact-map-column" data-fz-reveal>
                         <div class="fz-contact-panel fz-contact-map-panel">
                             <div class="fz-contact-panel__header">
@@ -177,18 +186,6 @@
                                     target="_blank"
                                     rel="noopener noreferrer"
                                 ><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4" aria-hidden="true"><path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z" /><circle cx="12" cy="10" r="2.5" /></svg> مسیریابی به نشانی فرزین در Google Maps</a>
-                            @else
-                                <div class="fz-contact-map-empty" role="status">
-                                    <div class="fz-contact-map-empty__rings" aria-hidden="true"><span></span><i></i></div>
-                                    <strong>هنوز موقعیتی ثبت نشده</strong>
-                                    <p>پس از ثبت آدرس یا مختصات مجموعه در تنظیمات فروشگاه پنل مدیریت، نقشه در همین بخش نمایش داده می‌شود.</p>
-                                </div>
-                                <div class="fz-contact-address fz-contact-address--pending">
-                                    <span class="fz-contact-address__icon" aria-hidden="true">⌖</span>
-                                    <div><span>موقعیت مجموعه</span><p>آدرس یا مختصات از تنظیمات واقعی فروشگاه خوانده می‌شود.</p></div>
-                                </div>
-                            @endif
-
                             @if(filled($contactSetting?->hours))
                                 <div class="fz-contact-hours">
                                     <span class="fz-contact-hours__icon" aria-hidden="true">◷</span>
@@ -202,17 +199,19 @@
                             <p>پیش از مراجعه حضوری، برای هماهنگی با تیم فرزین تماس بگیرید.</p>
                         </div>
                     </aside>
+                    @endif
 
-                    {{-- Left column in RTL: direct contact, social channels and message form --}}
+                    {{-- راه‌های تماس فقط وقتی مقدار واقعی دارند نمایش داده می‌شوند. --}}
                     <div class="fz-contact-left-column">
+                        @if($hasPublicContact)
                         <section class="fz-contact-panel fz-contact-channels" data-fz-reveal>
                             <div class="fz-contact-panel__header">
                                 <div>
-                                    <p class="fz-contact-kicker">DIRECT CHANNELS</p>
+                                    <p class="fz-contact-kicker">تماس مستقیم</p>
                                     <h2>راه‌های ارتباطی</h2>
                                     <p>مسیر مناسب خودتان را انتخاب کنید.</p>
                                 </div>
-                                <span class="fz-contact-live"><i aria-hidden="true"></i> در دسترس</span>
+                                @if($hasDirectChannels)<span class="fz-contact-live"><i aria-hidden="true"></i> راه ارتباط مستقیم</span>@endif
                             </div>
 
                             <div class="fz-contact-channel-grid">
@@ -236,15 +235,12 @@
                                     </a>
                                 @endif
 
-                                @if(!filled($contactSetting?->phone) && !filled($contactSetting?->email))
-                                    <div class="fz-contact-empty-channel">شماره تماس و ایمیل پس از ثبت در تنظیمات تماس نمایش داده می‌شوند.</div>
-                                @endif
                             </div>
 
-                            @if($whatsappDigits !== '' || filled($contactSetting?->instagram_url) || filled($contactSetting?->telegram_url))
+                            @if($hasSocialChannels)
                                 <div class="fz-contact-social">
                                     <div class="fz-contact-social__heading">
-                                        <span class="fz-contact-kicker">SOCIAL / ONLINE</span>
+                                        <span class="fz-contact-kicker">شبکه‌های اجتماعی</span>
                                         <h3>در فضای مجازی هم کنار شماییم</h3>
                                     </div>
                                     <div class="fz-contact-social__links">
@@ -263,18 +259,20 @@
                                                 <span aria-hidden="true">✈</span> تلگرام
                                             </a>
                                         @endif
-                                    </div>
-                                </div>
-                            @else
-                                <div class="fz-contact-social fz-contact-social--empty">
-                                    <div class="fz-contact-social__heading">
-                                        <span class="fz-contact-kicker">SOCIAL / ONLINE</span>
-                                        <h3>شبکه‌های اجتماعی فرزین</h3>
-                                        <p>لینک‌های شبکه‌های اجتماعی پس از ثبت در تنظیمات تماس همین‌جا قرار می‌گیرند.</p>
+                                        @if(filled($contactSetting?->eitaa_url))
+                                            <a href="{{ $contactSetting->eitaa_url }}" target="_blank" rel="noopener noreferrer" class="fz-contact-social__link">
+                                                <span aria-hidden="true">ا</span> ایتا
+                                            </a>
+                                        @endif
                                     </div>
                                 </div>
                             @endif
                         </section>
+                        @endif
+
+                        @if(filled($contactSetting?->hours))
+                            <div class="fz-contact-hours"><span class="fz-contact-hours__icon" aria-hidden="true">◷</span><div><span>ساعات کاری</span><p>{{ $contactSetting->hours }}</p></div></div>
+                        @endif
 
                         <section class="fz-contact-panel fz-contact-form-panel" id="contact-form" data-fz-reveal aria-labelledby="contact-form-title">
                             <div class="fz-contact-panel__header">
