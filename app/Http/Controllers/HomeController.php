@@ -88,9 +88,11 @@ class HomeController extends Controller
                 $applyPublicProductRules($products);
             })
             ->with([
-                'products' => function (Builder $products) use ($applyPublicProductRules): void {
-                    $applyPublicProductRules($products);
-                    $products
+                'products' => function ($products) use ($applyPublicProductRules): void {
+                    // Eager-load constraints receive the HasMany relation, not the Builder.
+                    $query = $products->getQuery();
+                    $applyPublicProductRules($query);
+                    $query
                         ->with([
                             'images' => fn ($images) => $images
                                 ->select(['id', 'product_id', 'media_id', 'path', 'alt', 'sort_order', 'is_primary'])
