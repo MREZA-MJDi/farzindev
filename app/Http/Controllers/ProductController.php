@@ -1,13 +1,13 @@
 <?php
 
-namespace App\\Http\\Controllers;
+namespace App\Http\Controllers;
 
-use App\\Models\\ContactSetting;
-use App\\Models\\Product;
-use App\\Models\\StorefrontSetting;
-use Illuminate\\Database\\Eloquent\\Builder;
-use Illuminate\\Support\\Str;
-use Illuminate\\Contracts\\View\\View;
+use App\Models\ContactSetting;
+use App\Models\Product;
+use App\Models\StorefrontSetting;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Str;
+use Illuminate\Contracts\View\View;
 
 class ProductController extends Controller
 {
