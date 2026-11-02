@@ -149,7 +149,11 @@ class FarzinStorefrontTest extends TestCase
         $this->get(route('admin.products.edit', $product))
             ->assertOk()
             ->assertSee('name="show_in_home_gallery"', false)
-            ->assertSee('نمایش در گالری تصویری صفحه اصلی');
+            ->assertSee('نمایش در گالری تصویری صفحه اصلی')
+            ->assertSee('role="tablist"', false)
+            ->assertSee('role="tabpanel"', false)
+            ->assertSee('اطلاعات و تنظیمات محصول')
+            ->assertSee('گالری و تنوع‌ها');
 
         $this->get(route('admin.product-images.index', ['product_id' => $product->id]))
             ->assertRedirect(route('admin.products.edit', $product));
