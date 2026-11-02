@@ -48,8 +48,8 @@
             @php
                 $homeServiceHighlights = collect([
                     ['label' => 'گارانتی', 'value' => data_get($publicContactSettings ?? [], 'warranty_summary')],
-                    ['label' => 'ارسال', 'value' => data_get($storefrontContact ?? [], 'shipping_summary')],
-                    ['label' => 'نصب', 'value' => data_get($storefrontContact ?? [], 'installation_summary')],
+                    ['label' => 'ارسال', 'value' => data_get($publicContactSettings ?? [], 'shipping_summary')],
+                    ['label' => 'نصب', 'value' => data_get($publicContactSettings ?? [], 'installation_summary')],
                 ])->filter(fn ($item) => filled($item['value']));
                 $homeInstallmentAvailable = $featuredProducts->contains(fn ($product) => (bool) $product->installment_enabled)
                     || (bool) ($heroProduct?->installment_enabled);
@@ -219,31 +219,34 @@
             </section>
         @endif
 
-        <section class="fz-home-trust" aria-labelledby="fz-home-trust-heading">
-            <div class="fz-container">
-                <div class="fz-home-trust__intro">
-                    <p class="fz-eyebrow"><span></span> تجربه خرید از فرزین</p>
-                    <h2 id="fz-home-trust-heading">برای انتخاب، اطلاعات روشن در اختیار شماست.</h2>
+        @if($homeServiceHighlights->isNotEmpty() || $homeInstallmentAvailable)
+            <section class="fz-home-trust" aria-labelledby="fz-home-trust-heading">
+                <div class="fz-container">
+                    <div class="fz-home-trust__intro">
+                        <p class="fz-eyebrow"><span></span> خدمات و شرایط ثبت‌شده</p>
+                        <h2 id="fz-home-trust-heading">چرا فرزین؟</h2>
+                    </div>
+                    <div class="fz-home-trust__grid">
+                        @foreach($homeServiceHighlights as $index => $service)
+                            <article class="fz-home-trust__item">
+                                <span class="fz-home-trust__index">{{ \App\Helpers\PersianNumberHelper::format($index + 1) }}</span>
+                                <span class="fz-home-trust__icon" aria-hidden="true">✓</span>
+                                <strong>{{ $service['label'] }}</strong>
+                                <span>{{ $service['value'] }}</span>
+                            </article>
+                        @endforeach
+                        @if($homeInstallmentAvailable)
+                            <article class="fz-home-trust__item">
+                                <span class="fz-home-trust__index">{{ \App\Helpers\PersianNumberHelper::format($homeServiceHighlights->count() + 1) }}</span>
+                                <span class="fz-home-trust__icon" aria-hidden="true">٪</span>
+                                <strong>خرید اقساطی</strong>
+                                <span>فقط برای محصولاتی که شرایط اقساط آن‌ها در صفحه محصول ثبت شده است.</span>
+                            </article>
+                        @endif
+                    </div>
                 </div>
-                <div class="fz-home-trust__grid">
-                    <a class="fz-home-trust__item" href="{{ route('shop.index') }}">
-                        <span class="fz-home-trust__index">01</span><span class="fz-home-trust__icon" aria-hidden="true">◇</span>
-                        <strong>مشخصات پیش از خرید</strong><span>تصویر، قیمت و جزئیات هر مدل را در صفحه محصول بررسی کنید.</span>
-                        <em>رفتن به فروشگاه <b aria-hidden="true">←</b></em>
-                    </a>
-                    <a class="fz-home-trust__item" href="{{ route('cart.index') }}">
-                        <span class="fz-home-trust__index">02</span><span class="fz-home-trust__icon" aria-hidden="true">＋</span>
-                        <strong>سبد خرید یکپارچه</strong><span>محصول‌ها را به سبد اضافه کنید؛ سبد مهمان پس از ورود به حساب منتقل می‌شود.</span>
-                        <em>مشاهده سبد خرید <b aria-hidden="true">←</b></em>
-                    </a>
-                    <a class="fz-home-trust__item" href="{{ auth()->check() && auth()->user()->isCustomer() ? route('account.orders.index') : route('login', ['intended' => '/account/orders']) }}">
-                        <span class="fz-home-trust__index">03</span><span class="fz-home-trust__icon" aria-hidden="true">↗</span>
-                        <strong>مدیریت سفارش‌ها</strong><span>پس از ورود، سفارش‌های ثبت‌شده را از حساب کاربری خود ببینید.</span>
-                        <em>حساب کاربری <b aria-hidden="true">←</b></em>
-                    </a>
-                </div>
-            </div>
-        </section>
+            </section>
+        @endif
 
         <section class="fz-section fz-home-buying-guides" aria-labelledby="fz-buying-guides-title">
             <div class="fz-container">
