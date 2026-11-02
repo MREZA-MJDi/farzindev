@@ -439,7 +439,7 @@ class FarzinStorefrontTest extends TestCase
                 ->image(str_replace('-', '_', $slug).'.jpg', 1200, 750)
                 ->storePublicly('blog', 'public');
 
-            \\App\\Models\\BlogPost::query()
+            \App\Models\BlogPost::query()
                 ->where('slug', $slug)
                 ->update([
                     'cover_image' => $coverPath,
