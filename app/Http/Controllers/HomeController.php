@@ -57,6 +57,16 @@ class HomeController extends Controller
             });
         };
 
+        $isPurchasable = static function (Product $product): bool {
+            $groups = $product->variants->groupBy('type');
+
+            return $groups->isNotEmpty()
+                ? $groups->every(fn ($options) => $options->contains(
+                    fn ($option) => (int) $option->stock > 0
+                ))
+                : (int) $product->stock > 0;
+        };
+
         $heroProduct = Product::query()
             ->active()
             ->whereHas('category', fn (Builder $query) => $query->where('is_active', true))
@@ -66,9 +76,9 @@ class HomeController extends Controller
             ->orderByDesc('is_featured')
             ->orderByDesc('updated_at')
             ->orderByDesc('id')
-            ->limit(12)
+            ->limit(30)
             ->get()
-            ->first(fn (Product $product) => $product->images->contains(
+            ->first(fn (Product $product) => $isPurchasable($product) && $product->images->contains(
                 fn ($image) => filled($image->url)
             ));
 
@@ -94,11 +104,12 @@ class HomeController extends Controller
             ->orderByDesc('is_featured')
             ->orderByDesc('updated_at')
             ->orderByDesc('id')
-            ->limit(18)
+            ->limit(60)
             ->get()
-            ->filter(fn (Product $product) => $product->images->contains(
+            ->filter(fn (Product $product) => $isPurchasable($product) && $product->images->contains(
                 fn ($image) => filled($image->url)
             ))
+            ->take(6)
             ->values();
 
         $hasBestSellerSales = $featuredProducts->contains(
@@ -120,10 +131,12 @@ class HomeController extends Controller
             ->where('installment_interval_months', '>', 0)
             ->whereHas('category', fn (Builder $query) => $query->where('is_active', true))
             ->when(true, $onlyInStock)
-            ->with(['category:id,name,slug'])
+            ->with(['category:id,name,slug', 'variants:id,product_id,type,stock'])
             ->orderByDesc('is_featured')
             ->orderByDesc('updated_at')
-            ->first();
+            ->limit(30)
+            ->get()
+            ->first(fn (Product $product) => $isPurchasable($product));
 
         $blogPosts = BlogPost::query()
             ->published()
