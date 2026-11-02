@@ -477,7 +477,7 @@ class FarzinStorefrontTest extends TestCase
 
         $this->get(route('home'))
             ->assertOk()
-            ->assertSee('tel:02112345678', false)
+            ->assertSee('tel:+982112345678', false)
             ->assertSee('hello@farajihome.com')
             ->assertSee('تهران، نشانی آزمایشی');
     }
@@ -487,6 +487,7 @@ class FarzinStorefrontTest extends TestCase
         $category = $this->category([
             'name' => 'هودهای منتخب',
             'slug' => 'hoods',
+            'description' => str_repeat('راهنمای انتخاب هود با توجه به فضای نصب، ابعاد و نیاز آشپزخانه. ', 3),
         ]);
 
         $products = [];
@@ -519,10 +520,9 @@ class FarzinStorefrontTest extends TestCase
         $response->assertOk()
             ->assertSee('fz-home-hero__showcase--static', false)
             ->assertSee('fz-home-buying-guides', false)
-            ->assertSee('راهنمای انتخاب هود')
-            ->assertSee('راهنمای انتخاب سینک')
+            ->assertSee('اطلاعات دسته‌بندی را پیش از انتخاب بخوانید.')
             ->assertSee('fz-home-featured-grid--six', false)
-            ->assertSee('fz-home-trust', false)
+            ->assertDontSee('fz-home-trust', false)
             ->assertSee('fz-home-final-cta', false)
             ->assertDontSee('fz-home-contact-bridge', false)
             ->assertSee('fz-home-journal', false)
@@ -564,6 +564,12 @@ class FarzinStorefrontTest extends TestCase
         ]);
         $videoCategory->update(['hover_media_id' => $video->id]);
 
+        $this->product($videoCategory, [
+            'name' => 'هود دارای ویدیوی دسته',
+            'slug' => 'hood-category-video-product',
+            'stock' => 2,
+        ]);
+
         $gifCategory = $this->category([
             'name' => 'سینک با پیش‌نمایش GIF',
             'slug' => 'gif-preview-sinks',
@@ -580,6 +586,12 @@ class FarzinStorefrontTest extends TestCase
         ]);
         $gifCategory->update(['hover_media_id' => $gif->id]);
 
+        $this->product($gifCategory, [
+            'name' => 'سینک دارای GIF دسته',
+            'slug' => 'sink-category-gif-product',
+            'stock' => 2,
+        ]);
+
         $this->get(route('home'))
             ->assertOk()
             ->assertSee('data-farzin-gif-card', false)
@@ -590,7 +602,7 @@ class FarzinStorefrontTest extends TestCase
             ->assertDontSee('PREVIEW · 5 SEC');
     }
 
-    public function test_homepage_lists_active_products_even_without_uploaded_images(): void
+    public function test_homepage_does_not_promote_products_without_a_real_image(): void
     {
         $category = $this->category();
         $product = $this->product($category, [
@@ -600,8 +612,8 @@ class FarzinStorefrontTest extends TestCase
 
         $this->get(route('home'))
             ->assertOk()
-            ->assertSee($product->name)
-            ->assertSee('تصویر محصول ثبت نشده');
+            ->assertDontSee($product->name)
+            ->assertDontSee('تصویر محصول ثبت نشده');
     }
 
     public function test_sitemap_lists_public_pages_and_only_active_catalog_items(): void
@@ -730,8 +742,8 @@ class FarzinStorefrontTest extends TestCase
 
         $this->get(route('product.show', $product->slug))
             ->assertOk()
-            ->assertSee('farzin-product-hero', false)
-            ->assertSee('farzin-product-detail-info__title', false)
+            ->assertSee('fz-product-panel', false)
+            ->assertSee('fz-product-panel__title', false)
             ->assertSee('<meta property="product:price:amount"', false)
             ->assertSee('<script type="application/ld+json">', false)
             ->assertSee('"@context":"https://schema.org"', false)
@@ -966,15 +978,14 @@ class FarzinStorefrontTest extends TestCase
             ->assertSee('"availability"', false)
             ->assertSee('InStock')
             ->assertSee('وابسته به ویژگی انتخاب‌شده')
-            ->assertSee('max="4"', false)
-            ->assertSee('موجود در انبار')
-            ->assertSee('farzin-product-detail-info', false)
-            ->assertSee('data-stock-available="true"', false)
-            ->assertSee('روش پرداخت در مرحله ثبت سفارش')
+            ->assertSee('max="2"', false)
+            ->assertSee('fz-product-panel', false)
+            ->assertSee('data-product-cart-form', false)
             ->assertSee('@touchstart.passive="startTouch($event)"', false)
             ->assertSee('@touchend.passive="endTouch($event)"', false)
             ->assertSee('https://cdn.example.test/variant-black.webp', false)
-            ->assertSee('w-[86px]', false);
+            ->assertSee('شناسه محصول')
+            ->assertDontSee('PRODUCT GALLERY');
     }
 
     public function test_customer_can_add_product_to_cart_and_repeated_adds_merge(): void
