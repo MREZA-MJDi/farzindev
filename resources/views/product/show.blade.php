@@ -385,12 +385,6 @@
                             <span dir="ltr">{{ $product->sku }}</span>
                         </span>
 
-                            <span class="h-1 w-1 rounded-full bg-[var(--livora-border)]"></span>
-
-                            <span>
-                            {{ $canPurchase ? 'موجود' : 'ناموجود' }}
-                        </span>
-
                         </div>
 
 
@@ -734,7 +728,7 @@
                                 </div>
                             @endif
 
-                            @if(filled(data_get($storefrontContact ?? [], 'shipping_summary')))
+                            @if(filled(data_get($publicContactSettings ?? [], 'shipping_summary')))
                                 <div class="rounded-2xl border border-[var(--livora-border)] bg-[var(--livora-white)] p-4">
                                     <p class="text-[10px] font-semibold text-[var(--livora-stone)]">ارسال</p>
                                     <p class="mt-2 text-xs font-medium leading-6">{{ data_get($publicContactSettings, 'shipping_summary') }}</p>
@@ -810,62 +804,6 @@
 
 
         {{-- =========================================================
-             PRODUCT FACTS
-        ========================================================== --}}
-        <section class="farzin-product-facts border-t border-[var(--livora-border)] bg-[var(--livora-cream)]">
-
-            <x-layout.container>
-
-                <div class="py-14 sm:py-18">
-
-                    <div class="mb-8">
-
-                        <p class="text-[10px] font-medium uppercase tracking-[0.22em] text-[var(--livora-accent)]">
-                            AT A GLANCE
-                        </p>
-
-                        <h2 class="mt-3 text-2xl font-semibold">
-                            اطلاعات سریع
-                        </h2>
-
-                    </div>
-
-                    <div class="farzin-product-facts__grid grid grid-cols-2 gap-3 lg:grid-cols-4">
-
-                        <div class="farzin-product-facts__item rounded-3xl border border-[var(--livora-border)] bg-[var(--livora-white)] p-5">
-
-                            <p class="text-[10px] uppercase tracking-[0.16em] text-[var(--livora-stone)]">
-                                دسته‌بندی
-                            </p>
-
-                            <p class="mt-3 text-sm font-semibold">
-                                {{ $product->category?->name ?? '—' }}
-                            </p>
-
-                        </div>
-
-                        <div class="farzin-product-facts__item rounded-3xl border border-[var(--livora-border)] bg-[var(--livora-white)] p-5">
-
-                            <p class="text-[10px] uppercase tracking-[0.16em] text-[var(--livora-stone)]">
-                                روش پرداخت
-                            </p>
-
-                            <p class="mt-3 text-sm font-semibold">
-                                {{ $installmentEnabled ? 'قابل خرید اقساطی' : 'پرداخت کامل' }}
-                            </p>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-            </x-layout.container>
-
-        </section>
-
-
-        {{-- =========================================================
              INSTALLMENT SEO / EXPLANATION
         ========================================================== --}}
         @if($installmentEnabled)
@@ -908,7 +846,7 @@
                                 <p class="mt-4">
                                     فاصله سررسید چک‌ها
                                     {{ \App\Helpers\PersianNumberHelper::format($intervalMonths) }}
-                                    ماه است و برنامه دقیق پرداخت هنگام Checkout نمایش داده می‌شود.
+                                    ماه است و برنامه دقیق پرداخت هنگام ثبت سفارش نمایش داده می‌شود.
                                 </p>
 
                             @endif
