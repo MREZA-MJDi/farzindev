@@ -71,7 +71,6 @@ class ProductController extends Controller
         $relatedProducts = Product::query()
             ->active()
             ->whereKeyNot($product->id)
-            ->where('show_in_home_gallery', true)
             ->where('category_id', $product->category_id)
             ->whereHas('category', fn (Builder $query) => $query->where('is_active', true))
             ->whereHas('images')
