@@ -277,21 +277,54 @@
 
                             <div class="mt-7 grid gap-5 sm:grid-cols-2">
 
-                                <x-ui.input
-                                    name="province"
-                                    label="استان"
-                                    value="{{ old('province') }}"
-                                    error="{{ $errors->first('province') }}"
-                                    required
-                                />
+                                <div class="space-y-2" data-location-picker
+                                     data-provinces-url="{{ route('api.provinces.index') }}"
+                                     data-cities-url-prefix="{{ url('/api/provinces') }}">
+                                    <div>
+                                        <label for="province-picker-button" class="mb-2 block text-xs font-medium text-[var(--livora-text)]">استان</label>
+                                        <button
+                                            type="button"
+                                            id="province-picker-button"
+                                            data-location-open="province"
+                                            aria-haspopup="dialog"
+                                            aria-controls="location-picker-modal"
+                                            aria-expanded="false"
+                                            aria-required="true"
+                                            aria-invalid="{{ $errors->has('province_id') ? 'true' : 'false' }}"
+                                            class="flex min-h-12 w-full items-center justify-between gap-3 rounded-2xl border border-[var(--livora-border)] bg-[var(--livora-white)] px-4 py-3 text-right text-sm text-[var(--livora-text)] transition hover:border-[var(--livora-ink)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--livora-ink)]"
+                                        >
+                                            <span data-location-value="province">{{ $selectedProvince?->name ?? 'انتخاب استان' }}</span>
+                                            <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7" class="h-4 w-4 shrink-0" aria-hidden="true"><path d="m5 7 5 5 5-5"/></svg>
+                                        </button>
+                                        <input type="hidden" id="province_id" name="province_id" value="{{ old('province_id', $selectedProvince?->id) }}">
+                                        @error('province_id')
+                                            <p class="mt-2 text-[11px] text-red-600" role="alert">{{ $message }}</p>
+                                        @enderror
+                                    </div>
 
-                                <x-ui.input
-                                    name="city"
-                                    label="شهر"
-                                    value="{{ old('city') }}"
-                                    error="{{ $errors->first('city') }}"
-                                    required
-                                />
+                                    <div>
+                                        <label for="city-picker-button" class="mb-2 block text-xs font-medium text-[var(--livora-text)]">شهر</label>
+                                        <button
+                                            type="button"
+                                            id="city-picker-button"
+                                            data-location-open="city"
+                                            aria-haspopup="dialog"
+                                            aria-controls="location-picker-modal"
+                                            aria-expanded="false"
+                                            aria-required="true"
+                                            aria-invalid="{{ $errors->has('city_id') ? 'true' : 'false' }}"
+                                            @disabled(! $selectedProvince)
+                                            class="flex min-h-12 w-full items-center justify-between gap-3 rounded-2xl border border-[var(--livora-border)] bg-[var(--livora-white)] px-4 py-3 text-right text-sm text-[var(--livora-text)] transition hover:border-[var(--livora-ink)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--livora-ink)] disabled:cursor-not-allowed disabled:bg-[var(--livora-surface)] disabled:text-slate-500"
+                                        >
+                                            <span data-location-value="city">{{ $selectedCity?->name ?? 'ابتدا استان را انتخاب کنید' }}</span>
+                                            <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7" class="h-4 w-4 shrink-0" aria-hidden="true"><path d="m5 7 5 5 5-5"/></svg>
+                                        </button>
+                                        <input type="hidden" id="city_id" name="city_id" value="{{ old('city_id', $selectedCity?->id) }}">
+                                        @error('city_id')
+                                            <p class="mt-2 text-[11px] text-red-600" role="alert">{{ $message }}</p>
+                                        @enderror
+                                    </div>
+                                </div>
 
 
                                 <div class="sm:col-span-2">
@@ -354,6 +387,24 @@
                             </div>
 
                         </section>
+
+                        <div id="location-picker-modal" class="fz-location-modal" data-location-modal hidden aria-hidden="true">
+                            <button type="button" class="fz-location-modal__backdrop" data-location-backdrop aria-label="بستن پنجره انتخاب"></button>
+                            <section class="fz-location-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="location-picker-title" tabindex="-1">
+                                <header class="fz-location-modal__header">
+                                    <div>
+                                        <p class="text-[10px] font-bold tracking-widest text-[var(--livora-accent)]">DELIVERY LOCATION</p>
+                                        <h2 id="location-picker-title" data-location-title class="mt-2 text-lg font-bold">انتخاب استان</h2>
+                                        <p class="mt-1 text-xs text-[var(--livora-stone)]">نام موردنظر را جستجو و انتخاب کنید.</p>
+                                    </div>
+                                    <button type="button" class="fz-location-modal__close" data-location-close aria-label="بستن">×</button>
+                                </header>
+                                <label class="sr-only" for="location-picker-search">جستجوی استان یا شهر</label>
+                                <input id="location-picker-search" class="fz-location-modal__search" type="search" autocomplete="off" placeholder="جستجوی نام..." data-location-search>
+                                <p class="fz-location-modal__status" data-location-status aria-live="polite">در حال دریافت فهرست...</p>
+                                <div class="fz-location-modal__options" data-location-options role="listbox" aria-label="نتایج انتخاب موقعیت"></div>
+                            </section>
+                        </div>
 
                         @if($checkoutPreview)
                             </fieldset>
@@ -590,3 +641,188 @@
     </div>
 
 @endsection
+
+@push('scripts')
+<script>
+(() => {
+    const picker = document.querySelector('[data-location-picker]');
+    const modal = document.querySelector('[data-location-modal]');
+    if (!picker || !modal) return;
+
+    const provinceInput = picker.querySelector('#province_id');
+    const cityInput = picker.querySelector('#city_id');
+    const provinceButton = picker.querySelector('[data-location-open="province"]');
+    const cityButton = picker.querySelector('[data-location-open="city"]');
+    const provinceValue = picker.querySelector('[data-location-value="province"]');
+    const cityValue = picker.querySelector('[data-location-value="city"]');
+    const title = modal.querySelector('[data-location-title]');
+    const search = modal.querySelector('[data-location-search]');
+    const status = modal.querySelector('[data-location-status]');
+    const options = modal.querySelector('[data-location-options]');
+    const dialog = modal.querySelector('[role="dialog"]');
+    const closeButton = modal.querySelector('[data-location-close]');
+    const provincesUrl = picker.dataset.provincesUrl;
+    const citiesUrlPrefix = picker.dataset.citiesUrlPrefix;
+    let activeType = 'province';
+    let provinceCache = null;
+    let cityCache = new Map();
+    let activeTrigger = null;
+    let allOptions = [];
+    let focusWasInside = false;
+
+    const normalize = (value) => String(value ?? '')
+        .trim()
+        .toLocaleLowerCase('fa')
+        .replace(/[يى]/g, 'ی')
+        .replace(/ك/g, 'ک')
+        .replace(/\s+/g, ' ');
+
+    const setStatus = (message) => { status.textContent = message; };
+
+    async function fetchJson(url) {
+        const response = await fetch(url, {
+            headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
+            credentials: 'same-origin',
+        });
+        if (!response.ok) throw new Error('Location lookup failed');
+        const payload = await response.json();
+        return Array.isArray(payload) ? payload : (payload.data ?? []);
+    }
+
+    async function loadOptions(type) {
+        setStatus('در حال دریافت فهرست...');
+        options.replaceChildren();
+        try {
+            if (type === 'province') {
+                provinceCache ??= await fetchJson(provincesUrl);
+                allOptions = provinceCache;
+            } else {
+                const provinceId = provinceInput.value;
+                if (!provinceId) {
+                    allOptions = [];
+                } else {
+                    if (!cityCache.has(provinceId)) {
+                        cityCache.set(provinceId, await fetchJson(
+                            citiesUrlPrefix + '/' + encodeURIComponent(provinceId) + '/cities'
+                        ));
+                    }
+                    allOptions = cityCache.get(provinceId);
+                }
+            }
+            renderOptions();
+        } catch (error) {
+            console.error(error);
+            setStatus('دریافت فهرست انجام نشد؛ اتصال اینترنت را بررسی و دوباره تلاش کنید.');
+        }
+    }
+
+    function renderOptions() {
+        const query = normalize(search.value);
+        const filtered = allOptions.filter((item) => normalize(item.name).includes(query));
+        options.replaceChildren();
+
+        if (!filtered.length) {
+            setStatus(allOptions.length ? 'موردی با این عبارت پیدا نشد.' : 'فهرستی برای نمایش وجود ندارد.');
+            return;
+        }
+
+        setStatus(filtered.length.toLocaleString('fa-IR') + ' مورد');
+        const fragment = document.createDocumentFragment();
+        filtered.forEach((item) => {
+            const button = document.createElement('button');
+            button.type = 'button';
+            button.className = 'fz-location-modal__option';
+            button.role = 'option';
+            button.setAttribute('aria-selected', String(
+                activeType === 'province'
+                    ? String(item.id) === String(provinceInput.value)
+                    : String(item.id) === String(cityInput.value)
+            ));
+            button.textContent = item.name;
+            button.addEventListener('click', () => choose(item));
+            fragment.append(button);
+        });
+        options.append(fragment);
+    }
+
+    function openModal(type, trigger = null) {
+        if (type === 'city' && !provinceInput.value) return;
+        activeType = type;
+        activeTrigger = trigger || (type === 'province' ? provinceButton : cityButton);
+        title.textContent = type === 'province' ? 'انتخاب استان' : 'انتخاب شهر';
+        search.value = '';
+        modal.hidden = false;
+        modal.setAttribute('aria-hidden', 'false');
+        activeTrigger?.setAttribute('aria-expanded', 'true');
+        document.body.style.overflow = 'hidden';
+        loadOptions(type).finally(() => search.focus({ preventScroll: true }));
+    }
+
+    function closeModal(restoreFocus = true) {
+        modal.hidden = true;
+        modal.setAttribute('aria-hidden', 'true');
+        activeTrigger?.setAttribute('aria-expanded', 'false');
+        document.body.style.overflow = '';
+        if (restoreFocus && activeTrigger && !activeTrigger.disabled) {
+            activeTrigger.focus({ preventScroll: true });
+        }
+    }
+
+    function choose(item) {
+        if (activeType === 'province') {
+            provinceInput.value = item.id;
+            provinceValue.textContent = item.name;
+            cityInput.value = '';
+            cityValue.textContent = 'انتخاب شهر';
+            cityButton.disabled = false;
+            cityButton.setAttribute('aria-invalid', 'false');
+            cityCache.clear();
+            closeModal(false);
+            openModal('city', cityButton);
+            return;
+        }
+
+        cityInput.value = item.id;
+        cityValue.textContent = item.name;
+        cityButton.setAttribute('aria-invalid', 'false');
+        closeModal(true);
+    }
+
+    picker.querySelectorAll('[data-location-open]').forEach((button) => {
+        button.addEventListener('click', () => openModal(button.dataset.locationOpen, button));
+    });
+    closeButton.addEventListener('click', () => closeModal(true));
+    modal.querySelector('[data-location-backdrop]').addEventListener('click', () => closeModal(true));
+    search.addEventListener('input', renderOptions);
+
+    document.addEventListener('keydown', (event) => {
+        if (modal.hidden) return;
+        if (event.key === 'Escape') {
+            event.preventDefault();
+            closeModal(true);
+            return;
+        }
+        if (event.key !== 'Tab') return;
+        const focusable = [...dialog.querySelectorAll('button:not(:disabled), input:not(:disabled)')];
+        if (!focusable.length) return;
+        const first = focusable[0];
+        const last = focusable[focusable.length - 1];
+        if (event.shiftKey && document.activeElement === first) {
+            event.preventDefault();
+            last.focus();
+        } else if (!event.shiftKey && document.activeElement === last) {
+            event.preventDefault();
+            first.focus();
+        }
+    });
+
+    // The controller resolves old input/default address IDs into these labels.
+    if (!provinceInput.value) {
+        cityButton.disabled = true;
+    } else {
+        cityButton.disabled = false;
+    }
+})();
+</script>
+@endpush
+
