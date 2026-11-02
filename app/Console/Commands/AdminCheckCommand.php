@@ -26,9 +26,13 @@ class AdminCheckCommand extends Command
         $exists = $user?->isAdmin() === true;
         $emailMatches = $exists
             && mb_strtolower(trim((string) $user->email)) === $email;
-        $passwordMatches = $exists
-            && $password !== ''
-            && Hash::check($password, (string) $user->password);
+        try {
+            $passwordMatches = $exists
+                && $password !== ''
+                && Hash::check($password, (string) $user->password);
+        } catch (\\Throwable) {
+            $passwordMatches = false;
+        }
 
         $this->line('admin_exists=' . ($exists ? 'true' : 'false'));
         $this->line('email_matches=' . ($emailMatches ? 'true' : 'false'));
