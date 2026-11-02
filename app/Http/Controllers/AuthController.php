@@ -97,6 +97,8 @@ class AuthController extends Controller
         }
 
         RateLimiter::clear($throttleKey);
+        Auth::guard('admin')->logout();
+        Auth::shouldUse('web');
 
         $request->session()->regenerate();
 
