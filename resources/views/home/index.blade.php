@@ -47,7 +47,7 @@
             </div>
             @php
                 $homeServiceHighlights = collect([
-                    ['label' => 'گارانتی', 'value' => data_get($storefrontContact ?? [], 'warranty_summary')],
+                    ['label' => 'گارانتی', 'value' => data_get($publicContactSettings ?? [], 'warranty_summary')],
                     ['label' => 'ارسال', 'value' => data_get($storefrontContact ?? [], 'shipping_summary')],
                     ['label' => 'نصب', 'value' => data_get($storefrontContact ?? [], 'installation_summary')],
                 ])->filter(fn ($item) => filled($item['value']));
