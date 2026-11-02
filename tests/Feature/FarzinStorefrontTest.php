@@ -13,7 +13,9 @@ use App\Models\Media;
 use App\Models\Product;
 use App\Models\ProductImage;
 use App\Models\ProductVariant;
+use App\Models\Province;
 use App\Models\StorefrontSetting;
+use Database\Seeders\ProvinceCitySeeder;
 use App\Models\SeoRedirect;
 use App\Models\User;
 use App\Services\Payments\PaymentService;
@@ -28,6 +30,8 @@ use Tests\TestCase;
 class FarzinStorefrontTest extends TestCase
 {
     use RefreshDatabase;
+
+    private ?array $checkoutLocationCache = null;
 
     public function test_admin_can_render_every_crud_dashboard_surface_with_real_records(): void
     {
@@ -1595,6 +1599,8 @@ class FarzinStorefrontTest extends TestCase
                 'last_name' => 'Buyer',
                 'phone' => '09123456789',
                 'email' => 'buyer@farzin.test',
+                'province_id' => $this->checkoutLocationPayload()['province_id'],
+                'city_id' => $this->checkoutLocationPayload()['city_id'],
                 'province' => 'Tehran',
                 'city' => 'Tehran',
                 'address' => ' خیابان نمونه، پلاک ۱',
@@ -1629,6 +1635,8 @@ class FarzinStorefrontTest extends TestCase
             'last_name' => 'Buyer',
             'phone' => '09123456789',
             'email' => 'buyer@farzin.test',
+            'province_id' => $this->checkoutLocationPayload()['province_id'],
+            'city_id' => $this->checkoutLocationPayload()['city_id'],
             'province' => 'Tehran',
             'city' => 'Tehran',
             'address' => ' خیابان نمونه، پلاک ۱',
@@ -1692,6 +1700,8 @@ class FarzinStorefrontTest extends TestCase
                 'last_name' => 'Buyer',
                 'phone' => '09123456789',
                 'email' => 'buyer@farzin.test',
+                'province_id' => $this->checkoutLocationPayload()['province_id'],
+                'city_id' => $this->checkoutLocationPayload()['city_id'],
                 'province' => 'Tehran',
                 'city' => 'Tehran',
                 'address' => 'خیابان نمونه، پلاک ۱',
@@ -1774,6 +1784,8 @@ class FarzinStorefrontTest extends TestCase
                 'last_name' => 'Buyer',
                 'phone' => '09123456789',
                 'email' => 'buyer@farzin.test',
+                'province_id' => $this->checkoutLocationPayload()['province_id'],
+                'city_id' => $this->checkoutLocationPayload()['city_id'],
                 'province' => 'Tehran',
                 'city' => 'Tehran',
                 'address' => 'خیابان نمونه، پلاک ۱',
@@ -2905,6 +2917,8 @@ class FarzinStorefrontTest extends TestCase
                 'last_name' => 'Buyer',
                 'phone' => '09123456789',
                 'email' => 'buyer@farzin.test',
+                'province_id' => $this->checkoutLocationPayload()['province_id'],
+                'city_id' => $this->checkoutLocationPayload()['city_id'],
                 'province' => 'Tehran',
                 'city' => 'Tehran',
                 'address' => 'Test address with enough length',
@@ -3622,6 +3636,8 @@ class FarzinStorefrontTest extends TestCase
             'last_name' => 'Buyer',
             'phone' => '09123456789',
             'email' => 'buyer@farzin.test',
+            'province_id' => $this->checkoutLocationPayload()['province_id'],
+            'city_id' => $this->checkoutLocationPayload()['city_id'],
             'province' => 'Tehran',
             'city' => 'Tehran',
             'address' => 'خیابان نمونه، پلاک ۱',
@@ -4382,6 +4398,27 @@ class FarzinStorefrontTest extends TestCase
         $this->assertDatabaseMissing('products', [
             'sku' => 'FZ-SEED-REAL-PRODUCT',
         ]);
+    }
+
+    private function checkoutLocationPayload(): array
+    {
+        if ($this->checkoutLocationCache !== null) {
+            return $this->checkoutLocationCache;
+        }
+
+        $this->seed(ProvinceCitySeeder::class);
+
+        $province = Province::query()
+            ->where('name', 'تهران')
+            ->firstOrFail();
+        $city = $province->cities()
+            ->where('name', 'تهران')
+            ->firstOrFail();
+
+        return $this->checkoutLocationCache = [
+            'province_id' => $province->id,
+            'city_id' => $city->id,
+        ];
     }
 
     private function category(array $attributes = []): Category
