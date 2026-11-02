@@ -18,7 +18,7 @@ class ApplyRobotsHeaders
             'account', 'account/*',
             'cart', 'cart/*',
             'checkout', 'checkout/*',
-            'login', 'register', 'forgot-password', 'reset-password/*', 'logout'
+            'login', 'admin/login', 'register', 'forgot-password', 'reset-password/*', 'logout'
         );
 
         // Private dashboards and customer-specific responses remain excluded
