@@ -673,6 +673,61 @@ test('admin blog image workflows expose the cropper and saved media library', as
 });
 
 
+test('admin contact location preview updates the existing map frame when address and coordinates change', async ({ page }) => {
+    await page.setViewportSize({ width: 1440, height: 960 });
+    await page.goto('/admin/login', { waitUntil: 'domcontentloaded' });
+
+    const loginForm = page.locator('form').filter({ has: page.locator('input[name="email"]') });
+    await loginForm.locator('input[name="email"]').fill('browser-admin@example.test');
+    await loginForm.locator('input[name="password"]').fill('browser-smoke-password');
+    await loginForm.locator('button[type="submit"]').click();
+    await expect(page).toHaveURL(/\/admin(?:\/dashboard)?(?:\?.*)?$/);
+
+    await page.goto('/admin/storefront-settings', { waitUntil: 'domcontentloaded' });
+
+    const preview = page.locator('#contact-map-preview');
+    const frame = page.locator('#contact-map-preview-frame');
+    const map = page.locator('#contact-map-preview-iframe');
+    const emptyState = page.locator('#contact-map-preview-empty');
+
+    await expect(preview).toBeVisible();
+    await expect(map).toBeAttached();
+    await expect(emptyState).toBeVisible();
+
+    await page.evaluate(() => {
+        window.__contactMapPreviewBeforeEdit = document.querySelector('#contact-map-preview');
+    });
+
+    await page.locator('#address').fill('Tehran, Vanak Square, Unit 1');
+    await expect(frame).toBeVisible();
+    await expect(map).toHaveAttribute(
+        'src',
+        'https://www.google.com/maps?q=Tehran%2C%20Vanak%20Square%2C%20Unit%201&z=15&output=embed'
+    );
+
+    await page.locator('#latitude').fill('35.6892');
+    await page.locator('#longitude').fill('51.3890');
+    await expect(map).toHaveAttribute(
+        'src',
+        'https://www.google.com/maps?q=35.6892%2C51.3890&z=15&output=embed'
+    );
+    await expect(page.locator('#contact-map-preview-link')).toHaveAttribute(
+        'href',
+        'https://www.google.com/maps/search/?api=1&query=35.6892%2C51.3890'
+    );
+    await expect(page.locator('#contact-map-preview-status')).toContainText('مختصات دقیق');
+
+    const samePreviewNode = await page.evaluate(() => (
+        window.__contactMapPreviewBeforeEdit === document.querySelector('#contact-map-preview')
+    ));
+    expect(samePreviewNode, 'editing the location must update the existing preview instead of replacing its layout').toBe(true);
+
+    await page.locator('#latitude').fill('91');
+    await expect(frame).toBeHidden();
+    await expect(emptyState).toBeVisible();
+    await expect(page.locator('#contact-map-preview-empty-text')).toContainText('مختصات معتبر نیست');
+});
+
 test('shop product card actions stay aligned across different content heights', async ({ page }) => {
     for (const viewport of [
         { width: 390, height: 844 },
