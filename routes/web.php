@@ -387,7 +387,7 @@ Route::middleware(['auth', 'customer'])->group(function () {
 */
 
 Route::middleware(['auth', 'admin'])
-    ->prefix('admin')
+    ->prefix(config('farzin.admin_path', 'admin'))
     ->name('admin.')
     ->group(function () {
 
