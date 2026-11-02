@@ -84,7 +84,7 @@
                     <div class="fz-contact-art" data-fz-reveal aria-label="تصویرسازی ارتباط با فرزین">
                         <div class="fz-contact-art__orbit fz-contact-art__orbit--outer" aria-hidden="true"></div>
                         <div class="fz-contact-art__orbit fz-contact-art__orbit--inner" aria-hidden="true"></div>
-                        <div class="fz-contact-art__topline"><span>FZ</span><i aria-hidden="true"></i><span>پشتیبانی</span></div>
+                        <div class="fz-contact-art__topline"><span>{{ $storefrontBrandName }}</span><i aria-hidden="true"></i><span>پشتیبانی</span></div>
                         <div class="fz-contact-art__device">
                             <div class="fz-contact-art__device-top"><span></span><span></span><span></span></div>
                             <svg viewBox="0 0 360 260" role="img" aria-label="نماد ارتباط با تیم فرزین">
@@ -176,7 +176,7 @@
                             @if($whatsappDigits !== '' || filled($contactSetting?->instagram_url) || filled($contactSetting?->telegram_url) || filled($storefrontPublicSettings['eitaa_url'] ?? null) || filled($storefrontPublicSettings['bale_url'] ?? null))
                                 <div class="fz-contact-social">
                                     <div class="fz-contact-social__heading">
-                                        <span class="fz-contact-kicker"></span>
+                                        
                                         <h3>در فضای مجازی هم کنار شماییم</h3>
                                     </div>
                                     <div class="fz-contact-social__links">
