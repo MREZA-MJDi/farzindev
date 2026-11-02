@@ -29,7 +29,7 @@ class HomeController extends Controller
                 'products' => fn (Builder $query) => $query->active(),
             ])
             ->orderBy('sort_order')
-            ->limit(4)
+            ->orderBy('name')
             ->get();
 
         $productRelations = [
@@ -72,7 +72,7 @@ class HomeController extends Controller
             fn ($image) => filled($image->url)
         );
 
-        $featuredProducts = Product::query()
+        $homepageProductCandidates = Product::query()
             ->active()
             ->where('show_in_home_gallery', true)
             ->whereHas('category', fn (Builder $query) => $query->where('is_active', true))
@@ -94,6 +94,15 @@ class HomeController extends Controller
             ->get()
             ->filter(fn (Product $product) => $hasPublicImage($product))
             ->sortByDesc(fn (Product $product) => $isPurchasable($product))
+            ->values();
+
+        // The hero recommendation must come from a product that can actually
+        // be bought now, even when it falls outside the eight-card selection.
+        $heroProduct = $homepageProductCandidates->first(
+            fn (Product $product) => $isPurchasable($product)
+        );
+
+        $featuredProducts = $homepageProductCandidates
             ->take(8)
             ->values();
 
@@ -117,6 +126,8 @@ class HomeController extends Controller
         $blogPosts = BlogPost::query()
             ->published()
             ->indexable()
+            ->whereNotNull('cover_image')
+            ->where('cover_image', '<>', '')
             ->with(['author:id,name', 'terms:id,type,name,slug'])
             ->orderByDesc('is_featured')
             ->orderByDesc('published_at')
@@ -135,6 +146,7 @@ class HomeController extends Controller
 
         return view('home.index', [
             'categories' => $categories,
+            'heroProduct' => $heroProduct,
             'featuredProducts' => $featuredProducts,
             'installmentProduct' => $installmentProduct,
             'shippingSettings' => $shippingSettings,
