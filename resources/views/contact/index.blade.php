@@ -16,22 +16,15 @@
 
 @section('content')
     @php
-        $publicPhone = \\App\\Support\\StorefrontContact::phone($contactSetting?->phone);\n        $mapAddress = trim((string) ($contactSetting?->address ?? ''));
+        $publicPhone = \App\Support\StorefrontContact::phone($contactSetting?->phone);
+        $mapAddress = trim((string) ($contactSetting?->address ?? ''));
         $mapLatitude = $contactSetting?->latitude;
         $mapLongitude = $contactSetting?->longitude;
         $hasMapCoordinates = is_numeric($mapLatitude) && is_numeric($mapLongitude);
         $mapQuery = $hasMapCoordinates
             ? (string) $mapLatitude . ',' . (string) $mapLongitude
             : $mapAddress;
-        $whatsappDigits = preg_replace('/\D+/', '', (string) ($contactSetting?->whatsapp ?? ''));
-
-        if ($whatsappDigits !== '') {
-            if (str_starts_with($whatsappDigits, '0')) {
-                $whatsappDigits = '98' . substr($whatsappDigits, 1);
-            } elseif (! str_starts_with($whatsappDigits, '98')) {
-                $whatsappDigits = '98' . $whatsappDigits;
-            }
-        }
+        $whatsappDigits = \App\Support\StorefrontContact::whatsapp($contactSetting?->whatsapp);
     @endphp
 
     <div class="fz-contact-page">
