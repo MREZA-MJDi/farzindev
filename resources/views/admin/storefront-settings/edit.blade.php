@@ -6,7 +6,7 @@
 @section('content')
     <div class="mx-auto max-w-5xl space-y-6">
         <div>
-            <p class="text-[10px] font-medium uppercase tracking-[0.2em] text-[var(--admin-accent)]">STOREFRONT / SETTINGS</p>
+            
             <h1 class="admin-title mt-2">بنر فروشگاه و راه‌های ارتباطی</h1>
             <p class="admin-subtitle mt-2">بنر صفحه فروشگاه و اطلاعات واقعی تماس را از همین بخش مدیریت کنید.</p>
         </div>
