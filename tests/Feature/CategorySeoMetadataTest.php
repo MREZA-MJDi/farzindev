@@ -3,6 +3,8 @@
 namespace Tests\Feature;
 
 use App\Models\Category;
+use App\Models\Product;
+use App\Models\ProductImage;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -63,8 +65,8 @@ class CategorySeoMetadataTest extends TestCase
 
         $this->get(route('home'))
             ->assertOk()
-            ->assertSee('دسته فعال بدون محصول')
-            ->assertSee('href="' . route('categories.show', 'active-empty-category') . '"', false);
+            ->assertDontSee('دسته فعال بدون محصول')
+            ->assertDontSee('href="' . route('categories.show', 'active-empty-category') . '"', false);
 
         $this->get(route('categories.index'))
             ->assertOk()
@@ -78,12 +80,35 @@ class CategorySeoMetadataTest extends TestCase
 
     public function test_homepage_category_card_uses_the_slug_route_parameter(): void
     {
-        Category::create([
+        $category = Category::create([
             'name' => 'دسته لینک عمومی',
             'slug' => 'public-category-link',
             'description' => 'آزمون لینک صفحه دسته‌بندی',
             'is_active' => true,
             'sort_order' => 1,
+        ]);
+
+        $product = Product::create([
+            'category_id' => $category->id,
+            'name' => 'محصول دسته لینک عمومی',
+            'slug' => 'public-category-link-product',
+            'sku' => 'FAR-PUBLIC-CATEGORY-LINK',
+            'short_description' => 'محصول آزمون لینک دسته‌بندی',
+            'description' => 'محصول فعال برای نمایش کارت دسته‌بندی در صفحه اصلی.',
+            'price' => 1000000,
+            'stock' => 5,
+            'status' => 'active',
+            'is_featured' => false,
+            'is_new' => false,
+            'show_in_home_gallery' => true,
+        ]);
+
+        ProductImage::create([
+            'product_id' => $product->id,
+            'path' => 'https://cdn.example.test/public-category-link.webp',
+            'alt' => $product->name,
+            'sort_order' => 0,
+            'is_primary' => true,
         ]);
 
         $this->get(route('home'))

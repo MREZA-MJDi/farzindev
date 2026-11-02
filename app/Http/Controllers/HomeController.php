@@ -14,10 +14,10 @@ class HomeController extends Controller
 {
     public function index(): View
     {
-        // Every active category is a public navigation destination, including
-        // a new category that has not received its first product yet.
+        // Only show categories that currently contain at least one active product.
         $categories = Category::query()
             ->active()
+            ->whereHas('products', fn (Builder $query) => $query->active())
             ->with([
                 'hoverMedia:id,path,mime_type,original_name,extension,size',
                 'latestActiveProduct.images' => fn ($query) => $query
@@ -44,9 +44,8 @@ class HomeController extends Controller
             'images.media:id,path',
         ];
 
-        // A public recommendation must be active, explicitly selected for the
-        // homepage, stocked for at least one valid option combination, and
-        // backed by an image that resolves to a usable public URL.
+        // The homepage hero is editorial; all selected, image-backed products
+        // are considered so stock sorting is applied before the eight-card limit.
         $onlyInStock = static function (Builder $query): void {
             $query->where(function (Builder $stockQuery): void {
                 $stockQuery
@@ -73,27 +72,11 @@ class HomeController extends Controller
             fn ($image) => filled($image->url)
         );
 
-        $heroProduct = Product::query()
-            ->active()
-            ->where('show_in_home_gallery', true)
-            ->whereHas('category', fn (Builder $query) => $query->where('is_active', true))
-            ->whereHas('images')
-            ->when(true, $onlyInStock)
-            ->with($productRelations)
-            ->orderByDesc('is_featured')
-            ->orderByDesc('updated_at')
-            ->orderByDesc('id')
-            ->limit(60)
-            ->get()
-            ->first(fn (Product $product) => $isPurchasable($product) && $hasPublicImage($product));
-
         $featuredProducts = Product::query()
             ->active()
             ->where('show_in_home_gallery', true)
-            ->when($heroProduct, fn (Builder $query) => $query->whereKeyNot($heroProduct->id))
             ->whereHas('category', fn (Builder $query) => $query->where('is_active', true))
             ->whereHas('images')
-            ->when(true, $onlyInStock)
             ->with($productRelations)
             ->withSum([
                 'orderItems as sold_quantity' => function (Builder $orderItemQuery): void {
@@ -108,10 +91,10 @@ class HomeController extends Controller
             ->orderByDesc('is_featured')
             ->orderByDesc('updated_at')
             ->orderByDesc('id')
-            ->limit(60)
             ->get()
-            ->filter(fn (Product $product) => $isPurchasable($product) && $hasPublicImage($product))
-            ->take(6)
+            ->filter(fn (Product $product) => $hasPublicImage($product))
+            ->sortByDesc(fn (Product $product) => $isPurchasable($product))
+            ->take(8)
             ->values();
 
         $installmentProduct = Product::query()
@@ -148,24 +131,15 @@ class HomeController extends Controller
 
         $contactSetting = ContactSetting::query()
             ->where('is_active', true)
-            ->first(['phone', 'whatsapp', 'email']);
-
-        // Guide links are data-driven from real, active catalogue categories.
-        // The view must never reference an undefined optional collection.
-        $homeGuides = $categories
-            ->filter(fn (Category $category): bool => filled(trim((string) $category->description)))
-            ->take(2)
-            ->values();
+            ->first(['phone', 'whatsapp', 'email', 'address']);
 
         return view('home.index', [
             'categories' => $categories,
-            'heroProduct' => $heroProduct,
             'featuredProducts' => $featuredProducts,
             'installmentProduct' => $installmentProduct,
             'shippingSettings' => $shippingSettings,
             'contactSetting' => $contactSetting,
             'blogPosts' => $blogPosts,
-            'homeGuides' => $homeGuides,
         ]);
     }
 }

@@ -11,11 +11,11 @@
     aria-label="مشاهده دسته‌بندی {{ $category->name }}"
 >
     <span class="fz-category-card__art">
-        @if($category->image_url)
+        @if($category->homepage_image_url)
             <img
                 class="fz-category-card__image"
                 src="{{ $category->homepage_image_url }}"
-                @if($category->image_srcset) srcset="{{ $category->homepage_image_srcset }}" sizes="(max-width: 639px) 88vw, (max-width: 1023px) 42vw, (max-width: 1279px) 28vw, 260px" @endif
+                @if($category->homepage_image_srcset) srcset="{{ $category->homepage_image_srcset }}" sizes="(max-width: 639px) 88vw, (max-width: 1023px) 42vw, (max-width: 1279px) 28vw, 260px" @endif
                 alt="{{ $category->name }}"
                 width="640"
                 height="480"

@@ -39,6 +39,11 @@ class DatabaseSeeder extends Seeder
             );
         }
 
+        // Location data is required by checkout in every environment.
+        $this->call([
+            ProvinceCitySeeder::class,
+        ]);
+
         if (app()->environment('local')) {
             $this->call([
                 CategorySeeder::class,

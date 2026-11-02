@@ -10,6 +10,8 @@
 @php
     $fieldName = $attributes->get('name');
     $resolvedError = $error ?: ($fieldName ? $errors->first($fieldName) : null);
+    $inputId = $attributes->get('id');
+    $errorId = $inputId && $resolvedError ? $inputId . '-error' : null;
 
     $inputClasses = implode(' ', [
         'w-full',
@@ -66,7 +68,9 @@
 
         <input
             type="{{ $type }}"
-            {{ $attributes->except(['class', 'type']) }}
+            {{ $attributes->except(['class', 'type', 'aria-invalid']) }}
+            aria-invalid="{{ $resolvedError ? 'true' : ($attributes->get('aria-invalid') ?? 'false') }}"
+            @if($errorId) aria-describedby="{{ $errorId }}" @elseif($hintId) aria-describedby="{{ $hintId }}" @endif
             class="{{ $inputClasses }}"
         >
 
@@ -76,6 +80,7 @@
 
         <p
             class="mt-2 flex items-start gap-2 text-[11px] leading-6 text-red-600"
+            @if($errorId) id="{{ $errorId }}" @endif
             role="alert"
         >
             <svg

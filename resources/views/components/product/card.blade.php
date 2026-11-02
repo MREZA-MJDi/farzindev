@@ -30,10 +30,14 @@
         && $chequeCount > 0
         && (int) ($product->installment_interval_months ?? 0) > 0;
 
-    $activeVariants = $product->relationLoaded('variants') ? $product->getRelation('variants') : collect();
-    $hasActiveVariants = $product->relationLoaded('variants') && $activeVariants->isNotEmpty();
+    $activeVariants = $product->relationLoaded('variants')
+        ? $product->getRelation('variants')
+        : $product->variants()->get();
+    $hasActiveVariants = $activeVariants->isNotEmpty();
     $isAvailable = $hasActiveVariants
-        ? $activeVariants->contains(fn ($variant) => (int) $variant->stock > 0)
+        ? $activeVariants->groupBy('type')->every(
+            fn ($options) => $options->contains(fn ($option) => (int) $option->stock > 0)
+        )
         : (int) $product->stock > 0;
     $availabilityLabel = $isAvailable
         ? ($hasActiveVariants ? 'موجود در گزینه‌ها' : 'موجود')
@@ -155,12 +159,39 @@
             @endif
         </div>
 
-        <a
-            href="{{ route('product.show', $product->slug) }}"
-            class="farzin-product-card__cta mt-auto inline-flex items-center justify-between gap-3"
-            aria-label="بررسی مشخصات {{ $product->name }}"
-        >
-            <span>مشاهده مشخصات</span>
-        </a>
+        <div class="mt-auto grid gap-2 pt-3">
+            @if($isAvailable && ! $hasActiveVariants)
+                <form action="{{ route('cart.add', $product) }}" method="POST">
+                    @csrf
+                    <input type="hidden" name="quantity" value="1">
+                    <button
+                        type="submit"
+                        class="farzin-product-card__cta inline-flex min-h-11 w-full items-center justify-between gap-3"
+                        aria-label="افزودن {{ $product->name }} به سبد خرید"
+                    >
+                        <span>افزودن به سبد</span>
+                        <span aria-hidden="true">＋</span>
+                    </button>
+                </form>
+            @elseif($isAvailable)
+                <a
+                    href="{{ route('product.show', $product->slug) }}"
+                    class="farzin-product-card__cta inline-flex min-h-11 w-full items-center justify-between gap-3"
+                    aria-label="انتخاب گزینه‌های {{ $product->name }}"
+                >
+                    <span>انتخاب گزینه‌ها</span>
+                    <span aria-hidden="true">←</span>
+                </a>
+            @else
+                <button type="button" disabled class="farzin-product-card__cta inline-flex min-h-11 w-full cursor-not-allowed items-center justify-between gap-3 opacity-60" aria-label="{{ $product->name }} ناموجود است">
+                    <span>ناموجود</span>
+                </button>
+            @endif
+            <a
+                href="{{ route('product.show', $product->slug) }}"
+                class="inline-flex min-h-9 items-center justify-center text-xs font-semibold text-[var(--livora-stone)] transition hover:text-[var(--livora-ink)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--livora-ink)]"
+                aria-label="مشاهده مشخصات {{ $product->name }}"
+            >مشاهده مشخصات</a>
+        </div>
     </div>
 </article>

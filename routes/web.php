@@ -8,6 +8,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CheckoutController;
+use App\Http\Controllers\LocationController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\BlogController;
@@ -43,6 +44,14 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', [HomeController::class, 'index'])
     ->name('home');
+
+// Public, read-only address data used by the accessible checkout picker.
+Route::get('/api/provinces', [LocationController::class, 'provinces'])
+    ->name('api.provinces.index');
+
+Route::get('/api/provinces/{province}/cities', [LocationController::class, 'cities'])
+    ->whereNumber('province')
+    ->name('api.provinces.cities');
 
 Route::get('/robots.txt', RobotsController::class)
     ->name('robots');

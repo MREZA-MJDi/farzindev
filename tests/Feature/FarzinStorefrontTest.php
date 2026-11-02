@@ -13,7 +13,9 @@ use App\Models\Media;
 use App\Models\Product;
 use App\Models\ProductImage;
 use App\Models\ProductVariant;
+use App\Models\Province;
 use App\Models\StorefrontSetting;
+use Database\Seeders\ProvinceCitySeeder;
 use App\Models\SeoRedirect;
 use App\Models\User;
 use App\Services\Payments\PaymentService;
@@ -28,6 +30,8 @@ use Tests\TestCase;
 class FarzinStorefrontTest extends TestCase
 {
     use RefreshDatabase;
+
+    private ?array $checkoutLocationCache = null;
 
     public function test_admin_can_render_every_crud_dashboard_surface_with_real_records(): void
     {
@@ -482,7 +486,7 @@ class FarzinStorefrontTest extends TestCase
             ->assertSee('تهران، نشانی آزمایشی');
     }
 
-    public function test_homepage_uses_a_static_hero_buying_guides_and_one_six_product_grid(): void
+    public function test_homepage_uses_sales_hero_one_combined_guide_and_eight_product_grid(): void
     {
         $category = $this->category([
             'name' => 'هودهای منتخب',
@@ -518,30 +522,25 @@ class FarzinStorefrontTest extends TestCase
         $response = $this->get(route('home'));
 
         $response->assertOk()
-            ->assertSee('fz-home-hero__showcase--static', false)
-            ->assertSee('fz-home-buying-guides', false)
-            ->assertSee('اطلاعات دسته‌بندی را پیش از انتخاب بخوانید.')
-            ->assertSee('fz-home-featured-grid--six', false)
-            ->assertDontSee('fz-home-trust', false)
-            ->assertSee('fz-home-final-cta', false)
+            ->assertSee('fz-sales-hero', false)
+            ->assertSee('fz-home-guides', false)
+            ->assertSee('تصویر واقعی آشپزخانه')
+            ->assertSee('fz-home-product-grid', false)
+            ->assertSee('fz-home-proof', false)
+            ->assertSee('fz-home-final', false)
             ->assertDontSee('fz-home-contact-bridge', false)
-            ->assertSee('fz-home-journal', false)
             ->assertDontSee('data-farzin-home-slider', false)
             ->assertDontSee('data-home-slide', false)
             ->assertDontSee('fz-mosaic-intro', false)
             ->assertDontSee('quick-view-modal', false);
 
         $this->assertSame(
-            6,
-            substr_count($response->getContent(), 'farzin-product-card--round-media'),
-            'The homepage should display one consistent grid of six featured products.'
+            8,
+            substr_count($response->getContent(), 'class="farzin-product-card group'),
+            'The homepage should display all eight selected products in one consistent grid.'
         );
 
-        foreach (array_slice($products, 0, 1) as $product) {
-            $response->assertDontSee($product->name);
-        }
-
-        foreach (array_slice($products, 1) as $product) {
+        foreach ($products as $product) {
             $response->assertSee($product->name);
         }
     }
@@ -1090,7 +1089,7 @@ class FarzinStorefrontTest extends TestCase
             ->assertDontSee('خرید اقساطی؛ پیش‌پرداخت');
     }
 
-    public function test_homepage_shows_active_empty_categories_and_hides_out_of_stock_product_recommendations(): void
+    public function test_homepage_hides_empty_categories_and_places_unavailable_products_after_available_ones(): void
     {
         $category = $this->category([
             'name' => 'دسته دارای دو محصول موجود',
@@ -1102,6 +1101,8 @@ class FarzinStorefrontTest extends TestCase
             'slug' => 'empty-home-category',
         ]);
 
+        $stockedProductNames = [];
+
         foreach ([1, 2] as $index) {
             $product = $this->product($category, [
                 'name' => 'هود موجود شماره '.$index,
@@ -1109,6 +1110,7 @@ class FarzinStorefrontTest extends TestCase
                 'sku' => 'FAR-HOME-STOCK-'.$index,
                 'stock' => 3,
             ]);
+            $stockedProductNames[] = $product->name;
 
             ProductImage::create([
                 'product_id' => $product->id,
@@ -1137,13 +1139,29 @@ class FarzinStorefrontTest extends TestCase
         $response = $this->get(route('home'))
             ->assertOk()
             ->assertSee('دسته دارای دو محصول موجود')
-            ->assertSee('دسته بدون محصول')
-            ->assertSee('۰ محصول فعال')
-            ->assertSee('href="' . route('categories.show', 'empty-home-category') . '"', false)
-            ->assertDontSee($outOfStock->name)
+            ->assertDontSee('دسته بدون محصول')
+            ->assertDontSee('href="' . route('categories.show', 'empty-home-category') . '"', false)
+            ->assertSee($outOfStock->name)
+            ->assertSee('ناموجود')
+            ->assertSee('fz-home-product-grid', false)
             ->assertDontSee('fz-home-featured-section', false);
 
-        $this->assertSame(0, substr_count($response->getContent(), 'farzin-product-card--round-media'));
+        $html = $response->getContent();
+        $this->assertSame(3, substr_count($html, 'class="farzin-product-card group'));
+
+        $gridStart = strpos($html, 'fz-home-product-grid');
+        $this->assertNotFalse($gridStart, 'The homepage product grid should be rendered.');
+
+        $availablePosition = strpos($html, $stockedProductNames[0], $gridStart);
+        $unavailablePosition = strpos($html, $outOfStock->name, $gridStart);
+
+        $this->assertNotFalse($availablePosition);
+        $this->assertNotFalse($unavailablePosition);
+        $this->assertLessThan(
+            $unavailablePosition,
+            $availablePosition,
+            'Available product cards must appear before unavailable product cards.'
+        );
     }
 
     public function test_customer_can_add_product_to_cart_and_repeated_adds_merge(): void
@@ -1595,6 +1613,8 @@ class FarzinStorefrontTest extends TestCase
                 'last_name' => 'Buyer',
                 'phone' => '09123456789',
                 'email' => 'buyer@farzin.test',
+                'province_id' => $this->checkoutLocationPayload()['province_id'],
+                'city_id' => $this->checkoutLocationPayload()['city_id'],
                 'province' => 'Tehran',
                 'city' => 'Tehran',
                 'address' => ' خیابان نمونه، پلاک ۱',
@@ -1629,6 +1649,8 @@ class FarzinStorefrontTest extends TestCase
             'last_name' => 'Buyer',
             'phone' => '09123456789',
             'email' => 'buyer@farzin.test',
+            'province_id' => $this->checkoutLocationPayload()['province_id'],
+            'city_id' => $this->checkoutLocationPayload()['city_id'],
             'province' => 'Tehran',
             'city' => 'Tehran',
             'address' => ' خیابان نمونه، پلاک ۱',
@@ -1692,6 +1714,8 @@ class FarzinStorefrontTest extends TestCase
                 'last_name' => 'Buyer',
                 'phone' => '09123456789',
                 'email' => 'buyer@farzin.test',
+                'province_id' => $this->checkoutLocationPayload()['province_id'],
+                'city_id' => $this->checkoutLocationPayload()['city_id'],
                 'province' => 'Tehran',
                 'city' => 'Tehran',
                 'address' => 'خیابان نمونه، پلاک ۱',
@@ -1774,6 +1798,8 @@ class FarzinStorefrontTest extends TestCase
                 'last_name' => 'Buyer',
                 'phone' => '09123456789',
                 'email' => 'buyer@farzin.test',
+                'province_id' => $this->checkoutLocationPayload()['province_id'],
+                'city_id' => $this->checkoutLocationPayload()['city_id'],
                 'province' => 'Tehran',
                 'city' => 'Tehran',
                 'address' => 'خیابان نمونه، پلاک ۱',
@@ -2905,6 +2931,8 @@ class FarzinStorefrontTest extends TestCase
                 'last_name' => 'Buyer',
                 'phone' => '09123456789',
                 'email' => 'buyer@farzin.test',
+                'province_id' => $this->checkoutLocationPayload()['province_id'],
+                'city_id' => $this->checkoutLocationPayload()['city_id'],
                 'province' => 'Tehran',
                 'city' => 'Tehran',
                 'address' => 'Test address with enough length',
@@ -3622,6 +3650,8 @@ class FarzinStorefrontTest extends TestCase
             'last_name' => 'Buyer',
             'phone' => '09123456789',
             'email' => 'buyer@farzin.test',
+            'province_id' => $this->checkoutLocationPayload()['province_id'],
+            'city_id' => $this->checkoutLocationPayload()['city_id'],
             'province' => 'Tehran',
             'city' => 'Tehran',
             'address' => 'خیابان نمونه، پلاک ۱',
@@ -4382,6 +4412,27 @@ class FarzinStorefrontTest extends TestCase
         $this->assertDatabaseMissing('products', [
             'sku' => 'FZ-SEED-REAL-PRODUCT',
         ]);
+    }
+
+    private function checkoutLocationPayload(): array
+    {
+        if ($this->checkoutLocationCache !== null) {
+            return $this->checkoutLocationCache;
+        }
+
+        $this->seed(ProvinceCitySeeder::class);
+
+        $province = Province::query()
+            ->where('name', 'تهران')
+            ->firstOrFail();
+        $city = $province->cities()
+            ->where('name', 'تهران')
+            ->firstOrFail();
+
+        return $this->checkoutLocationCache = [
+            'province_id' => $province->id,
+            'city_id' => $city->id,
+        ];
     }
 
     private function category(array $attributes = []): Category
