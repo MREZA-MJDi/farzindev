@@ -63,6 +63,11 @@ class StoreProductRequest extends FormRequest
                 'max:255',
             ],
 
+            'specifications' => ['nullable', 'array'],
+            'specifications.width' => ['nullable', 'string', 'max:80'],
+            'specifications.installation' => ['nullable', 'string', 'max:80'],
+            'specifications.material' => ['nullable', 'string', 'max:80'],
+
             'description' => [
                 'nullable',
                 'string',
