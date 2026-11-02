@@ -14,8 +14,7 @@ class HomeController extends Controller
 {
     public function index(): View
     {
-        // Every active category is a public navigation destination, including
-        // a new category that has not received its first product yet.
+        // Only show categories that currently contain at least one active product.
         $categories = Category::query()
             ->active()
             ->whereHas('products', fn (Builder $query) => $query->active())
@@ -110,7 +109,8 @@ class HomeController extends Controller
             ->orderByDesc('id')
             ->limit(60)
             ->get()
-            ->filter(fn (Product $product) => $isPurchasable($product) && $hasPublicImage($product))
+            ->filter(fn (Product $product) => $hasPublicImage($product))
+            ->sortByDesc(fn (Product $product) => $isPurchasable($product))
             ->take(8)
             ->values();
 
