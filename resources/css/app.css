@@ -1819,6 +1819,11 @@ body:not(.home-body) {
     border-color: var(--livora-danger);
     background-color: var(--livora-white);
 }
+.storefront-content [data-location-open][aria-invalid="true"] {
+    border-color: var(--livora-danger);
+    background-color: var(--livora-white);
+    color: var(--livora-text);
+}
 .storefront-content input:disabled,
 .storefront-content select:disabled,
 .storefront-content textarea:disabled {
