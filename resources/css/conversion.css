@@ -30,3 +30,75 @@
 @media(max-width:767px){.fz-auth{padding:.65rem}.fz-auth__layout{grid-template-columns:minmax(0,1fr);grid-template-areas:"visual" "form";min-height:0;border-radius:12px}.fz-auth__visual{min-height:250px;padding:1.2rem}.fz-auth__product-image{padding:2% 5% 8%;opacity:.48}.fz-auth__wordmark{font-size:1.55rem}.fz-auth__visual-copy{padding-block:2.5rem .8rem}.fz-auth__visual-copy h2{margin-block:.45rem;font-size:1.55rem}.fz-auth__visual-copy>span{max-width:29rem;font-size:.72rem}.fz-auth__visual-foot{font-size:.55rem}.fz-auth__featured{padding:.55rem .75rem}.fz-auth__form-side{padding:1.3rem 1rem 1.7rem}.fz-auth__mobile-brand{display:flex;align-items:center;gap:.65rem;margin-block-end:1.15rem;color:#06284F;font-size:1.3rem;font-weight:950}.fz-auth__mobile-brand span{color:#8290A0;font-size:.62rem;font-weight:650}.fz-auth__form-wrap h1{font-size:1.7rem}.fz-auth__field-grid{gap:.7rem}.fz-auth__field-grid input{min-height:46px;padding-inline:.7rem;font-size:.75rem}.fz-auth__field input{min-height:47px}.fz-auth__field-heading{align-items:flex-start;flex-direction:column;gap:.25rem}.home-body .fz-home-trust__grid{grid-template-columns:minmax(0,1fr)}.home-body .fz-home-trust__item{min-height:0}.home-body .fz-home-final-cta__panel{grid-template-columns:minmax(0,1fr)}.home-body .fz-home-final-cta__visual{min-height:220px;max-height:290px}.home-body .fz-home-final-cta__visual img{min-height:220px}.fz-store-footer__main{grid-template-columns:repeat(2,minmax(0,1fr));gap:1.8rem 1rem;padding-block:2.3rem 1.8rem}.fz-store-footer__brand{grid-column:1/-1}.fz-store-footer__assurance{grid-template-columns:minmax(0,1fr)}.fz-store-footer__assurance>div{padding-inline:0}.fz-store-footer__assurance>div+div{border-inline-start:0;border-block-start:1px solid rgba(255,255,255,.14)}.fz-store-footer__bottom{flex-direction:column}}
 @media(max-width:420px){.fz-auth__field-grid{grid-template-columns:minmax(0,1fr)}.fz-store-footer__main{grid-template-columns:minmax(0,1fr)}.fz-store-footer__brand{grid-column:auto}.fz-store-footer__assurance>div{gap:.65rem}}
 @media(prefers-reduced-motion:reduce){.fz-auth *,.fz-home-trust *,.fz-home-final-cta *,.fz-store-footer *{transition:none!important;animation:none!important}}
+
+
+/* Homepage quick dimension selector */
+.fz-home-width-selector {
+    padding-block: clamp(2rem, 5vw, 4rem);
+}
+.fz-home-width-selector__form {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(10rem, 15rem) auto;
+    align-items: end;
+    gap: 1.25rem;
+    border: 1px solid var(--livora-border);
+    border-radius: 1.5rem;
+    background: var(--livora-white);
+    padding: clamp(1.25rem, 3vw, 2rem);
+}
+.fz-home-width-selector__copy .fz-eyebrow {
+    margin-bottom: .65rem;
+}
+.fz-home-width-selector__copy h2 {
+    color: var(--livora-text);
+    font-size: clamp(1.1rem, 2vw, 1.55rem);
+    font-weight: 700;
+    line-height: 1.7;
+}
+.fz-home-width-selector__copy p:last-child {
+    margin-top: .4rem;
+    color: var(--livora-stone);
+    font-size: .78rem;
+    line-height: 1.9;
+}
+.fz-home-width-selector__field {
+    display: grid;
+    gap: .5rem;
+    color: var(--livora-stone);
+    font-size: .72rem;
+    font-weight: 600;
+}
+.fz-home-width-selector__field select {
+    min-height: 3rem;
+    width: 100%;
+    border: 1px solid var(--livora-border);
+    border-radius: .85rem;
+    background: var(--livora-surface);
+    padding: .75rem 1rem;
+    color: var(--livora-text);
+    font-size: .8rem;
+}
+.fz-home-width-selector__form button {
+    display: inline-flex;
+    min-height: 3rem;
+    align-items: center;
+    justify-content: center;
+    gap: .75rem;
+    border-radius: .85rem;
+    background: var(--livora-ink);
+    padding: .75rem 1.25rem;
+    color: #fff;
+    font-size: .78rem;
+    font-weight: 700;
+    transition: background .2s ease, transform .2s ease;
+}
+.fz-home-width-selector__form button:hover {
+    background: var(--livora-accent);
+    transform: translateY(-1px);
+}
+@media (max-width: 760px) {
+    .fz-home-width-selector__form {
+        grid-template-columns: minmax(0, 1fr);
+        align-items: stretch;
+    }
+}
