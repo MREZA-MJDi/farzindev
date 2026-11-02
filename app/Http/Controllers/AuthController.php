@@ -20,98 +20,106 @@ class AuthController extends Controller
 {
     public function showLogin(Request $request): View
     {
+        $this->rememberIntendedPath($request);
+
+        return view('auth.login', [
+            'brandProduct' => $this->authShowcaseProduct(),
+            'adminLogin' => false,
+        ]);
+    }
+
+    public function showAdminLogin(Request $request): View
+    {
         if ($request->boolean('session_expired')) {
-            $request->session()->flash('warning', 'نشست شما منقضی شده است؛ برای ادامه دوباره وارد شوید.');
+            $request->session()->flash('warning', 'نشست مدیریت شما منقضی شده است؛ برای ادامه دوباره وارد شوید.');
         }
 
+        return view('auth.login', [
+            'brandProduct' => $this->authShowcaseProduct(),
+            'adminLogin' => true,
+        ]);
+    }
+
+    public function login(LoginRequest $request): RedirectResponse
+    {
+        return $this->authenticate($request, false);
+    }
+
+    public function adminLogin(LoginRequest $request): RedirectResponse
+    {
+        return $this->authenticate($request, true);
+    }
+
+    private function rememberIntendedPath(Request $request): void
+    {
         $intended = $request->query('intended');
 
         if (is_string($intended) && str_starts_with($intended, '/') && ! str_starts_with($intended, '//')) {
             $request->session()->put('url.intended', url($intended));
         }
-
-        return view('auth.login', ['brandProduct' => $this->authShowcaseProduct()]);
     }
 
-    public function login(
-        LoginRequest $request
-    ): RedirectResponse {
+    private function authenticate(LoginRequest $request, bool $adminOnly): RedirectResponse
+    {
         $credentials = $request->validated();
-
         $identifier = $credentials['phone'];
         $loginField = str_contains($identifier, '@') ? 'email' : 'phone';
 
         $throttleKey = Str::transliterate(
-            Str::lower($identifier) .
-            '|' .
-            $request->ip()
+            Str::lower($identifier) . '|' . $request->ip()
         );
 
-        if (RateLimiter::tooManyAttempts(
-            $throttleKey,
-            5
-        )) {
-            $seconds = RateLimiter::availableIn(
-                $throttleKey
-            );
+        if (RateLimiter::tooManyAttempts($throttleKey, 5)) {
+            $seconds = RateLimiter::availableIn($throttleKey);
 
             return back()
                 ->withInput($request->only('phone'))
                 ->withErrors([
-                    'phone' =>
-                        "تعداد تلاش‌ها زیاد است. {$seconds} ثانیه دیگر دوباره تلاش کنید.",
+                    'phone' => "تعداد تلاش‌ها زیاد است. {$seconds} ثانیه دیگر دوباره تلاش کنید.",
                 ]);
         }
 
-        // Capture the guest cart key before the session guard rotates the session ID.
+        // Keep the original guest-cart key; only customer authentication merges it.
         $guestCartSessionId = $request->session()->getId();
 
-        if (! Auth::attempt([
+        $authenticated = Auth::attempt([
             $loginField => $identifier,
             'password' => $credentials['password'],
-        ], $credentials['remember'] ?? false)) {
+        ], $credentials['remember'] ?? false);
 
-            RateLimiter::hit(
-                $throttleKey,
-                60
-            );
+        $user = $authenticated ? $request->user() : null;
+        $roleAllowed = $user !== null && (
+            $adminOnly ? $user->isAdmin() : $user->isCustomer()
+        );
+
+        if (! $authenticated || ! $roleAllowed) {
+            Auth::logout();
+            $request->session()->regenerateToken();
+            RateLimiter::hit($throttleKey, 60);
 
             return back()
-                ->withInput($request->only('phone', 'email'))
+                ->withInput($request->only('phone'))
                 ->withErrors([
-                    'phone' =>
-                        'شماره موبایل یا رمز عبور صحیح نیست.',
+                    'phone' => $adminOnly
+                        ? 'اطلاعات ورود مدیریت صحیح نیست.'
+                        : 'شماره موبایل یا رمز عبور صحیح نیست.',
                 ]);
         }
 
         RateLimiter::clear($throttleKey);
-
         $request->session()->regenerate();
 
-        /*
-        |--------------------------------------------------------------------------
-        | Role Based Redirect
-        |--------------------------------------------------------------------------
-        */
-
-        if ($request->user()->isAdmin()) {
+        if ($adminOnly) {
             return redirect()
-                ->route('admin.dashboard')
-                ->with(
-                    'success',
-                    'به پنل مدیریت خوش آمدید.'
-                );
+                ->intended(route('admin.dashboard'))
+                ->with('success', 'به پنل مدیریت خوش آمدید.');
         }
 
-        // Customer cart migration is unrelated to admin access; keep admin login independent of it.
         $this->mergeGuestCartIntoUserCart($request, $guestCartSessionId);
 
         return redirect()
             ->intended(route('account.index'))
-            ->with(
-                'success',
-                'با موفقیت وارد شدید.'
-            );
+            ->with('success', 'با موفقیت وارد شدید.');
     }
 
     public function showRegister(Request $request): View
