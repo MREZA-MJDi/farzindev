@@ -103,7 +103,6 @@
                 'latitude' => (float) $seoContactLocation['latitude'],
                 'longitude' => (float) $seoContactLocation['longitude'],
             ];
-            $seoOrganizationSchema['hasMap'] = 'https://www.google.com/maps/search/?api=1&query=' . urlencode($coordinates);
 
             if (! filled($seoValues['seo_organization_address'] ?? null) && filled($seoContactLocation['address'] ?? null)) {
                 $seoOrganizationSchema['address'] = [
