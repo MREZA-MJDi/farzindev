@@ -13,8 +13,10 @@ class ApplyRobotsHeaders
     {
         $response = $next($request);
 
+        $adminPath = trim((string) config('farzin.admin_path', 'admin'), '/') ?: 'admin';
+
         $privateRoute = $request->is(
-            'admin', 'admin/*',
+            $adminPath, $adminPath . '/*',
             'account', 'account/*',
             'cart', 'cart/*',
             'checkout', 'checkout/*',
