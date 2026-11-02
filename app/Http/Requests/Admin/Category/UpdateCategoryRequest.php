@@ -16,10 +16,18 @@ class UpdateCategoryRequest extends FormRequest
 
     protected function prepareForValidation(): void
     {
+        $requestedSlug = trim((string) $this->input('slug', ''));
+        $slug = Str::slug($requestedSlug !== '' ? $requestedSlug : (string) $this->input('name', ''));
+
+        if ($slug === '') {
+            $category = $this->route('category');
+            $slug = $category instanceof Category && filled($category->slug)
+                ? $category->slug
+                : 'category-' . now()->format('YmdHis') . '-' . Str::lower(Str::random(6));
+        }
+
         $this->merge([
-            'slug' => $this->slug
-                ? Str::slug($this->slug)
-                : Str::slug($this->name),
+            'slug' => $slug,
             'is_active' => $this->boolean('is_active'),
             'sort_order' => $this->sort_order ?? 0,
         ]);
