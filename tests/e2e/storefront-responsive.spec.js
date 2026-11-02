@@ -483,7 +483,7 @@ test('homepage journal uses published image-backed articles only', async ({ page
         expect(await articles.count()).toBeGreaterThanOrEqual(1);
         expect(await articles.count()).toBeLessThanOrEqual(3);
         await expect(articles.first()).toBeVisible();
-        await expect(articles.first().locator('h3 a')).toHaveAttribute('href', /\\/blog\\//);
+        await expect(articles.first().locator('h3 a')).toHaveAttribute('href', /\/blog\//);
 
         const layout = await journal.evaluate((section) => {
             const gridElement = section.querySelector('.fz-home-journal__grid');

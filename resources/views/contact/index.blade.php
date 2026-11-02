@@ -176,10 +176,6 @@
                                     </div>
                                 </div>
 
-                                @if($hasMapCoordinates)
-                                    <p class="fz-contact-coordinates">مختصات ثبت‌شده: <span dir="ltr">{{ $mapLatitude }}, {{ $mapLongitude }}</span></p>
-                                @endif
-
                                 <a
                                     href="https://www.google.com/maps/dir/?api=1&amp;destination={{ urlencode($mapQuery) }}"
                                     class="fz-contact-directions"
