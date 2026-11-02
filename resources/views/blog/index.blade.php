@@ -162,7 +162,7 @@
                         @endif
 
                         <div class="blog-featured-card__meta">
-                            <time datetime="{{ $featuredPost->published_at?->toAtomString() }}">{{ $featuredPost->published_at?->format('Y/m/d') }}</time>
+                            <time datetime="{{ $featuredPost->published_at?->toAtomString() }}">{{ \App\Helpers\JalaliHelper::format($featuredPost->published_at, 'Y/m/d') }}</time>
                             <span aria-hidden="true">·</span>
                             <span>{{ \App\Helpers\PersianNumberHelper::format($featuredPost->reading_time) }} دقیقه مطالعه</span>
                             @if($featuredPost->author)
@@ -264,7 +264,7 @@
 
                             <div class="blog-article-card__body">
                                 <div class="blog-article-card__meta">
-                                    <time datetime="{{ $post->published_at?->toAtomString() }}">{{ $post->published_at?->format('Y/m/d') }}</time>
+                                    <time datetime="{{ $post->published_at?->toAtomString() }}">{{ \App\Helpers\JalaliHelper::format($post->published_at, 'Y/m/d') }}</time>
                                     <span aria-hidden="true">·</span>
                                     <span>{{ \App\Helpers\PersianNumberHelper::format($post->reading_time) }} دقیقه مطالعه</span>
                                 </div>
