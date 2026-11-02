@@ -1,5 +1,6 @@
 @props([
-'products' => null,
+    'products' => null,
+    'hasBestSellerSales' => false,
 ])
 
 @php
@@ -7,7 +8,13 @@
 
     $sortOptions = [
         'newest' => 'جدیدترین',
-        'popular' => 'پرفروش‌ترین',
+    ];
+
+    if ($hasBestSellerSales) {
+        $sortOptions['popular'] = 'پرفروش‌ترین';
+    }
+
+    $sortOptions += [
         'price_asc' => 'ارزان‌ترین',
         'price_desc' => 'گران‌ترین',
         'name_asc' => 'الفبایی',
@@ -49,7 +56,7 @@
 
         <span>
             <span class="block text-[10px] uppercase tracking-[0.16em] text-[var(--livora-stone)]">
-                SORT
+                مرتب‌سازی
             </span>
 
             <span
