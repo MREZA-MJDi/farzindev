@@ -2020,7 +2020,6 @@ body.home-body {
     border: 1px solid var(--livora-border);
     border-radius: 1.5rem;
     background: var(--livora-white);
-    color: var(--livora-text);
 }
 .fz-home-installment__panel h2 {
     margin-top: .65rem;
@@ -2045,7 +2044,6 @@ body.home-body {
     color: #fff;
     font-size: .78rem;
     font-weight: 700;
-    text-align: center;
 }
 .fz-home-final-cta__panel--text-only {
     grid-template-columns: minmax(0, 1fr);
