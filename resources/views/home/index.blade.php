@@ -142,7 +142,7 @@
             </header>
             <div class="fz-product-grid fz-home-featured-section__grid fz-home-featured-grid--six">
                 @foreach($featuredProducts as $product)
-                    <x-product.card :product="$product" variant="round" />
+                    <x-product.card :product="$product" variant="round" :show-availability="false" />
                 @endforeach
             </div>
         </div>
