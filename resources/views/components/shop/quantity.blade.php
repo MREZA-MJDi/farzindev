@@ -1,33 +1,27 @@
 @props([
-'name' => 'quantity',
-'value' => 1,
-'min' => 1,
-'max' => null,
+    'name' => 'quantity',
+    'value' => 1,
+    'min' => 1,
+    'max' => null,
+    'disabled' => false,
 ])
 
 @php
-    $initialValue = max(
-        (int) $min,
-        (int) $value
-    );
+    $minValue = max(1, (int) $min);
+    $maxValue = $max !== null ? max($minValue, min(99, (int) $max)) : null;
+    $initialValue = max($minValue, (int) $value);
 
-    if ($max !== null) {
-        $initialValue = min(
-            $initialValue,
-            (int) $max
-        );
+    if ($maxValue !== null) {
+        $initialValue = min($initialValue, $maxValue);
     }
-
-    $maxValue = $max !== null
-        ? (int) $max
-        : null;
 @endphp
 
 <div
     x-data="{
         value: {{ $initialValue }},
-        min: {{ (int) $min }},
+        min: {{ $minValue }},
         max: {{ $maxValue !== null ? $maxValue : 'null' }},
+        disabled: @js((bool) $disabled),
 
         init() {
             this.onVariantAvailabilityChanged = (event) => {
@@ -37,8 +31,8 @@
                     return;
                 }
 
-                this.max = nextMax;
-                this.value = Math.min(this.value, nextMax);
+                this.max = Math.min(99, nextMax);
+                this.normalize();
             };
 
             window.addEventListener(
@@ -56,84 +50,72 @@
             }
         },
 
+        normalize() {
+            const parsed = Number(this.value);
+            const safeValue = Number.isFinite(parsed) ? Math.floor(parsed) : this.min;
+            const upperBound = this.max === null ? 99 : this.max;
+
+            this.value = Math.max(this.min, Math.min(upperBound, safeValue));
+        },
+
         decrease() {
-            if (this.value > this.min) {
+            if (!this.disabled && this.value > this.min) {
                 this.value--;
             }
         },
 
         increase() {
-            if (this.max === null || this.value < this.max) {
+            if (!this.disabled && (this.max === null || this.value < this.max)) {
                 this.value++;
             }
         }
     }"
-    class="inline-flex items-center rounded-2xl border border-[var(--livora-border)] bg-[var(--livora-white)] p-1"
+    class="farzin-quantity"
+    data-quantity-control
+    role="group"
+    aria-label="انتخاب تعداد"
+    @if($disabled) aria-disabled="true" @endif
     {{ $attributes }}
 >
-
-    {{-- Decrease --}}
     <button
         type="button"
         aria-label="کاهش تعداد"
         @click="decrease()"
-        :disabled="value <= min"
-        class="flex h-9 w-9 items-center justify-center rounded-xl text-[var(--livora-ink)] transition hover:bg-[var(--livora-surface)] disabled:cursor-not-allowed disabled:opacity-30"
+        :disabled="disabled || value <= min"
+        class="farzin-quantity__button"
     >
-        <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke-width="1.7"
-            stroke="currentColor"
-            class="h-4 w-4"
-        >
-            <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                d="M5 12h14"
-            />
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14"/>
         </svg>
     </button>
 
-    {{-- Input --}}
     <input
         type="number"
         name="{{ $name }}"
         x-model.number="value"
-        min="{{ $min }}"
-        @if($max !== null)
-        max="{{ $max }}"
-        :max="max"
-        @endif
+        min="{{ $minValue }}"
+        @if($maxValue !== null) max="{{ $maxValue }}" @endif
+        :max="max === null ? 99 : max"
+        :aria-valuemin="min"
+        :aria-valuemax="max === null ? 99 : max"
+        :disabled="disabled"
+        @change="normalize()"
+        @blur="normalize()"
         inputmode="numeric"
         autocomplete="off"
         aria-label="تعداد"
-        class="w-12 border-0 bg-transparent p-0 text-center text-sm font-semibold text-[var(--livora-ink)] outline-none focus:ring-0"
+        class="farzin-quantity__input"
     >
 
-    {{-- Increase --}}
     <button
         type="button"
         aria-label="افزایش تعداد"
         @click="increase()"
-        :disabled="max !== null && value >= max"
-        class="flex h-9 w-9 items-center justify-center rounded-xl text-[var(--livora-ink)] transition hover:bg-[var(--livora-surface)] disabled:cursor-not-allowed disabled:opacity-30"
+        :disabled="disabled || (max !== null && value >= max)"
+        class="farzin-quantity__button"
     >
-        <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke-width="1.7"
-            stroke="currentColor"
-            class="h-4 w-4"
-        >
-            <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                d="M12 5v14M5 12h14"
-            />
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 5v14M5 12h14"/>
         </svg>
     </button>
-
 </div>
