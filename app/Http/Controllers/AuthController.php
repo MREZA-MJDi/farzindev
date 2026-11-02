@@ -84,7 +84,7 @@ class AuthController extends Controller
                 ]);
         }
 
-        if ($request->user('web')?->isAdmin()) {
+        if (Auth::guard('web')->user()?->isAdmin()) {
             Auth::guard('web')->logout();
             Auth::guard('admin')->logout();
             Auth::shouldUse('web');
@@ -175,15 +175,16 @@ class AuthController extends Controller
         // Login rotates the session ID, so keep the guest cart's original key.
         $guestCartSessionId = $request->session()->getId();
 
-        Auth::login($user);
+        Auth::guard('web')->login($user);
+        Auth::guard('admin')->logout();
+        Auth::shouldUse('web');
 
         $request->session()->regenerate();
 
         $this->mergeGuestCartIntoUserCart($request, $guestCartSessionId);
 
 
-        if ($request->user()->isAdmin()) {
-            return redirect()
+        return redirect()
                 ->route('admin.dashboard')
                 ->with(
                     'success',
