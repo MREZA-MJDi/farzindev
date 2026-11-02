@@ -61,7 +61,7 @@ class StorefrontSettingController extends Controller
             'shipping_free_threshold' => ['sometimes', 'nullable', 'integer', 'min:0', 'max:1000000000000'],
             'remove_shop_banner' => ['nullable', 'boolean'],
             'brand_name' => ['required', 'string', 'max:100'],
-            'brand_logo' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp,svg', 'max:5120'],
+            'brand_logo' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:5120'],
             'remove_brand_logo' => ['nullable', 'boolean'],
             'eitaa_url' => ['nullable', 'url', 'max:255'],
             'bale_url' => ['nullable', 'url', 'max:255'],
@@ -98,7 +98,7 @@ class StorefrontSettingController extends Controller
             'telegram_url.url' => 'لینک تلگرام معتبر نیست.',
             'brand_name.required' => 'نام برند الزامی است.',
             'brand_logo.image' => 'لوگوی برند باید تصویر معتبر باشد.',
-            'brand_logo.mimes' => 'فرمت لوگو باید JPG، PNG، WEBP یا SVG باشد.',
+            'brand_logo.mimes' => 'فرمت لوگو باید JPG، PNG یا WEBP باشد.',
             'brand_logo.max' => 'حجم لوگو نباید بیشتر از ۵ مگابایت باشد.',
             'eitaa_url.url' => 'لینک ایتا معتبر نیست.',
             'bale_url.url' => 'لینک بله معتبر نیست.',
@@ -130,6 +130,10 @@ class StorefrontSettingController extends Controller
             $newPath = $images->store($request->file('shop_banner_image'), 'banners');
 
             if (! $newPath) {
+                if ($newBrandLogoPath !== null) {
+                    Storage::disk('public')->delete($newBrandLogoPath);
+                }
+
                 return back()
                     ->withInput()
                     ->withErrors([
