@@ -27,7 +27,10 @@ class CategoryController extends Controller
 
     public function show(Category $category): View
     {
-        abort_unless($category->is_active, 404);
+        abort_unless(
+            $category->is_active && $category->products()->active()->exists(),
+            404
+        );
 
         $products = $category
             ->products()
