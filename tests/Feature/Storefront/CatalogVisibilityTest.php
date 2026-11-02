@@ -13,6 +13,8 @@ class CatalogVisibilityTest extends TestCase
 
     public function test_preview_and_legacy_products_are_not_publicly_active(): void
     {
+        $this->app['env'] = 'staging';
+
         $category = Category::query()->create([
             'name' => 'دسته واقعی',
             'slug' => 'real-category',
