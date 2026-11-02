@@ -38,6 +38,17 @@ class StoreContactMessageRequest extends FormRequest
                 'in:product,installment,order,shipping,other',
             ],
 
+            'product_model' => ['nullable', 'string', 'max:120'],
+            'width_cm' => ['nullable', 'integer', 'min:1', 'max:500'],
+            'callback_requested' => ['nullable', 'boolean'],
+            'photo' => [
+                'nullable',
+                'file',
+                'image',
+                'mimes:jpg,jpeg,png,webp',
+                'max:10240',
+            ],
+
             'message' => [
                 'required',
                 'string',
@@ -60,6 +71,13 @@ class StoreContactMessageRequest extends FormRequest
 
             'subject.required' => 'لطفاً موضوع پیام را انتخاب کنید.',
             'subject.in' => 'موضوع انتخاب‌شده معتبر نیست.',
+            'product_model.max' => 'نام یا مدل محصول نباید بیشتر از ۱۲۰ کاراکتر باشد.',
+            'width_cm.integer' => 'عرض باید به‌صورت عدد وارد شود.',
+            'width_cm.min' => 'عرض واردشده معتبر نیست.',
+            'width_cm.max' => 'عرض واردشده از محدوده مجاز بیشتر است.',
+            'photo.image' => 'فایل پیوست باید تصویر معتبر باشد.',
+            'photo.mimes' => 'فرمت تصویر باید JPG، PNG یا WEBP باشد.',
+            'photo.max' => 'حجم تصویر نباید بیشتر از ۱۰ مگابایت باشد.',
 
             'message.required' => 'نوشتن پیام الزامی است.',
             'message.min' => 'پیام باید حداقل ۱۰ کاراکتر باشد.',
