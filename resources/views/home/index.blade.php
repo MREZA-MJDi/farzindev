@@ -66,7 +66,7 @@
     </div>
     <div class="fz-container fz-home-hero__layout {{ $heroImage ? '' : 'fz-home-hero__layout--copy-only' }}">
         <div class="fz-home-hero__copy">
-            <p class="fz-home-hero__eyebrow"><span class="fz-home-hero__eyebrow-mark" aria-hidden="true"></span> هود و سینک آشپزخانه</p>
+            <p class="fz-home-hero__eyebrow"><span class="fz-home-hero__eyebrow-mark" aria-hidden="true"></span> هود آشپزخانه و سینک</p>
             <h1 id="fz-home-hero-title"><span>انتخابی هماهنگ با</span><strong>نیاز آشپزخانه شما</strong></h1>
             <p class="fz-home-hero__lead">مدل‌های هود و سینک را با تصویر و قیمت ثبت‌شده ببینید؛ اطلاعات هر محصول را بررسی کنید و آگاهانه انتخاب کنید.</p>
             <div class="fz-home-hero__actions">
