@@ -47,7 +47,7 @@ final class StorefrontContact
         }
 
         return [
-            'display' => \\App\\Helpers\\JalaliHelper::persianDigits($display),
+            'display' => \App\Helpers\JalaliHelper::persianDigits($display),
             'href' => 'tel:+' . (str_starts_with($digits, '0') ? '98' . substr($digits, 1) : $digits),
         ];
     }
