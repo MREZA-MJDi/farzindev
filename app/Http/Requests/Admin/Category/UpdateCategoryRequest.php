@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Admin\Category;
 
+use App\Models\Category;
 use App\Models\Media;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Str;
