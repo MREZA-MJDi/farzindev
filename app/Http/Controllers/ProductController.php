@@ -64,6 +64,24 @@ class ProductController extends Controller
             : (int) $product->stock;
         $maxPurchaseQuantity = max(1, min(99, $maxPurchaseQuantity));
 
+        $priceMinimum = (float) $product->price;
+        $priceMaximum = (float) $product->price;
+        foreach ($variantGroups as $options) {
+            $availableOptions = $options->filter(fn ($option) => (int) $option->stock > 0);
+
+            if ($availableOptions->isEmpty()) {
+                continue;
+            }
+
+            $priceMinimum += (float) $availableOptions->min('price_adjustment');
+            $priceMaximum += (float) $availableOptions->max('price_adjustment');
+        }
+
+        $productPriceRange = [
+            'min' => max(0, round($priceMinimum, 2)),
+            'max' => max(0, round($priceMaximum, 2)),
+        ];
+
         $installmentPlan = $this->resolveInstallmentPlan($product);
         $safeShortDescription = $this->publicCopy($product->short_description);
         $safeDescription = $this->publicCopy($product->description);
@@ -123,6 +141,7 @@ class ProductController extends Controller
             'variantGroups' => $variantGroups,
             'canPurchase' => $canPurchase,
             'maxPurchaseQuantity' => $maxPurchaseQuantity,
+            'productPriceRange' => $productPriceRange,
             'installmentPlan' => $installmentPlan,
             'safeShortDescription' => $safeShortDescription,
             'safeDescription' => $safeDescription,
@@ -145,6 +164,7 @@ class ProductController extends Controller
 
         if (
             ! $product->installment_enabled
+            || $product->variants->contains(fn ($variant) => abs((float) $variant->price_adjustment) >= 0.01)
             || $cashPercent < 1
             || $cashPercent > 99
             || $product->installment_remainder_method !== 'cheque'
