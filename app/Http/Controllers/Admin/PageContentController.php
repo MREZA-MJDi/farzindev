@@ -19,7 +19,7 @@ class PageContentController extends Controller
     private const GROUPS = [
         'home' => [
             'title' => 'صفحه اصلی',
-            'description' => 'عنوان کوتاه، زیرعنوان، تصویر واقعی و نقطه تمرکز Hero را کنترل کنید؛ دسته‌ها و محصولات از کاتالوگ واقعی خوانده می‌شوند.',
+            'description' => 'عنوان و زیرعنوان را ویرایش کنید و تصویر Hero را با پیش‌نمایش و برش ثابت ۱۶:۱۰ تنظیم کنید؛ دسته‌ها و محصولات از کاتالوگ واقعی خوانده می‌شوند.',
             'fields' => [
                 'page_home_hero_title' => ['label' => 'عنوان کوتاه Hero', 'type' => 'text', 'max' => 120],
                 'page_home_hero_description' => ['label' => 'زیرعنوان یک‌خطی Hero', 'type' => 'text', 'max' => 220],
