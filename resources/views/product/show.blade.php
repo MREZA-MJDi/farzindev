@@ -133,7 +133,7 @@
         .fz-product-gallery .farzin-gallery-arrow{width:2.75rem;height:2.75rem}
         .fz-product-gallery .farzin-gallery-zoom{right:.4rem;bottom:.4rem;padding:.35rem .5rem;font-size:9px}
         .fz-product-gallery .mt-4.flex.gap-3{gap:.4rem;margin-top:.5rem}
-        .fz-product-gallery .mt-4.flex.gap-3 button{width:2.65rem;height:2.65rem;border-radius:.6rem}
+        .fz-product-gallery .mt-4.flex.gap-3 button{width:2.75rem;height:2.75rem;min-width:44px;min-height:44px;border-radius:.6rem}
         .fz-product-panel__title{font-size:clamp(.95rem,4.4vw,1.15rem);line-height:1.55}
         .fz-product-panel .product-price__current strong{font-size:1.15rem}
         .fz-product-panel .product-price__current span{font-size:.65rem}
