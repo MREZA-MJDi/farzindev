@@ -26,6 +26,7 @@ use App\Http\Controllers\Admin\CategoryController as AdminCategoryController;
 use App\Http\Controllers\Admin\CustomerController as AdminCustomerController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\OrderController as AdminOrderController;
+use App\Http\Controllers\Admin\PageContentController as AdminPageContentController;
 use App\Http\Controllers\Admin\ProductController as AdminProductController;
 use App\Http\Controllers\Admin\ProductImageController as AdminProductImageController;
 use App\Http\Controllers\Admin\ProductVariantController as AdminProductVariantController;
@@ -425,6 +426,9 @@ Route::prefix(config('farzin.admin_path', 'admin'))
             'seo-settings',
             [AdminSeoSettingsController::class, 'update']
         )->name('seo-settings.update');
+
+        Route::get('page-content', [AdminPageContentController::class, 'edit'])->name('page-content.edit');
+        Route::put('page-content', [AdminPageContentController::class, 'update'])->name('page-content.update');
 
         Route::get('blog-appearance', [AdminBlogAppearanceController::class, 'edit'])->name('blog-appearance.edit');
         Route::put('blog-appearance', [AdminBlogAppearanceController::class, 'update'])->name('blog-appearance.update');
