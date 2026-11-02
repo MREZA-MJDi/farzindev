@@ -34,6 +34,20 @@ class ContactMessageController extends Controller
         ]);
     }
 
+    public function attachment(ContactMessage $contactMessage)
+    {
+        $path = $contactMessage->attachment_path;
+
+        abort_unless(filled($path) && Storage::disk('local')->exists($path), 404);
+
+        $extension = pathinfo($path, PATHINFO_EXTENSION) ?: 'jpg';
+
+        return Storage::disk('local')->download(
+            $path,
+            'contact-' . $contactMessage->id . '.' . $extension
+        );
+    }
+
     public function markAsRead(
         ContactMessage $contactMessage
     ): RedirectResponse {
