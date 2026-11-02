@@ -15,7 +15,7 @@ cd farzindev
 composer install
 ```
 
-Copy `.env.example` to `.env` (Windows CMD: `copy .env.example .env`), configure the database, and set a strong local `ADMIN_PASSWORD`. Never commit the real `.env` file or production credentials.
+Copy `.env.example` to `.env` (Windows CMD: `copy .env.example .env`), configure the database, and set `ADMIN_EMAIL` plus a strong local `ADMIN_PASSWORD` (at least 12 characters). Never commit the real `.env` file or production credentials.
 
 ```bash
 php artisan key:generate
@@ -28,6 +28,30 @@ php artisan serve
 ```
 
 Open `http://127.0.0.1:8000`. For Vite hot reload, run `npm run dev` in a separate terminal.
+
+### Administrator credentials
+
+Admin sign-in always authenticates against the `users` database table through the `admin` session guard. The `.env` values are provisioning inputs only; changing `ADMIN_PASSWORD` does not change an existing database hash until it is synchronized.
+
+Set a strong, unique `ADMIN_PASSWORD` (at least 12 characters). If it contains spaces, `#`, quotes, or backslashes, quote and escape the value according to dotenv syntax. Never paste credentials into chat, commit them, or place them in shell command arguments.
+
+After changing `ADMIN_NAME`, `ADMIN_EMAIL`, or `ADMIN_PASSWORD`, run this single provisioning command:
+
+```bash
+php artisan admin:sync
+```
+
+The command reads the current process environment or parses the root `.env` file directly, so it can apply changed credentials even when Laravel's configuration cache is present. It safely creates or updates the configured administrator and hashes the password. It refuses to take over a non-admin account with the same email and refuses ambiguous multiple-admin changes. It never prints or logs the password.
+
+To verify the result without exposing credentials, run:
+
+```bash
+php artisan admin:check
+```
+
+The check command prints only three boolean results: admin exists, email matches, and password matches.
+
+Back up the database before running `admin:sync` on an existing installation. The normal `db:seed` flow creates the initial administrator only; use `admin:sync` for intentional credential changes.
 
 ## Catalogue and imagery
 - Create real Farzin products, specifications, stock, images, and variants from the admin dashboard.

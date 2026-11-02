@@ -23,6 +23,26 @@ class ApplyRobotsHeaders
             'login', 'register', 'forgot-password', 'reset-password/*', 'logout'
         );
 
+        $csrfSensitiveRoute = $request->is(
+            $adminPath, $adminPath . '/*',
+            'account', 'account/*',
+            'contact', 'product/*',
+            'cart', 'cart/*',
+            'checkout', 'checkout/*',
+            'login', 'register', 'logout'
+        );
+
+        // Never let a browser, reverse proxy, or CDN reuse HTML containing a
+        // session-bound CSRF token. Admin and storefront form pages stay private.
+        $authenticatedResponse = $request->user('web') !== null
+            || $request->user('admin') !== null;
+
+        if ($csrfSensitiveRoute || $authenticatedResponse) {
+            $response->headers->set('Cache-Control', 'no-store, private');
+            $response->headers->set('Pragma', 'no-cache');
+            $response->headers->set('Expires', '0');
+        }
+
         // Private dashboards and customer-specific responses remain excluded
         // even after the public SEO release switch is intentionally turned off.
         if ($privateRoute) {

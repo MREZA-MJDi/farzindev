@@ -12,6 +12,7 @@ use App\Models\Media;
 use App\Services\Catalog\ProductMediaLibrary;
 use App\Services\Media\ResponsiveImageService;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
@@ -23,20 +24,94 @@ class ProductController extends Controller
     /**
      * Display a listing of products.
      */
-    public function index(): View
+    public function index(Request $request): View
     {
-        $products = Product::query()
+        $query = Product::query()
+            ->withCount('variants')
+            ->withSum('variants as active_variants_stock', 'stock')
             ->with([
                 'category',
                 'images' => fn ($query) => $query
                     ->select(['id', 'product_id', 'media_id', 'path', 'alt', 'sort_order', 'is_primary'])
                     ->limit(1),
                 'images.media:id,path',
-            ])
-            ->latest()
-            ->paginate(15);
+            ]);
 
-        return view('admin.products.index', compact('products'));
+        $search = trim((string) $request->query('q', ''));
+        if ($search !== '') {
+            $query->where(function ($builder) use ($search): void {
+                $builder->where('name', 'like', '%' . $search . '%')
+                    ->orWhere('sku', 'like', '%' . $search . '%');
+            });
+        }
+
+        $categoryId = $request->integer('category_id');
+        if ($categoryId > 0) {
+            $query->where('category_id', $categoryId);
+        }
+
+        $status = $request->query('status');
+        if (in_array($status, ['active', 'draft', 'archived'], true)) {
+            $query->where('status', $status);
+        }
+
+        $stock = $request->query('stock');
+        if ($stock === 'out') {
+            $query->where(function ($builder): void {
+                $builder->where(fn ($base) => $base
+                    ->whereDoesntHave('variants')
+                    ->where('stock', '<=', 0))
+                    ->orWhere(fn ($variants) => $variants
+                        ->whereHas('variants')
+                        ->whereDoesntHave('variants', fn ($variant) => $variant->where('stock', '>', 0)));
+            });
+        } elseif ($stock === 'low') {
+            $query->where(function ($builder): void {
+                $builder->where(fn ($base) => $base
+                    ->whereDoesntHave('variants')
+                    ->whereBetween('stock', [1, 5]))
+                    ->orWhereHas('variants', fn ($variant) => $variant->whereBetween('stock', [1, 5]));
+            });
+        } elseif ($stock === 'available') {
+            $query->where(function ($builder): void {
+                $builder->where(fn ($base) => $base
+                    ->whereDoesntHave('variants')
+                    ->where('stock', '>', 5))
+                    ->orWhereHas('variants', fn ($variant) => $variant->where('stock', '>', 5));
+            });
+        }
+
+        $completeness = $request->query('completeness');
+        $incomplete = function ($builder): void {
+            $builder->whereNull('description')
+                ->orWhere('description', '')
+                ->orWhereNull('short_description')
+                ->orWhere('short_description', '')
+                ->orWhere('sku', 'like', 'FZ-SEED-%')
+                ->orWhere('sku', 'like', 'LIV-%')
+                ->orWhereDoesntHave('images', fn ($imageQuery) => $imageQuery
+                    ->whereNotNull('alt')
+                    ->where('alt', '<>', ''));
+        };
+
+        if ($completeness === 'incomplete') {
+            $query->where($incomplete);
+        } elseif ($completeness === 'complete') {
+            $query->whereNot(function ($builder) use ($incomplete): void {
+                $builder->where($incomplete);
+            });
+        }
+
+        $products = $query
+            ->latest()
+            ->paginate(15)
+            ->withQueryString();
+
+        $categories = Category::query()
+            ->orderBy('name')
+            ->get(['id', 'name']);
+
+        return view('admin.products.index', compact('products', 'categories'));
     }
 
     /**

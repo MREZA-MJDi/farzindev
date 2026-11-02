@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Helpers\PersianNumberHelper;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\LoginRequest;
 use Illuminate\Http\RedirectResponse;
@@ -29,9 +30,15 @@ class AuthController extends Controller
         $key = 'admin-login:' . Str::lower($credentials['email']) . '|' . $request->ip();
 
         if (RateLimiter::tooManyAttempts($key, 5)) {
+            $minutes = max(1, (int) ceil(RateLimiter::availableIn($key) / 60));
+
             return back()
                 ->withInput($request->only('email'))
-                ->withErrors(['email' => 'تعداد تلاش‌ها بیش از حد مجاز است. کمی بعد دوباره تلاش کنید.']);
+                ->withErrors([
+                    'email' => 'تعداد تلاش‌های ورود زیاد است. ' .
+                        PersianNumberHelper::format($minutes) .
+                        ' دقیقه دیگر دوباره تلاش کنید.',
+                ]);
         }
 
         $authenticated = Auth::guard('admin')->attempt([

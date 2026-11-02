@@ -30,6 +30,10 @@ class SeoRedirectController extends Controller
             return back()->withInput()->withErrors(['target_url' => 'مبدأ و مقصد Redirect نباید یکسان باشند.']);
         }
 
+        if ($issue = $this->chainOrLoopIssue($validated['source_path'], $validated['target_url'])) {
+            return back()->withInput()->withErrors(['target_url' => $issue]);
+        }
+
         SeoRedirect::create($validated);
 
         return redirect()->route('admin.seo-redirects.index')->with('success', 'ریدایرکت ذخیره شد.');
@@ -44,6 +48,10 @@ class SeoRedirectController extends Controller
             return back()->withInput()->withErrors(['target_url' => 'مبدأ و مقصد Redirect نباید یکسان باشند.']);
         }
 
+        if ($issue = $this->chainOrLoopIssue($validated['source_path'], $validated['target_url'], $seoRedirect)) {
+            return back()->withInput()->withErrors(['target_url' => $issue]);
+        }
+
         $seoRedirect->update($validated);
 
         return redirect()->route('admin.seo-redirects.index')->with('success', 'ریدایرکت به‌روزرسانی شد.');
@@ -54,6 +62,63 @@ class SeoRedirectController extends Controller
         $seoRedirect->delete();
 
         return redirect()->route('admin.seo-redirects.index')->with('success', 'ریدایرکت حذف شد.');
+    }
+
+    /**
+     * Prevent manual redirect chains and cycles among active local redirects.
+     */
+    private function chainOrLoopIssue(string $sourcePath, string $targetUrl, ?SeoRedirect $current = null): ?string
+    {
+        $targetPath = $this->localPath($targetUrl);
+
+        if ($targetPath === null) {
+            return null;
+        }
+
+        $redirects = SeoRedirect::query()
+            ->where('is_active', true)
+            ->when($current, fn ($query) => $query->whereKeyNot($current->id))
+            ->get(['id', 'source_path', 'target_url']);
+
+        $outgoing = [];
+        $incoming = [];
+
+        foreach ($redirects as $redirect) {
+            $from = $this->normalizePath($redirect->source_path);
+            $to = $this->localPath($redirect->target_url);
+
+            if ($to === null) {
+                continue;
+            }
+
+            $outgoing[$from] = $to;
+            $incoming[$to] = true;
+        }
+
+        // A source already used as another redirect's target would create a
+        // chain for existing links; a target already used as a source would
+        // create a new chain for this redirect.
+        if (isset($incoming[$sourcePath]) || isset($outgoing[$targetPath])) {
+            return 'این مسیر باعث ایجاد زنجیره ریدایرکت می‌شود؛ مقصد نهایی را مستقیماً انتخاب کنید.';
+        }
+
+        $visited = [];
+        $cursor = $targetPath;
+
+        while (isset($outgoing[$cursor])) {
+            if (isset($visited[$cursor]) || $cursor === $sourcePath) {
+                return 'این مسیر باعث ایجاد حلقه ریدایرکت می‌شود.';
+            }
+
+            $visited[$cursor] = true;
+            $cursor = $outgoing[$cursor];
+        }
+
+        if ($cursor === $sourcePath) {
+            return 'این مسیر باعث ایجاد حلقه ریدایرکت می‌شود.';
+        }
+
+        return null;
     }
 
     private function validateRedirect(Request $request, ?SeoRedirect $redirect = null): array

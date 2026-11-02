@@ -95,7 +95,7 @@ jobs:
         run: |
           touch database/catalog-smoke.sqlite
           APP_ENV=local DB_CONNECTION=sqlite DB_DATABASE="$PWD/database/catalog-smoke.sqlite" php artisan migrate:fresh --force
-          APP_ENV=local DB_CONNECTION=sqlite DB_DATABASE="$PWD/database/catalog-smoke.sqlite" php artisan db:seed --force
+          ADMIN_EMAIL=ci-admin@example.test ADMIN_PASSWORD=ci-only-strong-password-2026 APP_ENV=local DB_CONNECTION=sqlite DB_DATABASE="$PWD/database/catalog-smoke.sqlite" php artisan db:seed --force
           APP_ENV=local DB_CONNECTION=sqlite DB_DATABASE="$PWD/database/catalog-smoke.sqlite" php -r '
           require "vendor/autoload.php";
           $app = require "bootstrap/app.php";
@@ -110,7 +110,7 @@ jobs:
           $admin->update(["password" => Illuminate\Support\Facades\Hash::make("manually-rotated-password")]);
           echo "Full database seed passed: preview catalogue and admin created.\n";
           '
-          APP_ENV=local DB_CONNECTION=sqlite DB_DATABASE="$PWD/database/catalog-smoke.sqlite" php artisan db:seed --force
+          ADMIN_EMAIL=ci-admin@example.test ADMIN_PASSWORD=ci-only-strong-password-2026 APP_ENV=local DB_CONNECTION=sqlite DB_DATABASE="$PWD/database/catalog-smoke.sqlite" php artisan db:seed --force
           APP_ENV=local DB_CONNECTION=sqlite DB_DATABASE="$PWD/database/catalog-smoke.sqlite" php -r '
           require "vendor/autoload.php";
           $app = require "bootstrap/app.php";

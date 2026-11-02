@@ -14,6 +14,7 @@ use App\Models\Product;
 use App\Models\ProductImage;
 use App\Models\ProductVariant;
 use App\Models\StorefrontSetting;
+use App\Models\SeoRedirect;
 use App\Models\User;
 use App\Services\Payments\PaymentService;
 use App\Services\Seo\SeoSettings;
@@ -175,6 +176,133 @@ class FarzinStorefrontTest extends TestCase
             ->assertDontSee(route('admin.product-images.index'), false)
             ->assertDontSee(route('admin.product-variants.index'), false);
 
+    }
+
+    public function test_admin_product_forms_reject_zero_or_negative_prices(): void
+    {
+        $admin = $this->admin();
+        $category = $this->category(['slug' => 'positive-price-category']);
+
+        $payload = [
+            'category_id' => $category->id,
+            'name' => 'Invalid Zero Price Hood',
+            'slug' => 'invalid-zero-price-hood',
+            'sku' => 'FAR-ZERO-PRICE-HOOD',
+            'short_description' => 'محصول آزمایشی برای اعتبارسنجی قیمت',
+            'description' => 'این محصول نباید با قیمت صفر ذخیره شود.',
+            'price' => '0',
+            'stock' => '1',
+            'status' => 'draft',
+            'is_featured' => '0',
+            'is_new' => '0',
+        ];
+
+        $this->actingAs($admin, 'admin')
+            ->post(route('admin.products.store'), $payload)
+            ->assertSessionHasErrors('price');
+
+        $this->assertDatabaseMissing('products', ['sku' => 'FAR-ZERO-PRICE-HOOD']);
+
+        $product = $this->product($category, [
+            'name' => 'Existing Positive Price Hood',
+            'slug' => 'existing-positive-price-hood',
+            'sku' => 'FAR-EXISTING-POSITIVE-PRICE',
+            'price' => 1000,
+        ]);
+
+        $this->put(route('admin.products.update', $product), array_merge($payload, [
+            'name' => $product->name,
+            'slug' => $product->slug,
+            'sku' => $product->sku,
+            'price' => '-1',
+        ]))->assertSessionHasErrors('price');
+
+        $this->assertSame('1000.00', $product->fresh()->price);
+    }
+
+    public function test_admin_seo_redirect_manager_rejects_chains_and_loops(): void
+    {
+        $admin = $this->admin();
+
+        SeoRedirect::create([
+            'source_path' => '/legacy-source',
+            'target_url' => '/legacy-target',
+            'status_code' => 301,
+            'is_active' => true,
+        ]);
+
+        $this->actingAs($admin, 'admin')
+            ->post(route('admin.seo-redirects.store'), [
+                'source_path' => '/legacy-target',
+                'target_url' => '/current-page',
+                'status_code' => 301,
+                'is_active' => '1',
+            ])
+            ->assertSessionHasErrors('target_url');
+
+        $this->assertDatabaseMissing('seo_redirects', [
+            'source_path' => '/legacy-target',
+        ]);
+
+        $this->post(route('admin.seo-redirects.store'), [
+            'source_path' => '/new-source',
+            'target_url' => '/legacy-source',
+            'status_code' => 301,
+            'is_active' => '1',
+        ])->assertSessionHasErrors('target_url');
+
+        $this->assertDatabaseMissing('seo_redirects', [
+            'source_path' => '/new-source',
+        ]);
+    }
+
+    public function test_admin_product_index_searches_and_filters_by_status_category_and_completeness(): void
+    {
+        $admin = $this->admin();
+        $category = $this->category(['slug' => 'product-filter-category']);
+
+        $incomplete = $this->product($category, [
+            'name' => 'هود نیازمند تکمیل',
+            'slug' => 'filter-incomplete-hood',
+            'sku' => 'FAR-FILTER-INCOMPLETE',
+            'status' => 'draft',
+            'description' => '',
+        ]);
+
+        $complete = $this->product($category, [
+            'name' => 'هود کامل فرزین',
+            'slug' => 'filter-complete-hood',
+            'sku' => 'FAR-FILTER-COMPLETE',
+            'status' => 'active',
+        ]);
+
+        ProductImage::create([
+            'product_id' => $complete->id,
+            'path' => 'https://cdn.example.test/filter-complete.webp',
+            'alt' => 'هود کامل فرزین',
+            'sort_order' => 0,
+            'is_primary' => true,
+        ]);
+
+        $this->actingAs($admin, 'admin')
+            ->get(route('admin.products.index', [
+                'q' => 'FAR-FILTER-INCOMPLETE',
+                'category_id' => $category->id,
+                'status' => 'draft',
+            ]))
+            ->assertOk()
+            ->assertSee('هود نیازمند تکمیل')
+            ->assertDontSee('هود کامل فرزین');
+
+        $this->get(route('admin.products.index', ['completeness' => 'incomplete']))
+            ->assertOk()
+            ->assertSee('هود نیازمند تکمیل')
+            ->assertDontSee('هود کامل فرزین');
+
+        $this->get(route('admin.products.index', ['completeness' => 'complete']))
+            ->assertOk()
+            ->assertSee('هود کامل فرزین')
+            ->assertDontSee('هود نیازمند تکمیل');
     }
 
     public function test_admin_can_choose_a_media_library_asset_as_the_primary_product_image(): void

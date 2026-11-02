@@ -4,40 +4,39 @@ namespace Database\Seeders;
 
 use App\Models\User;
 use Illuminate\Database\Seeder;
+use RuntimeException;
 
 class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
-        // Fail before mutating the catalogue if production admin credentials
-        // are missing; otherwise the seed would stop halfway through.
-        if (app()->environment('production')) {
-            $adminEmail = config('farzin.admin.email');
+        // Validate administrator provisioning before any local catalogue
+        // seeders run, so a missing credential cannot leave a partial seed.
+        $adminEmail = mb_strtolower(trim((string) config('farzin.admin.email', '')));
+        $adminPassword = (string) config('farzin.admin.password', '');
 
-            if (blank($adminEmail)) {
-                throw new \RuntimeException(
-                    'Set ADMIN_EMAIL before seeding the production database.'
-                );
-            }
+        if ($adminEmail === '' || ! filter_var($adminEmail, FILTER_VALIDATE_EMAIL)) {
+            throw new RuntimeException(
+                'Set a valid ADMIN_EMAIL before running the database seeder.'
+            );
+        }
 
-            $existingAdmin = User::query()
-                ->where('email', $adminEmail)
-                ->first();
+        $emailOwner = User::query()
+            ->whereRaw('LOWER(TRIM(email)) = ?', [$adminEmail])
+            ->first();
 
-            if ($existingAdmin && $existingAdmin->role !== 'admin') {
-                throw new \RuntimeException(
-                    'ADMIN_EMAIL belongs to a non-admin account. Choose a dedicated administrator email before seeding.'
-                );
-            }
+        if ($emailOwner && ! $emailOwner->isAdmin()) {
+            throw new RuntimeException(
+                'ADMIN_EMAIL belongs to a non-admin account. Choose a dedicated administrator email before seeding.'
+            );
+        }
 
-            // The one-time password is required only when no admin exists.
-            // Existing administrators can safely re-run UserSeeder after
-            // ADMIN_PASSWORD has been removed from the environment.
-            if (! $existingAdmin && blank(config('farzin.admin.password'))) {
-                throw new \RuntimeException(
-                    'Set ADMIN_PASSWORD before creating the initial production administrator.'
-                );
-            }
+        $hasAnyAdmin = User::query()->where('role', 'admin')->exists();
+
+        if (! $hasAnyAdmin && ($adminPassword === '' || mb_strlen($adminPassword) < 12)) {
+            throw new RuntimeException(
+                'Set a strong ADMIN_PASSWORD of at least 12 characters before creating the initial administrator.'
+            );
         }
 
         if (app()->environment('local')) {
