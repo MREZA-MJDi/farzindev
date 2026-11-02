@@ -296,7 +296,7 @@
                                             <span data-location-value="province">{{ $selectedProvince?->name ?? 'انتخاب استان' }}</span>
                                             <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7" class="h-4 w-4 shrink-0" aria-hidden="true"><path d="m5 7 5 5 5-5"/></svg>
                                         </button>
-                                        <input type="hidden" id="province_id" name="province_id" value="{{ old('province_id', $selectedProvince?->id) }}">
+                                        <input type="hidden" id="province_id" name="province_id" value="{{ $selectedProvince?->id }}">
                                         @error('province_id')
                                             <p class="mt-2 text-[11px] text-red-600" role="alert">{{ $message }}</p>
                                         @enderror
@@ -319,7 +319,7 @@
                                             <span data-location-value="city">{{ $selectedCity?->name ?? 'ابتدا استان را انتخاب کنید' }}</span>
                                             <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7" class="h-4 w-4 shrink-0" aria-hidden="true"><path d="m5 7 5 5 5-5"/></svg>
                                         </button>
-                                        <input type="hidden" id="city_id" name="city_id" value="{{ old('city_id', $selectedCity?->id) }}">
+                                        <input type="hidden" id="city_id" name="city_id" value="{{ $selectedCity?->id }}">
                                         @error('city_id')
                                             <p class="mt-2 text-[11px] text-red-600" role="alert">{{ $message }}</p>
                                         @enderror
@@ -389,7 +389,7 @@
                         </section>
 
                         <div id="location-picker-modal" class="fz-location-modal" data-location-modal hidden aria-hidden="true">
-                            <button type="button" class="fz-location-modal__backdrop" data-location-backdrop aria-label="بستن پنجره انتخاب"></button>
+                            <div class="fz-location-modal__backdrop" data-location-backdrop aria-hidden="true"></div>
                             <section class="fz-location-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="location-picker-title" tabindex="-1">
                                 <header class="fz-location-modal__header">
                                     <div>
@@ -668,7 +668,7 @@
     let cityCache = new Map();
     let activeTrigger = null;
     let allOptions = [];
-    let focusWasInside = false;
+    let previousBodyOverflow = '';
 
     const normalize = (value) => String(value ?? '')
         .trim()
@@ -754,6 +754,7 @@
         modal.hidden = false;
         modal.setAttribute('aria-hidden', 'false');
         activeTrigger?.setAttribute('aria-expanded', 'true');
+        previousBodyOverflow = document.body.style.overflow;
         document.body.style.overflow = 'hidden';
         loadOptions(type).finally(() => search.focus({ preventScroll: true }));
     }
@@ -762,7 +763,7 @@
         modal.hidden = true;
         modal.setAttribute('aria-hidden', 'true');
         activeTrigger?.setAttribute('aria-expanded', 'false');
-        document.body.style.overflow = '';
+        document.body.style.overflow = previousBodyOverflow;
         if (restoreFocus && activeTrigger && !activeTrigger.disabled) {
             activeTrigger.focus({ preventScroll: true });
         }
@@ -794,6 +795,10 @@
     closeButton.addEventListener('click', () => closeModal(true));
     modal.querySelector('[data-location-backdrop]').addEventListener('click', () => closeModal(true));
     search.addEventListener('input', renderOptions);
+    search.addEventListener('keydown', (event) => {
+        // Do not let Enter in the modal search submit the checkout form.
+        if (event.key === 'Enter') event.preventDefault();
+    });
 
     document.addEventListener('keydown', (event) => {
         if (modal.hidden) return;
