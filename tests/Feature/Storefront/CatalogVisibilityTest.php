@@ -16,6 +16,7 @@ class CatalogVisibilityTest extends TestCase
         $category = Category::query()->create([
             'name' => 'دسته واقعی',
             'slug' => 'real-category',
+            'description' => 'دسته‌بندی آزمایشی آزمون',
             'is_active' => true,
             'sort_order' => 1,
         ]);
@@ -26,8 +27,13 @@ class CatalogVisibilityTest extends TestCase
                 'name' => $sku,
                 'slug' => strtolower($sku),
                 'sku' => $sku,
+                'short_description' => 'توضیح کوتاه آزمون',
+                'description' => 'توضیحات کامل آزمون',
                 'price' => 100000,
+                'compare_at_price' => null,
                 'stock' => 5,
+                'meta_title' => null,
+                'meta_description' => null,
                 'status' => 'active',
                 'is_featured' => false,
                 'is_new' => false,
@@ -52,6 +58,7 @@ class CatalogVisibilityTest extends TestCase
         $legacy = Category::query()->create([
             'name' => 'مبلمان قدیمی',
             'slug' => 'furniture',
+            'description' => 'دسته‌بندی قدیمی آزمون',
             'is_active' => true,
             'sort_order' => 2,
         ]);
@@ -59,6 +66,7 @@ class CatalogVisibilityTest extends TestCase
         $real = Category::query()->create([
             'name' => 'هود آشپزخانه',
             'slug' => 'hoods',
+            'description' => 'دسته‌بندی واقعی آزمون',
             'is_active' => true,
             'sort_order' => 3,
         ]);
@@ -69,8 +77,13 @@ class CatalogVisibilityTest extends TestCase
                 'name' => 'محصول ' . $index,
                 'slug' => 'product-' . $index,
                 'sku' => 'SKU-' . $index,
+                'short_description' => 'توضیح کوتاه آزمون',
+                'description' => 'توضیحات کامل آزمون',
                 'price' => 100000,
+                'compare_at_price' => null,
                 'stock' => 5,
+                'meta_title' => null,
+                'meta_description' => null,
                 'status' => 'active',
                 'is_featured' => false,
                 'is_new' => false,
