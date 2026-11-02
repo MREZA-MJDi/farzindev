@@ -184,12 +184,19 @@ final class CheckoutOrderService
                 $subtotal += $unitPrice * (int) $item->quantity;
             }
 
-            $shippingFlatRate = max(
-                0,
-                (int) (StorefrontSetting::query()
-                    ->where('key', 'shipping_flat_rate')
-                    ->value('value') ?? 0)
-            );
+            $shippingFlatRateValue = StorefrontSetting::query()
+                ->where('key', 'shipping_flat_rate')
+                ->value('value');
+
+            if ($shippingFlatRateValue === null || $shippingFlatRateValue === '') {
+                throw new \RuntimeException(
+                    'هزینه ارسال هنوز توسط مجموعه ثبت نشده است. برای جلوگیری از اعلام مبلغ نادرست، تا ثبت نرخ ارسال امکان نهایی‌کردن سفارش وجود ندارد.'
+                );
+            }
+
+            // An explicitly saved zero is a real free-shipping decision.
+            // A missing setting is not interpreted as free shipping.
+            $shippingFlatRate = max(0, (int) $shippingFlatRateValue);
             $freeShippingThreshold = max(
                 0,
                 (int) (StorefrontSetting::query()
