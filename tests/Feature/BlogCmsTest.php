@@ -79,12 +79,12 @@ class BlogCmsTest extends TestCase
     {
         $admin = User::factory()->create(['role' => 'admin']);
 
-        $this->actingAs($admin)
+        $this->actingAs($admin, 'admin')
             ->get(route('admin.blog-posts.index'))
             ->assertOk()
             ->assertSee('مقالات بلاگ');
 
-        $this->actingAs($admin)
+        $this->actingAs($admin, 'admin')
             ->post(route('admin.blog-posts.store'), [
                 'title' => 'انتخاب سینک مناسب',
                 'slug' => 'choosing-a-sink',
@@ -101,7 +101,7 @@ class BlogCmsTest extends TestCase
         $this->assertSame('draft', $post->status);
         $this->get(route('blog.show', $post->slug))->assertNotFound();
 
-        $this->actingAs($admin)
+        $this->actingAs($admin, 'admin')
             ->put(route('admin.blog-posts.update', $post), [
                 'title' => 'انتخاب سینک مناسب',
                 'slug' => 'choosing-a-sink',
@@ -134,7 +134,7 @@ class BlogCmsTest extends TestCase
             'status' => 'draft',
         ]);
 
-        $this->actingAs($admin)
+        $this->actingAs($admin, 'admin')
             ->from(route('admin.blog-posts.create'))
             ->post(route('admin.blog-posts.store'), [
                 'title' => 'مقاله تکراری',
@@ -145,7 +145,7 @@ class BlogCmsTest extends TestCase
             ->assertRedirect(route('admin.blog-posts.create'))
             ->assertSessionHasErrors('slug');
 
-        $this->actingAs($admin)
+        $this->actingAs($admin, 'admin')
             ->from(route('admin.blog-posts.create'))
             ->post(route('admin.blog-posts.store'), [
                 'title' => 'مقاله بد',
@@ -183,7 +183,7 @@ class BlogCmsTest extends TestCase
         $category = BlogTerm::create(['type' => 'category', 'name' => 'راهنمای خرید', 'slug' => 'buying-guides', 'is_active' => true]);
         $tag = BlogTerm::create(['type' => 'tag', 'name' => 'هود', 'slug' => 'hood', 'is_active' => true]);
 
-        $this->actingAs($admin)->post(route('admin.blog-posts.store'), [
+        $this->actingAs($admin, 'admin')->post(route('admin.blog-posts.store'), [
             'title' => 'راهنمای انتخاب هود آشپزخانه',
             'slug' => 'kitchen-hood-buying-guide',
             'excerpt' => 'راهنمای انتخاب هود آشپزخانه برای فضای پخت‌وپز.',
@@ -288,7 +288,7 @@ class BlogCmsTest extends TestCase
     {
         $admin = User::factory()->create(['role' => 'admin']);
 
-        $this->actingAs($admin)->post(route('admin.seo-redirects.store'), [
+        $this->actingAs($admin, 'admin')->post(route('admin.seo-redirects.store'), [
             'source_path' => '/old-kitchen-guide',
             'target_url' => '/blog/new-kitchen-guide',
             'status_code' => '301',
@@ -313,7 +313,7 @@ class BlogCmsTest extends TestCase
             'published_at' => now()->subDay(),
         ]);
 
-        $this->actingAs($admin)->put(route('admin.blog-posts.update', $post), [
+        $this->actingAs($admin, 'admin')->put(route('admin.blog-posts.update', $post), [
             'title' => 'راهنمای به‌روزشده',
             'slug' => 'new-guide-slug',
             'excerpt' => '',
