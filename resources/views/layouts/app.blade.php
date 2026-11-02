@@ -266,7 +266,7 @@
         @yield('content')
     </main>
 
-    <x-layout.footer :contact="$storefrontContact" :settings="$storefrontSettings" />
+    <x-layout.footer :contact="$storefrontContact" :settings="$storefrontPublicSettings" />
 
     <x-layout.mobile-bottom-bar :cart-count="$storefrontCartCount" />
 
@@ -279,7 +279,7 @@
             $floatingWhatsapp = '98' . $floatingWhatsapp;
         }
     @endphp
-    @if(($storefrontSettings['floating_contact_enabled'] ?? '0') === '1' && ($floatingPhone !== '' || $floatingWhatsapp !== ''))
+    @if(($storefrontPublicSettings['floating_contact_enabled'] ?? '0') === '1' && ($floatingPhone !== '' || $floatingWhatsapp !== ''))
         <div class="fixed bottom-24 left-4 z-[75] flex flex-col gap-2 lg:bottom-6" aria-label="راه‌های ارتباط سریع">
             @if($floatingWhatsapp !== '')
                 <a href="https://wa.me/{{ $floatingWhatsapp }}" target="_blank" rel="noopener noreferrer" class="rounded-full bg-emerald-700 px-4 py-3 text-sm font-bold text-white shadow-xl">واتساپ</a>
