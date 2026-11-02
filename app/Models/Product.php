@@ -19,6 +19,7 @@ class Product extends Model
         'slug',
         'sku',
         'short_description',
+        'specifications',
         'description',
         'price',
         'compare_at_price',
@@ -58,6 +59,7 @@ class Product extends Model
         return [
             'price' => 'decimal:2',
             'compare_at_price' => 'decimal:2',
+            'specifications' => 'array',
             'stock' => 'integer',
 
             'is_featured' => 'boolean',
