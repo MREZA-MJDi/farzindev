@@ -147,7 +147,7 @@ class Product extends Model
     {
         $query->where('status', 'active');
 
-        if (! app()->environment('local')) {
+        if (! app()->environment(['local', 'testing'])) {
             $query->where(function ($skuQuery): void {
                 $skuQuery->whereNull('sku')
                     ->orWhere(function ($realProductQuery): void {
