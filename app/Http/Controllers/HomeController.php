@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\BlogPost;
+use App\Models\ContactSetting;
 use App\Models\Category;
 use App\Models\Product;
 use Illuminate\Contracts\View\View;
@@ -113,7 +114,12 @@ class HomeController extends Controller
             $blogPosts = collect();
         }
 
+        $publicContactSettings = ContactSetting::query()
+            ->where('is_active', true)
+            ->first(['warranty_summary', 'shipping_summary', 'installation_summary']);
+
         return view('home.index', [
+            'publicContactSettings' => $publicContactSettings,
             'categories' => $categories,
             'heroProduct' => $heroProduct,
             'featuredProducts' => $featuredProducts,
