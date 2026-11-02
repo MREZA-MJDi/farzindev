@@ -1,8 +1,8 @@
 <?php
 
-namespace App\\Support;
+namespace App\Support;
 
-use App\\Support\\IranianMobile;
+use App\Support\IranianMobile;
 
 final class StorefrontContact
 {
@@ -30,7 +30,7 @@ final class StorefrontContact
             '٠' => '0', '١' => '1', '٢' => '2', '٣' => '3', '٤' => '4',
             '٥' => '5', '٦' => '6', '٧' => '7', '٨' => '8', '٩' => '9',
         ]);
-        $digits = preg_replace('/\\D/u', '', $ascii) ?? '';
+        $digits = preg_replace('/\D/u', '', $ascii) ?? '';
 
         if (
             strlen($digits) < 8
