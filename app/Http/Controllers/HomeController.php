@@ -72,24 +72,9 @@ class HomeController extends Controller
             fn ($image) => filled($image->url)
         );
 
-        $heroProduct = Product::query()
-            ->active()
-            ->where('show_in_home_gallery', true)
-            ->whereHas('category', fn (Builder $query) => $query->where('is_active', true))
-            ->whereHas('images')
-            ->when(true, $onlyInStock)
-            ->with($productRelations)
-            ->orderByDesc('is_featured')
-            ->orderByDesc('updated_at')
-            ->orderByDesc('id')
-            ->limit(60)
-            ->get()
-            ->first(fn (Product $product) => $isPurchasable($product) && $hasPublicImage($product));
-
         $featuredProducts = Product::query()
             ->active()
             ->where('show_in_home_gallery', true)
-            ->when($heroProduct, fn (Builder $query) => $query->whereKeyNot($heroProduct->id))
             ->whereHas('category', fn (Builder $query) => $query->where('is_active', true))
             ->whereHas('images')
             ->with($productRelations)
@@ -158,7 +143,6 @@ class HomeController extends Controller
 
         return view('home.index', [
             'categories' => $categories,
-            'heroProduct' => $heroProduct,
             'featuredProducts' => $featuredProducts,
             'installmentProduct' => $installmentProduct,
             'shippingSettings' => $shippingSettings,
