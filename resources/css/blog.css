@@ -1533,12 +1533,6 @@
     margin-block: .35rem;
     padding-inline-start: .2rem;
 }
-.blog-article-content blockquote {
-    border-inline-start: 3px solid #7B0D1A;
-    border-radius: 8px;
-    color: #3F5062;
-    background: #F3F5F7;
-}
 .blog-article-content table {
     display: block;
     width: 100%;
@@ -1660,17 +1654,5 @@
     }
     .blog-article-card__body {
         padding: .6rem;
-    }
-}
-@media (prefers-reduced-motion: reduce) {
-    .blog-shell *,
-    .blog-shell *::before,
-    .blog-shell *::after,
-    .blog-article-page *,
-    .blog-article-page *::before,
-    .blog-article-page *::after {
-        scroll-behavior: auto !important;
-        animation: none !important;
-        transition: none !important;
     }
 }
