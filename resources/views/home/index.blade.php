@@ -24,12 +24,6 @@
             );
     }
 
-    $allowedHeroPositions = ['center center', 'center 35%', 'center 65%', 'right center', 'left center'];
-    $heroImagePosition = (string) ($homeCopy['page_home_hero_image_position'] ?? 'center center');
-    if (! in_array($heroImagePosition, $allowedHeroPositions, true)) {
-        $heroImagePosition = 'center center';
-    }
-
     $heroTitle = trim((string) ($homeCopy['page_home_hero_title'] ?? ''))
         ?: 'هود و سینک، آماده‌ی نصب در آشپزخانه‌ی شما';
     $heroDescription = trim((string) ($homeCopy['page_home_hero_description'] ?? ''))
@@ -94,7 +88,6 @@
                     fetchpriority="high"
                     loading="eager"
                     decoding="async"
-                    style="object-position: {{ $heroImagePosition }};"
                 >
                 <span class="fz-sales-hero__image-caption">هود و سینک فرزین در فضای آشپزخانه</span>
             @else
