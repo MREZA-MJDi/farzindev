@@ -240,6 +240,20 @@
                             <a id="contact-map-preview-link" href="https://maps.google.com/" target="_blank" rel="noopener noreferrer" class="admin-btn admin-btn-secondary" aria-disabled="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4" aria-hidden="true"><path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z" /><circle cx="12" cy="10" r="2.5" /></svg> باز کردن موقعیت در Google Maps</a>
                         </div>
                         <p id="contact-map-preview-query" class="mt-2 break-all text-xs text-[var(--admin-muted)]" dir="ltr"></p>
+                        <div id="contact-map-preview-frame" class="mt-4 overflow-hidden rounded-xl border border-[var(--admin-border)] hidden">
+                            <iframe
+                                id="contact-map-preview-iframe"
+                                title="پیش‌نمایش زنده نقشه موقعیت صفحه تماس"
+                                src="about:blank"
+                                loading="lazy"
+                                referrerpolicy="no-referrer-when-downgrade"
+                                allowfullscreen
+                                class="block h-64 w-full border-0 sm:h-80"
+                            ></iframe>
+                        </div>
+                        <div id="contact-map-preview-empty" class="mt-4 flex min-h-36 items-center justify-center rounded-xl border border-dashed border-[var(--admin-border)] bg-[var(--admin-surface-muted)] p-5 text-center text-xs leading-7 text-[var(--admin-muted)]">
+                            <p id="contact-map-preview-empty-text">برای دیدن نقشه، آدرس یا هر دو مختصات را وارد کنید.</p>
+                        </div>
                     </div>
                     <div>
                         <label for="whatsapp" class="admin-label">شماره واتساپ (اختیاری)</label>
@@ -311,57 +325,79 @@ document.addEventListener('DOMContentLoaded', function () {
     const link = document.getElementById('contact-map-preview-link');
     const status = document.getElementById('contact-map-preview-status');
     const queryText = document.getElementById('contact-map-preview-query');
+    const previewFrame = document.getElementById('contact-map-preview-frame');
+    const previewMap = document.getElementById('contact-map-preview-iframe');
+    const emptyState = document.getElementById('contact-map-preview-empty');
+    const emptyText = document.getElementById('contact-map-preview-empty-text');
 
-    if (!address || !latitude || !longitude || !link || !status || !queryText) return;
+    if (
+        !address || !latitude || !longitude || !link || !status || !queryText ||
+        !previewFrame || !previewMap || !emptyState || !emptyText
+    ) return;
+
+    const setEmptyState = function (message) {
+        previewFrame.classList.add('hidden');
+        emptyState.classList.remove('hidden');
+        emptyText.textContent = message;
+        link.setAttribute('aria-disabled', 'true');
+        link.href = 'https://maps.google.com/';
+        queryText.textContent = '';
+    };
 
     const syncMapPreview = function () {
         const latValue = latitude.value.trim();
         const lngValue = longitude.value.trim();
-        const lat = Number(latValue);
-        const lng = Number(lngValue);
         const hasLatitude = latValue !== '';
         const hasLongitude = lngValue !== '';
         let query = '';
 
         if (hasLatitude !== hasLongitude) {
-            link.setAttribute('aria-disabled', 'true');
-            link.href = 'https://maps.google.com/';
             status.textContent = 'برای تعیین نقطه دقیق، Latitude و Longitude را هر دو وارد کنید.';
-            queryText.textContent = '';
+            setEmptyState('برای نمایش نقشه دقیق، هر دو مقدار Latitude و Longitude را وارد کنید.');
             return;
         }
 
         if (hasLatitude && hasLongitude) {
+            const lat = Number(latValue);
+            const lng = Number(lngValue);
+
             if (!Number.isFinite(lat) || !Number.isFinite(lng) || lat < -90 || lat > 90 || lng < -180 || lng > 180) {
-                link.setAttribute('aria-disabled', 'true');
-                link.href = 'https://maps.google.com/';
                 status.textContent = 'مختصات واردشده خارج از محدوده معتبر است.';
-                queryText.textContent = '';
+                setEmptyState('مختصات معتبر نیست؛ Latitude باید بین ۹۰- تا ۹۰ و Longitude بین ۱۸۰- تا ۱۸۰ باشد.');
                 return;
             }
+
             query = latValue + ',' + lngValue;
-            status.textContent = 'مختصات دقیق ثبت شده است؛ همین نقطه در صفحه تماس و مسیر‌یابی استفاده می‌شود.';
+            status.textContent = 'پیش‌نمایش زنده با مختصات دقیق به‌روزرسانی شد؛ همین نقطه در صفحه تماس نمایش داده می‌شود.';
         } else {
             query = address.value.trim();
             status.textContent = query
-                ? 'نقشه بر اساس آدرس واردشده باز می‌شود. برای دقت بیشتر، مختصات را هم ثبت کنید.'
+                ? 'پیش‌نمایش زنده بر اساس آدرس واردشده به‌روزرسانی شد.'
                 : 'یک آدرس وارد کنید یا هر دو مختصات را تکمیل کنید.';
         }
 
         if (!query) {
-            link.setAttribute('aria-disabled', 'true');
-            link.href = 'https://maps.google.com/';
-            queryText.textContent = '';
+            setEmptyState('برای دیدن نقشه، آدرس یا هر دو مختصات را وارد کنید.');
             return;
         }
 
-        link.href = 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(query);
+        const encodedQuery = encodeURIComponent(query);
+        previewMap.src = 'https://www.google.com/maps?q=' + encodedQuery + '&z=15&output=embed';
+        previewFrame.classList.remove('hidden');
+        emptyState.classList.add('hidden');
+        link.href = 'https://www.google.com/maps/search/?api=1&query=' + encodedQuery;
         link.removeAttribute('aria-disabled');
         queryText.textContent = query;
     };
 
+    let updateFrame;
+    const scheduleMapPreview = function () {
+        window.clearTimeout(updateFrame);
+        updateFrame = window.setTimeout(syncMapPreview, 250);
+    };
+
     [address, latitude, longitude].forEach(function (input) {
-        input.addEventListener('input', syncMapPreview);
+        input.addEventListener('input', scheduleMapPreview);
         input.addEventListener('change', syncMapPreview);
     });
 
