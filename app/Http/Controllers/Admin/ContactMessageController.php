@@ -64,7 +64,12 @@ class ContactMessageController extends Controller
     public function destroy(
         ContactMessage $contactMessage
     ): RedirectResponse {
+        $attachmentPath = $contactMessage->attachment_path;
         $contactMessage->delete();
+
+        if ($attachmentPath) {
+            Storage::disk('local')->delete($attachmentPath);
+        }
 
         return redirect()
             ->route('admin.contact-messages.index')
