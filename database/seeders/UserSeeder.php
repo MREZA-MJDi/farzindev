@@ -12,29 +12,22 @@ class UserSeeder extends Seeder
     public function run(): void
     {
         // Use config() so this seeder also works after config:cache.
-        // Credentials must be explicitly provisioned; never create a weak demo admin.
+        // Never create a weak demo account or duplicate an existing administrator.
         $email = mb_strtolower(trim((string) config('farzin.admin.email', '')));
-        $adminPassword = (string) config('farzin.admin.password', '');
 
         if ($email === '' || ! filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            throw new \\RuntimeException(
+            throw new RuntimeException(
                 'Set a valid ADMIN_EMAIL before creating the administrator.'
             );
         }
 
-        if ($adminPassword === '' || mb_strlen($adminPassword) < 12) {
-            throw new \\RuntimeException(
-                'Set a strong ADMIN_PASSWORD of at least 12 characters before creating the administrator.'
-            );
-        }
-
-        $existingAdmin = User::query()
+        $emailOwner = User::query()
             ->whereRaw('LOWER(TRIM(email)) = ?', [$email])
             ->first();
 
-        if ($existingAdmin) {
-            if (! $existingAdmin->isAdmin()) {
-                throw new \\RuntimeException(
+        if ($emailOwner) {
+            if (! $emailOwner->isAdmin()) {
+                throw new RuntimeException(
                     'The configured ADMIN_EMAIL already belongs to a non-admin user. Choose a dedicated administrator email; the existing account was not changed.'
                 );
             }
@@ -42,6 +35,27 @@ class UserSeeder extends Seeder
             // Existing admin accounts are intentionally not rotated by db:seed.
             // Use the explicit admin:sync command to apply credential changes.
             return;
+        }
+
+        $existingAdmins = User::query()
+            ->where('role', 'admin')
+            ->orderBy('id')
+            ->get();
+
+        if ($existingAdmins->isNotEmpty()) {
+            $this->command?->warn(
+                'An administrator already exists with a different email. Run admin:sync to apply the configured email safely.'
+            );
+
+            return;
+        }
+
+        $adminPassword = (string) config('farzin.admin.password', '');
+
+        if ($adminPassword === '' || mb_strlen($adminPassword) < 12) {
+            throw new RuntimeException(
+                'Set a strong ADMIN_PASSWORD of at least 12 characters before creating the administrator.'
+            );
         }
 
         User::create([
