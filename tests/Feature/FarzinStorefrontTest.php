@@ -1072,7 +1072,7 @@ class FarzinStorefrontTest extends TestCase
         foreach ([
             ['type' => 'color', 'name' => 'رنگ', 'value' => 'سفید', 'stock' => 4, 'price_adjustment' => 0],
             ['type' => 'color', 'name' => 'رنگ', 'value' => 'مشکی', 'stock' => 2, 'price_adjustment' => 500000],
-            ['type' => 'size', 'name' => 'اندازه', 'value' => '۹۰', 'stock' => 3, 'price_adjustment' => 0],
+            ['type' => 'size', 'name' => 'اندازه', 'value' => '۹۰', 'stock' => 2, 'price_adjustment' => 0],
         ] as $index => $option) {
             ProductVariant::create(array_merge([
                 'product_id' => $product->id,
