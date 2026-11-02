@@ -130,7 +130,7 @@
         .fz-product-gallery .product-gallery-shell{border-radius:1rem}
         .fz-product-gallery .product-gallery-stage{aspect-ratio:1/1;max-height:none;height:auto}
         .fz-product-gallery .product-gallery-stage img{padding:.35rem}
-        .fz-product-gallery .farzin-gallery-arrow{width:2rem;height:2rem}
+        .fz-product-gallery .farzin-gallery-arrow{width:2.75rem;height:2.75rem}
         .fz-product-gallery .farzin-gallery-zoom{right:.4rem;bottom:.4rem;padding:.35rem .5rem;font-size:9px}
         .fz-product-gallery .mt-4.flex.gap-3{gap:.4rem;margin-top:.5rem}
         .fz-product-gallery .mt-4.flex.gap-3 button{width:2.65rem;height:2.65rem;border-radius:.6rem}
@@ -138,13 +138,14 @@
         .fz-product-panel .product-price__current strong{font-size:1.15rem}
         .fz-product-panel .product-price__current span{font-size:.65rem}
         .fz-product-panel .product-price__main{gap:.25rem}
-        .fz-product-panel__status{font-size:10px;padding:.3rem .55rem}
+        .fz-product-panel__status{font-size:10px;padding:.3rem .55rem;min-height:44px}
         .fz-product-panel .fz-product-action{width:100%;padding:.65rem .5rem;font-size:.72rem}
         .fz-product-panel .farzin-quantity{max-width:100%}
-        .fz-product-panel .farzin-quantity__button{width:2.5rem;height:2.5rem}
-        .fz-product-panel .farzin-quantity__input{width:2rem}
+        .fz-product-panel .farzin-quantity__button{width:44px;height:44px}
+        .fz-product-panel .farzin-quantity__input{width:2.5rem;min-height:44px}
         .fz-product-sku{font-size:9px}
     }
+     .fz-product-layout--no-gallery{grid-template-columns:minmax(0,1fr)}
     @media(min-width:768px){
         .fz-product-layout{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:clamp(1.5rem,4vw,3.5rem)}
     }
@@ -166,7 +167,7 @@
             @endif
         </nav>
 
-        <section class="fz-product-layout py-2 sm:py-6" aria-labelledby="product-title">
+        <section class="fz-product-layout py-2 sm:py-6 {{ $mainImage ? '' : 'fz-product-layout--no-gallery' }}" aria-labelledby="product-title">
             @if($mainImage)
                 <div class="min-w-0">
                     <x-product.gallery :product="$product" :variant-image-map="$variantImageMap" />
@@ -305,7 +306,7 @@
                                 </div>
                                 <div class="sm:col-span-2 lg:col-span-4">
                                     @if($installmentPlan['without_fee'])
-                                        <p class="text-xs font-semibold text-[var(--livora-accent)]">جمع پیش‌پرداخت و اقساط با قیمت نقدی برابر است.</p>
+                                        <p class="text-xs font-semibold text-[var(--livora-accent)]">بدون کارمزد؛ جمع پیش‌پرداخت و اقساط با قیمت نقدی برابر است.</p>
                                     @endif
                                     <ol class="mt-3 grid gap-2 sm:grid-cols-2">
                                         @foreach($installmentPlan['cheque_amounts'] as $chequeIndex => $amount)
