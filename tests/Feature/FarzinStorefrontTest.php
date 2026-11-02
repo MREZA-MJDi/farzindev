@@ -1122,7 +1122,7 @@ class FarzinStorefrontTest extends TestCase
 
     public function test_admin_and_customer_areas_enforce_role_boundaries(): void
     {
-        $this->get(route('admin.dashboard'))->assertRedirect(route('login'));
+        $this->get(route('admin.dashboard'))->assertRedirect(route('admin.login'));
         $this->get(route('account.index'))->assertRedirect(route('login'));
 
         $this->actingAs($this->customer())
