@@ -159,6 +159,16 @@
         $canPurchase
             ? 'https://schema.org/InStock'
             : 'https://schema.org/OutOfStock';
+
+    $technicalSpecs = collect([
+        ['key' => 'width_cm', 'label' => 'عرض', 'value' => $product->width_cm ? \App\Helpers\PersianNumberHelper::format($product->width_cm) . ' سانتی‌متر' : null],
+        ['key' => 'installation_type', 'label' => 'نوع نصب', 'value' => $product->installation_type],
+        ['key' => 'material', 'label' => 'جنس بدنه', 'value' => $product->material],
+        ['key' => 'suction_power_m3h', 'label' => 'قدرت مکش', 'value' => $product->suction_power_m3h ? \App\Helpers\PersianNumberHelper::format($product->suction_power_m3h) . ' مترمکعب بر ساعت' : null],
+        ['key' => 'noise_db', 'label' => 'سطح صدا', 'value' => $product->noise_db ? \App\Helpers\PersianNumberHelper::format((float) $product->noise_db) . ' دسی‌بل' : null],
+        ['key' => 'power_watts', 'label' => 'توان مصرفی', 'value' => $product->power_watts ? \App\Helpers\PersianNumberHelper::format($product->power_watts) . ' وات' : null],
+        ['key' => 'warranty_months', 'label' => 'مدت گارانتی', 'value' => $product->warranty_months ? \App\Helpers\PersianNumberHelper::format($product->warranty_months) . ' ماه' : null],
+    ])->filter(fn ($spec) => filled($spec['value']))->values();
 @endphp
 
 @section('title', $pageTitle)
@@ -208,6 +218,16 @@
 
         if ($product->category) {
             $productSchema['category'] = $product->category->name;
+        }
+
+        if ($technicalSpecs->isNotEmpty()) {
+            $productSchema['additionalProperty'] = $technicalSpecs
+                ->map(fn ($spec) => [
+                    '@type' => 'PropertyValue',
+                    'name' => $spec['label'],
+                    'value' => $spec['value'],
+                ])
+                ->all();
         }
     @endphp
 
@@ -411,6 +431,23 @@
 
                         @endif
 
+
+                        @if($technicalSpecs->isNotEmpty())
+                            <section class="mt-7 rounded-2xl border border-[var(--livora-border)] bg-[var(--livora-white)] p-5" aria-labelledby="product-technical-specs">
+                                <div class="flex items-center justify-between gap-3">
+                                    <h2 id="product-technical-specs" class="text-sm font-bold">مشخصات فنی</h2>
+                                    <span class="text-[10px] text-[var(--livora-stone)]">اطلاعات ثبت‌شده برای همین مدل</span>
+                                </div>
+                                <dl class="mt-4 grid grid-cols-1 gap-2 sm:grid-cols-2">
+                                    @foreach($technicalSpecs as $spec)
+                                        <div class="flex items-center justify-between gap-3 rounded-xl bg-[var(--livora-surface)] px-3 py-2.5">
+                                            <dt class="text-xs text-[var(--livora-stone)]">{{ $spec['label'] }}</dt>
+                                            <dd class="text-xs font-semibold text-[var(--livora-text)]">{{ $spec['value'] }}</dd>
+                                        </div>
+                                    @endforeach
+                                </dl>
+                            </section>
+                        @endif
 
                         {{-- Installment Box --}}
                         @if($installmentEnabled)
