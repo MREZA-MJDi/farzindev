@@ -1,14 +1,14 @@
 <?php
 
-namespace App\\Http\\Controllers;
+namespace App\Http\Controllers;
 
-use App\\Models\\BlogPost;
-use App\\Models\\Category;
-use App\\Models\\ContactSetting;
-use App\\Models\\Product;
-use App\\Models\\StorefrontSetting;
-use Illuminate\\Database\\Eloquent\\Builder;
-use Illuminate\\Contracts\\View\\View;
+use App\Models\BlogPost;
+use App\Models\Category;
+use App\Models\ContactSetting;
+use App\Models\Product;
+use App\Models\StorefrontSetting;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Contracts\View\View;
 
 class HomeController extends Controller
 {
