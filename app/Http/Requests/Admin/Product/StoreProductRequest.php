@@ -105,6 +105,16 @@ class StoreProductRequest extends FormRequest
                 'min:0',
             ],
 
+            'width_cm' => ['nullable', 'integer', 'min:1', 'max:500'],
+            'installation_type' => ['nullable', 'string', 'max:100'],
+            'suction_power_m3h' => ['nullable', 'integer', 'min:1', 'max:10000'],
+            'noise_db' => ['nullable', 'numeric', 'min:1', 'max:200', 'decimal:0,1'],
+            'power_watts' => ['nullable', 'integer', 'min:1', 'max:10000'],
+            'material' => ['nullable', 'string', 'max:120'],
+            'warranty_months' => ['nullable', 'integer', 'min:1', 'max:360'],
+
+
+
             'status' => [
                 'required',
                 Rule::in([
