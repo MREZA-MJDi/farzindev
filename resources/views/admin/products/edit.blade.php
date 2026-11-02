@@ -23,6 +23,7 @@
         action="{{ route('admin.products.update', $product) }}"
         method="POST"
         enctype="multipart/form-data"
+        data-admin-product-form
     >
         @method('PUT')
 
