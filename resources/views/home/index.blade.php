@@ -16,6 +16,7 @@
 
     $heroImageUrl = trim((string) ($homeCopy['page_home_hero_image_url'] ?? ''));
     if ($heroImageUrl !== '' && ! \Illuminate\Support\Str::startsWith($heroImageUrl, ['http://', 'https://', '//'])) {
+        $heroImageUrl = preg_replace('#^public/#', '', $heroImageUrl) ?? $heroImageUrl;
         $heroImageUrl = asset(ltrim($heroImageUrl, '/'));
     }
     $heroImageAlt = 'فضای آشپزخانه با هود و سینک فرزین';
