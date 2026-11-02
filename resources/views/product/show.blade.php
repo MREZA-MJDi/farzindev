@@ -191,7 +191,7 @@
                 <h1 id="product-title" class="fz-product-panel__title mt-2 font-bold tracking-tight text-[var(--livora-text)]">{{ $product->name }}</h1>
 
                 <div class="mt-3">
-                    <x-product.price :product="$product" :show-installment="false" />
+                    <x-product.price :product="$product" :show-installment="false" :price-range="$productPriceRange" />
                 </div>
 
                 @if($installmentPlan)
