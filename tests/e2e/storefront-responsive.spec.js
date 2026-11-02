@@ -674,6 +674,75 @@ test('admin blog image workflows expose the cropper and saved media library', as
 });
 
 
+test('admin homepage hero preview matches the fixed 16:10 crop and updates its copy live', async ({ page }) => {
+    await page.setViewportSize({ width: 1280, height: 900 });
+    await page.goto('/admin/login', { waitUntil: 'domcontentloaded' });
+
+    const loginForm = page.locator('form').filter({ has: page.locator('input[name="email"]') });
+    await loginForm.locator('input[name="email"]').fill('browser-admin@example.test');
+    await loginForm.locator('input[name="password"]').fill('browser-smoke-password');
+    await loginForm.locator('button[type="submit"]').click();
+    await expect(page).toHaveURL(/\\/admin(?:\\/dashboard)?(?:\\?.*)?$/);
+
+    await page.goto('/admin/page-content?tab=home', { waitUntil: 'domcontentloaded' });
+    await expect(page.locator('[data-home-hero-preview]')).toBeVisible();
+
+    const previewTitle = page.locator('[data-home-hero-preview-title]');
+    await page.locator('#page_home_hero_title').fill('پیش‌نمایش زنده هود و سینک');
+    await expect(previewTitle).toHaveText('پیش‌نمایش زنده هود و سینک');
+
+    const imageBytes = await page.evaluate(async () => {
+        const source = document.createElement('canvas');
+        source.width = 1600;
+        source.height = 1000;
+        const context = source.getContext('2d');
+        context.fillStyle = '#d9e2ea';
+        context.fillRect(0, 0, source.width, source.height);
+        context.fillStyle = '#163b5f';
+        context.fillRect(140, 180, 760, 620);
+        context.fillStyle = '#f4f5f3';
+        context.fillRect(280, 270, 470, 300);
+        context.fillStyle = '#667b8c';
+        context.fillRect(1040, 250, 360, 520);
+        const blob = await new Promise((resolve) => source.toBlob(resolve, 'image/png'));
+        return Array.from(new Uint8Array(await blob.arrayBuffer()));
+    });
+
+    const upload = page.locator('input[name="page_home_hero_image"]');
+    await upload.setInputFiles({
+        name: 'farzin-hero-preview.png',
+        mimeType: 'image/png',
+        buffer: Buffer.from(imageBytes),
+    });
+
+    const cropPanel = page.locator('[data-image-editor-panel]');
+    const cropCanvas = page.locator('[data-image-editor-canvas]');
+    await expect(cropPanel).toBeVisible();
+    await expect(cropCanvas).toBeVisible();
+    await expect(page.locator('[data-image-editor-ratio]')).toHaveValue('16:10');
+
+    const cropRatio = await cropCanvas.evaluate((canvas) => canvas.width / canvas.height);
+    expect(cropRatio, 'crop preview must use the same 16:10 frame as the public homepage').toBeCloseTo(1.6, 2);
+    await expect(cropPanel.locator('[data-image-editor-status]')).toContainText('پیکسل');
+
+    await page.locator('[data-image-editor-zoom]').evaluate((input) => {
+        input.value = '1.5';
+        input.dispatchEvent(new Event('input', { bubbles: true }));
+    });
+    await expect(page.locator('[data-image-editor-zoom-label]')).toContainText('۱٫۵');
+
+    await page.setViewportSize({ width: 390, height: 844 });
+    const previewOverflow = await page.locator('[data-home-hero-preview]').evaluate((element) => (
+        Math.max(element.scrollWidth, element.getBoundingClientRect().width)
+        - element.getBoundingClientRect().width
+    ));
+    expect(previewOverflow, 'the hero crop preview must not overflow on mobile').toBeLessThanOrEqual(1);
+
+    await upload.setInputFiles([]);
+    await expect(cropPanel).toBeHidden();
+    await expect(page.locator('[data-image-editor-placeholder]')).toBeVisible();
+});
+
 test('admin contact location preview updates the existing map frame when address and coordinates change', async ({ page }) => {
     await page.setViewportSize({ width: 1440, height: 960 });
     await page.goto('/admin/login', { waitUntil: 'domcontentloaded' });
