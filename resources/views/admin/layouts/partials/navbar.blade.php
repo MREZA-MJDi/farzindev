@@ -6,6 +6,8 @@
     $pageTitles = [
         'admin.dashboard' => 'داشبورد',
         'admin.storefront-settings.edit' => 'تنظیمات فروشگاه',
+        'admin.seo-settings.edit' => 'تنظیمات سئو',
+        'admin.seo-redirects.index' => 'تغییر مسیر لینک‌ها',
 
         'admin.products.index' => 'محصولات',
         'admin.products.create' => 'افزودن محصول',
@@ -23,16 +25,6 @@
         'admin.customers.index' => 'مشتریان',
         'admin.customers.show' => 'جزئیات مشتری',
         'admin.customers.edit' => 'ویرایش مشتری',
-
-        'admin.product-images.index' => 'تصاویر محصولات',
-        'admin.product-images.create' => 'افزودن تصویر محصول',
-        'admin.product-images.edit' => 'ویرایش تصویر محصول',
-        'admin.product-images.show' => 'جزئیات تصویر محصول',
-
-        'admin.product-variants.index' => 'تنوع‌های محصول',
-        'admin.product-variants.create' => 'افزودن تنوع محصول',
-        'admin.product-variants.edit' => 'ویرایش تنوع محصول',
-        'admin.product-variants.show' => 'جزئیات تنوع محصول',
 
         'admin.media.index' => 'رسانه',
         'admin.media.create' => 'افزودن رسانه',
@@ -53,10 +45,10 @@
     $quickSearchPages = [
         ['title' => 'داشبورد', 'url' => route('admin.dashboard'), 'terms' => 'home overview dashboard'],
         ['title' => 'تنظیمات فروشگاه', 'url' => route('admin.storefront-settings.edit'), 'terms' => 'banner hero contact settings'],
+        ['title' => 'تنظیمات سئو', 'url' => route('admin.seo-settings.edit'), 'terms' => 'seo search index meta گوگل'],
+        ['title' => 'تغییر مسیر لینک‌ها', 'url' => route('admin.seo-redirects.index'), 'terms' => 'redirect 301 302 لینک شکسته'],
         ['title' => 'محصولات', 'url' => route('admin.products.index'), 'terms' => 'product catalog کالا'],
         ['title' => 'دسته‌بندی‌ها', 'url' => route('admin.categories.index'), 'terms' => 'category دسته ها'],
-        ['title' => 'تصاویر محصولات', 'url' => route('admin.product-images.index'), 'terms' => 'images photos media تصویر'],
-        ['title' => 'تنوع‌های محصول', 'url' => route('admin.product-variants.index'), 'terms' => 'variants options ویژگی'],
         ['title' => 'سفارش‌ها', 'url' => route('admin.orders.index'), 'terms' => 'orders sales'],
         ['title' => 'مشتریان', 'url' => route('admin.customers.index'), 'terms' => 'customers users'],
         ['title' => 'رسانه', 'url' => route('admin.media.index'), 'terms' => 'media uploads فایل آپلود'],
