@@ -43,6 +43,53 @@
         </a>
     </div>
 
+    <form method="GET" action="{{ route('admin.products.index') }}" class="admin-card mb-6 grid grid-cols-1 gap-3 p-4 sm:grid-cols-2 xl:grid-cols-6" role="search" aria-label="جستجو و فیلتر محصولات">
+        <label class="block xl:col-span-2">
+            <span class="mb-1 block text-xs font-semibold text-[var(--admin-muted)]">جستجو در نام یا SKU</span>
+            <input type="search" name="q" value="{{ request('q') }}" maxlength="255" placeholder="نام محصول یا کد کالا..." class="admin-input w-full">
+        </label>
+        <label class="block">
+            <span class="mb-1 block text-xs font-semibold text-[var(--admin-muted)]">دسته‌بندی</span>
+            <select name="category_id" class="admin-select w-full">
+                <option value="">همه دسته‌ها</option>
+                @foreach($categories as $categoryOption)
+                    <option value="{{ $categoryOption->id }}" @selected((string) request('category_id') === (string) $categoryOption->id)>{{ $categoryOption->name }}</option>
+                @endforeach
+            </select>
+        </label>
+        <label class="block">
+            <span class="mb-1 block text-xs font-semibold text-[var(--admin-muted)]">وضعیت انتشار</span>
+            <select name="status" class="admin-select w-full">
+                <option value="">همه وضعیت‌ها</option>
+                <option value="active" @selected(request('status') === 'active')>فعال</option>
+                <option value="draft" @selected(request('status') === 'draft')>پیش‌نویس</option>
+                <option value="archived" @selected(request('status') === 'archived')>آرشیو</option>
+            </select>
+        </label>
+        <label class="block">
+            <span class="mb-1 block text-xs font-semibold text-[var(--admin-muted)]">موجودی</span>
+            <select name="stock" class="admin-select w-full">
+                <option value="">همه</option>
+                <option value="out" @selected(request('stock') === 'out')>ناموجود</option>
+                <option value="low" @selected(request('stock') === 'low')>کم (۱ تا ۵)</option>
+                <option value="available" @selected(request('stock') === 'available')>موجودی بالای ۵</option>
+            </select>
+        </label>
+        <label class="block">
+            <span class="mb-1 block text-xs font-semibold text-[var(--admin-muted)]">کامل‌بودن</span>
+            <select name="completeness" class="admin-select w-full">
+                <option value="">همه محصولات</option>
+                <option value="incomplete" @selected(request('completeness') === 'incomplete')>نیازمند تکمیل</option>
+                <option value="complete" @selected(request('completeness') === 'complete')>کامل</option>
+            </select>
+        </label>
+        <div class="flex flex-wrap items-end gap-2 sm:col-span-2 xl:col-span-6">
+            <button type="submit" class="admin-btn admin-btn-primary min-h-11">اعمال فیلترها</button>
+            <a href="{{ route('admin.products.index') }}" class="admin-btn admin-btn-secondary min-h-11">پاک‌کردن فیلترها</a>
+            <span class="self-center text-xs text-[var(--admin-muted)]">{{ \App\Helpers\PersianNumberHelper::format($products->total()) }} محصول</span>
+        </div>
+    </form>
+
     <div class="admin-table-wrapper admin-products-table-wrap">
         <table class="admin-table admin-products-table">
             <colgroup>
