@@ -1,5 +1,5 @@
 @php
-    $adminUser = auth()->user();
+    $adminUser = auth('admin')->user();
 
     $currentRouteName = request()->route()?->getName();
 
@@ -707,7 +707,7 @@
                     <div class="border-t border-[var(--admin-border)] p-2">
 
                         <form
-                            action="{{ route('logout') }}"
+                            action="{{ route('admin.logout') }}"
                             method="POST"
                         >
 
