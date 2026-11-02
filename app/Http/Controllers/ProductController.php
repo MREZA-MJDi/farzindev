@@ -62,14 +62,19 @@ class ProductController extends Controller
                     ->orderBy('sort_order')
                     ->limit(1),
                 'images.media:id,path',
-                'variants:id,product_id,stock',
+                'variants:id,product_id,type,stock',
             ])
             ->latest()
             ->limit(12)
             ->get()
-            ->filter(fn (Product $related) => $related->images->contains(
-                fn ($image) => filled($image->url)
-            ))
+            ->filter(function (Product $related): bool {
+                $groups = $related->variants->groupBy('type');
+                $canPurchase = $groups->isNotEmpty()
+                    ? $groups->every(fn ($options) => $options->contains(fn ($option) => (int) $option->stock > 0))
+                    : (int) $related->stock > 0;
+
+                return $canPurchase && $related->images->contains(fn ($image) => filled($image->url));
+            })
             ->take(4)
             ->values();
 
