@@ -586,7 +586,7 @@
     <div class="shrink-0 border-t border-[var(--admin-border)] p-3">
 
         @php
-            $adminUser = auth()->user();
+            $adminUser = auth('admin')->user();
         @endphp
 
         <div class="rounded-2xl bg-[var(--admin-surface)] p-3">
@@ -612,7 +612,7 @@
                 </div>
 
                 <form
-                    action="{{ route('logout') }}"
+                    action="{{ route('admin.logout') }}"
                     method="POST"
                 >
 
