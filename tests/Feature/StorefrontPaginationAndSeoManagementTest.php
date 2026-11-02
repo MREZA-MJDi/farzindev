@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\Models\Address;
 use App\Models\Category;
 use App\Models\Order;
+use App\Models\Product;
 use App\Models\StorefrontSetting;
 use App\Models\User;
 use App\Services\Seo\SeoSettings;
@@ -26,12 +27,22 @@ class StorefrontPaginationAndSeoManagementTest extends TestCase
     public function test_public_category_directory_is_paginated_and_keeps_only_twelve_categories_per_page(): void
     {
         for ($index = 1; $index <= 13; $index++) {
-            Category::create([
+            $category = Category::create([
                 'name' => 'Pagination Category ' . str_pad((string) $index, 2, '0', STR_PAD_LEFT),
                 'slug' => 'pagination-category-' . $index,
                 'description' => 'Category used for public pagination checks.',
                 'is_active' => true,
                 'sort_order' => $index,
+            ]);
+
+            Product::create([
+                'category_id' => $category->id,
+                'name' => 'Pagination Product ' . $index,
+                'slug' => 'pagination-product-' . $index,
+                'sku' => 'FAR-PAGINATION-' . $index,
+                'price' => 10000000 + $index,
+                'stock' => 3,
+                'status' => 'active',
             ]);
         }
 
@@ -216,12 +227,22 @@ class StorefrontPaginationAndSeoManagementTest extends TestCase
     public function test_shop_filter_category_dataset_remains_bounded_and_selected_category_stays_available(): void
     {
         for ($index = 1; $index <= 105; $index++) {
-            Category::create([
+            $category = Category::create([
                 'name' => 'Shop Filter Category ' . str_pad((string) $index, 3, '0', STR_PAD_LEFT),
                 'slug' => 'shop-filter-category-' . $index,
                 'description' => 'Category used for bounded shop filters.',
                 'is_active' => true,
                 'sort_order' => $index,
+            ]);
+
+            Product::create([
+                'category_id' => $category->id,
+                'name' => 'Shop Filter Product ' . $index,
+                'slug' => 'shop-filter-product-' . $index,
+                'sku' => 'FAR-SHOP-FILTER-' . $index,
+                'price' => 10000000 + $index,
+                'stock' => 3,
+                'status' => 'active',
             ]);
         }
 
