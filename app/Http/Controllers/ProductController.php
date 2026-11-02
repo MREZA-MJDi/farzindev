@@ -16,6 +16,7 @@ class ProductController extends Controller
                 'variants.images.media',
             ])
             ->active()
+            ->publicCatalogue()
             ->whereHas('category', fn ($categoryQuery) => $categoryQuery
                 ->where('is_active', true))
             ->where('slug', $slug)
