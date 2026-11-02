@@ -42,6 +42,24 @@ class DashboardController extends Controller
         $totalProducts = (int) $productMetrics->total_products;
         $activeProducts = (int) $productMetrics->active_products;
 
+        $incompleteProducts = Product::query()
+            ->where(function ($query): void {
+                $query->whereNull('description')
+                    ->orWhere('description', '')
+                    ->orWhereNull('short_description')
+                    ->orWhere('short_description', '')
+                    ->orWhere('sku', 'like', 'FZ-SEED-%')
+                    ->orWhere('sku', 'like', 'LIV-%')
+                    ->orWhereDoesntHave('images', fn ($imageQuery) => $imageQuery
+                        ->whereNotNull('alt')
+                        ->where('alt', '<>', ''));
+            })
+            ->count();
+
+        $unreadContactMessages = ContactMessage::query()
+            ->where('status', 'unread')
+            ->count();
+
         // Variant-backed products track inventory on their active options;
         // the parent product's stock column is only authoritative when there
         // are no active variants.
@@ -241,6 +259,8 @@ class DashboardController extends Controller
         return view('admin.dashboard.index', [
             'totalProducts' => $totalProducts,
             'activeProducts' => $activeProducts,
+            'incompleteProducts' => $incompleteProducts,
+            'unreadContactMessages' => $unreadContactMessages,
             'lowStockProducts' => $lowStockProducts,
             'outOfStockProducts' => $outOfStockProducts,
 
