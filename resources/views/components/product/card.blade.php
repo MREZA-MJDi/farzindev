@@ -2,12 +2,13 @@
     'product',
     'reveal' => true,
     'variant' => 'default',
+    'showAvailability' => true,
 ])
 
 @php
     $imageModel = $product->images?->first();
     $image = $imageModel?->url;
-    $imageAlt = $imageModel?->alt ?: $product->name;
+    $imageAlt = $product->name;
     $imageSrcset = $imageModel?->responsive_srcset;
 
     $hasDiscount = $product->compare_at_price !== null
@@ -23,11 +24,13 @@
     $cashAmount = $installmentEnabled && $cashPercent > 0
         ? round((float) $product->price * ($cashPercent / 100), 2)
         : 0;
-    $showInstallment = $cashAmount > 0;
+    $showInstallment = $cashAmount > 0
+        && $cashPercent < 100
+        && $product->installment_remainder_method === 'cheque'
+        && $chequeCount > 0
+        && (int) ($product->installment_interval_months ?? 0) > 0;
 
-    $activeVariants = $product->relationLoaded('variants')
-        ? $product->getRelation('variants')
-        : collect();
+    $activeVariants = $product->relationLoaded('variants') ? $product->getRelation('variants') : collect();
     $hasActiveVariants = $product->relationLoaded('variants') && $activeVariants->isNotEmpty();
     $isAvailable = $hasActiveVariants
         ? $activeVariants->contains(fn ($variant) => (int) $variant->stock > 0)
@@ -35,6 +38,7 @@
     $availabilityLabel = $isAvailable
         ? ($hasActiveVariants ? 'موجود در گزینه‌ها' : 'موجود')
         : 'ناموجود';
+
 @endphp
 
 <article
@@ -58,12 +62,6 @@
                     decoding="async"
                     class="farzin-product-card__image h-full w-full object-contain"
                 >
-            @else
-                <div class="farzin-product-fallback flex h-full min-h-[210px] w-full flex-col items-center justify-center gap-3">
-                    <span class="farzin-product-fallback__monogram" aria-hidden="true">FZ</span>
-                    <span class="farzin-product-fallback__label">فرزین / هود و سینک</span>
-                    <span class="text-[11px] text-[var(--livora-stone)]">تصویر محصول ثبت نشده</span>
-                </div>
             @endif
         </a>
 
@@ -111,9 +109,7 @@
             <span class="farzin-product-card__category min-w-0 truncate">
                 {{ $product->category?->name ?? 'فرزین' }}
             </span>
-            @if(filled($product->sku))
-                <span class="farzin-product-card__sku shrink-0" dir="ltr">{{ $product->sku }}</span>
-            @endif
+
         </div>
 
         <a href="{{ route('product.show', $product->slug) }}" class="mt-2 block min-w-0">
@@ -134,7 +130,9 @@
             @endif
         </div>
 
-        <div class="farzin-product-card__availability {{ $isAvailable ? 'is-available' : 'is-unavailable' }}" aria-label="وضعیت موجودی: {{ $availabilityLabel }}"><span aria-hidden="true"></span>{{ $availabilityLabel }}</div>
+        @if($showAvailability)
+            <div class="farzin-product-card__availability {{ $isAvailable ? 'is-available' : 'is-unavailable' }}" aria-label="وضعیت موجودی: {{ $availabilityLabel }}"><span aria-hidden="true"></span>{{ $availabilityLabel }}</div>
+        @endif
         <div class="farzin-product-card__installment-slot mt-3">
             @if($showInstallment)
                 <div class="farzin-product-card__installment flex w-full items-center justify-between gap-3 rounded-xl p-3">

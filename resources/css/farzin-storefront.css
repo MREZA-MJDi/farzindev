@@ -1,3 +1,10 @@
+/* Minimum comfortable pointer targets for shared storefront actions. */
+.farzin-site-header__action,
+.farzin-product-card__wishlist {
+    min-width: 44px;
+    min-height: 44px;
+}
+
 /*
 |--------------------------------------------------------------------------
 | Farzin storefront refresh

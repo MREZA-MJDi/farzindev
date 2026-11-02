@@ -477,7 +477,7 @@ class FarzinStorefrontTest extends TestCase
 
         $this->get(route('home'))
             ->assertOk()
-            ->assertSee('tel:02112345678', false)
+            ->assertSee('tel:+982112345678', false)
             ->assertSee('hello@farajihome.com')
             ->assertSee('تهران، نشانی آزمایشی');
     }
@@ -487,6 +487,7 @@ class FarzinStorefrontTest extends TestCase
         $category = $this->category([
             'name' => 'هودهای منتخب',
             'slug' => 'hoods',
+            'description' => str_repeat('راهنمای انتخاب هود با توجه به فضای نصب، ابعاد و نیاز آشپزخانه. ', 3),
         ]);
 
         $products = [];
@@ -519,10 +520,9 @@ class FarzinStorefrontTest extends TestCase
         $response->assertOk()
             ->assertSee('fz-home-hero__showcase--static', false)
             ->assertSee('fz-home-buying-guides', false)
-            ->assertSee('راهنمای انتخاب هود')
-            ->assertSee('راهنمای انتخاب سینک')
+            ->assertSee('اطلاعات دسته‌بندی را پیش از انتخاب بخوانید.')
             ->assertSee('fz-home-featured-grid--six', false)
-            ->assertSee('fz-home-trust', false)
+            ->assertDontSee('fz-home-trust', false)
             ->assertSee('fz-home-final-cta', false)
             ->assertDontSee('fz-home-contact-bridge', false)
             ->assertSee('fz-home-journal', false)
@@ -564,6 +564,12 @@ class FarzinStorefrontTest extends TestCase
         ]);
         $videoCategory->update(['hover_media_id' => $video->id]);
 
+        $this->product($videoCategory, [
+            'name' => 'هود دارای ویدیوی دسته',
+            'slug' => 'hood-category-video-product',
+            'stock' => 2,
+        ]);
+
         $gifCategory = $this->category([
             'name' => 'سینک با پیش‌نمایش GIF',
             'slug' => 'gif-preview-sinks',
@@ -580,6 +586,12 @@ class FarzinStorefrontTest extends TestCase
         ]);
         $gifCategory->update(['hover_media_id' => $gif->id]);
 
+        $this->product($gifCategory, [
+            'name' => 'سینک دارای GIF دسته',
+            'slug' => 'sink-category-gif-product',
+            'stock' => 2,
+        ]);
+
         $this->get(route('home'))
             ->assertOk()
             ->assertSee('data-farzin-gif-card', false)
@@ -590,7 +602,7 @@ class FarzinStorefrontTest extends TestCase
             ->assertDontSee('PREVIEW · 5 SEC');
     }
 
-    public function test_homepage_lists_active_products_even_without_uploaded_images(): void
+    public function test_homepage_does_not_promote_products_without_a_real_image(): void
     {
         $category = $this->category();
         $product = $this->product($category, [
@@ -600,8 +612,8 @@ class FarzinStorefrontTest extends TestCase
 
         $this->get(route('home'))
             ->assertOk()
-            ->assertSee($product->name)
-            ->assertSee('تصویر محصول ثبت نشده');
+            ->assertDontSee($product->name)
+            ->assertDontSee('تصویر محصول ثبت نشده');
     }
 
     public function test_sitemap_lists_public_pages_and_only_active_catalog_items(): void
@@ -730,8 +742,8 @@ class FarzinStorefrontTest extends TestCase
 
         $this->get(route('product.show', $product->slug))
             ->assertOk()
-            ->assertSee('farzin-product-hero', false)
-            ->assertSee('farzin-product-detail-info__title', false)
+            ->assertSee('fz-product-panel', false)
+            ->assertSee('fz-product-panel__title', false)
             ->assertSee('<meta property="product:price:amount"', false)
             ->assertSee('<script type="application/ld+json">', false)
             ->assertSee('"@context":"https://schema.org"', false)
@@ -965,16 +977,173 @@ class FarzinStorefrontTest extends TestCase
             ->assertOk()
             ->assertSee('"availability"', false)
             ->assertSee('InStock')
-            ->assertSee('وابسته به ویژگی انتخاب‌شده')
-            ->assertSee('max="4"', false)
-            ->assertSee('موجود در انبار')
-            ->assertSee('farzin-product-detail-info', false)
-            ->assertSee('data-stock-available="true"', false)
-            ->assertSee('روش پرداخت در مرحله ثبت سفارش')
+            ->assertSee('max="2"', false)
+            ->assertSee('fz-product-panel', false)
+            ->assertSee('data-product-cart-form', false)
             ->assertSee('@touchstart.passive="startTouch($event)"', false)
             ->assertSee('@touchend.passive="endTouch($event)"', false)
             ->assertSee('https://cdn.example.test/variant-black.webp', false)
-            ->assertSee('w-[86px]', false);
+            ->assertSee('شناسه محصول')
+            ->assertDontSee('PRODUCT GALLERY');
+    }
+
+    public function test_product_page_hides_purchase_controls_when_unavailable_and_prefills_stock_request(): void
+    {
+        $product = $this->product($this->category(['slug' => 'hoods']), [
+            'name' => 'هود ناموجود برای درخواست موجودی',
+            'slug' => 'out-of-stock-inquiry-hood',
+            'sku' => 'FAR-OUT-UX-1',
+            'stock' => 0,
+        ]);
+
+        $response = $this->get(route('product.show', $product->slug))
+            ->assertOk()
+            ->assertSee('ناموجود')
+            ->assertSee('درخواست اطلاع از موجودی')
+            ->assertDontSee('id="product-purchase"', false)
+            ->assertDontSee('data-quantity-control', false)
+            ->assertSee('subject=product', false)
+            ->assertSee('#contact-form', false);
+
+        $html = $response->getContent();
+        $this->assertSame(1, substr_count($html, 'شناسه محصول: '.$product->sku));
+
+        $message = 'سلام، لطفاً درباره زمان تأمین موجودی محصول «'.$product->name.'» راهنمایی‌ام کنید.';
+        $this->get(route('contact', ['subject' => 'product', 'message' => $message]))
+            ->assertOk()
+            ->assertSee('value="product" selected', false)
+            ->assertSee($message);
+    }
+
+    public function test_product_page_shows_one_installment_summary_and_one_sku(): void
+    {
+        $category = $this->category(['slug' => 'hoods']);
+        $product = $this->product($category, [
+            'name' => 'هود اقساطی فرزین',
+            'slug' => 'farzin-installment-hood',
+            'sku' => 'FAR-INSTALLMENT-UX',
+            'price' => 10000000,
+            'stock' => 4,
+            'installment_enabled' => true,
+            'installment_cash_percent' => 50,
+            'installment_remainder_method' => 'cheque',
+            'installment_cheque_count' => 2,
+            'installment_interval_months' => 1,
+        ]);
+
+        ProductImage::create([
+            'product_id' => $product->id,
+            'path' => 'https://cdn.example.test/farzin-installment-hood.webp',
+            'alt' => 'متن alt قدیمی و ناهماهنگ',
+            'sort_order' => 0,
+            'is_primary' => true,
+        ]);
+
+        $html = $this->get(route('product.show', $product->slug))
+            ->assertOk()
+            ->assertSee('افزودن به سبد خرید')
+            ->assertSee('id="product-purchase"', false)
+            ->assertSee('data-quantity-control', false)
+            ->assertSee('خرید اقساطی؛ پیش‌پرداخت ۵۰٪')
+            ->assertSee('بدون کارمزد')
+            ->assertSee('alt="'.$product->name.'"', false)
+            ->assertDontSee('متن alt قدیمی و ناهماهنگ')
+            ->getContent();
+
+        $this->assertSame(1, substr_count($html, 'شناسه محصول: '.$product->sku));
+        $this->assertSame(1, substr_count($html, 'خرید اقساطی؛ پیش‌پرداخت ۵۰٪'));
+    }
+
+    public function test_product_page_shows_variant_price_range_and_limits_the_initial_quantity(): void
+    {
+        $product = $this->product($this->category(['slug' => 'hoods']), [
+            'name' => 'هود با قیمت متغیر بر اساس رنگ',
+            'slug' => 'variant-price-range-hood',
+            'sku' => 'FAR-VARIANT-PRICE-RANGE',
+            'price' => 10000000,
+            'stock' => 0,
+            'installment_enabled' => true,
+            'installment_cash_percent' => 50,
+            'installment_remainder_method' => 'cheque',
+            'installment_cheque_count' => 2,
+            'installment_interval_months' => 1,
+        ]);
+
+        foreach ([
+            ['type' => 'color', 'name' => 'رنگ', 'value' => 'سفید', 'stock' => 4, 'price_adjustment' => 0],
+            ['type' => 'color', 'name' => 'رنگ', 'value' => 'مشکی', 'stock' => 2, 'price_adjustment' => 500000],
+            ['type' => 'size', 'name' => 'اندازه', 'value' => '۹۰', 'stock' => 2, 'price_adjustment' => 0],
+        ] as $index => $option) {
+            ProductVariant::create(array_merge([
+                'product_id' => $product->id,
+                'sku' => 'FAR-VARIANT-PRICE-RANGE-'.$index,
+                'is_active' => true,
+            ], $option));
+        }
+
+        $this->get(route('product.show', $product->slug))
+            ->assertOk()
+            ->assertSee('data-product-price-summary', false)
+            ->assertSee('data-product-price-range', false)
+            ->assertSee('data-price-adjustment="500000"', false)
+            ->assertSee('max="2"', false)
+            ->assertDontSee('خرید اقساطی؛ پیش‌پرداخت');
+    }
+
+    public function test_homepage_shows_active_empty_categories_and_hides_out_of_stock_product_recommendations(): void
+    {
+        $category = $this->category([
+            'name' => 'دسته دارای دو محصول موجود',
+            'slug' => 'two-stocked-products',
+            'description' => 'راهنمای انتخاب مدل‌های موجود این دسته.',
+        ]);
+        $this->category([
+            'name' => 'دسته بدون محصول',
+            'slug' => 'empty-home-category',
+        ]);
+
+        foreach ([1, 2] as $index) {
+            $product = $this->product($category, [
+                'name' => 'هود موجود شماره '.$index,
+                'slug' => 'home-stocked-hood-'.$index,
+                'sku' => 'FAR-HOME-STOCK-'.$index,
+                'stock' => 3,
+            ]);
+
+            ProductImage::create([
+                'product_id' => $product->id,
+                'path' => 'https://cdn.example.test/home-stocked-'.$index.'.webp',
+                'alt' => $product->name,
+                'sort_order' => 0,
+                'is_primary' => true,
+            ]);
+        }
+
+        $outOfStock = $this->product($category, [
+            'name' => 'هود ناموجود نباید پیشنهاد شود',
+            'slug' => 'home-out-of-stock-hood',
+            'sku' => 'FAR-HOME-OUT-1',
+            'stock' => 0,
+        ]);
+
+        ProductImage::create([
+            'product_id' => $outOfStock->id,
+            'path' => 'https://cdn.example.test/home-out-of-stock.webp',
+            'alt' => $outOfStock->name,
+            'sort_order' => 0,
+            'is_primary' => true,
+        ]);
+
+        $response = $this->get(route('home'))
+            ->assertOk()
+            ->assertSee('دسته دارای دو محصول موجود')
+            ->assertSee('دسته بدون محصول')
+            ->assertSee('۰ محصول فعال')
+            ->assertSee('href="' . route('categories.show', 'empty-home-category') . '"', false)
+            ->assertDontSee($outOfStock->name)
+            ->assertDontSee('fz-home-featured-section', false);
+
+        $this->assertSame(0, substr_count($response->getContent(), 'farzin-product-card--round-media'));
     }
 
     public function test_customer_can_add_product_to_cart_and_repeated_adds_merge(): void
@@ -4108,6 +4277,14 @@ class FarzinStorefrontTest extends TestCase
             ->where('sku', 'FAR-HOME-SELECTED-01')
             ->firstOrFail();
 
+        ProductImage::create([
+            'product_id' => $selected->id,
+            'path' => 'https://cdn.example.test/homepage-selected-product.webp',
+            'alt' => $selected->name,
+            'sort_order' => 0,
+            'is_primary' => true,
+        ]);
+
         $hiddenResponse = $this->actingAs($admin, 'admin')
             ->post(route('admin.products.store'), [
                 'category_id' => $category->id,
@@ -4131,6 +4308,14 @@ class FarzinStorefrontTest extends TestCase
         $shopOnly = Product::query()
             ->where('sku', 'FAR-SHOP-ONLY-01')
             ->firstOrFail();
+
+        ProductImage::create([
+            'product_id' => $shopOnly->id,
+            'path' => 'https://cdn.example.test/shop-only-product.webp',
+            'alt' => $shopOnly->name,
+            'sort_order' => 0,
+            'is_primary' => true,
+        ]);
 
         $this->get(route('home'))
             ->assertOk()
