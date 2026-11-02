@@ -1,5 +1,5 @@
 @extends('errors.layout')
-@section('title', 'صفحه پیدا نشد | فرزین')
+@section('title', 'صفحه پیدا نشد | ' . $storefrontBrandName)
 @section('code', '404')
 @section('heading', 'صفحه پیدا نشد')
 @section('message', 'نشانی واردشده وجود ندارد یا صفحه جابه‌جا شده است.')
