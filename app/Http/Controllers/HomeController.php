@@ -77,7 +77,6 @@ class HomeController extends Controller
 
         $heroProduct = Product::query()
             ->active()
-            ->where('show_in_home_gallery', true)
             ->whereHas('category', fn (Builder $query) => $query->where('is_active', true))
             ->whereHas('images')
             ->when(true, $onlyInStock)
@@ -91,7 +90,6 @@ class HomeController extends Controller
 
         $featuredProducts = Product::query()
             ->active()
-            ->where('show_in_home_gallery', true)
             ->when($heroProduct, fn (Builder $query) => $query->whereKeyNot($heroProduct->id))
             ->whereHas('category', fn (Builder $query) => $query->where('is_active', true))
             ->whereHas('images')
