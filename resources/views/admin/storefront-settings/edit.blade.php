@@ -199,9 +199,33 @@
                         @error('telegram_url')<p class="mt-2 text-xs text-[var(--admin-danger)]">{{ $message }}</p>@enderror
                     </div>
                     <div>
+                        <label for="eitaa_url" class="admin-label">لینک ایتا (اختیاری)</label>
+                        <input id="eitaa_url" name="eitaa_url" type="url" dir="ltr" value="{{ old('eitaa_url', $contact?->eitaa_url) }}" class="admin-input" maxlength="255" placeholder="https://eitaa.com/your_channel">
+                        @error('eitaa_url')<p class="mt-2 text-xs text-[var(--admin-danger)]">{{ $message }}</p>@enderror
+                    </div>
+                    <div>
                         <label for="hours" class="admin-label">ساعات کاری</label>
                         <input id="hours" name="hours" type="text" value="{{ old('hours', $contact?->hours) }}" class="admin-input" maxlength="255">
                         @error('hours')<p class="mt-2 text-xs text-[var(--admin-danger)]">{{ $message }}</p>@enderror
+                    </div>
+                    <div class="sm:col-span-2 rounded-xl border border-[var(--admin-border)] bg-[var(--admin-surface-soft)] p-4">
+                        <h3 class="text-sm font-bold text-[var(--admin-text)]">مزیت‌های واقعی قابل نمایش در فوتر</h3>
+                        <p class="mt-1 text-xs leading-6 text-[var(--admin-muted)]">فقط متن‌هایی را ثبت کنید که مجموعه واقعاً متعهد به ارائه آن‌هاست. هر مورد خالی بماند، در سایت نمایش داده نمی‌شود.</p>
+                    </div>
+                    <div>
+                        <label for="warranty_summary" class="admin-label">شرایط گارانتی</label>
+                        <input id="warranty_summary" name="warranty_summary" type="text" value="{{ old('warranty_summary', $contact?->warranty_summary) }}" class="admin-input" maxlength="500" placeholder="مثلاً مدت و دامنه پوشش واقعی ضمانت">
+                        @error('warranty_summary')<p class="mt-2 text-xs text-[var(--admin-danger)]">{{ $message }}</p>@enderror
+                    </div>
+                    <div>
+                        <label for="shipping_summary" class="admin-label">شرایط ارسال</label>
+                        <input id="shipping_summary" name="shipping_summary" type="text" value="{{ old('shipping_summary', $contact?->shipping_summary) }}" class="admin-input" maxlength="500" placeholder="محدوده و روش ارسال قطعی">
+                        @error('shipping_summary')<p class="mt-2 text-xs text-[var(--admin-danger)]">{{ $message }}</p>@enderror
+                    </div>
+                    <div class="sm:col-span-2">
+                        <label for="installation_summary" class="admin-label">خدمات نصب</label>
+                        <input id="installation_summary" name="installation_summary" type="text" value="{{ old('installation_summary', $contact?->installation_summary) }}" class="admin-input" maxlength="500" placeholder="محدوده و شرایط واقعی نصب">
+                        @error('installation_summary')<p class="mt-2 text-xs text-[var(--admin-danger)]">{{ $message }}</p>@enderror
                     </div>
                     <div>
                         <label for="phone_label" class="admin-label">عنوان تماس</label>
