@@ -103,6 +103,35 @@
         </div>
 
 
+        @if($contactMessage->product_model || $contactMessage->width_cm || $contactMessage->callback_requested || $contactMessage->attachment_path)
+            <div class="rounded-3xl border border-[var(--livora-border)] bg-[var(--livora-white)] p-6">
+                <h2 class="text-sm font-semibold">جزئیات درخواست مشتری</h2>
+                <div class="mt-4 grid gap-4 sm:grid-cols-2">
+                    @if($contactMessage->product_model)
+                        <div>
+                            <p class="text-[10px] text-[var(--livora-stone)]">نام یا مدل محصول</p>
+                            <p class="mt-1 text-sm font-medium">{{ $contactMessage->product_model }}</p>
+                        </div>
+                    @endif
+                    @if($contactMessage->width_cm)
+                        <div>
+                            <p class="text-[10px] text-[var(--livora-stone)]">عرض موردنیاز</p>
+                            <p class="mt-1 text-sm font-medium">{{ \App\Helpers\PersianNumberHelper::format($contactMessage->width_cm) }} سانتی‌متر</p>
+                        </div>
+                    @endif
+                    <div>
+                        <p class="text-[10px] text-[var(--livora-stone)]">درخواست تماس برگشتی</p>
+                        <p class="mt-1 text-sm font-medium">{{ $contactMessage->callback_requested ? 'بله، تماس گرفته شود' : 'درخواستی ثبت نشده' }}</p>
+                    </div>
+                </div>
+                @if($contactMessage->attachment_path)
+                    <a href="{{ route('admin.contact-messages.attachment', $contactMessage) }}" class="mt-5 inline-flex min-h-11 items-center rounded-xl bg-[var(--livora-ink)] px-5 py-3 text-xs font-semibold text-white">
+                        مشاهده / دریافت عکس ضمیمه
+                    </a>
+                @endif
+            </div>
+        @endif
+
         {{-- Message --}}
 
         <div class="rounded-3xl border border-[var(--livora-border)] bg-[var(--livora-white)] p-6">
