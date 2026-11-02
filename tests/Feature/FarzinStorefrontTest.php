@@ -454,6 +454,104 @@ class FarzinStorefrontTest extends TestCase
             ->assertSee('fz-contact-form-panel', false);
     }
 
+    public function test_stock_filter_and_variant_product_cards_require_stock_in_every_option_group(): void
+    {
+        $category = $this->category(['slug' => 'stock-filter-category']);
+
+        $available = $this->product($category, [
+            'name' => 'هود موجود بدون گزینه',
+            'slug' => 'hood-stock-filter-available',
+            'sku' => 'FAR-STOCK-FILTER-AVAILABLE',
+            'stock' => 3,
+        ]);
+
+        $unavailable = $this->product($category, [
+            'name' => 'هود ناموجود بدون گزینه',
+            'slug' => 'hood-stock-filter-unavailable',
+            'sku' => 'FAR-STOCK-FILTER-UNAVAILABLE',
+            'stock' => 0,
+        ]);
+
+        $blockedVariant = $this->product($category, [
+            'name' => 'هود با یک گروه ناموجود',
+            'slug' => 'hood-stock-filter-blocked-variant',
+            'sku' => 'FAR-STOCK-FILTER-BLOCKED',
+            'stock' => 10,
+        ]);
+
+        ProductVariant::create([
+            'product_id' => $blockedVariant->id,
+            'type' => 'color',
+            'name' => 'رنگ',
+            'value' => 'مشکی',
+            'sku' => 'FAR-STOCK-BLOCKED-BLACK',
+            'price_adjustment' => 0,
+            'stock' => 4,
+            'is_active' => true,
+        ]);
+        ProductVariant::create([
+            'product_id' => $blockedVariant->id,
+            'type' => 'width',
+            'name' => 'عرض',
+            'value' => '۷۰',
+            'sku' => 'FAR-STOCK-BLOCKED-70',
+            'price_adjustment' => 0,
+            'stock' => 0,
+            'is_active' => true,
+        ]);
+
+        $availableVariant = $this->product($category, [
+            'name' => 'هود با همه گروه‌های موجود',
+            'slug' => 'hood-stock-filter-available-variant',
+            'sku' => 'FAR-STOCK-FILTER-VARIANT',
+            'stock' => 0,
+        ]);
+
+        ProductVariant::create([
+            'product_id' => $availableVariant->id,
+            'type' => 'color',
+            'name' => 'رنگ',
+            'value' => 'سفید',
+            'sku' => 'FAR-STOCK-VARIANT-WHITE',
+            'price_adjustment' => 0,
+            'stock' => 2,
+            'is_active' => true,
+        ]);
+        ProductVariant::create([
+            'product_id' => $availableVariant->id,
+            'type' => 'width',
+            'name' => 'عرض',
+            'value' => '۷۰',
+            'sku' => 'FAR-STOCK-VARIANT-70',
+            'price_adjustment' => 0,
+            'stock' => 1,
+            'is_active' => true,
+        ]);
+
+        $filtered = $this->get(route('shop.index', ['in_stock' => 1]))
+            ->assertOk()
+            ->assertSee($available->name)
+            ->assertSee($availableVariant->name)
+            ->assertDontSee($unavailable->name)
+            ->assertDontSee($blockedVariant->name)
+            ->assertSee('فقط محصولات موجود');
+
+        $html = $this->get(route('shop.index'))->assertOk()->getContent();
+        foreach ([
+            $blockedVariant->name => 'is-unavailable',
+            $availableVariant->name => 'is-available',
+        ] as $name => $expectedStatus) {
+            $position = strpos($html, $name);
+            $this->assertNotFalse($position, "Missing product card for {$name}.");
+            $cardStart = strrpos(substr($html, 0, $position), '<article');
+            $cardEnd = strpos($html, '</article>', $position);
+            $this->assertNotFalse($cardStart);
+            $this->assertNotFalse($cardEnd);
+            $card = substr($html, $cardStart, $cardEnd - $cardStart + strlen('</article>'));
+            $this->assertStringContainsString($expectedStatus, $card);
+        }
+    }
+
     public function test_admin_and_customer_login_pages_have_separate_forms(): void
     {
         $this->get(route('login'))
