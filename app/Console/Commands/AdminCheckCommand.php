@@ -15,8 +15,18 @@ class AdminCheckCommand extends Command
 
     public function handle(): int
     {
-        $email = mb_strtolower(trim((string) config('farzin.admin.email', '')));
-        $password = (string) config('farzin.admin.password', '');
+        try {
+            $credentials = AdminEnvironment::credentials();
+        } catch (Throwable) {
+            $this->line('admin_exists=false');
+            $this->line('email_matches=false');
+            $this->line('password_matches=false');
+
+            return self::FAILURE;
+        }
+
+        $email = $credentials['email'];
+        $password = $credentials['password'];
 
         $user = $email === ''
             ? null
