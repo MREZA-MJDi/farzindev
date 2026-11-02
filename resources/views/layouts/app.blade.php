@@ -26,6 +26,7 @@
             ? $seoPageTitle
             : ($seoTitle !== '' ? $seoTitle : (string) $seoValues['seo_default_title']);
 
+        $seoTitle = str_replace('فرزین', $storefrontBrandName, $seoTitle);
         $seoDescription = trim((string) $__env->yieldContent('description'));
         $seoPageDescription = $seoStaticPage ? trim((string) ($seoValues[$seoStaticPage['description']] ?? '')) : '';
         $seoDescription = $seoPageDescription !== ''
