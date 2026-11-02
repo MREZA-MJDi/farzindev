@@ -208,6 +208,37 @@
                     </div>
 
 
+                    @if($widthOptions->isNotEmpty() || $installationTypes->isNotEmpty())
+                        <form method="GET" action="{{ route('categories.show', $category->slug) }}" class="mt-6 flex flex-wrap items-end gap-3 rounded-2xl border border-[var(--livora-border)] bg-[var(--livora-surface)] p-4">
+                            @if($widthOptions->isNotEmpty())
+                                <label class="min-w-[150px] flex-1">
+                                    <span class="mb-2 block text-[11px] text-[var(--livora-stone)]">عرض</span>
+                                    <select name="width_cm" class="w-full rounded-xl border border-[var(--livora-border)] bg-white px-3 py-3 text-xs text-[var(--livora-text)]">
+                                        <option value="">همه عرض‌ها</option>
+                                        @foreach($widthOptions as $width)
+                                            <option value="{{ $width }}" @selected((string) request('width_cm') === (string) $width)>{{ \App\Helpers\PersianNumberHelper::format($width) }} سانتی‌متر</option>
+                                        @endforeach
+                                    </select>
+                                </label>
+                            @endif
+                            @if($installationTypes->isNotEmpty())
+                                <label class="min-w-[150px] flex-1">
+                                    <span class="mb-2 block text-[11px] text-[var(--livora-stone)]">نوع نصب</span>
+                                    <select name="installation_type" class="w-full rounded-xl border border-[var(--livora-border)] bg-white px-3 py-3 text-xs text-[var(--livora-text)]">
+                                        <option value="">همه روش‌ها</option>
+                                        @foreach($installationTypes as $type)
+                                            <option value="{{ $type }}" @selected(request('installation_type') === $type)>{{ $type }}</option>
+                                        @endforeach
+                                    </select>
+                                </label>
+                            @endif
+                            <button type="submit" class="inline-flex min-h-11 items-center rounded-xl bg-[var(--livora-ink)] px-5 py-3 text-xs font-semibold text-white hover:bg-[var(--livora-accent)]">اعمال فیلتر</button>
+                            @if(request()->hasAny(['width_cm', 'installation_type']))
+                                <a href="{{ route('categories.show', $category->slug) }}" class="inline-flex min-h-11 items-center rounded-xl border border-[var(--livora-border)] px-4 py-3 text-xs text-[var(--livora-stone)]">پاک‌کردن</a>
+                            @endif
+                        </form>
+                    @endif
+
                     @if($products->isNotEmpty())
 
                         <div class="mt-8 grid grid-cols-2 gap-x-4 gap-y-10 sm:grid-cols-2 xl:grid-cols-4">
