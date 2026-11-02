@@ -2070,7 +2070,7 @@ body.home-body {
     --fz-home-unit: 8px;
     --fz-home-section-space: clamp(3.5rem, 6.2vw, 5.75rem);
     --fz-home-content-max: 1320px;
-    --fz-home-card-radius: 20px;
+    --fz-home-card-radius: var(--fz-radius-card, 8px);
     --fz-home-ink: var(--fz-ink, #06284F);
     --fz-home-paper: var(--fz-paper, #fff);
     --fz-home-soft: var(--fz-paper-soft, #eef1f4);
