@@ -1,57 +1,3 @@
-@php
-    $adminNavigationGroups = [
-        [
-            'title' => 'نمای کلی',
-            'description' => 'وضعیت کلی فروشگاه و دسترسی سریع',
-            'items' => [
-                ['label' => 'داشبورد اصلی', 'description' => 'خلاصه سفارش‌ها، فروش و فعالیت‌های اخیر', 'route' => 'admin.dashboard', 'active' => 'admin.dashboard', 'icon' => '⌂'],
-            ],
-        ],
-        [
-            'title' => 'محصولات و کاتالوگ',
-            'description' => 'مدیریت کالاها، دسته‌ها و فایل‌های تصویری',
-            'items' => [
-                ['label' => 'محصولات', 'description' => 'افزودن و ویرایش کالا، قیمت، موجودی و مشخصات', 'route' => 'admin.products.index', 'active' => 'admin.products.*', 'icon' => '▦'],
-                ['label' => 'دسته‌بندی‌ها', 'description' => 'ساخت دسته‌ها و تنظیم تصویر و معرفی هر دسته', 'route' => 'admin.categories.index', 'active' => 'admin.categories.*', 'icon' => '▤'],
-                ['label' => 'کتابخانه رسانه', 'description' => 'بارگذاری و مدیریت تصاویر و فایل‌های قابل استفاده در سایت', 'route' => 'admin.media.index', 'active' => 'admin.media.*', 'icon' => '▧'],
-            ],
-        ],
-        [
-            'title' => 'مجله و محتوای آموزشی',
-            'description' => 'انتشار مقاله و مدیریت ساختار مجله',
-            'items' => [
-                ['label' => 'مقالات و نوشته‌ها', 'description' => 'نوشتن، ویرایش و انتشار مطالب مجله', 'route' => 'admin.blog-posts.index', 'active' => 'admin.blog-posts.*', 'icon' => '¶'],
-                ['label' => 'دسته‌ها و برچسب‌ها', 'description' => 'مرتب‌سازی مطالب و تعریف موضوعات مجله', 'route' => 'admin.blog-terms.index', 'active' => 'admin.blog-terms.*', 'icon' => '◇'],
-                ['label' => 'ظاهر و تصاویر مجله', 'description' => 'تنظیم تصویرها و ظاهر بخش مجله در سایت', 'route' => 'admin.blog-appearance.edit', 'active' => 'admin.blog-appearance.*', 'icon' => '▣'],
-            ],
-        ],
-        [
-            'title' => 'فروش و مشتریان',
-            'description' => 'پیگیری خریدها و اطلاعات خریداران',
-            'items' => [
-                ['label' => 'سفارش‌ها', 'description' => 'بررسی جزئیات خرید و به‌روزرسانی وضعیت سفارش', 'route' => 'admin.orders.index', 'active' => 'admin.orders.*', 'icon' => '▣'],
-                ['label' => 'مشتریان', 'description' => 'مشاهده حساب‌ها و سوابق مشتریان', 'route' => 'admin.customers.index', 'active' => 'admin.customers.*', 'icon' => '♙'],
-            ],
-        ],
-        [
-            'title' => 'تنظیمات و حضور در گوگل',
-            'description' => 'اطلاعات عمومی فروشگاه و تنظیمات جست‌وجو',
-            'items' => [
-                ['label' => 'تنظیمات فروشگاه', 'description' => 'بنر فروشگاه، هزینه ارسال، اطلاعات تماس و راه‌های ارتباطی', 'route' => 'admin.storefront-settings.edit', 'active' => 'admin.storefront-settings.*', 'icon' => '⚙'],
-                ['label' => 'سئو و ایندکس', 'description' => 'عنوان و توضیحات نتایج جست‌وجو و تنظیمات ایندکس صفحات', 'route' => 'admin.seo-settings.edit', 'active' => 'admin.seo-settings.*', 'icon' => '⌕'],
-                ['label' => 'تغییر مسیر لینک‌ها', 'description' => 'هدایت آدرس‌های قدیمی به آدرس جدید و جلوگیری از لینک شکسته', 'route' => 'admin.seo-redirects.index', 'active' => 'admin.seo-redirects.*', 'icon' => '↪'],
-            ],
-        ],
-        [
-            'title' => 'ارتباط با کاربران',
-            'description' => 'دریافت و پیگیری پیام‌های ارسال‌شده از سایت',
-            'items' => [
-                ['label' => 'پیام‌های کاربران', 'description' => 'مشاهده پیام‌های فرم تماس و پیگیری درخواست‌ها', 'route' => 'admin.contact-messages.index', 'active' => 'admin.contact-messages.*', 'icon' => '✉'],
-            ],
-        ],
-    ];
-@endphp
-
 <aside
     class="fixed inset-y-0 right-0 z-50 flex w-[280px] max-w-[88vw] flex-col border-l border-[var(--admin-border)] bg-[var(--admin-white)] transition-transform duration-300 lg:translate-x-0"
     :class="sidebarOpen ? 'translate-x-0' : 'translate-x-full lg:translate-x-0'"
@@ -151,50 +97,13 @@
 
                 </a>
 
-                <a
-                    href="{{ route('admin.blog-terms.index') }}"
-                    @class([
-                        'group flex items-center gap-3 rounded-2xl px-3 py-3 text-xs font-medium transition',
-                        'bg-[var(--admin-accent-soft)] text-[var(--admin-accent-dark)]' => request()->routeIs('admin.blog-terms.*'),
-                        'text-[var(--admin-text-soft)] hover:bg-[var(--admin-surface)] hover:text-[var(--admin-text)]' => !request()->routeIs('admin.blog-terms.*'),
-                    ])
-                >
-                    <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[var(--admin-surface)] text-[var(--admin-muted)]" aria-hidden="true">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4"><path d="m20.5 13.5-7 7a1.4 1.4 0 0 1-2 0L3.5 12.5V3.5h9l8 8a1.4 1.4 0 0 1 0 2Z" /><circle cx="8" cy="8" r="1.1" /></svg>
-                    </span>
-                    <span class="flex-1">دسته‌ها و برچسب‌های بلاگ</span>
-                    @if(request()->routeIs('admin.blog-terms.*'))
-                        <span class="h-1.5 w-1.5 rounded-full bg-[var(--admin-accent)]"></span>
-                    @endif
-                </a>
 
-                <a
-                    href="{{ route('admin.blog-appearance.edit') }}"
-                    @class([
-                        'group flex items-center gap-3 rounded-2xl px-3 py-3 text-xs font-medium transition',
-                        'bg-[var(--admin-accent-soft)] text-[var(--admin-accent-dark)]' => request()->routeIs('admin.blog-appearance.*'),
-                        'text-[var(--admin-text-soft)] hover:bg-[var(--admin-surface)] hover:text-[var(--admin-text)]' => !request()->routeIs('admin.blog-appearance.*'),
-                    ])
-                >
-                    <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[var(--admin-surface)] text-[var(--admin-muted)]" aria-hidden="true">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4"><rect x="3" y="3" width="18" height="18" rx="2" /><circle cx="8.5" cy="8.5" r="1.5" /><path d="m21 15-5-5L5 21" /></svg>
-                    </span>
-                    <span class="flex-1">ظاهر و تصاویر مجله</span>
-                    @if(request()->routeIs('admin.blog-appearance.*'))
-                        <span class="h-1.5 w-1.5 rounded-full bg-[var(--admin-accent)]"></span>
-                    @endif
-                </a>
+
+
 
             </div>
 
         </div>
-
-        @foreach ($adminNavigationGroups as $group)
-            <section aria-label="{{ $group['title'] }}">
-                <div class="mb-2 px-3">
-                    <h2 class="text-xs font-extrabold text-[var(--admin-text)]">{{ $group['title'] }}</h2>
-                    <p class="mt-1 text-[10px] leading-5 text-[var(--admin-muted)]">{{ $group['description'] }}</p>
-                </div>
 
         {{-- =====================================================
              مدیریت کالا
@@ -342,6 +251,21 @@
 
 
 
+
+
+            </div>
+
+        </div>
+
+
+        {{-- =====================================================
+             مجله و محتوای آموزشی
+        ====================================================== --}}
+        <div class="mb-5">
+            <p class="px-3 text-[9px] font-bold uppercase tracking-[0.2em] text-[var(--admin-muted)]">
+                مجله و محتوای آموزشی
+            </p>
+            <div class="mt-2 space-y-1">
                 <a
                     href="{{ route('admin.blog-posts.index') }}"
                     @class([
@@ -356,11 +280,40 @@
                         <span class="h-1.5 w-1.5 rounded-full bg-[var(--admin-accent)]"></span>
                     @endif
                 </a>
-
+                <a
+                    href="{{ route('admin.blog-terms.index') }}"
+                    @class([
+                        'group flex items-center gap-3 rounded-2xl px-3 py-3 text-xs font-medium transition',
+                        'bg-[var(--admin-accent-soft)] text-[var(--admin-accent-dark)]' => request()->routeIs('admin.blog-terms.*'),
+                        'text-[var(--admin-text-soft)] hover:bg-[var(--admin-surface)] hover:text-[var(--admin-text)]' => !request()->routeIs('admin.blog-terms.*'),
+                    ])
+                >
+                    <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[var(--admin-surface)] text-[var(--admin-muted)]" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4"><path d="m20.5 13.5-7 7a1.4 1.4 0 0 1-2 0L3.5 12.5V3.5h9l8 8a1.4 1.4 0 0 1 0 2Z" /><circle cx="8" cy="8" r="1.1" /></svg>
+                    </span>
+                    <span class="flex-1">دسته‌ها و برچسب‌های بلاگ</span>
+                    @if(request()->routeIs('admin.blog-terms.*'))
+                        <span class="h-1.5 w-1.5 rounded-full bg-[var(--admin-accent)]"></span>
+                    @endif
+                </a>
+                <a
+                    href="{{ route('admin.blog-appearance.edit') }}"
+                    @class([
+                        'group flex items-center gap-3 rounded-2xl px-3 py-3 text-xs font-medium transition',
+                        'bg-[var(--admin-accent-soft)] text-[var(--admin-accent-dark)]' => request()->routeIs('admin.blog-appearance.*'),
+                        'text-[var(--admin-text-soft)] hover:bg-[var(--admin-surface)] hover:text-[var(--admin-text)]' => !request()->routeIs('admin.blog-appearance.*'),
+                    ])
+                >
+                    <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[var(--admin-surface)] text-[var(--admin-muted)]" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4"><rect x="3" y="3" width="18" height="18" rx="2" /><circle cx="8.5" cy="8.5" r="1.5" /><path d="m21 15-5-5L5 21" /></svg>
+                    </span>
+                    <span class="flex-1">ظاهر و تصاویر مجله</span>
+                    @if(request()->routeIs('admin.blog-appearance.*'))
+                        <span class="h-1.5 w-1.5 rounded-full bg-[var(--admin-accent)]"></span>
+                    @endif
+                </a>
             </div>
-
         </div>
-
 
         {{-- =====================================================
              فروش و سفارش‌ها
@@ -462,6 +415,29 @@
 
 
                 {{-- Storefront Settings --}}
+
+
+                {{-- SEO / Search visibility --}}
+
+
+
+
+                {{-- Contact Messages --}}
+
+
+            </div>
+
+        </div>
+
+
+        {{-- =====================================================
+             تنظیمات و سئو
+        ====================================================== --}}
+        <div class="mb-5">
+            <p class="px-3 text-[9px] font-bold uppercase tracking-[0.2em] text-[var(--admin-muted)]">
+                تنظیمات و سئو
+            </p>
+            <div class="mt-2 space-y-1">
                 <a
                     href="{{ route('admin.storefront-settings.edit') }}"
                     @class([
@@ -473,8 +449,6 @@
                     <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-white/70 text-sm" aria-hidden="true">⚙</span>
                     <span class="min-w-0 flex-1 truncate">تنظیمات فروشگاه</span>
                 </a>
-
-                {{-- SEO / Search visibility --}}
                 <a
                     href="{{ route('admin.seo-settings.edit') }}"
                     @class([
@@ -486,7 +460,6 @@
                     <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-white/70 text-sm" aria-hidden="true">⌕</span>
                     <span class="min-w-0 flex-1 truncate">سئو و ایندکس</span>
                 </a>
-
                 <a
                     href="{{ route('admin.seo-redirects.index') }}"
                     @class([
@@ -498,8 +471,17 @@
                     <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-white/70 text-sm" aria-hidden="true">↪</span>
                     <span class="min-w-0 flex-1 truncate">مدیریت تغییرمسیرها</span>
                 </a>
+            </div>
+        </div>
 
-                {{-- Contact Messages --}}
+        {{-- =====================================================
+             ارتباط با کاربران
+        ====================================================== --}}
+        <div class="mb-5">
+            <p class="px-3 text-[9px] font-bold uppercase tracking-[0.2em] text-[var(--admin-muted)]">
+                ارتباط با کاربران
+            </p>
+            <div class="mt-2 space-y-1">
                 <a
                     href="{{ route('admin.contact-messages.index') }}"
                     @class([
@@ -546,64 +528,8 @@
                     @endif
 
                 </a>
-
             </div>
-
         </div>
-
-
-        {{-- =====================================================
-             ابزارهای فروشگاه
-        ====================================================== --}}
-        <div class="mb-5">
-
-            <p class="px-3 text-[9px] font-bold uppercase tracking-[0.2em] text-[var(--admin-muted)]">
-                STORE
-            </p>
-
-            <div class="mt-2 space-y-1">
-
-                {{-- Frontend --}}
-                <a
-                    href="{{ route('home') }}"
-                    target="_blank"
-                    rel="noopener"
-                    class="group flex items-center gap-3 rounded-2xl px-3 py-3 text-xs font-medium text-[var(--admin-text-soft)] transition hover:bg-[var(--admin-surface)] hover:text-[var(--admin-text)]"
-                >
-
-                    <span
-                        class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[var(--admin-surface)] text-[var(--admin-muted)]"
-                    >
-
-                        <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke-width="1.5"
-                            stroke="currentColor"
-                            class="h-4 w-4"
-                        >
-                            <span @class([
-                                'mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-base',
-                                'bg-white/80 text-[var(--admin-accent-dark)]' => $isActive,
-                                'bg-[var(--admin-surface)] text-[var(--admin-muted)] group-hover:text-[var(--admin-text)]' => ! $isActive,
-                            ]) aria-hidden="true">{{ $item['icon'] }}</span>
-                            <span class="min-w-0 flex-1">
-                                <span class="block text-xs font-bold">{{ $item['label'] }}</span>
-                                <span @class([
-                                    'mt-1 block text-[10px] leading-5',
-                                    'text-[var(--admin-accent-dark)]/80' => $isActive,
-                                    'text-[var(--admin-muted)]' => ! $isActive,
-                                ])>{{ $item['description'] }}</span>
-                            </span>
-                            @if ($isActive)
-                                <span class="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--admin-accent)]" aria-hidden="true"></span>
-                            @endif
-                        </a>
-                    @endforeach
-                </div>
-            </section>
-        @endforeach
 
         <section>
             <div class="mb-2 px-3">
