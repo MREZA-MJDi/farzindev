@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use App\Models\User;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Hash;
+use Throwable;
 
 class AdminSyncCommand extends Command
 {
@@ -57,16 +58,31 @@ class AdminSyncCommand extends Command
             $admin = $existingAdmins->first();
         }
 
-        // The User model's "hashed" cast hashes this plain configuration value
-        // exactly once. Never print or log the credential.
+        $attributes = [
+            'name' => $name !== '' ? $name : 'Farzin Admin',
+            'email' => $email,
+            'role' => 'admin',
+        ];
+
+        $passwordMatches = false;
+
+        if ($admin && filled($admin->password)) {
+            try {
+                $passwordMatches = Hash::check($password, (string) $admin->password);
+            } catch (Throwable) {
+                $passwordMatches = false;
+            }
+        }
+
+        // Hash only when creating the account or rotating its password. The
+        // User model's "hashed" cast recognizes this hash and will not hash it twice.
+        if (! $passwordMatches) {
+            $attributes['password'] = Hash::make($password);
+        }
+
         User::updateOrCreate(
             ['id' => $admin?->getKey()],
-            [
-                'name' => $name !== '' ? $name : 'Farzin Admin',
-                'email' => $email,
-                'role' => 'admin',
-                'password' => Hash::make($password),
-            ]
+            $attributes
         );
 
         $this->info('حساب مدیر با تنظیمات محیط همگام شد.');
