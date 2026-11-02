@@ -66,7 +66,7 @@ class ProductController extends Controller
                 'variants:id,product_id,type,stock',
             ])
             ->latest()
-            ->limit(12)
+            ->limit(30)
             ->get()
             ->filter(function (Product $related): bool {
                 $groups = $related->variants->groupBy('type');
