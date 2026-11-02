@@ -2,13 +2,36 @@
 
 namespace App\Http\Requests\Checkout;
 
+use App\Models\Province;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class PlaceOrderRequest extends FormRequest
 {
     public function authorize(): bool
     {
         return auth()->check();
+    }
+
+    protected function prepareForValidation(): void
+    {
+        $provinceId = filter_var($this->input('province_id'), FILTER_VALIDATE_INT) ?: null;
+        $cityId = filter_var($this->input('city_id'), FILTER_VALIDATE_INT) ?: null;
+
+        $province = $provinceId
+            ? Province::query()->find($provinceId)
+            : null;
+
+        // Resolve both labels on the server. Browser-submitted province/city
+        // text is never trusted or persisted to the order.
+        $city = $province && $cityId
+            ? $province->cities()->whereKey($cityId)->first()
+            : null;
+
+        $this->merge([
+            'province' => $province?->name,
+            'city' => $city?->name,
+        ]);
     }
 
     public function rules(): array
@@ -40,17 +63,24 @@ class PlaceOrderRequest extends FormRequest
                 'max:255',
             ],
 
-            'province' => [
+            'province_id' => [
                 'required',
-                'string',
-                'max:100',
+                'integer',
+                Rule::exists('provinces', 'id'),
             ],
 
-            'city' => [
+            'city_id' => [
                 'required',
-                'string',
-                'max:100',
+                'integer',
+                Rule::exists('cities', 'id')->where(
+                    fn ($query) => $query->where('province_id', (int) $this->input('province_id'))
+                ),
             ],
+
+            // These labels are populated by prepareForValidation() from the
+            // selected IDs and keep the existing order/address snapshot schema.
+            'province' => ['required', 'string', 'max:100'],
+            'city' => ['required', 'string', 'max:100'],
 
             'address' => [
                 'required',
@@ -85,6 +115,8 @@ class PlaceOrderRequest extends FormRequest
             'last_name' => 'نام خانوادگی',
             'phone' => 'شماره موبایل',
             'email' => 'ایمیل',
+            'province_id' => 'استان',
+            'city_id' => 'شهر',
             'province' => 'استان',
             'city' => 'شهر',
             'address' => 'آدرس',
@@ -115,11 +147,17 @@ class PlaceOrderRequest extends FormRequest
             'email.email' =>
                 'فرمت ایمیل صحیح نیست.',
 
-            'province.required' =>
-                'استان را انتخاب یا وارد کنید.',
+            'province_id.required' =>
+                'استان را انتخاب کنید.',
 
-            'city.required' =>
-                'شهر را وارد کنید.',
+            'province_id.exists' =>
+                'استان انتخاب‌شده معتبر نیست.',
+
+            'city_id.required' =>
+                'شهر را انتخاب کنید.',
+
+            'city_id.exists' =>
+                'شهر انتخاب‌شده متعلق به استان انتخاب‌شده نیست.',
 
             'address.required' =>
                 'آدرس کامل را وارد کنید.',
