@@ -258,24 +258,6 @@
                     @endif
 
 
-                            @if($installationTypes->isNotEmpty())
-                                <label class="min-w-[150px] flex-1 text-xs font-medium">
-                                    نوع نصب
-                                    <select name="installation_type" class="mt-2 w-full rounded-xl border border-[var(--livora-border)] bg-white px-3 py-3 text-xs">
-                                        <option value="">همه روش‌ها</option>
-                                        @foreach($installationTypes as $type)
-                                            <option value="{{ $type }}" @selected(request('installation_type') === $type)>{{ $type }}</option>
-                                        @endforeach
-                                    </select>
-                                </label>
-                            @endif
-                            <button type="submit" class="min-h-11 rounded-xl bg-[var(--livora-ink)] px-5 text-xs font-semibold text-white">اعمال فیلتر</button>
-                            @if(request()->hasAny(['width_cm', 'installation_type']))
-                                <a href="{{ route('categories.show', $category->slug) }}" class="inline-flex min-h-11 items-center px-3 text-xs font-semibold text-[var(--livora-stone)]">حذف فیلتر</a>
-                            @endif
-                        </form>
-                    @endif
-
                     @if($products->isNotEmpty())
 
                         <div class="mt-8 grid grid-cols-2 gap-x-4 gap-y-10 sm:grid-cols-2 xl:grid-cols-4">
