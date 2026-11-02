@@ -348,7 +348,7 @@
                                         <span>مجله فرزین</span>
                                     @endif
                                     <span aria-hidden="true">·</span>
-                                    <time datetime="{{ $homeFeaturedArticle->published_at?->toAtomString() }}">{{ \App\Helpers\PersianNumberHelper::format(\App\Helpers\JalaliHelper::format($homeFeaturedArticle->published_at, 'Y/m/d')) }}</time>
+                                    <time datetime="{{ $homeFeaturedArticle->published_at?->toAtomString() }}">{{ \App\Helpers\JalaliHelper::format($homeFeaturedArticle->published_at, 'Y/m/d') }}</time>
                                     <span aria-hidden="true">·</span>
                                     <span>{{ \App\Helpers\PersianNumberHelper::format($homeFeaturedArticle->reading_time) }} دقیقه مطالعه</span>
                                 </div>
@@ -385,7 +385,7 @@
                                         @endif
                                         <h3>{{ $story->title }}</h3>
                                         <span class="fz-home-journal__story-meta">
-                                            <time datetime="{{ $story->published_at?->toAtomString() }}">{{ $story->published_at?->format('Y/m/d') }}</time>
+                                            <time datetime="{{ $story->published_at?->toAtomString() }}">{{ \App\Helpers\JalaliHelper::format($story->published_at, 'Y/m/d') }}</time>
                                             <span aria-hidden="true">·</span>
                                             {{ \App\Helpers\PersianNumberHelper::format($story->reading_time) }} دقیقه
                                         </span>
