@@ -5,6 +5,10 @@
 @section('canonical', route('home'))
 @section('body_class', 'home-body min-h-screen antialiased')
 
+@push('styles')
+    @vite('resources/css/home.css')
+@endpush
+
 @section('content')
 @php
     $heroImage = $heroProduct?->images->first(fn ($image) => filled($image->url));
