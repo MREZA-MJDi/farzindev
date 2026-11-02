@@ -6,7 +6,7 @@
     $footerEmail = trim((string) data_get($contact, 'email', ''));
     $footerAddress = trim((string) data_get($contact, 'address', ''));
     $footerHours = trim((string) data_get($contact, 'hours', ''));
-    $footerBrandName = trim((string) data_get($settings, 'brand_name', 'فرزین'));
+    $footerBrandName = trim((string) data_get($settings, 'brand_name', '')) ?: 'فرزین';
     $footerBrandLogoUrl = $brandLogoUrl;
 @endphp
 <footer class="farzin-site-footer farzin-site-footer--editorial fz-store-footer">
