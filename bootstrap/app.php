@@ -130,7 +130,9 @@ return Application::configure(
             $isExpiredSession = $e instanceof \Illuminate\Session\TokenMismatchException
                 || ($e instanceof HttpExceptionInterface && $e->getStatusCode() === 419);
 
-            if (! $isExpiredSession || ! $request->is('admin', 'admin/*')) {
+            $adminPath = trim((string) config('farzin.admin_path', 'admin'), '/');
+
+            if (! $isExpiredSession || ! $request->is($adminPath, $adminPath . '/*')) {
                 return null;
             }
 
