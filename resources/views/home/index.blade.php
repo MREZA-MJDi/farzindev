@@ -18,23 +18,23 @@
         $cashPercent = (int) $installmentProduct->installment_cash_percent;
         $homeBenefits[] = [
             'title' => 'خرید اقساطی برای مدل‌های واجد شرایط',
-            'description' => 'پیش‌پرداخت ' . \\App\\Helpers\\PersianNumberHelper::format($cashPercent) . '٪، ' .
-                \\App\\Helpers\\PersianNumberHelper::format($installmentProduct->installment_cheque_count) .
-                ' چک با فاصله ' . \\App\\Helpers\\PersianNumberHelper::format($installmentProduct->installment_interval_months) . ' ماه',
+            'description' => 'پیش‌پرداخت ' . \App\Helpers\PersianNumberHelper::format($cashPercent) . '٪، ' .
+                \App\Helpers\PersianNumberHelper::format($installmentProduct->installment_cheque_count) .
+                ' چک با فاصله ' . \App\Helpers\PersianNumberHelper::format($installmentProduct->installment_interval_months) . ' ماه',
             'url' => route('product.show', $installmentProduct->slug),
             'label' => 'دیدن شرایط همین مدل',
         ];
     }
 
-    $phone = \\App\\Support\\StorefrontContact::phone($contactSetting?->phone);
-    $whatsappDigits = \\App\\Support\\StorefrontContact::whatsapp($contactSetting?->whatsapp);
+    $phone = \App\Support\StorefrontContact::phone($contactSetting?->phone);
+    $whatsappDigits = \App\Support\StorefrontContact::whatsapp($contactSetting?->whatsapp);
 
     if (array_key_exists('shipping_flat_rate', $shippingSettings) && is_numeric($shippingSettings['shipping_flat_rate'])) {
         $flatRate = (float) $shippingSettings['shipping_flat_rate'];
         $homeBenefits[] = [
             'title' => 'هزینه ارسال مشخص',
             'description' => $flatRate > 0
-                ? 'هزینه پایه ارسال: ' . \\App\\Helpers\\PersianNumberHelper::format($flatRate) . ' تومان'
+                ? 'هزینه پایه ارسال: ' . \App\Helpers\PersianNumberHelper::format($flatRate) . ' تومان'
                 : 'هزینه پایه ارسال طبق تنظیمات فروشگاه رایگان است.',
             'url' => route('contact'),
             'label' => 'پرسش درباره ارسال',
@@ -42,7 +42,7 @@
     } elseif (isset($shippingSettings['shipping_free_threshold']) && is_numeric($shippingSettings['shipping_free_threshold']) && (float) $shippingSettings['shipping_free_threshold'] > 0) {
         $homeBenefits[] = [
             'title' => 'آستانه ارسال رایگان',
-            'description' => 'برای سفارش‌های بالاتر از ' . \\App\\Helpers\\PersianNumberHelper::format($shippingSettings['shipping_free_threshold']) . ' تومان',
+            'description' => 'برای سفارش‌های بالاتر از ' . \App\Helpers\PersianNumberHelper::format($shippingSettings['shipping_free_threshold']) . ' تومان',
             'url' => route('contact'),
             'label' => 'پرسش درباره ارسال',
         ];
@@ -96,7 +96,7 @@
                 <span class="fz-home-hero__product-details">
                     <strong>{{ $heroProduct->name }}</strong>
                     <span class="fz-home-hero__product-footer">
-                        <span class="fz-home-hero__product-price">{{ \\App\\Helpers\\PersianNumberHelper::format((float) $heroProduct->price) }} <small>تومان</small></span>
+                        <span class="fz-home-hero__product-price">{{ \App\Helpers\PersianNumberHelper::format((float) $heroProduct->price) }} <small>تومان</small></span>
                         <span class="fz-home-hero__product-link">مشاهده محصول</span>
                     </span>
                 </span>
@@ -156,7 +156,7 @@
                 <div>
                     <p class="fz-eyebrow"><span></span> شرایط ثبت‌شده محصول</p>
                     <h2 id="fz-home-installment-title">خرید اقساطی برای بعضی مدل‌های موجود</h2>
-                    <p>{{ $installmentProduct->name }} با {{ \\App\\Helpers\\PersianNumberHelper::format($installmentProduct->installment_cash_percent) }}٪ پیش‌پرداخت و {{ \\App\\Helpers\\PersianNumberHelper::format($installmentProduct->installment_cheque_count) }} چک، با فاصله سررسید {{ \\App\\Helpers\\PersianNumberHelper::format($installmentProduct->installment_interval_months) }} ماه عرضه شده است.</p>
+                    <p>{{ $installmentProduct->name }} با {{ \App\Helpers\PersianNumberHelper::format($installmentProduct->installment_cash_percent) }}٪ پیش‌پرداخت و {{ \App\Helpers\PersianNumberHelper::format($installmentProduct->installment_cheque_count) }} چک، با فاصله سررسید {{ \App\Helpers\PersianNumberHelper::format($installmentProduct->installment_interval_months) }} ماه عرضه شده است.</p>
                 </div>
                 <a href="{{ route('product.show', $installmentProduct->slug) }}">مشاهده قیمت و جزئیات این مدل</a>
             </div>
@@ -174,7 +174,7 @@
             <div class="fz-home-trust__grid">
                 @foreach($homeBenefits as $index => $benefit)
                     <a class="fz-home-trust__item" href="{{ $benefit['url'] }}">
-                        <span class="fz-home-trust__index">{{ \\App\\Helpers\\PersianNumberHelper::format($index + 1) }}</span>
+                        <span class="fz-home-trust__index">{{ \App\Helpers\PersianNumberHelper::format($index + 1) }}</span>
                         <span class="fz-home-trust__icon" aria-hidden="true">{{ $index === 0 ? '٪' : ($index === 1 ? '↗' : '☎') }}</span>
                         <strong>{{ $benefit['title'] }}</strong>
                         <span>{{ $benefit['description'] }}</span>
@@ -198,8 +198,8 @@
             <div class="fz-home-buying-guides__grid">
                 @foreach($homeGuides as $index => $category)
                     <a class="fz-home-buying-guide" href="{{ route('categories.show', $category->slug) }}">
-                        <span class="fz-home-buying-guide__index">{{ \\App\\Helpers\\PersianNumberHelper::format($index + 1) }}</span>
-                        <span><strong>{{ $category->name }}</strong><small>{{ \\Illuminate\\Support\\Str::limit(trim($category->description), 150) }}</small></span>
+                        <span class="fz-home-buying-guide__index">{{ \App\Helpers\PersianNumberHelper::format($index + 1) }}</span>
+                        <span><strong>{{ $category->name }}</strong><small>{{ \Illuminate\Support\Str::limit(trim($category->description), 150) }}</small></span>
                         <span class="fz-home-buying-guide__action">مشاهده مدل‌ها</span>
                     </a>
                 @endforeach
@@ -245,8 +245,8 @@
                             @if($homeFeaturedCategory)
                                 <a href="{{ route('blog.category', $homeFeaturedCategory->slug) }}">{{ $homeFeaturedCategory->name }}</a>
                             @endif
-                            <time datetime="{{ $homeFeaturedArticle->published_at?->toAtomString() }}">{{ \\App\\Helpers\\JalaliHelper::format($homeFeaturedArticle->published_at, 'Y/m/d') }}</time>
-                            <span>{{ \\App\\Helpers\\PersianNumberHelper::format($homeFeaturedArticle->reading_time) }} دقیقه مطالعه</span>
+                            <time datetime="{{ $homeFeaturedArticle->published_at?->toAtomString() }}">{{ \App\Helpers\JalaliHelper::format($homeFeaturedArticle->published_at, 'Y/m/d') }}</time>
+                            <span>{{ \App\Helpers\PersianNumberHelper::format($homeFeaturedArticle->reading_time) }} دقیقه مطالعه</span>
                         </div>
                         <h3><a href="{{ route('blog.show', $homeFeaturedArticle->slug) }}">{{ $homeFeaturedArticle->title }}</a></h3>
                         @if($homeFeaturedArticle->excerpt)
@@ -268,9 +268,9 @@
                                     @endif
                                     <h3>{{ $story->title }}</h3>
                                     <span class="fz-home-journal__story-meta">
-                                        <time datetime="{{ $story->published_at?->toAtomString() }}">{{ \\App\\Helpers\\JalaliHelper::format($story->published_at, 'Y/m/d') }}</time>
+                                        <time datetime="{{ $story->published_at?->toAtomString() }}">{{ \App\Helpers\JalaliHelper::format($story->published_at, 'Y/m/d') }}</time>
                                         <span aria-hidden="true">·</span>
-                                        {{ \\App\\Helpers\\PersianNumberHelper::format($story->reading_time) }} دقیقه
+                                        {{ \App\Helpers\PersianNumberHelper::format($story->reading_time) }} دقیقه
                                     </span>
                                 </a>
                             </article>
