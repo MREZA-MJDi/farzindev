@@ -6,6 +6,7 @@ use App\Http\Requests\Checkout\PlaceOrderRequest;
 use App\Models\Cart;
 use App\Services\Checkout\CheckoutOrderService;
 use App\Models\Order;
+use App\Models\StorefrontSetting;
 use App\Services\Installments\InstallmentPlanService;
 use App\Services\Payments\PaymentService;
 use Illuminate\Http\RedirectResponse;
@@ -61,10 +62,29 @@ class CheckoutController extends Controller
             ? $user->defaultAddress()->first()
             : null;
 
+        $shippingFlatRateSetting = StorefrontSetting::query()
+            ->where('key', 'shipping_flat_rate')
+            ->value('value');
+        $shippingFreeThreshold = max(0, (int) (StorefrontSetting::query()
+            ->where('key', 'shipping_free_threshold')
+            ->value('value') ?? 0));
+        $cartSubtotal = $cart->subtotal();
+
+        $shippingCostPreview = null;
+
+        if ($shippingFlatRateSetting !== null && $shippingFlatRateSetting !== '') {
+            $shippingCostPreview = $shippingFreeThreshold > 0
+                && $cartSubtotal >= $shippingFreeThreshold
+                ? 0
+                : max(0, (int) $shippingFlatRateSetting);
+        }
+
         return view('checkout.index', [
             'cart' => $cart,
             'defaultAddress' => $defaultAddress,
             'checkoutPreview' => $checkoutPreview,
+            'shippingCostPreview' => $shippingCostPreview,
+            'checkoutTotalPreview' => $cartSubtotal + ($shippingCostPreview ?? 0),
         ]);
     }
 
