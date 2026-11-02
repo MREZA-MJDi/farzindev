@@ -26,12 +26,14 @@
                 <a href="{{ route('home') }}" class="fz-store-footer__logo farzin-footer-editorial__logo" aria-label="فرزین، صفحه اصلی">فرزین</a>
                 
                 <p>کاتالوگ آنلاین هود و سینک آشپزخانه؛ مشخصات و قیمت مدل‌ها را بررسی کنید و انتخابتان را آگاهانه انجام دهید.</p>
-                <div class="fz-store-footer__socials" aria-label="شبکه‌های اجتماعی">
-                    @if(filled(data_get($contact, 'instagram_url')))<a href="{{ data_get($contact, 'instagram_url') }}" target="_blank" rel="noopener noreferrer" aria-label="اینستاگرام فرزین">اینستاگرام</a>@endif
-                    @if(filled(data_get($contact, 'telegram_url')))<a href="{{ data_get($contact, 'telegram_url') }}" target="_blank" rel="noopener noreferrer" aria-label="تلگرام فرزین">تلگرام</a>@endif
-                    @if(filled(data_get($contact, 'eitaa_url')))<a href="{{ data_get($contact, 'eitaa_url') }}" target="_blank" rel="noopener noreferrer" aria-label="ایتا فرزین">ایتا</a>@endif
-                    @if($footerWhatsapp !== '')<a href="https://wa.me/{{ $footerWhatsapp }}" target="_blank" rel="noopener noreferrer" aria-label="واتساپ فرزین">واتساپ</a>@endif
-                </div>
+                @if(filled(data_get($contact, 'instagram_url')) || filled(data_get($contact, 'telegram_url')) || filled(data_get($contact, 'eitaa_url')) || $footerWhatsapp !== '')
+                    <div class="fz-store-footer__socials" aria-label="شبکه‌های اجتماعی">
+                        @if(filled(data_get($contact, 'instagram_url')))<a href="{{ data_get($contact, 'instagram_url') }}" target="_blank" rel="noopener noreferrer" aria-label="اینستاگرام فرزین">اینستاگرام</a>@endif
+                        @if(filled(data_get($contact, 'telegram_url')))<a href="{{ data_get($contact, 'telegram_url') }}" target="_blank" rel="noopener noreferrer" aria-label="تلگرام فرزین">تلگرام</a>@endif
+                        @if(filled(data_get($contact, 'eitaa_url')))<a href="{{ data_get($contact, 'eitaa_url') }}" target="_blank" rel="noopener noreferrer" aria-label="ایتا فرزین">ایتا</a>@endif
+                        @if($footerWhatsapp !== '')<a href="https://wa.me/{{ $footerWhatsapp }}" target="_blank" rel="noopener noreferrer" aria-label="واتساپ فرزین">واتساپ</a>@endif
+                    </div>
+                @endif
             </div>
             <nav class="fz-store-footer__column farzin-footer-editorial__nav" aria-label="پیوندهای اصلی">
                 <h2>فروشگاه</h2><a href="{{ route('home') }}">خانه</a><a href="{{ route('shop.index') }}">همه محصولات</a><a href="{{ route('categories.index') }}">دسته‌بندی‌ها</a><a href="{{ route('blog.index') }}">راهنمای خرید و مجله</a><a href="{{ route('about') }}">درباره فرزین</a><a href="{{ route('contact') }}">تماس با ما</a>
@@ -51,7 +53,7 @@
                 @if($footerEmail !== '')<a href="mailto:{{ $footerEmail }}">{{ $footerEmail }}</a>@endif
                 @if($footerAddress !== '')<p>{{ $footerAddress }}</p>@endif
                 @if($footerHours !== '')<p class="fz-store-footer__hours">ساعات پاسخ‌گویی: {{ $footerHours }}</p>@endif
-                @if($footerPhone === '' && $footerEmail === '' && $footerAddress === '' && $footerWhatsapp === '' && !filled(data_get($contact, 'eitaa_url')) && !filled(data_get($contact, 'telegram_url')))<p>برای ارسال پرسش، از فرم تماس با فرزین استفاده کنید.</p>@endif
+                @if($footerPhone === '' && $footerEmail === '' && $footerAddress === '' && $footerWhatsapp === '' && !filled(data_get($contact, 'eitaa_url')) && !filled(data_get($contact, 'telegram_url')) && !filled(data_get($contact, 'instagram_url')))<p>برای ارسال پرسش، از فرم تماس با فرزین استفاده کنید.</p>@endif
                 <a class="fz-store-footer__contact-link" href="{{ route('contact') }}">رفتن به صفحه تماس <span aria-hidden="true">←</span></a>
             </div>
         </div>
