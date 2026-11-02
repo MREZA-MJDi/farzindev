@@ -2069,8 +2069,4 @@ body.home-body {
     .fz-home-installment__panel > a {
         width: 100%;
     }
-    .home-body .farzin-product-card--round-media .farzin-product-card__wishlist {
-        min-width: 44px;
-        min-height: 44px;
-    }
 }
