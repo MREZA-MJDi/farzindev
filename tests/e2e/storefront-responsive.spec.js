@@ -252,11 +252,11 @@ test('homepage final CTA meets the shared footer without a duplicate contact bri
         await page.setViewportSize(viewport);
         await page.goto('/', { waitUntil: 'domcontentloaded' });
         await expect(page.locator('.farzin-site-footer')).toBeVisible();
-        await expect(page.locator('.fz-home-final-cta__panel')).toBeVisible();
+        await expect(page.locator('.fz-home-final__panel')).toBeVisible();
 
         const homeSpacing = await page.evaluate(() => {
-            const ctaPanel = document.querySelector('.fz-home-final-cta__panel');
-            const finalSection = document.querySelector('.fz-home-final-cta');
+            const ctaPanel = document.querySelector('.fz-home-final__panel');
+            const finalSection = document.querySelector('.fz-home-final');
             const footer = document.querySelector('.farzin-site-footer');
 
             return {
@@ -268,6 +268,7 @@ test('homepage final CTA meets the shared footer without a duplicate contact bri
         });
 
         expect(homeSpacing.panelToFooter, 'homepage CTA must have deliberate bottom breathing room').toBeGreaterThanOrEqual(40);
+        expect(homeSpacing.sectionBottom).toBeLessThanOrEqual(homeSpacing.footerTop + 1);
         expect(homeSpacing.hasOldContactBridge, 'the old duplicate contact bridge must stay removed').toBe(false);
 
         await page.goto('/shop', { waitUntil: 'domcontentloaded' });
@@ -395,14 +396,14 @@ test('homepage image and product sections stay within the loading budget', async
 
         if (viewport.width >= 1024) {
             const imageIsLeftOfCopy = await page.evaluate(() => {
-                const image = document.querySelector('.fz-home-hero__showcase');
-                const copy = document.querySelector('.fz-home-hero__copy');
+                const image = document.querySelector('.fz-sales-hero__visual');
+                const copy = document.querySelector('.fz-sales-hero__copy');
                 if (!image || !copy) return false;
                 const imageRect = image.getBoundingClientRect();
                 const copyRect = copy.getBoundingClientRect();
                 return imageRect.left < copyRect.left && imageRect.right <= copyRect.left + 1;
             });
-            expect(imageIsLeftOfCopy, 'desktop hero product image must sit physically to the left of the copy').toBeTruthy();
+            expect(imageIsLeftOfCopy, 'desktop kitchen hero image must sit physically to the left of the sales copy').toBeTruthy();
         }
 
         const hiddenCategoryCards = await page.locator('.fz-category-card').evaluateAll((elements) => (
@@ -414,21 +415,20 @@ test('homepage image and product sections stay within the loading budget', async
         expect(hiddenCategoryCards, 'homepage category cards must render without a delayed blur or fade').toBe(0);
 
         expect(await page.locator('.fz-category-card').count()).toBeLessThanOrEqual(4);
-        expect(await page.locator('.fz-home-buying-guide').count()).toBe(2);
-        expect(await page.locator('.fz-home-featured-grid--six .farzin-product-card').count()).toBeLessThanOrEqual(6);
+        expect(await page.locator('.fz-home-guide-card').count()).toBe(2);
+        expect(await page.locator('.fz-home-product-grid .farzin-product-card').count()).toBeLessThanOrEqual(8);
         await expect(page.locator('.fz-new-section')).toHaveCount(0);
         await expect(page.locator('.fz-mosaic-intro')).toHaveCount(0);
         await expect(page.locator('[data-farzin-home-slider]')).toHaveCount(0);
 
-        const homepageProductCards = await page.locator('.fz-home-featured-grid--six .farzin-product-card').count();
-        expect(homepageProductCards, 'homepage shows one compact grid of up to six real products').toBeLessThanOrEqual(6);
-        const homepageProductEntries = await page.locator('.fz-home-hero__showcase--static, .fz-home-featured-grid--six .farzin-product-card').count();
-        expect(homepageProductEntries, 'homepage shows one hero item and no more than six featured cards').toBeLessThanOrEqual(7);
-        await expect(page.locator('.fz-category-section .fz-text-link')).toHaveAttribute('href', /\/categories(?:\?|$)/);
-        await expect(page.locator('.fz-product-section .fz-text-link')).toHaveAttribute('href', /\/shop(?:\?|$)/);
+        const homepageProductCards = await page.locator('.fz-home-product-grid .farzin-product-card').count();
+        expect(homepageProductCards, 'homepage shows one compact grid of up to eight selected products').toBeLessThanOrEqual(8);
+        const homepageProductEntries = await page.locator('.fz-sales-hero__visual, .fz-home-product-grid .farzin-product-card').count();
+        expect(homepageProductEntries, 'homepage shows one kitchen hero and no more than eight featured cards').toBeLessThanOrEqual(9);
+        await expect(page.locator('.fz-home-categories .fz-home-text-link')).toHaveAttribute('href', /\/categories(?:\?|$)/);
+        await expect(page.locator('.fz-home-products .fz-home-text-link')).toHaveAttribute('href', /\/shop(?:\?|$)/);
     }
 });
-
 
 
 test('admin mobile quick search and list filters remain reachable without horizontal overflow', async ({ page }) => {
@@ -482,34 +482,35 @@ test('homepage journal uses published articles, responsive RTL columns and restr
 
         const journal = page.locator('.fz-home-journal');
         await expect(journal).toBeVisible();
-        await expect(journal.locator('.fz-home-journal__featured')).toBeVisible();
-        await expect(journal.locator('.fz-home-journal__featured-copy h3 a')).toHaveAttribute('href', /\/blog\//);
-        await expect(journal.locator('.fz-home-journal__aside')).toBeVisible();
-        await expect(journal.locator('.fz-home-journal__all')).toHaveAttribute('href', /\/blog$/);
+        const grid = journal.locator('.fz-home-journal-grid');
+        await expect(grid).toBeVisible();
+        const articles = journal.locator('.fz-home-article-card');
+        await expect(articles.first()).toBeVisible();
+        expect(await articles.count()).toBeLessThanOrEqual(3);
+        await expect(journal.locator('.fz-home-article-card h3 a').first()).toHaveAttribute('href', /\/blog\//);
+        await expect(journal.locator('.fz-home-text-link')).toHaveAttribute('href', /\/blog(?:\?|$)/);
 
         const layout = await journal.evaluate((section) => {
-            const grid = section.querySelector('.fz-home-journal__layout');
-            const featured = section.querySelector('.fz-home-journal__featured');
+            const grid = section.querySelector('.fz-home-journal-grid');
+            const card = section.querySelector('.fz-home-article-card');
             const style = window.getComputedStyle(grid);
-            const cardStyle = window.getComputedStyle(featured);
-            const columns = style.gridTemplateColumns.split(' ').length;
-
+            const cardStyle = window.getComputedStyle(card);
             return {
                 direction: style.direction,
-                columns,
+                columns: style.gridTemplateColumns.split(' ').length,
                 radius: Number.parseFloat(cardStyle.borderTopLeftRadius),
-                background: window.getComputedStyle(document.body).backgroundColor,
                 overflow: Math.max(document.documentElement.scrollWidth, document.body.scrollWidth)
                     - document.documentElement.clientWidth,
             };
         });
 
         expect(layout.direction, 'homepage journal must keep RTL reading order').toBe('rtl');
-        expect(layout.columns, 'journal becomes one column on mobile and two columns on desktop/tablet').toBe(viewport.width <= 767 ? 1 : 2);
-        expect(layout.radius, 'journal card corner radius must remain restrained').toBeLessThanOrEqual(12);
+        expect(layout.columns, 'journal becomes one column on mobile and three columns on tablet/desktop').toBe(viewport.width <= 767 ? 1 : 3);
+        expect(layout.radius, 'journal card corner radius must remain restrained and consistent').toBeLessThanOrEqual(24);
         expect(layout.overflow, 'homepage journal must not cause horizontal overflow').toBeLessThanOrEqual(1);
     }
 });
+
 
 test('blog archive renders the editorial magazine layout without horizontal overflow', async ({ page }) => {
     for (const viewport of [
@@ -753,7 +754,7 @@ test('shop product card actions stay aligned across different content heights', 
     }
 });
 
-test('homepage featured product cards and image links are fully circular', async ({ page }) => {
+test('homepage product cards use equal responsive image ratios and readable actions', async ({ page }) => {
     for (const viewport of [
         { width: 390, height: 844 },
         { width: 1440, height: 960 },
@@ -761,49 +762,47 @@ test('homepage featured product cards and image links are fully circular', async
         await page.setViewportSize(viewport);
         await page.goto('/', { waitUntil: 'domcontentloaded' });
 
-        const card = page.locator('.farzin-product-card--round-media').first();
-        await expect(card, 'homepage must render a round featured product card').toBeVisible();
+        const card = page.locator('.fz-home-product-grid .farzin-product-card').first();
+        await expect(card, 'homepage must render a selected product card').toBeVisible();
 
         const geometry = await card.evaluate((element) => {
             const media = element.querySelector('.farzin-product-card__media');
             const imageLink = element.querySelector('.farzin-product-card__image-link');
             const infoPanel = element.querySelector('.farzin-product-card__content');
             const cardRect = element.getBoundingClientRect();
+            const mediaRect = media.getBoundingClientRect();
             const linkRect = imageLink.getBoundingClientRect();
             const infoRect = infoPanel.getBoundingClientRect();
-            const infoStyle = getComputedStyle(infoPanel);
 
             return {
                 width: cardRect.width,
                 height: cardRect.height,
-                radius: getComputedStyle(element).borderTopLeftRadius,
+                radius: Number.parseFloat(getComputedStyle(element).borderTopLeftRadius),
                 overflow: getComputedStyle(element).overflow,
-                mediaRadius: getComputedStyle(media).borderTopLeftRadius,
-                linkRadius: getComputedStyle(imageLink).borderTopLeftRadius,
-                linkClass: imageLink.classList.contains('farzin-product-card__image-link--round'),
+                mediaWidth: mediaRect.width,
+                mediaHeight: mediaRect.height,
                 linkWidth: linkRect.width,
                 linkHeight: linkRect.height,
-                infoHeight: infoRect.height,
+                mediaBottom: mediaRect.bottom,
+                infoTop: infoRect.top,
                 infoBottom: infoRect.bottom,
-                infoBorderTop: infoStyle.borderTopStyle,
-                infoBackground: infoStyle.backgroundImage,
+                cardBottom: cardRect.bottom,
             };
         });
 
-        expect(Math.abs(geometry.width - geometry.height), 'the whole product card must stay 1:1').toBeLessThanOrEqual(1);
-        expect(geometry.radius, 'the full product card must be circular').toBe('50%');
-        expect(geometry.overflow, 'card content must be clipped to the circle').toBe('hidden');
-        expect(geometry.mediaRadius, 'the image media must inherit the card circle').toBe('50%');
-        expect(geometry.linkClass, 'round homepage variant must mark the image link explicitly').toBeTruthy();
-        expect(geometry.linkRadius, 'the image link itself must inherit the circular shape').toBe('50%');
-        expect(Math.abs(geometry.linkWidth - geometry.linkHeight), 'the image link must fill a square circle frame').toBeLessThanOrEqual(1);
-        expect(Math.abs(geometry.infoBottom - geometry.height - (await card.evaluate((element) => element.getBoundingClientRect().top))), 'the product information panel must attach to the bottom of the circle').toBeLessThanOrEqual(1);
-        expect(geometry.infoHeight, 'the circle must reserve a readable lower band for product information').toBeGreaterThanOrEqual(geometry.height * 0.45);
-        expect(geometry.infoBorderTop, 'the image and attached information band must have a clear join').toBe('solid');
-        expect(geometry.infoBackground, 'the information band must remain on a bright product-data surface').toContain('linear-gradient');
+        expect(geometry.radius, 'product cards should keep the shared rounded-card treatment').toBeGreaterThanOrEqual(12);
+        expect(geometry.radius, 'product cards should not become circular/pill-shaped').toBeLessThanOrEqual(24);
+        expect(geometry.overflow, 'product card content must stay within its rounded frame').toBe('hidden');
+        expect(geometry.mediaWidth).toBeGreaterThan(0);
+        expect(geometry.mediaHeight).toBeGreaterThan(0);
+        expect(geometry.mediaWidth / geometry.mediaHeight, 'all selected product images use one fixed landscape ratio').toBeGreaterThan(1.05);
+        expect(geometry.mediaWidth / geometry.mediaHeight).toBeLessThan(1.2);
+        expect(Math.abs(geometry.linkWidth - geometry.mediaWidth), 'the product image link fills the shared media frame').toBeLessThanOrEqual(1);
+        expect(Math.abs(geometry.linkHeight - geometry.mediaHeight), 'the product image link fills the shared media frame').toBeLessThanOrEqual(1);
+        expect(geometry.infoTop, 'product details start after the image rather than overlaying it').toBeGreaterThanOrEqual(geometry.mediaBottom - 1);
+        expect(geometry.infoBottom, 'product details stay inside the card frame').toBeLessThanOrEqual(geometry.cardBottom + 1);
     }
 });
-
 
 
 test('category index cards keep their copy readable above the image treatment', async ({ page }) => {
