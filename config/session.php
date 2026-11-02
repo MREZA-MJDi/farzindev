@@ -170,7 +170,7 @@ return [
     */
 
     // Require HTTPS-only session cookies in production unless explicitly overridden.
-    'secure' => env('SESSION_SECURE_COOKIE', env('APP_ENV', 'production') === 'production'),
+    'secure' => env('SESSION_SECURE_COOKIE', str_starts_with((string) env('APP_URL', 'http://localhost'), 'https://')),
 
     /*
     |--------------------------------------------------------------------------
