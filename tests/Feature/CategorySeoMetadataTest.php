@@ -39,6 +39,42 @@ class CategorySeoMetadataTest extends TestCase
             ->assertSee('name="description" content="مدل‌های هود مخفی فرزین را با مشخصات و قیمت بررسی کنید."', false);
     }
 
+    public function test_active_category_created_in_admin_remains_visible_in_production_without_products(): void
+    {
+        $admin = User::factory()->create(['role' => 'admin']);
+
+        $this->actingAs($admin, 'admin')
+            ->post(route('admin.categories.store'), [
+                'name' => 'دسته فعال بدون محصول',
+                'slug' => 'active-empty-category',
+                'description' => 'این دسته پیش از انتشار اولین محصول باید صفحه عمومی داشته باشد.',
+                'is_active' => '1',
+                'sort_order' => '4',
+            ])
+            ->assertRedirect(route('admin.categories.index'))
+            ->assertSessionHasNoErrors();
+
+        $category = Category::query()
+            ->where('slug', 'active-empty-category')
+            ->firstOrFail();
+
+        // Exercise production visibility rules, not the permissive test rules.
+        $this->app['env'] = 'production';
+
+        $this->get(route('home'))
+            ->assertOk()
+            ->assertSee('دسته فعال بدون محصول');
+
+        $this->get(route('categories.index'))
+            ->assertOk()
+            ->assertSee('دسته فعال بدون محصول');
+
+        $this->get(route('categories.show', $category->slug))
+            ->assertOk()
+            ->assertSee('دسته فعال بدون محصول')
+            ->assertSee('محصولی در این دسته پیدا نشد');
+    }
+
     public function test_category_image_forms_use_the_shared_preview_and_crop_editor(): void
     {
         $admin = User::factory()->create(['role' => 'admin']);
