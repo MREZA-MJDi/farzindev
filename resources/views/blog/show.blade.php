@@ -86,7 +86,7 @@
                 @endif
 
                 <div class="blog-article-meta">
-                    <time datetime="{{ $post->published_at?->toAtomString() }}">انتشار: {{ $post->published_at?->format('Y/m/d') }}</time>
+                    <time datetime="{{ $post->published_at?->toAtomString() }}">انتشار: {{ \App\Helpers\JalaliHelper::format($post->published_at, 'Y/m/d') }}</time>
                     <span aria-hidden="true">·</span>
                     <span>{{ \App\Helpers\PersianNumberHelper::format($post->reading_time) }} دقیقه مطالعه</span>
                     @if($post->author)
@@ -161,7 +161,7 @@
                             @foreach($relatedPosts as $related)
                                 <a href="{{ route('blog.show', $related->slug) }}">
                                     <span>{{ $related->title }}</span>
-                                    <small>{{ $related->published_at?->format('Y/m/d') }}</small>
+                                    <small>{{ \App\Helpers\JalaliHelper::format($related->published_at, 'Y/m/d') }}</small>
                                 </a>
                             @endforeach
                         </div>
