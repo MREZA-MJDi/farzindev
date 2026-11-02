@@ -132,29 +132,7 @@
             <x-layout.container>
                 <div class="fz-contact-grid">
                     {{-- Right column in RTL: location and map --}}
-                    @if($mapAddress !== '' || $hasMapCoordinates || filled($contactSetting?->hours))
-                        <aside class="fz-contact-map-column" data-fz-reveal>
-                            <div class="fz-contact-panel fz-contact-map-panel">
-                                @if($mapAddress !== '' || $hasMapCoordinates)
-                                    <div class="fz-contact-panel__header">
-                                        <div>
-                                            <h2>نشانی مجموعه</h2>
-                                            @if($mapAddress !== '')<p>{{ $mapAddress }}</p>@endif
-                                        </div>
-                                    </div>
-                                    @if($hasMapCoordinates)
-                                        <a href="https://www.google.com/maps/dir/?api=1&amp;destination={{ urlencode($mapQuery) }}" class="fz-contact-directions" target="_blank" rel="noopener noreferrer">مسیریابی</a>
-                                    @endif
-                                @endif
-                                @if(filled($contactSetting?->hours))
-                                    <div class="fz-contact-hours">
-                                        <span class="fz-contact-hours__icon" aria-hidden="true">◷</span>
-                                        <div><span>ساعات پاسخ‌گویی</span><p>{{ $contactSetting->hours }}</p></div>
-                                    </div>
-                                @endif
-                            </div>
-                        </aside>
-                    @endif
+
 
                     {{-- Left column in RTL: direct contact, social channels and message form --}}
                     <div class="fz-contact-left-column">
@@ -300,6 +278,29 @@
                             </form>
                         </section>
                     </div>
+                    @if($mapAddress !== '' || $hasMapCoordinates || filled($contactSetting?->hours))
+                        <aside class="fz-contact-map-column" data-fz-reveal>
+                            <div class="fz-contact-panel fz-contact-map-panel">
+                                @if($mapAddress !== '' || $hasMapCoordinates)
+                                    <div class="fz-contact-panel__header">
+                                        <div>
+                                            <h2>نشانی مجموعه</h2>
+                                            @if($mapAddress !== '')<p>{{ $mapAddress }}</p>@endif
+                                        </div>
+                                    </div>
+                                    @if($hasMapCoordinates)
+                                        <a href="https://www.google.com/maps/dir/?api=1&amp;destination={{ urlencode($mapQuery) }}" class="fz-contact-directions" target="_blank" rel="noopener noreferrer">مسیریابی</a>
+                                    @endif
+                                @endif
+                                @if(filled($contactSetting?->hours))
+                                    <div class="fz-contact-hours">
+                                        <span class="fz-contact-hours__icon" aria-hidden="true">◷</span>
+                                        <div><span>ساعات پاسخ‌گویی</span><p>{{ $contactSetting->hours }}</p></div>
+                                    </div>
+                                @endif
+                            </div>
+                        </aside>
+                    @endif
                 </div>
             </x-layout.container>
         </section>
