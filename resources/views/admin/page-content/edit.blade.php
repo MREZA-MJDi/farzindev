@@ -63,7 +63,7 @@
 
                 @if($tab === 'home')
                     <div class="rounded-xl border border-[var(--admin-border)] bg-[var(--admin-surface-soft)] p-4 text-xs leading-6 text-[var(--admin-muted)]">
-                        محتوای این تب در Hero، کارت‌های اعتماد، راهنماها، معرفی مجله و دعوت پایانی خانه استفاده می‌شود. نام و ترتیب دسته‌ها و محصولات از CRUD اختصاصی خودشان می‌آیند.
+                        متن Hero و عنوان بخش‌ها را از اینجا ویرایش کنید. نام و تعداد دسته‌ها و محصولات از کاتالوگ؛ مشخصات فنی از فرم محصول؛ تلفن، نشانی و واتساپ از تنظیمات تماس؛ و شرایط اقساط از تنظیمات همان محصول خوانده می‌شوند.
                     </div>
                     @php
                         $heroImageValue = trim((string) ($values['page_home_hero_image_url'] ?? ''));
