@@ -8,7 +8,7 @@
 @section('content')
 @php
     $heroImage = $heroProduct?->images->first(fn ($image) => filled($image->url));
-    $homeGuides = $categories->filter(fn ($category) => filled(trim((string) $category->description)))->values();
+    $homeGuides = $categories->filter(fn ($category) => mb_strlen(trim((string) $category->description)) >= 120)->values();
     $homeCtaCategory = $categories->first(fn ($category) => filled($category->homepage_image_url));
     $homeCtaImage = $homeCtaCategory?->homepage_image_url
         ?? $heroImage?->url;
@@ -296,8 +296,7 @@
                 <h2 id="fz-home-final-heading">برای انتخاب مدل مناسب، راهنمایی بگیرید.</h2>
                 <p>مدل‌های موجود را بررسی کنید یا پرسش خود را درباره محصول با فرزین در میان بگذارید.</p>
                 <div class="fz-home-final-cta__actions">
-                    <a class="fz-home-final-cta__primary" href="{{ route('shop.index') }}">مشاهده محصولات <span aria-hidden="true">←</span></a>
-                    <a class="fz-home-final-cta__secondary" href="{{ route('contact') }}">تماس و مشاوره</a>
+                    <a class="fz-home-final-cta__primary" href="{{ route('contact') }}">تماس و مشاوره <span aria-hidden="true">←</span></a>
                 </div>
             </div>
         </div>
