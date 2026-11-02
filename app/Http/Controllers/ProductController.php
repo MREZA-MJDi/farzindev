@@ -2,10 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ContactSetting;
 use App\Models\Product;
 use App\Models\SeoRedirect;
-use Illuminate\Contracts\View\View;
+use App\Models\StorefrontSetting;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Str;
+use Illuminate\Contracts\View\View;
 
 class ProductController extends Controller
 {
@@ -18,8 +22,7 @@ class ProductController extends Controller
                 'variants.images.media',
             ])
             ->active()
-            ->whereHas('category', fn ($categoryQuery) => $categoryQuery
-                ->where('is_active', true))
+            ->whereHas('category', fn (Builder $query) => $query->where('is_active', true))
             ->where('slug', $slug)
             ->first();
 
@@ -36,28 +39,189 @@ class ProductController extends Controller
             abort(404);
         }
 
+        // Never render broken/empty image records as gallery slides.
+        $product->setRelation(
+            'images',
+            $product->images->filter(fn ($image) => filled($image->url))->values()
+        );
+
+        // Product::variants() already scopes to active variants. Stock rules
+        // must use the same active option set as the cart and checkout.
+        $variantGroups = $product->variants->groupBy('type');
+        $canPurchase = $variantGroups->isNotEmpty()
+            ? $variantGroups->every(fn ($options) => $options->contains(
+                fn ($option) => (int) $option->stock > 0
+            ))
+            : (int) $product->stock > 0;
+
+        // This is the largest quantity that could be purchased for at least
+        // one combination. A small client-side listener tightens it further
+        // after the shopper selects specific options.
+        $maxPurchaseQuantity = $variantGroups->isNotEmpty()
+            ? (int) $variantGroups->map(
+                fn ($options) => (int) $options->max('stock')
+            )->min()
+            : (int) $product->stock;
+        $maxPurchaseQuantity = max(1, min(99, $maxPurchaseQuantity));
+
+        $installmentPlan = $this->resolveInstallmentPlan($product);
+        $safeShortDescription = $this->publicCopy($product->short_description);
+        $safeDescription = $this->publicCopy($product->description);
+
         $relatedProducts = Product::query()
             ->active()
+            ->whereKeyNot($product->id)
+            ->where('show_in_home_gallery', true)
+            ->where('category_id', $product->category_id)
+            ->whereHas('category', fn (Builder $query) => $query->where('is_active', true))
+            ->whereHas('images')
+            ->where(function (Builder $stockQuery): void {
+                $stockQuery
+                    ->whereHas('variants', fn (Builder $variants) => $variants->where('stock', '>', 0))
+                    ->orWhere(function (Builder $simpleProduct): void {
+                        $simpleProduct
+                            ->whereDoesntHave('variants')
+                            ->where('stock', '>', 0);
+                    });
+            })
             ->with([
-                'category',
-                // Related-product cards only render one image; keep the main product gallery complete.
+                'category:id,name,slug',
                 'images' => fn ($query) => $query
                     ->select(['id', 'product_id', 'media_id', 'path', 'alt', 'sort_order', 'is_primary'])
+                    ->orderByDesc('is_primary')
+                    ->orderBy('sort_order')
                     ->limit(1),
                 'images.media:id,path',
-                'variants:id,product_id,stock',
+                'variants:id,product_id,type,stock',
             ])
-            ->where('id', '!=', $product->id)
-            ->where('category_id', $product->category_id)
-            ->whereHas('category', fn ($categoryQuery) => $categoryQuery
-                ->where('is_active', true))
             ->latest()
-            ->limit(4)
-            ->get();
+            ->limit(60)
+            ->get()
+            ->filter(function (Product $related): bool {
+                $images = $related->images;
+                $groups = $related->variants->groupBy('type');
+                $canPurchase = $groups->isNotEmpty()
+                    ? $groups->every(fn ($options) => $options->contains(fn ($option) => (int) $option->stock > 0))
+                    : (int) $related->stock > 0;
+
+                return $canPurchase && $images->contains(fn ($image) => filled($image->url));
+            })
+            ->take(4)
+            ->values();
+
+        $contactSetting = ContactSetting::query()
+            ->where('is_active', true)
+            ->first(['phone', 'whatsapp']);
+
+        $shippingSettings = StorefrontSetting::query()
+            ->whereIn('key', ['shipping_flat_rate', 'shipping_free_threshold'])
+            ->pluck('value', 'key')
+            ->all();
 
         return view('product.show', [
             'product' => $product,
             'relatedProducts' => $relatedProducts,
+            'variantGroups' => $variantGroups,
+            'canPurchase' => $canPurchase,
+            'maxPurchaseQuantity' => $maxPurchaseQuantity,
+            'installmentPlan' => $installmentPlan,
+            'safeShortDescription' => $safeShortDescription,
+            'safeDescription' => $safeDescription,
+            'contactSetting' => $contactSetting,
+            'shippingSettings' => $shippingSettings,
         ]);
+    }
+
+    /**
+     * Build installment amounts in integer cents to prevent floating-point
+     * rounding from showing totals different from the exact product price.
+     *
+     * @return array<string, mixed>|null
+     */
+    private function resolveInstallmentPlan(Product $product): ?array
+    {
+        $cashPercent = (int) ($product->installment_cash_percent ?? 0);
+        $chequeCount = (int) ($product->installment_cheque_count ?? 0);
+        $intervalMonths = (int) ($product->installment_interval_months ?? 0);
+
+        if (
+            ! $product->installment_enabled
+            || $cashPercent < 1
+            || $cashPercent > 99
+            || $product->installment_remainder_method !== 'cheque'
+            || $chequeCount < 1
+            || $chequeCount > 36
+            || $intervalMonths < 1
+            || $intervalMonths > 24
+            || (float) $product->price <= 0
+        ) {
+            return null;
+        }
+
+        $priceCents = (int) round((float) $product->price * 100);
+        $cashCents = (int) round($priceCents * $cashPercent / 100);
+        $remainderCents = $priceCents - $cashCents;
+
+        if ($priceCents < 1 || $cashCents < 1 || $remainderCents < $chequeCount) {
+            return null;
+        }
+
+        $baseChequeCents = intdiv($remainderCents, $chequeCount);
+        $distributedCents = 0;
+        $amounts = [];
+
+        for ($index = 1; $index <= $chequeCount; $index++) {
+            $amountCents = $index === $chequeCount
+                ? $remainderCents - $distributedCents
+                : $baseChequeCents;
+
+            if ($amountCents < 1) {
+                return null;
+            }
+
+            $amounts[] = $amountCents / 100;
+            $distributedCents += $amountCents;
+        }
+
+        $cashAmount = $cashCents / 100;
+        $deferredAmount = $remainderCents / 100;
+        $total = $cashAmount + array_sum($amounts);
+        $price = $priceCents / 100;
+
+        return [
+            'cash_percent' => $cashPercent,
+            'cash_amount' => $cashAmount,
+            'deferred_amount' => $deferredAmount,
+            'cheque_count' => $chequeCount,
+            'interval_months' => $intervalMonths,
+            'cheque_amounts' => $amounts,
+            'without_fee' => abs($total - $price) < 0.001,
+        ];
+    }
+
+    private function publicCopy(?string $value): ?string
+    {
+        $copy = trim((string) $value);
+
+        if ($copy === '') {
+            return null;
+        }
+
+        $placeholderPatterns = [
+            'این رکورد برای بررسی چیدمان',
+            'اطلاعات نمایشی برای پیش‌نمایش',
+            'پیش‌نمایش کاتالوگ',
+            'پیش از انتشار نهایی',
+            'مشخصات نهایی باید',
+            'رکورد صرفاً برای تست خودکار',
+        ];
+
+        foreach ($placeholderPatterns as $pattern) {
+            if (Str::contains($copy, $pattern)) {
+                return null;
+            }
+        }
+
+        return $copy;
     }
 }
