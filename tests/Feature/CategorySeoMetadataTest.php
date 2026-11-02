@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\Category;
+use App\Models\Product;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -32,6 +33,16 @@ class CategorySeoMetadataTest extends TestCase
 
         $this->assertSame('خرید هود مخفی آشپزخانه | فرزین', $category->meta_title);
         $this->assertSame('مدل‌های هود مخفی فرزین را با مشخصات و قیمت بررسی کنید.', $category->meta_description);
+
+        Product::create([
+            'category_id' => $category->id,
+            'name' => 'هود مخفی تست‌شده',
+            'slug' => 'built-in-hood-seo-test-product',
+            'sku' => 'FAR-HOOD-SEO-TEST',
+            'price' => 18000000,
+            'stock' => 2,
+            'status' => 'active',
+        ]);
 
         $this->get(route('categories.show', $category->slug))
             ->assertOk()
