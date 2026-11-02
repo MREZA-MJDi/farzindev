@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Category;
+use App\Http\Requests\Shop\ShopFilterRequest;
 use Illuminate\Contracts\View\View;
 
 class CategoryController extends Controller
@@ -35,8 +36,9 @@ class CategoryController extends Controller
         ]);
     }
 
-    public function show(Category $category): View
+    public function show(ShopFilterRequest $request, Category $category): View
     {
+        $filters = $request->validated();
         abort_unless(
             $category->is_active
             && $category->products()->active()->publicCatalogue()->exists(),
@@ -50,10 +52,20 @@ class CategoryController extends Controller
             'latestActiveProduct.images.media:id,path',
         ]);
 
-        $products = $category
+        $productQuery = $category
             ->products()
             ->active()
-            ->publicCatalogue()
+            ->publicCatalogue();
+
+        if (! empty($filters['width_cm'])) {
+            $productQuery->where('width_cm', (int) $filters['width_cm']);
+        }
+
+        if (! empty($filters['installation_type'])) {
+            $productQuery->where('installation_type', $filters['installation_type']);
+        }
+
+        $products = $productQuery
             ->with([
                 'category',
                 // Product cards only render the first image; avoid loading full galleries for 12 rows.
@@ -68,9 +80,28 @@ class CategoryController extends Controller
             ->paginate(12)
             ->withQueryString();
 
+        $widthOptions = $category->products()
+            ->active()
+            ->publicCatalogue()
+            ->whereNotNull('width_cm')
+            ->distinct()
+            ->orderBy('width_cm')
+            ->pluck('width_cm');
+
+        $installationTypes = $category->products()
+            ->active()
+            ->publicCatalogue()
+            ->whereNotNull('installation_type')
+            ->where('installation_type', '!=', '')
+            ->distinct()
+            ->orderBy('installation_type')
+            ->pluck('installation_type');
+
         return view('categories.show', [
             'category' => $category,
             'products' => $products,
+            'widthOptions' => $widthOptions,
+            'installationTypes' => $installationTypes,
         ]);
     }
 }
