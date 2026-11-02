@@ -285,6 +285,83 @@ class FarzinStorefrontTest extends TestCase
             ->assertSee('چک‌لیست ساده پیش از ثبت سفارش');
     }
 
+    public function test_homepage_trust_section_only_shows_configured_real_services(): void
+    {
+        $this->get(route('home'))
+            ->assertOk()
+            ->assertDontSee('fz-home-trust', false);
+
+        ContactSetting::create([
+            'phone' => '09121234567',
+            'warranty_summary' => '۱۲ ماه ضمانت ثبت‌شده برای این فروشگاه',
+            'shipping_summary' => 'ارسال طبق محدوده و هزینه اعلام‌شده هنگام سفارش',
+            'installation_summary' => 'نصب با هماهنگی در محدوده خدمت‌رسانی',
+            'is_active' => true,
+        ]);
+
+        $this->get(route('home'))
+            ->assertOk()
+            ->assertSee('fz-home-trust', false)
+            ->assertSee('چرا فرزین؟')
+            ->assertSee('۱۲ ماه ضمانت ثبت‌شده برای این فروشگاه')
+            ->assertSee('ارسال طبق محدوده و هزینه اعلام‌شده هنگام سفارش')
+            ->assertSee('نصب با هماهنگی در محدوده خدمت‌رسانی')
+            ->assertDontSee('سبد خرید یکپارچه')
+            ->assertDontSee('مدیریت سفارش‌ها');
+    }
+
+    public function test_homepage_quick_width_selector_uses_only_available_products_with_real_widths(): void
+    {
+        $category = $this->category();
+        $this->product($category, [
+            'name' => 'هود عرض هفتاد واقعی',
+            'slug' => 'hood-width-real-70',
+            'sku' => 'FAR-HOME-WIDTH-70',
+            'width_cm' => 70,
+            'stock' => 4,
+        ]);
+        $this->product($category, [
+            'name' => 'هود عرض نود ناموجود',
+            'slug' => 'hood-width-out-90',
+            'sku' => 'FAR-HOME-WIDTH-90',
+            'width_cm' => 90,
+            'stock' => 0,
+        ]);
+
+        $this->get(route('home'))
+            ->assertOk()
+            ->assertSee('fz-home-width-selector', false)
+            ->assertSee('۷۰ سانتی‌متر')
+            ->assertDontSee('۹۰ سانتی‌متر');
+    }
+
+    public function test_shop_filters_by_structured_width_and_installation_type(): void
+    {
+        $category = $this->category();
+        $matching = $this->product($category, [
+            'name' => 'هود مخفی عرض هفتاد',
+            'slug' => 'hood-hidden-70-filter',
+            'sku' => 'FAR-FILTER-HIDDEN-70',
+            'width_cm' => 70,
+            'installation_type' => 'مخفی',
+        ]);
+        $nonMatching = $this->product($category, [
+            'name' => 'هود مورب عرض نود',
+            'slug' => 'hood-angled-90-filter',
+            'sku' => 'FAR-FILTER-ANGLED-90',
+            'width_cm' => 90,
+            'installation_type' => 'مورب',
+        ]);
+
+        $this->get(route('shop.index', [
+            'width_cm' => 70,
+            'installation_type' => 'مخفی',
+        ]))
+            ->assertOk()
+            ->assertSee($matching->name)
+            ->assertDontSee($nonMatching->name);
+    }
+
     public function test_homepage_journal_waits_for_three_published_image_backed_articles(): void
     {
         Storage::fake('public');
@@ -432,7 +509,7 @@ class FarzinStorefrontTest extends TestCase
             ->assertSee('راهنمای انتخاب هود')
             ->assertSee('راهنمای انتخاب سینک')
             ->assertSee('fz-home-featured-grid--six', false)
-            ->assertSee('fz-home-trust', false)
+            ->assertDontSee('fz-home-trust', false)
             ->assertSee('fz-home-final-cta', false)
             ->assertDontSee('fz-home-contact-bridge', false)
             ->assertDontSee('fz-home-journal', false)
