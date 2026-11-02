@@ -42,7 +42,7 @@ final class StorefrontContact
 
         return [
             'display' => $display,
-            'href' => 'tel:+' . $digits,
+            'href' => 'tel:+' . (str_starts_with($digits, '0') ? '98' . substr($digits, 1) : $digits),
         ];
     }
 
