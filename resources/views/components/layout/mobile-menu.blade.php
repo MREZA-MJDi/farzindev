@@ -248,10 +248,10 @@
                         <a href="https://wa.me/{{ preg_replace('/\D+/', '', (string) data_get($storefrontContact, 'whatsapp')) }}" target="_blank" rel="noopener noreferrer" class="text-[var(--livora-text)]">واتساپ</a>
                     @endif
                     @if(filled(data_get($storefrontContact, 'instagram_url')))
-                        <a href="{{ data_get($storefrontContact, 'instagram_url') }}" target="_blank" rel="noopener noreferrer" class="text-[var(--livora-text)]">Instagram</a>
+                        <a href="{{ data_get($storefrontContact, 'instagram_url') }}" target="_blank" rel="noopener noreferrer" class="text-[var(--livora-text)]">اینستاگرام</a>
                     @endif
                     @if(filled(data_get($storefrontContact, 'telegram_url')))
-                        <a href="{{ data_get($storefrontContact, 'telegram_url') }}" target="_blank" rel="noopener noreferrer" class="text-[var(--livora-text)]">Telegram</a>
+                        <a href="{{ data_get($storefrontContact, 'telegram_url') }}" target="_blank" rel="noopener noreferrer" class="text-[var(--livora-text)]">تلگرام</a>
                     @endif
                 </div>
             @endif
