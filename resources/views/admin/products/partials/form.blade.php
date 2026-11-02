@@ -353,6 +353,29 @@
                 </div>
 
 
+                {{-- Homepage product-card specifications --}}
+                <div class="sm:col-span-2 rounded-2xl border border-[var(--admin-border)] bg-[var(--admin-surface-soft)] p-5">
+                    <h3 class="text-sm font-bold text-[var(--admin-text)]">مشخصات کوتاه برای کارت محصول</h3>
+                    <p class="mt-1 text-xs leading-6 text-[var(--admin-muted)]">فقط مقدارهای تأییدشده همین مدل را وارد کنید. این سه مورد در کارت محصولات منتخب صفحه اصلی نمایش داده می‌شوند؛ مقدار خالی به معنی عدم نمایش چیپ است.</p>
+                    <div class="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-3">
+                        <div>
+                            <label for="specifications_width" class="admin-label">عرض</label>
+                            <input id="specifications_width" name="specifications[width]" type="text" maxlength="80" value="{{ old('specifications.width', data_get($product->specifications, 'width')) }}" class="admin-input mt-2 w-full" placeholder="مثلاً ۹۰ سانتی‌متر">
+                            @error('specifications.width')<p class="mt-2 text-xs text-[var(--admin-danger)]">{{ $message }}</p>@enderror
+                        </div>
+                        <div>
+                            <label for="specifications_installation" class="admin-label">نوع نصب</label>
+                            <input id="specifications_installation" name="specifications[installation]" type="text" maxlength="80" value="{{ old('specifications.installation', data_get($product->specifications, 'installation')) }}" class="admin-input mt-2 w-full" placeholder="مقدار واقعی نصب">
+                            @error('specifications.installation')<p class="mt-2 text-xs text-[var(--admin-danger)]">{{ $message }}</p>@enderror
+                        </div>
+                        <div>
+                            <label for="specifications_material" class="admin-label">جنس</label>
+                            <input id="specifications_material" name="specifications[material]" type="text" maxlength="80" value="{{ old('specifications.material', data_get($product->specifications, 'material')) }}" class="admin-input mt-2 w-full" placeholder="جنس تأییدشده محصول">
+                            @error('specifications.material')<p class="mt-2 text-xs text-[var(--admin-danger)]">{{ $message }}</p>@enderror
+                        </div>
+                    </div>
+                </div>
+
                 {{-- Description --}}
                 <div class="sm:col-span-2">
 

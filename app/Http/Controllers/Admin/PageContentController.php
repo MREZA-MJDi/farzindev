@@ -5,9 +5,11 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\StorefrontSetting;
 use App\Services\StorefrontPageContent;
+use App\Services\Media\ResponsiveImageService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\Rule;
 use Illuminate\View\View;
 
 class PageContentController extends Controller
@@ -15,34 +17,30 @@ class PageContentController extends Controller
     private const GROUPS = [
         'home' => [
             'title' => 'صفحه اصلی',
-            'description' => 'متن Hero، معرفی دسته‌ها، محصولات، اعتمادسازی، راهنماها و دعوت به خرید را کنترل کنید.',
+            'description' => 'عنوان کوتاه، زیرعنوان، تصویر واقعی و نقطه تمرکز Hero را کنترل کنید؛ دسته‌ها و محصولات از کاتالوگ واقعی خوانده می‌شوند.',
             'fields' => [
-                'page_home_hero_eyebrow' => ['label' => 'برچسب بالای Hero', 'type' => 'text', 'max' => 160],
-                'page_home_hero_title' => ['label' => 'عنوان اصلی Hero', 'type' => 'text', 'max' => 160],
-                'page_home_hero_highlight' => ['label' => 'خط تأکیدی عنوان', 'type' => 'text', 'max' => 160],
-                'page_home_hero_description' => ['label' => 'متن معرفی Hero', 'type' => 'textarea', 'max' => 500],
-                'page_home_hero_image_url' => ['label' => 'تصویر واقعی آشپزخانه برای Hero (URL یا مسیر public مانند /storage/hero.webp)', 'type' => 'text', 'max' => 1000],
+                'page_home_hero_title' => ['label' => 'عنوان کوتاه Hero', 'type' => 'text', 'max' => 120],
+                'page_home_hero_description' => ['label' => 'زیرعنوان یک‌خطی Hero', 'type' => 'text', 'max' => 220],
+                'page_home_hero_image_position' => [
+                    'label' => 'نقطه تمرکز تصویر Hero',
+                    'type' => 'select',
+                    'options' => [
+                        'center center' => 'مرکز تصویر',
+                        'center 35%' => 'کمی بالاتر',
+                        'center 65%' => 'کمی پایین‌تر',
+                        'right center' => 'سمت راست',
+                        'left center' => 'سمت چپ',
+                    ],
+                ],
                 'page_home_enamad_url' => ['label' => 'پیوند رسمی نماد اعتماد الکترونیکی (HTTPS)', 'type' => 'text', 'max' => 500],
                 'page_home_warranty_text' => ['label' => 'توضیح ضمانت در صفحه اصلی', 'type' => 'textarea', 'max' => 300],
-                'page_home_reviews_text' => ['label' => 'متن نظر مشتریان / جای‌نگهدار', 'type' => 'textarea', 'max' => 300],
                 'page_home_hero_primary_label' => ['label' => 'متن دکمه اصلی', 'type' => 'text', 'max' => 80],
-                'page_home_hero_secondary_label' => ['label' => 'متن دکمه دسته‌بندی', 'type' => 'text', 'max' => 80],
                 'page_home_categories_eyebrow' => ['label' => 'برچسب دسته‌بندی‌ها', 'type' => 'text', 'max' => 120],
                 'page_home_categories_title' => ['label' => 'عنوان بخش دسته‌بندی‌ها', 'type' => 'text', 'max' => 160],
                 'page_home_categories_description' => ['label' => 'توضیح بخش دسته‌بندی‌ها', 'type' => 'textarea', 'max' => 500],
                 'page_home_products_eyebrow' => ['label' => 'برچسب بخش محصولات منتخب', 'type' => 'text', 'max' => 120],
                 'page_home_products_title' => ['label' => 'عنوان محصولات منتخب در نبود فروش', 'type' => 'text', 'max' => 160],
                 'page_home_products_description' => ['label' => 'توضیح محصولات منتخب', 'type' => 'textarea', 'max' => 500],
-                'page_home_best_sellers_title' => ['label' => 'عنوان پرفروش‌ها', 'type' => 'text', 'max' => 160],
-                'page_home_best_sellers_description' => ['label' => 'توضیح پرفروش‌ها', 'type' => 'textarea', 'max' => 500],
-                'page_home_trust_eyebrow' => ['label' => 'برچسب اعتمادسازی', 'type' => 'text', 'max' => 120],
-                'page_home_trust_title' => ['label' => 'عنوان اعتمادسازی', 'type' => 'text', 'max' => 160],
-                'page_home_trust_1_title' => ['label' => 'کارت اعتماد ۱ — عنوان', 'type' => 'text', 'max' => 100],
-                'page_home_trust_1_description' => ['label' => 'کارت اعتماد ۱ — توضیح', 'type' => 'textarea', 'max' => 300],
-                'page_home_trust_2_title' => ['label' => 'کارت اعتماد ۲ — عنوان', 'type' => 'text', 'max' => 100],
-                'page_home_trust_2_description' => ['label' => 'کارت اعتماد ۲ — توضیح', 'type' => 'textarea', 'max' => 300],
-                'page_home_trust_3_title' => ['label' => 'کارت اعتماد ۳ — عنوان', 'type' => 'text', 'max' => 100],
-                'page_home_trust_3_description' => ['label' => 'کارت اعتماد ۳ — توضیح', 'type' => 'textarea', 'max' => 300],
                 'page_home_guides_title' => ['label' => 'عنوان راهنماها', 'type' => 'text', 'max' => 160],
                 'page_home_guides_description' => ['label' => 'توضیح راهنماها', 'type' => 'textarea', 'max' => 300],
                 'page_home_hood_guide_title' => ['label' => 'راهنمای هود — عنوان', 'type' => 'text', 'max' => 100],
@@ -54,7 +52,6 @@ class PageContentController extends Controller
                 'page_home_journal_title' => ['label' => 'عنوان مجله', 'type' => 'text', 'max' => 160],
                 'page_home_journal_description' => ['label' => 'توضیح مجله', 'type' => 'textarea', 'max' => 300],
                 'page_home_final_title' => ['label' => 'عنوان دعوت پایانی', 'type' => 'text', 'max' => 160],
-                'page_home_final_description' => ['label' => 'توضیح دعوت پایانی', 'type' => 'textarea', 'max' => 500],
                 'page_home_final_cta' => ['label' => 'متن دکمه پایانی', 'type' => 'text', 'max' => 80],
                 'page_home_show_categories' => ['label' => 'نمایش بخش دسته‌بندی‌ها', 'type' => 'toggle'],
                 'page_home_show_products' => ['label' => 'نمایش بخش محصولات منتخب', 'type' => 'toggle'],
@@ -174,7 +171,7 @@ class PageContentController extends Controller
         ]);
     }
 
-    public function update(Request $request, StorefrontPageContent $content): RedirectResponse
+    public function update(Request $request, StorefrontPageContent $content, ResponsiveImageService $images): RedirectResponse
     {
         $tab = (string) $request->input('tab', 'home');
         abort_unless(array_key_exists($tab, self::GROUPS), 404);
@@ -184,15 +181,33 @@ class PageContentController extends Controller
             $rules[$key] = match ($field['type']) {
                 'toggle' => ['required', 'boolean'],
                 'number' => ['required', 'numeric', 'between:' . $field['min'] . ',' . $field['max']],
+                'select' => ['required', 'string', Rule::in(array_keys($field['options']))],
                 default => ['present', 'nullable', 'string', 'max:' . $field['max']],
             };
+        }
+
+        if ($tab === 'home') {
+            $rules['page_home_hero_image'] = [
+                'nullable',
+                'image',
+                'mimes:jpg,jpeg,png,webp',
+                'dimensions:min_width=1200,min_height=700',
+                'max:20480',
+            ];
         }
 
         $validated = $request->validate($rules, [
             'page_typography_font_scale.between' => 'مقیاس فونت باید بین ۹۰ تا ۱۱۰ درصد باشد.',
             'page_typography_line_height.between' => 'ارتفاع خط باید بین ۱٫۴ تا ۲٫۲ باشد.',
             'page_typography_content_width.between' => 'عرض محتوا باید بین ۱۱۲۰ تا ۱۴۴۰ پیکسل باشد.',
+            'page_home_hero_image.image' => 'فایل Hero باید یک تصویر معتبر باشد.',
+            'page_home_hero_image.mimes' => 'فرمت تصویر Hero باید JPG، PNG یا WEBP باشد.',
+            'page_home_hero_image.dimensions' => 'ابعاد تصویر Hero حداقل باید ۱۲۰۰ در ۷۰۰ پیکسل باشد.',
+            'page_home_hero_image.max' => 'حجم تصویر Hero نباید بیشتر از ۲۰ مگابایت باشد.',
         ]);
+
+        $heroImageUpload = $validated['page_home_hero_image'] ?? null;
+        unset($validated['page_home_hero_image']);
 
         $normalized = [];
         foreach ($validated as $key => $value) {
@@ -203,14 +218,40 @@ class PageContentController extends Controller
             };
         }
 
-        DB::transaction(function () use ($normalized): void {
-            foreach ($normalized as $key => $value) {
-                StorefrontSetting::query()->updateOrCreate(
-                    ['key' => $key],
-                    ['value' => $value]
-                );
+        $newHeroImagePath = null;
+        if ($heroImageUpload !== null) {
+            $newHeroImagePath = $images->store($heroImageUpload, 'homepage');
+
+            if (! $newHeroImagePath) {
+                return back()->withInput()->withErrors([
+                    'page_home_hero_image' => 'ذخیره تصویر Hero انجام نشد؛ فضای ذخیره‌سازی را بررسی کنید.',
+                ]);
             }
-        });
+        }
+
+        try {
+            DB::transaction(function () use ($normalized, $newHeroImagePath): void {
+                foreach ($normalized as $key => $value) {
+                    StorefrontSetting::query()->updateOrCreate(
+                        ['key' => $key],
+                        ['value' => $value]
+                    );
+                }
+
+                if ($newHeroImagePath !== null) {
+                    StorefrontSetting::query()->updateOrCreate(
+                        ['key' => 'page_home_hero_image_url'],
+                        ['value' => $newHeroImagePath]
+                    );
+                }
+            });
+        } catch (\Throwable $exception) {
+            if ($newHeroImagePath !== null) {
+                $images->delete($newHeroImagePath);
+            }
+
+            throw $exception;
+        }
 
         $content->clearCache();
 

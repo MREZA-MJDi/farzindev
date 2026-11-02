@@ -56,15 +56,45 @@
                 <p class="mt-2 text-xs leading-6 text-[var(--admin-muted)]">{{ $group['description'] }}</p>
             </div>
 
-            <form method="POST" action="{{ route('admin.page-content.update') }}" class="space-y-6 p-5 sm:p-7">
+            <form method="POST" action="{{ route('admin.page-content.update') }}" enctype="multipart/form-data" class="space-y-6 p-5 sm:p-7">
                 @csrf
                 @method('PUT')
                 <input type="hidden" name="tab" value="{{ $tab }}">
 
                 @if($tab === 'home')
                     <div class="rounded-xl border border-[var(--admin-border)] bg-[var(--admin-surface-soft)] p-4 text-xs leading-6 text-[var(--admin-muted)]">
-                        محتوای این تب در Hero، کارت‌های اعتماد، راهنماها، معرفی مجله و دعوت پایانی خانه استفاده می‌شود. نام و ترتیب دسته‌ها و محصولات از CRUD اختصاصی خودشان می‌آیند.
+                        متن Hero و عنوان بخش‌ها را از اینجا ویرایش کنید. نام و تعداد دسته‌ها و محصولات از کاتالوگ؛ مشخصات فنی از فرم محصول؛ تلفن، نشانی و واتساپ از تنظیمات تماس؛ و شرایط اقساط از تنظیمات همان محصول خوانده می‌شوند.
                     </div>
+                    @php
+                        $heroImageValue = trim((string) ($values['page_home_hero_image_url'] ?? ''));
+                        $heroImagePreview = '';
+                        if ($heroImageValue !== '') {
+                            $heroImagePreview = \Illuminate\Support\Str::startsWith($heroImageValue, ['http://', 'https://', '//'])
+                                ? $heroImageValue
+                                : \Illuminate\Support\Facades\Storage::disk('public')->url(
+                                    preg_replace('#^(public/|storage/)#', '', ltrim($heroImageValue, '/')) ?? $heroImageValue
+                                );
+                        }
+                    @endphp
+                    <div class="grid gap-5 rounded-2xl border border-[var(--admin-border)] bg-[var(--admin-surface-soft)] p-4 sm:grid-cols-[minmax(0,1.2fr)_minmax(250px,.8fr)] sm:p-5">
+                        <div class="min-w-0">
+                            <h3 class="text-sm font-bold text-[var(--admin-text)]">تصویر واقعی Hero</h3>
+                            <p class="mt-2 text-xs leading-6 text-[var(--admin-muted)]">عکس یک آشپزخانه واقعی با هود یا سینک نصب‌شده را بارگذاری کنید. تصویر جایگزین قبلی می‌شود؛ تصویر نمایشی یا ساختگی به‌صورت خودکار انتخاب نمی‌شود.</p>
+                            <label for="page_home_hero_image" class="admin-label mt-4 block">انتخاب تصویر آشپزخانه</label>
+                            <input id="page_home_hero_image" name="page_home_hero_image" type="file" accept="image/jpeg,image/png,image/webp" class="admin-input mt-2 w-full p-2">
+                            <p class="mt-2 text-xs leading-6 text-[var(--admin-muted)]">فرمت JPG، PNG یا WEBP؛ حداقل ۱۲۰۰×۷۰۰ پیکسل و حداکثر ۲۰ مگابایت. برای تغییر نقطه تمرکز تصویر، تنظیم کنار فیلدهای متن را انتخاب کنید.</p>
+                            @error('page_home_hero_image')<p role="alert" class="mt-2 text-xs text-[var(--admin-danger)]">{{ $message }}</p>@enderror
+                        </div>
+                        <div class="min-w-0">
+                            @if($heroImagePreview !== '')
+                                <img src="{{ $heroImagePreview }}" alt="پیش‌نمایش تصویر فعلی Hero" class="aspect-[16/10] w-full rounded-xl border border-[var(--admin-border)] object-cover" loading="lazy">
+                                <p class="mt-2 text-xs text-[var(--admin-muted)]">تصویر فعلی روی صفحه اصلی نمایش داده می‌شود.</p>
+                            @else
+                                <div class="flex aspect-[16/10] items-center justify-center rounded-xl border border-dashed border-[var(--admin-border)] bg-[var(--admin-card)] p-5 text-center text-xs leading-6 text-[var(--admin-muted)]">هنوز تصویر واقعی برای Hero بارگذاری نشده است.</div>
+                            @endif
+                        </div>
+                    </div>
+
                 @elseif($tab === 'about')
                     <div class="rounded-xl border border-[var(--admin-border)] bg-[var(--admin-surface-soft)] p-4 text-xs leading-6 text-[var(--admin-muted)]">
                         اطلاعات فنی و ادعاهای تجاری را فقط با داده تأییدشده مجموعه جایگزین کنید. این فیلدها متن ساده‌اند و HTML یا اسکریپت اجرا نمی‌کنند.
@@ -95,6 +125,12 @@
                                 <label for="{{ $key }}" class="admin-label">{{ $field['label'] }}</label>
                                 @if($field['type'] === 'textarea')
                                     <textarea id="{{ $key }}" name="{{ $key }}" rows="3" maxlength="{{ $field['max'] }}" class="admin-textarea mt-2 w-full">{{ $value }}</textarea>
+                                @elseif($field['type'] === 'select')
+                                    <select id="{{ $key }}" name="{{ $key }}" class="admin-select mt-2 w-full">
+                                        @foreach($field['options'] as $optionValue => $optionLabel)
+                                            <option value="{{ $optionValue }}" @selected((string) $value === (string) $optionValue)>{{ $optionLabel }}</option>
+                                        @endforeach
+                                    </select>
                                 @else
                                     <input id="{{ $key }}" name="{{ $key }}" type="{{ $field['type'] === 'number' ? 'number' : 'text' }}"
                                            value="{{ $value }}" @if(isset($field['min'])) min="{{ $field['min'] }}" @endif
