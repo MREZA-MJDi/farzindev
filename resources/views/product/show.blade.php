@@ -1,164 +1,69 @@
 @extends('layouts.app')
 
 @php
-    /*
-    |--------------------------------------------------------------------------
-    | Product SEO
-    |--------------------------------------------------------------------------
-    */
-
-    $pageTitle = str_ireplace(
-        'فرزین',
-        'فرزین',
-        $product->meta_title
-            ?: ($product->name . ' | فرزین')
-    );
-
-    $pageDescription = str_ireplace(
-        'فرزین',
-        'فرزین',
-        $product->meta_description
-            ?: ($product->short_description
-                ?: ('خرید ' . $product->name . ' با مشاهده قیمت، مشخصات و شرایط خرید در فرزین.'))
-    );
-
+    $pageTitle = $product->meta_title ?: ($product->name . ' | فرزین');
+    $pageDescription = $product->meta_description
+        ?: ($safeShortDescription ?: $safeDescription ?: $product->name);
     $pageCanonical = $product->canonical_url ?: route('product.show', $product->slug);
-    $pageOgTitle = $product->og_title ?: $pageTitle;
-    $pageOgDescription = $product->og_description ?: $pageDescription;
+    $mainImage = $product->images->first(fn ($image) => filled($image->url));
 
-    /*
-    |--------------------------------------------------------------------------
-    | Installment
-    |--------------------------------------------------------------------------
-    */
+    $productPrice = (float) $product->price;
+    $phone = \App\Support\StorefrontContact::phone($contactSetting?->phone);
+    $whatsappDigits = \App\Support\StorefrontContact::whatsapp($contactSetting?->whatsapp);
 
-    $installmentEnabled =
-        (bool) $product->installment_enabled;
+    $stockRequestMessage = 'سلام، لطفاً درباره زمان تأمین موجودی محصول «' . $product->name . '» راهنمایی‌ام کنید.';
+    $consultationMessage = 'سلام، برای انتخاب و بررسی محصول «' . $product->name . '» به مشاوره نیاز دارم.';
+    $stockRequestUrl = route('contact', [
+        'subject' => 'product',
+        'message' => $stockRequestMessage,
+    ]) . '#contact-form';
+    $consultationUrl = route('contact', [
+        'subject' => 'product',
+        'message' => $consultationMessage,
+    ]) . '#contact-form';
 
-    $cashPercent =
-        $installmentEnabled
-            ? (int) ($product->installment_cash_percent ?? 0)
-            : 0;
+    $whatsappUrl = $whatsappDigits
+        ? 'https://wa.me/' . $whatsappDigits . '?' . http_build_query(['text' => $consultationMessage])
+        : null;
 
-    $chequeCount =
-        $installmentEnabled
-            ? (int) ($product->installment_cheque_count ?? 0)
-            : 0;
+    $hasShippingFlatRate = array_key_exists('shipping_flat_rate', $shippingSettings)
+        && is_numeric($shippingSettings['shipping_flat_rate']);
+    $hasFreeShippingThreshold = array_key_exists('shipping_free_threshold', $shippingSettings)
+        && is_numeric($shippingSettings['shipping_free_threshold'])
+        && (float) $shippingSettings['shipping_free_threshold'] > 0;
+    $shippingFlatRate = $hasShippingFlatRate ? (float) $shippingSettings['shipping_flat_rate'] : null;
+    $shippingFreeThreshold = $hasFreeShippingThreshold ? (float) $shippingSettings['shipping_free_threshold'] : null;
+    $hasShippingInfo = $hasShippingFlatRate || $hasFreeShippingThreshold;
 
-    $intervalMonths =
-        $installmentEnabled
-            ? (int) ($product->installment_interval_months ?? 0)
-            : 0;
-
-    $productPrice =
-        (float) $product->price;
-
-    $cashAmount =
-        $installmentEnabled && $cashPercent > 0
-            ? round(
-                $productPrice * ($cashPercent / 100),
-                2
-            )
-            : 0;
-
-    $deferredAmount =
-        $installmentEnabled
-            ? round(
-                $productPrice - $cashAmount,
-                2
-            )
-            : 0;
-
-    $chequeAmounts = [];
-
-    if (
-        $installmentEnabled
-        && $chequeCount > 0
-        && $deferredAmount > 0
-    ) {
-        $baseChequeAmount = round(
-            $deferredAmount / $chequeCount,
-            2
-        );
-
-        $distributed = 0;
-
-        for ($i = 1; $i <= $chequeCount; $i++) {
-
-            if ($i === $chequeCount) {
-                $amount = round(
-                    $deferredAmount - $distributed,
-                    2
-                );
-            } else {
-                $amount = $baseChequeAmount;
-            }
-
-            $chequeAmounts[] = $amount;
-
-            $distributed = round(
-                $distributed + $amount,
-                2
-            );
-        }
+    $productTabs = [];
+    if ($safeDescription) {
+        $productTabs[] = 'description';
+    }
+    if ($installmentPlan) {
+        $productTabs[] = 'installment';
+    }
+    if ($hasShippingInfo) {
+        $productTabs[] = 'shipping';
     }
 
     $galleryImageIndexes = $product->images
         ->values()
-        ->mapWithKeys(
-            fn ($image, $index) => [
-                (int) $image->id => (int) $index,
-            ]
-        )
+        ->mapWithKeys(fn ($image, $index) => [(int) $image->id => (int) $index])
         ->all();
 
     $variantImageMap = $product->variants
-        ->mapWithKeys(
-            fn ($variant) => [
-                (string) $variant->id => $variant->images
-                    ->map(
-                        fn ($image) =>
-                            $galleryImageIndexes[$image->id] ?? null
-                    )
-                    ->filter(fn ($index) => $index !== null)
-                    ->values()
-                    ->all(),
-            ]
-        )
+        ->mapWithKeys(fn ($variant) => [
+            (string) $variant->id => $variant->images
+                ->map(fn ($image) => $galleryImageIndexes[$image->id] ?? null)
+                ->filter(fn ($index) => $index !== null)
+                ->values()
+                ->all(),
+        ])
         ->all();
 
-
-    $mainImage =
-        $product->images?->first()?->url;
-
-    $variantGroups =
-        $product->variants
-            ->groupBy('type');
-
-    $variantOptionsAvailable =
-        $variantGroups->isNotEmpty()
-        && $variantGroups->every(
-            fn ($options) =>
-                $options->contains(
-                    fn ($option) => (int) $option->stock > 0
-                )
-        );
-
-    $canPurchase =
-        $variantGroups->isNotEmpty()
-            ? $variantOptionsAvailable
-            : (int) $product->stock > 0;
-
-    // Variant-backed products track stock on each option, not the parent row.
-    // The selector further limits quantity to the minimum stock among selected options.
-    $maxPurchaseQuantity = $variantGroups->isNotEmpty()
-        ? max(1, min(99, (int) $product->variants->max('stock')))
-        : max(1, min(99, (int) $product->stock));
-
-    $availability =
-        $canPurchase
-            ? 'https://schema.org/InStock'
-            : 'https://schema.org/OutOfStock';
+    $availability = $canPurchase
+        ? 'https://schema.org/InStock'
+        : 'https://schema.org/OutOfStock';
 @endphp
 
 @section('title', $pageTitle)
@@ -168,10 +73,10 @@
     @section('robots', $product->seo_robots)
 @endif
 @section('og_type', 'product')
-@section('og_title', $pageOgTitle)
-@section('og_description', $pageOgDescription)
+@section('og_title', $product->og_title ?: $pageTitle)
+@section('og_description', $product->og_description ?: $pageDescription)
 @section('twitter_card', $mainImage ? 'summary_large_image' : 'summary')
-@section('og_image', $mainImage ?? '')
+@section('og_image', $mainImage?->url ?? '')
 
 @push('seo')
     @if($mainImage)
@@ -179,844 +84,303 @@
     @endif
     <meta property="product:price:amount" content="{{ (int) round($productPrice * 10) }}">
     <meta property="product:price:currency" content="IRR">
-
     @php
         $productSchema = [
             '@context' => 'https://schema.org',
             '@type' => 'Product',
             'name' => $product->name,
             'description' => $pageDescription,
-            'sku' => $product->sku,
             'url' => $pageCanonical,
-            'brand' => [
-                '@type' => 'Brand',
-                'name' => 'فرزین',
-            ],
+            'brand' => ['@type' => 'Brand', 'name' => 'فرزین'],
             'offers' => [
                 '@type' => 'Offer',
                 'url' => $pageCanonical,
                 'priceCurrency' => 'IRR',
-                // Product prices are stored in toman; schema.org expects rial.
-                'price' => (string) (int) round((float) $product->price * 10),
+                'price' => (string) (int) round($productPrice * 10),
                 'availability' => $availability,
             ],
         ];
 
-        if (filled($mainImage)) {
-            $productSchema['image'] = [$mainImage];
+        if (filled($product->sku)) {
+            $productSchema['sku'] = $product->sku;
         }
-
+        if ($mainImage) {
+            $productSchema['image'] = [$mainImage->url];
+        }
         if ($product->category) {
             $productSchema['category'] = $product->category->name;
         }
     @endphp
-
     <script type="application/ld+json">{!! json_encode($productSchema, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT) !!}</script>
 @endpush
 
+@push('styles')
+<style>
+    .fz-product-layout{display:grid;grid-template-columns:minmax(0,1fr);align-items:start;gap:1rem}
+    .fz-product-panel{min-width:0}
+    .fz-product-panel__title{font-size:clamp(1.05rem,2vw,1.85rem);line-height:1.65}
+    .fz-product-action{display:inline-flex;min-height:44px;align-items:center;justify-content:center;gap:.5rem;border-radius:1rem;padding:.75rem 1rem;font-size:.82rem;font-weight:700;text-align:center}
+    .fz-product-accordion summary{min-height:52px;display:flex;align-items:center;justify-content:space-between;gap:1rem;cursor:pointer;list-style:none}
+    .fz-product-accordion summary::-webkit-details-marker{display:none}
+    .fz-product-accordion summary:focus-visible,.fz-product-action:focus-visible{outline:2px solid var(--livora-accent);outline-offset:3px}
+    .fz-product-accordion[open] summary svg{transform:rotate(180deg)}
+    .fz-product-sticky{padding-bottom:max(.75rem,env(safe-area-inset-bottom))}
+    @media(max-width:767px){
+        .fz-product-layout{grid-template-columns:minmax(0,.88fr) minmax(0,1.12fr);gap:.7rem}
+        .fz-product-gallery .product-gallery-shell{border-radius:1rem}
+        .fz-product-gallery .product-gallery-stage{aspect-ratio:1/1;max-height:none;height:auto}
+        .fz-product-gallery .product-gallery-stage img{padding:.35rem}
+        .fz-product-gallery .farzin-gallery-arrow{width:2.75rem;height:2.75rem}
+        .fz-product-gallery .farzin-gallery-zoom{right:.4rem;bottom:.4rem;padding:.35rem .5rem;font-size:9px}
+        .fz-product-gallery .mt-4.flex.gap-3{gap:.4rem;margin-top:.5rem}
+        .fz-product-gallery .mt-4.flex.gap-3 button{width:2.75rem;height:2.75rem;min-width:44px;min-height:44px;border-radius:.6rem}
+        .fz-product-panel__title{font-size:clamp(.95rem,4.4vw,1.15rem);line-height:1.55}
+        .fz-product-panel .product-price__current strong{font-size:1.15rem}
+        .fz-product-panel .product-price__current span{font-size:.65rem}
+        .fz-product-panel .product-price__main{gap:.25rem}
+        .fz-product-panel__status{font-size:10px;padding:.3rem .55rem;min-height:44px}
+        .fz-product-panel .fz-product-action{width:100%;padding:.65rem .5rem;font-size:.72rem}
+        .fz-product-panel .farzin-quantity{max-width:100%}
+        .fz-product-panel .farzin-quantity__button{width:44px;height:44px}
+        .fz-product-panel .farzin-quantity__input{width:2.5rem;min-height:44px}
+        .fz-product-sku{font-size:9px}
+    }
+     .fz-product-layout--no-gallery{grid-template-columns:minmax(0,1fr)}
+    @media(min-width:768px){
+        .fz-product-layout{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:clamp(1.5rem,4vw,3.5rem)}
+    }
+    @media(min-width:1024px){.fz-product-layout{grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr)}}
+    @media(max-width:360px){.fz-product-panel__title{font-size:.9rem}.fz-product-gallery .farzin-gallery-arrow{width:1.75rem;height:1.75rem}}
+</style>
+@endpush
+
 @section('content')
+<div class="bg-[var(--livora-cream)] pb-28 lg:pb-0">
+    <x-layout.container>
+        <nav aria-label="مسیر صفحه" class="flex min-w-0 items-center gap-2 overflow-hidden py-3 text-[11px] text-[var(--livora-stone)]">
+            <a class="shrink-0 rounded py-1 hover:text-[var(--livora-text)]" href="{{ route('home') }}">خانه</a>
+            <span aria-hidden="true">/</span>
+            <a class="shrink-0 rounded py-1 hover:text-[var(--livora-text)]" href="{{ route('shop.index') }}">فروشگاه</a>
+            @if($product->category)
+                <span aria-hidden="true">/</span>
+                <a class="min-w-0 truncate rounded py-1 hover:text-[var(--livora-text)]" href="{{ route('categories.show', $product->category->slug) }}">{{ $product->category->name }}</a>
+            @endif
+        </nav>
 
-    <div
-        class="bg-[var(--livora-cream)] pb-28 lg:pb-0"
-        x-data="{
-        showInstallmentDetails: false
-    }"
-    >
+        <section class="fz-product-layout py-2 sm:py-6 {{ $mainImage ? '' : 'fz-product-layout--no-gallery' }}" aria-labelledby="product-title">
+            @if($mainImage)
+                <div class="min-w-0">
+                    <x-product.gallery :product="$product" :variant-image-map="$variantImageMap" />
+                </div>
+            @endif
 
-        {{-- =========================================================
-             BREADCRUMB
-        ========================================================== --}}
-        <section class="border-b border-[var(--livora-border)] bg-[var(--livora-white)]">
-
-            <x-layout.container>
-
-                <nav
-                    aria-label="breadcrumb"
-                    class="flex flex-wrap items-center gap-2 py-5 text-[11px] text-[var(--livora-stone)]"
-                >
-
-                    <a
-                        href="{{ route('home') }}"
-                        class="transition hover:text-[var(--livora-text)]"
-                    >
-                        خانه
-                    </a>
-
-                    <span>/</span>
-
-                    <a
-                        href="{{ route('shop.index') }}"
-                        class="transition hover:text-[var(--livora-text)]"
-                    >
-                        فروشگاه
-                    </a>
-
-                    @if($product->category)
-
-                        <span>/</span>
-
-                        <a
-                            href="{{ route('categories.show', $product->category->slug) }}"
-                            class="transition hover:text-[var(--livora-text)]"
-                        >
-                            {{ $product->category->name }}
-                        </a>
-
+            <div class="fz-product-panel min-w-0 rounded-2xl border border-[var(--livora-border)] bg-[var(--livora-white)] p-3 sm:rounded-3xl sm:p-6 lg:p-8">
+                <div class="flex flex-wrap items-center gap-2">
+                    <span class="fz-product-panel__status inline-flex min-h-8 items-center rounded-full border px-3 py-1 text-xs font-semibold {{ $canPurchase ? 'border-emerald-200 bg-emerald-50 text-emerald-800' : 'border-[var(--livora-border)] bg-[var(--livora-surface)] text-[var(--livora-stone)]' }}">
+                        {{ $canPurchase ? 'موجود' : 'ناموجود' }}
+                    </span>
+                    @if($product->is_new)
+                        <span class="inline-flex min-h-8 items-center rounded-full bg-[var(--livora-surface)] px-3 py-1 text-[11px] text-[var(--livora-text)]">جدید</span>
                     @endif
-
-                    <span>/</span>
-
-                    <span class="text-[var(--livora-text)]">
-                    {{ $product->name }}
-                </span>
-
-                </nav>
-
-            </x-layout.container>
-
-        </section>
-
-
-        {{-- =========================================================
-             PRODUCT HERO
-        ========================================================== --}}
-        <section class="farzin-product-hero">
-
-            <x-layout.container class="product-detail-container">
-
-                <div class="farzin-product-hero__layout product-detail-grid grid items-start gap-8 py-8 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] lg:gap-12 lg:py-12 xl:gap-16">
-
-                    {{-- Gallery --}}
-                    <div class="min-w-0">
-
-                        <div class="xl:sticky xl:top-24">
-                            <x-product.gallery
-                                :product="$product"
-                                :variant-image-map="$variantImageMap"
-                            />
-                        </div>
-
-                    </div>
-
-
-                    {{-- Product Details --}}
-                    <div class="min-w-0 farzin-product-detail-info">
-
-                        {{-- Labels --}}
-                        <div class="flex flex-wrap items-center gap-2">
-
-                            @if($product->is_new)
-
-                                <span class="rounded-full bg-[var(--livora-ink)] px-3 py-1.5 text-[10px] font-medium text-white">
-                                جدید
-                            </span>
-
-                            @endif
-
-                            @if($product->is_featured)
-
-                                <span class="farzin-product-detail-info__badge rounded-full border border-[var(--livora-border)] bg-[var(--livora-white)] px-3 py-1.5 text-[10px] font-medium text-[var(--livora-text)]">
-                                منتخب فرزین
-                            </span>
-
-                            @endif
-
-                            @if($installmentEnabled)
-
-                                <span class="farzin-product-detail-info__badge farzin-product-detail-info__badge--installment rounded-full border border-[var(--livora-border)] bg-[var(--livora-white)] px-3 py-1.5 text-[10px] font-medium text-[var(--livora-accent)]">
-                                خرید اقساطی
-                            </span>
-
-                            @endif
-
-                        </div>
-
-
-                        {{-- Category --}}
-                        @if($product->category)
-
-                            <p class="farzin-product-detail-info__category mt-6 text-[10px] font-medium uppercase tracking-[0.22em] text-[var(--livora-accent)]">
-                                {{ $product->category->name }}
-                            </p>
-
-                        @endif
-
-
-                        {{-- Title --}}
-                        <h1 class="farzin-product-detail-info__title mt-3 text-3xl font-semibold leading-tight tracking-tight text-[var(--livora-text)] sm:text-4xl xl:text-5xl">
-                            {{ $product->name }}
-                        </h1>
-
-
-                        {{-- SKU --}}
-                        <div class="mt-4 flex flex-wrap items-center gap-3 text-[11px] text-[var(--livora-stone)]">
-
-                        <span>
-                            SKU:
-                            {{ $product->sku }}
-                        </span>
-
-                            <span class="h-1 w-1 rounded-full bg-[var(--livora-border)]"></span>
-
-                            <span>
-                            {{ $canPurchase ? 'موجود' : 'ناموجود' }}
-                        </span>
-
-                        </div>
-
-
-                        {{-- Price --}}
-                        <div class="mt-7">
-
-                            <x-product.price
-                                :product="$product"
-                            />
-
-                        </div>
-
-
-                        {{-- Short Description --}}
-                        @if($product->short_description)
-
-                            <div class="mt-7 border-t border-[var(--livora-border)] pt-7">
-
-                                <p class="text-sm leading-8 text-[var(--livora-stone)]">
-                                    {{ $product->short_description }}
-                                </p>
-
-                            </div>
-
-                        @endif
-
-
-                        {{-- Installment Box --}}
-                        @if($installmentEnabled)
-
-                            <div class="mt-7 overflow-hidden rounded-[2rem] border border-[var(--livora-border)] bg-[var(--livora-white)]">
-
-                                <div class="border-b border-[var(--livora-border)] bg-[var(--livora-surface)] p-5 sm:p-6">
-
-                                    <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-
-                                        <div>
-
-                                            <p class="text-[10px] font-medium uppercase tracking-[0.2em] text-[var(--livora-accent)]">
-                                                FLEXIBLE PAYMENT
-                                            </p>
-
-                                            <h2 class="mt-2 text-lg font-semibold">
-                                                امکان خرید اقساطی
-                                            </h2>
-
-                                            <p class="mt-2 text-xs leading-7 text-[var(--livora-stone)]">
-                                                بخشی از مبلغ امروز پرداخت می‌شود و باقی‌مانده
-                                                طبق شرایط ثبت‌شده برای این محصول تسویه خواهد شد.
-                                            </p>
-
-                                        </div>
-
-                                        <span class="rounded-full bg-[var(--livora-ink)] px-3 py-1.5 text-[10px] font-medium text-white">
-                                        {{ \App\Helpers\PersianNumberHelper::format($cashPercent) }}٪ پیش‌پرداخت
-                                    </span>
-
-                                    </div>
-
-                                </div>
-
-                                <div class="p-5 sm:p-6">
-
-                                    <div class="grid grid-cols-1 gap-3 sm:grid-cols-3">
-
-                                        <div class="rounded-2xl border border-[var(--livora-border)] p-4">
-
-                                            <p class="text-[10px] text-[var(--livora-stone)]">
-                                                پرداخت امروز
-                                            </p>
-
-                                            <p class="mt-2 text-base font-semibold">
-                                                {{ \App\Helpers\PersianNumberHelper::format($cashAmount) }}
-                                            </p>
-
-                                            <p class="mt-1 text-[10px] text-[var(--livora-stone)]">
-                                                تومان
-                                            </p>
-
-                                        </div>
-
-                                        <div class="rounded-2xl border border-[var(--livora-border)] p-4">
-
-                                            <p class="text-[10px] text-[var(--livora-stone)]">
-                                                باقی‌مانده
-                                            </p>
-
-                                            <p class="mt-2 text-base font-semibold">
-                                                {{ \App\Helpers\PersianNumberHelper::format($deferredAmount) }}
-                                            </p>
-
-                                            <p class="mt-1 text-[10px] text-[var(--livora-stone)]">
-                                                تومان
-                                            </p>
-
-                                        </div>
-
-                                        <div class="rounded-2xl border border-[var(--livora-border)] p-4">
-
-                                            <p class="text-[10px] text-[var(--livora-stone)]">
-                                                برنامه تسویه
-                                            </p>
-
-                                            <p class="mt-2 text-base font-semibold">
-                                                {{ \App\Helpers\PersianNumberHelper::format($chequeCount) }}
-                                                چک
-                                            </p>
-
-                                            <p class="mt-1 text-[10px] text-[var(--livora-stone)]">
-                                                هر {{ \App\Helpers\PersianNumberHelper::format($intervalMonths) }} ماه
-                                            </p>
-
-                                        </div>
-
-                                    </div>
-
-
-                                    @if(count($chequeAmounts))
-
-                                        <button
-                                            type="button"
-                                            @click="showInstallmentDetails = !showInstallmentDetails"
-                                            class="mt-5 flex w-full items-center justify-between rounded-2xl bg-[var(--livora-surface)] px-4 py-4 text-right"
-                                        >
-
-                                        <span class="text-xs font-medium">
-                                            مشاهده جزئیات سررسیدها
-                                        </span>
-
-                                            <svg
-                                                xmlns="http://www.w3.org/2000/svg"
-                                                fill="none"
-                                                viewBox="0 0 24 24"
-                                                stroke-width="1.5"
-                                                stroke="currentColor"
-                                                class="h-4 w-4 transition-transform"
-                                                :class="showInstallmentDetails ? 'rotate-180' : ''"
-                                            >
-                                                <path
-                                                    stroke-linecap="round"
-                                                    stroke-linejoin="round"
-                                                    d="m19.5 8.25-7.5 7.5-7.5-7.5"
-                                                />
-                                            </svg>
-
-                                        </button>
-
-
-                                        <div
-                                            x-show="showInstallmentDetails"
-                                            x-cloak
-                                            x-collapse
-                                            class="mt-3 space-y-2"
-                                        >
-
-                                            @foreach($chequeAmounts as $index => $amount)
-
-                                                <div class="flex items-center justify-between gap-4 rounded-xl border border-[var(--livora-border)] px-4 py-3">
-
-                                                    <div>
-
-                                                        <p class="text-xs font-medium">
-                                                            چک {{ \App\Helpers\PersianNumberHelper::format($index + 1) }}
-                                                        </p>
-
-                                                        <p class="mt-1 text-[10px] text-[var(--livora-stone)]">
-                                                            {{ \App\Helpers\PersianNumberHelper::format(($index + 1) * $intervalMonths) }}
-                                                            ماه بعد
-                                                        </p>
-
-                                                    </div>
-
-                                                    <p class="text-sm font-semibold">
-                                                        {{ \App\Helpers\PersianNumberHelper::format($amount) }}
-                                                        تومان
-                                                    </p>
-
-                                                </div>
-
-                                            @endforeach
-
-                                        </div>
-
-                                    @endif
-
-
-                                    <div class="mt-5 flex items-start gap-3 rounded-2xl border border-[var(--livora-border)] p-4">
-
-                                    <span class="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-[var(--livora-surface)] text-xs font-semibold">
-                                        i
-                                    </span>
-
-                                        <p class="text-[11px] leading-6 text-[var(--livora-stone)]">
-                                            شرایط نهایی پرداخت اقساطی هنگام Checkout و بر اساس
-                                            تنظیمات ثبت‌شده برای سفارش به شما نمایش داده می‌شود.
-                                        </p>
-
-                                    </div>
-
-                                </div>
-
-                            </div>
-
-                        @endif
-
-
-                        {{-- Product / Cart --}}
-                        <form
-                            id="product-purchase"
-                            action="{{ route('cart.add', $product) }}"
-                            method="POST"
-                            data-product-cart-form
-                            class="mt-8 space-y-7"
-                        >
-
-                            @csrf
-
-                            {{-- Variants --}}
-                            @if($product->variants->isNotEmpty())
-
-                                <div class="border-t border-[var(--livora-border)] pt-7">
-
-                                    <div class="mb-5">
-
-                                        <p class="text-[10px] uppercase tracking-[0.2em] text-[var(--livora-accent)]">
-                                            CUSTOMIZE
-                                        </p>
-
-                                        <h2 class="mt-2 text-sm font-semibold">
-                                            انتخاب ویژگی
-                                        </h2>
-
-                                    </div>
-
-                                    <div class="space-y-6">
-
-                                        @foreach($product->variants->groupBy('type') as $type => $variants)
-
-                                            <x-product.variant-selector
-                                                :title="$variants->first()->name"
-                                                :options="$variants"
-                                                :name="$type"
-                                                :type="$type"
-                                            />
-
-                                        @endforeach
-
-                                    </div>
-
-                                    @if(
-                                        $errors->has('variants')
-                                        || collect($errors->keys())
-                                            ->contains(
-                                                fn ($key) =>
-                                                    str_starts_with($key, 'variants.')
-                                            )
-                                    )
-                                        <div class="mt-4 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-xs leading-6 text-red-800">
-                                            لطفاً تمام ویژگی‌های ضروری محصول را انتخاب کنید.
-                                        </div>
-                                    @endif
-
-                                </div>
-
-                            @endif
-
-
-                            {{-- Quantity --}}
-                            <div class="border-t border-[var(--livora-border)] pt-7">
-
-                                <div class="flex items-center justify-between gap-4">
-
-                                    <div>
-
-                                        <p class="text-sm font-semibold">
-                                            تعداد
-                                        </p>
-
-                                        <p class="mt-1 text-[11px] text-[var(--livora-stone)]">
-                                            موجودی:
-                                            @if($variantGroups->isNotEmpty())
-                                                وابسته به ویژگی انتخاب‌شده
-                                            @else
-                                                {{ \App\Helpers\PersianNumberHelper::format($product->stock) }}
-                                            @endif
-                                        </p>
-
-                                    </div>
-
-                                    <x-shop.quantity
-                                        name="quantity"
-                                        min="1"
-                                        :max="$maxPurchaseQuantity"
-                                        :disabled="!$canPurchase"
+                </div>
+
+                @if($product->category)
+                    <p class="mt-3 text-[11px] font-medium text-[var(--livora-accent)]">{{ $product->category->name }}</p>
+                @endif
+
+                <h1 id="product-title" class="fz-product-panel__title mt-2 font-bold tracking-tight text-[var(--livora-text)]">{{ $product->name }}</h1>
+
+                <div class="mt-3">
+                    <x-product.price :product="$product" :show-installment="false" />
+                </div>
+
+                @if($installmentPlan)
+                    <p class="mt-3 flex flex-wrap items-center gap-x-2 gap-y-1 text-[11px] leading-6 text-[var(--livora-stone)]">
+                        <span>خرید اقساطی؛ پیش‌پرداخت {{ \App\Helpers\PersianNumberHelper::format($installmentPlan['cash_percent']) }}٪</span>
+                        <a href="#product-installment" class="font-semibold text-[var(--livora-accent)] underline underline-offset-4">جزئیات</a>
+                    </p>
+                @endif
+
+                @if($safeShortDescription)
+                    <p class="mt-3 hidden text-xs leading-7 text-[var(--livora-stone)] sm:block">{{ $safeShortDescription }}</p>
+                @endif
+
+                @if($canPurchase)
+                    <form id="product-purchase" action="{{ route('cart.add', $product) }}" method="POST" data-product-cart-form class="mt-4 space-y-3">
+                        @csrf
+                        @if($variantGroups->isNotEmpty())
+                            <div class="space-y-3 border-t border-[var(--livora-border)] pt-3">
+                                @foreach($variantGroups as $type => $variants)
+                                    <x-product.variant-selector
+                                        :title="$variants->first()->name ?: 'انتخاب ویژگی'"
+                                        :options="$variants"
+                                        :name="$type"
+                                        :type="$type"
                                     />
-
-                                </div>
-
+                                @endforeach
+                                @if($errors->has('variants') || collect($errors->keys())->contains(fn ($key) => str_starts_with($key, 'variants.')))
+                                    <p class="rounded-xl border border-red-200 bg-red-50 px-3 py-2 text-xs leading-6 text-red-800" role="alert">لطفاً ویژگی‌های لازم محصول را انتخاب کنید.</p>
+                                @endif
                             </div>
-
-
-                            {{-- CTA --}}
-                            <div class="border-t border-[var(--livora-border)] pt-7">
-
-                                <button
-                                    type="submit"
-                                    @disabled(!$canPurchase)
-                                    class="flex w-full items-center justify-center rounded-2xl bg-[var(--livora-ink)] px-6 py-4 text-sm font-medium text-white transition duration-300 hover:bg-[var(--livora-accent)] disabled:cursor-not-allowed disabled:opacity-40"
-                                    >
-                                    {{ $canPurchase ? 'افزودن به سبد خرید' : 'این محصول ناموجود است' }}
-                                </button>
-
-                            </div>
-
-                        </form>
-
-
-                        {{-- Service Cards --}}
-                        <div class="mt-8 grid grid-cols-1 gap-3 sm:grid-cols-3">
-
-                            <div class="rounded-2xl border border-[var(--livora-border)] bg-[var(--livora-white)] p-4">
-
-                                <p class="text-[10px] uppercase tracking-[0.16em] text-[var(--livora-stone)]">
-                                    STOCK
-                                </p>
-
-                                <p
-                                    class="farzin-product-stock-status mt-2 text-xs font-semibold"
-                                    data-stock-available="{{ $canPurchase ? 'true' : 'false' }}"
-                                >
-                                    {{ $canPurchase ? 'موجود' : 'ناموجود' }}
-                                </p>
-
-                            </div>
-
-                            <div class="rounded-2xl border border-[var(--livora-border)] bg-[var(--livora-white)] p-4">
-
-                                <p class="text-[10px] uppercase tracking-[0.16em] text-[var(--livora-stone)]">
-                                    PAYMENT
-                                </p>
-
-                                <p class="mt-2 text-xs font-medium">
-                                    {{ $installmentEnabled ? 'نقدی و اقساطی طبق شرایط محصول' : 'روش پرداخت در مرحله ثبت سفارش' }}
-                                </p>
-
-                            </div>
-
-                            <div class="rounded-2xl border border-[var(--livora-border)] bg-[var(--livora-white)] p-4">
-
-                                <p class="text-[10px] uppercase tracking-[0.16em] text-[var(--livora-stone)]">
-                                    SKU
-                                </p>
-
-                                <p class="mt-2 truncate text-xs font-medium">
-                                    {{ $product->sku }}
-                                </p>
-
-                            </div>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-            </x-layout.container>
-
-        </section>
-
-
-        {{-- =========================================================
-             PRODUCT INFORMATION
-        ========================================================== --}}
-        <section class="farzin-product-information border-t border-[var(--livora-border)] bg-[var(--livora-white)]">
-
-            <x-layout.container>
-
-                <div class="grid gap-10 py-14 lg:grid-cols-[0.75fr_1.25fr] lg:py-20">
-
-                    <div>
-
-                        <p class="text-[10px] font-medium uppercase tracking-[0.22em] text-[var(--livora-accent)]">
-                            PRODUCT DETAILS
-                        </p>
-
-                        <h2 class="mt-3 text-3xl font-semibold tracking-tight">
-                            درباره این محصول
-                        </h2>
-
-                        <p class="mt-4 text-sm leading-8 text-[var(--livora-stone)]">
-                            اطلاعات و مشخصات محصول را بررسی کنید تا انتخاب دقیق‌تری برای فضای خود داشته باشید.
-                        </p>
-
-                    </div>
-
-                    <div>
-
-                        @if($product->description)
-
-                            <div class="text-sm leading-9 text-[var(--livora-stone)]">
-                                {!! nl2br(e($product->description)) !!}
-                            </div>
-
-                        @else
-
-                            <p class="text-sm leading-8 text-[var(--livora-stone)]">
-                                توضیحات کامل این محصول هنوز توسط فروشگاه ثبت نشده است.
-                            </p>
-
                         @endif
 
-                    </div>
-
-                </div>
-
-            </x-layout.container>
-
-        </section>
-
-
-        {{-- =========================================================
-             PRODUCT FACTS
-        ========================================================== --}}
-        <section class="farzin-product-facts border-t border-[var(--livora-border)] bg-[var(--livora-cream)]">
-
-            <x-layout.container>
-
-                <div class="py-14 sm:py-18">
-
-                    <div class="mb-8">
-
-                        <p class="text-[10px] font-medium uppercase tracking-[0.22em] text-[var(--livora-accent)]">
-                            AT A GLANCE
-                        </p>
-
-                        <h2 class="mt-3 text-2xl font-semibold">
-                            اطلاعات سریع
-                        </h2>
-
-                    </div>
-
-                    <div class="farzin-product-facts__grid grid grid-cols-2 gap-3 lg:grid-cols-4">
-
-                        <div class="farzin-product-facts__item rounded-3xl border border-[var(--livora-border)] bg-[var(--livora-white)] p-5">
-
-                            <p class="text-[10px] uppercase tracking-[0.16em] text-[var(--livora-stone)]">
-                                CATEGORY
-                            </p>
-
-                            <p class="mt-3 text-sm font-semibold">
-                                {{ $product->category?->name ?? '—' }}
-                            </p>
-
+                        <div class="flex items-center justify-between gap-3 border-t border-[var(--livora-border)] pt-3">
+                            <span class="text-xs font-medium text-[var(--livora-text)]">تعداد</span>
+                            <x-shop.quantity name="quantity" min="1" :max="$maxPurchaseQuantity" />
                         </div>
 
-                        <div class="farzin-product-facts__item rounded-3xl border border-[var(--livora-border)] bg-[var(--livora-white)] p-5">
-
-                            <p class="text-[10px] uppercase tracking-[0.16em] text-[var(--livora-stone)]">
-                                SKU
-                            </p>
-
-                            <p class="mt-3 break-all text-sm font-semibold">
-                                {{ $product->sku }}
-                            </p>
-
-                        </div>
-
-                        <div class="farzin-product-facts__item rounded-3xl border border-[var(--livora-border)] bg-[var(--livora-white)] p-5">
-
-                            <p class="text-[10px] uppercase tracking-[0.16em] text-[var(--livora-stone)]">
-                                AVAILABILITY
-                            </p>
-
-                            <p class="mt-3 text-sm font-semibold">
-                                {{ $canPurchase ? 'موجود در انبار' : 'ناموجود' }}
-                            </p>
-
-                        </div>
-
-                        <div class="farzin-product-facts__item rounded-3xl border border-[var(--livora-border)] bg-[var(--livora-white)] p-5">
-
-                            <p class="text-[10px] uppercase tracking-[0.16em] text-[var(--livora-stone)]">
-                                PAYMENT
-                            </p>
-
-                            <p class="mt-3 text-sm font-semibold">
-                                {{ $installmentEnabled ? 'قابل خرید اقساطی' : 'پرداخت کامل' }}
-                            </p>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-            </x-layout.container>
-
-        </section>
-
-
-        {{-- =========================================================
-             INSTALLMENT SEO / EXPLANATION
-        ========================================================== --}}
-        @if($installmentEnabled)
-
-            <section class="border-t border-[var(--livora-border)] bg-[var(--livora-surface)]">
-
-                <x-layout.container>
-
-                    <div class="grid gap-8 py-14 lg:grid-cols-[0.8fr_1.2fr] lg:py-18">
-
-                        <div>
-
-                            <p class="text-[10px] font-medium uppercase tracking-[0.22em] text-[var(--livora-accent)]">
-                                INSTALLMENT GUIDE
-                            </p>
-
-                            <h2 class="mt-3 text-2xl font-semibold">
-                                شرایط خرید اقساطی {{ $product->name }}
-                            </h2>
-
-                        </div>
-
-                        <div class="text-sm leading-8 text-[var(--livora-stone)]">
-
-                            <p>
-                                این محصول با
-                                {{ \App\Helpers\PersianNumberHelper::format($cashPercent) }}٪
-                                پیش‌پرداخت قابلیت خرید اقساطی دارد.
-                                مبلغ پیش‌پرداخت
-                                {{ \App\Helpers\PersianNumberHelper::format($cashAmount) }}
-                                تومان است و باقی‌مانده
-                                {{ \App\Helpers\PersianNumberHelper::format($deferredAmount) }}
-                                تومان در
-                                {{ \App\Helpers\PersianNumberHelper::format($chequeCount) }}
-                                فقره چک برنامه‌ریزی می‌شود.
-                            </p>
-
-                            @if($intervalMonths)
-
-                                <p class="mt-4">
-                                    فاصله سررسید چک‌ها
-                                    {{ \App\Helpers\PersianNumberHelper::format($intervalMonths) }}
-                                    ماه است و برنامه دقیق پرداخت هنگام Checkout نمایش داده می‌شود.
-                                </p>
-
-                            @endif
-
-                        </div>
-
-                    </div>
-
-                </x-layout.container>
-
-            </section>
-
-        @endif
-
-
-        {{-- =========================================================
-             RELATED PRODUCTS
-        ========================================================== --}}
-        @if($relatedProducts->count())
-
-            <section class="border-t border-[var(--livora-border)]">
-
-                <x-layout.container>
-
-                    <div class="py-14 sm:py-18">
-
-                        <div class="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-
-                            <div>
-
-                                <p class="text-[10px] font-medium uppercase tracking-[0.22em] text-[var(--livora-accent)]">
-                                    YOU MAY ALSO LIKE
-                                </p>
-
-                                <h2 class="mt-3 text-2xl font-semibold">
-                                    محصولات مرتبط
-                                </h2>
-
+                        <button type="submit" class="fz-product-action w-full bg-[var(--livora-ink)] text-white transition hover:bg-[var(--livora-accent)]">
+                            افزودن به سبد خرید
+                        </button>
+                    </form>
+                @else
+                    <div class="mt-4 space-y-2 border-t border-[var(--livora-border)] pt-4">
+                        <a class="fz-product-action w-full bg-[var(--livora-ink)] text-white hover:bg-[var(--livora-accent)]" href="{{ $stockRequestUrl }}">درخواست اطلاع از موجودی</a>
+                        @if($phone || $whatsappUrl)
+                            <div class="grid grid-cols-1 gap-2 {{ $phone && $whatsappUrl ? 'sm:grid-cols-2' : '' }}">
+                                @if($phone)
+                                    <a class="fz-product-action border border-[var(--livora-border)] text-[var(--livora-text)]" href="{{ $phone['href'] }}">مشاوره تلفنی</a>
+                                @endif
+                                @if($whatsappUrl)
+                                    <a class="fz-product-action border border-[var(--livora-border)] text-[var(--livora-text)]" href="{{ $whatsappUrl }}" target="_blank" rel="noopener noreferrer">مشاوره در واتساپ</a>
+                                @endif
                             </div>
-
-                            @if($product->category)
-
-                                <a
-                                    href="{{ route('categories.show', $product->category->slug) }}"
-                                    class="text-sm font-medium text-[var(--livora-accent)]"
-                                >
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4 shrink-0" aria-hidden="true"><rect x="3.5" y="3.5" width="7" height="7" rx="1.3" /><rect x="13.5" y="3.5" width="7" height="7" rx="1.3" /><rect x="3.5" y="13.5" width="7" height="7" rx="1.3" /><rect x="13.5" y="13.5" width="7" height="7" rx="1.3" /></svg> مشاهده دسته‌بندی
-                                </a>
-
-                            @endif
-
-                        </div>
-
-                        <div class="mt-8 grid grid-cols-2 gap-x-4 gap-y-10 lg:grid-cols-4">
-
-                            @foreach($relatedProducts as $relatedProduct)
-
-                                <x-product.card
-                                    :product="$relatedProduct"
-                                />
-
-                            @endforeach
-
-                        </div>
-
+                        @endif
+                        <p class="text-[10px] leading-5 text-[var(--livora-stone)]">درخواست اطلاع از موجودی از طریق فرم تماس برای پیگیری تیم فروش ثبت می‌شود.</p>
                     </div>
+                @endif
 
-                </x-layout.container>
+                @if(filled($product->sku))
+                    <p class="fz-product-sku mt-4 border-t border-[var(--livora-border)] pt-3 text-[10px] text-[var(--livora-stone)]" dir="ltr">شناسه محصول: {{ $product->sku }}</p>
+                @endif
+            </div>
+        </section>
 
+        @if(count($productTabs))
+            <section class="my-8 space-y-3 sm:my-12" aria-label="اطلاعات تکمیلی محصول">
+                @foreach($productTabs as $index => $tab)
+                    <details @if($index === 0) open @endif @if($tab === 'installment') id="product-installment" @endif class="fz-product-accordion rounded-2xl border border-[var(--livora-border)] bg-[var(--livora-white)] px-4 sm:px-6">
+                        <summary class="text-sm font-semibold text-[var(--livora-text)]">
+                            <span>
+                                @if($tab === 'description') توضیحات محصول
+                                @elseif($tab === 'installment') شرایط خرید اقساطی
+                                @elseif($tab === 'shipping') ارسال
+                                @endif
+                            </span>
+                            <svg class="h-4 w-4 shrink-0 text-[var(--livora-stone)] transition-transform" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="m6 9 6 6 6-6"/></svg>
+                        </summary>
+
+                        @if($tab === 'description')
+                            @php
+                                $descriptionText = $safeDescription;
+                                $descriptionPreview = \Illuminate\Support\Str::limit($descriptionText, 420);
+                                $hasMoreDescription = mb_strlen($descriptionText) > 420;
+                            @endphp
+                            <div class="border-t border-[var(--livora-border)] py-4 text-sm leading-8 text-[var(--livora-stone)]" x-data="{ expanded: false }">
+                                <div x-show="!expanded">{{ nl2br(e($descriptionPreview)) }}</div>
+                                @if($hasMoreDescription)
+                                    <div x-show="expanded" x-cloak>{{ nl2br(e($descriptionText)) }}</div>
+                                    <button type="button" class="mt-3 inline-flex min-h-11 items-center rounded-lg font-semibold text-[var(--livora-accent)] underline underline-offset-4" @click="expanded = !expanded" :aria-expanded="expanded.toString()">
+                                        <span x-show="!expanded">ادامه مطلب</span>
+                                        <span x-show="expanded" x-cloak>نمایش کمتر</span>
+                                    </button>
+                                @endif
+                            </div>
+                        @elseif($tab === 'installment')
+                            <div class="grid gap-3 border-t border-[var(--livora-border)] py-4 sm:grid-cols-2 lg:grid-cols-4">
+                                <div class="rounded-xl bg-[var(--livora-surface)] p-3">
+                                    <p class="text-[11px] text-[var(--livora-stone)]">پیش‌پرداخت</p>
+                                    <p class="mt-2 text-sm font-bold">{{ \App\Helpers\PersianNumberHelper::format($installmentPlan['cash_amount']) }} تومان</p>
+                                </div>
+                                <div class="rounded-xl bg-[var(--livora-surface)] p-3">
+                                    <p class="text-[11px] text-[var(--livora-stone)]">مبلغ باقی‌مانده</p>
+                                    <p class="mt-2 text-sm font-bold">{{ \App\Helpers\PersianNumberHelper::format($installmentPlan['deferred_amount']) }} تومان</p>
+                                </div>
+                                <div class="rounded-xl bg-[var(--livora-surface)] p-3">
+                                    <p class="text-[11px] text-[var(--livora-stone)]">تعداد چک</p>
+                                    <p class="mt-2 text-sm font-bold">{{ \App\Helpers\PersianNumberHelper::format($installmentPlan['cheque_count']) }} فقره</p>
+                                </div>
+                                <div class="rounded-xl bg-[var(--livora-surface)] p-3">
+                                    <p class="text-[11px] text-[var(--livora-stone)]">فاصله سررسید</p>
+                                    <p class="mt-2 text-sm font-bold">هر {{ \App\Helpers\PersianNumberHelper::format($installmentPlan['interval_months']) }} ماه</p>
+                                </div>
+                                <div class="sm:col-span-2 lg:col-span-4">
+                                    @if($installmentPlan['without_fee'])
+                                        <p class="text-xs font-semibold text-[var(--livora-accent)]">بدون کارمزد؛ جمع پیش‌پرداخت و اقساط با قیمت نقدی برابر است.</p>
+                                    @endif
+                                    <ol class="mt-3 grid gap-2 sm:grid-cols-2">
+                                        @foreach($installmentPlan['cheque_amounts'] as $chequeIndex => $amount)
+                                            <li class="flex items-center justify-between gap-3 rounded-xl border border-[var(--livora-border)] px-3 py-2 text-xs">
+                                                <span>چک {{ \App\Helpers\PersianNumberHelper::format($chequeIndex + 1) }} · {{ \App\Helpers\PersianNumberHelper::format(($chequeIndex + 1) * $installmentPlan['interval_months']) }} ماه بعد</span>
+                                                <strong>{{ \App\Helpers\PersianNumberHelper::format($amount) }} تومان</strong>
+                                            </li>
+                                        @endforeach
+                                    </ol>
+                                    <p class="mt-3 text-[11px] leading-6 text-[var(--livora-stone)]">برنامه پرداخت این محصول بر اساس شرایط ثبت‌شده در فروشگاه محاسبه شده است.</p>
+                                </div>
+                            </div>
+                        @elseif($tab === 'shipping')
+                            <div class="grid gap-3 border-t border-[var(--livora-border)] py-4 sm:grid-cols-2">
+                                @if($hasShippingFlatRate)
+                                    <div class="rounded-xl bg-[var(--livora-surface)] p-3">
+                                        <p class="text-[11px] text-[var(--livora-stone)]">هزینه پایه ارسال</p>
+                                        <p class="mt-2 text-sm font-bold">{{ $shippingFlatRate > 0 ? \App\Helpers\PersianNumberHelper::format($shippingFlatRate) . ' تومان' : 'رایگان' }}</p>
+                                    </div>
+                                @endif
+                                @if($hasFreeShippingThreshold)
+                                    <div class="rounded-xl bg-[var(--livora-surface)] p-3">
+                                        <p class="text-[11px] text-[var(--livora-stone)]">حداقل مبلغ برای ارسال رایگان</p>
+                                        <p class="mt-2 text-sm font-bold">{{ \App\Helpers\PersianNumberHelper::format($shippingFreeThreshold) }} تومان</p>
+                                    </div>
+                                @endif
+                            </div>
+                        @endif
+                    </details>
+                @endforeach
             </section>
-
         @endif
 
-
-        {{-- =========================================================
-             MOBILE STICKY CTA
-        ========================================================== --}}
-        <div class="fixed inset-x-0 bottom-[5.5rem] z-[80] border-y border-[var(--livora-border)] bg-[var(--livora-white)]/95 p-3 shadow-[0_-10px_30px_rgba(24,23,21,.08)] backdrop-blur-xl lg:hidden">
-
-            <x-layout.container>
-
-                <div class="flex items-center gap-3">
-
-                    <div class="min-w-0 flex-1">
-
-                        <p class="truncate text-[11px] text-[var(--livora-stone)]">
-                            {{ $product->name }}
-                        </p>
-
-                        <p class="mt-1 text-sm font-semibold">
-                            {{ \App\Helpers\PersianNumberHelper::format($productPrice) }}
-                            <span class="text-[10px] font-normal text-[var(--livora-stone)]">
-                            تومان
-                        </span>
-                        </p>
-
+        @if($relatedProducts->isNotEmpty())
+            <section class="border-t border-[var(--livora-border)] py-8 sm:py-12" aria-labelledby="related-products-title">
+                <div class="mb-5 flex items-end justify-between gap-3">
+                    <div>
+                        <h2 id="related-products-title" class="text-xl font-bold text-[var(--livora-text)]">مدل‌های مشابه موجود</h2>
+                        @if($product->category)
+                            <p class="mt-1 text-xs text-[var(--livora-stone)]">از دسته {{ $product->category->name }}</p>
+                        @endif
                     </div>
-
-                    <a
-                        href="#product-purchase"
-                        class="inline-flex shrink-0 items-center rounded-2xl bg-[var(--livora-ink)] px-5 py-3.5 text-xs font-medium text-white"
-                    >
-                        خرید
-                    </a>
-
+                    @if($product->category)
+                        <a class="inline-flex min-h-11 items-center rounded-lg px-2 text-xs font-semibold text-[var(--livora-accent)]" href="{{ route('categories.show', $product->category->slug) }}">همه مدل‌ها</a>
+                    @endif
                 </div>
+                <div class="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
+                    @foreach($relatedProducts as $relatedProduct)
+                        <x-product.card :product="$relatedProduct" :show-availability="false" />
+                    @endforeach
+                </div>
+            </section>
+        @endif
+    </x-layout.container>
 
-            </x-layout.container>
-
-        </div>
-
+    <div class="fz-product-sticky fixed inset-x-0 bottom-[5.5rem] z-[80] border-t border-[var(--livora-border)] bg-[var(--livora-white)]/95 p-3 shadow-[0_-10px_30px_rgba(24,23,21,.08)] backdrop-blur-xl lg:hidden">
+        <x-layout.container>
+            <div class="flex items-center gap-3">
+                <div class="min-w-0 flex-1">
+                    <p class="truncate text-[10px] text-[var(--livora-stone)]">{{ $product->name }}</p>
+                    <p class="mt-1 text-sm font-bold">{{ \App\Helpers\PersianNumberHelper::format($productPrice) }} <span class="text-[10px] font-normal text-[var(--livora-stone)]">تومان</span></p>
+                </div>
+                @if($canPurchase)
+                    <a href="#product-purchase" class="fz-product-action shrink-0 bg-[var(--livora-ink)] text-white">افزودن به سبد</a>
+                @else
+                    <a href="{{ $stockRequestUrl }}" class="fz-product-action shrink-0 bg-[var(--livora-ink)] text-white">درخواست موجودی</a>
+                    @if($whatsappUrl)
+                        <a href="{{ $whatsappUrl }}" target="_blank" rel="noopener noreferrer" aria-label="مشاوره در واتساپ" class="fz-product-action shrink-0 border border-[var(--livora-border)] text-[var(--livora-text)]">مشاوره</a>
+                    @elseif($phone)
+                        <a href="{{ $phone['href'] }}" aria-label="مشاوره تلفنی" class="fz-product-action shrink-0 border border-[var(--livora-border)] text-[var(--livora-text)]">مشاوره</a>
+                    @endif
+                @endif
+            </div>
+        </x-layout.container>
     </div>
-
+</div>
 @endsection
