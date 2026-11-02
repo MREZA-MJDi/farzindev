@@ -12,7 +12,13 @@ class CategoryController extends Controller
         $categories = Category::query()
             ->active()
             ->whereHas('products', fn ($query) => $query->active()->publicCatalogue()->availableForPurchase())
-            ->with('hoverMedia')
+            ->with([
+                'hoverMedia',
+                'latestActiveProduct.images' => fn ($query) => $query
+                    ->select(['id', 'product_id', 'media_id', 'path', 'alt', 'sort_order', 'is_primary'])
+                    ->limit(1),
+                'latestActiveProduct.images.media:id,path',
+            ])
             ->withCount([
                 'products' => fn ($query) => $query->active()->publicCatalogue()->availableForPurchase(),
             ])
