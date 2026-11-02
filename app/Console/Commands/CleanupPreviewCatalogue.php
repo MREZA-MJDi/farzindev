@@ -93,7 +93,6 @@ class CleanupPreviewCatalogue extends Command
                 $query
                     ->where('sku', 'like', '%SEED%')
                     ->orWhere('sku', 'like', '%DEMO%')
-                    ->orWhere('sku', 'like', '%TEST%')
                     ->orWhere('slug', 'like', '%preview%')
                     ->orWhere('name', 'like', '%تی‌شرت%')
                     ->orWhere('name', 'like', '%تی شرت%')
