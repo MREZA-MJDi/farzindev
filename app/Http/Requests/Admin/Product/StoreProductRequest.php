@@ -86,7 +86,7 @@ class StoreProductRequest extends FormRequest
             'price' => [
                 'required',
                 'numeric',
-                'min:0',
+                'min:0.01',
                 'max:9999999999999.99',
                 'decimal:0,2',
             ],
@@ -223,7 +223,7 @@ class StoreProductRequest extends FormRequest
 
             'price.required' => 'وارد کردن قیمت محصول الزامی است.',
             'price.numeric' => 'قیمت محصول باید یک عدد معتبر باشد.',
-            'price.min' => 'قیمت محصول نمی‌تواند منفی باشد.',
+            'price.min' => 'قیمت محصول باید بیشتر از صفر باشد.',
             'price.max' => 'قیمت محصول بیش از سقف مجاز است.',
             'price.decimal' => 'قیمت محصول باید حداکثر دو رقم اعشار داشته باشد.',
 
