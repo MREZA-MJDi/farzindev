@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\LoginRequest;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -21,18 +22,9 @@ class AuthController extends Controller
         return view('admin.auth.login');
     }
 
-    public function store(Request $request): RedirectResponse
+    public function store(LoginRequest $request): RedirectResponse
     {
-        $credentials = $request->validate([
-            'email' => ['required', 'string', 'email:rfc', 'max:255'],
-            'password' => ['required', 'string', 'min:8', 'max:255'],
-            'remember' => ['nullable', 'boolean'],
-        ], [
-            'email.required' => 'ایمیل را وارد کنید.',
-            'email.email' => 'ایمیل معتبر نیست.',
-            'password.required' => 'رمز عبور را وارد کنید.',
-            'password.min' => 'رمز عبور باید حداقل ۸ کاراکتر باشد.',
-        ]);
+        $credentials = $request->validated();
 
         $key = 'admin-login:' . Str::lower($credentials['email']) . '|' . $request->ip();
 
