@@ -381,14 +381,14 @@ class BlogCmsTest extends TestCase
         $this->get(route('blog.index'))
             ->assertOk()
             ->assertSee('blog-featured-card', false)
-            ->assertSee('مقاله آرشیو ۱۱');
+            ->assertSee('مقاله آرشیو 9');
 
         $this->get(route('blog.index', ['page' => 2]))
             ->assertOk()
             ->assertDontSee('blog-featured-card', false)
             ->assertSee('blog-article-card', false)
-            ->assertSee('مقاله آرشیو ۲')
-            ->assertSee('مقاله آرشیو ۱');
+            ->assertSee('مقاله آرشیو 10')
+            ->assertSee('مقاله آرشیو 11');
     }
 
 
