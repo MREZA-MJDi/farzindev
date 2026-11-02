@@ -29,7 +29,7 @@ class AppServiceProvider extends ServiceProvider
         Paginator::defaultSimpleView('vendor.pagination.farzin-simple');
 
         View::composer('*', function ($view): void {
-            $settings = Cache::remember(
+            $settings = rescue(fn (): array => Cache::remember(
                 'storefront.public-brand-settings.v1',
                 now()->addMinutes(10),
                 static fn (): array => StorefrontSetting::query()
@@ -40,7 +40,7 @@ class AppServiceProvider extends ServiceProvider
                     ])
                     ->pluck('value', 'key')
                     ->all()
-            );
+            ), [], report: false);
 
             $view->with('storefrontPublicSettings', $settings);
             $view->with('storefrontBrandName', $settings['brand_name'] ?? config('app.name', 'فرزین'));
