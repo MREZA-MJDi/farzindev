@@ -62,6 +62,24 @@
 @section('og_description', $categoryOgDescription)
 @section('og_image', $category->image_url ?? '')
 
+@push('seo')
+    @php
+        $categoryFaqSchema = [
+            '@context' => 'https://schema.org',
+            '@type' => 'FAQPage',
+            'mainEntity' => collect($categoryGuide['faqs'])->map(fn ($faq) => [
+                '@type' => 'Question',
+                'name' => $faq['q'],
+                'acceptedAnswer' => [
+                    '@type' => 'Answer',
+                    'text' => $faq['a'],
+                ],
+            ])->values()->all(),
+        ];
+    @endphp
+    <script type="application/ld+json">{!! json_encode($categoryFaqSchema, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT) !!}</script>
+@endpush
+
 
 
 @section('content')
@@ -235,6 +253,37 @@
                             <button type="submit" class="inline-flex min-h-11 items-center rounded-xl bg-[var(--livora-ink)] px-5 py-3 text-xs font-semibold text-white hover:bg-[var(--livora-accent)]">اعمال فیلتر</button>
                             @if(request()->hasAny(['width_cm', 'installation_type']))
                                 <a href="{{ route('categories.show', $category->slug) }}" class="inline-flex min-h-11 items-center rounded-xl border border-[var(--livora-border)] px-4 py-3 text-xs text-[var(--livora-stone)]">پاک‌کردن</a>
+                            @endif
+                        </form>
+                    @endif
+
+                    @if($widthOptions->isNotEmpty() || $installationTypes->isNotEmpty())
+                        <form method="GET" action="{{ route('categories.show', $category->slug) }}" class="mb-8 flex flex-wrap items-end gap-3 rounded-2xl border border-[var(--livora-border)] bg-[var(--livora-surface)] p-4">
+                            @if($widthOptions->isNotEmpty())
+                                <label class="min-w-[150px] flex-1 text-xs font-medium">
+                                    عرض محصول
+                                    <select name="width_cm" class="mt-2 w-full rounded-xl border border-[var(--livora-border)] bg-white px-3 py-3 text-xs">
+                                        <option value="">همه عرض‌ها</option>
+                                        @foreach($widthOptions as $width)
+                                            <option value="{{ $width }}" @selected((string) request('width_cm') === (string) $width)>{{ \App\Helpers\PersianNumberHelper::format($width) }} سانتی‌متر</option>
+                                        @endforeach
+                                    </select>
+                                </label>
+                            @endif
+                            @if($installationTypes->isNotEmpty())
+                                <label class="min-w-[150px] flex-1 text-xs font-medium">
+                                    نوع نصب
+                                    <select name="installation_type" class="mt-2 w-full rounded-xl border border-[var(--livora-border)] bg-white px-3 py-3 text-xs">
+                                        <option value="">همه روش‌ها</option>
+                                        @foreach($installationTypes as $type)
+                                            <option value="{{ $type }}" @selected(request('installation_type') === $type)>{{ $type }}</option>
+                                        @endforeach
+                                    </select>
+                                </label>
+                            @endif
+                            <button type="submit" class="min-h-11 rounded-xl bg-[var(--livora-ink)] px-5 text-xs font-semibold text-white">اعمال فیلتر</button>
+                            @if(request()->hasAny(['width_cm', 'installation_type']))
+                                <a href="{{ route('categories.show', $category->slug) }}" class="inline-flex min-h-11 items-center px-3 text-xs font-semibold text-[var(--livora-stone)]">حذف فیلتر</a>
                             @endif
                         </form>
                     @endif
