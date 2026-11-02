@@ -7,8 +7,7 @@
     $footerAddress = trim((string) data_get($contact, 'address', ''));
     $footerHours = trim((string) data_get($contact, 'hours', ''));
     $footerBrandName = trim((string) data_get($settings, 'brand_name', 'فرزین'));
-    $footerBrandLogo = trim((string) data_get($settings, 'brand_logo', ''));
-    $footerBrandLogoUrl = $footerBrandLogo !== '' ? \Illuminate\Support\Facades\Storage::disk('public')->url($footerBrandLogo) : null;
+    $footerBrandLogoUrl = $brandLogoUrl;
 @endphp
 <footer class="farzin-site-footer farzin-site-footer--editorial fz-store-footer">
     <x-layout.container class="fz-store-footer__container">
