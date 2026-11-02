@@ -25,6 +25,7 @@ class ApplyRobotsHeaders
 
         $csrfSensitiveRoute = $request->is(
             $adminPath, $adminPath . '/*',
+            'account', 'account/*',
             'contact', 'product/*',
             'cart', 'cart/*',
             'checkout', 'checkout/*',
@@ -33,7 +34,10 @@ class ApplyRobotsHeaders
 
         // Never let a browser, reverse proxy, or CDN reuse HTML containing a
         // session-bound CSRF token. Admin and storefront form pages stay private.
-        if ($csrfSensitiveRoute) {
+        $authenticatedResponse = $request->user('web') !== null
+            || $request->user('admin') !== null;
+
+        if ($csrfSensitiveRoute || $authenticatedResponse) {
             $response->headers->set('Cache-Control', 'private, no-store, no-cache, max-age=0, must-revalidate');
             $response->headers->set('Pragma', 'no-cache');
             $response->headers->set('Expires', '0');
