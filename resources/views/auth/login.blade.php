@@ -1,5 +1,6 @@
 @extends('layouts.app')
-@section('title', 'ورود به حساب | فرزین')
+@php($adminLogin = $adminLogin ?? false)
+@section('title', $adminLogin ? 'ورود مدیریت | فرزین' : 'ورود به حساب | فرزین')
 @section('description', 'ورود به حساب کاربری فرزین و مشاهده سفارش‌ها.')
 @section('body_class', 'fz-auth-body min-h-screen antialiased')
 @section('content')
@@ -19,20 +20,24 @@
     <div class="fz-auth__form-side"><div class="fz-auth__form-wrap">
         <a href="{{ route('home') }}" class="fz-auth__mobile-brand">فرزین <span>تجهیزات مدرن آشپزخانه</span></a>
         <div class="fz-auth__eyebrow"><span></span> حساب کاربری فرزین</div>
-        <h1 id="fz-login-heading">خوش برگشتید.</h1>
-        <p class="fz-auth__intro">برای ادامه خرید و مشاهده سفارش‌ها وارد حساب خود شوید.</p>
+        <h1 id="fz-login-heading">{{ $adminLogin ? 'ورود به مدیریت' : 'خوش برگشتید.' }}</h1>
+        <p class="fz-auth__intro">{{ $adminLogin ? 'برای دسترسی به پنل مدیریت، اطلاعات مدیر را وارد کنید.' : 'برای ادامه خرید و مشاهده سفارش‌ها وارد حساب خود شوید.' }}</p>
         @if(session('warning'))<div class="fz-auth__notice fz-auth__notice--warning" role="status">{{ session('warning') }}</div>@endif
         @if(session('success'))<div class="fz-auth__notice fz-auth__notice--success" role="status">{{ session('success') }}</div>@endif
         @if($errors->any())<div class="fz-auth__notice fz-auth__notice--error" role="alert"><strong>ورود انجام نشد.</strong><ul>@foreach($errors->all() as $error)<li>{{ $error }}</li>@endforeach</ul></div>@endif
-        <form action="{{ route('login.store') }}" method="POST" class="fz-auth__form">
+        <form action="{{ $adminLogin ? route('admin.login.store') : route('login.store') }}" method="POST" class="fz-auth__form">
             @csrf
             @if(request()->query('intended') === '/checkout' || session()->has('url.intended'))<div class="fz-auth__checkout-note">برای ادامه خرید وارد شوید؛ پس از ورود به مرحله تسویه برمی‌گردید.</div>@endif
-            <div class="fz-auth__field"><label for="login-identifier">شماره موبایل یا ایمیل مدیر</label><input id="login-identifier" type="text" name="phone" value="{{ old('phone') }}" placeholder="09123456789" autocomplete="username" inputmode="text" required autofocus>@error('phone')<small role="alert">{{ $message }}</small>@enderror</div>
+            <div class="fz-auth__field"><label for="login-identifier">{{ $adminLogin ? 'ایمیل یا شماره موبایل مدیر' : 'شماره موبایل یا ایمیل' }}</label><input id="login-identifier" type="text" name="phone" value="{{ old('phone') }}" placeholder="09123456789" autocomplete="username" inputmode="text" required autofocus>@error('phone')<small role="alert">{{ $message }}</small>@enderror</div>
             <div class="fz-auth__field"><div class="fz-auth__field-heading"><label for="login-password">رمز عبور</label><a href="{{ route('contact') }}">برای بازیابی رمز با پشتیبانی تماس بگیرید</a></div><input id="login-password" type="password" name="password" placeholder="رمز عبور" autocomplete="current-password" required aria-invalid="{{ $errors->has('password') ? 'true' : 'false' }}">@error('password')<small role="alert">{{ $message }}</small>@enderror</div>
             <label class="fz-auth__remember"><input type="checkbox" name="remember" value="1" @checked(old('remember'))><span>مرا به خاطر بسپار</span></label>
-            <button class="fz-auth__submit" type="submit">ورود به حساب <span aria-hidden="true">←</span></button>
+            <button class="fz-auth__submit" type="submit">{{ $adminLogin ? 'ورود به پنل مدیریت' : 'ورود به حساب' }} <span aria-hidden="true">←</span></button>
         </form>
-        <div class="fz-auth__switch"><span>هنوز حساب ندارید؟</span><a href="{{ route('register', request()->only('intended')) }}">ایجاد حساب جدید</a></div>
+        @if($adminLogin)
+            <div class="fz-auth__switch"><span>ورود مشتری هستید؟</span><a href="{{ route('login') }}">ورود به حساب مشتری</a></div>
+        @else
+            <div class="fz-auth__switch"><span>هنوز حساب ندارید؟</span><a href="{{ route('register', request()->only('intended')) }}">ایجاد حساب جدید</a></div>
+        @endif
         <a class="fz-auth__back" href="{{ route('shop.index') }}">بازگشت به فروشگاه</a>
     </div></div>
 </div></section>
