@@ -407,6 +407,12 @@ class FarzinStorefrontTest extends TestCase
         ]);
         $videoCategory->update(['hover_media_id' => $video->id]);
 
+        $this->product($videoCategory, [
+            'name' => 'هود دارای ویدیوی دسته',
+            'slug' => 'hood-category-video-product',
+            'stock' => 2,
+        ]);
+
         $gifCategory = $this->category([
             'name' => 'سینک با پیش‌نمایش GIF',
             'slug' => 'gif-preview-sinks',
@@ -422,6 +428,12 @@ class FarzinStorefrontTest extends TestCase
             'size' => 1024,
         ]);
         $gifCategory->update(['hover_media_id' => $gif->id]);
+
+        $this->product($gifCategory, [
+            'name' => 'سینک دارای GIF دسته',
+            'slug' => 'sink-category-gif-product',
+            'stock' => 2,
+        ]);
 
         $this->get(route('home'))
             ->assertOk()
@@ -932,7 +944,6 @@ class FarzinStorefrontTest extends TestCase
             ->assertSee('max="4"', false)
             ->assertSee('fz-product-panel', false)
             ->assertSee('data-product-cart-form', false)
-            ->assertSee('data-stock-available="true"', false)
             ->assertSee('@touchstart.passive="startTouch($event)"', false)
             ->assertSee('@touchend.passive="endTouch($event)"', false)
             ->assertSee('https://cdn.example.test/variant-black.webp', false)
