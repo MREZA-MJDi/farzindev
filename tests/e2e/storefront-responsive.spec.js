@@ -709,6 +709,7 @@ test('admin homepage hero preview matches the fixed 16:10 crop and updates its c
     });
 
     const upload = page.locator('input[name="page_home_hero_image"]');
+    await expect(upload).toHaveAttribute('data-image-editor-ready', 'true');
     await upload.setInputFiles({
         name: 'farzin-hero-preview.png',
         mimeType: 'image/png',
