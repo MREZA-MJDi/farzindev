@@ -53,7 +53,7 @@ class AuthController extends Controller
             RateLimiter::hit($key, 60);
 
             return back()
-                ->onlyInput('email')
+                ->withInput($request->only('email'))
                 ->withErrors(['email' => 'اطلاعات ورود صحیح نیست.']);
         }
 
