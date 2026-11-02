@@ -268,13 +268,14 @@ class FarzinStorefrontTest extends TestCase
         $this->get(route('home'))
             ->assertOk()
             ->assertSee('فرزین')
-            ->assertSee('هود آشپزخانه')
-            ->assertSee('fz-home-journal', false);
+            ->assertSee('تولید تخصصی')
+            ->assertSee('هود و سینک آشپزخانه')
+            ->assertDontSee('fz-home-journal', false);
 
         $this->get(route('about'))
             ->assertOk()
             ->assertSee('فرزین فرجی')
-            ->assertSee('FACTORY & PROCESS', false);
+            ->assertSee('کارگاه و فرایند تولید', false);
 
         $this->get(route('blog.index'))
             ->assertOk()
@@ -282,6 +283,33 @@ class FarzinStorefrontTest extends TestCase
             ->assertSee('تازه‌های مجله')
             ->assertSee('قبل از خرید هود آشپزخانه چه چیزهایی را بررسی کنیم؟')
             ->assertSee('چک‌لیست ساده پیش از ثبت سفارش');
+    }
+
+    public function test_homepage_journal_waits_for_three_published_image_backed_articles(): void
+    {
+        Storage::fake('public');
+
+        foreach (range(1, 3) as $index) {
+            $image = \Illuminate\Http\UploadedFile::fake()->image("journal-{$index}.jpg", 1200, 760);
+            $coverPath = $image->store('blog/covers', 'public');
+
+            \App\Models\BlogPost::create([
+                'title' => 'راهنمای تصویری فرزین ' . $index,
+                'slug' => 'farzin-illustrated-guide-' . $index,
+                'excerpt' => 'راهنمای تصویری برای انتخاب آگاهانه.',
+                'body' => 'متن مقاله راهنمای فرزین.',
+                'cover_image' => $coverPath,
+                'cover_image_alt' => 'تصویر راهنمای فرزین',
+                'status' => 'published',
+                'published_at' => now()->subMinutes($index),
+            ]);
+        }
+
+        $this->get(route('home'))
+            ->assertOk()
+            ->assertSee('fz-home-journal', false)
+            ->assertSee('راهنمای تصویری فرزین ۱')
+            ->assertSee('راهنمای تصویری فرزین ۳');
     }
 
     public function test_auth_and_legal_pages_use_the_farzin_customer_experience(): void
