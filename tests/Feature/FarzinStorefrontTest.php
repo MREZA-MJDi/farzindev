@@ -3805,7 +3805,11 @@ class FarzinStorefrontTest extends TestCase
             ->assertSee('بنر صفحه فروشگاه')
             ->assertSee('اطلاعات تماس واقعی')
             ->assertSee('name="latitude"', false)
-            ->assertSee('name="longitude"', false);
+            ->assertSee('name="longitude"', false)
+            ->assertSee('id="contact-map-preview"', false)
+            ->assertSee('id="contact-map-preview-frame"', false)
+            ->assertSee('id="contact-map-preview-iframe"', false)
+            ->assertSee('id="contact-map-preview-empty"', false);
 
         $this->put(route('admin.storefront-settings.update'), [
             'shop_banner_image' => UploadedFile::fake()->image('shop-banner.jpg', 1600, 900),
@@ -3874,13 +3878,23 @@ class FarzinStorefrontTest extends TestCase
         $this->assertEqualsWithDelta(35.6892, (float) $contact->latitude, 0.0000001);
         $this->assertEqualsWithDelta(51.3890, (float) $contact->longitude, 0.0000001);
 
-        $this->get(route('contact'))
+        $coordinateQuery = urlencode((string) $contact->latitude.','.(string) $contact->longitude);
+
+        $response = $this->get(route('contact'))
             ->assertOk()
+            ->assertSee("https://www.google.com/maps?q={$coordinateQuery}&amp;z=15&amp;output=embed", false)
+            ->assertSee("https://www.google.com/maps/dir/?api=1&amp;destination={$coordinateQuery}", false)
             ->assertSee('مختصات ثبت‌شده')
             ->assertSee('35.6892')
             ->assertSee('51.389')
-            ->assertDontSee('google.com/maps')
             ->assertSee('آدرس تستی که نباید جای مختصات استفاده شود');
+
+        $html = $response->getContent();
+        $this->assertLessThan(
+            strpos($html, 'fz-contact-left-column'),
+            strpos($html, 'fz-contact-map-column'),
+            'The map must remain the first (right-hand in RTL) column, before the contact form.'
+        );
     }
 
     public function test_contact_map_coordinates_must_be_in_range_and_provided_as_a_pair(): void
