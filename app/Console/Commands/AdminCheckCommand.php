@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use App\Models\User;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Hash;
+use Throwable;
 
 class AdminCheckCommand extends Command
 {
@@ -30,7 +31,7 @@ class AdminCheckCommand extends Command
             $passwordMatches = $exists
                 && $password !== ''
                 && Hash::check($password, (string) $user->password);
-        } catch (\\Throwable) {
+        } catch (Throwable) {
             $passwordMatches = false;
         }
 
