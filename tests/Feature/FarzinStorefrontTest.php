@@ -447,6 +447,127 @@ class FarzinStorefrontTest extends TestCase
             ->assertDontSee('تصویر محصول ثبت نشده');
     }
 
+    public function test_product_page_hides_purchase_controls_when_unavailable_and_prefills_stock_request(): void
+    {
+        $product = $this->product($this->category(['slug' => 'hoods']), [
+            'name' => 'هود ناموجود برای درخواست موجودی',
+            'slug' => 'out-of-stock-inquiry-hood',
+            'sku' => 'FAR-OUT-UX-1',
+            'stock' => 0,
+        ]);
+
+        $response = $this->get(route('product.show', $product->slug))
+            ->assertOk()
+            ->assertSee('ناموجود')
+            ->assertSee('درخواست اطلاع از موجودی')
+            ->assertDontSee('id="product-purchase"', false)
+            ->assertDontSee('data-quantity-control', false)
+            ->assertSee('subject=product', false)
+            ->assertSee('#contact-form', false);
+
+        $html = $response->getContent();
+        $this->assertSame(1, substr_count($html, 'شناسه محصول: '.$product->sku));
+
+        $message = 'سلام، لطفاً درباره زمان تأمین موجودی محصول «'.$product->name.'» راهنمایی‌ام کنید.';
+        $this->get(route('contact', ['subject' => 'product', 'message' => $message]))
+            ->assertOk()
+            ->assertSee('value="product" selected', false)
+            ->assertSee($message);
+    }
+
+    public function test_product_page_shows_one_installment_summary_and_one_sku(): void
+    {
+        $category = $this->category(['slug' => 'hoods']);
+        $product = $this->product($category, [
+            'name' => 'هود اقساطی فرزین',
+            'slug' => 'farzin-installment-hood',
+            'sku' => 'FAR-INSTALLMENT-UX',
+            'price' => 10000000,
+            'stock' => 4,
+            'installment_enabled' => true,
+            'installment_cash_percent' => 50,
+            'installment_remainder_method' => 'cheque',
+            'installment_cheque_count' => 2,
+            'installment_interval_months' => 1,
+        ]);
+
+        ProductImage::create([
+            'product_id' => $product->id,
+            'path' => 'https://cdn.example.test/farzin-installment-hood.webp',
+            'alt' => 'متن alt قدیمی و ناهماهنگ',
+            'sort_order' => 0,
+            'is_primary' => true,
+        ]);
+
+        $html = $this->get(route('product.show', $product->slug))
+            ->assertOk()
+            ->assertSee('افزودن به سبد خرید')
+            ->assertSee('id="product-purchase"', false)
+            ->assertSee('data-quantity-control', false)
+            ->assertSee('خرید اقساطی؛ پیش‌پرداخت ۵۰٪')
+            ->assertSee('بدون کارمزد')
+            ->assertSee('alt="'.$product->name.'"', false)
+            ->assertDontSee('متن alt قدیمی و ناهماهنگ')
+            ->getContent();
+
+        $this->assertSame(1, substr_count($html, 'شناسه محصول: '.$product->sku));
+        $this->assertSame(1, substr_count($html, 'خرید اقساطی؛ پیش‌پرداخت ۵۰٪'));
+    }
+
+    public function test_homepage_hides_empty_categories_out_of_stock_products_and_sparse_featured_section(): void
+    {
+        $category = $this->category([
+            'name' => 'دسته دارای دو محصول موجود',
+            'slug' => 'two-stocked-products',
+        ]);
+        $this->category([
+            'name' => 'دسته بدون محصول',
+            'slug' => 'empty-home-category',
+        ]);
+
+        foreach ([1, 2] as $index) {
+            $product = $this->product($category, [
+                'name' => 'هود موجود شماره '.$index,
+                'slug' => 'home-stocked-hood-'.$index,
+                'sku' => 'FAR-HOME-STOCK-'.$index,
+                'stock' => 3,
+            ]);
+
+            ProductImage::create([
+                'product_id' => $product->id,
+                'path' => 'https://cdn.example.test/home-stocked-'.$index.'.webp',
+                'alt' => $product->name,
+                'sort_order' => 0,
+                'is_primary' => true,
+            ]);
+        }
+
+        $outOfStock = $this->product($category, [
+            'name' => 'هود ناموجود نباید پیشنهاد شود',
+            'slug' => 'home-out-of-stock-hood',
+            'sku' => 'FAR-HOME-OUT-1',
+            'stock' => 0,
+        ]);
+
+        ProductImage::create([
+            'product_id' => $outOfStock->id,
+            'path' => 'https://cdn.example.test/home-out-of-stock.webp',
+            'alt' => $outOfStock->name,
+            'sort_order' => 0,
+            'is_primary' => true,
+        ]);
+
+        $response = $this->get(route('home'))
+            ->assertOk()
+            ->assertSee('دسته دارای دو محصول موجود')
+            ->assertDontSee('دسته بدون محصول')
+            ->assertDontSee($outOfStock->name)
+            ->assertDontSee('fz-home-featured-section', false)
+            ->assertDontSee('۰ محصول فعال');
+
+        $this->assertSame(0, substr_count($response->getContent(), 'farzin-product-card--round-media'));
+    }
+
     public function test_sitemap_lists_public_pages_and_only_active_catalog_items(): void
     {
         $category = $this->category([
