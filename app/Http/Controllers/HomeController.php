@@ -34,7 +34,7 @@ class HomeController extends Controller
 
         $productRelations = [
             'category:id,name',
-            'variants:id,product_id,stock',
+            'variants:id,product_id,type,stock',
             'images' => fn ($query) => $query
                 ->select(['id', 'product_id', 'media_id', 'path', 'alt', 'sort_order', 'is_primary'])
                 ->orderByDesc('is_primary')
