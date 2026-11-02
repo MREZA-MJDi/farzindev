@@ -239,12 +239,12 @@ class ShopPaginationAndBestSellersTest extends TestCase
             'total' => $product->price * $quantity,
         ]);
     }
-    public function test_homepage_uses_one_best_seller_grid_and_removes_duplicate_gallery_and_arrival_sections(): void
+    public function test_homepage_displays_unique_best_seller_newest_and_curated_shelves(): void
     {
         $category = $this->category();
 
-        // Homepage-selected, best-selling and new-arrival products share one
-        // eight-item product grid; no secondary gallery or mosaic is rendered.
+        // Best sellers and new arrivals have their own shelves. Curated products
+        // remain visible only when they have not already appeared in an earlier shelf.
         $heroGalleryProductIds = [];
         for ($index = 1; $index <= 2; $index++) {
             $galleryProduct = $this->product($category, [
@@ -286,8 +286,10 @@ class ShopPaginationAndBestSellersTest extends TestCase
         $response = $this->get(route('home'))->assertOk();
         $html = $response->getContent();
 
-         $this->assertStringContainsString('id="fz-home-newest"', $html);
-        $this->assertSame(8, substr_count($html, 'class="farzin-product-card group'));
+        $this->assertStringContainsString('id="fz-home-newest"', $html);
+        $this->assertStringContainsString('id="fz-home-bestsellers"', $html);
+        $this->assertStringContainsString('id="fz-home-selected"', $html);
+        $this->assertSame(10, substr_count($html, 'class="farzin-product-card group'));
         $this->assertStringNotContainsString('fz-new-section', $html);
         $this->assertStringNotContainsString('grid__image', $html);
         foreach ($heroGalleryProductIds as $productId) {
