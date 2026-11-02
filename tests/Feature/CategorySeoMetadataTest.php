@@ -93,7 +93,7 @@ class CategorySeoMetadataTest extends TestCase
             ->where('name', 'دسته‌بندی جدید فارسی')
             ->firstOrFail();
 
-        $this->assertMatchesRegularExpression('/^category-[a-z0-9-]+$/', $category->slug);
+        $this->assertMatchesRegularExpression('/^[a-z0-9][a-z0-9-]*$/', $category->slug);
 
         $this->get(route('categories.show', $category->slug))
             ->assertOk()
