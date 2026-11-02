@@ -35,16 +35,21 @@ Admin sign-in always authenticates against the `users` database table through th
 
 Set a strong, unique `ADMIN_PASSWORD` (at least 12 characters). If it contains spaces, `#`, quotes, or backslashes, quote and escape the value according to dotenv syntax. Never paste credentials into chat, commit them, or place them in shell command arguments.
 
-After changing `ADMIN_NAME`, `ADMIN_EMAIL`, or `ADMIN_PASSWORD`, run:
+After changing `ADMIN_NAME`, `ADMIN_EMAIL`, or `ADMIN_PASSWORD`, run this single provisioning command:
 
 ```bash
-php artisan config:clear
-php artisan config:cache
 php artisan admin:sync
+```
+
+The command reads the current process environment or parses the root `.env` file directly, so it can apply changed credentials even when Laravel's configuration cache is present. It safely creates or updates the configured administrator and hashes the password. It refuses to take over a non-admin account with the same email and refuses ambiguous multiple-admin changes. It never prints or logs the password.
+
+To verify the result without exposing credentials, run:
+
+```bash
 php artisan admin:check
 ```
 
-`admin:sync` safely creates or updates the configured administrator and hashes the password through the User model. It refuses to take over a non-admin account with the same email and refuses ambiguous multiple-admin changes. It never prints or logs the password. `admin:check` prints only three boolean results: admin exists, email matches, and password matches.
+The check command prints only three boolean results: admin exists, email matches, and password matches.
 
 Back up the database before running `admin:sync` on an existing installation. The normal `db:seed` flow creates the initial administrator only; use `admin:sync` for intentional credential changes.
 
