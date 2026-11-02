@@ -16,7 +16,7 @@
 
 @section('content')
     @php
-        $mapAddress = trim((string) ($contactSetting?->address ?? ''));
+        $publicPhone = \\App\\Support\\StorefrontContact::phone($contactSetting?->phone);\n        $mapAddress = trim((string) ($contactSetting?->address ?? ''));
         $mapLatitude = $contactSetting?->latitude;
         $mapLongitude = $contactSetting?->longitude;
         $hasMapCoordinates = is_numeric($mapLatitude) && is_numeric($mapLongitude);
@@ -63,8 +63,8 @@
                             <a href="#contact-form" class="fz-contact-button fz-contact-button--primary">
                                 <span>ارسال پیام</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4" aria-hidden="true"><path d="M20 11.5a7.5 7.5 0 0 1-7.5 7.5H6l-3 2v-9.5A7.5 7.5 0 0 1 10.5 4h2A7.5 7.5 0 0 1 20 11.5Z" /><path d="M8 11h8m-8 3h5" /></svg>
                             </a>
-                            @if(filled($contactSetting?->phone))
-                                <a href="tel:{{ $contactSetting->phone }}" class="fz-contact-button fz-contact-button--glass">
+                            @if($publicPhone)
+                                <a href="{{ $publicPhone['href'] }}" class="fz-contact-button fz-contact-button--glass">
                                     <span>تماس مستقیم</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4" aria-hidden="true"><path d="M5 4.5h3l1.4 3.7-2 1.4a15 15 0 0 0 7 7l1.4-2 3.7 1.4v3c0 .8-.7 1.5-1.5 1.5A14.5 14.5 0 0 1 3.5 6c0-.8.7-1.5 1.5-1.5Z" /></svg>
                                 </a>
                             @else
@@ -221,7 +221,7 @@
                                         <span class="fz-contact-channel__icon" aria-hidden="true">
                                             <svg viewBox="0 0 24 24" fill="none"><path d="M7 3.8 4.9 5.1c-.8.5-1.1 1.6-.7 2.5 2.4 5.3 6.8 9.7 12.1 12.1.9.4 2 0 2.5-.7l1.3-2.1-4.1-2.5-1.4 1.7a16 16 0 0 1-6.7-6.7l1.7-1.4L7 3.8Z" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
                                         </span>
-                                        <span class="fz-contact-channel__copy"><small>PHONE / تماس تلفنی</small><strong>{{ $contactSetting->phone_label ?: 'تماس مستقیم' }}</strong><em dir="ltr">{{ $contactSetting->phone }}</em></span>
+                                        <span class="fz-contact-channel__copy"><small>PHONE / تماس تلفنی</small><strong>{{ $contactSetting->phone_label ?: 'تماس مستقیم' }}</strong><em dir="ltr">{{ $publicPhone['display'] }}</em></span>
 
                                     </a>
                                 @endif
@@ -236,7 +236,7 @@
                                     </a>
                                 @endif
 
-                                @if(!filled($contactSetting?->phone) && !filled($contactSetting?->email))
+                                @if(! $publicPhone && !filled($contactSetting?->email))
                                     <div class="fz-contact-empty-channel">شماره تماس و ایمیل پس از ثبت در تنظیمات تماس نمایش داده می‌شوند.</div>
                                 @endif
                             </div>
@@ -325,18 +325,18 @@
                                     <label for="subject">موضوع پیام <span>*</span></label>
                                     <select id="subject" name="subject" required @error('subject') aria-invalid="true" @enderror>
                                         <option value="">موضوع را انتخاب کنید</option>
-                                        <option value="product" @selected(old('subject') === 'product')>مشاوره درباره محصول</option>
-                                        <option value="installment" @selected(old('subject') === 'installment')>شرایط خرید اقساطی</option>
-                                        <option value="order" @selected(old('subject') === 'order')>پیگیری سفارش</option>
-                                        <option value="shipping" @selected(old('subject') === 'shipping')>ارسال و تحویل</option>
-                                        <option value="other" @selected(old('subject') === 'other')>سایر موضوعات</option>
+                                        <option value="product" @selected(old('subject', request('subject')) === 'product')>مشاوره درباره محصول</option>
+                                        <option value="installment" @selected(old('subject', request('subject')) === 'installment')>شرایط خرید اقساطی</option>
+                                        <option value="order" @selected(old('subject', request('subject')) === 'order')>پیگیری سفارش</option>
+                                        <option value="shipping" @selected(old('subject', request('subject')) === 'shipping')>ارسال و تحویل</option>
+                                        <option value="other" @selected(old('subject', request('subject')) === 'other')>سایر موضوعات</option>
                                     </select>
                                     @error('subject')<small class="fz-contact-field__error">{{ $message }}</small>@enderror
                                 </div>
 
                                 <div class="fz-contact-field">
                                     <label for="message">متن پیام <span>*</span></label>
-                                    <textarea id="message" name="message" rows="5" required minlength="10" maxlength="5000" placeholder="چطور می‌توانیم کمکتان کنیم؟" @error('message') aria-invalid="true" @enderror>{{ old('message') }}</textarea>
+                                    <textarea id="message" name="message" rows="5" required minlength="10" maxlength="5000" placeholder="چطور می‌توانیم کمکتان کنیم؟" @error('message') aria-invalid="true" @enderror>{{ old('message', request('message')) }}</textarea>
                                     @error('message')<small class="fz-contact-field__error">{{ $message }}</small>@enderror
                                     <small class="fz-contact-field__hint">حداقل ۱۰ کاراکتر · اطلاعات تماس فقط برای پاسخ‌گویی استفاده می‌شوند.</small>
                                 </div>
