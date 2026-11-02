@@ -84,6 +84,18 @@ class AuthController extends Controller
                 ]);
         }
 
+        if ($request->user()?->isAdmin()) {
+            Auth::logout();
+            RateLimiter::hit($throttleKey, 60);
+            $request->session()->regenerate();
+
+            return back()
+                ->withInput($request->only('phone'))
+                ->withErrors([
+                    'phone' => 'شماره موبایل یا رمز عبور صحیح نیست.',
+                ]);
+        }
+
         RateLimiter::clear($throttleKey);
 
         $request->session()->regenerate();
