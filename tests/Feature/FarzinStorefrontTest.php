@@ -1047,7 +1047,7 @@ class FarzinStorefrontTest extends TestCase
             ->assertSee('موجود برای سفارش')
             ->assertSee('farzin-product-detail-info', false)
             ->assertSee('data-stock-available="true"', false)
-            ->assertSee('روش پرداخت در مرحله ثبت سفارش')
+            ->assertDontSee('روش پرداخت در مرحله ثبت سفارش')
             ->assertSee('@touchstart.passive="startTouch($event)"', false)
             ->assertSee('@touchend.passive="endTouch($event)"', false)
             ->assertSee('https://cdn.example.test/variant-black.webp', false)
