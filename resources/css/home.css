@@ -2336,40 +2336,6 @@ body.home-body {
     background: rgba(255,255,255,.055);
 }
 
-/* Four concise benefit cards; the long-form trust details remain below. */
-.fz-home-benefits {
-    padding-block: 1.25rem;
-    background: #fff;
-    border-bottom: 1px solid var(--fz-home-line);
-}
-.fz-home-benefits__grid {
-    display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: .75rem;
-}
-.fz-home-benefit {
-    display: flex;
-    min-width: 0;
-    align-items: flex-start;
-    gap: .85rem;
-    padding: .85rem .8rem;
-}
-.fz-home-benefit__icon {
-    display: grid;
-    width: 2.65rem;
-    height: 2.65rem;
-    flex: 0 0 auto;
-    place-items: center;
-    border: 1px solid #dce4ed;
-    border-radius: .9rem;
-    color: var(--fz-home-ink);
-    background: #f3f6f9;
-    font-size: 1.1rem;
-    font-weight: 900;
-}
-.fz-home-benefit strong { display: block; color: var(--fz-home-ink); font-size: .78rem; font-weight: 900; }
-.fz-home-benefit p { margin-top: .28rem; color: var(--fz-home-muted); font-size: .66rem; line-height: 1.9; }
-
 .fz-home-empty {
     padding: clamp(1.5rem, 4vw, 3rem);
     border: 1px dashed #bdc9d6;
