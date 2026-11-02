@@ -47,9 +47,13 @@ class StorefrontPageContent
         return [
             // Homepage hero and catalogue.
             'page_home_hero_eyebrow' => 'تجهیزات آشپزخانه فرزین',
-            'page_home_hero_title' => 'برای آشپزخانه‌ای',
-            'page_home_hero_highlight' => 'هماهنگ با نیاز شما',
-            'page_home_hero_description' => 'هود و سینک را با تصویر، قیمت و مشخصات واقعی مقایسه کنید؛ انتخاب را از مدل مناسب فضای خودتان شروع کنید.',
+            'page_home_hero_title' => 'هود و سینک مناسب آشپزخانه‌تان را',
+            'page_home_hero_highlight' => 'مستقیم از فرزین انتخاب کنید',
+            'page_home_hero_description' => 'مدل‌های موجود را با قیمت و مشخصات ببینید، گزینه‌ها را مقایسه کنید و سفارش خود را آنلاین ثبت کنید.',
+            'page_home_hero_image_url' => '',
+            'page_home_enamad_url' => '',
+            'page_home_warranty_text' => '',
+            'page_home_reviews_text' => '',
             'page_home_hero_primary_label' => 'مشاهده محصولات',
             'page_home_hero_secondary_label' => 'انتخاب دسته‌بندی',
             'page_home_categories_eyebrow' => 'دسته‌بندی محصولات فرزین',
