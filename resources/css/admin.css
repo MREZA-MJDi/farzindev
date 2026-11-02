@@ -2021,3 +2021,311 @@ p {
 @media (prefers-reduced-motion: reduce) {
     .blog-design-preview__art img { transition: none; }
 }
+
+
+/* Live CMS preview of the exact public homepage Hero image and offer card. */
+.fz-admin-home-hero-preview {
+    --fz-home-ink: #06284f;
+    color: var(--admin-text);
+}
+.fz-admin-home-hero-preview__toolbar {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: .9rem;
+}
+.fz-admin-home-hero-preview__toolbar h3 {
+    color: var(--admin-text);
+    font-size: .9rem;
+    font-weight: 850;
+}
+.fz-admin-home-hero-preview__toolbar p,
+.fz-admin-home-hero-preview__toolbar > span {
+    margin-top: .25rem;
+    color: var(--admin-muted);
+    font-size: .68rem;
+    line-height: 1.8;
+}
+.fz-admin-home-hero-preview__toolbar > span {
+    flex: 0 0 auto;
+    padding: .35rem .6rem;
+    border: 1px solid var(--admin-border);
+    border-radius: 999px;
+    background: var(--admin-surface-soft);
+}
+.fz-admin-home-hero-preview__layout {
+    display: grid;
+    grid-template-columns: minmax(0, .82fr) minmax(0, 1.18fr);
+    align-items: center;
+    gap: clamp(1rem, 3vw, 2.5rem);
+    padding: clamp(.9rem, 2vw, 1.5rem);
+    border: 1px solid var(--admin-border);
+    border-radius: 1.15rem;
+    background: linear-gradient(135deg, #fff, #f0f4f8);
+}
+.fz-admin-home-hero-preview__copy { min-width: 0; }
+.fz-admin-home-hero-preview__eyebrow {
+    color: #17436f;
+    font-size: .66rem;
+    font-weight: 900;
+}
+.fz-admin-home-hero-preview__copy h2 {
+    max-width: 18ch;
+    margin-top: .65rem;
+    color: #06284f;
+    font-size: clamp(1.25rem, 2.5vw, 2rem);
+    font-weight: 950;
+    line-height: 1.55;
+}
+.fz-admin-home-hero-preview__copy > p:not(.fz-admin-home-hero-preview__eyebrow) {
+    max-width: 34rem;
+    margin-top: .65rem;
+    color: #536174;
+    font-size: .74rem;
+    line-height: 1.95;
+}
+.fz-admin-home-hero-preview__button {
+    display: inline-flex;
+    min-height: 2.55rem;
+    align-items: center;
+    gap: .6rem;
+    margin-top: 1rem;
+    padding: .55rem .95rem;
+    border-radius: .7rem;
+    color: #fff;
+    background: #06284f;
+    font-size: .69rem;
+    font-weight: 900;
+}
+.fz-admin-home-hero-preview__visual {
+    position: relative;
+    width: 100%;
+    min-width: 0;
+    aspect-ratio: 16 / 10;
+    overflow: visible;
+    border: 1px solid rgba(6,40,79,.1);
+    border-radius: 1.1rem;
+    background: #dce4ed;
+    box-shadow: 0 14px 32px rgba(6,40,79,.12);
+}
+.fz-admin-home-hero-preview__saved {
+    position: absolute;
+    inset: 0;
+    display: block;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    border-radius: inherit;
+    background: #edf2f7;
+}
+.fz-admin-home-hero-preview__saved > img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.fz-admin-home-hero-preview__placeholder {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: .55rem;
+    padding: 1.5rem;
+    border-radius: inherit;
+    color: #fff;
+    background: linear-gradient(135deg, #0a3159, #041e3e);
+    text-align: center;
+}
+.fz-admin-home-hero-preview__placeholder > span {
+    font-size: .72rem;
+    font-weight: 900;
+    opacity: .72;
+}
+.fz-admin-home-hero-preview__placeholder > strong {
+    max-width: 24ch;
+    font-size: .9rem;
+    font-weight: 900;
+    line-height: 1.8;
+}
+.fz-admin-home-hero-preview__placeholder > small {
+    max-width: 30ch;
+    color: rgba(255,255,255,.72);
+    font-size: .65rem;
+    line-height: 1.8;
+}
+.fz-admin-home-hero-crop-panel {
+    position: absolute;
+    z-index: 4;
+    inset: 0;
+}
+.fz-admin-home-hero-crop-frame {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 10;
+    overflow: visible;
+    border-radius: inherit;
+    background: #edf2f7;
+}
+.fz-admin-home-hero-crop-frame > canvas {
+    position: absolute;
+    inset: 0;
+    display: block;
+    width: 100%;
+    height: 100%;
+    max-width: none;
+    border-radius: inherit;
+    background: #edf2f7;
+    cursor: grab;
+    touch-action: none;
+}
+.fz-admin-home-hero-crop-controls {
+    position: absolute;
+    top: calc(100% + .8rem);
+    inset-inline: 0;
+    display: grid;
+    gap: .75rem;
+    padding: .9rem;
+    border: 1px solid var(--admin-border);
+    border-radius: .85rem;
+    background: var(--admin-card);
+    box-shadow: 0 12px 30px rgba(15,23,42,.08);
+}
+.fz-admin-home-hero-crop-controls__heading {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: .4rem;
+}
+.fz-admin-home-hero-crop-controls__heading strong {
+    color: var(--admin-text);
+    font-size: .75rem;
+    font-weight: 850;
+}
+.fz-admin-home-hero-crop-controls__heading span {
+    color: var(--admin-muted);
+    font-size: .64rem;
+}
+.fz-admin-home-hero-crop-panel[hidden] { display: none !important; }
+.fz-admin-home-hero-preview__no-offer {
+    position: absolute;
+    inset-inline: .7rem;
+    inset-block-end: .7rem;
+    z-index: 3;
+    padding: .6rem .7rem;
+    border: 1px dashed rgba(6,40,79,.24);
+    border-radius: .65rem;
+    color: #536174;
+    background: rgba(255,255,255,.94);
+    font-size: .62rem;
+    line-height: 1.7;
+    text-align: center;
+}
+.fz-admin-home-hero-preview .fz-home-hero-offer {
+    position: absolute;
+    z-index: 3;
+    inset-inline-start: .75rem;
+    inset-block-end: .75rem;
+    display: grid;
+    width: min(340px, calc(100% - 1.5rem));
+    grid-template-columns: 3.75rem minmax(0, 1fr) auto;
+    align-items: center;
+    gap: .55rem;
+    padding: .65rem .75rem;
+    border: 1px solid rgba(6,40,79,.08);
+    border-radius: .85rem;
+    background: rgba(255,255,255,.96);
+    box-shadow: 0 12px 30px rgba(5,25,48,.2);
+    backdrop-filter: blur(10px);
+}
+.fz-admin-home-hero-preview .fz-home-hero-offer__eyebrow {
+    grid-column: 1 / -1;
+    color: #17436f;
+    font-size: .58rem;
+    font-weight: 900;
+}
+.fz-admin-home-hero-preview .fz-home-hero-offer > img {
+    width: 3.75rem;
+    height: 3.35rem;
+    border-radius: .6rem;
+    background: #f2f5f8;
+    object-fit: contain;
+}
+.fz-admin-home-hero-preview .fz-home-hero-offer__details { min-width: 0; }
+.fz-admin-home-hero-preview .fz-home-hero-offer__details h2 {
+    overflow: hidden;
+    color: #06284f;
+    font-size: .7rem;
+    font-weight: 900;
+    line-height: 1.6;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.fz-admin-home-hero-preview .fz-home-hero-offer__details > strong {
+    display: block;
+    margin-top: .15rem;
+    color: #06284f;
+    font-size: .78rem;
+    font-weight: 950;
+}
+.fz-admin-home-hero-preview .fz-home-hero-offer__details > strong small { font-size: .57rem; }
+.fz-admin-home-hero-preview .fz-home-hero-offer__stock {
+    display: inline-flex;
+    align-items: center;
+    gap: .3rem;
+    margin-top: .18rem;
+    color: #187a49;
+    font-size: .57rem;
+    font-weight: 800;
+}
+.fz-admin-home-hero-preview .fz-home-hero-offer__stock i {
+    width: .38rem;
+    height: .38rem;
+    border-radius: 50%;
+    background: #1c9a5b;
+}
+.fz-admin-home-hero-preview .fz-home-hero-offer > a {
+    display: inline-flex;
+    align-items: center;
+    gap: .25rem;
+    color: #06284f;
+    font-size: .62rem;
+    font-weight: 900;
+    white-space: nowrap;
+}
+.fz-admin-home-hero-preview__upload {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(240px, .8fr);
+    align-items: end;
+    gap: 1rem;
+    margin-top: 1rem;
+    padding: 1rem;
+    border: 1px solid var(--admin-border);
+    border-radius: .9rem;
+    background: var(--admin-surface-soft);
+}
+.fz-admin-home-hero-preview__upload p {
+    margin-top: .3rem;
+    color: var(--admin-muted);
+    font-size: .66rem;
+    line-height: 1.8;
+}
+@media (max-width: 767px) {
+    .fz-admin-home-hero-preview__toolbar { flex-direction: column; }
+    .fz-admin-home-hero-preview__layout { grid-template-columns: minmax(0, 1fr); gap: 1rem; }
+    .fz-admin-home-hero-preview__copy h2 { max-width: none; font-size: 1.35rem; }
+    .fz-admin-home-hero-preview__visual { min-height: 0; }
+    .fz-admin-home-hero-preview .fz-home-hero-offer {
+        position: relative;
+        inset: auto;
+        width: auto;
+        margin: -1rem .65rem 0;
+        grid-template-columns: 3.3rem minmax(0, 1fr) auto;
+        padding: .6rem;
+    }
+    .fz-admin-home-hero-preview .fz-home-hero-offer > img { width: 3.3rem; height: 3rem; }
+    .fz-admin-home-hero-preview__upload { grid-template-columns: minmax(0, 1fr); }
+}
