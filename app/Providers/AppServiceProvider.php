@@ -6,6 +6,7 @@ use App\Models\StorefrontSetting;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\View;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -43,6 +44,9 @@ class AppServiceProvider extends ServiceProvider
 
             $view->with('storefrontPublicSettings', $settings);
             $view->with('storefrontBrandName', $settings['brand_name'] ?? config('app.name', 'فرزین'));
+            $view->with('storefrontBrandLogoUrl', filled($settings['brand_logo'] ?? null)
+                ? Storage::disk('public')->url($settings['brand_logo'])
+                : null);
         });
     }
 }
