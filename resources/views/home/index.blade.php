@@ -9,8 +9,8 @@
 @php
     $heroImage = $heroProduct?->images->first(fn ($image) => filled($image->url));
     $homeGuides = $categories->filter(fn ($category) => mb_strlen(trim((string) $category->description)) >= 120)->values();
-    $homeCtaCategory = $categories->first(fn ($category) => filled($category->homepage_image_url));
-    $homeCtaImage = $homeCtaCategory?->homepage_image_url
+    $homeCtaCategory = $categories->first(fn ($category) => filled($category->image_url));
+    $homeCtaImage = $homeCtaCategory?->image_url
         ?? $heroImage?->url;
 
     $homeBenefits = [];
