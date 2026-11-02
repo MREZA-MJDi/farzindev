@@ -266,7 +266,7 @@
         @yield('content')
     </main>
 
-    <x-layout.footer :contact="$storefrontContact" :settings="$storefrontPublicSettings" />
+    <x-layout.footer :contact="$storefrontContact" :settings="$storefrontPublicSettings" :brand-logo-url="$storefrontBrandLogoUrl" />
 
     <x-layout.mobile-bottom-bar :cart-count="$storefrontCartCount" />
 
