@@ -47,7 +47,7 @@
     {{-- Discount badge --}}
     @if ($hasDiscount)
         <div class="product-price__discount">
-            {{ \\App\\Helpers\\PersianNumberHelper::format($discountPercent) }}٪ تخفیف
+            {{ \App\Helpers\PersianNumberHelper::format($discountPercent) }}٪ تخفیف
         </div>
     @endif
 
