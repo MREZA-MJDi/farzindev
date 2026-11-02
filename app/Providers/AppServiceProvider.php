@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Models\StorefrontSetting;
+use App\Services\StorefrontPageContent;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\View;
@@ -43,6 +44,12 @@ class AppServiceProvider extends ServiceProvider
             ), [], report: false);
 
             $view->with('storefrontPublicSettings', $settings);
+            $pageContent = rescue(
+                fn (): array => app(StorefrontPageContent::class)->all(),
+                [],
+                report: false
+            );
+            $view->with('storefrontPageContent', $pageContent);
             $view->with('storefrontBrandName', filled($settings['brand_name'] ?? null) ? $settings['brand_name'] : 'فرزین');
             $brandLogoPath = $settings['brand_logo'] ?? null;
             $view->with('storefrontBrandLogoUrl', rescue(
