@@ -386,10 +386,22 @@ Route::middleware(['auth', 'customer'])->group(function () {
 |--------------------------------------------------------------------------
 */
 
-Route::middleware(['auth', 'admin'])
-    ->prefix(config('farzin.admin_path', 'admin'))
+Route::prefix(config('farzin.admin_path', 'admin'))
     ->name('admin.')
     ->group(function () {
+        Route::get('login', [AdminAuthController::class, 'create'])
+            ->middleware('guest:admin')
+            ->name('login');
+
+        Route::post('login', [AdminAuthController::class, 'store'])
+            ->middleware(['guest:admin', 'throttle:5,1'])
+            ->name('login.store');
+
+        Route::post('logout', [AdminAuthController::class, 'destroy'])
+            ->middleware('auth:admin')
+            ->name('logout');
+
+        Route::middleware(['auth:admin', 'admin'])->group(function () {
 
         Route::get(
             'storefront-settings',
@@ -604,6 +616,7 @@ Route::middleware(['auth', 'admin'])
             '/contact-messages/{contactMessage}',
             [ContactMessageController::class, 'destroy']
         )->name('contact-messages.destroy');
+        });
     });
 
 
