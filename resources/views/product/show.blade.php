@@ -727,24 +727,24 @@
 
                             </div>
 
-                            @if(filled(data_get($storefrontContact ?? [], 'warranty_summary')))
+                            @if(filled(data_get($publicContactSettings ?? [], 'warranty_summary')))
                                 <div class="rounded-2xl border border-[var(--livora-border)] bg-[var(--livora-white)] p-4">
                                     <p class="text-[10px] font-semibold text-[var(--livora-stone)]">گارانتی</p>
-                                    <p class="mt-2 text-xs font-medium leading-6">{{ data_get($storefrontContact, 'warranty_summary') }}</p>
+                                    <p class="mt-2 text-xs font-medium leading-6">{{ data_get($publicContactSettings, 'warranty_summary') }}</p>
                                 </div>
                             @endif
 
                             @if(filled(data_get($storefrontContact ?? [], 'shipping_summary')))
                                 <div class="rounded-2xl border border-[var(--livora-border)] bg-[var(--livora-white)] p-4">
                                     <p class="text-[10px] font-semibold text-[var(--livora-stone)]">ارسال</p>
-                                    <p class="mt-2 text-xs font-medium leading-6">{{ data_get($storefrontContact, 'shipping_summary') }}</p>
+                                    <p class="mt-2 text-xs font-medium leading-6">{{ data_get($publicContactSettings, 'shipping_summary') }}</p>
                                 </div>
                             @endif
 
                             @if(filled(data_get($storefrontContact ?? [], 'installation_summary')))
                                 <div class="rounded-2xl border border-[var(--livora-border)] bg-[var(--livora-white)] p-4">
                                     <p class="text-[10px] font-semibold text-[var(--livora-stone)]">نصب</p>
-                                    <p class="mt-2 text-xs font-medium leading-6">{{ data_get($storefrontContact, 'installation_summary') }}</p>
+                                    <p class="mt-2 text-xs font-medium leading-6">{{ data_get($publicContactSettings, 'installation_summary') }}</p>
                                 </div>
                             @endif
 
