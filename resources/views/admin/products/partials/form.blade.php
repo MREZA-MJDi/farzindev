@@ -381,6 +381,57 @@
 
 
         {{-- ========================================================
+             Verified technical specifications
+        ========================================================= --}}
+        <div class="admin-card p-6">
+            <div class="mb-6">
+                <h3 class="text-base font-bold text-[var(--admin-text)]">مشخصات فنی قابل نمایش</h3>
+                <p class="mt-1 text-xs leading-6 text-[var(--admin-muted)]">
+                    فقط اطلاعاتی را وارد کنید که با برگه فنی یا مشخصات تأییدشده همین مدل مطابقت دارد. فیلدهای خالی در سایت و فیلترها نمایش داده نمی‌شوند.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+                <div>
+                    <label for="width_cm" class="admin-label">عرض محصول (سانتی‌متر)</label>
+                    <input id="width_cm" name="width_cm" type="number" min="1" max="500" step="1" value="{{ old('width_cm', $product->width_cm ?? '') }}" class="admin-input" placeholder="مثلاً ۷۰">
+                    @error('width_cm')<p class="mt-2 text-xs text-[var(--admin-danger)]">{{ $message }}</p>@enderror
+                </div>
+                <div>
+                    <label for="installation_type" class="admin-label">نوع نصب</label>
+                    <input id="installation_type" name="installation_type" type="text" maxlength="100" value="{{ old('installation_type', $product->installation_type ?? '') }}" class="admin-input" placeholder="مثلاً مخفی، مورب، روکار یا توکار">
+                    @error('installation_type')<p class="mt-2 text-xs text-[var(--admin-danger)]">{{ $message }}</p>@enderror
+                </div>
+                <div>
+                    <label for="material" class="admin-label">جنس / متریال</label>
+                    <input id="material" name="material" type="text" maxlength="120" value="{{ old('material', $product->material ?? '') }}" class="admin-input" placeholder="فقط جنس تأییدشده">
+                    @error('material')<p class="mt-2 text-xs text-[var(--admin-danger)]">{{ $message }}</p>@enderror
+                </div>
+                <div>
+                    <label for="suction_power_m3h" class="admin-label">مکش (مترمکعب بر ساعت)</label>
+                    <input id="suction_power_m3h" name="suction_power_m3h" type="number" min="1" max="10000" value="{{ old('suction_power_m3h', $product->suction_power_m3h ?? '') }}" class="admin-input" placeholder="عدد برگه فنی">
+                    @error('suction_power_m3h')<p class="mt-2 text-xs text-[var(--admin-danger)]">{{ $message }}</p>@enderror
+                </div>
+                <div>
+                    <label for="noise_db" class="admin-label">سطح صدا (دسی‌بل)</label>
+                    <input id="noise_db" name="noise_db" type="number" min="1" max="200" step="0.1" value="{{ old('noise_db', $product->noise_db ?? '') }}" class="admin-input" placeholder="عدد برگه فنی">
+                    @error('noise_db')<p class="mt-2 text-xs text-[var(--admin-danger)]">{{ $message }}</p>@enderror
+                </div>
+                <div>
+                    <label for="power_watts" class="admin-label">توان (وات)</label>
+                    <input id="power_watts" name="power_watts" type="number" min="1" max="10000" value="{{ old('power_watts', $product->power_watts ?? '') }}" class="admin-input" placeholder="عدد برگه فنی">
+                    @error('power_watts')<p class="mt-2 text-xs text-[var(--admin-danger)]">{{ $message }}</p>@enderror
+                </div>
+                <div>
+                    <label for="warranty_months" class="admin-label">مدت گارانتی همین محصول (ماه)</label>
+                    <input id="warranty_months" name="warranty_months" type="number" min="1" max="360" value="{{ old('warranty_months', $product->warranty_months ?? '') }}" class="admin-input" placeholder="فقط مدت تأییدشده">
+                    @error('warranty_months')<p class="mt-2 text-xs text-[var(--admin-danger)]">{{ $message }}</p>@enderror
+                </div>
+            </div>
+        </div>
+
+
+        {{-- ========================================================
              Pricing
         ========================================================= --}}
         <div class="admin-card p-6">
