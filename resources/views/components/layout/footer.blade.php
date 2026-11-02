@@ -6,7 +6,7 @@
     $footerEmail = trim((string) data_get($contact, 'email', ''));
     $footerAddress = trim((string) data_get($contact, 'address', ''));
     $footerHours = trim((string) data_get($contact, 'hours', ''));
-    $footerBrandName = trim((string) data_get($settings, 'brand_name', config('app.name', 'فرزین')));
+    $footerBrandName = trim((string) data_get($settings, 'brand_name', 'فرزین'));
     $footerBrandLogo = trim((string) data_get($settings, 'brand_logo', ''));
     $footerBrandLogoUrl = $footerBrandLogo !== '' ? \Illuminate\Support\Facades\Storage::disk('public')->url($footerBrandLogo) : null;
 @endphp
