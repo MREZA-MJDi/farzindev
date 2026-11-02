@@ -20,11 +20,12 @@
     </div>
 
     @php
-        $mediaTabHasErrors = collect($errors->keys())->contains(
-            fn (string $key): bool => str_starts_with($key, 'images')
-                || str_starts_with($key, 'media_ids')
-                || str_starts_with($key, 'image_ids')
-        );
+        $mediaTabHasErrors = old('return_to_product')
+            || collect($errors->keys())->contains(
+                fn (string $key): bool => str_starts_with($key, 'images')
+                    || str_starts_with($key, 'media_ids')
+                    || str_starts_with($key, 'image_ids')
+            );
     @endphp
 
     <div
