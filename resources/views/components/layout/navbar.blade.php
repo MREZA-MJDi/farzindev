@@ -1,4 +1,4 @@
-@props(['cartCount' => 0])
+@props(['cartCount' => 0, 'brandName' => 'فرزین'])
 
 <nav
     aria-label="ناوبری اصلی فرزین"
@@ -11,10 +11,10 @@
             <a
                 href="{{ route('home') }}"
                 class="farzin-site-header__brand group inline-flex min-w-0 shrink-0 items-center"
-                aria-label="فرزین، صفحه اصلی"
+                aria-label="{{ $brandName }}، صفحه اصلی"
             >
                 <span class="farzin-wordmark">
-                    <span class="farzin-wordmark__main">فرزین</span>
+                    <span class="farzin-wordmark__main">{{ $brandName }}</span>
                     <span class="farzin-wordmark__caption">تجهیزات مدرن آشپزخانه</span>
                 </span>
             </a>
