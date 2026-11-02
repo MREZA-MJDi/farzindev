@@ -132,7 +132,7 @@
             <header class="fz-home-featured-section__heading fz-reveal">
                 <div class="fz-home-featured-section__heading-copy">
                     <p class="fz-eyebrow"><span aria-hidden="true"></span> مدل‌های موجود</p>
-                    <h2 id="fz-products-heading">{{ $hasBestSellerSales ? 'پرفروش‌ترین مدل‌های موجود' : 'مدل‌های منتخب و موجود' }}</h2>
+                    <h2 id="fz-products-heading">مدل‌های منتخب و موجود</h2>
                     <p>مدل‌هایی را ببینید که در حال حاضر امکان خرید دارند.</p>
                 </div>
                 <a class="fz-home-featured-section__all-link fz-text-link" href="{{ route('shop.index') }}">
