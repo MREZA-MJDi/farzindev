@@ -112,6 +112,15 @@ class AdminAuthorizationTest extends TestCase
         $this->assertAuthenticatedAs($admin, 'admin');
     }
 
+    public function test_non_admin_account_cannot_use_the_admin_guard(): void
+    {
+        $customer = User::factory()->create(['role' => 'customer']);
+
+        $this->actingAs($customer, 'admin')
+            ->get('/admin')
+            ->assertForbidden();
+    }
+
     public function test_authenticated_customer_cannot_open_admin_sections(): void
     {
         $customer = User::factory()->create([
@@ -135,7 +144,7 @@ class AdminAuthorizationTest extends TestCase
             $this->get($path)->assertRedirect(route('admin.login'));
         }
 
-        // Mutating endpoints must be blocked by role middleware before validation
+        // Mutating endpoints must be blocked by the admin guard before validation
         // or controller code can change anything.
         $this->post('/admin/products', [])->assertRedirect(route('admin.login'));
         $this->post('/admin/categories', [])->assertRedirect(route('admin.login'));
