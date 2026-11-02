@@ -5,6 +5,7 @@ namespace App\Http\Middleware;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
 
 class AdminMiddleware
@@ -13,7 +14,9 @@ class AdminMiddleware
         Request $request,
         Closure $next
     ): Response {
-        if (! $request->user()?->isAdmin()) {
+        Auth::shouldUse('admin');
+
+        if (! $request->user('admin')?->isAdmin()) {
             // Log failures must never change the authorization decision.
             rescue(fn () => Log::warning('Blocked access to an admin-only route', [
                 'request_id' => $request->attributes->get('request_id'),
