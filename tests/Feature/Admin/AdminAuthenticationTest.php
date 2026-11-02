@@ -187,6 +187,7 @@ class AdminAuthenticationTest extends TestCase
         ])->assertRedirect(route('admin.dashboard'));
 
         $this->assertAuthenticatedAs($admin, 'admin');
+        $this->assertNotEmpty($admin->fresh()->remember_token);
 
         $this->post(route('admin.logout'))
             ->assertRedirect(route('admin.login'));
@@ -222,8 +223,11 @@ class AdminAuthenticationTest extends TestCase
         $this->assertTrue(Hash::check('StrongPass123', $admin->password));
         $this->assertDatabaseCount('users', 1);
 
+        $firstHash = $admin->password;
+
         $this->assertSame(0, Artisan::call('admin:sync'));
         $this->assertDatabaseCount('users', 1);
+        $this->assertSame($firstHash, $admin->fresh()->password);
 
         config(['farzin.admin.password' => 'ChangedStrongPass123']);
         $this->assertSame(0, Artisan::call('admin:sync'));
@@ -231,6 +235,36 @@ class AdminAuthenticationTest extends TestCase
         $admin->refresh();
         $this->assertTrue(Hash::check('ChangedStrongPass123', $admin->password));
         $this->assertFalse(Hash::check('StrongPass123', $admin->password));
+
+        config(['farzin.admin.email' => 'new-admin-sync@example.test']);
+        $this->assertSame(0, Artisan::call('admin:sync'));
+        $this->assertDatabaseCount('users', 1);
+        $this->assertDatabaseHas('users', [
+            'id' => $admin->id,
+            'email' => 'new-admin-sync@example.test',
+            'role' => 'admin',
+        ]);
+    }
+
+    public function test_admin_sync_refuses_to_take_over_a_customer_account(): void
+    {
+        config([
+            'farzin.admin.email' => 'existing-customer@example.test',
+            'farzin.admin.password' => 'StrongPass123',
+        ]);
+
+        $customer = User::factory()->create([
+            'role' => 'customer',
+            'email' => 'existing-customer@example.test',
+        ]);
+
+        $this->assertSame(1, Artisan::call('admin:sync'));
+        $this->assertDatabaseHas('users', [
+            'id' => $customer->id,
+            'role' => 'customer',
+            'email' => 'existing-customer@example.test',
+        ]);
+        $this->assertDatabaseCount('users', 1);
     }
 
     public function test_admin_check_reports_only_boolean_results_without_credentials(): void
@@ -270,6 +304,13 @@ class AdminAuthenticationTest extends TestCase
             'email' => $admin->email,
             'password' => 'StrongPass123',
         ])->assertRedirect(route('admin.products.create'));
+    }
+
+    public function test_public_contact_form_response_is_not_cached(): void
+    {
+        $this->get(route('contact'))
+            ->assertOk()
+            ->assertHeader('Cache-Control', 'private, no-store, no-cache, max-age=0, must-revalidate');
     }
 
     public function test_admin_dashboard_responses_are_not_cached(): void
