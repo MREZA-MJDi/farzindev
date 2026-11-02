@@ -1,7 +1,7 @@
 @props(['contact' => []])
 @php
-    $footerPhone = \\App\\Support\\StorefrontContact::phone(data_get($contact, 'phone'));
-    $footerWhatsapp = \\App\\Support\\StorefrontContact::whatsapp(data_get($contact, 'whatsapp'));
+    $footerPhone = \App\Support\StorefrontContact::phone(data_get($contact, 'phone'));
+    $footerWhatsapp = \App\Support\StorefrontContact::whatsapp(data_get($contact, 'whatsapp'));
     $footerEmail = trim((string) data_get($contact, 'email', ''));
     $footerAddress = trim((string) data_get($contact, 'address', ''));
     $footerHours = trim((string) data_get($contact, 'hours', ''));
