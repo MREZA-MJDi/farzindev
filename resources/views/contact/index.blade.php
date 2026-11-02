@@ -143,61 +143,6 @@
         <section class="fz-contact-workspace" aria-label="راه‌های ارتباط و فرم تماس">
             <x-layout.container>
                 <div class="fz-contact-grid {{ $hasMap ? '' : '!grid-cols-1' }}">
-                    {{-- Right column in RTL: location and map --}}
-                    @if($hasMap)
-                    <aside class="fz-contact-map-column" data-fz-reveal>
-                        <div class="fz-contact-panel fz-contact-map-panel">
-                            <div class="fz-contact-panel__header">
-                                <div>
-                                    <p class="fz-contact-kicker">موقعیت مجموعه</p>
-                                    <h2>موقعیت ما روی نقشه</h2>
-                                    <p>آدرس مجموعه را ببینید و مسیر رسیدن را باز کنید.</p>
-                                </div>
-                                <span class="fz-contact-panel__badge" aria-hidden="true">
-                                    <svg viewBox="0 0 24 24" fill="none"><path d="M19 10c0 5-7 11-7 11S5 15 5 10a7 7 0 1 1 14 0Z" stroke="currentColor" stroke-width="1.7"/><circle cx="12" cy="10" r="2.4" stroke="currentColor" stroke-width="1.7"/></svg>
-                                </span>
-                            </div>
-
-                                <div class="fz-contact-map-frame">
-                                    <iframe
-                                        title="نقشه موقعیت مجموعه فرزین"
-                                        src="https://www.google.com/maps?q={{ urlencode($mapQuery) }}&amp;z=15&amp;output=embed"
-                                        loading="lazy"
-                                        referrerpolicy="no-referrer-when-downgrade"
-                                        allowfullscreen
-                                    ></iframe>
-                                    <span class="fz-contact-map-frame__corner fz-contact-map-frame__corner--one" aria-hidden="true"></span>
-                                    <span class="fz-contact-map-frame__corner fz-contact-map-frame__corner--two" aria-hidden="true"></span>
-                                </div>
-                                <div class="fz-contact-address">
-                                    <span class="fz-contact-address__icon" aria-hidden="true">
-                                        <svg viewBox="0 0 24 24" fill="none"><path d="M19 10c0 5-7 11-7 11S5 15 5 10a7 7 0 1 1 14 0Z" stroke="currentColor" stroke-width="1.7"/><circle cx="12" cy="10" r="2.4" stroke="currentColor" stroke-width="1.7"/></svg>
-                                    </span>
-                                    <div>
-                                        @if($mapAddress !== '')
-                                            <span>آدرس ثبت‌شده</span>
-                                            <p>{{ $mapAddress }}</p>
-                                        @else
-                                            <span>مختصات ثبت‌شده</span>
-                                            <p dir="ltr">{{ $mapLatitude }}, {{ $mapLongitude }}</p>
-                                        @endif
-                                    </div>
-                                </div>
-                                <a
-                                    href="https://www.google.com/maps/dir/?api=1&amp;destination={{ urlencode($mapQuery) }}"
-                                    class="fz-contact-directions"
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                ><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4" aria-hidden="true"><path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z" /><circle cx="12" cy="10" r="2.5" /></svg> مسیریابی به نشانی فرزین در Google Maps</a>
-                        </div>
-
-                        <div class="fz-contact-map-note">
-                            <span class="fz-contact-map-note__pulse" aria-hidden="true"></span>
-                            <p>پیش از مراجعه حضوری، برای هماهنگی با تیم فرزین تماس بگیرید.</p>
-                        </div>
-                    </aside>
-                    @endif
-
                     {{-- راه‌های تماس فقط وقتی مقدار واقعی دارند نمایش داده می‌شوند. --}}
                     <div class="fz-contact-left-column">
                         @if($hasContactChannels)
@@ -342,6 +287,61 @@
                             </form>
                         </section>
                     </div>
+                    {{-- Right column in RTL: location and map --}}
+                    @if($hasMap)
+                    <aside class="fz-contact-map-column" data-fz-reveal>
+                        <div class="fz-contact-panel fz-contact-map-panel">
+                            <div class="fz-contact-panel__header">
+                                <div>
+                                    <p class="fz-contact-kicker">موقعیت مجموعه</p>
+                                    <h2>موقعیت ما روی نقشه</h2>
+                                    <p>آدرس مجموعه را ببینید و مسیر رسیدن را باز کنید.</p>
+                                </div>
+                                <span class="fz-contact-panel__badge" aria-hidden="true">
+                                    <svg viewBox="0 0 24 24" fill="none"><path d="M19 10c0 5-7 11-7 11S5 15 5 10a7 7 0 1 1 14 0Z" stroke="currentColor" stroke-width="1.7"/><circle cx="12" cy="10" r="2.4" stroke="currentColor" stroke-width="1.7"/></svg>
+                                </span>
+                            </div>
+
+                                <div class="fz-contact-map-frame">
+                                    <iframe
+                                        title="نقشه موقعیت مجموعه فرزین"
+                                        src="https://www.google.com/maps?q={{ urlencode($mapQuery) }}&amp;z=15&amp;output=embed"
+                                        loading="lazy"
+                                        referrerpolicy="no-referrer-when-downgrade"
+                                        allowfullscreen
+                                    ></iframe>
+                                    <span class="fz-contact-map-frame__corner fz-contact-map-frame__corner--one" aria-hidden="true"></span>
+                                    <span class="fz-contact-map-frame__corner fz-contact-map-frame__corner--two" aria-hidden="true"></span>
+                                </div>
+                                <div class="fz-contact-address">
+                                    <span class="fz-contact-address__icon" aria-hidden="true">
+                                        <svg viewBox="0 0 24 24" fill="none"><path d="M19 10c0 5-7 11-7 11S5 15 5 10a7 7 0 1 1 14 0Z" stroke="currentColor" stroke-width="1.7"/><circle cx="12" cy="10" r="2.4" stroke="currentColor" stroke-width="1.7"/></svg>
+                                    </span>
+                                    <div>
+                                        @if($mapAddress !== '')
+                                            <span>آدرس ثبت‌شده</span>
+                                            <p>{{ $mapAddress }}</p>
+                                        @else
+                                            <span>مختصات ثبت‌شده</span>
+                                            <p dir="ltr">{{ $mapLatitude }}, {{ $mapLongitude }}</p>
+                                        @endif
+                                    </div>
+                                </div>
+                                <a
+                                    href="https://www.google.com/maps/dir/?api=1&amp;destination={{ urlencode($mapQuery) }}"
+                                    class="fz-contact-directions"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                ><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4" aria-hidden="true"><path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z" /><circle cx="12" cy="10" r="2.5" /></svg> مسیریابی به نشانی فرزین در Google Maps</a>
+                        </div>
+
+                        <div class="fz-contact-map-note">
+                            <span class="fz-contact-map-note__pulse" aria-hidden="true"></span>
+                            <p>پیش از مراجعه حضوری، برای هماهنگی با تیم فرزین تماس بگیرید.</p>
+                        </div>
+                    </aside>
+                    @endif
+
                 </div>
             </x-layout.container>
         </section>
