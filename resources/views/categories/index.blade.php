@@ -42,7 +42,7 @@
 
                     <div class="fz-category-hero__layout">
                         <div class="fz-category-hero__content">
-                            <p class="fz-category-hero__eyebrow">SHOP BY CATEGORY / FIND YOUR FIT</p>
+                            <p class="fz-category-hero__eyebrow">انتخاب بر اساس دسته‌بندی</p>
 
                             <h1 class="fz-category-hero__title">
                                 فضای مناسب خودت را پیدا کن.
@@ -57,15 +57,15 @@
                                 <a href="#category-list" class="fz-category-hero__action">
                                     <span>انتخاب دسته‌بندی</span><span aria-hidden="true">↙</span>
                                 </a>
-                                <span class="fz-category-hero__hint">FARZIN / DESIGN SYSTEMS</span>
+                                <span class="fz-category-hero__hint">دسته‌بندی محصولات فرزین</span>
                             </div>
                         </div>
 
                         <div class="fz-category-hero__visual" data-category-hero aria-label="نمایش گرافیکی هود و سینک فرزین">
                             <span class="fz-category-hero__orbit fz-category-hero__orbit--outer" aria-hidden="true"></span>
                             <span class="fz-category-hero__orbit fz-category-hero__orbit--inner" aria-hidden="true"></span>
-                            <div class="fz-category-hero__stamp">FARZIN <span>DESIGN STUDIO / 2026</span></div>
-                            <span class="fz-category-hero__spec" aria-hidden="true">METAL · FORM · FUNCTION</span>
+                            <div class="fz-category-hero__stamp">فرزین <span>هود و سینک آشپزخانه</span></div>
+                            <span class="fz-category-hero__spec" aria-hidden="true">جنس · فرم · کاربرد</span>
 
                             <article class="fz-category-hero__product fz-category-hero__product--hood" data-category-float>
                                 <div class="fz-category-hero__product-art" aria-hidden="true">
@@ -87,9 +87,9 @@
                                     </svg>
                                 </div>
                                 <div class="fz-category-hero__product-label">
-                                    <small>AIR / 01</small>
+                                    <small>هود / ۰۱</small>
                                     <strong>هود آشپزخانه</strong>
-                                    <em>POWER · PRECISION</em>
+                                    <em>قدرت · دقت</em>
                                 </div>
                                 <span class="fz-category-hero__index">01</span>
                             </article>
@@ -116,9 +116,9 @@
                                     </svg>
                                 </div>
                                 <div class="fz-category-hero__product-label">
-                                    <small>FORM / 02</small>
+                                    <small>سینک / ۰۲</small>
                                     <strong>سینک ظرفشویی</strong>
-                                    <em>CRAFT · DURABILITY</em>
+                                    <em>کیفیت · دوام</em>
                                 </div>
                                 <span class="fz-category-hero__index">02</span>
                             </article>
