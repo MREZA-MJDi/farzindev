@@ -215,7 +215,7 @@
 
                             /
 
-                            {{ \\App\\Helpers\\PersianNumberHelper::format($imageCount) }}
+                            {{ \App\Helpers\PersianNumberHelper::format($imageCount) }}
 
                         </span>
 
