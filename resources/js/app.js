@@ -74,6 +74,25 @@ window.addEventListener('product-variant-selected', () => {
     window.dispatchEvent(new CustomEvent('product-variant-availability-changed', {
         detail: { max },
     }));
+
+    // Reflect the exact combined variant adjustment in the visible price.
+    const priceSummary = document.querySelector('[data-product-price-summary]');
+    const currentPrice = priceSummary?.querySelector('[data-product-current-price]');
+    const priceRange = priceSummary?.querySelector('[data-product-price-range]');
+
+    if (priceSummary && currentPrice && priceRange) {
+        const basePrice = Number(priceSummary.dataset.basePrice || 0);
+        const adjustment = options
+            .filter((input) => input.checked)
+            .reduce((total, input) => total + Number(input.dataset.priceAdjustment || 0), 0);
+        const nextPrice = Math.max(0, basePrice + adjustment);
+
+        currentPrice.textContent = new Intl.NumberFormat('fa-IR', {
+            maximumFractionDigits: 0,
+        }).format(nextPrice);
+        currentPrice.hidden = false;
+        priceRange.hidden = true;
+    }
 });
 
 /*
