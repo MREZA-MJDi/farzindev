@@ -121,6 +121,7 @@ class HomeController extends Controller
             ->where('installment_remainder_method', 'cheque')
             ->where('installment_cheque_count', '>', 0)
             ->where('installment_interval_months', '>', 0)
+            ->whereDoesntHave('variants', fn (Builder $query) => $query->where('price_adjustment', '!=', 0))
             ->whereHas('category', fn (Builder $query) => $query->where('is_active', true))
             ->when(true, $onlyInStock)
             ->with(['category:id,name,slug', 'variants:id,product_id,type,stock'])
