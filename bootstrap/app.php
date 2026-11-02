@@ -1,5 +1,7 @@
 <?php
 
+use App\Console\Commands\AdminCheckCommand;
+use App\Console\Commands\AdminSyncCommand;
 use App\Console\Commands\OptimizeResponsiveImages;
 use App\Http\Middleware\AdminMiddleware;
 use App\Http\Middleware\CustomerMiddleware;
@@ -29,6 +31,8 @@ return Application::configure(
 
     ->withCommands([
         OptimizeResponsiveImages::class,
+        AdminSyncCommand::class,
+        AdminCheckCommand::class,
     ])
 
     ->withMiddleware(function (
