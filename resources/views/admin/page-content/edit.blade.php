@@ -65,7 +65,6 @@
                     <div class="rounded-xl border border-[var(--admin-border)] bg-[var(--admin-surface-soft)] p-4 text-xs leading-6 text-[var(--admin-muted)]">
                         محتوای این تب در Hero، کارت‌های اعتماد، راهنماها، معرفی مجله و دعوت پایانی خانه استفاده می‌شود. نام و ترتیب دسته‌ها و محصولات از CRUD اختصاصی خودشان می‌آیند.
                     </div>
-                @if($tab === 'home')
                     @php
                         $heroImageValue = trim((string) ($values['page_home_hero_image_url'] ?? ''));
                         $heroImagePreview = '';
@@ -95,7 +94,6 @@
                             @endif
                         </div>
                     </div>
-                @endif
 
                 @elseif($tab === 'about')
                     <div class="rounded-xl border border-[var(--admin-border)] bg-[var(--admin-surface-soft)] p-4 text-xs leading-6 text-[var(--admin-muted)]">
