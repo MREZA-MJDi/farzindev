@@ -58,6 +58,16 @@ class UpdateProductRequest extends FormRequest
                 'max:255',
                 Rule::unique('products', 'sku')
                     ->ignore($product),
+                function ($attribute, $value, $fail) use ($product): void {
+                    $sku = strtoupper(trim((string) $value));
+                    $isReserved = str_starts_with($sku, 'FZ-SEED-')
+                        || str_starts_with($sku, 'LIV-');
+                    $isUnchangedLegacySku = $sku === strtoupper(trim((string) $product->sku));
+
+                    if ($isReserved && ! $isUnchangedLegacySku) {
+                        $fail('پیشوندهای FZ-SEED- و LIV- رزرو شده‌اند؛ برای محصول واقعی یک SKU مستقل وارد کنید.');
+                    }
+                },
             ],
 
             'short_description' => [
