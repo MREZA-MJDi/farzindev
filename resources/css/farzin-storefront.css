@@ -5732,3 +5732,249 @@ body.home-body,
         grid-template-areas: "copy" "showcase";
     }
 }
+
+
+/* Final category-card contract: the dark copy layer always stays readable above real imagery. */
+.storefront-content .farzin-category-card {
+    display: block;
+    min-width: 0;
+    color: #FFFFFF !important;
+    border: 1px solid #D8E0E8;
+    border-radius: 12px;
+    background: #06284F;
+    box-shadow: 0 8px 24px rgba(6,40,79,.08);
+    text-decoration: none;
+    transition: transform .2s ease, border-color .2s ease, box-shadow .2s ease;
+}
+.storefront-content .farzin-category-card:hover,
+.storefront-content .farzin-category-card:focus-within {
+    color: #FFFFFF !important;
+    border-color: rgba(123,13,26,.48);
+    box-shadow: 0 14px 30px rgba(6,40,79,.14);
+    transform: translateY(-3px);
+}
+.storefront-content .farzin-category-card__surface {
+    position: relative;
+    isolation: isolate;
+    aspect-ratio: 5 / 4;
+    border-radius: inherit;
+    background: #06284F;
+}
+.storefront-content .farzin-category-card__media {
+    position: absolute;
+    z-index: -1;
+    inset: 0;
+    background: #DCE2E8;
+}
+.storefront-content .farzin-category-card__media > img,
+.storefront-content .farzin-category-card__media > .farzin-category-card__gif,
+.storefront-content .farzin-category-card__media > video {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+}
+.storefront-content .farzin-category-card__shade {
+    z-index: 0;
+    background:
+        linear-gradient(180deg, rgba(4,24,46,.02) 10%, rgba(4,24,46,.08) 42%, rgba(4,24,46,.9) 100%),
+        linear-gradient(90deg, rgba(4,24,46,.08), transparent 58%);
+    pointer-events: none;
+}
+.storefront-content .farzin-category-card__signature {
+    display: inline-flex;
+    align-items: center;
+    gap: .45rem;
+    padding: .4rem .58rem;
+    border: 1px solid rgba(255,255,255,.34);
+    border-radius: 6px;
+    color: #FFFFFF !important;
+    background: rgba(6,40,79,.66);
+    font-size: .55rem;
+    font-weight: 850;
+    letter-spacing: .13em;
+    direction: ltr;
+    backdrop-filter: blur(8px);
+}
+.storefront-content .farzin-category-card__signature i {
+    display: block;
+    width: .35rem;
+    height: .35rem;
+    border-radius: 50%;
+    background: #D99AA3;
+}
+.storefront-content .farzin-category-card__content {
+    z-index: 1;
+    color: #FFFFFF !important;
+    text-align: right;
+}
+.storefront-content .farzin-category-card__content :where(p, h3, small, strong, span) {
+    color: #FFFFFF !important;
+    text-shadow: 0 1px 8px rgba(4,24,46,.22);
+}
+.storefront-content .farzin-category-card__content p:first-child {
+    color: rgba(255,255,255,.72) !important;
+    font-size: .58rem;
+    font-weight: 800;
+    letter-spacing: .12em;
+    direction: ltr;
+}
+.storefront-content .farzin-category-card__content h3 {
+    margin: .35rem 0 0;
+    font-size: clamp(1rem, 1.25vw, 1.22rem);
+    font-weight: 900;
+    line-height: 1.6;
+}
+.storefront-content .farzin-category-card__content p:not(:first-child) {
+    margin-top: .22rem;
+    color: rgba(255,255,255,.82) !important;
+    font-size: .68rem;
+    line-height: 1.7;
+}
+.storefront-content .farzin-category-card__arrow {
+    width: 2.6rem;
+    height: 2.6rem;
+    flex: 0 0 2.6rem;
+    border: 1px solid rgba(255,255,255,.34);
+    color: #FFFFFF !important;
+    background: rgba(6,40,79,.58);
+    backdrop-filter: blur(8px);
+    transition: color .2s ease, background .2s ease, transform .2s ease;
+}
+.storefront-content .farzin-category-card:hover .farzin-category-card__arrow,
+.storefront-content .farzin-category-card:focus-within .farzin-category-card__arrow {
+    color: #FFFFFF !important;
+    background: #7B0D1A;
+    transform: translateX(-2px);
+}
+@media (max-width: 767px) {
+    .storefront-content .farzin-category-card__surface { aspect-ratio: 5 / 4.5; }
+    .storefront-content .farzin-category-card__content { padding: .9rem !important; }
+    .storefront-content .farzin-category-card__content h3 { font-size: .92rem; }
+    .storefront-content .farzin-category-card__arrow { width: 2.25rem; height: 2.25rem; flex-basis: 2.25rem; }
+}
+
+/* Single quantity stepper: one neutral rail, clear actions, no duplicate visual counters. */
+.storefront-content .farzin-quantity {
+    display: inline-grid;
+    grid-template-columns: 42px 54px 42px;
+    align-items: center;
+    gap: 3px;
+    width: max-content;
+    padding: 4px;
+    border: 1px solid #D6DEE7;
+    border-radius: 11px;
+    color: #06284F;
+    background: #FFFFFF;
+    box-shadow: 0 3px 12px rgba(6,40,79,.045);
+    direction: rtl;
+}
+.storefront-content .farzin-quantity__button {
+    display: grid;
+    width: 42px;
+    height: 42px;
+    place-items: center;
+    padding: 0;
+    border: 1px solid #E3E8ED;
+    border-radius: 8px;
+    color: #06284F;
+    background: #F3F5F7;
+    transition: color .16s ease, background .16s ease, border-color .16s ease, transform .16s ease;
+}
+.storefront-content .farzin-quantity__button:hover:not(:disabled) {
+    color: #FFFFFF;
+    border-color: #7B0D1A;
+    background: #7B0D1A;
+}
+.storefront-content .farzin-quantity__button:active:not(:disabled) { transform: scale(.96); }
+.storefront-content .farzin-quantity__button:disabled {
+    color: #AEB7C1;
+    border-color: #EDF0F3;
+    background: #F8F9FA;
+    cursor: not-allowed;
+    opacity: .72;
+}
+.storefront-content .farzin-quantity__button svg {
+    width: 16px;
+    height: 16px;
+}
+.storefront-content .farzin-quantity__input {
+    display: block;
+    width: 54px;
+    min-width: 0;
+    min-height: 42px !important;
+    height: 42px;
+    padding: 0 !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    outline: 0;
+    color: #06284F !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    font-size: .9rem;
+    font-weight: 900;
+    font-variant-numeric: tabular-nums;
+    text-align: center;
+}
+.storefront-content .farzin-quantity__input:disabled { color: #9AA4AE !important; }
+.storefront-content .farzin-quantity__input::-webkit-inner-spin-button,
+.storefront-content .farzin-quantity__input::-webkit-outer-spin-button {
+    margin: 0;
+    appearance: none;
+}
+.storefront-content .farzin-quantity__input { -moz-appearance: textfield; }
+@media (max-width: 479px) {
+    .storefront-content .farzin-quantity { grid-template-columns: 40px 48px 40px; }
+    .storefront-content .farzin-quantity__button { width: 40px; height: 40px; }
+    .storefront-content .farzin-quantity__input { width: 48px; min-height: 40px !important; height: 40px; }
+}
+
+/* Homepage product circle: real image above, attached product information below, one clipped shape. */
+.home-body .farzin-product-card--round-media .farzin-product-card__media {
+    border-radius: 50%;
+    background: radial-gradient(circle at 50% 28%, #FFFFFF 0%, #F4F6F8 68%, #E8EDF2 100%);
+}
+.home-body .farzin-product-card--round-media .farzin-product-card__image {
+    padding: 8% 11% 38%;
+    object-fit: contain;
+    object-position: center 34%;
+}
+.home-body .farzin-product-card--round-media .farzin-product-card__content {
+    min-height: 47%;
+    padding: 12% 10% 9%;
+    border-top: 1px solid rgba(6,40,79,.1);
+    background: linear-gradient(180deg, rgba(255,255,255,.97), #FFFFFF 22%);
+    box-shadow: 0 -8px 22px rgba(6,40,79,.055);
+    backdrop-filter: blur(5px);
+}
+.home-body .farzin-product-card--round-media .farzin-product-card__title {
+    display: -webkit-box;
+    max-width: 100%;
+    overflow: hidden;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    color: #06284F !important;
+    text-shadow: none;
+}
+.home-body .farzin-product-card--round-media .farzin-product-card__availability {
+    margin-top: .22rem;
+    color: #397451;
+    font-size: .58rem;
+    line-height: 1.4;
+}
+.home-body .farzin-product-card--round-media .farzin-product-card__availability.is-unavailable {
+    color: #A33B45;
+}
+.home-body .farzin-product-card--round-media .farzin-product-card__price-current {
+    color: #7B0D1A !important;
+}
+@media (max-width: 767px) {
+    .home-body .farzin-product-card--round-media .farzin-product-card__content {
+        min-height: 51%;
+        padding: 11% 8% 9%;
+    }
+    .home-body .farzin-product-card--round-media .farzin-product-card__availability {
+        font-size: .54rem;
+    }
+}
