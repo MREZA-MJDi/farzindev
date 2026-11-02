@@ -11,11 +11,14 @@ class CategoryController extends Controller
     {
         $categories = Category::query()
             ->active()
-            ->whereHas('products', fn ($query) => $query->active()->publicCatalogue())
+            ->whereHas('products', fn ($query) => $query->active()->publicCatalogue()->availableForPurchase())
             ->with('hoverMedia')
             ->withCount([
-                'products' => fn ($query) => $query->active()->publicCatalogue(),
+                'products' => fn ($query) => $query->active()->publicCatalogue()->availableForPurchase(),
             ])
+            ->withMin([
+                'products as starting_price' => fn ($query) => $query->active()->publicCatalogue()->availableForPurchase(),
+            ], 'price')
             ->orderBy('sort_order')
             ->orderBy('id')
             ->paginate(12)
@@ -28,7 +31,11 @@ class CategoryController extends Controller
 
     public function show(Category $category): View
     {
-        abort_unless($category->is_active, 404);
+        abort_unless(
+            $category->is_active
+            && $category->products()->active()->publicCatalogue()->exists(),
+            404
+        );
 
         $products = $category
             ->products()
