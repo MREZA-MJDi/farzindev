@@ -13,6 +13,7 @@ class HomeController extends Controller
     {
         $categories = Category::query()
             ->active()
+            ->whereHas('products', fn ($query) => $query->active()->publicCatalogue()->availableForPurchase())
             ->with([
                 'hoverMedia:id,path,mime_type,original_name,extension,size',
                 'latestActiveProduct.images' => fn ($query) => $query
@@ -21,7 +22,7 @@ class HomeController extends Controller
                 'latestActiveProduct.images.media:id,path',
             ])
             ->withCount([
-                'products' => fn ($query) => $query->active(),
+                'products' => fn ($query) => $query->active()->publicCatalogue()->availableForPurchase(),
             ])
             ->orderBy('sort_order')
             ->limit(4)
@@ -43,6 +44,8 @@ class HomeController extends Controller
         // editorial gallery is needed for the first decision.
         $heroProduct = Product::query()
             ->active()
+            ->publicCatalogue()
+            ->availableForPurchase()
             ->whereHas('category', fn ($query) => $query->where('is_active', true))
             ->whereHas('images')
             ->with($productRelations)
@@ -59,6 +62,8 @@ class HomeController extends Controller
         // updated products are tie-breakers when sales data is equal.
         $featuredProducts = Product::query()
             ->active()
+            ->publicCatalogue()
+            ->availableForPurchase()
             ->when($heroProduct, fn ($query) => $query->whereKeyNot($heroProduct->id))
             ->whereHas('category', fn ($query) => $query->where('is_active', true))
             ->with($productRelations)
@@ -93,12 +98,20 @@ class HomeController extends Controller
         $blogPosts = BlogPost::query()
             ->published()
             ->indexable()
+            ->whereNotNull('cover_image')
+            ->where('cover_image', '!=', '')
             ->with(['author:id,name', 'terms:id,type,name,slug'])
             ->orderByDesc('is_featured')
             ->orderByDesc('published_at')
             ->orderByDesc('id')
             ->limit(3)
             ->get();
+
+        // The homepage journal is an editorial section, not a filler block.
+        // Keep it hidden until three published, indexable, image-backed posts exist.
+        if ($blogPosts->count() < 3) {
+            $blogPosts = collect();
+        }
 
         return view('home.index', [
             'categories' => $categories,
