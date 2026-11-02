@@ -424,7 +424,7 @@
                                         <div>
 
                                             <p class="text-[10px] font-medium uppercase tracking-[0.2em] text-[var(--livora-accent)]">
-                                                FLEXIBLE PAYMENT
+                                                پرداخت منعطف
                                             </p>
 
                                             <h2 class="mt-2 text-lg font-semibold">
@@ -578,7 +578,7 @@
                                     </span>
 
                                         <p class="text-[11px] leading-6 text-[var(--livora-stone)]">
-                                            شرایط نهایی پرداخت اقساطی هنگام Checkout و بر اساس
+                                            شرایط نهایی پرداخت اقساطی هنگام ثبت سفارش و بر اساس
                                             تنظیمات ثبت‌شده برای سفارش به شما نمایش داده می‌شود.
                                         </p>
 
@@ -735,7 +735,7 @@
                                 </div>
                             @endif
 
-                            @if(filled(data_get($storefrontContact ?? [], 'installation_summary')))
+                            @if(filled(data_get($publicContactSettings ?? [], 'installation_summary')))
                                 <div class="rounded-2xl border border-[var(--livora-border)] bg-[var(--livora-white)] p-4">
                                     <p class="text-[10px] font-semibold text-[var(--livora-stone)]">نصب</p>
                                     <p class="mt-2 text-xs font-medium leading-6">{{ data_get($publicContactSettings, 'installation_summary') }}</p>
@@ -765,7 +765,7 @@
                     <div>
 
                         <p class="text-[10px] font-medium uppercase tracking-[0.22em] text-[var(--livora-accent)]">
-                            PRODUCT DETAILS
+                            درباره محصول
                         </p>
 
                         <h2 class="mt-3 text-3xl font-semibold tracking-tight">
@@ -817,7 +817,7 @@
                         <div>
 
                             <p class="text-[10px] font-medium uppercase tracking-[0.22em] text-[var(--livora-accent)]">
-                                INSTALLMENT GUIDE
+                                راهنمای اقساط
                             </p>
 
                             <h2 class="mt-3 text-2xl font-semibold">
