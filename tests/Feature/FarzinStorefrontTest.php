@@ -3686,10 +3686,10 @@ class FarzinStorefrontTest extends TestCase
             ->assertOk()
             ->assertSee('هزینه ارسال هنوز در جمع محاسبه نشده است.')
             ->assertSee('پس از ثبت نرخ ارسال یا هماهنگی با مجموعه مشخص می‌شود.')
-            ->assertSee('رایگان نشده', false)
+            ->assertDontSee('رایگان')
             ->assertSee('ثبت سفارش پس از تعیین هزینه ارسال')
             ->assertSee('disabled', false)
-            ->assertDontSee('3000000 تومان</p>', false);
+            ->assertSee('جمع کالاها');
 
         $this->post(route('checkout.place'), [
             'first_name' => 'Farzin',
