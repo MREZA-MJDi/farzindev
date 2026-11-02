@@ -519,6 +519,13 @@ class FarzinStorefrontTest extends TestCase
             $products[] = $product;
         }
 
+        ContactSetting::create([
+            'phone' => '02112345678',
+            'whatsapp' => '09123456789',
+            'address' => 'تهران، نشانی آزمایشی',
+            'is_active' => true,
+        ]);
+
         $response = $this->get(route('home'));
 
         $response->assertOk()
@@ -543,6 +550,125 @@ class FarzinStorefrontTest extends TestCase
         foreach ($products as $product) {
             $response->assertSee($product->name);
         }
+    }
+
+    public function test_homepage_shows_every_active_category_with_an_active_product(): void
+    {
+        $categories = [];
+
+        foreach (range(1, 6) as $index) {
+            $category = $this->category([
+                'name' => 'دسته واقعی فرزین '.$index,
+                'slug' => 'farzin-real-category-'.$index,
+                'sort_order' => $index,
+            ]);
+
+            $product = $this->product($category, [
+                'name' => 'محصول واقعی دسته '.$index,
+                'slug' => 'farzin-real-category-product-'.$index,
+                'sku' => 'FAR-REAL-CATEGORY-'.$index,
+                'show_in_home_gallery' => false,
+                'stock' => 2,
+            ]);
+
+            ProductImage::create([
+                'product_id' => $product->id,
+                'path' => 'https://cdn.example.test/farzin-real-category-'.$index.'.webp',
+                'alt' => 'تصویر محصول دسته '.$index,
+                'sort_order' => 0,
+                'is_primary' => true,
+            ]);
+
+            $categories[] = $category;
+        }
+
+        $response = $this->get(route('home'))->assertOk();
+
+        foreach ($categories as $category) {
+            $response->assertSee($category->name);
+            $response->assertSee(route('categories.show', $category->slug), false);
+        }
+
+        $this->assertSame(
+            6,
+            substr_count($response->getContent(), 'class="fz-category-card fz-category-card--editorial'),
+            'All active categories that contain active products should appear on the homepage.'
+        );
+    }
+
+    public function test_homepage_product_cards_use_saved_specifications_and_real_stock(): void
+    {
+        $category = $this->category(['name' => 'هود آشپزخانه', 'slug' => 'hoods']);
+
+        $available = $this->product($category, [
+            'name' => 'هود موجود با مشخصات واقعی',
+            'slug' => 'available-hood-with-real-specs',
+            'sku' => 'FAR-HOME-SPECS-AVAILABLE',
+            'stock' => 4,
+            'specifications' => [
+                'width' => '۹۰ سانتی‌متر',
+                'installation' => 'توکار',
+                'material' => 'استیل',
+            ],
+        ]);
+
+        ProductImage::create([
+            'product_id' => $available->id,
+            'path' => 'https://cdn.example.test/available-hood-with-real-specs.webp',
+            'alt' => 'هود موجود با مشخصات واقعی',
+            'sort_order' => 0,
+            'is_primary' => true,
+        ]);
+
+        $unavailable = $this->product($category, [
+            'name' => 'هود ناموجود',
+            'slug' => 'unavailable-home-hood',
+            'sku' => 'FAR-HOME-SPECS-OUT',
+            'stock' => 0,
+        ]);
+
+        ProductImage::create([
+            'product_id' => $unavailable->id,
+            'path' => 'https://cdn.example.test/unavailable-home-hood.webp',
+            'alt' => 'هود ناموجود',
+            'sort_order' => 0,
+            'is_primary' => true,
+        ]);
+
+        $response = $this->get(route('home'))->assertOk()
+            ->assertSee('۹۰ سانتی‌متر')
+            ->assertSee('توکار')
+            ->assertSee('استیل')
+            ->assertSee('افزودن به سبد')
+            ->assertSee('هود ناموجود')
+            ->assertSee('fz-home-hero-offer', false)
+            ->assertSee('هود موجود با مشخصات واقعی');
+
+        $html = $response->getContent();
+        $availablePosition = strpos($html, 'هود موجود با مشخصات واقعی');
+        $unavailablePosition = strpos($html, 'هود ناموجود');
+
+        $this->assertNotFalse($availablePosition);
+        $this->assertNotFalse($unavailablePosition);
+        $this->assertTrue(
+            $availablePosition < $unavailablePosition,
+            'In-stock homepage products must precede unavailable products.'
+        );
+        $this->assertStringContainsString('is-unavailable', $html);
+        $this->assertStringContainsString('موجود و آماده سفارش', $html);
+    }
+
+    public function test_homepage_cms_exposes_a_real_image_uploader_and_focal_position_control(): void
+    {
+        $admin = $this->admin();
+
+        $this->actingAs($admin, 'admin')
+            ->get(route('admin.page-content.edit', ['tab' => 'home']))
+            ->assertOk()
+            ->assertSee('enctype="multipart/form-data"', false)
+            ->assertSee('name="page_home_hero_image"', false)
+            ->assertSee('page_home_hero_image_position')
+            ->assertSee('نقطه تمرکز تصویر Hero');
     }
 
     public function test_homepage_renders_category_video_and_gif_with_the_correct_media_elements(): void
