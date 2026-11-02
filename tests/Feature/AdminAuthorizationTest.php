@@ -29,7 +29,7 @@ class AdminAuthorizationTest extends TestCase
 
         $admin = User::factory()->create(['role' => 'admin']);
 
-        $this->actingAs($admin)
+        $this->actingAs($admin, 'admin')
             ->from(route('admin.products.create'))
             ->post(route('admin.products.store'), [])
             ->assertRedirect(route('admin.products.create'))
@@ -71,7 +71,7 @@ class AdminAuthorizationTest extends TestCase
             'role' => 'admin',
         ]);
 
-        $this->actingAs($admin)
+        $this->actingAs($admin, 'admin')
             ->get('/admin')
             ->assertOk();
     }
