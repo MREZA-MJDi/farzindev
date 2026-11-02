@@ -19,6 +19,14 @@ final class AdminEnvironment
      */
     public static function credentials(): array
     {
+        if (app()->environment('testing')) {
+            return [
+                'name' => trim((string) config('farzin.admin.name', 'Farzin Admin')),
+                'email' => mb_strtolower(trim((string) config('farzin.admin.email', ''))),
+                'password' => (string) config('farzin.admin.password', ''),
+            ];
+        }
+
         $parsed = [];
         $path = base_path('.env');
 
