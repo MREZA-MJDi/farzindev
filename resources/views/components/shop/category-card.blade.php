@@ -5,6 +5,7 @@
     'motionMedia' => null,
     'href' => '#',
     'count' => null,
+    'startingPrice' => null,
 ])
 
 @php
@@ -36,7 +37,10 @@
                         <p class="text-[10px] font-semibold uppercase tracking-[0.22em] text-white/60">تجهیزات آشپزخانه</p>
                         <h3 class="mt-2 truncate text-xl font-semibold text-white sm:text-2xl">{{ $name }}</h3>
                         @if($hasCount)
-                            <p class="mt-2 text-xs text-white/65">{{ \App\Helpers\PersianNumberHelper::format($count) }} محصول</p>
+                            <p class="mt-2 text-xs text-white/65">{{ \App\Helpers\PersianNumberHelper::format($count) }} محصول موجود</p>
+                        @endif
+                        @if((float) ($startingPrice ?? 0) > 0)
+                            <p class="mt-1 text-xs font-semibold text-white">از {{ \App\Helpers\PersianNumberHelper::format((float) $startingPrice) }} تومان</p>
                         @endif
                     </div>
                     <span class="farzin-category-card__arrow flex h-11 w-11 shrink-0 items-center justify-center rounded-full" aria-hidden="true">
