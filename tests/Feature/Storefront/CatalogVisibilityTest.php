@@ -48,6 +48,8 @@ class CatalogVisibilityTest extends TestCase
 
     public function test_empty_and_retired_demo_categories_are_not_publicly_active(): void
     {
+        $this->app['env'] = 'staging';
+
         $empty = Category::query()->create([
             'name' => 'دسته خالی',
             'slug' => 'empty-category',
