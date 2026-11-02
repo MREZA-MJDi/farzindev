@@ -1,6 +1,7 @@
 <?php
 
 use App\Console\Commands\OptimizeResponsiveImages;
+use App\Console\Commands\CleanupPreviewCatalogue;
 use App\Http\Middleware\AdminMiddleware;
 use App\Http\Middleware\CustomerMiddleware;
 use App\Http\Middleware\RequestIdMiddleware;
@@ -29,6 +30,7 @@ return Application::configure(
 
     ->withCommands([
         OptimizeResponsiveImages::class,
+        CleanupPreviewCatalogue::class,
     ])
 
     ->withMiddleware(function (
