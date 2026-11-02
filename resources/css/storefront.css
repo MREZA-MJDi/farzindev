@@ -1,6 +1,5 @@
 /* Public storefront entrypoint: one stylesheet request for the public site. */
 @import './app.css';
-@import './home.css';
 @import './responsive.css';
 @import './farzin-storefront.css';
 @import './conversion.css';

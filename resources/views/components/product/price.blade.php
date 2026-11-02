@@ -1,7 +1,8 @@
 @props([
-'product',
-'showInstallment' => true,
-'compact' => false,
+    'product',
+    'showInstallment' => true,
+    'compact' => false,
+    'priceRange' => null,
 ])
 
 @php
@@ -10,7 +11,14 @@
         ? (float) $product->compare_at_price
         : null;
 
-    $hasDiscount = $compareAtPrice !== null
+    $rangeMinimum = is_array($priceRange) ? (float) ($priceRange['min'] ?? $price) : $price;
+    $rangeMaximum = is_array($priceRange) ? (float) ($priceRange['max'] ?? $price) : $price;
+    $hasPriceRange = $rangeMaximum - $rangeMinimum >= 0.01;
+
+    // A single compare-at price cannot accurately describe a range of
+    // variant-adjusted prices, so suppress the discount badge in that case.
+    $hasDiscount = ! $hasPriceRange
+        && $compareAtPrice !== null
         && $compareAtPrice > $price;
 
     $discountPercent = $hasDiscount
@@ -19,6 +27,7 @@
 
     $installmentEnabled =
         $showInstallment
+        && ! $hasPriceRange
         && (bool) $product->installment_enabled
         && (int) $product->installment_cash_percent < 100;
 
@@ -44,16 +53,19 @@
         'class' => 'product-price'
     ]) }}
 >
-    {{-- Discount badge --}}
     @if ($hasDiscount)
         <div class="product-price__discount">
-            {{ $discountPercent }}٪ تخفیف
+            {{ \App\Helpers\PersianNumberHelper::format($discountPercent) }}٪ تخفیف
         </div>
     @endif
 
-    {{-- Main price --}}
-    <div class="product-price__main">
-
+    <div
+        class="product-price__main"
+        @if($priceRange !== null)
+            data-product-price-summary
+            data-base-price="{{ $price }}"
+        @endif
+    >
         @if ($hasDiscount)
             <span class="product-price__compare">
                 {{ \App\Helpers\PersianNumberHelper::format($compareAtPrice) }}
@@ -62,68 +74,47 @@
         @endif
 
         <div class="product-price__current">
-            <strong>
+            <strong data-product-current-price @if($hasPriceRange) hidden @endif>
                 {{ \App\Helpers\PersianNumberHelper::format($price) }}
             </strong>
 
-            <span>
-                تومان
-            </span>
-        </div>
+            @if($hasPriceRange)
+                <span data-product-price-range class="text-sm font-bold">
+                    از {{ \App\Helpers\PersianNumberHelper::format($rangeMinimum) }}
+                    تا {{ \App\Helpers\PersianNumberHelper::format($rangeMaximum) }}
+                </span>
+            @else
+                <span data-product-price-range hidden></span>
+            @endif
 
+            <span>تومان</span>
+        </div>
     </div>
 
-    {{-- Installment information --}}
     @if ($installmentEnabled)
-
         <div class="product-price__installment">
-
             <div class="product-price__installment-header">
-                <span class="product-price__installment-icon">
-                    ✓
-                </span>
-
-                <span>
-                    امکان خرید اقساطی
-                </span>
+                <span class="product-price__installment-icon">✓</span>
+                <span>امکان خرید اقساطی</span>
             </div>
 
             <div class="product-price__installment-content">
-
                 <div class="product-price__installment-row">
-                    <span>
-                        پرداخت اولیه
-                    </span>
-
-                    <strong>
-                        {{ \App\Helpers\PersianNumberHelper::format($cashAmount) }}
-                        تومان
-                    </strong>
+                    <span>پرداخت اولیه</span>
+                    <strong>{{ \App\Helpers\PersianNumberHelper::format($cashAmount) }} تومان</strong>
                 </div>
 
                 @if ($chequeCount > 0 && $chequeAmount)
                     <div class="product-price__installment-row">
-                        <span>
-                            {{ $chequeCount }} فقره چک
-                        </span>
-
-                        <strong>
-                            هر چک
-                            {{ \App\Helpers\PersianNumberHelper::format($chequeAmount) }}
-                            تومان
-                        </strong>
+                        <span>{{ $chequeCount }} فقره چک</span>
+                        <strong>هر چک {{ \App\Helpers\PersianNumberHelper::format($chequeAmount) }} تومان</strong>
                     </div>
                 @endif
-
             </div>
 
             <div class="product-price__installment-note">
-                {{ $cashPercent }}٪ نقد،
-                مابقی به‌صورت اقساطی
+                {{ $cashPercent }}٪ نقد، مابقی به‌صورت اقساطی
             </div>
-
         </div>
-
     @endif
-
 </div>

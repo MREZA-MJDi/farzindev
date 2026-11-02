@@ -69,6 +69,7 @@ jobs:
           touch "$DB_DATABASE"
           php artisan migrate:fresh --force
           ADMIN_EMAIL=browser-admin@example.test ADMIN_PASSWORD=browser-smoke-password php artisan db:seed --force
+          php artisan db:seed --class=BrowserSmokeSeeder --force
           npm install --no-save --package-lock=false @playwright/test@1.55.0
           npx playwright install --with-deps chromium
           npx playwright test

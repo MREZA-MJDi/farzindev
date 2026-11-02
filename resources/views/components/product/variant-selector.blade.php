@@ -34,7 +34,7 @@
 
         <div>
             <p class="text-[10px] font-medium uppercase tracking-[0.18em] text-[var(--livora-accent)]">
-                {{ strtoupper($typeLabel) }}
+                {{ $typeLabel }}
             </p>
 
             <h3 class="mt-1 text-sm font-semibold text-[var(--livora-text)]">
@@ -115,8 +115,9 @@
                     data-label="{{ $optionLabel }}"
                     data-variant-type="{{ $name }}"
                     data-stock="{{ $optionStock ?? 0 }}"
+                    data-price-adjustment="{{ (float) ($option->price_adjustment ?? 0) }}"
                     x-model="selected"
-                    @change="window.dispatchEvent(new CustomEvent('product-variant-selected', { detail: { id: {{ $optionId }}, type: @js($name), label: @js($optionLabel), stock: {{ $optionStock ?? 0 }} } }))"
+                    @change="window.dispatchEvent(new CustomEvent('product-variant-selected', { detail: { id: {{ $optionId }}, type: @js($name), label: @js($optionLabel), stock: {{ $optionStock ?? 0 }}, priceAdjustment: {{ (float) ($option->price_adjustment ?? 0) }} } }))"
                     class="sr-only"
                     @disabled($isUnavailable)
                     @if($isUnavailable)
@@ -151,7 +152,7 @@
                         @if($isUnavailable)
                             <span class="text-[10px] text-red-600">ناموجود</span>
                         @elseif($optionStock !== null)
-                            <span class="text-[10px] text-[var(--livora-stone)]">{{ number_format($optionStock) }} عدد</span>
+                            <span class="text-[10px] text-[var(--livora-stone)]">{{ \App\Helpers\PersianNumberHelper::format($optionStock) }} عدد</span>
                         @endif
                     </span>
 
