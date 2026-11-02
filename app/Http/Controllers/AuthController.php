@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\Auth\LoginRequest;
 use App\Http\Requests\Auth\RegisterRequest;
 use App\Models\Cart;
+use App\Models\Product;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -29,7 +30,7 @@ class AuthController extends Controller
             $request->session()->put('url.intended', url($intended));
         }
 
-        return view('auth.login');
+        return view('auth.login', ['brandProduct' => $this->authShowcaseProduct()]);
     }
 
     public function login(
@@ -121,7 +122,7 @@ class AuthController extends Controller
             $request->session()->put('url.intended', url($intended));
         }
 
-        return view('auth.register');
+        return view('auth.register', ['brandProduct' => $this->authShowcaseProduct()]);
     }
 
     public function register(
@@ -300,4 +301,27 @@ class AuthController extends Controller
             'status' => 'converted',
         ]);
     }
+
+    /** Return one image-backed active product for the guest auth brand panel. */
+    private function authShowcaseProduct(): ?Product
+    {
+        return Product::query()
+            ->active()
+            ->whereHas('category', fn ($query) => $query->where('is_active', true))
+            ->whereHas('images')
+            ->with([
+                'category:id,name',
+                'images' => fn ($query) => $query
+                    ->select(['id', 'product_id', 'media_id', 'path', 'alt', 'sort_order', 'is_primary'])
+                    ->orderByDesc('is_primary')
+                    ->orderBy('sort_order')
+                    ->limit(1),
+                'images.media:id,path',
+            ])
+            ->orderByDesc('is_featured')
+            ->orderByDesc('updated_at')
+            ->orderByDesc('id')
+            ->first();
+    }
+
 }

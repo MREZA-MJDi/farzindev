@@ -165,30 +165,6 @@
             </section>
         @endif
 
-        <section class="fz-section fz-home-buying-guides" aria-labelledby="fz-buying-guides-title">
-            <div class="fz-container">
-                <header class="fz-home-buying-guides__heading">
-                    <div>
-                        <p class="fz-eyebrow"><span></span> راهنمای شروع انتخاب</p>
-                        <h2 id="fz-buying-guides-title">از نیاز آشپزخانه‌تان شروع کنید.</h2>
-                        <p>مسیر مناسب را انتخاب کنید تا مدل‌ها و مشخصات مرتبط را ببینید.</p>
-                    </div>
-                </header>
-                <div class="fz-home-buying-guides__grid">
-                    <a class="fz-home-buying-guide" href="{{ $hoodCategory ? route('categories.show', $hoodCategory) : route('categories.index') }}">
-                        <span class="fz-home-buying-guide__index">۰۱</span>
-                        <span><strong>راهنمای انتخاب هود</strong><small>نوع نصب، عرض و مشخصات مدل‌ها را بررسی کنید.</small></span>
-                        <span class="fz-home-buying-guide__action">مشاهده هودها</span>
-                    </a>
-                    <a class="fz-home-buying-guide" href="{{ $sinkCategory ? route('categories.show', $sinkCategory) : route('categories.index') }}">
-                        <span class="fz-home-buying-guide__index">۰۲</span>
-                        <span><strong>راهنمای انتخاب سینک</strong><small>جنس، تعداد لگن و ابعاد مناسب را مقایسه کنید.</small></span>
-                        <span class="fz-home-buying-guide__action">مشاهده سینک‌ها</span>
-                    </a>
-                </div>
-            </div>
-        </section>
-
         @if($featuredProducts->isNotEmpty())
             <section class="fz-section fz-product-section fz-home-featured-section" aria-labelledby="fz-products-heading">
                 <div class="fz-container fz-home-featured-section__inner">
@@ -228,6 +204,56 @@
                 </div>
             </section>
         @endif
+
+        <section class="fz-home-trust" aria-labelledby="fz-home-trust-heading">
+            <div class="fz-container">
+                <div class="fz-home-trust__intro">
+                    <p class="fz-eyebrow"><span></span> تجربه خرید از فرزین</p>
+                    <h2 id="fz-home-trust-heading">برای انتخاب، اطلاعات روشن در اختیار شماست.</h2>
+                </div>
+                <div class="fz-home-trust__grid">
+                    <a class="fz-home-trust__item" href="{{ route('shop.index') }}">
+                        <span class="fz-home-trust__index">01</span><span class="fz-home-trust__icon" aria-hidden="true">◇</span>
+                        <strong>مشخصات پیش از خرید</strong><span>تصویر، قیمت و جزئیات هر مدل را در صفحه محصول بررسی کنید.</span>
+                        <em>رفتن به فروشگاه <b aria-hidden="true">←</b></em>
+                    </a>
+                    <a class="fz-home-trust__item" href="{{ route('cart.index') }}">
+                        <span class="fz-home-trust__index">02</span><span class="fz-home-trust__icon" aria-hidden="true">＋</span>
+                        <strong>سبد خرید یکپارچه</strong><span>محصول‌ها را به سبد اضافه کنید؛ سبد مهمان پس از ورود به حساب منتقل می‌شود.</span>
+                        <em>مشاهده سبد خرید <b aria-hidden="true">←</b></em>
+                    </a>
+                    <a class="fz-home-trust__item" href="{{ auth()->check() && auth()->user()->isCustomer() ? route('account.orders.index') : route('login', ['intended' => '/account/orders']) }}">
+                        <span class="fz-home-trust__index">03</span><span class="fz-home-trust__icon" aria-hidden="true">↗</span>
+                        <strong>مدیریت سفارش‌ها</strong><span>پس از ورود، سفارش‌های ثبت‌شده را از حساب کاربری خود ببینید.</span>
+                        <em>حساب کاربری <b aria-hidden="true">←</b></em>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <section class="fz-section fz-home-buying-guides" aria-labelledby="fz-buying-guides-title">
+            <div class="fz-container">
+                <header class="fz-home-buying-guides__heading">
+                    <div>
+                        <p class="fz-eyebrow"><span></span> راهنمای شروع انتخاب</p>
+                        <h2 id="fz-buying-guides-title">از نیاز آشپزخانه‌تان شروع کنید.</h2>
+                        <p>مسیر مناسب را انتخاب کنید تا مدل‌ها و مشخصات مرتبط را ببینید.</p>
+                    </div>
+                </header>
+                <div class="fz-home-buying-guides__grid">
+                    <a class="fz-home-buying-guide" href="{{ $hoodCategory ? route('categories.show', $hoodCategory) : route('categories.index') }}">
+                        <span class="fz-home-buying-guide__index">۰۱</span>
+                        <span><strong>راهنمای انتخاب هود</strong><small>نوع نصب، عرض و مشخصات مدل‌ها را بررسی کنید.</small></span>
+                        <span class="fz-home-buying-guide__action">مشاهده هودها</span>
+                    </a>
+                    <a class="fz-home-buying-guide" href="{{ $sinkCategory ? route('categories.show', $sinkCategory) : route('categories.index') }}">
+                        <span class="fz-home-buying-guide__index">۰۲</span>
+                        <span><strong>راهنمای انتخاب سینک</strong><small>جنس، تعداد لگن و ابعاد مناسب را مقایسه کنید.</small></span>
+                        <span class="fz-home-buying-guide__action">مشاهده سینک‌ها</span>
+                    </a>
+                </div>
+            </div>
+        </section>
 
         @if($blogPosts->isNotEmpty())
             @php
@@ -337,45 +363,26 @@
             </section>
         @endif
 
-        <section class="fz-bottom-cta fz-home-purchase-cta" aria-labelledby="fz-home-purchase-heading">
-            <div class="fz-container fz-bottom-cta__inner fz-home-purchase-cta__inner fz-reveal">
-                <div class="fz-home-purchase-cta__visual" aria-hidden="true">
+        <section class="fz-home-final-cta" aria-labelledby="fz-home-final-heading">
+            <div class="fz-container"><div class="fz-home-final-cta__panel">
+                <div class="fz-home-final-cta__visual" aria-hidden="true">
                     @if($homeCtaImageUrl)
-                        <img
-                            src="{{ $homeCtaImageUrl }}"
-                            @if($homeCtaImageSrcset) srcset="{{ $homeCtaImageSrcset }}" sizes="(max-width: 767px) 100vw, 50vw" @endif
-                            alt=""
-                            width="1200"
-                            height="900"
-                            loading="lazy"
-                            decoding="async"
-                        >
+                        <img src="{{ $homeCtaImageUrl }}" @if($homeCtaImageSrcset) srcset="{{ $homeCtaImageSrcset }}" sizes="(max-width: 767px) 100vw, 48vw" @endif alt="" width="1200" height="900" loading="lazy" decoding="async">
                     @else
-                        <span class="fz-home-purchase-cta__fallback">FARZIN</span>
+                        <span class="fz-home-final-cta__fallback">FARZIN</span>
                     @endif
-                    <span class="fz-home-purchase-cta__shade"></span>
-                    <span class="fz-home-purchase-cta__image-label">FARZIN / KITCHEN EQUIPMENT</span>
+                    <span class="fz-home-final-cta__image-label">FARZIN / KITCHEN EQUIPMENT</span>
                 </div>
-
-                <div class="fz-home-purchase-cta__copy">
-                    <p class="fz-eyebrow"><span></span> کاتالوگ محصولات فرزین</p>
-                    <h2 id="fz-home-purchase-heading">انتخاب مدل مناسب آشپزخانه‌تان را از همین‌جا شروع کنید.</h2>
-                    <p>مدل‌های هود و سینک را ببینید، قیمت و مشخصات هر محصول را بررسی کنید و سفارش‌تان را آنلاین ثبت کنید.</p>
-                    <a class="fz-home-purchase-cta__button" href="{{ route('shop.index') }}">
-                        مشاهده محصولات و قیمت‌ها
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                            <path d="M19 12H5m7 7-7-7 7-7"/>
-                        </svg>
-                    </a>
+                <div class="fz-home-final-cta__copy">
+                    <p class="fz-eyebrow"><span></span> قدم بعدی شما</p>
+                    <h2 id="fz-home-final-heading">مدل مناسب آشپزخانه‌تان را پیدا کنید.</h2>
+                    <p>محصول‌ها را مقایسه کنید و برای بررسی مشخصات یا پرسش پیش از خرید، از مسیرهای ارتباطی فرزین کمک بگیرید.</p>
+                    <div class="fz-home-final-cta__actions">
+                        <a class="fz-home-final-cta__primary" href="{{ route('shop.index') }}">مشاهده محصولات و قیمت‌ها <span aria-hidden="true">←</span></a>
+                        <a class="fz-home-final-cta__secondary" href="{{ route('contact') }}">پرسش از فرزین</a>
+                    </div>
                 </div>
-            </div>
+            </div></div>
         </section>
-
-    <section class="fz-home-contact-bridge" aria-label="راهنمایی پیش از خرید">
-        <div class="fz-container fz-home-contact-bridge__inner">
-            <p>برای بررسی ابعاد نصب یا انتخاب مدل مناسب، پیش از سفارش با مجموعه در ارتباط باشید.</p>
-            <a href="{{ route('contact') }}">ارتباط با فرزین</a>
-        </div>
-    </section>
 
 @endsection
