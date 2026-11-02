@@ -161,6 +161,23 @@ test('shop mobile filters apply together, scroll safely and preserve the selecte
     await expect(page).toHaveURL(/installment=1/);
 });
 
+test('admin login refreshes an expired CSRF session and never caches its form', async ({ page }) => {
+    const login = await page.goto('/admin/login', { waitUntil: 'domcontentloaded' });
+    expect(login?.status()).toBe(200);
+    expect(login?.headers()['cache-control']).toContain('no-store');
+
+    const expiredResponse = await page.request.post('/admin/login', {
+        form: {
+            _token: 'expired-csrf-token',
+            email: 'browser-admin@example.test',
+            password: 'browser-smoke-password',
+        },
+    });
+
+    expect(expiredResponse.url()).toContain('/admin/login');
+    expect(await expiredResponse.text()).toContain('نشست مدیریت منقضی شده است');
+});
+
 test('homepage category GIF preview starts on hover and the first touch tap', async ({ page }) => {
     // This test validates the interaction itself; other tests cover the
     // reduced-motion experience separately.
