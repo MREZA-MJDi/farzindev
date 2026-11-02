@@ -24,6 +24,30 @@
         @else
             <span class="fz-category-card__monogram" aria-hidden="true">{{ $category->slug === 'sinks' ? 'S' : 'H' }}</span>
         @endif
+        @if($category->hoverMedia?->is_animated_preview)
+            @if($category->hoverMedia->is_video)
+                <video
+                    data-farzin-category-video
+                    data-farzin-video-src="{{ $category->hoverMedia->url }}"
+                    muted
+                    loop
+                    playsinline
+                    preload="none"
+                    aria-hidden="true"
+                ></video>
+            @elseif($category->hoverMedia->mime_type === 'image/gif')
+                <img
+                    data-farzin-category-gif
+                    data-farzin-gif-src="{{ $category->hoverMedia->url }}"
+                    alt=""
+                    width="640"
+                    height="480"
+                    loading="lazy"
+                    decoding="async"
+                    aria-hidden="true"
+                >
+            @endif
+        @endif
         <span class="fz-category-card__image-halo" aria-hidden="true"></span>
     </span>
 
