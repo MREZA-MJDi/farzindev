@@ -150,13 +150,21 @@
 
                             @if($hasMapCoordinates || $mapAddress !== '')
                                 <div class="fz-contact-map-frame">
-                                    <iframe
-                                        title="نقشه موقعیت مجموعه فرزین"
-                                        src="https://www.google.com/maps?q={{ urlencode($mapQuery) }}&amp;z=15&amp;output=embed"
-                                        loading="lazy"
-                                        referrerpolicy="no-referrer-when-downgrade"
-                                        allowfullscreen
-                                    ></iframe>
+                                    @if($mapEmbedUrl)
+                                        <iframe
+                                            title="نقشه موقعیت مجموعه فرزین"
+                                            src="{{ $mapEmbedUrl }}"
+                                            loading="lazy"
+                                            referrerpolicy="no-referrer-when-downgrade"
+                                            allowfullscreen
+                                        ></iframe>
+                                    @else
+                                        <div class="fz-contact-map-empty" role="img" aria-label="نشانی ثبت‌شده مجموعه فرزین">
+                                            <div class="fz-contact-map-empty__rings" aria-hidden="true"><span></span><i></i></div>
+                                            <strong>نشانی مجموعه ثبت شده است</strong>
+                                            <p>{{ $mapAddress }}</p>
+                                        </div>
+                                    @endif
                                     <span class="fz-contact-map-frame__corner fz-contact-map-frame__corner--one" aria-hidden="true"></span>
                                     <span class="fz-contact-map-frame__corner fz-contact-map-frame__corner--two" aria-hidden="true"></span>
                                 </div>
@@ -165,21 +173,22 @@
                                         <svg viewBox="0 0 24 24" fill="none"><path d="M19 10c0 5-7 11-7 11S5 15 5 10a7 7 0 1 1 14 0Z" stroke="currentColor" stroke-width="1.7"/><circle cx="12" cy="10" r="2.4" stroke="currentColor" stroke-width="1.7"/></svg>
                                     </span>
                                     <div>
-                                        @if($mapAddress !== '')
-                                            <span>آدرس ثبت‌شده</span>
-                                            <p>{{ $mapAddress }}</p>
-                                        @else
+                                        @if($hasMapCoordinates)
                                             <span>مختصات ثبت‌شده</span>
                                             <p dir="ltr">{{ $mapLatitude }}, {{ $mapLongitude }}</p>
                                         @endif
+                                        @if($mapAddress !== '')
+                                            <span>آدرس ثبت‌شده</span>
+                                            <p>{{ $mapAddress }}</p>
+                                        @endif
                                     </div>
                                 </div>
-                                <a
-                                    href="https://www.google.com/maps/dir/?api=1&amp;destination={{ urlencode($mapQuery) }}"
-                                    class="fz-contact-directions"
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                ><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4" aria-hidden="true"><path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z" /><circle cx="12" cy="10" r="2.5" /></svg> مسیریابی به نشانی فرزین در Google Maps</a>
+                                @if($mapDirectionsUrl)
+                                    <a href="{{ $mapDirectionsUrl }}" class="fz-contact-directions" target="_blank" rel="noopener noreferrer">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4" aria-hidden="true"><path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/></svg>
+                                        مسیریابی روی نقشه
+                                    </a>
+                                @endif
                             @else
                                 <div class="fz-contact-map-empty" role="status">
                                     <div class="fz-contact-map-empty__rings" aria-hidden="true"><span></span><i></i></div>
