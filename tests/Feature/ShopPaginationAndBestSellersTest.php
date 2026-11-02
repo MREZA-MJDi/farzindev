@@ -82,13 +82,29 @@ class ShopPaginationAndBestSellersTest extends TestCase
             'sku' => 'FAR-HOME-BEST-SELLER',
         ]);
 
+        $thirdSeller = $this->product($category, [
+            'name' => 'Middle Ranked Hood',
+            'slug' => 'middle-ranked-hood',
+            'sku' => 'FAR-MIDDLE-RANKED',
+        ]);
+        $hero = $this->product($category, [
+            'name' => 'Homepage Hero Hood',
+            'slug' => 'homepage-hero-hood',
+            'sku' => 'FAR-HOMEPAGE-HERO',
+        ]);
+
+        foreach ([$lowerRanked, $bestSeller, $thirdSeller, $hero] as $product) {
+            $this->addProductImage($product);
+        }
+
         $order = $this->paidOrder();
         $this->addOrderItem($order, $lowerRanked, 1);
         $this->addOrderItem($order, $bestSeller, 5);
+        $this->addOrderItem($order, $thirdSeller, 2);
 
         $response = $this->get(route('home'))
             ->assertOk()
-            ->assertSee('پرفروش‌ترین محصولات');
+            ->assertSee('مدل‌های منتخب و موجود');
 
         $html = $response->getContent();
         $this->assertLessThan(
@@ -173,6 +189,17 @@ class ShopPaginationAndBestSellersTest extends TestCase
         ], $attributes));
     }
 
+    private function addProductImage(Product $product): void
+    {
+        ProductImage::create([
+            'product_id' => $product->id,
+            'path' => 'https://cdn.example.test/'.$product->slug.'.webp',
+            'alt' => $product->name,
+            'sort_order' => 0,
+            'is_primary' => true,
+        ]);
+    }
+
     private function paidOrder(): Order
     {
         static $sequence = 0;
@@ -245,20 +272,22 @@ class ShopPaginationAndBestSellersTest extends TestCase
                 'sku' => 'FAR-HOMEPAGE-BESTSELLER-'.$index,
             ]);
             $this->addOrderItem($order, $bestSeller, 10 - $index);
+            $this->addProductImage($bestSeller);
 
-            $this->product($category, [
+            $newArrival = $this->product($category, [
                 'name' => 'Homepage New Arrival '.$index,
                 'slug' => 'homepage-new-arrival-'.$index,
                 'sku' => 'FAR-HOMEPAGE-NEW-'.$index,
                 'is_new' => true,
             ]);
+            $this->addProductImage($newArrival);
         }
 
         $response = $this->get(route('home'))->assertOk();
         $html = $response->getContent();
 
-        $this->assertStringContainsString('پرفروش‌ترین محصولات', $html);
-        $this->assertSame(4, substr_count($html, 'farzin-product-card--round-media'));
+        $this->assertStringContainsString('مدل‌های منتخب و موجود', $html);
+        $this->assertSame(6, substr_count($html, 'farzin-product-card--round-media'));
         $this->assertStringNotContainsString('fz-new-section', $html);
         $this->assertStringNotContainsString('grid__image', $html);
         foreach ($heroGalleryProductIds as $productId) {
@@ -273,7 +302,6 @@ class ShopPaginationAndBestSellersTest extends TestCase
 
         for ($index = 1; $index <= 4; $index++) {
             $response->assertSee('Homepage Bestseller '.$index);
-            $response->assertDontSee('Homepage New Arrival '.$index);
         }
     }
 
