@@ -51,6 +51,15 @@ class AdminDashboardMetricsTest extends TestCase
         $this->order('FAR-DASHBOARD-PAID', 'delivered', 'paid', 25000000, now());
         $this->order('FAR-DASHBOARD-PENDING', 'pending', 'pending', 5000000, now());
 
+        ContactMessage::create([
+            'name' => 'مشتری آزمایشی',
+            'phone' => '09123456789',
+            'email' => 'dashboard-contact@example.test',
+            'subject' => 'پرسش درباره محصول',
+            'message' => 'پیام برای آزمون شمارنده داشبورد',
+            'status' => 'unread',
+        ]);
+
         BlogPost::create([
             'title' => 'مقاله منتشرشده داشبورد',
             'slug' => 'dashboard-published-post',
@@ -86,7 +95,11 @@ class AdminDashboardMetricsTest extends TestCase
 
         $response
             ->assertViewHas('totalProducts', 1)
+            ->assertViewHas('incompleteProducts', 1)
+            ->assertViewHas('unreadContactMessages', 1)
             ->assertViewHas('activeProducts', 1)
+            ->assertSee(route('admin.products.index', ['completeness' => 'incomplete']), false)
+            ->assertSee(route('admin.contact-messages.index'), false)
             ->assertViewHas('featuredProductsCount', 1)
             ->assertViewHas('newProductsCount', 1)
             ->assertViewHas('installmentProductsCount', 1)
