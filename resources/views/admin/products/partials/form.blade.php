@@ -1095,7 +1095,7 @@
 
                     <option
                         value="draft"
-                        @selected(old('status', $product->status ?? 'draft') === 'draft')
+                        @selected(old('status', $product->status ?? 'active') === 'draft')
                     >
                     پیش‌نویس
                     </option>
@@ -1103,7 +1103,7 @@
 
                     <option
                         value="active"
-                        @selected(old('status', $product->status ?? '') === 'active')
+                        @selected(old('status', $product->status ?? 'active') === 'active')
                     >
                     فعال
                     </option>
@@ -1121,6 +1121,10 @@
 
                 <p class="mt-2 text-xs leading-6 text-[var(--admin-muted)]">
                     فقط محصولات «فعال» در فروشگاه، صفحه دسته‌بندی و صفحه محصول برای مشتری قابل مشاهده‌اند. پیش‌نویس و آرشیو عمومی نیستند.
+                </p>
+
+                <p class="mt-2 text-xs leading-6 text-[var(--admin-muted)]">
+                    محصول جدید به‌صورت پیش‌فرض منتشر می‌شود. برای آماده‌سازی و بازبینی قبل از انتشار، «پیش‌نویس» را انتخاب کنید.
                 </p>
 
                 @error('status')
