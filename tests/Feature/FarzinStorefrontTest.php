@@ -3650,6 +3650,20 @@ class FarzinStorefrontTest extends TestCase
             ->assertSessionHasErrors('gateway');
     }
 
+    public function test_admin_is_told_when_shipping_rate_has_not_been_explicitly_configured(): void
+    {
+        StorefrontSetting::query()->where('key', 'shipping_flat_rate')->delete();
+        $admin = $this->admin();
+
+        $this->actingAs($admin)
+            ->get(route('admin.storefront-settings.edit'))
+            ->assertOk()
+            ->assertSee('نرخ ارسال هنوز ثبت نشده است')
+            ->assertSee('برای ارسال رایگان، صفر وارد کنید')
+            ->assertSee('id="shipping_flat_rate"', false)
+            ->assertSee('value=""', false);
+    }
+
     public function test_checkout_does_not_assume_free_shipping_when_no_rate_is_configured(): void
     {
         StorefrontSetting::query()->where('key', 'shipping_flat_rate')->delete();
@@ -3746,6 +3760,11 @@ class FarzinStorefrontTest extends TestCase
             'unit_price' => 3000000,
         ]);
 
+        $this->actingAs($customer)
+            ->get(route('checkout.index'))
+            ->assertOk()
+            ->assertSee('۲۵۰٬۰۰۰ تومان');
+
         $checkoutData = [
             'first_name' => 'Farzin',
             'last_name' => 'Buyer',
@@ -3786,6 +3805,10 @@ class FarzinStorefrontTest extends TestCase
             'quantity' => 1,
             'unit_price' => 6000000,
         ]);
+
+        $this->get(route('checkout.index'))
+            ->assertOk()
+            ->assertSee('رایگان');
 
         $this->post(route('checkout.place'), $checkoutData)
             ->assertRedirect();
