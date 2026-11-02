@@ -291,7 +291,6 @@ Route::middleware(['auth:web', 'customer'])->group(function () {
             )->name('payment.livora-installment');
         });
 
-Route::fallback([PublicSeoRedirectController::class, 'handle']);
 
 
     /*
