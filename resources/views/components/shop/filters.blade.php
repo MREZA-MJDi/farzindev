@@ -1,7 +1,9 @@
 @props([
-'categories' => collect(),
-'selectedCategory' => null,
-'mobile' => false,
+    'categories' => collect(),
+    'selectedCategory' => null,
+    'widthOptions' => collect(),
+    'installationTypes' => collect(),
+    'mobile' => false,
 ])
 
 <div class="space-y-5">
@@ -121,6 +123,39 @@
         </div>
 
     </section>
+
+
+    {{-- =========================================================
+         PRODUCT DIMENSIONS AND INSTALLATION
+    ========================================================== --}}
+    @if($widthOptions->isNotEmpty() || $installationTypes->isNotEmpty())
+        <section>
+            <div>
+                <p class="text-[10px] text-[var(--livora-accent)]">مشخصات فنی</p>
+                <h3 class="mt-2 text-sm font-semibold">انتخاب بر اساس اندازه و نصب</h3>
+            </div>
+
+            @if($widthOptions->isNotEmpty())
+                <label for="{{ $mobile ? 'shop_width_mobile' : 'shop_width_desktop' }}" class="mt-4 block text-[10px] text-[var(--livora-stone)]">عرض محصول</label>
+                <select id="{{ $mobile ? 'shop_width_mobile' : 'shop_width_desktop' }}" name="width_cm" class="mt-2 w-full rounded-xl border border-[var(--livora-border)] bg-[var(--livora-surface)] px-3 py-3 text-xs text-[var(--livora-text)]" @if(!$mobile) @change="$el.form.submit()" @endif>
+                    <option value="">همه عرض‌ها</option>
+                    @foreach($widthOptions as $width)
+                        <option value="{{ $width }}" @selected((string) request('width_cm') === (string) $width)>{{ \App\Helpers\PersianNumberHelper::format($width) }} سانتی‌متر</option>
+                    @endforeach
+                </select>
+            @endif
+
+            @if($installationTypes->isNotEmpty())
+                <label for="{{ $mobile ? 'shop_installation_mobile' : 'shop_installation_desktop' }}" class="mt-4 block text-[10px] text-[var(--livora-stone)]">نوع نصب</label>
+                <select id="{{ $mobile ? 'shop_installation_mobile' : 'shop_installation_desktop' }}" name="installation_type" class="mt-2 w-full rounded-xl border border-[var(--livora-border)] bg-[var(--livora-surface)] px-3 py-3 text-xs text-[var(--livora-text)]" @if(!$mobile) @change="$el.form.submit()" @endif>
+                    <option value="">همه روش‌های نصب</option>
+                    @foreach($installationTypes as $type)
+                        <option value="{{ $type }}" @selected(request('installation_type') === $type)>{{ $type }}</option>
+                    @endforeach
+                </select>
+            @endif
+        </section>
+    @endif
 
 
     {{-- =========================================================
