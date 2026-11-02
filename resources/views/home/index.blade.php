@@ -100,7 +100,7 @@
                             <a
                                 class="fz-category-card fz-reveal"
                                 style="--fz-category-delay: {{ $index * 90 }}ms"
-                                href="{{ route('categories.show', $category) }}"
+                                href="{{ route('categories.show', $category->slug) }}"
                                 @if($category->hoverMedia?->url) data-farzin-gif-card @endif
                                 aria-label="مشاهده دسته‌بندی {{ $category->name }}، {{ \App\Helpers\PersianNumberHelper::format($category->products_count) }} محصول فعال"
                             >
@@ -241,12 +241,12 @@
                     </div>
                 </header>
                 <div class="fz-home-buying-guides__grid">
-                    <a class="fz-home-buying-guide" href="{{ $hoodCategory ? route('categories.show', $hoodCategory) : route('categories.index') }}">
+                    <a class="fz-home-buying-guide" href="{{ $hoodCategory ? route('categories.show', $hoodCategory->slug) : route('categories.index') }}">
                         <span class="fz-home-buying-guide__index">۰۱</span>
                         <span><strong>راهنمای انتخاب هود</strong><small>نوع نصب، عرض و مشخصات مدل‌ها را بررسی کنید.</small></span>
                         <span class="fz-home-buying-guide__action">مشاهده هودها</span>
                     </a>
-                    <a class="fz-home-buying-guide" href="{{ $sinkCategory ? route('categories.show', $sinkCategory) : route('categories.index') }}">
+                    <a class="fz-home-buying-guide" href="{{ $sinkCategory ? route('categories.show', $sinkCategory->slug) : route('categories.index') }}">
                         <span class="fz-home-buying-guide__index">۰۲</span>
                         <span><strong>راهنمای انتخاب سینک</strong><small>جنس، تعداد لگن و ابعاد مناسب را مقایسه کنید.</small></span>
                         <span class="fz-home-buying-guide__action">مشاهده سینک‌ها</span>
