@@ -130,6 +130,10 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+    {{-- Warm the two storefront font weights used by body copy and bold headings to reduce first-paint reflow. --}}
+    <link rel="preload" as="font" href="{{ Vite::asset('resources/fonts/iranyekanx-fanum/IRANYekanXFaNum-Regular.woff2') }}" type="font/woff2" crossorigin>
+    <link rel="preload" as="font" href="{{ Vite::asset('resources/fonts/iranyekanx-fanum/IRANYekanXFaNum-ExtraBold.woff2') }}" type="font/woff2" crossorigin>
+
     <title>{{ $seoTitle }}</title>
     <meta name="description" content="{{ $seoDescription }}">
     @if($seoKeywords !== '')

@@ -12,8 +12,8 @@
         : route('blog.index');
 
     $visiblePosts = $posts->getCollection();
-    $featuredPost = $visiblePosts->first();
-    $gridPosts = $visiblePosts->skip(1);
+    $featuredPost = $posts->currentPage() === 1 ? $visiblePosts->first() : null;
+    $gridPosts = $featuredPost ? $visiblePosts->skip(1) : $visiblePosts;
 @endphp
 
 @section('title', $archiveTitle)

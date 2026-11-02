@@ -692,8 +692,11 @@ test('homepage featured product cards and image links are fully circular', async
         const geometry = await card.evaluate((element) => {
             const media = element.querySelector('.farzin-product-card__media');
             const imageLink = element.querySelector('.farzin-product-card__image-link');
+            const infoPanel = element.querySelector('.farzin-product-card__content');
             const cardRect = element.getBoundingClientRect();
             const linkRect = imageLink.getBoundingClientRect();
+            const infoRect = infoPanel.getBoundingClientRect();
+            const infoStyle = getComputedStyle(infoPanel);
 
             return {
                 width: cardRect.width,
@@ -705,6 +708,10 @@ test('homepage featured product cards and image links are fully circular', async
                 linkClass: imageLink.classList.contains('farzin-product-card__image-link--round'),
                 linkWidth: linkRect.width,
                 linkHeight: linkRect.height,
+                infoHeight: infoRect.height,
+                infoBottom: infoRect.bottom,
+                infoBorderTop: infoStyle.borderTopStyle,
+                infoBackground: infoStyle.backgroundImage,
             };
         });
 
@@ -715,6 +722,58 @@ test('homepage featured product cards and image links are fully circular', async
         expect(geometry.linkClass, 'round homepage variant must mark the image link explicitly').toBeTruthy();
         expect(geometry.linkRadius, 'the image link itself must inherit the circular shape').toBe('50%');
         expect(Math.abs(geometry.linkWidth - geometry.linkHeight), 'the image link must fill a square circle frame').toBeLessThanOrEqual(1);
+        expect(Math.abs(geometry.infoBottom - geometry.height - (await card.evaluate((element) => element.getBoundingClientRect().top))), 'the product information panel must attach to the bottom of the circle').toBeLessThanOrEqual(1);
+        expect(geometry.infoHeight, 'the circle must reserve a readable lower band for product information').toBeGreaterThanOrEqual(geometry.height * 0.45);
+        expect(geometry.infoBorderTop, 'the image and attached information band must have a clear join').toBe('solid');
+        expect(geometry.infoBackground, 'the information band must remain on a bright product-data surface').toContain('linear-gradient');
     }
 });
 
+
+
+test('category index cards keep their copy readable above the image treatment', async ({ page }) => {
+    await page.setViewportSize({ width: 1440, height: 960 });
+    await page.goto('/categories', { waitUntil: 'domcontentloaded' });
+
+    const card = page.locator('.farzin-category-card').first();
+    await expect(card).toBeVisible();
+    const contrast = await card.evaluate((element) => {
+        const title = element.querySelector('.farzin-category-card__content h3');
+        const description = element.querySelector('.farzin-category-card__content p:not(:first-child)');
+        const shade = element.querySelector('.farzin-category-card__shade');
+
+        return {
+            title: getComputedStyle(title).color,
+            description: description ? getComputedStyle(description).color : null,
+            shade: getComputedStyle(shade).backgroundImage,
+        };
+    });
+
+    expect(contrast.title, 'category names must be white over the dark lower image overlay').toBe('rgb(255, 255, 255)');
+    expect(contrast.description, 'category counts must stay legible on the same overlay').toBe('rgba(255, 255, 255, 0.82)');
+    expect(contrast.shade, 'category cards must include a readable dark image gradient').toContain('linear-gradient');
+});
+
+test('product detail exposes one branded quantity stepper and preloads primary fonts', async ({ page }) => {
+    await page.setViewportSize({ width: 1280, height: 900 });
+    await page.goto('/product/farzin-hood-preview-01', { waitUntil: 'domcontentloaded' });
+
+    const stepper = page.locator('[data-quantity-control]');
+    await expect(stepper).toHaveCount(1);
+    await expect(stepper).toBeVisible();
+    await expect(stepper.locator('input[name="quantity"]')).toBeVisible();
+    await expect(stepper.getByRole('button', { name: 'کاهش تعداد' })).toBeVisible();
+    await expect(stepper.getByRole('button', { name: 'افزایش تعداد' })).toBeVisible();
+
+    const appearance = await stepper.evaluate((element) => ({
+        background: getComputedStyle(element).backgroundColor,
+        inputColor: getComputedStyle(element.querySelector('input')).color,
+        gridColumns: getComputedStyle(element).gridTemplateColumns,
+    }));
+    expect(appearance.background).toBe('rgb(255, 255, 255)');
+    expect(appearance.inputColor).toBe('rgb(6, 40, 79)');
+    expect(appearance.gridColumns.split(' ').length).toBe(3);
+
+    const fontPreloads = await page.locator('link[rel="preload"][as="font"]').count();
+    expect(fontPreloads, 'regular and extra-bold Farzin font files must start before first paint').toBe(2);
+});

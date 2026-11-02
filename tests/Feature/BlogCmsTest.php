@@ -365,4 +365,43 @@ class BlogCmsTest extends TestCase
     }
 
 
+    public function test_blog_archive_only_features_the_first_page_and_lists_all_page_two_posts(): void
+    {
+        for ($index = 1; $index <= 11; $index++) {
+            BlogPost::create([
+                'title' => 'مقاله آرشیو ' . $index,
+                'slug' => 'archive-page-' . $index,
+                'excerpt' => 'توضیح کوتاه مقاله ' . $index,
+                'body' => 'متن مقاله آرشیو ' . $index,
+                'status' => 'published',
+                'published_at' => now()->subMinutes($index),
+            ]);
+        }
+
+        $this->get(route('blog.index'))
+            ->assertOk()
+            ->assertSee('blog-featured-card', false);
+
+        $secondPageTitles = BlogPost::query()
+            ->published()
+            ->orderByDesc('is_featured')
+            ->orderByDesc('published_at')
+            ->orderByDesc('id')
+            ->skip(9)
+            ->take(9)
+            ->pluck('title');
+
+        $this->assertNotEmpty($secondPageTitles);
+
+        $secondPage = $this->get(route('blog.index', ['page' => 2]))
+            ->assertOk()
+            ->assertDontSee('blog-featured-card', false)
+            ->assertSee('blog-article-card', false);
+
+        foreach ($secondPageTitles as $title) {
+            $secondPage->assertSee($title);
+        }
+    }
+
+
 }

@@ -219,7 +219,6 @@
     <div
         class="bg-[var(--livora-cream)] pb-28 lg:pb-0"
         x-data="{
-        quantity: 1,
         showInstallmentDetails: false
     }"
     >
@@ -656,6 +655,7 @@
                                         name="quantity"
                                         min="1"
                                         :max="$maxPurchaseQuantity"
+                                        :disabled="!$canPurchase"
                                     />
 
                                 </div>
