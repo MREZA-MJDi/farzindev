@@ -2,6 +2,7 @@
     'product',
     'reveal' => true,
     'variant' => 'default',
+    'showAvailability' => true,
 ])
 
 @php
@@ -28,6 +29,15 @@
         && $product->installment_remainder_method === 'cheque'
         && $chequeCount > 0
         && (int) ($product->installment_interval_months ?? 0) > 0;
+
+    $activeVariants = $product->relationLoaded('variants') ? $product->getRelation('variants') : collect();
+    $hasActiveVariants = $product->relationLoaded('variants') && $activeVariants->isNotEmpty();
+    $isAvailable = $hasActiveVariants
+        ? $activeVariants->contains(fn ($variant) => (int) $variant->stock > 0)
+        : (int) $product->stock > 0;
+    $availabilityLabel = $isAvailable
+        ? ($hasActiveVariants ? 'موجود در گزینه‌ها' : 'موجود')
+        : 'ناموجود';
 
 @endphp
 
@@ -120,6 +130,9 @@
             @endif
         </div>
 
+        @if($showAvailability)
+            <div class="farzin-product-card__availability {{ $isAvailable ? 'is-available' : 'is-unavailable' }}" aria-label="وضعیت موجودی: {{ $availabilityLabel }}"><span aria-hidden="true"></span>{{ $availabilityLabel }}</div>
+        @endif
         <div class="farzin-product-card__installment-slot mt-3">
             @if($showInstallment)
                 <div class="farzin-product-card__installment flex w-full items-center justify-between gap-3 rounded-xl p-3">
