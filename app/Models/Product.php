@@ -189,7 +189,6 @@ class Product extends Model
         return $query
             ->where('sku', 'not like', '%SEED%')
             ->where('sku', 'not like', '%DEMO%')
-            ->where('sku', 'not like', '%TEST%')
             ->where('slug', 'not like', '%preview%')
             ->where(function (Builder $name): void {
                 $name
