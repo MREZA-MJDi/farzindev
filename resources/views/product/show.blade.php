@@ -8,8 +8,8 @@
     $mainImage = $product->images->first(fn ($image) => filled($image->url));
 
     $productPrice = (float) $product->price;
-    $phone = \\App\\Support\\StorefrontContact::phone($contactSetting?->phone);
-    $whatsappDigits = \\App\\Support\\StorefrontContact::whatsapp($contactSetting?->whatsapp);
+    $phone = \App\Support\StorefrontContact::phone($contactSetting?->phone);
+    $whatsappDigits = \App\Support\StorefrontContact::whatsapp($contactSetting?->whatsapp);
 
     $stockRequestMessage = 'سلام، لطفاً درباره زمان تأمین موجودی محصول «' . $product->name . '» راهنمایی‌ام کنید.';
     $consultationMessage = 'سلام، برای انتخاب و بررسی محصول «' . $product->name . '» به مشاوره نیاز دارم.';
@@ -195,7 +195,7 @@
 
                 @if($installmentPlan)
                     <p class="mt-3 flex flex-wrap items-center gap-x-2 gap-y-1 text-[11px] leading-6 text-[var(--livora-stone)]">
-                        <span>خرید اقساطی؛ پیش‌پرداخت {{ \\App\\Helpers\\PersianNumberHelper::format($installmentPlan['cash_percent']) }}٪</span>
+                        <span>خرید اقساطی؛ پیش‌پرداخت {{ \App\Helpers\PersianNumberHelper::format($installmentPlan['cash_percent']) }}٪</span>
                         <a href="#product-installment" class="font-semibold text-[var(--livora-accent)] underline underline-offset-4">جزئیات</a>
                     </p>
                 @endif
@@ -272,7 +272,7 @@
                         @if($tab === 'description')
                             @php
                                 $descriptionText = $safeDescription ?: $safeShortDescription;
-                                $descriptionPreview = \\Illuminate\\Support\\Str::limit($descriptionText, 420);
+                                $descriptionPreview = \Illuminate\Support\Str::limit($descriptionText, 420);
                                 $hasMoreDescription = mb_strlen($descriptionText) > 420;
                             @endphp
                             <div class="border-t border-[var(--livora-border)] py-4 text-sm leading-8 text-[var(--livora-stone)]" x-data="{ expanded: false }">
@@ -289,19 +289,19 @@
                             <div class="grid gap-3 border-t border-[var(--livora-border)] py-4 sm:grid-cols-2 lg:grid-cols-4">
                                 <div class="rounded-xl bg-[var(--livora-surface)] p-3">
                                     <p class="text-[11px] text-[var(--livora-stone)]">پیش‌پرداخت</p>
-                                    <p class="mt-2 text-sm font-bold">{{ \\App\\Helpers\\PersianNumberHelper::format($installmentPlan['cash_amount']) }} تومان</p>
+                                    <p class="mt-2 text-sm font-bold">{{ \App\Helpers\PersianNumberHelper::format($installmentPlan['cash_amount']) }} تومان</p>
                                 </div>
                                 <div class="rounded-xl bg-[var(--livora-surface)] p-3">
                                     <p class="text-[11px] text-[var(--livora-stone)]">مبلغ باقی‌مانده</p>
-                                    <p class="mt-2 text-sm font-bold">{{ \\App\\Helpers\\PersianNumberHelper::format($installmentPlan['deferred_amount']) }} تومان</p>
+                                    <p class="mt-2 text-sm font-bold">{{ \App\Helpers\PersianNumberHelper::format($installmentPlan['deferred_amount']) }} تومان</p>
                                 </div>
                                 <div class="rounded-xl bg-[var(--livora-surface)] p-3">
                                     <p class="text-[11px] text-[var(--livora-stone)]">تعداد چک</p>
-                                    <p class="mt-2 text-sm font-bold">{{ \\App\\Helpers\\PersianNumberHelper::format($installmentPlan['cheque_count']) }} فقره</p>
+                                    <p class="mt-2 text-sm font-bold">{{ \App\Helpers\PersianNumberHelper::format($installmentPlan['cheque_count']) }} فقره</p>
                                 </div>
                                 <div class="rounded-xl bg-[var(--livora-surface)] p-3">
                                     <p class="text-[11px] text-[var(--livora-stone)]">فاصله سررسید</p>
-                                    <p class="mt-2 text-sm font-bold">هر {{ \\App\\Helpers\\PersianNumberHelper::format($installmentPlan['interval_months']) }} ماه</p>
+                                    <p class="mt-2 text-sm font-bold">هر {{ \App\Helpers\PersianNumberHelper::format($installmentPlan['interval_months']) }} ماه</p>
                                 </div>
                                 <div class="sm:col-span-2 lg:col-span-4">
                                     @if($installmentPlan['without_fee'])
@@ -310,8 +310,8 @@
                                     <ol class="mt-3 grid gap-2 sm:grid-cols-2">
                                         @foreach($installmentPlan['cheque_amounts'] as $chequeIndex => $amount)
                                             <li class="flex items-center justify-between gap-3 rounded-xl border border-[var(--livora-border)] px-3 py-2 text-xs">
-                                                <span>چک {{ \\App\\Helpers\\PersianNumberHelper::format($chequeIndex + 1) }} · {{ \\App\\Helpers\\PersianNumberHelper::format(($chequeIndex + 1) * $installmentPlan['interval_months']) }} ماه بعد</span>
-                                                <strong>{{ \\App\\Helpers\\PersianNumberHelper::format($amount) }} تومان</strong>
+                                                <span>چک {{ \App\Helpers\PersianNumberHelper::format($chequeIndex + 1) }} · {{ \App\Helpers\PersianNumberHelper::format(($chequeIndex + 1) * $installmentPlan['interval_months']) }} ماه بعد</span>
+                                                <strong>{{ \App\Helpers\PersianNumberHelper::format($amount) }} تومان</strong>
                                             </li>
                                         @endforeach
                                     </ol>
@@ -323,13 +323,13 @@
                                 @if($hasShippingFlatRate)
                                     <div class="rounded-xl bg-[var(--livora-surface)] p-3">
                                         <p class="text-[11px] text-[var(--livora-stone)]">هزینه پایه ارسال</p>
-                                        <p class="mt-2 text-sm font-bold">{{ $shippingFlatRate > 0 ? \\App\\Helpers\\PersianNumberHelper::format($shippingFlatRate) . ' تومان' : 'رایگان' }}</p>
+                                        <p class="mt-2 text-sm font-bold">{{ $shippingFlatRate > 0 ? \App\Helpers\PersianNumberHelper::format($shippingFlatRate) . ' تومان' : 'رایگان' }}</p>
                                     </div>
                                 @endif
                                 @if($hasFreeShippingThreshold)
                                     <div class="rounded-xl bg-[var(--livora-surface)] p-3">
                                         <p class="text-[11px] text-[var(--livora-stone)]">حداقل مبلغ برای ارسال رایگان</p>
-                                        <p class="mt-2 text-sm font-bold">{{ \\App\\Helpers\\PersianNumberHelper::format($shippingFreeThreshold) }} تومان</p>
+                                        <p class="mt-2 text-sm font-bold">{{ \App\Helpers\PersianNumberHelper::format($shippingFreeThreshold) }} تومان</p>
                                     </div>
                                 @endif
                             </div>
@@ -366,7 +366,7 @@
             <div class="flex items-center gap-3">
                 <div class="min-w-0 flex-1">
                     <p class="truncate text-[10px] text-[var(--livora-stone)]">{{ $product->name }}</p>
-                    <p class="mt-1 text-sm font-bold">{{ \\App\\Helpers\\PersianNumberHelper::format($productPrice) }} <span class="text-[10px] font-normal text-[var(--livora-stone)]">تومان</span></p>
+                    <p class="mt-1 text-sm font-bold">{{ \App\Helpers\PersianNumberHelper::format($productPrice) }} <span class="text-[10px] font-normal text-[var(--livora-stone)]">تومان</span></p>
                 </div>
                 @if($canPurchase)
                     <a href="#product-purchase" class="fz-product-action shrink-0 bg-[var(--livora-ink)] text-white">افزودن به سبد</a>
