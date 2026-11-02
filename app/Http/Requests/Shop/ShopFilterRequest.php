@@ -43,6 +43,8 @@ class ShopFilterRequest extends FormRequest
                 'string',
                 'max:150',
             ],
+            'width_cm' => ['nullable', 'integer', 'min:1', 'max:500'],
+            'installation_type' => ['nullable', 'string', 'max:100'],
 
             /*
             |--------------------------------------------------------------------------
@@ -135,6 +137,10 @@ class ShopFilterRequest extends FormRequest
             */
             'search' => $this->filled('search')
                 ? trim((string) $this->input('search'))
+                : null,
+            'width_cm' => $this->filled('width_cm') ? (int) $this->input('width_cm') : null,
+            'installation_type' => $this->filled('installation_type')
+                ? trim((string) $this->input('installation_type'))
                 : null,
 
             /*
