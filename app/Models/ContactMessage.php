@@ -13,6 +13,10 @@ class ContactMessage extends Model
         'phone',
         'email',
         'subject',
+        'product_model',
+        'width_cm',
+        'callback_requested',
+        'attachment_path',
         'message',
         'status',
         'admin_reply',
@@ -21,6 +25,8 @@ class ContactMessage extends Model
 
     protected $casts = [
         'replied_at' => 'datetime',
+        'callback_requested' => 'boolean',
+        'width_cm' => 'integer',
     ];
 
     public function user(): BelongsTo
