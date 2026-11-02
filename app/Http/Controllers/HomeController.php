@@ -89,8 +89,6 @@ class HomeController extends Controller
             ->whereHas('images')
             ->when(true, $onlyInStock)
             ->with($productRelations)
-            ->withCount('variants')
-            ->withSum('variants as active_variants_stock', 'stock')
             ->withSum([
                 'orderItems as sold_quantity' => function (Builder $orderItemQuery): void {
                     $orderItemQuery->whereHas('order', function (Builder $orderQuery): void {
@@ -111,16 +109,6 @@ class HomeController extends Controller
             ))
             ->take(6)
             ->values();
-
-        $hasBestSellerSales = $featuredProducts->contains(
-            fn (Product $product): bool => (int) ($product->sold_quantity ?? 0) > 0
-        );
-
-        if ($hasBestSellerSales) {
-            $featuredProducts = $featuredProducts
-                ->filter(fn (Product $product): bool => (int) ($product->sold_quantity ?? 0) > 0)
-                ->values();
-        }
 
         $installmentProduct = Product::query()
             ->active()
@@ -161,7 +149,6 @@ class HomeController extends Controller
             'categories' => $categories,
             'heroProduct' => $heroProduct,
             'featuredProducts' => $featuredProducts,
-            'hasBestSellerSales' => $hasBestSellerSales,
             'installmentProduct' => $installmentProduct,
             'shippingSettings' => $shippingSettings,
             'contactSetting' => $contactSetting,
