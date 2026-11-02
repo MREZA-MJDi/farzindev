@@ -426,6 +426,27 @@ class FarzinStorefrontTest extends TestCase
 
     public function test_homepage_and_blog_use_farzin_kitchen_product_content(): void
     {
+        Storage::fake('public');
+
+        $coverPosts = [
+            'choosing-kitchen-hood' => 'تصویر جلد راهنمای انتخاب هود',
+            'choosing-a-kitchen-sink' => 'تصویر جلد راهنمای انتخاب سینک',
+            'kitchen-product-order-checklist' => 'تصویر جلد چک‌لیست پیش از سفارش',
+        ];
+
+        foreach ($coverPosts as $slug => $alt) {
+            $coverPath = UploadedFile::fake()
+                ->image(str_replace('-', '_', $slug).'.jpg', 1200, 750)
+                ->storePublicly('blog', 'public');
+
+            \\App\\Models\\BlogPost::query()
+                ->where('slug', $slug)
+                ->update([
+                    'cover_image' => $coverPath,
+                    'cover_image_alt' => $alt,
+                ]);
+        }
+
         $this->get(route('home'))
             ->assertOk()
             ->assertSee('فرزین')
