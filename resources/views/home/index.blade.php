@@ -17,9 +17,9 @@
     $heroImageValue = trim((string) ($homeCopy['page_home_hero_image_url'] ?? ''));
     $heroImageUrl = '';
     if ($heroImageValue !== '') {
-        $heroImageUrl = \\Illuminate\\Support\\Str::startsWith($heroImageValue, ['http://', 'https://', '//'])
+        $heroImageUrl = \Illuminate\Support\Str::startsWith($heroImageValue, ['http://', 'https://', '//'])
             ? $heroImageValue
-            : \\Illuminate\\Support\\Facades\\Storage::disk('public')->url(
+            : \Illuminate\Support\Facades\Storage::disk('public')->url(
                 preg_replace('#^(public/|storage/)#', '', ltrim($heroImageValue, '/')) ?? $heroImageValue
             );
     }
@@ -37,8 +37,8 @@
     $heroButtonLabel = trim((string) ($homeCopy['page_home_hero_primary_label'] ?? ''))
         ?: 'مشاهده محصولات';
 
-    $phone = \\App\\Support\\StorefrontContact::phone($contactSetting?->phone);
-    $whatsappDigits = \\App\\Support\\StorefrontContact::whatsapp($contactSetting?->whatsapp);
+    $phone = \App\Support\StorefrontContact::phone($contactSetting?->phone);
+    $whatsappDigits = \App\Support\StorefrontContact::whatsapp($contactSetting?->whatsapp);
     $address = trim((string) ($contactSetting?->address ?? ''));
 
     $warrantyText = trim((string) ($homeSettings['warranty_text'] ?? ''));
@@ -47,7 +47,7 @@
     }
 
     $enamadUrl = trim((string) ($homeCopy['page_home_enamad_url'] ?? ''));
-    if (! \\Illuminate\\Support\\Str::startsWith($enamadUrl, 'https://')) {
+    if (! \Illuminate\Support\Str::startsWith($enamadUrl, 'https://')) {
         $enamadUrl = '';
     }
 
@@ -121,8 +121,8 @@
                         <img src="{{ $heroProductImage->url }}" alt="{{ $heroProduct->name }}" width="160" height="120" loading="lazy" decoding="async">
                     @endif
                     <div class="fz-home-hero-offer__details">
-                        <h2>{{ \\Illuminate\\Support\\Str::limit($heroProduct->name, 48) }}</h2>
-                        <strong>{{ \\App\\Helpers\\PersianNumberHelper::format((float) $heroProduct->price) }} <small>تومان</small></strong>
+                        <h2>{{ \Illuminate\Support\Str::limit($heroProduct->name, 48) }}</h2>
+                        <strong>{{ \App\Helpers\PersianNumberHelper::format((float) $heroProduct->price) }} <small>تومان</small></strong>
                         <span class="fz-home-hero-offer__stock"><i aria-hidden="true"></i> موجود و آماده سفارش</span>
                     </div>
                     <a href="{{ route('product.show', $heroProduct->slug) }}" aria-label="مشاهده پیشنهاد فرزین: {{ $heroProduct->name }}">مشاهده <span aria-hidden="true">←</span></a>
@@ -221,10 +221,10 @@
                     <div class="fz-home-installment__terms">
                         <strong>{{ $installmentProduct->name }}</strong>
                         <span>
-                            پیش‌پرداخت {{ \\App\\Helpers\\PersianNumberHelper::format($installmentProduct->installment_cash_percent) }}٪
-                            ({{ \\App\\Helpers\\PersianNumberHelper::format($installmentCashAmount) }} تومان)
-                            · {{ \\App\\Helpers\\PersianNumberHelper::format($installmentProduct->installment_cheque_count) }} چک
-                            · فاصله سررسید {{ \\App\\Helpers\\PersianNumberHelper::format($installmentProduct->installment_interval_months) }} ماه
+                            پیش‌پرداخت {{ \App\Helpers\PersianNumberHelper::format($installmentProduct->installment_cash_percent) }}٪
+                            ({{ \App\Helpers\PersianNumberHelper::format($installmentCashAmount) }} تومان)
+                            · {{ \App\Helpers\PersianNumberHelper::format($installmentProduct->installment_cheque_count) }} چک
+                            · فاصله سررسید {{ \App\Helpers\PersianNumberHelper::format($installmentProduct->installment_interval_months) }} ماه
                         </span>
                     </div>
                     <a href="{{ route('product.show', $installmentProduct->slug) }}">مشاهده شرایط این محصول <span aria-hidden="true">←</span></a>
@@ -356,10 +356,10 @@
                         <div class="fz-home-article-card__body">
                             <div class="fz-home-article-card__meta">
                                 @if($articleCategory)<span>{{ $articleCategory->name }}</span>@endif
-                                <span>{{ \\App\\Helpers\\PersianNumberHelper::format($article->reading_time) }} دقیقه مطالعه</span>
+                                <span>{{ \App\Helpers\PersianNumberHelper::format($article->reading_time) }} دقیقه مطالعه</span>
                             </div>
                             <h3><a href="{{ route('blog.show', $article->slug) }}">{{ $article->title }}</a></h3>
-                            @if($article->excerpt)<p>{{ \\Illuminate\\Support\\Str::limit($article->excerpt, 125) }}</p>@endif
+                            @if($article->excerpt)<p>{{ \Illuminate\Support\Str::limit($article->excerpt, 125) }}</p>@endif
                             <a class="fz-home-article-card__link" href="{{ route('blog.show', $article->slug) }}">ادامه مطلب <span aria-hidden="true">←</span></a>
                         </div>
                     </article>
