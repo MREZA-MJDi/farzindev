@@ -792,6 +792,104 @@ class FarzinStorefrontTest extends TestCase
             ->assertDontSee($hiddenRelatedProduct->name);
     }
 
+    public function test_available_for_purchase_requires_stock_in_every_active_variant_type(): void
+    {
+        $category = $this->category(['slug' => 'variant-availability-groups']);
+
+        $blocked = $this->product($category, [
+            'name' => 'Blocked Variant Groups',
+            'slug' => 'blocked-variant-groups',
+            'sku' => 'FAR-GROUPS-BLOCKED',
+            'stock' => 20,
+        ]);
+
+        \App\Models\ProductVariant::create([
+            'product_id' => $blocked->id,
+            'type' => 'color',
+            'name' => 'رنگ',
+            'value' => 'مشکی',
+            'sku' => 'FAR-GROUPS-BLOCKED-BLACK',
+            'stock' => 4,
+            'is_active' => true,
+        ]);
+        \App\Models\ProductVariant::create([
+            'product_id' => $blocked->id,
+            'type' => 'size',
+            'name' => 'عرض',
+            'value' => '۷۰',
+            'sku' => 'FAR-GROUPS-BLOCKED-70',
+            'stock' => 0,
+            'is_active' => true,
+        ]);
+
+        $available = $this->product($category, [
+            'name' => 'Available Variant Groups',
+            'slug' => 'available-variant-groups',
+            'sku' => 'FAR-GROUPS-AVAILABLE',
+            'stock' => 0,
+        ]);
+
+        \App\Models\ProductVariant::create([
+            'product_id' => $available->id,
+            'type' => 'color',
+            'name' => 'رنگ',
+            'value' => 'سفید',
+            'sku' => 'FAR-GROUPS-AVAILABLE-WHITE',
+            'stock' => 3,
+            'is_active' => true,
+        ]);
+        \App\Models\ProductVariant::create([
+            'product_id' => $available->id,
+            'type' => 'size',
+            'name' => 'عرض',
+            'value' => '۷۰',
+            'sku' => 'FAR-GROUPS-AVAILABLE-70',
+            'stock' => 2,
+            'is_active' => true,
+        ]);
+
+        $this->assertFalse(
+            Product::query()->availableForPurchase()->whereKey($blocked->id)->exists()
+        );
+        $this->assertTrue(
+            Product::query()->availableForPurchase()->whereKey($available->id)->exists()
+        );
+    }
+
+    public function test_shop_default_sort_places_purchasable_products_first_and_hides_preview_records(): void
+    {
+        $category = $this->category(['slug' => 'stock-priority']);
+        $unavailable = $this->product($category, [
+            'name' => 'محصول ناموجود برای مرتب‌سازی',
+            'slug' => 'out-of-stock-sort-test',
+            'sku' => 'FAR-SORT-OUT-OF-STOCK',
+            'stock' => 0,
+        ]);
+        $available = $this->product($category, [
+            'name' => 'محصول موجود برای مرتب‌سازی',
+            'slug' => 'in-stock-sort-test',
+            'sku' => 'FAR-SORT-IN-STOCK',
+            'stock' => 5,
+        ]);
+        $preview = $this->product($category, [
+            'name' => 'محصول نمایشی بذر',
+            'slug' => 'seed-sort-preview',
+            'sku' => 'FZ-SEED-SORT-TEST',
+            'stock' => 8,
+        ]);
+
+        $response = $this->get(route('shop.index'))->assertOk();
+        $html = $response->getContent();
+
+        $this->assertLessThan(
+            strpos($html, $unavailable->name),
+            strpos($html, $available->name),
+            'Available products must be rendered before unavailable products.'
+        );
+        $response->assertDontSee($preview->name);
+        $response->assertDontSee('پرفروش‌ترین');
+    }
+
     public function test_variant_product_detail_uses_variant_stock_for_availability_and_quantity(): void
     {
         $product = $this->product($this->category(['slug' => 'hoods']), [
