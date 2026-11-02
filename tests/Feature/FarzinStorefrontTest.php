@@ -256,6 +256,55 @@ class FarzinStorefrontTest extends TestCase
         ]);
     }
 
+    public function test_admin_product_index_searches_and_filters_by_status_category_and_completeness(): void
+    {
+        $admin = $this->admin();
+        $category = $this->category(['slug' => 'product-filter-category']);
+
+        $incomplete = $this->product($category, [
+            'name' => 'هود نیازمند تکمیل',
+            'slug' => 'filter-incomplete-hood',
+            'sku' => 'FAR-FILTER-INCOMPLETE',
+            'status' => 'draft',
+            'description' => '',
+        ]);
+
+        $complete = $this->product($category, [
+            'name' => 'هود کامل فرزین',
+            'slug' => 'filter-complete-hood',
+            'sku' => 'FAR-FILTER-COMPLETE',
+            'status' => 'active',
+        ]);
+
+        ProductImage::create([
+            'product_id' => $complete->id,
+            'path' => 'https://cdn.example.test/filter-complete.webp',
+            'alt' => 'هود کامل فرزین',
+            'sort_order' => 0,
+            'is_primary' => true,
+        ]);
+
+        $this->actingAs($admin, 'admin')
+            ->get(route('admin.products.index', [
+                'q' => 'FAR-FILTER-INCOMPLETE',
+                'category_id' => $category->id,
+                'status' => 'draft',
+            ]))
+            ->assertOk()
+            ->assertSee('هود نیازمند تکمیل')
+            ->assertDontSee('هود کامل فرزین');
+
+        $this->get(route('admin.products.index', ['completeness' => 'incomplete']))
+            ->assertOk()
+            ->assertSee('هود نیازمند تکمیل')
+            ->assertDontSee('هود کامل فرزین');
+
+        $this->get(route('admin.products.index', ['completeness' => 'complete']))
+            ->assertOk()
+            ->assertSee('هود کامل فرزین')
+            ->assertDontSee('هود نیازمند تکمیل');
+    }
+
     public function test_admin_can_choose_a_media_library_asset_as_the_primary_product_image(): void
     {
         Storage::fake('public');
