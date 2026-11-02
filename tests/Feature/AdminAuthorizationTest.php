@@ -120,7 +120,7 @@ class AdminAuthorizationTest extends TestCase
             'password' => Hash::make('StrongPass123'),
         ]);
 
-        $this->post(route('login.store'), [
+        $this->from(route('login'))->post(route('login.store'), [
             'phone' => 'role-separated-admin@example.test',
             'password' => 'StrongPass123',
         ])->assertRedirect(route('login'));
