@@ -111,10 +111,22 @@
             <span class="farzin-product-card__category min-w-0 truncate">
                 {{ $product->category?->name ?? 'فرزین' }}
             </span>
-            @if(filled($product->sku))
-                <span class="farzin-product-card__sku shrink-0" dir="ltr">{{ $product->sku }}</span>
-            @endif
         </div>
+
+        @if($product->width_cm || filled($product->installation_type))
+            <div class="mt-2 flex min-h-6 flex-wrap items-center gap-1.5" aria-label="مشخصات کلیدی">
+                @if($product->width_cm)
+                    <span class="rounded-full border border-[var(--livora-border)] bg-[var(--livora-surface)] px-2 py-1 text-[10px] text-[var(--livora-stone)]">
+                        عرض {{ \App\Helpers\PersianNumberHelper::format($product->width_cm) }} سانتی‌متر
+                    </span>
+                @endif
+                @if(filled($product->installation_type))
+                    <span class="rounded-full border border-[var(--livora-border)] bg-[var(--livora-surface)] px-2 py-1 text-[10px] text-[var(--livora-stone)]">
+                        {{ $product->installation_type }}
+                    </span>
+                @endif
+            </div>
+        @endif
 
         <a href="{{ route('product.show', $product->slug) }}" class="mt-2 block min-w-0">
             <h3 class="farzin-product-card__title line-clamp-2 text-sm font-semibold leading-7 sm:text-[15px]">
