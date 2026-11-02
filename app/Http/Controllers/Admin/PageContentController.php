@@ -21,17 +21,6 @@ class PageContentController extends Controller
             'fields' => [
                 'page_home_hero_title' => ['label' => 'عنوان کوتاه Hero', 'type' => 'text', 'max' => 120],
                 'page_home_hero_description' => ['label' => 'زیرعنوان یک‌خطی Hero', 'type' => 'text', 'max' => 220],
-                'page_home_hero_image_position' => [
-                    'label' => 'نقطه تمرکز تصویر Hero',
-                    'type' => 'select',
-                    'options' => [
-                        'center center' => 'مرکز تصویر',
-                        'center 35%' => 'کمی بالاتر',
-                        'center 65%' => 'کمی پایین‌تر',
-                        'right center' => 'سمت راست',
-                        'left center' => 'سمت چپ',
-                    ],
-                ],
                 'page_home_enamad_url' => ['label' => 'پیوند رسمی نماد اعتماد الکترونیکی (HTTPS)', 'type' => 'text', 'max' => 500],
                 'page_home_warranty_text' => ['label' => 'توضیح ضمانت در صفحه اصلی', 'type' => 'textarea', 'max' => 300],
                 'page_home_hero_primary_label' => ['label' => 'متن دکمه اصلی', 'type' => 'text', 'max' => 80],
@@ -168,6 +157,7 @@ class PageContentController extends Controller
             'group' => self::GROUPS[$tab],
             'groups' => self::GROUPS,
             'values' => $content->all(),
+            'heroProductPreview' => $tab === 'home' ? $this->homepageHeroProductPreview() : null,
         ]);
     }
 
@@ -259,4 +249,55 @@ class PageContentController extends Controller
             ->route('admin.page-content.edit', ['tab' => $tab])
             ->with('success', 'محتوا و تنظیمات صفحه ذخیره شد و در خروجی عمومی قابل مشاهده است.');
     }
+    /**
+     * Return the same currently purchasable, image-backed recommendation used
+     * by the public homepage so the admin preview never invents a sample card.
+     */
+    private function homepageHeroProductPreview(): ?Product
+    {
+        $products = Product::query()
+            ->active()
+            ->where('show_in_home_gallery', true)
+            ->whereHas('category', fn (Builder $query) => $query->where('is_active', true))
+            ->whereHas('images')
+            ->with([
+                'category:id,name,slug,description',
+                'variants:id,product_id,type,name,value,stock',
+                'images' => fn ($query) => $query
+                    ->select(['id', 'product_id', 'media_id', 'path', 'alt', 'sort_order', 'is_primary'])
+                    ->orderByDesc('is_primary')
+                    ->orderBy('sort_order')
+                    ->orderBy('id')
+                    ->limit(1),
+                'images.media:id,path',
+            ])
+            ->withSum([
+                'orderItems as sold_quantity' => function (Builder $orderItemQuery): void {
+                    $orderItemQuery->whereHas('order', function (Builder $orderQuery): void {
+                        $orderQuery
+                            ->where('payment_status', 'paid')
+                            ->where('status', '!=', 'cancelled');
+                    });
+                },
+            ], 'quantity')
+            ->orderByDesc('sold_quantity')
+            ->orderByDesc('is_featured')
+            ->orderByDesc('updated_at')
+            ->orderByDesc('id')
+            ->get()
+            ->filter(fn (Product $product) => $product->images->contains(
+                fn ($image) => filled($image->url)
+            ));
+
+        return $products->first(function (Product $product): bool {
+            $groups = $product->variants->groupBy('type');
+
+            return $groups->isNotEmpty()
+                ? $groups->every(fn ($options) => $options->contains(
+                    fn ($option) => (int) $option->stock > 0
+                ))
+                : (int) $product->stock > 0;
+        });
+    }
+
 }
