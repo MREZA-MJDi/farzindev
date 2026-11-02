@@ -2326,3 +2326,23 @@ p {
     .fz-admin-home-hero-preview .fz-home-hero-offer__details > strong { font-size: .8rem; }
     .fz-admin-home-hero-preview__upload { grid-template-columns: minmax(0, 1fr); }
 }
+
+
+@media (max-width: 767px) {
+    .fz-admin-home-hero-preview__saved {
+        aspect-ratio: auto;
+        overflow: visible;
+        border: 0;
+        background: transparent;
+        box-shadow: none;
+    }
+    .fz-admin-home-hero-preview__saved > img {
+        position: relative;
+        inset: auto;
+        width: 100%;
+        height: auto;
+        aspect-ratio: 16 / 10;
+        border: 1px solid rgba(6,40,79,.1);
+        border-radius: 1.1rem;
+    }
+}
