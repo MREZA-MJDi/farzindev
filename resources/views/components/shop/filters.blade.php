@@ -12,7 +12,7 @@
     @endif
 
     {{-- =========================================================
-         CATEGORY
+         دسته‌بندی
     ========================================================== --}}
 
     <section>
@@ -20,7 +20,7 @@
         <div>
 
             <p class="text-[10px] uppercase tracking-[0.18em] text-[var(--livora-accent)]">
-                CATEGORY
+                دسته‌بندی
             </p>
 
             <h3 class="mt-2 text-sm font-semibold">
@@ -88,7 +88,7 @@
 
 
     {{-- =========================================================
-         SEARCH
+         جستجو
     ========================================================== --}}
 
     <section>
@@ -96,7 +96,7 @@
         <div>
 
             <p class="text-[10px] uppercase tracking-[0.18em] text-[var(--livora-accent)]">
-                SEARCH
+                جستجو
             </p>
 
             <h3 class="mt-2 text-sm font-semibold">
@@ -167,7 +167,7 @@
         <div>
 
             <p class="text-[10px] uppercase tracking-[0.18em] text-[var(--livora-accent)]">
-                PAYMENT
+                خرید اقساطی
             </p>
 
             <h3 class="mt-2 text-sm font-semibold">
@@ -204,7 +204,7 @@
 
 
     {{-- =========================================================
-         PRICE
+         قیمت
     ========================================================== --}}
 
     <section>
@@ -212,7 +212,7 @@
         <div>
 
             <p class="text-[10px] uppercase tracking-[0.18em] text-[var(--livora-accent)]">
-                PRICE
+                قیمت
             </p>
 
             <h3 class="mt-2 text-sm font-semibold">
@@ -283,7 +283,7 @@
         <div>
 
             <p class="text-[10px] uppercase tracking-[0.18em] text-[var(--livora-accent)]">
-                DISCOVERY
+                فیلترهای تکمیلی
             </p>
 
             <h3 class="mt-2 text-sm font-semibold">
