@@ -43,6 +43,13 @@ class CategoryController extends Controller
             404
         );
 
+        $category->loadMissing([
+            'latestActiveProduct.images' => fn ($query) => $query
+                ->select(['id', 'product_id', 'media_id', 'path', 'alt', 'sort_order', 'is_primary'])
+                ->limit(1),
+            'latestActiveProduct.images.media:id,path',
+        ]);
+
         $products = $category
             ->products()
             ->active()
