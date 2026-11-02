@@ -17,8 +17,11 @@
             default => null,
         };
 
+        $storefrontBrandName = $storefrontBrandName ?? config('app.name', 'فرزین');
         $seoTitle = trim((string) $__env->yieldContent('title'));
+        $seoTitle = str_replace('فرزین', $storefrontBrandName, $seoTitle);
         $seoPageTitle = $seoStaticPage ? trim((string) ($seoValues[$seoStaticPage['title']] ?? '')) : '';
+        $seoPageTitle = str_replace('فرزین', $storefrontBrandName, $seoPageTitle);
         $seoTitle = $seoPageTitle !== ''
             ? $seoPageTitle
             : ($seoTitle !== '' ? $seoTitle : (string) $seoValues['seo_default_title']);
@@ -50,9 +53,7 @@
         $seoOrganizationSchema = [
             '@context' => 'https://schema.org',
             '@type' => 'Organization',
-            'name' => filled($seoValues['seo_organization_name'] ?? null)
-                ? $seoValues['seo_organization_name']
-                : $seoValues['seo_site_name'],
+            'name' => $storefrontBrandName,
             'url' => $seoBaseUrl,
         ];
 
@@ -114,7 +115,7 @@
         $seoWebsiteSchema = [
             '@context' => 'https://schema.org',
             '@type' => 'WebSite',
-            'name' => $seoValues['seo_site_name'],
+            'name' => $storefrontBrandName,
             'url' => $seoBaseUrl,
             'inLanguage' => 'fa-IR',
             'description' => $seoValues['seo_default_description'],
@@ -255,9 +256,9 @@
         }
     @endphp
 
-    <x-layout.navbar :cart-count="$storefrontCartCount" />
+    <x-layout.navbar :cart-count="$storefrontCartCount" :brand-name="$storefrontBrandName" />
 
-    <x-layout.mobile-menu />
+    <x-layout.mobile-menu :brand-name="$storefrontBrandName" />
 
     <x-layout.search-overlay />
 
@@ -265,7 +266,7 @@
         @yield('content')
     </main>
 
-    <x-layout.footer :contact="$storefrontContact" />
+    <x-layout.footer :contact="$storefrontContact" :settings="$storefrontSettings" />
 
     <x-layout.mobile-bottom-bar :cart-count="$storefrontCartCount" />
 
