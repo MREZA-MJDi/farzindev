@@ -130,6 +130,8 @@ class Category extends Model
     {
         return $query
             ->where('is_active', true)
+            ->whereNotIn('slug', ['furniture', 'chairs', 'tables', 'decor', 'accessories'])
+            ->whereHas('products', fn ($productQuery) => $productQuery->active())
             ->orderBy('sort_order');
     }
 }
