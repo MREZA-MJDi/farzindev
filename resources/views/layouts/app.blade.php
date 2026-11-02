@@ -54,7 +54,9 @@
         $seoOrganizationSchema = [
             '@context' => 'https://schema.org',
             '@type' => 'Organization',
-            'name' => $storefrontBrandName,
+            'name' => filled($seoValues['seo_organization_name'] ?? null)
+                ? $seoValues['seo_organization_name']
+                : $storefrontBrandName,
             'url' => $seoBaseUrl,
         ];
 
