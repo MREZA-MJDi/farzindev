@@ -41,7 +41,7 @@ class AppServiceProvider extends ServiceProvider
                     ->all()
             );
 
-            $view->with('storefrontSettings', $settings);
+            $view->with('storefrontPublicSettings', $settings);
             $view->with('storefrontBrandName', $settings['brand_name'] ?? config('app.name', 'فرزین'));
         });
     }
