@@ -24,6 +24,12 @@ trait PreparesProductInput
             'stock' =>
                 $this->normalizeNumericInput($this->input('stock')) ?? 0,
 
+            'width_cm' => $this->normalizeNumericInput($this->input('width_cm')),
+            'suction_power_m3h' => $this->normalizeNumericInput($this->input('suction_power_m3h')),
+            'noise_db' => $this->normalizeNumericInput($this->input('noise_db')),
+            'power_watts' => $this->normalizeNumericInput($this->input('power_watts')),
+            'warranty_months' => $this->normalizeNumericInput($this->input('warranty_months')),
+
             'is_featured' =>
                 $this->boolean('is_featured'),
 
