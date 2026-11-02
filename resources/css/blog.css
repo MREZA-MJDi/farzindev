@@ -1525,14 +1525,6 @@
     font-size: 1.12rem;
     line-height: 1.7;
 }
-.blog-article-content :where(ul,ol) {
-    margin-block: 1rem;
-    padding-inline-start: 1.3rem;
-}
-.blog-article-content li {
-    margin-block: .35rem;
-    padding-inline-start: .2rem;
-}
 .blog-article-content table {
     display: block;
     width: 100%;
