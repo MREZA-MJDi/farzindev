@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Helpers\PersianNumberHelper;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\LoginRequest;
 use Illuminate\Http\RedirectResponse;
@@ -35,7 +36,7 @@ class AuthController extends Controller
                 ->withInput($request->only('email'))
                 ->withErrors([
                     'email' => 'تعداد تلاش‌های ورود زیاد است. ' .
-                        \\App\\Helpers\\PersianNumberHelper::format($minutes) .
+                        PersianNumberHelper::format($minutes) .
                         ' دقیقه دیگر دوباره تلاش کنید.',
                 ]);
         }
