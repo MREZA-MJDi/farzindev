@@ -30,7 +30,7 @@
         : collect();
     $hasActiveVariants = $product->relationLoaded('variants') && $activeVariants->isNotEmpty();
     $isAvailable = $hasActiveVariants
-        ? $activeVariants->contains(fn ($variant) => (int) $variant->stock > 0)
+        ? $activeVariants->groupBy(fn ($variant) => filled($variant->type) ? $variant->type : '__default')->every(fn ($options) => $options->contains(fn ($variant) => (int) $variant->stock > 0))
         : (int) $product->stock > 0;
     $availabilityLabel = $isAvailable
         ? ($hasActiveVariants ? 'موجود در گزینه‌ها' : 'موجود')
