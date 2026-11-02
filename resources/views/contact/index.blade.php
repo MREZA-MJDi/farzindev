@@ -136,7 +136,7 @@
                         <div class="fz-contact-panel fz-contact-map-panel">
                             <div class="fz-contact-panel__header">
                                 <div>
-                                    <p class="fz-contact-kicker">موقعیت مجموعه</p>
+                                    <p class="fz-contact-kicker">نشانی مجموعه</p>
                                     <h2>موقعیت ما روی نقشه</h2>
                                     <p>آدرس مجموعه را ببینید و مسیر رسیدن را باز کنید.</p>
                                 </div>
