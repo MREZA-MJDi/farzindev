@@ -44,8 +44,8 @@ class HomeController extends Controller
             'images.media:id,path',
         ];
 
-        // The lead hero pick is purchasable; the selected-products grid below
-        // may include sold-out items, but always sorts purchasable ones first.
+        // The homepage hero is editorial; all selected, image-backed products
+        // are considered so stock sorting is applied before the eight-card limit.
         $onlyInStock = static function (Builder $query): void {
             $query->where(function (Builder $stockQuery): void {
                 $stockQuery
@@ -91,7 +91,6 @@ class HomeController extends Controller
             ->orderByDesc('is_featured')
             ->orderByDesc('updated_at')
             ->orderByDesc('id')
-            ->limit(60)
             ->get()
             ->filter(fn (Product $product) => $hasPublicImage($product))
             ->sortByDesc(fn (Product $product) => $isPurchasable($product))
