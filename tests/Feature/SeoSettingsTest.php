@@ -106,7 +106,7 @@ class SeoSettingsTest extends TestCase
     public function test_admin_seo_settings_are_protected_and_can_control_meta_robots(): void
     {
         $this->get(route('admin.seo-settings.edit'))
-            ->assertRedirect(route('login'));
+            ->assertRedirect(route('admin.login'));
 
         $admin = User::factory()->create(['role' => 'admin']);
 
