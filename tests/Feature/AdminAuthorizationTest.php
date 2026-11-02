@@ -104,12 +104,12 @@ class AdminAuthorizationTest extends TestCase
             'password' => Hash::make('StrongPass123'),
         ]);
 
-        $this->post('/login', [
-            'phone' => 'admin-login@example.test',
+        $this->post(route('admin.login.store'), [
+            'email' => 'admin-login@example.test',
             'password' => 'StrongPass123',
         ])->assertRedirect(route('admin.dashboard'));
 
-        $this->assertAuthenticatedAs($admin);
+        $this->assertAuthenticatedAs($admin, 'admin');
     }
 
     public function test_authenticated_customer_cannot_open_admin_sections(): void
