@@ -60,7 +60,7 @@ class StorefrontSettingController extends Controller
             'shipping_flat_rate' => ['sometimes', 'nullable', 'integer', 'min:0', 'max:1000000000000'],
             'shipping_free_threshold' => ['sometimes', 'nullable', 'integer', 'min:0', 'max:1000000000000'],
             'remove_shop_banner' => ['nullable', 'boolean'],
-            'brand_name' => ['required', 'string', 'max:100'],
+            'brand_name' => ['sometimes', 'required', 'string', 'max:100'],
             'brand_logo' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:5120'],
             'remove_brand_logo' => ['nullable', 'boolean'],
             'eitaa_url' => ['nullable', 'url', 'max:255'],
@@ -69,7 +69,7 @@ class StorefrontSettingController extends Controller
             'shipping_text' => ['nullable', 'string', 'max:1000'],
             'installation_text' => ['nullable', 'string', 'max:1000'],
             'returns_text' => ['nullable', 'string', 'max:1000'],
-            'floating_contact_enabled' => ['nullable', 'boolean'],
+            'floating_contact_enabled' => ['sometimes', 'boolean'],
 
             'phone' => ['nullable', 'string', 'max:50'],
             'email' => ['nullable', 'email:rfc', 'max:255'],
@@ -180,16 +180,25 @@ class StorefrontSettingController extends Controller
                     );
                 }
 
-                $globalSettings = [
-                    'brand_name' => $data['brand_name'],
-                    'eitaa_url' => $data['eitaa_url'] ?? null,
-                    'bale_url' => $data['bale_url'] ?? null,
-                    'warranty_text' => $data['warranty_text'] ?? null,
-                    'shipping_text' => $data['shipping_text'] ?? null,
-                    'installation_text' => $data['installation_text'] ?? null,
-                    'returns_text' => $data['returns_text'] ?? null,
-                    'floating_contact_enabled' => $request->boolean('floating_contact_enabled') ? '1' : '0',
-                ];
+                $globalSettings = [];
+
+                foreach ([
+                    'brand_name',
+                    'eitaa_url',
+                    'bale_url',
+                    'warranty_text',
+                    'shipping_text',
+                    'installation_text',
+                    'returns_text',
+                ] as $settingKey) {
+                    if (array_key_exists($settingKey, $data)) {
+                        $globalSettings[$settingKey] = $data[$settingKey] ?? null;
+                    }
+                }
+
+                if ($request->has('floating_contact_enabled')) {
+                    $globalSettings['floating_contact_enabled'] = $request->boolean('floating_contact_enabled') ? '1' : '0';
+                }
 
                 if ($newBrandLogoPath !== null || $removeBrandLogo) {
                     $globalSettings['brand_logo'] = $newBrandLogoPath;
