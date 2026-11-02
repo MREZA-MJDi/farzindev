@@ -295,10 +295,10 @@ class ShopPaginationAndBestSellersTest extends TestCase
         foreach ($heroGalleryProductIds as $productId) {
             $galleryProduct = Product::query()->findOrFail($productId);
 
-            $this->assertLessThanOrEqual(
+            $this->assertSame(
                 1,
-                substr_count($html, route('product.show', $galleryProduct->slug)),
-                'An image-backed homepage product must not be repeated in a second gallery or mosaic.'
+                substr_count($html, 'data-product-slug="'.$galleryProduct->slug.'"'),
+                'An image-backed homepage product must render as exactly one product card.'
             );
         }
 

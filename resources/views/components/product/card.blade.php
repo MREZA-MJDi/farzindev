@@ -63,6 +63,8 @@
 @endphp
 
 <article
+    data-product-card
+    data-product-slug="{{ $product->slug }}"
     class="farzin-product-card group relative flex h-full min-w-0 flex-col {{ $variant === 'round' ? 'farzin-product-card--round-media' : '' }} {{ $variant === 'home-shelf' ? 'farzin-product-card--home-shelf' : '' }} {{ ! $isAvailable ? 'is-unavailable' : '' }}"
     @if($reveal) data-farzin-reveal @endif
 >
