@@ -1,4 +1,4 @@
-@props(['cartCount' => 0, 'brandName' => 'فرزین'])
+@props(['cartCount' => 0, 'brandName' => 'فرزین', 'brandLogo' => null])
 
 <nav
     aria-label="ناوبری اصلی فرزین"
@@ -14,7 +14,7 @@
                 aria-label="{{ $brandName }}، صفحه اصلی"
             >
                 <span class="farzin-wordmark">
-                    <span class="farzin-wordmark__main">{{ $brandName }}</span>
+                    @if($brandLogo)<img src="{{ $brandLogo }}" alt="{{ $brandName }}" class="max-h-11 max-w-36 object-contain">@else<span class="farzin-wordmark__main">{{ $brandName }}</span>@endif
                     <span class="farzin-wordmark__caption">تجهیزات مدرن آشپزخانه</span>
                 </span>
             </a>
