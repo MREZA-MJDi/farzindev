@@ -112,21 +112,7 @@
             @endif
 
             @if($heroProduct)
-                @php
-                    $heroProductImage = $heroProduct->images?->first();
-                @endphp
-                <aside class="fz-home-hero-offer" aria-label="پیشنهاد فرزین، محصول موجود">
-                    <span class="fz-home-hero-offer__eyebrow">پیشنهاد فرزین</span>
-                    @if($heroProductImage?->url)
-                        <img src="{{ $heroProductImage->url }}" alt="{{ $heroProduct->name }}" width="160" height="120" loading="lazy" decoding="async">
-                    @endif
-                    <div class="fz-home-hero-offer__details">
-                        <h2>{{ \Illuminate\Support\Str::limit($heroProduct->name, 48) }}</h2>
-                        <strong>{{ \App\Helpers\PersianNumberHelper::format((float) $heroProduct->price) }} <small>تومان</small></strong>
-                        <span class="fz-home-hero-offer__stock"><i aria-hidden="true"></i> موجود و آماده سفارش</span>
-                    </div>
-                    <a href="{{ route('product.show', $heroProduct->slug) }}" aria-label="مشاهده پیشنهاد فرزین: {{ $heroProduct->name }}">مشاهده <span aria-hidden="true">←</span></a>
-                </aside>
+                <x-home.hero-offer :product="$heroProduct" />
             @endif
         </div>
     </div>
