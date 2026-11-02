@@ -257,19 +257,7 @@
                         </form>
                     @endif
 
-                    @if($widthOptions->isNotEmpty() || $installationTypes->isNotEmpty())
-                        <form method="GET" action="{{ route('categories.show', $category->slug) }}" class="mb-8 flex flex-wrap items-end gap-3 rounded-2xl border border-[var(--livora-border)] bg-[var(--livora-surface)] p-4">
-                            @if($widthOptions->isNotEmpty())
-                                <label class="min-w-[150px] flex-1 text-xs font-medium">
-                                    عرض محصول
-                                    <select name="width_cm" class="mt-2 w-full rounded-xl border border-[var(--livora-border)] bg-white px-3 py-3 text-xs">
-                                        <option value="">همه عرض‌ها</option>
-                                        @foreach($widthOptions as $width)
-                                            <option value="{{ $width }}" @selected((string) request('width_cm') === (string) $width)>{{ \App\Helpers\PersianNumberHelper::format($width) }} سانتی‌متر</option>
-                                        @endforeach
-                                    </select>
-                                </label>
-                            @endif
+
                             @if($installationTypes->isNotEmpty())
                                 <label class="min-w-[150px] flex-1 text-xs font-medium">
                                     نوع نصب
