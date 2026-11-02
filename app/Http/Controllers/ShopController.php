@@ -30,7 +30,7 @@ class ShopController extends Controller
                     ->select(['id', 'product_id', 'media_id', 'path', 'alt', 'sort_order', 'is_primary'])
                     ->limit(1),
                 'images.media:id,path',
-                'variants:id,product_id,stock',
+                'variants:id,product_id,type,stock',
             ])
             ->active()
             ->publicCatalogue()
