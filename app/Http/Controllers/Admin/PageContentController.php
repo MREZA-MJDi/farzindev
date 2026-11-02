@@ -22,6 +22,26 @@ class PageContentController extends Controller
             'description' => 'عنوان و زیرعنوان را ویرایش کنید و تصویر Hero را با پیش‌نمایش و برش ثابت ۱۶:۱۰ تنظیم کنید؛ دسته‌ها و محصولات از کاتالوگ واقعی خوانده می‌شوند.',
             'fields' => [
                 'page_home_hero_title' => ['label' => 'عنوان کوتاه Hero', 'type' => 'text', 'max' => 120],
+                'page_home_banner_1_eyebrow' => ['label' => 'بنر 1 — برچسب بالای عنوان', 'type' => 'text', 'max' => 100],
+                'page_home_banner_1_title' => ['label' => 'بنر 1 — عنوان', 'type' => 'text', 'max' => 140],
+                'page_home_banner_1_description' => ['label' => 'بنر 1 — توضیح', 'type' => 'textarea', 'max' => 350],
+                'page_home_banner_1_button_label' => ['label' => 'بنر 1 — متن دکمه', 'type' => 'text', 'max' => 70],
+                'page_home_banner_1_button_url' => ['label' => 'بنر 1 — نشانی دکمه (مسیر داخلی یا لینک HTTPS)', 'type' => 'text', 'max' => 500],
+                'page_home_banner_2_eyebrow' => ['label' => 'بنر 2 — برچسب بالای عنوان', 'type' => 'text', 'max' => 100],
+                'page_home_banner_2_title' => ['label' => 'بنر 2 — عنوان', 'type' => 'text', 'max' => 140],
+                'page_home_banner_2_description' => ['label' => 'بنر 2 — توضیح', 'type' => 'textarea', 'max' => 350],
+                'page_home_banner_2_button_label' => ['label' => 'بنر 2 — متن دکمه', 'type' => 'text', 'max' => 70],
+                'page_home_banner_2_button_url' => ['label' => 'بنر 2 — نشانی دکمه (مسیر داخلی یا لینک HTTPS)', 'type' => 'text', 'max' => 500],
+                'page_home_banner_3_eyebrow' => ['label' => 'بنر 3 — برچسب بالای عنوان', 'type' => 'text', 'max' => 100],
+                'page_home_banner_3_title' => ['label' => 'بنر 3 — عنوان', 'type' => 'text', 'max' => 140],
+                'page_home_banner_3_description' => ['label' => 'بنر 3 — توضیح', 'type' => 'textarea', 'max' => 350],
+                'page_home_banner_3_button_label' => ['label' => 'بنر 3 — متن دکمه', 'type' => 'text', 'max' => 70],
+                'page_home_banner_3_button_url' => ['label' => 'بنر 3 — نشانی دکمه (مسیر داخلی یا لینک HTTPS)', 'type' => 'text', 'max' => 500],
+                'page_home_banner_4_eyebrow' => ['label' => 'بنر 4 — برچسب بالای عنوان', 'type' => 'text', 'max' => 100],
+                'page_home_banner_4_title' => ['label' => 'بنر 4 — عنوان', 'type' => 'text', 'max' => 140],
+                'page_home_banner_4_description' => ['label' => 'بنر 4 — توضیح', 'type' => 'textarea', 'max' => 350],
+                'page_home_banner_4_button_label' => ['label' => 'بنر 4 — متن دکمه', 'type' => 'text', 'max' => 70],
+                'page_home_banner_4_button_url' => ['label' => 'بنر 4 — نشانی دکمه (مسیر داخلی یا لینک HTTPS)', 'type' => 'text', 'max' => 500],
                 'page_home_hero_description' => ['label' => 'زیرعنوان یک‌خطی Hero', 'type' => 'text', 'max' => 220],
                 'page_home_enamad_url' => ['label' => 'پیوند رسمی نماد اعتماد الکترونیکی (HTTPS)', 'type' => 'text', 'max' => 500],
                 'page_home_warranty_text' => ['label' => 'توضیح ضمانت در صفحه اصلی', 'type' => 'textarea', 'max' => 300],
@@ -186,6 +206,38 @@ class PageContentController extends Controller
                 'dimensions:min_width=1200,min_height=750,ratio=16/10',
                 'max:20480',
             ];
+
+            for ($index = 1; $index <= 4; $index++) {
+                $rules["page_home_banner_{$index}_image"] = [
+                    'nullable',
+                    'image',
+                    'mimes:jpg,jpeg,png,webp',
+                    'dimensions:min_width=1200,min_height=375,ratio=16/6',
+                    'max:20480',
+                ];
+                $rules["remove_page_home_banner_{$index}_image"] = ['sometimes', 'boolean'];
+                $rules["page_home_banner_{$index}_button_url"] = [
+                    'present',
+                    'nullable',
+                    'string',
+                    'max:500',
+                    static function (string $attribute, mixed $value, \Closure $fail): void {
+                        $value = trim((string) $value);
+                        if ($value === '') {
+                            return;
+                        }
+
+                        $scheme = parse_url($value, PHP_URL_SCHEME);
+                        $isInternalPath = str_starts_with($value, '/') && ! str_starts_with($value, '//');
+                        $isSecureAbsoluteUrl = filter_var($value, FILTER_VALIDATE_URL)
+                            && in_array($scheme, ['http', 'https'], true);
+
+                        if (! $isInternalPath && ! $isSecureAbsoluteUrl) {
+                            $fail('نشانی دکمه باید مسیر داخلی سایت یا لینک معتبر HTTP/HTTPS باشد.');
+                        }
+                    },
+                ];
+            }
         }
 
         $validated = $request->validate($rules, [
@@ -196,10 +248,38 @@ class PageContentController extends Controller
             'page_home_hero_image.mimes' => 'فرمت تصویر Hero باید JPG، PNG یا WEBP باشد.',
             'page_home_hero_image.dimensions' => 'خروجی Hero باید نسبت ۱۶:۱۰ و حداقل ابعاد ۱۲۰۰ در ۷۵۰ پیکسل داشته باشد.',
             'page_home_hero_image.max' => 'حجم تصویر Hero نباید بیشتر از ۲۰ مگابایت باشد.',
+            'page_home_banner_1_image.image' => 'فایل بنر 1 باید یک تصویر معتبر باشد.',
+            'page_home_banner_1_image.dimensions' => 'تصویر بنر 1 باید حداقل ۱۲۰۰×۳۷۵ و با نسبت ۱۶:۶ باشد.',
+            'page_home_banner_1_image.max' => 'حجم تصویر بنر 1 نباید بیشتر از ۲۰ مگابایت باشد.',
+            'page_home_banner_2_image.image' => 'فایل بنر 2 باید یک تصویر معتبر باشد.',
+            'page_home_banner_2_image.dimensions' => 'تصویر بنر 2 باید حداقل ۱۲۰۰×۳۷۵ و با نسبت ۱۶:۶ باشد.',
+            'page_home_banner_2_image.max' => 'حجم تصویر بنر 2 نباید بیشتر از ۲۰ مگابایت باشد.',
+            'page_home_banner_3_image.image' => 'فایل بنر 3 باید یک تصویر معتبر باشد.',
+            'page_home_banner_3_image.dimensions' => 'تصویر بنر 3 باید حداقل ۱۲۰۰×۳۷۵ و با نسبت ۱۶:۶ باشد.',
+            'page_home_banner_3_image.max' => 'حجم تصویر بنر 3 نباید بیشتر از ۲۰ مگابایت باشد.',
+            'page_home_banner_4_image.image' => 'فایل بنر 4 باید یک تصویر معتبر باشد.',
+            'page_home_banner_4_image.dimensions' => 'تصویر بنر 4 باید حداقل ۱۲۰۰×۳۷۵ و با نسبت ۱۶:۶ باشد.',
+            'page_home_banner_4_image.max' => 'حجم تصویر بنر 4 نباید بیشتر از ۲۰ مگابایت باشد.',
         ]);
 
         $heroImageUpload = $validated['page_home_hero_image'] ?? null;
         unset($validated['page_home_hero_image']);
+
+        $bannerImageUploads = [];
+        $removeBannerImages = [];
+        $previousBannerImages = [];
+
+        for ($index = 1; $index <= 4; $index++) {
+            $uploadKey = "page_home_banner_{$index}_image";
+            $removeKey = "remove_page_home_banner_{$index}_image";
+            $bannerImageUploads[$index] = $validated[$uploadKey] ?? null;
+            unset($validated[$uploadKey], $validated[$removeKey]);
+
+            $removeBannerImages[$index] = $request->boolean($removeKey);
+            $previousBannerImages[$index] = (string) StorefrontSetting::query()
+                ->where('key', "page_home_banner_{$index}_image_url")
+                ->value('value');
+        }
 
         $normalized = [];
         foreach ($validated as $key => $value) {
@@ -227,8 +307,35 @@ class PageContentController extends Controller
             }
         }
 
+        $newBannerImagePaths = [];
+        $bannerImageChanges = [];
+
+        foreach ($bannerImageUploads as $index => $upload) {
+            if ($upload !== null) {
+                $storedPath = $images->store($upload, 'homepage/banners');
+
+                if (! $storedPath) {
+                    if ($newHeroImagePath !== null) {
+                        $images->delete($newHeroImagePath);
+                    }
+                    foreach ($newBannerImagePaths as $storedBannerPath) {
+                        $images->delete($storedBannerPath);
+                    }
+
+                    return back()->withInput()->withErrors([
+                        "page_home_banner_{$index}_image" => "ذخیره تصویر بنر {$index} انجام نشد؛ فایل قبلی حفظ شد.",
+                    ]);
+                }
+
+                $newBannerImagePaths[$index] = $storedPath;
+                $bannerImageChanges[$index] = $storedPath;
+            } elseif ($removeBannerImages[$index]) {
+                $bannerImageChanges[$index] = null;
+            }
+        }
+
         try {
-            DB::transaction(function () use ($normalized, $newHeroImagePath): void {
+            DB::transaction(function () use ($normalized, $newHeroImagePath, $bannerImageChanges): void {
                 foreach ($normalized as $key => $value) {
                     StorefrontSetting::query()->updateOrCreate(
                         ['key' => $key],
@@ -242,13 +349,30 @@ class PageContentController extends Controller
                         ['value' => $newHeroImagePath]
                     );
                 }
+
+                foreach ($bannerImageChanges as $index => $path) {
+                    StorefrontSetting::query()->updateOrCreate(
+                        ['key' => "page_home_banner_{$index}_image_url"],
+                        ['value' => $path]
+                    );
+                }
             });
         } catch (\Throwable $exception) {
             if ($newHeroImagePath !== null) {
                 $images->delete($newHeroImagePath);
             }
+            foreach ($newBannerImagePaths as $storedBannerPath) {
+                $images->delete($storedBannerPath);
+            }
 
             throw $exception;
+        }
+
+        foreach ($bannerImageChanges as $index => $newPath) {
+            $oldPath = $previousBannerImages[$index] ?? '';
+            if ($oldPath !== '' && $oldPath !== (string) $newPath) {
+                $images->delete($oldPath);
+            }
         }
 
         if (

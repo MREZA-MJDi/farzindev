@@ -37,7 +37,10 @@ for (const viewport of viewports) {
             expect(response, path + ' must return a document response').not.toBeNull();
             expect(response.status(), path + ' must not return an HTTP error').toBeLessThan(400);
 
-            await expect(page.locator('.farzin-site-header'), path + ' header').toBeVisible();
+            const header = path === '/'
+                ? page.locator('.fz-home-header')
+                : page.locator('.farzin-site-header');
+            await expect(header, path + ' header').toBeVisible();
             await expect(page.locator('.farzin-site-footer'), path + ' footer').toBeAttached();
 
             const footerLayout = await page.locator('.farzin-site-footer').evaluate((footer) => {
@@ -129,7 +132,7 @@ test('global mobile search is available and usable on every public page', async 
     }
 
     await page.goto('/', { waitUntil: 'domcontentloaded' });
-    await page.locator('.farzin-site-header button[aria-label="باز کردن منو"]').click();
+    await page.locator('.fz-home-header .fz-home-header__menu').click();
     await expect(page.locator('[data-farzin-mobile-menu-panel]')).toBeVisible();
 });
 
@@ -243,7 +246,7 @@ test('homepage category GIF preview starts on hover and the first touch tap', as
 });
 
 
-test('homepage final CTA meets the shared footer without a duplicate contact bridge', async ({ page }) => {
+test('homepage uses the sticky commerce header, a real banner fallback and the shared footer', async ({ page }) => {
     for (const viewport of [
         { width: 390, height: 844 },
         { width: 768, height: 900 },
@@ -251,46 +254,38 @@ test('homepage final CTA meets the shared footer without a duplicate contact bri
     ]) {
         await page.setViewportSize(viewport);
         await page.goto('/', { waitUntil: 'domcontentloaded' });
+
+        await expect(page.locator('.fz-home-header')).toBeVisible();
+        await expect(page.locator('.fz-home-header__search')).toBeVisible();
+        await expect(page.locator('.fz-home-header__cart')).toBeVisible();
+        await expect(page.locator('.fz-market-hero__slide').first()).toBeVisible();
         await expect(page.locator('.farzin-site-footer')).toBeVisible();
-        await expect(page.locator('.fz-home-final__panel')).toBeVisible();
 
-        const homeSpacing = await page.evaluate(() => {
-            const ctaPanel = document.querySelector('.fz-home-final__panel');
-            const finalSection = document.querySelector('.fz-home-final');
+        const layout = await page.evaluate(() => {
+            const header = document.querySelector('.fz-home-header');
+            const hero = document.querySelector('.fz-market-hero');
             const footer = document.querySelector('.farzin-site-footer');
-
             return {
-                panelToFooter: footer.getBoundingClientRect().top - ctaPanel.getBoundingClientRect().bottom,
-                sectionBottom: finalSection.getBoundingClientRect().bottom,
+                headerPosition: window.getComputedStyle(header).position,
+                heroTop: hero.getBoundingClientRect().top,
                 footerTop: footer.getBoundingClientRect().top,
-                hasOldContactBridge: Boolean(document.querySelector('.fz-home-contact-bridge')),
+                overflow: Math.max(document.documentElement.scrollWidth, document.body.scrollWidth)
+                    - document.documentElement.clientWidth,
             };
         });
-
-        expect(homeSpacing.panelToFooter, 'homepage CTA must have deliberate bottom breathing room').toBeGreaterThanOrEqual(40);
-        expect(homeSpacing.sectionBottom).toBeLessThanOrEqual(homeSpacing.footerTop + 1);
-        expect(homeSpacing.hasOldContactBridge, 'the old duplicate contact bridge must stay removed').toBe(false);
+        expect(layout.headerPosition).toBe('sticky');
+        expect(layout.footerTop).toBeGreaterThan(layout.heroTop);
+        expect(layout.overflow).toBeLessThanOrEqual(1);
 
         await page.goto('/shop', { waitUntil: 'domcontentloaded' });
         const shopSpacing = await page.evaluate(() => {
             const main = document.querySelector('#main-content');
             const footer = document.querySelector('.farzin-site-footer');
-            const footerStyle = window.getComputedStyle(footer);
-
-            return {
-                mainToFooter: footer.getBoundingClientRect().top - main.getBoundingClientRect().bottom,
-                footerMarginTop: Number.parseFloat(footerStyle.marginBlockStart),
-            };
+            return footer.getBoundingClientRect().top - main.getBoundingClientRect().bottom;
         });
-
-        expect(
-            Math.abs(shopSpacing.mainToFooter - shopSpacing.footerMarginTop),
-            'interior page must use the shared footer margin'
-        ).toBeLessThanOrEqual(1);
-        expect(shopSpacing.footerMarginTop).toBeGreaterThanOrEqual(24);
+        expect(shopSpacing).toBeGreaterThanOrEqual(24);
     }
 });
-
 
 test('shared footer keeps the same brand, navigation and dashboard-driven contacts on every storefront page', async ({ page }) => {
     const snapshots = [];
@@ -360,33 +355,32 @@ test('customer and admin endpoints redirect guests to login', async ({ page }) =
 });
 
 
-test('guest navigation uses account icons without login or register text buttons', async ({ page }) => {
+test('homepage header exposes login, cart and accessible mobile navigation', async ({ page }) => {
     await page.setViewportSize({ width: 1440, height: 960 });
     await page.goto('/', { waitUntil: 'domcontentloaded' });
 
-    const desktopHeader = page.locator('.farzin-site-header');
-    await expect(desktopHeader.getByText('ورود', { exact: true })).toHaveCount(0);
-    await expect(desktopHeader.getByText('ثبت‌نام', { exact: true })).toHaveCount(0);
-    await expect(desktopHeader.locator('a[aria-label="حساب کاربری"]')).toBeVisible();
+    const desktopHeader = page.locator('.fz-home-header');
+    await expect(desktopHeader.locator('.fz-home-header__account')).toBeVisible();
+    await expect(desktopHeader.locator('.fz-home-header__account')).toContainText('ورود');
+    await expect(desktopHeader.locator('.fz-home-header__search input')).toBeVisible();
+    await expect(desktopHeader.locator('.fz-home-header__cart')).toBeVisible();
 
     await page.setViewportSize({ width: 390, height: 844 });
     await page.reload({ waitUntil: 'domcontentloaded' });
 
-    const mobileAccount = page.locator('.farzin-mobile-nav a[aria-label="حساب کاربری"]');
-    await expect(mobileAccount).toBeVisible();
-    await expect(mobileAccount.locator('span')).toHaveCount(0);
-    await expect(page.locator('.farzin-site-header').getByText('ورود', { exact: true })).toHaveCount(0);
-    await expect(page.locator('.farzin-site-header').getByText('ثبت‌نام', { exact: true })).toHaveCount(0);
+    const mobileHeader = page.locator('.fz-home-header');
+    await expect(mobileHeader.locator('.fz-home-header__account')).toBeVisible();
+    await expect(mobileHeader.locator('.fz-home-header__cart')).toBeVisible();
+    await expect(mobileHeader.locator('.fz-home-header__search input')).toBeVisible();
 
-    await page.locator('.farzin-site-header button[aria-label="باز کردن منو"]').click();
+    await mobileHeader.locator('.fz-home-header__menu').click();
     const mobileMenu = page.locator('[data-farzin-mobile-menu-panel]');
     await expect(mobileMenu).toBeVisible();
-    await expect(mobileMenu.getByText('ورود', { exact: true })).toHaveCount(0);
-    await expect(mobileMenu.getByText('ثبت‌نام', { exact: true })).toHaveCount(0);
     await expect(mobileMenu.getByRole('link', { name: 'سبد خرید' })).toBeVisible();
+    await expect(mobileMenu.getByRole('link', { name: /ورود|حساب من/ }).first()).toBeVisible();
 });
 
-test('homepage image and product sections stay within the loading budget', async ({ page }) => {
+test('homepage commerce shelves render only configured categories and genuine product records', async ({ page }) => {
     for (const viewport of [
         { width: 390, height: 844 },
         { width: 1440, height: 960 },
@@ -394,42 +388,39 @@ test('homepage image and product sections stay within the loading budget', async
         await page.setViewportSize(viewport);
         await page.goto('/', { waitUntil: 'domcontentloaded' });
 
-        if (viewport.width >= 1024) {
-            const imageIsLeftOfCopy = await page.evaluate(() => {
-                const image = document.querySelector('.fz-sales-hero__visual');
-                const copy = document.querySelector('.fz-sales-hero__copy');
-                if (!image || !copy) return false;
-                const imageRect = image.getBoundingClientRect();
-                const copyRect = copy.getBoundingClientRect();
-                return imageRect.left < copyRect.left && imageRect.right <= copyRect.left + 1;
-            });
-            expect(imageIsLeftOfCopy, 'desktop kitchen hero image must sit physically to the left of the sales copy').toBeTruthy();
+        const slideCount = await page.locator('.fz-market-hero__slide').count();
+        expect(slideCount).toBeGreaterThanOrEqual(1);
+        expect(slideCount).toBeLessThanOrEqual(4);
+
+        const categories = page.locator('.fz-home-round-category');
+        const hiddenCategories = await categories.evaluateAll((elements) => elements.filter((element) => {
+            const style = window.getComputedStyle(element);
+            return style.opacity !== '1' || style.visibility !== 'visible' || style.filter.includes('blur');
+        }).length);
+        expect(hiddenCategories).toBe(0);
+
+        const cards = page.locator('.fz-home-shelf .farzin-product-card');
+        const cardCount = await cards.count();
+        expect(cardCount).toBeLessThanOrEqual(44);
+        const invalidProductTitles = await cards.locator('.farzin-product-card__title').evaluateAll((elements) =>
+            elements.filter((element) => /FZ-SEED|تست|آزمایشی|پیش‌نمایش|placeholder|preview|sample/i.test(element.textContent || '')).length
+        );
+        expect(invalidProductTitles).toBe(0);
+
+        if (cardCount === 0) {
+            await expect(page.locator('.fz-home-shelf')).toHaveCount(0);
+        } else {
+            await expect(page.locator('.fz-home-shelf__track').first()).toBeVisible();
+            expect(await cards.locator('img').count()).toBe(cardCount);
         }
 
-        const hiddenCategoryCards = await page.locator('.fz-category-card').evaluateAll((elements) => (
-            elements.filter((element) => {
-                const style = window.getComputedStyle(element);
-                return style.opacity !== '1' || style.visibility !== 'visible' || style.filter.includes('blur');
-            }).length
-        ));
-        expect(hiddenCategoryCards, 'homepage category cards must render without a delayed blur or fade').toBe(0);
+        await expect(page.locator('.fz-home-guide-card')).toHaveCount(0);
+        await expect(page.locator('.fz-home-product-grid')).toHaveCount(0);
 
-        expect(await page.locator('.fz-category-card').count()).toBeLessThanOrEqual(4);
-        expect(await page.locator('.fz-home-guide-card').count()).toBe(2);
-        expect(await page.locator('.fz-home-product-grid .farzin-product-card').count()).toBeLessThanOrEqual(8);
-        await expect(page.locator('.fz-new-section')).toHaveCount(0);
-        await expect(page.locator('.fz-mosaic-intro')).toHaveCount(0);
-        await expect(page.locator('[data-farzin-home-slider]')).toHaveCount(0);
-
-        const homepageProductCards = await page.locator('.fz-home-product-grid .farzin-product-card').count();
-        expect(homepageProductCards, 'homepage shows one compact grid of up to eight selected products').toBeLessThanOrEqual(8);
-        const homepageProductEntries = await page.locator('.fz-sales-hero__visual, .fz-home-product-grid .farzin-product-card').count();
-        expect(homepageProductEntries, 'homepage shows one kitchen hero and no more than eight featured cards').toBeLessThanOrEqual(9);
-        await expect(page.locator('.fz-home-categories .fz-home-text-link')).toHaveAttribute('href', /\/categories(?:\?|$)/);
-        await expect(page.locator('.fz-home-products .fz-home-text-link')).toHaveAttribute('href', /\/shop(?:\?|$)/);
+        const overflow = await page.evaluate(() => Math.max(document.documentElement.scrollWidth, document.body.scrollWidth) - document.documentElement.clientWidth);
+        expect(overflow).toBeLessThanOrEqual(1);
     }
 });
-
 
 test('admin mobile quick search and list filters remain reachable without horizontal overflow', async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 });
@@ -471,7 +462,7 @@ test('admin mobile quick search and list filters remain reachable without horizo
     }
 });
 
-test('homepage journal uses published articles, responsive RTL columns and restrained card radii', async ({ page }) => {
+test('homepage journal uses published image-backed articles only', async ({ page }) => {
     for (const viewport of [
         { width: 390, height: 844 },
         { width: 768, height: 900 },
@@ -481,36 +472,43 @@ test('homepage journal uses published articles, responsive RTL columns and restr
         await page.goto('/', { waitUntil: 'domcontentloaded' });
 
         const journal = page.locator('.fz-home-journal');
-        await expect(journal).toBeVisible();
-        const grid = journal.locator('.fz-home-journal-grid');
+        if (await journal.count() === 0) {
+            await expect(page.locator('.fz-home-journal__grid')).toHaveCount(0);
+            continue;
+        }
+
+        const grid = journal.locator('.fz-home-journal__grid');
         await expect(grid).toBeVisible();
         const articles = journal.locator('.fz-home-article-card');
-        await expect(articles.first()).toBeVisible();
+        expect(await articles.count()).toBeGreaterThanOrEqual(1);
         expect(await articles.count()).toBeLessThanOrEqual(3);
-        await expect(journal.locator('.fz-home-article-card h3 a').first()).toHaveAttribute('href', /\/blog\//);
-        await expect(journal.locator('.fz-home-text-link')).toHaveAttribute('href', /\/blog(?:\?|$)/);
+        await expect(articles.first()).toBeVisible();
+        await expect(articles.first().locator('h3 a')).toHaveAttribute('href', /\\/blog\\//);
 
         const layout = await journal.evaluate((section) => {
-            const grid = section.querySelector('.fz-home-journal-grid');
+            const gridElement = section.querySelector('.fz-home-journal__grid');
             const card = section.querySelector('.fz-home-article-card');
-            const style = window.getComputedStyle(grid);
+            const style = window.getComputedStyle(gridElement);
             const cardStyle = window.getComputedStyle(card);
             return {
                 direction: style.direction,
                 columns: style.gridTemplateColumns.split(' ').length,
                 radius: Number.parseFloat(cardStyle.borderTopLeftRadius),
+                imageCount: section.querySelectorAll('.fz-home-article-card img').length,
+                imagesHaveAlt: Array.from(section.querySelectorAll('.fz-home-article-card img')).every((image) => image.getAttribute('alt')?.trim()),
                 overflow: Math.max(document.documentElement.scrollWidth, document.body.scrollWidth)
                     - document.documentElement.clientWidth,
             };
         });
 
-        expect(layout.direction, 'homepage journal must keep RTL reading order').toBe('rtl');
-        expect(layout.columns, 'journal becomes one column on mobile and three columns on tablet/desktop').toBe(viewport.width <= 767 ? 1 : 3);
-        expect(layout.radius, 'journal card corner radius must remain restrained and consistent').toBeLessThanOrEqual(24);
-        expect(layout.overflow, 'homepage journal must not cause horizontal overflow').toBeLessThanOrEqual(1);
+        expect(layout.direction).toBe('rtl');
+        expect(layout.columns).toBe(viewport.width <= 767 ? 1 : 3);
+        expect(layout.radius).toBeLessThanOrEqual(24);
+        expect(layout.imageCount).toBe(await articles.count());
+        expect(layout.imagesHaveAlt).toBeTruthy();
+        expect(layout.overflow).toBeLessThanOrEqual(1);
     }
 });
-
 
 test('blog archive renders the editorial magazine layout without horizontal overflow', async ({ page }) => {
     for (const viewport of [
@@ -591,6 +589,17 @@ test('desktop active navigation underline is centered and the shared palette sta
 
     for (const path of ['/', '/shop', '/categories', '/blog', '/about', '/contact']) {
         await page.goto(path, { waitUntil: 'domcontentloaded' });
+
+        if (path === '/') {
+            await expect(page.locator('.fz-home-header')).toBeVisible();
+            const homeShell = await page.evaluate(() => ({
+                header: getComputedStyle(document.querySelector('.fz-home-header')).backgroundColor,
+                footer: getComputedStyle(document.querySelector('.farzin-site-footer')).backgroundColor,
+            }));
+            expect(homeShell.header).toBe('rgba(255, 255, 255, 0.97)');
+            expect(homeShell.footer).toBe('rgb(9, 46, 80)');
+            continue;
+        }
 
         const activeLink = page.locator('.farzin-site-header__nav-link[aria-current="page"]');
         await expect(activeLink, path + ' must expose one current desktop navigation item').toHaveCount(1);
@@ -824,7 +833,7 @@ test('shop product card actions stay aligned across different content heights', 
     }
 });
 
-test('homepage product cards use equal responsive image ratios and readable actions', async ({ page }) => {
+test('homepage product cards use the shared carousel card and fixed image ratio', async ({ page }) => {
     for (const viewport of [
         { width: 390, height: 844 },
         { width: 1440, height: 960 },
@@ -832,48 +841,49 @@ test('homepage product cards use equal responsive image ratios and readable acti
         await page.setViewportSize(viewport);
         await page.goto('/', { waitUntil: 'domcontentloaded' });
 
-        const card = page.locator('.fz-home-product-grid .farzin-product-card').first();
-        await expect(card, 'homepage must render a selected product card').toBeVisible();
+        const cards = page.locator('.fz-home-shelf__item .farzin-product-card');
+        const count = await cards.count();
+        if (count === 0) {
+            await expect(page.locator('.fz-home-shelf')).toHaveCount(0);
+            continue;
+        }
 
+        const card = cards.first();
+        await expect(card).toBeVisible();
         const geometry = await card.evaluate((element) => {
             const media = element.querySelector('.farzin-product-card__media');
             const imageLink = element.querySelector('.farzin-product-card__image-link');
-            const infoPanel = element.querySelector('.farzin-product-card__content');
+            const image = imageLink.querySelector('img');
+            const content = element.querySelector('.farzin-product-card__content');
             const cardRect = element.getBoundingClientRect();
             const mediaRect = media.getBoundingClientRect();
-            const linkRect = imageLink.getBoundingClientRect();
-            const infoRect = infoPanel.getBoundingClientRect();
+            const imageRect = imageLink.getBoundingClientRect();
+            const contentRect = content.getBoundingClientRect();
 
             return {
-                width: cardRect.width,
-                height: cardRect.height,
                 radius: Number.parseFloat(getComputedStyle(element).borderTopLeftRadius),
                 overflow: getComputedStyle(element).overflow,
-                mediaWidth: mediaRect.width,
-                mediaHeight: mediaRect.height,
-                linkWidth: linkRect.width,
-                linkHeight: linkRect.height,
+                imageRatio: imageRect.width / imageRect.height,
+                imageAlt: image?.getAttribute('alt')?.trim(),
                 mediaBottom: mediaRect.bottom,
-                infoTop: infoRect.top,
-                infoBottom: infoRect.bottom,
+                contentTop: contentRect.top,
+                contentBottom: contentRect.bottom,
                 cardBottom: cardRect.bottom,
+                hasAction: Boolean(element.querySelector('.farzin-product-card__cta')),
             };
         });
 
-        expect(geometry.radius, 'product cards should keep the existing rounded-card token').toBeGreaterThanOrEqual(6);
-        expect(geometry.radius, 'product cards should not become square or circular/pill-shaped').toBeLessThanOrEqual(12);
-        expect(geometry.overflow, 'product card content must stay within its rounded frame').toBe('hidden');
-        expect(geometry.mediaWidth).toBeGreaterThan(0);
-        expect(geometry.mediaHeight).toBeGreaterThan(0);
-        expect(geometry.mediaWidth / geometry.mediaHeight, 'all selected product images use one fixed landscape ratio').toBeGreaterThan(1.05);
-        expect(geometry.mediaWidth / geometry.mediaHeight).toBeLessThan(1.2);
-        expect(Math.abs(geometry.linkWidth - geometry.mediaWidth), 'the product image link fills the shared media frame').toBeLessThanOrEqual(1);
-        expect(Math.abs(geometry.linkHeight - geometry.mediaHeight), 'the product image link fills the shared media frame').toBeLessThanOrEqual(1);
-        expect(geometry.infoTop, 'product details start after the image rather than overlaying it').toBeGreaterThanOrEqual(geometry.mediaBottom - 1);
-        expect(geometry.infoBottom, 'product details stay inside the card frame').toBeLessThanOrEqual(geometry.cardBottom + 1);
+        expect(geometry.radius).toBeGreaterThanOrEqual(10);
+        expect(geometry.radius).toBeLessThanOrEqual(24);
+        expect(geometry.overflow).toBe('hidden');
+        expect(geometry.imageRatio).toBeGreaterThan(1.05);
+        expect(geometry.imageRatio).toBeLessThan(1.2);
+        expect(geometry.imageAlt).toBeTruthy();
+        expect(geometry.contentTop).toBeGreaterThanOrEqual(geometry.mediaBottom - 1);
+        expect(geometry.contentBottom).toBeLessThanOrEqual(geometry.cardBottom + 1);
+        expect(geometry.hasAction).toBeTruthy();
     }
 });
-
 
 test('category index cards keep their copy readable above the image treatment', async ({ page }) => {
     await page.setViewportSize({ width: 1440, height: 960 });

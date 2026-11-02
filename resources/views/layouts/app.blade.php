@@ -258,7 +258,16 @@
         }
     @endphp
 
-    <x-layout.navbar :cart-count="$storefrontCartCount" :brand-name="$storefrontBrandName" :brand-logo="$storefrontBrandLogoUrl" />
+    @if(request()->routeIs('home'))
+        <x-layout.home-navbar
+            :cart-count="$storefrontCartCount"
+            :brand-name="$storefrontBrandName"
+            :brand-logo="$storefrontBrandLogoUrl"
+            :categories="$categories ?? null"
+        />
+    @else
+        <x-layout.navbar :cart-count="$storefrontCartCount" :brand-name="$storefrontBrandName" :brand-logo="$storefrontBrandLogoUrl" />
+    @endif
 
     <x-layout.mobile-menu :brand-name="$storefrontBrandName" :brand-logo="$storefrontBrandLogoUrl" />
 

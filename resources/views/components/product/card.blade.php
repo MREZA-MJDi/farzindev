@@ -43,10 +43,27 @@
         ? ($hasActiveVariants ? 'موجود در گزینه‌ها' : 'موجود')
         : 'ناموجود';
 
+    $specificationLabels = [
+        'width' => 'عرض',
+        'installation' => 'نصب',
+        'material' => 'جنس',
+        'material_type' => 'جنس',
+        'color' => 'رنگ',
+        'capacity' => 'ظرفیت',
+        'type' => 'نوع',
+    ];
+    $specifications = collect($product->specifications ?? [])
+        ->filter(static fn ($value): bool => is_scalar($value) && filled($value))
+        ->map(fn ($value, $key): array => [
+            'label' => $specificationLabels[$key] ?? (string) $key,
+            'value' => trim((string) $value),
+        ])
+        ->take(3);
+
 @endphp
 
 <article
-    class="farzin-product-card group relative flex h-full min-w-0 flex-col {{ $variant === 'round' ? 'farzin-product-card--round-media' : '' }}"
+    class="farzin-product-card group relative flex h-full min-w-0 flex-col {{ $variant === 'round' ? 'farzin-product-card--round-media' : '' }} {{ $variant === 'home-shelf' ? 'farzin-product-card--home-shelf' : '' }} {{ ! $isAvailable ? 'is-unavailable' : '' }}"
     @if($reveal) data-farzin-reveal @endif
 >
     <div class="farzin-product-card__media relative overflow-hidden">
@@ -121,6 +138,14 @@
                 {{ $product->name }}
             </h3>
         </a>
+
+        @if($specifications->isNotEmpty())
+            <ul class="farzin-product-card__specifications" aria-label="مشخصات کلیدی محصول">
+                @foreach($specifications as $specification)
+                    <li><span>{{ $specification['label'] }}</span><strong>{{ \Illuminate\Support\Str::limit($specification['value'], 22) }}</strong></li>
+                @endforeach
+            </ul>
+        @endif
 
         <div class="farzin-product-card__price-row mt-3 flex min-h-10 min-w-0 flex-wrap items-center gap-x-2 gap-y-1">
             <p class="farzin-product-card__price-current">

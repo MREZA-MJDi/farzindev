@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('title', 'فرزین | خرید آنلاین هود و سینک آشپزخانه')
-@section('description', 'هود و سینک فرزین را با عکس، قیمت و مشخصات واقعی بررسی کنید؛ مدل مناسب آشپزخانه‌تان را انتخاب و آنلاین سفارش دهید.')
+@section('description', 'محصولات واقعی هود و سینک فرزین را با تصویر، قیمت و مشخصات بررسی و آنلاین سفارش دهید.')
 @section('canonical', route('home'))
 @section('body_class', 'home-body min-h-screen antialiased')
 
@@ -12,359 +12,240 @@
 @section('content')
 @php
     $homeCopy = $storefrontPageContent ?? [];
-    $homeSettings = $storefrontPublicSettings ?? [];
-
-    $heroImageValue = trim((string) ($homeCopy['page_home_hero_image_url'] ?? ''));
-    $heroImageUrl = '';
-    if ($heroImageValue !== '') {
-        $heroImageUrl = \Illuminate\Support\Str::startsWith($heroImageValue, ['http://', 'https://', '//'])
-            ? $heroImageValue
-            : \Illuminate\Support\Facades\Storage::disk('public')->url(
-                preg_replace('#^(public/|storage/)#', '', ltrim($heroImageValue, '/')) ?? $heroImageValue
-            );
-    }
-
-    $heroTitle = trim((string) ($homeCopy['page_home_hero_title'] ?? ''))
-        ?: 'هود و سینک، آماده‌ی نصب در آشپزخانه‌ی شما';
-    $heroDescription = trim((string) ($homeCopy['page_home_hero_description'] ?? ''))
-        ?: 'مدل‌های موجود فرزین را با تصویر، قیمت و مشخصات واقعی بررسی کنید.';
-    $heroButtonLabel = trim((string) ($homeCopy['page_home_hero_primary_label'] ?? ''))
-        ?: 'مشاهده محصولات';
-
-    $phone = \App\Support\StorefrontContact::phone($contactSetting?->phone);
-    $whatsappDigits = \App\Support\StorefrontContact::whatsapp($contactSetting?->whatsapp);
-    $address = trim((string) ($contactSetting?->address ?? ''));
-
-    $warrantyText = trim((string) ($homeSettings['warranty_text'] ?? ''));
-    if ($warrantyText === '') {
-        $warrantyText = trim((string) ($homeCopy['page_home_warranty_text'] ?? ''));
-    }
-
-    $enamadUrl = trim((string) ($homeCopy['page_home_enamad_url'] ?? ''));
-    if (! \Illuminate\Support\Str::startsWith($enamadUrl, 'https://')) {
-        $enamadUrl = '';
-    }
-
     $showCategories = ($homeCopy['page_home_show_categories'] ?? '1') === '1';
     $showProducts = ($homeCopy['page_home_show_products'] ?? '1') === '1';
-    $showTrust = ($homeCopy['page_home_show_trust'] ?? '1') === '1';
-    $showGuides = ($homeCopy['page_home_show_guides'] ?? '1') === '1';
+    $showBenefits = ($homeCopy['page_home_show_trust'] ?? '1') === '1';
     $showJournal = ($homeCopy['page_home_show_journal'] ?? '1') === '1';
-    $showFinalCta = ($homeCopy['page_home_show_final_cta'] ?? '1') === '1';
-
-    $installmentCashAmount = $installmentProduct
-        ? round((float) $installmentProduct->price * ((int) $installmentProduct->installment_cash_percent / 100))
-        : 0;
-
-    $hoodCategory = $categories->firstWhere('slug', 'hoods');
-    $sinkCategory = $categories->firstWhere('slug', 'sinks');
-
-    $hasTrustDetails = filled($warrantyText)
-        || (bool) $whatsappDigits
-        || $enamadUrl !== ''
-        || filled($address)
-        || (bool) $phone;
+    $categoriesEyebrow = trim((string) ($homeCopy['page_home_categories_eyebrow'] ?? ''));
+    $categoriesTitle = trim((string) ($homeCopy['page_home_categories_title'] ?? 'دسته‌بندی محصولات')); 
+    $categoriesDescription = trim((string) ($homeCopy['page_home_categories_description'] ?? ''));
+    $enamadUrl = trim((string) ($enamadUrl ?? ''));
+    if (!\Illuminate\Support\Str::startsWith($enamadUrl, 'https://')) {
+        $enamadUrl = '';
+    }
 @endphp
 
-<section class="fz-sales-hero" aria-labelledby="fz-sales-hero-title">
-    <div class="fz-container fz-sales-hero__layout">
-        <div class="fz-sales-hero__copy">
-            <p class="fz-sales-hero__eyebrow">تجهیزات آشپزخانه فرزین</p>
-            <h1 id="fz-sales-hero-title">{{ $heroTitle }}</h1>
-            <p class="fz-sales-hero__lead">{{ $heroDescription }}</p>
-            <a class="fz-sales-button fz-sales-button--primary" href="{{ route('shop.index') }}">
-                {{ $heroButtonLabel }}
-                <span aria-hidden="true">←</span>
-            </a>
-        </div>
-
-        <div class="fz-sales-hero__visual">
-            @if($heroImageUrl !== '')
-                <img
-                    src="{{ $heroImageUrl }}"
-                    alt="آشپزخانه واقعی با تجهیزات نصب‌شده فرزین"
-                    width="1600"
-                    height="1000"
-                    fetchpriority="high"
-                    loading="eager"
-                    decoding="async"
-                >
-                <span class="fz-sales-hero__image-caption">هود و سینک فرزین در فضای آشپزخانه</span>
-            @else
-                <div class="fz-sales-hero__image-placeholder" role="img" aria-label="تصویر واقعی آشپزخانه هنوز در مدیریت محتوا بارگذاری نشده است">
-                    <span class="fz-sales-hero__placeholder-mark" aria-hidden="true">
-                        <svg viewBox="0 0 48 48" fill="none">
-                            <rect x="5" y="8" width="38" height="32" rx="5" stroke="currentColor" stroke-width="1.5"/>
-                            <path d="m9 34 10-10 7 7 5-5 8 8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                            <circle cx="32" cy="17" r="3" stroke="currentColor" stroke-width="1.5"/>
-                        </svg>
-                    </span>
-                    <span class="fz-sales-hero__placeholder-title">تصویر واقعی آشپزخانه</span>
-                    <span class="fz-sales-hero__placeholder-copy">عکس محیط نصب‌شده را از مدیریت محتوای صفحه اصلی بارگذاری کنید.</span>
-                </div>
-            @endif
-
-            @if($heroProduct)
-                <x-home.hero-offer :product="$heroProduct" />
-            @endif
-        </div>
-    </div>
-</section>
-
-<section class="fz-home-benefits" aria-label="مزیت‌های خرید از فرزین">
-    <div class="fz-container fz-home-benefits__grid">
-        <article class="fz-home-benefit">
-            <span class="fz-home-benefit__icon" aria-hidden="true">
-                <svg viewBox="0 0 24 24" fill="none"><path d="M3 7h11v10H3zM14 10h4l3 3v4h-7z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><circle cx="7" cy="18" r="2" stroke="currentColor" stroke-width="1.7"/><circle cx="18" cy="18" r="2" stroke="currentColor" stroke-width="1.7"/></svg>
-            </span>
-            <strong>ارسال سفارش</strong>
-        </article>
-        <article class="fz-home-benefit">
-            <span class="fz-home-benefit__icon" aria-hidden="true">
-                <svg viewBox="0 0 24 24" fill="none"><path d="M4 20h16M6 20V8l6-4 6 4v12M9 11h6M9 15h6" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            </span>
-            <strong>راهنمای نصب</strong>
-        </article>
-        <article class="fz-home-benefit">
-            <span class="fz-home-benefit__icon" aria-hidden="true">
-                <svg viewBox="0 0 24 24" fill="none"><path d="m12 3 7 3v5c0 4.5-2.9 7.8-7 10-4.1-2.2-7-5.5-7-10V6l7-3Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="m9 12 2 2 4-4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            </span>
-            <strong>گارانتی محصول</strong>
-        </article>
-        <article class="fz-home-benefit">
-            <span class="fz-home-benefit__icon" aria-hidden="true">
-                <svg viewBox="0 0 24 24" fill="none"><path d="M4 6h16M6 3v6m12-6v6M5 12h14v8H5zM9 16h6" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            </span>
-            <strong>خرید اقساطی</strong>
-        </article>
-    </div>
-</section>
-
-@if($showCategories && $categories->isNotEmpty())
-    <section id="product-categories" class="fz-home-section fz-home-categories" aria-labelledby="fz-home-categories-title">
-        <div class="fz-container">
-            <header class="fz-home-section__heading">
-                <div>
-                    <p class="fz-home-eyebrow">{{ $homeCopy['page_home_categories_eyebrow'] ?? 'دسته‌بندی محصولات فرزین' }}</p>
-                    <h2 id="fz-home-categories-title">{{ $homeCopy['page_home_categories_title'] ?? 'از دسته‌ی مناسب شروع کنید.' }}</h2>
-                    <p>{{ $homeCopy['page_home_categories_description'] ?? 'دسته‌های فعال و محصولات واقعی فرزین را ببینید.' }}</p>
-                </div>
-                <a class="fz-home-text-link" href="{{ route('categories.index') }}">همه دسته‌بندی‌ها <span aria-hidden="true">←</span></a>
-            </header>
-            <div class="fz-home-category-grid">
-                @foreach($categories as $index => $category)
-                    <x-home.category-card :category="$category" :index="$index" />
-                @endforeach
-            </div>
-        </div>
-    </section>
-@endif
-
-@if($showProducts)
-    <section class="fz-home-section fz-home-products" aria-labelledby="fz-home-products-title">
-        <div class="fz-container">
-            <header class="fz-home-section__heading">
-                <div>
-                    <p class="fz-home-eyebrow">{{ $homeCopy['page_home_products_eyebrow'] ?? 'کاتالوگ محصولات فرزین' }}</p>
-                    <h2 id="fz-home-products-title">{{ $homeCopy['page_home_products_title'] ?? 'مدل‌های منتخب فرزین' }}</h2>
-                    <p>{{ $homeCopy['page_home_products_description'] ?? 'موجودها در ابتدا و مدل‌های ناموجود در انتهای فهرست قرار می‌گیرند.' }}</p>
-                </div>
-                <a class="fz-home-text-link" href="{{ route('shop.index') }}">همه محصولات <span aria-hidden="true">←</span></a>
-            </header>
-
-            @if($featuredProducts->isNotEmpty())
-                <div class="fz-home-product-grid">
-                    @foreach($featuredProducts as $product)
-                        <x-home.featured-product-card :product="$product" />
+<div class="fz-home-market" data-fz-home>
+    {{-- Main banner carousel. A single CMS-backed fallback slide is used when no image slides are configured. --}}
+    @if($bannerSlides->isNotEmpty())
+        <section class="fz-market-hero" aria-label="بنرهای اصلی فرزین" data-fz-hero-slider>
+            <div class="fz-market-hero__container">
+                <div class="fz-market-hero__slides">
+                    @foreach($bannerSlides as $index => $slide)
+                        <article
+                            class="fz-market-hero__slide {{ $index === 0 ? 'is-active' : '' }}"
+                            data-fz-hero-slide
+                            aria-roledescription="اسلاید"
+                            aria-label="اسلاید {{ \App\Helpers\PersianNumberHelper::format($index + 1) }} از {{ \App\Helpers\PersianNumberHelper::format($bannerSlides->count()) }}"
+                            @if($index !== 0) hidden @endif
+                        >
+                            @if($slide['image'])
+                                <img
+                                    class="fz-market-hero__image"
+                                    src="{{ $slide['image'] }}"
+                                    alt="{{ $slide['alt'] }}"
+                                    width="1920"
+                                    height="720"
+                                    @if($index === 0) fetchpriority="high" loading="eager" @else loading="lazy" @endif
+                                    decoding="async"
+                                >
+                            @endif
+                            <div class="fz-market-hero__shade" aria-hidden="true"></div>
+                            <div class="fz-market-hero__copy">
+                                @if($slide['eyebrow'] !== '')
+                                    <p class="fz-market-hero__eyebrow">{{ $slide['eyebrow'] }}</p>
+                                @endif
+                                <h1>{{ $slide['title'] }}</h1>
+                                @if($slide['description'] !== '')
+                                    <p class="fz-market-hero__description">{{ $slide['description'] }}</p>
+                                @endif
+                                @if($slide['button_label'] !== '')
+                                    <a class="fz-market-hero__button" href="{{ $slide['button_url'] }}">
+                                        {{ $slide['button_label'] }}
+                                        <span aria-hidden="true">←</span>
+                                    </a>
+                                @endif
+                            </div>
+                        </article>
                     @endforeach
                 </div>
-            @else
-                <div class="fz-home-empty">
-                    <h3>هنوز محصولی برای نمایش در این بخش انتخاب نشده است.</h3>
-                    <p>محصول‌های واقعی را از مدیریت محصولات برای نمایش در صفحه اصلی انتخاب کنید.</p>
-                    <a class="fz-sales-button fz-sales-button--primary" href="{{ route('shop.index') }}">رفتن به فروشگاه</a>
-                </div>
-            @endif
-        </div>
-    </section>
-@endif
 
-@if($installmentProduct)
-    <section class="fz-home-section fz-home-installment" aria-labelledby="fz-home-installment-title">
-        <div class="fz-container">
-            <div class="fz-home-installment__panel">
-                <div class="fz-home-installment__intro">
-                    <p class="fz-home-eyebrow">خرید اقساطی</p>
-                    <h2 id="fz-home-installment-title">خرید را در سه قدم انجام دهید.</h2>
-                    <p>شرایط زیر از تنظیمات یک محصول فعال و موجود خوانده شده است؛ جزئیات هر مدل در صفحه همان محصول نمایش داده می‌شود.</p>
-                    <div class="fz-home-installment__terms">
-                        <strong>{{ $installmentProduct->name }}</strong>
-                        <span>
-                            پیش‌پرداخت {{ \App\Helpers\PersianNumberHelper::format($installmentProduct->installment_cash_percent) }}٪
-                            ({{ \App\Helpers\PersianNumberHelper::format($installmentCashAmount) }} تومان)
-                            · {{ \App\Helpers\PersianNumberHelper::format($installmentProduct->installment_cheque_count) }} چک
-                            · فاصله سررسید {{ \App\Helpers\PersianNumberHelper::format($installmentProduct->installment_interval_months) }} ماه
-                        </span>
-                    </div>
-                    <a href="{{ route('product.show', $installmentProduct->slug) }}">مشاهده شرایط این محصول <span aria-hidden="true">←</span></a>
-                </div>
-
-                <ol class="fz-home-installment__steps">
-                    <li><span>۰۱</span><strong>انتخاب محصول</strong><p>مدل واجد شرایط را از کاتالوگ انتخاب کنید.</p></li>
-                    <li><span>۰۲</span><strong>پرداخت پیش‌پرداخت</strong><p>مبلغ اولیه مطابق درصد ثبت‌شده پرداخت می‌شود.</p></li>
-                    <li><span>۰۳</span><strong>ثبت چک‌ها</strong><p>چک‌ها طبق فاصله سررسید مشخص‌شده ثبت می‌شوند.</p></li>
-                </ol>
-            </div>
-        </div>
-    </section>
-@endif
-
-@if($showTrust && $hasTrustDetails)
-    <section class="fz-home-section fz-home-proof" aria-labelledby="fz-home-proof-title">
-        <div class="fz-container">
-            <header class="fz-home-section__heading">
-                <div>
-                    <p class="fz-home-eyebrow">اطلاعات واقعی فروشگاه</p>
-                    <h2 id="fz-home-proof-title">پیش از سفارش، راه‌های ارتباط و شرایط را ببینید.</h2>
-                </div>
-            </header>
-
-            <div class="fz-home-proof-grid">
-                @if($warrantyText !== '')
-                    <article class="fz-home-proof-card">
-                        <span class="fz-home-proof-card__icon" aria-hidden="true">✓</span>
-                        <h3>گارانتی و ضمانت</h3>
-                        <p>{{ $warrantyText }}</p>
-                    </article>
-                @endif
-
-                @if($whatsappDigits || $phone)
-                    <article class="fz-home-proof-card">
-                        <span class="fz-home-proof-card__icon" aria-hidden="true">⌁</span>
-                        <h3>پشتیبانی فرزین</h3>
-                        <p>برای پرسش درباره مدل، موجودی و سفارش با پشتیبانی در ارتباط باشید.</p>
-                        @if($whatsappDigits)
-                            <a href="https://wa.me/{{ $whatsappDigits }}" target="_blank" rel="noopener noreferrer">گفت‌وگو در واتساپ</a>
-                        @endif
-                        @if($phone)
-                            <a href="{{ $phone['href'] }}" dir="ltr">{{ $phone['display'] }}</a>
-                        @endif
-                    </article>
-                @endif
-
-                @if($enamadUrl !== '')
-                    <article class="fz-home-proof-card">
-                        <span class="fz-home-proof-card__icon" aria-hidden="true">◆</span>
-                        <h3>نماد اعتماد الکترونیکی</h3>
-                        <p>برای بررسی اطلاعات و وضعیت نماد، به صفحه رسمی آن مراجعه کنید.</p>
-                        <a href="{{ $enamadUrl }}" target="_blank" rel="noopener noreferrer">مشاهده نماد اعتماد</a>
-                    </article>
-                @endif
-
-                @if($address !== '' || $phone)
-                    <article class="fz-home-proof-card">
-                        <span class="fz-home-proof-card__icon" aria-hidden="true">⌖</span>
-                        <h3>نشانی و تماس</h3>
-                        @if($address)<p>{{ $address }}</p>@endif
-                        @if($phone)<a href="{{ $phone['href'] }}" dir="ltr">{{ $phone['display'] }}</a>@endif
-                    </article>
-                @endif
-            </div>
-        </div>
-    </section>
-@endif
-
-@if($showGuides)
-    <section class="fz-home-section fz-home-guides" aria-labelledby="fz-home-guides-title">
-        <div class="fz-container">
-            <header class="fz-home-section__heading">
-                <div>
-                    <p class="fz-home-eyebrow">راهنمای انتخاب</p>
-                    <h2 id="fz-home-guides-title">{{ $homeCopy['page_home_guides_title'] ?? 'برای انتخاب درست، این دو راهنما را ببینید.' }}</h2>
-                    <p>{{ $homeCopy['page_home_guides_description'] ?? 'نکات مهم انتخاب هود و سینک را پیش از سفارش بررسی کنید.' }}</p>
-                </div>
-            </header>
-            <div class="fz-home-guide-grid">
-                <article class="fz-home-guide-card">
-                    <span class="fz-home-guide-card__number">۰۱</span>
-                    <div>
-                        <h3>{{ $homeCopy['page_home_hood_guide_title'] ?? 'راهنمای انتخاب هود' }}</h3>
-                        <p>{{ $homeCopy['page_home_hood_guide_description'] ?? 'عرض محل نصب، نوع نصب، ابعاد اجاق و مسیر خروج هوا را با فضای آشپزخانه تطبیق دهید.' }}</p>
-                        <a href="{{ $hoodCategory ? route('categories.show', $hoodCategory->slug) : route('categories.index') }}">{{ $homeCopy['page_home_hood_guide_cta'] ?? 'مشاهده هودها' }} <span aria-hidden="true">←</span></a>
-                    </div>
-                </article>
-                <article class="fz-home-guide-card">
-                    <span class="fz-home-guide-card__number">۰۲</span>
-                    <div>
-                        <h3>{{ $homeCopy['page_home_sink_guide_title'] ?? 'راهنمای انتخاب سینک' }}</h3>
-                        <p>{{ $homeCopy['page_home_sink_guide_description'] ?? 'ابعاد کابینت، روش نصب، تعداد لگن و جنس سینک را پیش از خرید بررسی کنید.' }}</p>
-                        <a href="{{ $sinkCategory ? route('categories.show', $sinkCategory->slug) : route('categories.index') }}">{{ $homeCopy['page_home_sink_guide_cta'] ?? 'مشاهده سینک‌ها' }} <span aria-hidden="true">←</span></a>
-                    </div>
-                </article>
-            </div>
-        </div>
-    </section>
-@endif
-
-@if($showJournal && $blogPosts->isNotEmpty())
-    <section class="fz-home-section fz-home-journal" aria-labelledby="fz-home-journal-title">
-        <div class="fz-container">
-            <header class="fz-home-section__heading">
-                <div>
-                    <p class="fz-home-eyebrow">مجله فرزین</p>
-                    <h2 id="fz-home-journal-title">{{ $homeCopy['page_home_journal_title'] ?? 'پیش از انتخاب، بیشتر بدانید.' }}</h2>
-                    <p>{{ $homeCopy['page_home_journal_description'] ?? 'سه مقاله کاربردی درباره انتخاب و نگهداری تجهیزات آشپزخانه.' }}</p>
-                </div>
-                <a class="fz-home-text-link" href="{{ route('blog.index') }}">همه مقاله‌ها <span aria-hidden="true">←</span></a>
-            </header>
-            <div class="fz-home-journal-grid">
-                @foreach($blogPosts->take(3) as $article)
-                    @php($articleCategory = $article->terms->firstWhere('type', 'category'))
-                    <article class="fz-home-article-card">
-                        <a class="fz-home-article-card__media" href="{{ route('blog.show', $article->slug) }}" aria-label="مطالعه {{ $article->title }}">
-                            <img
-                                src="{{ $article->cover_image_url }}"
-                                @if($article->cover_image_srcset) srcset="{{ $article->cover_image_srcset }}" sizes="(max-width: 767px) 88vw, (max-width: 1023px) 45vw, 360px" @endif
-                                alt="{{ $article->cover_image_alt ?: $article->title }}"
-                                width="900"
-                                height="620"
-                                loading="lazy"
-                                decoding="async"
-                            >
-                        </a>
-                        <div class="fz-home-article-card__body">
-                            <div class="fz-home-article-card__meta">
-                                @if($articleCategory)<span>{{ $articleCategory->name }}</span>@endif
-                                <span>{{ \App\Helpers\PersianNumberHelper::format($article->reading_time) }} دقیقه مطالعه</span>
-                            </div>
-                            <h3><a href="{{ route('blog.show', $article->slug) }}">{{ $article->title }}</a></h3>
-                            @if($article->excerpt)<p>{{ \Illuminate\Support\Str::limit($article->excerpt, 125) }}</p>@endif
-                            <a class="fz-home-article-card__link" href="{{ route('blog.show', $article->slug) }}">ادامه مطلب <span aria-hidden="true">←</span></a>
+                @if($bannerSlides->count() > 1)
+                    <div class="fz-market-hero__controls">
+                        <button type="button" class="fz-market-hero__arrow" data-fz-hero-prev aria-label="بنر قبلی">
+                            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 5-7 7 7 7"/></svg>
+                        </button>
+                        <div class="fz-market-hero__dots" role="group" aria-label="انتخاب بنر">
+                            @foreach($bannerSlides as $index => $slide)
+                                <button
+                                    type="button"
+                                    data-fz-hero-dot="{{ $index }}"
+                                    aria-label="نمایش بنر {{ \App\Helpers\PersianNumberHelper::format($index + 1) }}"
+                                    @if($index === 0) aria-current="true" @endif
+                                ></button>
+                            @endforeach
                         </div>
-                    </article>
-                @endforeach
+                        <button type="button" class="fz-market-hero__arrow" data-fz-hero-next aria-label="بنر بعدی">
+                            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg>
+                        </button>
+                    </div>
+                @endif
             </div>
-        </div>
-    </section>
-@endif
+        </section>
+    @endif
 
-@if($showFinalCta)
-    <section class="fz-home-final" aria-labelledby="fz-home-final-title">
-        <div class="fz-container">
-            <div class="fz-home-final__panel">
-                <h2 id="fz-home-final-title">{{ $homeCopy['page_home_final_title'] ?? 'برای آشپزخانه‌تان انتخابی مطمئن داشته باشید.' }}</h2>
-                <div class="fz-home-final__actions">
-                    <a class="fz-sales-button fz-sales-button--light" href="{{ route('shop.index') }}">{{ $homeCopy['page_home_final_cta'] ?? 'مشاهده محصولات' }}</a>
-                    @if($whatsappDigits)
-                        <a class="fz-sales-button fz-sales-button--outline" href="https://wa.me/{{ $whatsappDigits }}" target="_blank" rel="noopener noreferrer">پرسش در واتساپ</a>
-                    @elseif($phone)
-                        <a class="fz-sales-button fz-sales-button--outline" href="{{ $phone['href'] }}">پرسش از پشتیبانی</a>
-                    @else
-                        <a class="fz-sales-button fz-sales-button--outline" href="{{ route('contact') }}">پرسش از فرزین</a>
-                    @endif
+    {{-- Circular entry points use active categories and their own/fallback product photography. --}}
+    @if($showCategories && $categories->isNotEmpty())
+        <section class="fz-home-categories" aria-labelledby="fz-home-categories-title">
+            <div class="fz-home-container">
+                <header class="fz-home-section-head">
+                    <div>
+                        @if($categoriesEyebrow !== '')
+                            <span class="fz-home-section-head__eyebrow">{{ $categoriesEyebrow }}</span>
+                        @endif
+                        @if($categoriesTitle !== '')
+                            <h2 id="fz-home-categories-title">{{ $categoriesTitle }}</h2>
+                        @endif
+                        @if($categoriesDescription !== '')
+                            <p>{{ $categoriesDescription }}</p>
+                        @endif
+                    </div>
+                    <a href="{{ route('categories.index') }}" class="fz-home-section-head__link">همه دسته‌ها <span aria-hidden="true">←</span></a>
+                </header>
+                <div class="fz-home-category-rail">
+                    @foreach($categories as $category)
+                        <x-home.round-category-card :category="$category" />
+                    @endforeach
                 </div>
             </div>
+        </section>
+    @endif
+
+    {{-- Only genuine compare-at-price reductions are eligible. There is no discount-expiry field in the current schema. --}}
+    @if($showProducts && $discountProducts->isNotEmpty())
+        <x-home.product-carousel-section
+            id="fz-home-discounts"
+            title="پیشنهاد ویژه"
+            eyebrow="قیمت‌های به‌روزشده"
+            :products="$discountProducts"
+        />
+    @endif
+
+    @if($showProducts && $newestProducts->isNotEmpty())
+        <x-home.product-carousel-section
+            id="fz-home-newest"
+            title="جدیدترین‌ها"
+            eyebrow="تازه‌های کاتالوگ"
+            :products="$newestProducts"
+        />
+    @endif
+
+    @if($showProducts && $bestSellingProducts->isNotEmpty())
+        <x-home.product-carousel-section
+            id="fz-home-bestsellers"
+            title="پرفروش‌ترین‌ها"
+            eyebrow="بر اساس سفارش‌های پرداخت‌شده"
+            :products="$bestSellingProducts"
+        />
+    @endif
+
+    {{-- Keep the existing admin-managed homepage selection, without mixing it with sales rankings. --}}
+    @if($showProducts && $selectedProducts->isNotEmpty())
+        <x-home.product-carousel-section
+            id="fz-home-selected"
+            title="منتخب فرزین"
+            eyebrow="انتخاب‌شده از مدیریت محصولات"
+            :products="$selectedProducts"
+        />
+    @endif
+
+    {{-- This strip is assembled from configured shipping, installation, warranty and installment data only. --}}
+    @if($showBenefits && $benefits->isNotEmpty())
+        <section class="fz-home-benefits" aria-label="خدمات و مزیت‌های ثبت‌شده فرزین">
+            <div class="fz-home-container">
+                <div class="fz-home-benefits__grid">
+                    @foreach($benefits as $benefit)
+                        <article class="fz-home-benefit">
+                            <span class="fz-home-benefit__mark" aria-hidden="true">
+                                @switch($benefit['key'])
+                                    @case('shipping')
+                                        <svg viewBox="0 0 24 24"><path d="M3 7h11v10H3zM14 10h4l3 3v4h-7zM7 20a2 2 0 1 0 0-4 2 2 0 0 0 0 4Zm11 0a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z"/></svg>
+                                        @break
+                                    @case('installation')
+                                        <svg viewBox="0 0 24 24"><path d="m14.5 6.5 3 3M4 20l8.5-8.5m2-8A5 5 0 0 0 21 10l-4 4-7-7 4-4A5 5 0 0 0 7 9l-3 3 8 8 3-3"/></svg>
+                                        @break
+                                    @case('warranty')
+                                        <svg viewBox="0 0 24 24"><path d="m12 3 7 3v5c0 4.5-2.9 7.8-7 10-4.1-2.2-7-5.5-7-10V6l7-3Z"/><path d="m9 12 2 2 4-4"/></svg>
+                                        @break
+                                    @case('installment')
+                                        <svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 10h18M7 15h4"/></svg>
+                                        @break
+                                @endswitch
+                            </span>
+                            <div class="fz-home-benefit__copy">
+                                <h3>{{ $benefit['title'] }}</h3>
+                                <p>{{ $benefit['description'] }}</p>
+                            </div>
+                        </article>
+                    @endforeach
+                </div>
+            </div>
+        </section>
+    @endif
+
+    @if($showJournal && $blogPosts->isNotEmpty())
+        <section class="fz-home-journal" aria-labelledby="fz-home-journal-title">
+            <div class="fz-home-container">
+                <header class="fz-home-section-head">
+                    <div>
+                        <span class="fz-home-section-head__eyebrow">دانش‌نامه فرزین</span>
+                        <h2 id="fz-home-journal-title">{{ $homeCopy['page_home_journal_title'] ?? 'مجله و راهنمای انتخاب' }}</h2>
+                        @if(filled($homeCopy['page_home_journal_description'] ?? null))
+                            <p>{{ $homeCopy['page_home_journal_description'] }}</p>
+                        @endif
+                    </div>
+                    <a href="{{ route('blog.index') }}" class="fz-home-section-head__link">همه مقاله‌ها <span aria-hidden="true">←</span></a>
+                </header>
+
+                <div class="fz-home-journal__grid">
+                    @foreach($blogPosts->take(3) as $article)
+                        @php($articleCategory = $article->terms->firstWhere('type', 'category'))
+                        <article class="fz-home-article-card">
+                            <a class="fz-home-article-card__media" href="{{ route('blog.show', $article->slug) }}" aria-label="مطالعه {{ $article->title }}">
+                                <img
+                                    src="{{ $article->cover_image_url }}"
+                                    @if($article->cover_image_srcset) srcset="{{ $article->cover_image_srcset }}" sizes="(max-width: 767px) 88vw, (max-width: 1023px) 45vw, 360px" @endif
+                                    alt="{{ $article->cover_image_alt ?: $article->title }}"
+                                    width="900"
+                                    height="620"
+                                    loading="lazy"
+                                    decoding="async"
+                                >
+                            </a>
+                            <div class="fz-home-article-card__body">
+                                <div class="fz-home-article-card__meta">
+                                    @if($articleCategory)<span>{{ $articleCategory->name }}</span>@endif
+                                    <span>{{ \App\Helpers\PersianNumberHelper::format($article->reading_time) }} دقیقه مطالعه</span>
+                                </div>
+                                <h3><a href="{{ route('blog.show', $article->slug) }}">{{ $article->title }}</a></h3>
+                                @if(filled($article->excerpt))
+                                    <p>{{ \Illuminate\Support\Str::limit($article->excerpt, 125) }}</p>
+                                @endif
+                                <a class="fz-home-article-card__link" href="{{ route('blog.show', $article->slug) }}">ادامه مطلب <span aria-hidden="true">←</span></a>
+                            </div>
+                        </article>
+                    @endforeach
+                </div>
+            </div>
+        </section>
+    @endif
+
+    @if($enamadUrl !== '')
+        <div class="fz-home-enamad" aria-label="نماد اعتماد الکترونیکی">
+            <div class="fz-home-container">
+                <a href="{{ $enamadUrl }}" target="_blank" rel="noopener noreferrer">مشاهده نماد اعتماد الکترونیکی فرزین <span aria-hidden="true">↗</span></a>
+            </div>
         </div>
-    </section>
-@endif
+    @endif
+</div>
 @endsection
