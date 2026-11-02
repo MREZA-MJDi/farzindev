@@ -2685,3 +2685,6 @@ body.home-body {
     .fz-sales-button:hover,
     .fz-home-product-grid .farzin-product-card:hover { transform: none; }
 }
+
+/* Keep the installment band in the same vertical rhythm as neighboring sections. */
+.fz-home-installment { padding-block: var(--fz-home-section-space); }
