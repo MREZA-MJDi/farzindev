@@ -161,7 +161,7 @@ Route::prefix('cart')
 |--------------------------------------------------------------------------
 */
 
-Route::middleware('guest')->group(function () {
+Route::middleware('guest:web')->group(function () {
 
     Route::get(
         '/login',
@@ -197,7 +197,7 @@ Route::post(
     '/logout',
     [AuthController::class, 'logout']
 )
-    ->middleware('auth')
+    ->middleware('auth:web')
     ->name('logout');
 
 
@@ -238,7 +238,7 @@ Route::get(
 |--------------------------------------------------------------------------
 */
 
-Route::middleware(['auth', 'customer'])->group(function () {
+Route::middleware(['auth:web', 'customer'])->group(function () {
 
     /*
     |--------------------------------------------------------------------------
