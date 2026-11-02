@@ -1,4 +1,4 @@
-@props(['storefrontContact' => []])
+@props(['brandName' => 'فرزین', 'storefrontContact' => []])
 
 <div
     id="farzin-mobile-menu"
@@ -54,9 +54,9 @@
                 href="{{ route('home') }}"
                 @click="mobileOpen = false"
                 class="farzin-wordmark"
-                aria-label="فرزین، صفحه اصلی"
+                aria-label="{{ $brandName }}، صفحه اصلی"
             >
-                <span class="farzin-wordmark__main">فرزین</span>
+                <span class="farzin-wordmark__main">{{ $brandName }}</span>
                 <span class="farzin-wordmark__caption">تجهیزات مدرن آشپزخانه</span>
             </a>
 
