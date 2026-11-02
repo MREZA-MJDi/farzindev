@@ -257,7 +257,7 @@ class PageContentController extends Controller
                     );
                 }
             });
-        } catch (\\Throwable $exception) {
+        } catch (\Throwable $exception) {
             if ($newHeroImagePath !== null) {
                 $images->delete($newHeroImagePath);
             }
