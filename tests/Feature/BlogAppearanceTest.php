@@ -75,7 +75,7 @@ class BlogAppearanceTest extends TestCase
     public function test_blog_appearance_and_article_image_editor_are_admin_only_and_crop_ready(): void
     {
         $this->get(route('admin.blog-appearance.edit'))
-            ->assertRedirect(route('login'));
+            ->assertRedirect(route('admin.login'));
 
         $admin = User::factory()->create(['role' => 'admin']);
 
