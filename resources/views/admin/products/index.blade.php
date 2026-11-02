@@ -9,10 +9,6 @@
 
     <div class="mb-8 flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
         <div>
-            <span class="text-xs font-medium text-[var(--admin-accent)]">
-                CATALOG / PRODUCTS
-            </span>
-
             <h2 class="admin-title mt-2">
                 محصولات
             </h2>
