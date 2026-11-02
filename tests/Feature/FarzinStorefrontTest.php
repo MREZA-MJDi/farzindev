@@ -1621,6 +1621,17 @@ class FarzinStorefrontTest extends TestCase
         $this->actingAs($this->admin())
             ->get(route('admin.contact-messages.attachment', $message))
             ->assertOk();
+
+        $this->get(route('admin.contact-messages.show', $message))
+            ->assertOk()
+            ->assertSee('هود مخفی H105')
+            ->assertSee('درخواست تماس برگشتی')
+            ->assertSee(route('admin.contact-messages.attachment', $message), false);
+
+        $this->delete(route('admin.contact-messages.destroy', $message))
+            ->assertRedirect(route('admin.contact-messages.index'));
+
+        Storage::disk('local')->assertMissing($message->attachment_path);
     }
 
     public function test_admin_can_create_a_product_with_an_uploaded_image_visible_on_the_storefront(): void
