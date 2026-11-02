@@ -22,7 +22,7 @@ class AdminAuthorizationTest extends TestCase
             ->assertRedirect(route('cart.index'));
 
         $this->get('/admin')
-            ->assertRedirect(route('login'));
+            ->assertRedirect(route('admin.login'));
 
         $this->get(route('product.show', 'missing-product-for-error-handler-test'))
             ->assertNotFound();
@@ -42,7 +42,7 @@ class AdminAuthorizationTest extends TestCase
             ->middleware('web');
 
         $this->get('/admin/__tests/session-expired')
-            ->assertRedirect(route('login'))
+            ->assertRedirect(route('admin.login'))
             ->assertSessionHas('warning');
     }
 
@@ -62,7 +62,7 @@ class AdminAuthorizationTest extends TestCase
     public function test_guest_cannot_enter_admin_dashboard(): void
     {
         $this->get('/admin')
-            ->assertRedirect(route('login'));
+            ->assertRedirect(route('admin.login'));
     }
 
     public function test_valid_admin_can_open_the_dashboard(): void
@@ -88,12 +88,12 @@ class AdminAuthorizationTest extends TestCase
         Schema::dropIfExists('cart_items');
         Schema::dropIfExists('carts');
 
-        $this->post('/login', [
-            'phone' => 'admin-login@example.test',
+        $this->post(route('admin.login.store'), [
+            'email' => 'admin-login@example.test',
             'password' => 'StrongPass123',
         ])->assertRedirect(route('admin.dashboard'));
 
-        $this->assertAuthenticatedAs($admin);
+        $this->assertAuthenticatedAs($admin, 'admin');
     }
 
     public function test_admin_can_log_in_and_is_redirected_to_dashboard(): void
@@ -132,16 +132,16 @@ class AdminAuthorizationTest extends TestCase
             '/admin/storefront-settings',
             '/admin/contact-messages',
         ] as $path) {
-            $this->get($path)->assertForbidden();
+            $this->get($path)->assertRedirect(route('admin.login'));
         }
 
         // Mutating endpoints must be blocked by role middleware before validation
         // or controller code can change anything.
-        $this->post('/admin/products', [])->assertForbidden();
-        $this->post('/admin/categories', [])->assertForbidden();
-        $this->post('/admin/blog-posts', [])->assertForbidden();
-        $this->put('/admin/seo-settings', [])->assertForbidden();
-        $this->put('/admin/storefront-settings', [])->assertForbidden();
+        $this->post('/admin/products', [])->assertRedirect(route('admin.login'));
+        $this->post('/admin/categories', [])->assertRedirect(route('admin.login'));
+        $this->post('/admin/blog-posts', [])->assertRedirect(route('admin.login'));
+        $this->put('/admin/seo-settings', [])->assertRedirect(route('admin.login'));
+        $this->put('/admin/storefront-settings', [])->assertRedirect(route('admin.login'));
     }
 
     public function test_user_cannot_register_themselves_as_an_admin(): void
