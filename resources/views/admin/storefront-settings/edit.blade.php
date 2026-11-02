@@ -139,6 +139,64 @@
 
             <section class="admin-card p-5 sm:p-7">
                 <div class="mb-6">
+                    <h2 class="text-base font-bold text-[var(--admin-text)]">هویت برند و خدمات فروشگاه</h2>
+                    <p class="mt-2 text-xs leading-6 text-[var(--admin-muted)]">اطلاعات این بخش فقط در صورت ثبت مقدار در بخش‌های عمومی سایت نمایش داده می‌شوند.</p>
+                </div>
+                <div class="grid gap-5 sm:grid-cols-2">
+                    <div>
+                        <label for="brand_name" class="admin-label">نام برند</label>
+                        <input id="brand_name" name="brand_name" type="text" value="{{ old('brand_name', $storefrontSettings->get('brand_name') ?: config('app.name')) }}" class="admin-input" maxlength="100" required>
+                        @error('brand_name')<p class="mt-2 text-xs text-[var(--admin-danger)]">{{ $message }}</p>@enderror
+                    </div>
+                    <div>
+                        <label for="brand_logo" class="admin-label">لوگوی برند (اختیاری)</label>
+                        <input id="brand_logo" name="brand_logo" type="file" accept="image/jpeg,image/png,image/webp" class="admin-input p-2">
+                        @if($storefrontSettings->get('brand_logo'))
+                            <div class="mt-3 flex items-center gap-3">
+                                <img src="{{ Storage::disk('public')->url($storefrontSettings->get('brand_logo')) }}" alt="لوگوی فعلی برند" class="h-14 max-w-32 object-contain">
+                                <label class="flex items-center gap-2 text-xs text-[var(--admin-muted)]"><input type="checkbox" name="remove_brand_logo" value="1"> حذف لوگوی فعلی</label>
+                            </div>
+                        @endif
+                        @error('brand_logo')<p class="mt-2 text-xs text-[var(--admin-danger)]">{{ $message }}</p>@enderror
+                    </div>
+                    <div>
+                        <label for="eitaa_url" class="admin-label">لینک ایتا</label>
+                        <input id="eitaa_url" name="eitaa_url" type="url" dir="ltr" value="{{ old('eitaa_url', $storefrontSettings->get('eitaa_url')) }}" class="admin-input" maxlength="255">
+                        @error('eitaa_url')<p class="mt-2 text-xs text-[var(--admin-danger)]">{{ $message }}</p>@enderror
+                    </div>
+                    <div>
+                        <label for="bale_url" class="admin-label">لینک بله</label>
+                        <input id="bale_url" name="bale_url" type="url" dir="ltr" value="{{ old('bale_url', $storefrontSettings->get('bale_url')) }}" class="admin-input" maxlength="255">
+                        @error('bale_url')<p class="mt-2 text-xs text-[var(--admin-danger)]">{{ $message }}</p>@enderror
+                    </div>
+                    <div class="sm:col-span-2">
+                        <label for="warranty_text" class="admin-label">توضیحات گارانتی</label>
+                        <textarea id="warranty_text" name="warranty_text" rows="2" class="admin-input" maxlength="1000">{{ old('warranty_text', $storefrontSettings->get('warranty_text')) }}</textarea>
+                    </div>
+                    <div class="sm:col-span-2">
+                        <label for="shipping_text" class="admin-label">توضیحات ارسال</label>
+                        <textarea id="shipping_text" name="shipping_text" rows="2" class="admin-input" maxlength="1000">{{ old('shipping_text', $storefrontSettings->get('shipping_text')) }}</textarea>
+                    </div>
+                    <div class="sm:col-span-2">
+                        <label for="installation_text" class="admin-label">توضیحات نصب و خدمات</label>
+                        <textarea id="installation_text" name="installation_text" rows="2" class="admin-input" maxlength="1000">{{ old('installation_text', $storefrontSettings->get('installation_text')) }}</textarea>
+                    </div>
+                    <div class="sm:col-span-2">
+                        <label for="returns_text" class="admin-label">توضیحات مرجوعی</label>
+                        <textarea id="returns_text" name="returns_text" rows="2" class="admin-input" maxlength="1000">{{ old('returns_text', $storefrontSettings->get('returns_text')) }}</textarea>
+                    </div>
+                    <div class="sm:col-span-2">
+                        <input type="hidden" name="floating_contact_enabled" value="0">
+                        <label class="flex items-center gap-3 rounded-xl border border-[var(--admin-border)] p-4 text-sm font-medium text-[var(--admin-text)]">
+                            <input type="checkbox" name="floating_contact_enabled" value="1" @checked(old('floating_contact_enabled', $storefrontSettings->get('floating_contact_enabled', '0')) == '1')>
+                            نمایش دکمه شناور تماس و پیام‌رسان در صفحات سایت
+                        </label>
+                    </div>
+                </div>
+            </section>
+
+            <section class="admin-card p-5 sm:p-7">
+                <div class="mb-6">
                     <h2 class="text-base font-bold text-[var(--admin-text)]">اطلاعات تماس واقعی</h2>
                     <p class="mt-2 text-xs leading-6 text-[var(--admin-muted)]">شماره موبایل و راه‌های ارتباطی این بخش در فوتر تمام صفحات سایت استفاده می‌شوند. لینک شبکه‌های اجتماعی فقط در صورت ثبت مقدار معتبر نمایش داده خواهد شد.</p>
                 </div>
