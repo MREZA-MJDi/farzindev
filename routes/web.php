@@ -162,6 +162,12 @@ Route::prefix('cart')
 
 Route::middleware('guest')->group(function () {
 
+    Route::get('/admin/login', [AuthController::class, 'showAdminLogin'])
+        ->name('admin.login');
+    Route::post('/admin/login', [AuthController::class, 'adminLogin'])
+        ->middleware('throttle:5,1')
+        ->name('admin.login.store');
+
     Route::get(
         '/login',
         [AuthController::class, 'showLogin']
