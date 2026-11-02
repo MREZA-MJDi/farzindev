@@ -14,6 +14,7 @@ use App\Models\Product;
 use App\Models\ProductImage;
 use App\Models\ProductVariant;
 use App\Models\StorefrontSetting;
+use App\Models\SeoRedirect;
 use App\Models\User;
 use App\Services\Payments\PaymentService;
 use App\Services\Seo\SeoSettings;
