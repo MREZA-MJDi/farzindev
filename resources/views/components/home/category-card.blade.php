@@ -10,11 +10,11 @@
     aria-label="مشاهده دسته‌بندی {{ $category->name }}"
 >
     <span class="fz-category-card__art">
-        @if($category->homepage_image_url)
+        @if($category->image_url)
             <img
                 class="fz-category-card__image"
                 src="{{ $category->homepage_image_url }}"
-                @if($category->homepage_image_srcset) srcset="{{ $category->homepage_image_srcset }}" sizes="(max-width: 639px) 88vw, (max-width: 1023px) 42vw, (max-width: 1279px) 28vw, 260px" @endif
+                @if($category->image_srcset) srcset="{{ $category->homepage_image_srcset }}" sizes="(max-width: 639px) 88vw, (max-width: 1023px) 42vw, (max-width: 1279px) 28vw, 260px" @endif
                 alt="{{ $category->name }}"
                 width="640"
                 height="480"
@@ -22,7 +22,7 @@
                 decoding="async"
             >
         @else
-            <span class="fz-category-card__monogram" aria-hidden="true">{{ $category->slug === 'sinks' ? 'S' : 'H' }}</span>
+            <span class="fz-category-card__monogram" aria-hidden="true">{{ mb_substr($category->name, 0, 1) }}</span>
         @endif
         @if($category->hoverMedia?->is_animated_preview)
             @if($category->hoverMedia->is_video)
