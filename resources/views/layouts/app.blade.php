@@ -145,7 +145,7 @@
     <link rel="canonical" href="{{ $seoCanonical }}">
 
     <meta property="og:type" content="{{ $seoOgType }}">
-    <meta property="og:site_name" content="{{ $seoValues['seo_site_name'] }}">
+    <meta property="og:site_name" content="{{ $storefrontBrandName }}">
     <meta property="og:title" content="{{ $seoOgTitle }}">
     <meta property="og:description" content="{{ $seoOgDescription }}">
     <meta property="og:url" content="{{ $seoCanonical }}">
