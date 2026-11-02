@@ -80,7 +80,7 @@ Route::get('/categories', [CategoryController::class, 'index'])
     ->name('categories.index');
 
 Route::get(
-    '/categories/{category:slug}',
+    '/categories/{slug}',
     [CategoryController::class, 'show']
 )->name('categories.show');
 
@@ -280,6 +280,8 @@ Route::middleware(['auth:web', 'customer'])->group(function () {
                 [CheckoutController::class, 'startInternalInstallment']
             )->name('payment.livora-installment');
         });
+
+Route::fallback([PublicSeoRedirectController::class, 'handle']);
 
 
     /*
