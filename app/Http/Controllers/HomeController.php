@@ -1,11 +1,14 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\\Http\\Controllers;
 
-use App\Models\BlogPost;
-use App\Models\Category;
-use App\Models\Product;
-use Illuminate\Contracts\View\View;
+use App\\Models\\BlogPost;
+use App\\Models\\Category;
+use App\\Models\\ContactSetting;
+use App\\Models\\Product;
+use App\\Models\\StorefrontSetting;
+use Illuminate\\Database\\Eloquent\\Builder;
+use Illuminate\\Contracts\\View\\View;
 
 class HomeController extends Controller
 {
@@ -13,6 +16,7 @@ class HomeController extends Controller
     {
         $categories = Category::query()
             ->active()
+            ->whereHas('products', fn (Builder $query) => $query->active())
             ->with([
                 'hoverMedia:id,path,mime_type,original_name,extension,size',
                 'latestActiveProduct.images' => fn ($query) => $query
@@ -21,15 +25,15 @@ class HomeController extends Controller
                 'latestActiveProduct.images.media:id,path',
             ])
             ->withCount([
-                'products' => fn ($query) => $query->active(),
+                'products' => fn (Builder $query) => $query->active(),
             ])
             ->orderBy('sort_order')
             ->limit(4)
             ->get();
 
         $productRelations = [
-            'category:id,name',
-            'variants:id,product_id,stock',
+            'category:id,name,slug,description',
+            'variants:id,product_id,type,name,value,stock',
             'images' => fn ($query) => $query
                 ->select(['id', 'product_id', 'media_id', 'path', 'alt', 'sort_order', 'is_primary'])
                 ->orderByDesc('is_primary')
@@ -39,12 +43,25 @@ class HomeController extends Controller
             'images.media:id,path',
         ];
 
-        // One real catalogue product in the hero. No carousel or duplicate
-        // editorial gallery is needed for the first decision.
+        // Products shown as recommendations must have stock on the parent
+        // record or on at least one active variant.
+        $onlyInStock = static function (Builder $query): void {
+            $query->where(function (Builder $stockQuery): void {
+                $stockQuery
+                    ->whereHas('variants', fn (Builder $variants) => $variants->where('stock', '>', 0))
+                    ->orWhere(function (Builder $simpleProduct): void {
+                        $simpleProduct
+                            ->whereDoesntHave('variants')
+                            ->where('stock', '>', 0);
+                    });
+            });
+        };
+
         $heroProduct = Product::query()
             ->active()
-            ->whereHas('category', fn ($query) => $query->where('is_active', true))
+            ->whereHas('category', fn (Builder $query) => $query->where('is_active', true))
             ->whereHas('images')
+            ->tap($onlyInStock)
             ->with($productRelations)
             ->orderByDesc('is_featured')
             ->orderByDesc('updated_at')
@@ -55,16 +72,18 @@ class HomeController extends Controller
                 fn ($image) => filled($image->url)
             ));
 
-        // Rank by paid, non-cancelled order quantity. Featured and recently
-        // updated products are tie-breakers when sales data is equal.
         $featuredProducts = Product::query()
             ->active()
-            ->when($heroProduct, fn ($query) => $query->whereKeyNot($heroProduct->id))
-            ->whereHas('category', fn ($query) => $query->where('is_active', true))
+            ->when($heroProduct, fn (Builder $query) => $query->whereKeyNot($heroProduct->id))
+            ->whereHas('category', fn (Builder $query) => $query->where('is_active', true))
+            ->whereHas('images')
+            ->tap($onlyInStock)
             ->with($productRelations)
+            ->withCount('variants')
+            ->withSum('variants as active_variants_stock', 'stock')
             ->withSum([
-                'orderItems as sold_quantity' => function ($orderItemQuery): void {
-                    $orderItemQuery->whereHas('order', function ($orderQuery): void {
+                'orderItems as sold_quantity' => function (Builder $orderItemQuery): void {
+                    $orderItemQuery->whereHas('order', function (Builder $orderQuery): void {
                         $orderQuery
                             ->where('payment_status', 'paid')
                             ->where('status', '!=', 'cancelled');
@@ -76,19 +95,35 @@ class HomeController extends Controller
             ->orderByDesc('updated_at')
             ->orderByDesc('id')
             ->limit(6)
-            ->get();
+            ->get()
+            ->filter(fn (Product $product) => $product->images->contains(
+                fn ($image) => filled($image->url)
+            ))
+            ->values();
 
         $hasBestSellerSales = $featuredProducts->contains(
             fn (Product $product): bool => (int) ($product->sold_quantity ?? 0) > 0
         );
 
-        // Never label zero-sale catalogue items as best sellers. Keep the
-        // six-product editorial fallback only when the store has no paid sales.
         if ($hasBestSellerSales) {
             $featuredProducts = $featuredProducts
                 ->filter(fn (Product $product): bool => (int) ($product->sold_quantity ?? 0) > 0)
                 ->values();
         }
+
+        $installmentProduct = Product::query()
+            ->active()
+            ->where('installment_enabled', true)
+            ->whereBetween('installment_cash_percent', [1, 99])
+            ->where('installment_remainder_method', 'cheque')
+            ->where('installment_cheque_count', '>', 0)
+            ->where('installment_interval_months', '>', 0)
+            ->whereHas('category', fn (Builder $query) => $query->where('is_active', true))
+            ->tap($onlyInStock)
+            ->with(['category:id,name,slug'])
+            ->orderByDesc('is_featured')
+            ->orderByDesc('updated_at')
+            ->first();
 
         $blogPosts = BlogPost::query()
             ->published()
@@ -100,11 +135,23 @@ class HomeController extends Controller
             ->limit(3)
             ->get();
 
+        $shippingSettings = StorefrontSetting::query()
+            ->whereIn('key', ['shipping_flat_rate', 'shipping_free_threshold'])
+            ->pluck('value', 'key')
+            ->all();
+
+        $contactSetting = ContactSetting::query()
+            ->where('is_active', true)
+            ->first(['phone', 'whatsapp', 'email']);
+
         return view('home.index', [
             'categories' => $categories,
             'heroProduct' => $heroProduct,
             'featuredProducts' => $featuredProducts,
             'hasBestSellerSales' => $hasBestSellerSales,
+            'installmentProduct' => $installmentProduct,
+            'shippingSettings' => $shippingSettings,
+            'contactSetting' => $contactSetting,
             'blogPosts' => $blogPosts,
         ]);
     }
