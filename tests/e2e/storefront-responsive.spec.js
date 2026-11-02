@@ -23,6 +23,8 @@ const publicRoutes = [
     '/cart',
     '/login',
     '/register',
+    '/terms',
+    '/privacy',
 ];
 
 for (const viewport of viewports) {
@@ -221,40 +223,32 @@ test('homepage category GIF preview starts on hover and the first touch tap', as
 });
 
 
-test('homepage CTA meets the shared footer at the same spacing used by interior pages', async ({ page }) => {
+test('homepage final CTA meets the shared footer without a duplicate contact bridge', async ({ page }) => {
     for (const viewport of [
         { width: 390, height: 844 },
         { width: 768, height: 900 },
         { width: 1440, height: 960 },
     ]) {
         await page.setViewportSize(viewport);
-
-        // The homepage CTA provides its own deliberate bottom breathing room;
-        // interior pages use the shared footer margin instead.
         await page.goto('/', { waitUntil: 'domcontentloaded' });
         await expect(page.locator('.farzin-site-footer')).toBeVisible();
+        await expect(page.locator('.fz-home-final-cta__panel')).toBeVisible();
 
         const homeSpacing = await page.evaluate(() => {
-            const ctaPanel = document.querySelector('.fz-home-purchase-cta__inner');
-            const bridge = document.querySelector('.fz-home-contact-bridge');
+            const ctaPanel = document.querySelector('.fz-home-final-cta__panel');
+            const finalSection = document.querySelector('.fz-home-final-cta');
             const footer = document.querySelector('.farzin-site-footer');
-            const footerStyle = window.getComputedStyle(footer);
 
             return {
-                panelToBridge: bridge.getBoundingClientRect().top - ctaPanel.getBoundingClientRect().bottom,
-                bridgeToFooter: footer.getBoundingClientRect().top - bridge.getBoundingClientRect().bottom,
-                footerMarginTop: Number.parseFloat(footerStyle.marginBlockStart),
+                panelToFooter: footer.getBoundingClientRect().top - ctaPanel.getBoundingClientRect().bottom,
+                sectionBottom: finalSection.getBoundingClientRect().bottom,
+                footerTop: footer.getBoundingClientRect().top,
+                hasOldContactBridge: Boolean(document.querySelector('.fz-home-contact-bridge')),
             };
         });
 
-        expect(
-            homeSpacing.panelToBridge,
-            'homepage CTA must have a deliberate transition into the footer bridge'
-        ).toBeGreaterThanOrEqual(40);
-        expect(
-            Math.abs(homeSpacing.bridgeToFooter - homeSpacing.footerMarginTop),
-            'the bridge-to-footer gap must use the shared footer spacing'
-        ).toBeLessThanOrEqual(2);
+        expect(homeSpacing.panelToFooter, 'homepage CTA must have deliberate bottom breathing room').toBeGreaterThanOrEqual(40);
+        expect(homeSpacing.hasOldContactBridge, 'the old duplicate contact bridge must stay removed').toBe(false);
 
         await page.goto('/shop', { waitUntil: 'domcontentloaded' });
         const shopSpacing = await page.evaluate(() => {
@@ -270,7 +264,7 @@ test('homepage CTA meets the shared footer at the same spacing used by interior 
 
         expect(
             Math.abs(shopSpacing.mainToFooter - shopSpacing.footerMarginTop),
-            'interior page must use the same shared footer margin'
+            'interior page must use the shared footer margin'
         ).toBeLessThanOrEqual(1);
         expect(shopSpacing.footerMarginTop).toBeGreaterThanOrEqual(24);
     }

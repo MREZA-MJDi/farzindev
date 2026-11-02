@@ -30,6 +30,7 @@ class ProductController extends Controller
                     ->select(['id', 'product_id', 'media_id', 'path', 'alt', 'sort_order', 'is_primary'])
                     ->limit(1),
                 'images.media:id,path',
+                'variants:id,product_id,stock',
             ])
             ->where('id', '!=', $product->id)
             ->where('category_id', $product->category_id)

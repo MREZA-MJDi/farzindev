@@ -86,6 +86,12 @@ Route::get(
 Route::view('/about', 'about.index')
     ->name('about');
 
+Route::view('/terms', 'legal.terms')
+    ->name('terms');
+
+Route::view('/privacy', 'legal.privacy')
+    ->name('privacy');
+
 
 /*
 |--------------------------------------------------------------------------

@@ -6,6 +6,7 @@ use App\Models\Cart;
 use App\Models\CartItem;
 use App\Models\Category;
 use App\Models\ContactMessage;
+use App\Models\ContactSetting;
 use App\Models\Order;
 use App\Models\Payment;
 use App\Models\Media;
@@ -19,6 +20,7 @@ use App\Services\Seo\SeoSettings;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
@@ -282,6 +284,47 @@ class FarzinStorefrontTest extends TestCase
             ->assertSee('چک‌لیست ساده پیش از ثبت سفارش');
     }
 
+    public function test_auth_and_legal_pages_use_the_farzin_customer_experience(): void
+    {
+        $this->get(route('login'))
+            ->assertOk()
+            ->assertSee('fz-auth__layout', false)
+            ->assertSee('ورود به حساب')
+            ->assertSee('fz-auth__submit', false);
+
+        $this->get(route('register'))
+            ->assertOk()
+            ->assertSee('fz-auth__layout', false)
+            ->assertSee('href="'.route('terms').'"', false);
+
+        $this->get(route('terms'))
+            ->assertOk()
+            ->assertSee('قوانین و شرایط استفاده');
+
+        $this->get(route('privacy'))
+            ->assertOk()
+            ->assertSee('حریم خصوصی');
+    }
+
+    public function test_footer_receives_and_displays_the_active_contact_settings(): void
+    {
+        ContactSetting::create([
+            'phone' => '02112345678',
+            'email' => 'hello@farajihome.com',
+            'address' => 'تهران، نشانی آزمایشی',
+            'hours' => 'شنبه تا چهارشنبه',
+            'is_active' => true,
+        ]);
+
+        Cache::forget('storefront.public-contact.v1');
+
+        $this->get(route('home'))
+            ->assertOk()
+            ->assertSee('tel:02112345678', false)
+            ->assertSee('hello@farajihome.com')
+            ->assertSee('تهران، نشانی آزمایشی');
+    }
+
     public function test_homepage_uses_a_static_hero_buying_guides_and_one_six_product_grid(): void
     {
         $category = $this->category([
@@ -322,7 +365,9 @@ class FarzinStorefrontTest extends TestCase
             ->assertSee('راهنمای انتخاب هود')
             ->assertSee('راهنمای انتخاب سینک')
             ->assertSee('fz-home-featured-grid--six', false)
-            ->assertSee('fz-home-contact-bridge', false)
+            ->assertSee('fz-home-trust', false)
+            ->assertSee('fz-home-final-cta', false)
+            ->assertDontSee('fz-home-contact-bridge', false)
             ->assertSee('fz-home-journal', false)
             ->assertDontSee('data-farzin-home-slider', false)
             ->assertDontSee('data-home-slide', false)
