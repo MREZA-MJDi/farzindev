@@ -404,9 +404,15 @@ class FarzinStorefrontTest extends TestCase
         foreach (['/', '/shop', '/categories', '/about', '/contact', '/blog'] as $uri) {
             $response = $this->get($uri);
 
+            $response->assertOk();
+
+            if ($uri === '/') {
+                $response->assertSee('fz-home-header', false);
+            } else {
+                $response->assertSee('farzin-site-header', false);
+            }
+
             $response
-                ->assertOk()
-                ->assertSee('farzin-site-header', false)
                 ->assertSee('aria-label="ناوبری اصلی فرزین"', false)
                 ->assertSee('farzin-site-footer', false)
                 ->assertDontSee('farzin-site-footer--spaced', false);
@@ -550,13 +556,10 @@ class FarzinStorefrontTest extends TestCase
         $response = $this->get(route('home'));
 
         $response->assertOk()
-            ->assertSee('fz-sales-hero', false)
-            ->assertSee('fz-home-guides', false)
-            ->assertSee('تصویر واقعی آشپزخانه')
-            ->assertSee('fz-home-product-grid', false)
-            ->assertSee('fz-home-proof', false)
-            ->assertSee('fz-home-final', false)
-            ->assertDontSee('fz-home-contact-bridge', false)
+            ->assertSee('fz-market-hero', false)
+            ->assertSee('fz-home-categories', false)
+            ->assertSee('fz-home-shelf', false)
+            ->assertSee('data-fz-carousel-track', false)
             ->assertDontSee('data-farzin-home-slider', false)
             ->assertDontSee('data-home-slide', false)
             ->assertDontSee('fz-mosaic-intro', false)
@@ -612,7 +615,7 @@ class FarzinStorefrontTest extends TestCase
 
         $this->assertSame(
             6,
-            substr_count($response->getContent(), 'class="fz-category-card fz-category-card--editorial'),
+            substr_count($response->getContent(), 'class="fz-home-round-category"'),
             'All active categories that contain active products should appear on the homepage.'
         );
     }
@@ -662,7 +665,7 @@ class FarzinStorefrontTest extends TestCase
             ->assertSee('استیل')
             ->assertSee('افزودن به سبد')
             ->assertSee('هود ناموجود')
-            ->assertSee('fz-home-hero-offer', false)
+            ->assertSee('fz-home-shelf', false)
             ->assertSee('هود موجود با مشخصات واقعی');
 
         $html = $response->getContent();
@@ -822,11 +825,10 @@ class FarzinStorefrontTest extends TestCase
 
         $this->get(route('home'))
             ->assertOk()
-            ->assertSee('data-farzin-gif-card', false)
-            ->assertSee('data-farzin-category-video', false)
-            ->assertSee('data-farzin-video-src=', false)
-            ->assertSee('playsinline', false)
-            ->assertSee('data-farzin-category-gif', false)
+            ->assertDontSee('data-farzin-gif-card', false)
+            ->assertDontSee('data-farzin-category-video', false)
+            ->assertDontSee('data-farzin-video-src=', false)
+            ->assertDontSee('data-farzin-category-gif', false)
             ->assertDontSee('PREVIEW · 5 SEC');
     }
 
@@ -1042,7 +1044,7 @@ class FarzinStorefrontTest extends TestCase
     {
         $this->get(route('home'))
             ->assertOk()
-            ->assertSee('navbar-product-search', false)
+            ->assertSee('fz-home-header__search', false)
             ->assertSee('action="'.route('shop.index').'"', false)
             ->assertSee('name="search"', false)
             ->assertSee('id="global-search"', false)
@@ -1372,13 +1374,13 @@ class FarzinStorefrontTest extends TestCase
             ->assertDontSee('href="' . route('categories.show', 'empty-home-category') . '"', false)
             ->assertSee($outOfStock->name)
             ->assertSee('ناموجود')
-            ->assertSee('fz-home-product-grid', false)
+            ->assertSee('fz-home-shelf', false)
             ->assertDontSee('fz-home-featured-section', false);
 
         $html = $response->getContent();
         $this->assertSame(3, substr_count($html, 'class="farzin-product-card group'));
 
-        $gridStart = strpos($html, 'fz-home-product-grid');
+        $gridStart = strpos($html, 'fz-home-shelf');
         $this->assertNotFalse($gridStart, 'The homepage product grid should be rendered.');
 
         $availablePosition = strpos($html, $stockedProductNames[0], $gridStart);
@@ -4317,9 +4319,8 @@ class FarzinStorefrontTest extends TestCase
             ->assertOk()
             ->assertSee("https://www.google.com/maps?q={$coordinateQuery}&amp;z=15&amp;output=embed", false)
             ->assertSee("https://www.google.com/maps/dir/?api=1&amp;destination={$coordinateQuery}", false)
-            ->assertSee('مختصات ثبت‌شده')
-            ->assertSee('35.6892')
-            ->assertSee('51.389')
+            ->assertDontSee('fz-contact-coordinates', false)
+            ->assertDontSee('مختصات ثبت‌شده:', false)
             ->assertSee('آدرس تستی که نباید جای مختصات استفاده شود');
 
         $html = $response->getContent();

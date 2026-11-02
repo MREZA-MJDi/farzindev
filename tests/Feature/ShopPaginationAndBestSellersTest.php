@@ -104,7 +104,7 @@ class ShopPaginationAndBestSellersTest extends TestCase
 
         $response = $this->get(route('home'))
             ->assertOk()
-            ->assertSee('fz-home-product-grid', false);
+            ->assertSee('id="fz-home-bestsellers"', false);
 
         $html = $response->getContent();
         $this->assertLessThan(
@@ -286,7 +286,7 @@ class ShopPaginationAndBestSellersTest extends TestCase
         $response = $this->get(route('home'))->assertOk();
         $html = $response->getContent();
 
-         $this->assertStringContainsString('fz-home-product-grid', $html);
+         $this->assertStringContainsString('id="fz-home-newest"', $html);
         $this->assertSame(8, substr_count($html, 'class="farzin-product-card group'));
         $this->assertStringNotContainsString('fz-new-section', $html);
         $this->assertStringNotContainsString('grid__image', $html);
