@@ -28,7 +28,7 @@
     </span>
 
     <span class="fz-category-card__content">
-        <span class="fz-category-card__eyebrow">FARZIN / CATEGORY</span>
+        <span class="fz-category-card__eyebrow">دسته‌بندی محصولات</span>
         <strong>{{ $category->name }}</strong>
         <small>{{ \App\Helpers\PersianNumberHelper::format($category->products_count) }} محصول فعال</small>
         <span class="fz-category-card__link">
