@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -160,6 +161,55 @@ class Product extends Model
         return $query
             ->where('status', 'active')
             ->where('is_new', true);
+    }
+
+
+    /**
+     * Products that can be purchased with the current base or option stock.
+     * For variant-backed products, every active option type must have at least
+     * one in-stock option; a single available colour must not hide an empty size group.
+     */
+    public function scopeAvailableForPurchase(Builder $query): Builder
+    {
+        $table = $this->getTable();
+
+        return $query->where(function (Builder $available) use ($table): void {
+            $available
+                ->where(function (Builder $baseStock) use ($table): void {
+                    $baseStock
+                        ->whereDoesntHave('variants')
+                        ->where($table . '.stock', '>', 0);
+                })
+                ->orWhere(function (Builder $variantStock) use ($table): void {
+                    $variantStock
+                        ->whereHas('variants')
+                        ->whereNotExists(function ($emptyOptionType) use ($table): void {
+                            $emptyOptionType
+                                ->selectRaw('1')
+                                ->from('product_variants as availability_options')
+                                ->whereColumn('availability_options.product_id', $table . '.id')
+                                ->where('availability_options.is_active', true)
+                                ->groupBy('availability_options.type')
+                                ->havingRaw('SUM(CASE WHEN availability_options.stock > 0 THEN 1 ELSE 0 END) = 0');
+                        });
+                });
+        });
+    }
+
+    /**
+     * Put purchasable products before unavailable ones without changing the
+     * caller's secondary ordering or filtering out unavailable catalogue items.
+     */
+    public function scopeOrderByAvailability(Builder $query): Builder
+    {
+        $availableIds = static::query()
+            ->select($this->getTable() . '.id')
+            ->availableForPurchase();
+
+        return $query->orderByRaw(
+            $this->getTable() . '.id IN (' . $availableIds->toSql() . ') DESC',
+            $availableIds->getBindings()
+        );
     }
 
     public function scopeInStock($query)
