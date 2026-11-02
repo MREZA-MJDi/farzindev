@@ -66,7 +66,7 @@ class AuthController extends Controller
         // Capture the guest cart key before the session guard rotates the session ID.
         $guestCartSessionId = $request->session()->getId();
 
-        if (! Auth::attempt([
+        if (! Auth::guard('web')->attempt([
             $loginField => $identifier,
             'password' => $credentials['password'],
         ], $credentials['remember'] ?? false)) {
@@ -103,21 +103,6 @@ class AuthController extends Controller
         Auth::shouldUse('web');
 
         $request->session()->regenerate();
-
-        /*
-        |--------------------------------------------------------------------------
-        | Role Based Redirect
-        |--------------------------------------------------------------------------
-        */
-
-        if ($request->user()->isAdmin()) {
-            return redirect()
-                ->route('admin.dashboard')
-                ->with(
-                    'success',
-                    'به پنل مدیریت خوش آمدید.'
-                );
-        }
 
         // Customer cart migration is unrelated to admin access; keep admin login independent of it.
         $this->mergeGuestCartIntoUserCart($request, $guestCartSessionId);
