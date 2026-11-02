@@ -212,6 +212,35 @@
     @endphp
 
     <script type="application/ld+json">{!! json_encode($productSchema, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT) !!}</script>
+    @php
+        $breadcrumbItems = [
+            ['@type' => 'ListItem', 'position' => 1, 'name' => 'خانه', 'item' => route('home')],
+            ['@type' => 'ListItem', 'position' => 2, 'name' => 'فروشگاه', 'item' => route('shop.index')],
+        ];
+
+        if ($product->category) {
+            $breadcrumbItems[] = [
+                '@type' => 'ListItem',
+                'position' => count($breadcrumbItems) + 1,
+                'name' => $product->category->name,
+                'item' => route('categories.show', $product->category->slug),
+            ];
+        }
+
+        $breadcrumbItems[] = [
+            '@type' => 'ListItem',
+            'position' => count($breadcrumbItems) + 1,
+            'name' => $product->name,
+            'item' => $pageCanonical,
+        ];
+
+        $breadcrumbSchema = [
+            '@context' => 'https://schema.org',
+            '@type' => 'BreadcrumbList',
+            'itemListElement' => $breadcrumbItems,
+        ];
+    @endphp
+    <script type="application/ld+json">{!! json_encode($breadcrumbSchema, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT) !!}</script>
 @endpush
 
 @section('content')
@@ -231,7 +260,7 @@
             <x-layout.container>
 
                 <nav
-                    aria-label="breadcrumb"
+                    aria-label="مسیر صفحه"
                     class="flex flex-wrap items-center gap-2 py-5 text-[11px] text-[var(--livora-stone)]"
                 >
 
@@ -352,8 +381,8 @@
                         <div class="mt-4 flex flex-wrap items-center gap-3 text-[11px] text-[var(--livora-stone)]">
 
                         <span>
-                            SKU:
-                            {{ $product->sku }}
+                            کد محصول:
+                            <span dir="ltr">{{ $product->sku }}</span>
                         </span>
 
                             <span class="h-1 w-1 rounded-full bg-[var(--livora-border)]"></span>
@@ -587,7 +616,7 @@
                                     <div class="mb-5">
 
                                         <p class="text-[10px] uppercase tracking-[0.2em] text-[var(--livora-accent)]">
-                                            CUSTOMIZE
+                                            ویژگی‌های محصول
                                         </p>
 
                                         <h2 class="mt-2 text-sm font-semibold">
@@ -680,46 +709,44 @@
 
 
                         {{-- Service Cards --}}
-                        <div class="mt-8 grid grid-cols-1 gap-3 sm:grid-cols-3">
+                        <div class="mt-8 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
 
                             <div class="rounded-2xl border border-[var(--livora-border)] bg-[var(--livora-white)] p-4">
 
-                                <p class="text-[10px] uppercase tracking-[0.16em] text-[var(--livora-stone)]">
-                                    STOCK
+                                <p class="text-[10px] font-semibold text-[var(--livora-stone)]">
+                                    وضعیت موجودی
                                 </p>
 
                                 <p
-                                    class="farzin-product-stock-status mt-2 text-xs font-semibold"
+                                    class="farzin-product-stock-status mt-2 text-sm font-bold"
                                     data-stock-available="{{ $canPurchase ? 'true' : 'false' }}"
+                                    aria-live="polite"
                                 >
-                                    {{ $canPurchase ? 'موجود' : 'ناموجود' }}
+                                    {{ $canPurchase ? 'موجود برای سفارش' : 'ناموجود' }}
                                 </p>
 
                             </div>
 
-                            <div class="rounded-2xl border border-[var(--livora-border)] bg-[var(--livora-white)] p-4">
+                            @if(filled(data_get($storefrontContact ?? [], 'warranty_summary')))
+                                <div class="rounded-2xl border border-[var(--livora-border)] bg-[var(--livora-white)] p-4">
+                                    <p class="text-[10px] font-semibold text-[var(--livora-stone)]">گارانتی</p>
+                                    <p class="mt-2 text-xs font-medium leading-6">{{ data_get($storefrontContact, 'warranty_summary') }}</p>
+                                </div>
+                            @endif
 
-                                <p class="text-[10px] uppercase tracking-[0.16em] text-[var(--livora-stone)]">
-                                    PAYMENT
-                                </p>
+                            @if(filled(data_get($storefrontContact ?? [], 'shipping_summary')))
+                                <div class="rounded-2xl border border-[var(--livora-border)] bg-[var(--livora-white)] p-4">
+                                    <p class="text-[10px] font-semibold text-[var(--livora-stone)]">ارسال</p>
+                                    <p class="mt-2 text-xs font-medium leading-6">{{ data_get($storefrontContact, 'shipping_summary') }}</p>
+                                </div>
+                            @endif
 
-                                <p class="mt-2 text-xs font-medium">
-                                    {{ $installmentEnabled ? 'نقدی و اقساطی طبق شرایط محصول' : 'روش پرداخت در مرحله ثبت سفارش' }}
-                                </p>
-
-                            </div>
-
-                            <div class="rounded-2xl border border-[var(--livora-border)] bg-[var(--livora-white)] p-4">
-
-                                <p class="text-[10px] uppercase tracking-[0.16em] text-[var(--livora-stone)]">
-                                    SKU
-                                </p>
-
-                                <p class="mt-2 truncate text-xs font-medium">
-                                    {{ $product->sku }}
-                                </p>
-
-                            </div>
+                            @if(filled(data_get($storefrontContact ?? [], 'installation_summary')))
+                                <div class="rounded-2xl border border-[var(--livora-border)] bg-[var(--livora-white)] p-4">
+                                    <p class="text-[10px] font-semibold text-[var(--livora-stone)]">نصب</p>
+                                    <p class="mt-2 text-xs font-medium leading-6">{{ data_get($storefrontContact, 'installation_summary') }}</p>
+                                </div>
+                            @endif
 
                         </div>
 
@@ -808,7 +835,7 @@
                         <div class="farzin-product-facts__item rounded-3xl border border-[var(--livora-border)] bg-[var(--livora-white)] p-5">
 
                             <p class="text-[10px] uppercase tracking-[0.16em] text-[var(--livora-stone)]">
-                                CATEGORY
+                                دسته‌بندی
                             </p>
 
                             <p class="mt-3 text-sm font-semibold">
@@ -820,31 +847,7 @@
                         <div class="farzin-product-facts__item rounded-3xl border border-[var(--livora-border)] bg-[var(--livora-white)] p-5">
 
                             <p class="text-[10px] uppercase tracking-[0.16em] text-[var(--livora-stone)]">
-                                SKU
-                            </p>
-
-                            <p class="mt-3 break-all text-sm font-semibold">
-                                {{ $product->sku }}
-                            </p>
-
-                        </div>
-
-                        <div class="farzin-product-facts__item rounded-3xl border border-[var(--livora-border)] bg-[var(--livora-white)] p-5">
-
-                            <p class="text-[10px] uppercase tracking-[0.16em] text-[var(--livora-stone)]">
-                                AVAILABILITY
-                            </p>
-
-                            <p class="mt-3 text-sm font-semibold">
-                                {{ $canPurchase ? 'موجود در انبار' : 'ناموجود' }}
-                            </p>
-
-                        </div>
-
-                        <div class="farzin-product-facts__item rounded-3xl border border-[var(--livora-border)] bg-[var(--livora-white)] p-5">
-
-                            <p class="text-[10px] uppercase tracking-[0.16em] text-[var(--livora-stone)]">
-                                PAYMENT
+                                روش پرداخت
                             </p>
 
                             <p class="mt-3 text-sm font-semibold">
@@ -937,7 +940,7 @@
                             <div>
 
                                 <p class="text-[10px] font-medium uppercase tracking-[0.22em] text-[var(--livora-accent)]">
-                                    YOU MAY ALSO LIKE
+                                    پیشنهادهای مرتبط
                                 </p>
 
                                 <h2 class="mt-3 text-2xl font-semibold">
