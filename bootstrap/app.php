@@ -46,6 +46,12 @@ return Application::configure(
             'customer' => CustomerMiddleware::class,
         ]);
 
+        $middleware->redirectGuestsTo(
+            fn (Request $request): string => $request->is('admin', 'admin/*')
+                ? route('admin.login')
+                : route('login')
+        );
+
         // Give every request a safe identifier that can be matched to server logs.
         $middleware->prepend(RequestIdMiddleware::class);
 
