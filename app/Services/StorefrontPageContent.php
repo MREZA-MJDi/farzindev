@@ -61,7 +61,7 @@ class StorefrontPageContent
             'page_home_categories_description' => 'هود و سینک موردنیازتان را از میان دسته‌بندی‌های محصولات فرزین پیدا کنید.',
             'page_home_products_eyebrow' => 'کاتالوگ محصولات فرزین',
             'page_home_products_title' => 'مدل‌های منتخب فرزین',
-            'page_home_products_description' => 'مدل‌های منتخب فرزین را ببینید و برای مقایسه مشخصات و انتخاب متناسب با آشپزخانه، وارد صفحه هر محصول شوید.',
+            'page_home_products_description' => 'محصولات قابل خرید در ابتدای فهرست نمایش داده می‌شوند؛ مدل‌های ناموجود پس از آن‌ها قرار می‌گیرند.',
             'page_home_best_sellers_title' => 'پرفروش‌ترین محصولات',
             'page_home_best_sellers_description' => 'انتخاب‌ها بر اساس تعداد محصولات ثبت‌شده در سفارش‌های پرداخت‌شده مرتب شده‌اند؛ مشخصات هر مدل را بررسی کنید.',
             'page_home_trust_eyebrow' => 'تجربه خرید از فرزین',
