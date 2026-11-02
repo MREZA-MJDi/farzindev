@@ -158,7 +158,7 @@
 
                     {{-- Left column in RTL: direct contact, social channels and message form --}}
                     <div class="fz-contact-left-column">
-                        @if(filled($contactSetting?->phone) || filled($contactSetting?->email) || $whatsappDigits !== '' || filled($contactSetting?->instagram_url) || filled($contactSetting?->telegram_url) || filled($storefrontSettings['eitaa_url'] ?? null) || filled($storefrontSettings['bale_url'] ?? null) || filled($storefrontSettings['eitaa_url'] ?? null) || filled($storefrontSettings['bale_url'] ?? null))
+                        @if(filled($contactSetting?->phone) || filled($contactSetting?->email) || $whatsappDigits !== '' || filled($contactSetting?->instagram_url) || filled($contactSetting?->telegram_url) || filled($storefrontPublicSettings['eitaa_url'] ?? null) || filled($storefrontPublicSettings['bale_url'] ?? null))
                         <section class="fz-contact-panel fz-contact-channels" data-fz-reveal>
                             <div class="fz-contact-panel__header">
                                 <div>
@@ -195,7 +195,7 @@
                             </div>
                             @endif
 
-                            @if($whatsappDigits !== '' || filled($contactSetting?->instagram_url) || filled($contactSetting?->telegram_url))
+                            @if($whatsappDigits !== '' || filled($contactSetting?->instagram_url) || filled($contactSetting?->telegram_url) || filled($storefrontPublicSettings['eitaa_url'] ?? null) || filled($storefrontPublicSettings['bale_url'] ?? null))
                                 <div class="fz-contact-social">
                                     <div class="fz-contact-social__heading">
                                         <span class="fz-contact-kicker"></span>
@@ -212,11 +212,11 @@
                                                 <span aria-hidden="true">◎</span> اینستاگرام
                                             </a>
                                         @endif
-                                        @if(filled($storefrontSettings['eitaa_url'] ?? null))
-                                            <a href="{{ $storefrontSettings['eitaa_url'] }}" target="_blank" rel="noopener noreferrer" class="fz-contact-social__link">ایتا</a>
+                                        @if(filled($storefrontPublicSettings['eitaa_url'] ?? null))
+                                            <a href="{{ $storefrontPublicSettings['eitaa_url'] }}" target="_blank" rel="noopener noreferrer" class="fz-contact-social__link">ایتا</a>
                                         @endif
-                                        @if(filled($storefrontSettings['bale_url'] ?? null))
-                                            <a href="{{ $storefrontSettings['bale_url'] }}" target="_blank" rel="noopener noreferrer" class="fz-contact-social__link">بله</a>
+                                        @if(filled($storefrontPublicSettings['bale_url'] ?? null))
+                                            <a href="{{ $storefrontPublicSettings['bale_url'] }}" target="_blank" rel="noopener noreferrer" class="fz-contact-social__link">بله</a>
                                         @endif
                                         @if(filled($contactSetting?->telegram_url))
                                             <a href="{{ $contactSetting->telegram_url }}" target="_blank" rel="noopener noreferrer" class="fz-contact-social__link fz-contact-social__link--telegram">
