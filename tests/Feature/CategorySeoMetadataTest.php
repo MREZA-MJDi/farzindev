@@ -15,7 +15,7 @@ class CategorySeoMetadataTest extends TestCase
     {
         $admin = User::factory()->create(['role' => 'admin']);
 
-        $this->actingAs($admin)
+        $this->actingAs($admin, 'admin')
             ->post(route('admin.categories.store'), [
                 'name' => 'هود مخفی',
                 'slug' => 'built-in-hoods',
@@ -54,7 +54,7 @@ class CategorySeoMetadataTest extends TestCase
             route('admin.categories.create'),
             route('admin.categories.edit', $category),
         ] as $url) {
-            $this->actingAs($admin)
+            $this->actingAs($admin, 'admin')
                 ->get($url)
                 ->assertOk()
                 ->assertSee('data-image-editor-input', false)
