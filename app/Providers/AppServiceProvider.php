@@ -45,9 +45,13 @@ class AppServiceProvider extends ServiceProvider
             $view->with('storefrontPublicSettings', $settings);
             $view->with('storefrontBrandName', filled($settings['brand_name'] ?? null) ? $settings['brand_name'] : 'فرزین');
             $brandLogoPath = $settings['brand_logo'] ?? null;
-            $view->with('storefrontBrandLogoUrl', filled($brandLogoPath) && Storage::disk('public')->exists($brandLogoPath)
-                ? Storage::disk('public')->url($brandLogoPath)
-                : null);
+            $view->with('storefrontBrandLogoUrl', rescue(
+                fn () => filled($brandLogoPath) && Storage::disk('public')->exists($brandLogoPath)
+                    ? Storage::disk('public')->url($brandLogoPath)
+                    : null,
+                null,
+                report: false
+            ));
         });
     }
 }
