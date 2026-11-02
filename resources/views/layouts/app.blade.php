@@ -258,7 +258,7 @@
 
     <x-layout.navbar :cart-count="$storefrontCartCount" :brand-name="$storefrontBrandName" :brand-logo="$storefrontBrandLogoUrl" />
 
-    <x-layout.mobile-menu :brand-name="$storefrontBrandName" />
+    <x-layout.mobile-menu :brand-name="$storefrontBrandName" :brand-logo="$storefrontBrandLogoUrl" />
 
     <x-layout.search-overlay />
 
