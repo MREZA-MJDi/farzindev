@@ -2688,3 +2688,12 @@ body.home-body {
 
 /* Keep the installment band in the same vertical rhythm as neighboring sections. */
 .fz-home-installment { padding-block: var(--fz-home-section-space); }
+
+/* Keyboard focus on white category/product tiles must contrast with the card surface. */
+.fz-home-category-grid a:focus-visible,
+.fz-home-product-grid a:focus-visible,
+.fz-home-benefits a:focus-visible {
+    outline: 3px solid var(--fz-home-ink);
+    outline-offset: 4px;
+    border-radius: 1rem;
+}
