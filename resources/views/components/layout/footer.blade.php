@@ -12,12 +12,12 @@
         <div class="fz-store-footer__main">
             <div class="fz-store-footer__brand">
                 <a href="{{ route('home') }}" class="fz-store-footer__logo farzin-footer-editorial__logo" aria-label="فرزین، صفحه اصلی">فرزین</a>
-                <span class="fz-store-footer__english">FARZIN / KITCHEN EQUIPMENT</span>
+                
                 <p>کاتالوگ آنلاین هود و سینک آشپزخانه؛ مشخصات و قیمت مدل‌ها را بررسی کنید و انتخابتان را آگاهانه انجام دهید.</p>
                 <div class="fz-store-footer__socials" aria-label="شبکه‌های اجتماعی">
-                    @if(filled(data_get($contact, 'instagram_url')))<a href="{{ data_get($contact, 'instagram_url') }}" target="_blank" rel="noopener noreferrer" aria-label="اینستاگرام فرزین">Instagram</a>@endif
-                    @if(filled(data_get($contact, 'telegram_url')))<a href="{{ data_get($contact, 'telegram_url') }}" target="_blank" rel="noopener noreferrer" aria-label="تلگرام فرزین">Telegram</a>@endif
-                    @if($footerWhatsapp !== '')<a href="https://wa.me/{{ $footerWhatsapp }}" target="_blank" rel="noopener noreferrer" aria-label="واتساپ فرزین">WhatsApp</a>@endif
+                    @if(filled(data_get($contact, 'instagram_url')))<a href="{{ data_get($contact, 'instagram_url') }}" target="_blank" rel="noopener noreferrer" aria-label="اینستاگرام فرزین">اینستاگرام</a>@endif
+                    @if(filled(data_get($contact, 'telegram_url')))<a href="{{ data_get($contact, 'telegram_url') }}" target="_blank" rel="noopener noreferrer" aria-label="تلگرام فرزین">تلگرام</a>@endif
+                    @if($footerWhatsapp !== '')<a href="https://wa.me/{{ $footerWhatsapp }}" target="_blank" rel="noopener noreferrer" aria-label="واتساپ فرزین">واتساپ</a>@endif
                 </div>
             </div>
             <nav class="fz-store-footer__column farzin-footer-editorial__nav" aria-label="پیوندهای اصلی">
