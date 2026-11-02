@@ -41,6 +41,14 @@ return Application::configure(
         |--------------------------------------------------------------------------
         */
 
+        $adminPath = trim((string) config('farzin.admin_path', 'admin'), '/') ?: 'admin';
+
+        $middleware->redirectGuestsTo(fn (Request $request) =>
+            $request->is($adminPath, $adminPath . '/*')
+                ? route('admin.login')
+                : route('login')
+        );
+
         $middleware->alias([
             'admin' => AdminMiddleware::class,
             'customer' => CustomerMiddleware::class,
@@ -136,7 +144,7 @@ return Application::configure(
                 return null;
             }
 
-            Auth::logout();
+            Auth::guard('admin')->logout();
             $request->session()->invalidate();
             $request->session()->regenerateToken();
 
@@ -148,7 +156,7 @@ return Application::configure(
             }
 
             return redirect()
-                ->route('login')
+                ->route('admin.login')
                 ->with('warning', 'نشست مدیریت منقضی شده است؛ برای ادامه دوباره وارد شوید.');
         });
 
