@@ -14,12 +14,10 @@ class HomeController extends Controller
 {
     public function index(): View
     {
-        // The homepage is an editorial storefront: show active categories that
-        // have at least one active product, while the category index/detail
-        // pages remain independently reachable for empty active categories.
+        // Every active category is a public navigation destination, including
+        // a new category that has not received its first product yet.
         $categories = Category::query()
             ->active()
-            ->whereHas('products', fn (Builder $query) => $query->active())
             ->with([
                 'hoverMedia:id,path,mime_type,original_name,extension,size',
                 'latestActiveProduct.images' => fn ($query) => $query
@@ -77,6 +75,7 @@ class HomeController extends Controller
 
         $heroProduct = Product::query()
             ->active()
+            ->where('show_in_home_gallery', true)
             ->whereHas('category', fn (Builder $query) => $query->where('is_active', true))
             ->whereHas('images')
             ->when(true, $onlyInStock)
@@ -90,6 +89,7 @@ class HomeController extends Controller
 
         $featuredProducts = Product::query()
             ->active()
+            ->where('show_in_home_gallery', true)
             ->when($heroProduct, fn (Builder $query) => $query->whereKeyNot($heroProduct->id))
             ->whereHas('category', fn (Builder $query) => $query->where('is_active', true))
             ->whereHas('images')
