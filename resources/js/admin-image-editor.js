@@ -1,5 +1,5 @@
 const inputs = Array.from(document.querySelectorAll('[data-image-editor-input]'));
-const RATIOS = { '1:1': 1, '4:3': 4 / 3, '4:5': 4 / 5, '16:9': 16 / 9 };
+const RATIOS = { '1:1': 1, '4:3': 4 / 3, '4:5': 4 / 5, '16:9': 16 / 9, '16:10': 16 / 10 };
 const MAX_EDGE = 3200;
 
 function clamp(value, min, max) {
@@ -30,10 +30,12 @@ function initImageEditor(input) {
     if (!form || !panel || !(canvas instanceof HTMLCanvasElement) || !ratioInput || !zoomInput) return;
     const ctx = canvas.getContext('2d', { alpha: false });
     if (!ctx) return;
+    input.dataset.imageEditorReady = 'true';
 
     const original = {
         previewSrc: oldPreview ? oldPreview.getAttribute('src') : null,
         previewHidden: oldPreview ? oldPreview.classList.contains('hidden') : false,
+        previewWrapHidden: previewWrap ? previewWrap.classList.contains('hidden') : false,
         placeholderHidden: placeholder ? placeholder.classList.contains('hidden') : true,
     };
     const state = {
@@ -147,7 +149,7 @@ function initImageEditor(input) {
             else oldPreview.removeAttribute('src');
             oldPreview.classList.toggle('hidden', original.previewHidden);
         }
-        if (previewWrap) previewWrap.classList.remove('hidden');
+        if (previewWrap) previewWrap.classList.toggle('hidden', original.previewWrapHidden);
         if (placeholder) {
             placeholder.classList.toggle('hidden', original.placeholderHidden);
             placeholder.classList.toggle('flex', !original.placeholderHidden);

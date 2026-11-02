@@ -51,7 +51,6 @@ class StorefrontPageContent
             'page_home_hero_highlight' => '',
             'page_home_hero_description' => 'مدل‌های موجود فرزین را با تصویر، قیمت و مشخصات واقعی بررسی کنید.',
             'page_home_hero_image_url' => '',
-            'page_home_hero_image_position' => 'center center',
             'page_home_enamad_url' => '',
             'page_home_warranty_text' => '',
             'page_home_reviews_text' => '',
