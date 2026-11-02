@@ -1,4 +1,4 @@
-@props(['contact' => [], 'settings' => []])
+@props(['contact' => [], 'settings' => [], 'brandLogoUrl' => null])
 @php
     $footerPhone = trim((string) data_get($contact, 'phone', ''));
     $footerPhoneHref = preg_replace('/[^0-9+]/', '', $footerPhone);
