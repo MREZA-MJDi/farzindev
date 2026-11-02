@@ -726,6 +726,10 @@ class FarzinStorefrontTest extends TestCase
             ->filter(fn ($value, $key) => str_starts_with($key, 'page_home_'))
             ->all();
 
+        $storedPathBefore = StorefrontSetting::query()
+            ->where('key', 'page_home_hero_image_url')
+            ->value('value');
+
         $this->actingAs($admin, 'admin')
             ->put(route('admin.page-content.update'), array_merge($values, [
                 'tab' => 'home',
@@ -733,9 +737,10 @@ class FarzinStorefrontTest extends TestCase
             ]))
             ->assertSessionHasErrors('page_home_hero_image');
 
-        $this->assertDatabaseMissing('storefront_settings', [
-            'key' => 'page_home_hero_image_url',
-        ]);
+        $this->assertSame(
+            $storedPathBefore,
+            StorefrontSetting::query()->where('key', 'page_home_hero_image_url')->value('value')
+        );
         $this->assertSame([], Storage::disk('public')->allFiles('homepage'));
     }
 
