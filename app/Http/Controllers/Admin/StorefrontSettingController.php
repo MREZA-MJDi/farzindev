@@ -35,7 +35,10 @@ class StorefrontSettingController extends Controller
             'shopBannerSubtitle' => $settings->get('shop_banner_subtitle') ?: 'هود و سینک آشپزخانه؛ انتخابی دقیق برای فضای شما.',
             'shopBannerPath' => $bannerPath,
             'shopBannerUrl' => $bannerPath ? Storage::disk('public')->url($bannerPath) : null,
-            'shippingFlatRate' => (int) ($settings->get('shipping_flat_rate') ?? 0),
+            'shippingFlatRate' => $settings->has('shipping_flat_rate')
+                ? (int) $settings->get('shipping_flat_rate')
+                : null,
+            'shippingFlatRateConfigured' => $settings->has('shipping_flat_rate'),
             'shippingFreeThreshold' => (int) ($settings->get('shipping_free_threshold') ?? 0),
             'contactSetting' => ContactSetting::query()->first(),
         ]);
