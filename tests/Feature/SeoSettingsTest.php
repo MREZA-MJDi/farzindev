@@ -110,13 +110,13 @@ class SeoSettingsTest extends TestCase
 
         $admin = User::factory()->create(['role' => 'admin']);
 
-        $this->actingAs($admin)
+        $this->actingAs($admin, 'admin')
             ->get(route('admin.seo-settings.edit'))
             ->assertOk()
             ->assertSee('تنظیمات سئو و ایندکس')
             ->assertSee(route('admin.seo-settings.update'), false);
 
-        $this->actingAs($admin)
+        $this->actingAs($admin, 'admin')
             ->put(route('admin.seo-settings.update'), [
                 'seo_canonical_base_url' => 'https://farajihome.com',
                 'seo_site_name' => 'فرزین',
@@ -159,7 +159,7 @@ class SeoSettingsTest extends TestCase
     {
         $admin = User::factory()->create(['role' => 'admin']);
 
-        $this->actingAs($admin)
+        $this->actingAs($admin, 'admin')
             ->put(route('admin.seo-settings.update'), [
                 'seo_canonical_base_url' => 'https://farajihome.com',
                 'seo_site_name' => 'فرزین',
@@ -230,7 +230,7 @@ class SeoSettingsTest extends TestCase
             ->assertSee('<link rel="preconnect" href="https://fonts.gstatic.com"', false)
             ->assertSee('crossorigin="anonymous"', false);
 
-        $this->actingAs($admin)
+        $this->actingAs($admin, 'admin')
             ->get(route('admin.seo-settings.edit'))
             ->assertOk()
             ->assertSee('افزودن تگ')
@@ -242,7 +242,7 @@ class SeoSettingsTest extends TestCase
     {
         $admin = User::factory()->create(['role' => 'admin']);
 
-        $this->actingAs($admin)
+        $this->actingAs($admin, 'admin')
             ->from(route('admin.seo-settings.edit'))
             ->put(route('admin.seo-settings.update'), [
                 'seo_canonical_base_url' => 'https://farajihome.com',
@@ -285,7 +285,7 @@ class SeoSettingsTest extends TestCase
 
         app(\App\Services\Seo\SeoSettings::class)->clearCache();
 
-        $this->actingAs($admin)
+        $this->actingAs($admin, 'admin')
             ->get(route('admin.seo-settings.edit'))
             ->assertOk()
             ->assertDontSee('name="seo_development_mode" value="1" checked', false)
@@ -319,7 +319,7 @@ class SeoSettingsTest extends TestCase
     {
         $admin = User::factory()->create(['role' => 'admin']);
 
-        $this->actingAs($admin)
+        $this->actingAs($admin, 'admin')
             ->put(route('admin.seo-settings.update'), [
                 'seo_canonical_base_url' => 'https://farajihome.com',
                 'seo_site_name' => 'فرزین',
@@ -351,7 +351,7 @@ class SeoSettingsTest extends TestCase
     {
         $admin = User::factory()->create(['role' => 'admin']);
 
-        $this->actingAs($admin)
+        $this->actingAs($admin, 'admin')
             ->from(route('admin.seo-settings.edit'))
             ->put(route('admin.seo-settings.update'), [
                 'seo_canonical_base_url' => 'https://farajihome.com',
@@ -385,12 +385,12 @@ class SeoSettingsTest extends TestCase
 
         $admin = User::factory()->create(['role' => 'admin']);
 
-        $this->actingAs($admin)
+        $this->actingAs($admin, 'admin')
             ->get(route('admin.seo-settings.edit'))
             ->assertOk()
             ->assertSee('name="seo_default_og_image_upload"', false);
 
-        $this->actingAs($admin)
+        $this->actingAs($admin, 'admin')
             ->put(route('admin.seo-settings.update'), [
                 'seo_canonical_base_url' => 'https://farajihome.com',
                 'seo_site_name' => 'فرزین',
