@@ -6,6 +6,11 @@
     $footerEmail = trim((string) data_get($contact, 'email', ''));
     $footerAddress = trim((string) data_get($contact, 'address', ''));
     $footerHours = trim((string) data_get($contact, 'hours', ''));
+    $serviceDetails = collect([
+        ['title' => 'گارانتی', 'value' => data_get($contact, 'warranty_summary')],
+        ['title' => 'ارسال', 'value' => data_get($contact, 'shipping_summary')],
+        ['title' => 'نصب', 'value' => data_get($contact, 'installation_summary')],
+    ])->filter(fn ($item) => filled($item['value']));
 @endphp
 <footer class="farzin-site-footer farzin-site-footer--editorial fz-store-footer">
     <x-layout.container class="fz-store-footer__container">
@@ -16,8 +21,9 @@
                 <p>کاتالوگ آنلاین هود و سینک آشپزخانه؛ مشخصات و قیمت مدل‌ها را بررسی کنید و انتخابتان را آگاهانه انجام دهید.</p>
                 <div class="fz-store-footer__socials" aria-label="شبکه‌های اجتماعی">
                     @if(filled(data_get($contact, 'instagram_url')))<a href="{{ data_get($contact, 'instagram_url') }}" target="_blank" rel="noopener noreferrer" aria-label="اینستاگرام فرزین">Instagram</a>@endif
-                    @if(filled(data_get($contact, 'telegram_url')))<a href="{{ data_get($contact, 'telegram_url') }}" target="_blank" rel="noopener noreferrer" aria-label="تلگرام فرزین">Telegram</a>@endif
-                    @if($footerWhatsapp !== '')<a href="https://wa.me/{{ $footerWhatsapp }}" target="_blank" rel="noopener noreferrer" aria-label="واتساپ فرزین">WhatsApp</a>@endif
+                    @if(filled(data_get($contact, 'telegram_url')))<a href="{{ data_get($contact, 'telegram_url') }}" target="_blank" rel="noopener noreferrer" aria-label="تلگرام فرزین">تلگرام</a>@endif
+                    @if(filled(data_get($contact, 'eitaa_url')))<a href="{{ data_get($contact, 'eitaa_url') }}" target="_blank" rel="noopener noreferrer" aria-label="ایتا فرزین">ایتا</a>@endif
+                    @if($footerWhatsapp !== '')<a href="https://wa.me/{{ $footerWhatsapp }}" target="_blank" rel="noopener noreferrer" aria-label="واتساپ فرزین">واتساپ</a>@endif
                 </div>
             </div>
             <nav class="fz-store-footer__column farzin-footer-editorial__nav" aria-label="پیوندهای اصلی">
@@ -42,11 +48,13 @@
                 <a class="fz-store-footer__contact-link" href="{{ route('contact') }}">رفتن به صفحه تماس <span aria-hidden="true">←</span></a>
             </div>
         </div>
-        <div class="fz-store-footer__assurance" aria-label="اطلاعات خرید">
-            <div><span aria-hidden="true">01</span><p><strong>مشخصات قابل بررسی</strong><small>جزئیات هر محصول در صفحه اختصاصی آن</small></p></div>
-            <div><span aria-hidden="true">02</span><p><strong>سبد خرید شخصی</strong><small>سبد مهمان پس از ورود به حساب منتقل می‌شود</small></p></div>
-            <div><span aria-hidden="true">03</span><p><strong>سوابق سفارش</strong><small>دسترسی به سفارش‌ها در حساب کاربری</small></p></div>
-        </div>
+        @if($serviceDetails->isNotEmpty())
+            <div class="fz-store-footer__assurance" aria-label="خدمات فرزین">
+                @foreach($serviceDetails as $item)
+                    <div><span aria-hidden="true">✓</span><p><strong>{{ $item['title'] }}</strong><small>{{ $item['value'] }}</small></p></div>
+                @endforeach
+            </div>
+        @endif
         <div class="fz-store-footer__bottom"><span>© {{ \App\Helpers\JalaliHelper::format(now(), 'Y') }} فرزین · تمامی حقوق محفوظ است.</span><span>طراحی‌شده برای انتخاب بهتر تجهیزات آشپزخانه</span></div>
     </x-layout.container>
 </footer>
