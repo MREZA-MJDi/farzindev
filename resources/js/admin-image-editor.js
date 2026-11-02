@@ -30,6 +30,7 @@ function initImageEditor(input) {
     if (!form || !panel || !(canvas instanceof HTMLCanvasElement) || !ratioInput || !zoomInput) return;
     const ctx = canvas.getContext('2d', { alpha: false });
     if (!ctx) return;
+    input.dataset.imageEditorReady = 'true';
 
     const original = {
         previewSrc: oldPreview ? oldPreview.getAttribute('src') : null,
