@@ -105,6 +105,12 @@ if (document.querySelector('[data-image-editor-input]')) {
     });
 }
 
+if (document.querySelector('[data-home-hero-preview]')) {
+    import('./admin-home-hero-preview.js').catch((error) => {
+        console.error('Unable to initialize the homepage hero preview.', error);
+    });
+}
+
 if (document.querySelector('[data-blog-appearance]')) {
     import('./admin-blog-appearance.js').catch((error) => {
         console.error('Unable to initialize blog appearance previews.', error);
