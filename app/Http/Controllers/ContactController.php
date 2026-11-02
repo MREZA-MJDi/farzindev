@@ -7,6 +7,8 @@ use App\Models\ContactMessage;
 use App\Models\ContactSetting;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
+use Illuminate\Support\Facades\Storage;
+use Throwable;
 
 class ContactController extends Controller
 {
@@ -29,14 +31,42 @@ class ContactController extends Controller
     public function store(
         StoreContactMessageRequest $request
     ): RedirectResponse {
-        ContactMessage::query()->create([
-            ...$request->validated(),
-            'user_id' => auth()->id(),
-            'status' => 'unread',
-        ]);
+        $data = $request->validated();
+        $photo = $request->file('photo');
+        unset($data['photo']);
+
+        $attachmentPath = null;
+
+        if ($photo) {
+            $attachmentPath = $photo->store('contact-attachments', 'local');
+
+            if (! $attachmentPath) {
+                return back()
+                    ->withInput($request->except('photo'))
+                    ->withErrors([
+                        'photo' => 'ذخیره تصویر انجام نشد؛ لطفاً دوباره تلاش کنید.',
+                    ]);
+            }
+        }
+
+        try {
+            ContactMessage::query()->create([
+                ...$data,
+                'user_id' => auth()->id(),
+                'callback_requested' => (bool) ($data['callback_requested'] ?? false),
+                'attachment_path' => $attachmentPath,
+                'status' => 'unread',
+            ]);
+        } catch (Throwable $exception) {
+            if ($attachmentPath) {
+                Storage::disk('local')->delete($attachmentPath);
+            }
+
+            throw $exception;
+        }
 
         return redirect()
             ->route('contact')
-            ->with('success', 'پیام شما با موفقیت ارسال شد.');
+            ->with('success', 'پیام شما با موفقیت ارسال شد. در صورت درخواست تماس برگشتی، همکاران مجموعه با شما هماهنگ می‌کنند.');
     }
 }
