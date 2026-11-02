@@ -1998,3 +1998,79 @@ body.home-body {
         transition: none !important;
     }
 }
+
+
+/* Customer-first additions: keep existing Farzin design tokens and palette. */
+.fz-home-hero__layout--copy-only {
+    grid-template-columns: minmax(0, 1fr);
+}
+.fz-home-hero__layout--copy-only .fz-home-hero__copy {
+    max-width: 54rem;
+}
+.fz-home-installment {
+    padding-block: clamp(1.5rem, 4vw, 3rem);
+    background: var(--livora-surface, #f6f7f8);
+}
+.fz-home-installment__panel {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 1.5rem;
+    padding: clamp(1.25rem, 3vw, 2.25rem);
+    border: 1px solid var(--livora-border);
+    border-radius: 1.5rem;
+    background: var(--livora-white);
+    color: var(--livora-text);
+}
+.fz-home-installment__panel h2 {
+    margin-top: .65rem;
+    font-size: clamp(1.1rem, 2vw, 1.55rem);
+    font-weight: 800;
+    line-height: 1.7;
+}
+.fz-home-installment__panel p:not(.fz-eyebrow) {
+    margin-top: .55rem;
+    color: var(--livora-stone);
+    font-size: .82rem;
+    line-height: 2;
+}
+.fz-home-installment__panel > a {
+    display: inline-flex;
+    min-height: 44px;
+    align-items: center;
+    justify-content: center;
+    border-radius: 999px;
+    padding: .75rem 1.15rem;
+    background: var(--livora-ink);
+    color: #fff;
+    font-size: .78rem;
+    font-weight: 700;
+    text-align: center;
+}
+.fz-home-final-cta__panel--text-only {
+    grid-template-columns: minmax(0, 1fr);
+}
+.fz-home-final-cta__panel--text-only .fz-home-final-cta__copy {
+    max-width: 54rem;
+}
+.farzin-site-header__action {
+    min-width: 44px;
+    min-height: 44px;
+}
+.farzin-product-card__wishlist {
+    min-width: 44px;
+    min-height: 44px;
+}
+@media (max-width: 767px) {
+    .fz-home-installment__panel {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 1rem;
+    }
+    .fz-home-installment__panel > a {
+        width: 100%;
+    }
+    .home-body .farzin-product-card--round-media .farzin-product-card__wishlist {
+        min-width: 44px;
+        min-height: 44px;
+    }
+}
