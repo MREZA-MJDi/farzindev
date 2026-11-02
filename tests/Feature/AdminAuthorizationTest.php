@@ -22,7 +22,7 @@ class AdminAuthorizationTest extends TestCase
             ->assertRedirect(route('cart.index'));
 
         $this->get('/admin')
-            ->assertRedirect(route('login'));
+            ->assertRedirect(route('admin.login'));
 
         $this->get(route('product.show', 'missing-product-for-error-handler-test'))
             ->assertNotFound();
@@ -62,7 +62,7 @@ class AdminAuthorizationTest extends TestCase
     public function test_guest_cannot_enter_admin_dashboard(): void
     {
         $this->get('/admin')
-            ->assertRedirect(route('login'));
+            ->assertRedirect(route('admin.login'));
     }
 
     public function test_valid_admin_can_open_the_dashboard(): void
@@ -88,7 +88,7 @@ class AdminAuthorizationTest extends TestCase
         Schema::dropIfExists('cart_items');
         Schema::dropIfExists('carts');
 
-        $this->post('/login', [
+        $this->post('/admin/login', [
             'phone' => 'admin-login@example.test',
             'password' => 'StrongPass123',
         ])->assertRedirect(route('admin.dashboard'));
@@ -104,8 +104,31 @@ class AdminAuthorizationTest extends TestCase
             'password' => Hash::make('StrongPass123'),
         ]);
 
-        $this->post('/login', [
+        $this->post('/admin/login', [
             'phone' => 'admin-login@example.test',
+            'password' => 'StrongPass123',
+        ])->assertRedirect(route('admin.dashboard'));
+
+        $this->assertAuthenticatedAs($admin);
+    }
+
+    public function test_customer_and_admin_logins_are_role_separated(): void
+    {
+        $admin = User::factory()->create([
+            'role' => 'admin',
+            'email' => 'role-separated-admin@example.test',
+            'password' => Hash::make('StrongPass123'),
+        ]);
+
+        $this->post(route('login.store'), [
+            'phone' => 'role-separated-admin@example.test',
+            'password' => 'StrongPass123',
+        ])->assertRedirect(route('login'));
+
+        $this->assertGuest();
+
+        $this->post(route('admin.login.store'), [
+            'phone' => 'role-separated-admin@example.test',
             'password' => 'StrongPass123',
         ])->assertRedirect(route('admin.dashboard'));
 
