@@ -33,6 +33,7 @@ class ShopController extends Controller
                 'variants:id,product_id,stock',
             ])
             ->active()
+            ->publicCatalogue()
             ->whereHas('category', fn ($categoryQuery) => $categoryQuery
                 ->where('is_active', true));
 
@@ -112,20 +113,7 @@ class ShopController extends Controller
         */
 
         if (! empty($filters['in_stock'])) {
-            // Stock belongs to the parent product only when no variants are
-            // configured. Variant-backed products must use option-level stock.
-            $query->where(function ($stockQuery): void {
-                $stockQuery
-                    ->where(function ($baseStock): void {
-                        $baseStock
-                            ->whereDoesntHave('variants', fn ($variantQuery) => $variantQuery
-                                ->where('is_active', true))
-                            ->where('products.stock', '>', 0);
-                    })
-                    ->orWhereHas('variants', fn ($variantQuery) => $variantQuery
-                        ->where('is_active', true)
-                        ->where('stock', '>', 0));
-            });
+            $query->availableForPurchase();
         }
 
         if (!empty($filters['featured'])) {
@@ -168,7 +156,7 @@ class ShopController extends Controller
                 ->orderByDesc('is_featured')
                 ->orderByDesc('updated_at'),
 
-            default => $query->latest()->orderByDesc('id'),
+            default => $query->orderByAvailability()->latest()->orderByDesc('id'),
         };
 
         /*
@@ -189,8 +177,9 @@ class ShopController extends Controller
 
         $categories = Category::query()
             ->active()
+            ->whereHas('products', fn ($query) => $query->active()->publicCatalogue())
             ->withCount([
-                'products' => fn ($query) => $query->active(),
+                'products' => fn ($query) => $query->active()->publicCatalogue(),
             ])
             // Category::active() adds its own sort order. Reset it so a
             // selected category outside the first 100 is promoted before cap.
@@ -209,6 +198,18 @@ class ShopController extends Controller
         |--------------------------------------------------------------------------
         */
 
+        $hasBestSellerSales = Product::query()
+            ->active()
+            ->publicCatalogue()
+            ->whereHas('orderItems', function ($orderItems): void {
+                $orderItems->whereHas('order', function ($orders): void {
+                    $orders
+                        ->where('payment_status', 'paid')
+                        ->where('status', '!=', 'cancelled');
+                });
+            })
+            ->exists();
+
         $settings = StorefrontSetting::query()
             ->whereIn('key', [
                 'shop_banner_image',
@@ -222,6 +223,7 @@ class ShopController extends Controller
         return view('shop.index', [
             'products' => $products,
             'categories' => $categories,
+            'hasBestSellerSales' => $hasBestSellerSales,
             'shopBanner' => [
                 'image_url' => $bannerPath ? Storage::disk('public')->url($bannerPath) : null,
                 'image_srcset' => $bannerPath ? $images->srcset($bannerPath) : null,
