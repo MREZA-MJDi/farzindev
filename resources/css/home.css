@@ -3242,10 +3242,3 @@ body.home-body {
     .fz-home-final__actions { width: 100%; }
     .fz-home-final__actions .fz-sales-button { flex: 1 1 100%; min-width: 0; }
 }
-@media (prefers-reduced-motion: reduce) {
-    .fz-home-category-grid .fz-category-card,
-    .fz-home-product-grid .fz-home-product-card,
-    .fz-home-product-card__media img { transition: none; }
-    .fz-home-category-grid .fz-category-card:hover,
-    .fz-home-product-grid .fz-home-product-card:hover { transform: none; }
-}
