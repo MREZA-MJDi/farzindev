@@ -67,7 +67,7 @@
                 return [
                     'url' => $image->url,
                     'srcset' => $image->responsive_srcset,
-                    'alt' => ($image->alt ?: $productName),
+                    'alt' => $productName,
                 ];
             })->values()
         ),
@@ -194,7 +194,7 @@
                         x-transition:enter-end="opacity-100 scale-100"
                         src="{{ $image->url }}"
                         @if($image->responsive_srcset) srcset="{{ $image->responsive_srcset }}" sizes="(max-width: 1023px) 100vw, 50vw" @endif
-                        alt="{{ ($image->alt ?: $productName) }}"
+                        alt="{{ $productName }}"
                         @if($index !== 0)
                         loading="lazy"
                         @endif
@@ -215,7 +215,7 @@
 
                             /
 
-                            {{ $imageCount }}
+                            {{ \\App\\Helpers\\PersianNumberHelper::format($imageCount) }}
 
                         </span>
 
@@ -394,7 +394,7 @@
 
                 <div>
                     <p class="text-[10px] font-medium uppercase tracking-[0.18em] text-[var(--livora-accent)]">
-                        VARIANT GALLERY
+                        تصاویر گزینه انتخاب‌شده
                     </p>
 
                     <p class="mt-1 text-xs text-[var(--livora-stone)]">
