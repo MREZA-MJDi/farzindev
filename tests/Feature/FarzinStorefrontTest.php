@@ -463,6 +463,8 @@ class FarzinStorefrontTest extends TestCase
             'slug' => 'video-preview-hoods',
             'sort_order' => 1,
         ]);
+        $this->product($videoCategory);
+
         $video = \App\Models\Media::create([
             'disk' => 'public',
             'path' => 'media/hood-preview.mp4',
@@ -479,6 +481,8 @@ class FarzinStorefrontTest extends TestCase
             'slug' => 'gif-preview-sinks',
             'sort_order' => 2,
         ]);
+        $this->product($gifCategory);
+
         $gif = \App\Models\Media::create([
             'disk' => 'public',
             'path' => 'media/sink-preview.gif',
@@ -614,6 +618,7 @@ class FarzinStorefrontTest extends TestCase
             'name' => 'دسته تست SEO',
             'slug' => 'seo-test-category',
         ]);
+        $this->product($category);
 
         $this->get(route('categories.show', $category->slug))
             ->assertOk()
