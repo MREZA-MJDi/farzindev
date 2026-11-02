@@ -185,14 +185,6 @@ class AuthController extends Controller
 
 
         return redirect()
-                ->route('admin.dashboard')
-                ->with(
-                    'success',
-                    'به پنل مدیریت خوش آمدید.'
-                );
-        }
-
-        return redirect()
             ->intended(route('account.index'))
             ->with(
                 'success',
