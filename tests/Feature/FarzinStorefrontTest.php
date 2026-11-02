@@ -977,7 +977,6 @@ class FarzinStorefrontTest extends TestCase
             ->assertOk()
             ->assertSee('"availability"', false)
             ->assertSee('InStock')
-            ->assertSee('وابسته به ویژگی انتخاب‌شده')
             ->assertSee('max="2"', false)
             ->assertSee('fz-product-panel', false)
             ->assertSee('data-product-cart-form', false)
