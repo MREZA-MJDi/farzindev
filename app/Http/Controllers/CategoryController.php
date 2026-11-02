@@ -27,11 +27,10 @@ class CategoryController extends Controller
 
     public function show(Category $category): View
     {
+        // Publication belongs to the category itself. Do not make its URL
+        // disappear merely because its products are still drafts or not added.
         abort_unless(
-            $category->is_active && (
-                app()->environment(['local', 'testing'])
-                || $category->products()->active()->exists()
-            ),
+            Category::query()->active()->whereKey($category->getKey())->exists(),
             404
         );
 
