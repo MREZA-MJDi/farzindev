@@ -272,6 +272,30 @@
             </div>
         </section>
 
+        @if($homeWidthOptions->isNotEmpty())
+            <section class="fz-home-width-selector" aria-labelledby="fz-home-width-title">
+                <div class="fz-container">
+                    <form action="{{ route('shop.index') }}" method="GET" class="fz-home-width-selector__form">
+                        <div class="fz-home-width-selector__copy">
+                            <p class="fz-eyebrow"><span></span> انتخاب سریع</p>
+                            <h2 id="fz-home-width-title">عرض موردنیاز هود چند سانتی‌متر است؟</h2>
+                            <p>مدل‌هایی را ببینید که عرض ثبت‌شده‌شان با اندازه انتخابی شما هماهنگ است.</p>
+                        </div>
+                        <label class="fz-home-width-selector__field">
+                            <span>عرض محصول</span>
+                            <select name="width_cm" required>
+                                <option value="">انتخاب عرض</option>
+                                @foreach($homeWidthOptions as $width)
+                                    <option value="{{ $width }}">{{ \App\Helpers\PersianNumberHelper::format($width) }} سانتی‌متر</option>
+                                @endforeach
+                            </select>
+                        </label>
+                        <button type="submit">مشاهده مدل‌های مناسب <span aria-hidden="true">←</span></button>
+                    </form>
+                </div>
+            </section>
+        @endif
+
         @if($blogPosts->count() >= 3)
             @php
                 $homeFeaturedArticle = $blogPosts->first();
