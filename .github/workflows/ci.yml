@@ -69,6 +69,7 @@ jobs:
           touch "$DB_DATABASE"
           php artisan migrate:fresh --force
           ADMIN_EMAIL=browser-admin@example.test ADMIN_PASSWORD=browser-smoke-password php artisan db:seed --force
+          php artisan db:seed --class=BrowserSmokeSeeder --force
           npm install --no-save --package-lock=false @playwright/test@1.55.0
           npx playwright install --with-deps chromium
           npx playwright test
@@ -91,7 +92,7 @@ jobs:
           php artisan view:cache
           php artisan view:clear
 
-      - name: Smoke-test the full Farzin database seeder
+      - name: Smoke-test the production database seeder (no placeholder products)
         run: |
           touch database/catalog-smoke.sqlite
           APP_ENV=local DB_CONNECTION=sqlite DB_DATABASE="$PWD/database/catalog-smoke.sqlite" php artisan migrate:fresh --force
@@ -100,37 +101,38 @@ jobs:
           require "vendor/autoload.php";
           $app = require "bootstrap/app.php";
           $app->make(Illuminate\Contracts\Console\Kernel::class)->bootstrap();
-          $products = App\Models\Product::where("sku", "like", "FZ-SEED-%")->count();
-          $images = App\Models\ProductImage::whereHas("product", fn ($query) => $query->where("sku", "like", "FZ-SEED-%"))->count();
+          $products = App\Models\Product::count();
+          $previewProducts = App\Models\Product::where(function ($query) {
+              $query->where("sku", "like", "%SEED%")
+                  ->orWhere("sku", "like", "%DEMO%")
+                  ->orWhere("slug", "like", "%preview%");
+          })->count();
           $admins = App\Models\User::where("role", "admin")->count();
-          if ($products !== 50 || $images !== 0 || $admins < 1) { throw new RuntimeException("Seed smoke test failed: " . $products . " products, " . $images . " placeholder images, " . $admins . " admins."); }
-          App\Models\Product::where("sku", "FZ-SEED-HOOD-01")->update(["name" => "Edited by dashboard"]);
+          if ($products !== 0 || $previewProducts !== 0 || $admins < 1) {
+              throw new RuntimeException("Database seed created placeholder products or failed to create the admin.");
+          }
           App\Models\Category::where("slug", "hoods")->update(["name" => "Edited category by dashboard", "is_active" => false, "sort_order" => 8]);
           $admin = App\Models\User::where("role", "admin")->orderBy("id")->firstOrFail();
           $admin->update(["password" => Illuminate\Support\Facades\Hash::make("manually-rotated-password")]);
-          echo "Full database seed passed: preview catalogue and admin created.\n";
+          echo "Seed passed: no products created; admin and categories initialized.\n";
           '
           APP_ENV=local DB_CONNECTION=sqlite DB_DATABASE="$PWD/database/catalog-smoke.sqlite" php artisan db:seed --force
           APP_ENV=local DB_CONNECTION=sqlite DB_DATABASE="$PWD/database/catalog-smoke.sqlite" php -r '
           require "vendor/autoload.php";
           $app = require "bootstrap/app.php";
           $app->make(Illuminate\Contracts\Console\Kernel::class)->bootstrap();
-          $products = App\Models\Product::where("sku", "like", "FZ-SEED-%")->count();
-          $images = App\Models\ProductImage::whereHas("product", fn ($query) => $query->where("sku", "like", "FZ-SEED-%"))->count();
-          $name = App\Models\Product::where("sku", "FZ-SEED-HOOD-01")->value("name");
+          $products = App\Models\Product::count();
+          $previewProducts = App\Models\Product::where(function ($query) {
+              $query->where("sku", "like", "%SEED%")
+                  ->orWhere("sku", "like", "%DEMO%")
+                  ->orWhere("slug", "like", "%preview%");
+          })->count();
           $category = Illuminate\Support\Facades\DB::table("categories")->where("slug", "hoods")->first();
           $admin = App\Models\User::where("role", "admin")->orderBy("id")->firstOrFail();
-          if (
-              $products !== 50
-              || $images !== 0
-              || $name !== "Edited by dashboard"
-              || ! $category
-              || $category->name !== "Edited category by dashboard"
-              || (int) $category->is_active !== 0
-              || (int) $category->sort_order !== 8
-              || ! Illuminate\Support\Facades\Hash::check("manually-rotated-password", $admin->password)
-          ) { throw new RuntimeException("Repeat seeding changed or duplicated existing catalogue/admin data."); }
-          echo "Repeat seed passed: product/category edits and admin password are preserved.\n";
+          if ($products !== 0 || $previewProducts !== 0 || ! $category || $category->name !== "Edited category by dashboard" || (int) $category->is_active !== 0 || (int) $category->sort_order !== 8 || ! Illuminate\Support\Facades\Hash::check("manually-rotated-password", $admin->password)) {
+              throw new RuntimeException("Repeat seeding changed catalogue/admin state or created preview products.");
+          }
+          echo "Repeat seed passed: catalogue remains empty and category/admin changes are preserved.\n";
           '
 
       - name: Install production Composer dependencies
