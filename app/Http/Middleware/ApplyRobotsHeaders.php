@@ -46,6 +46,8 @@ class ApplyRobotsHeaders
                 'X-Robots-Tag',
                 'noindex, nofollow, noarchive, nosnippet, noimageindex'
             );
+
+            return $response;
         }
 
         // The service combines the global development lock with global robots
