@@ -102,17 +102,21 @@ class Category extends Model
      */
     public function latestActiveProduct(): HasOne
     {
-        return $this->hasOne(Product::class)
-            ->where('status', 'active')
-            ->where(function ($query): void {
-                $query->whereNull('sku')
+        $query = $this->hasOne(Product::class)
+            ->where('status', 'active');
+
+        if (! app()->environment('local')) {
+            $query->where(function ($skuQuery): void {
+                $skuQuery->whereNull('sku')
                     ->orWhere(function ($realProductQuery): void {
                         $realProductQuery
                             ->where('sku', 'not like', 'FZ-SEED-%')
                             ->where('sku', 'not like', 'LIV-%');
                     });
-            })
-            ->latestOfMany('updated_at');
+            });
+        }
+
+        return $query->latestOfMany('updated_at');
     }
 
     public function getHomepageImageUrlAttribute(): ?string
@@ -136,9 +140,13 @@ class Category extends Model
 
     public function scopeActive($query)
     {
+        $query->where('is_active', true);
+
+        if (! app()->environment('local')) {
+            $query->whereNotIn('slug', ['furniture', 'chairs', 'tables', 'decor', 'accessories']);
+        }
+
         return $query
-            ->where('is_active', true)
-            ->whereNotIn('slug', ['furniture', 'chairs', 'tables', 'decor', 'accessories'])
             ->whereHas('products', fn ($productQuery) => $productQuery->active())
             ->orderBy('sort_order');
     }
