@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\Helpers\JalaliHelper;
 use App\Models\BlogPost;
 use App\Models\Category;
+use App\Models\ContactMessage;
 use App\Models\Order;
 use App\Models\Product;
 use App\Models\User;
