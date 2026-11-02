@@ -717,6 +717,28 @@ class FarzinStorefrontTest extends TestCase
             ->assertDontSee('نقطه تمرکز تصویر Hero');
     }
 
+    public function test_homepage_cms_rejects_hero_images_outside_the_fixed_crop_ratio(): void
+    {
+        Storage::fake('public');
+        $admin = $this->admin();
+
+        $values = collect(app(\\App\\Services\\StorefrontPageContent::class)->defaults())
+            ->filter(fn ($value, $key) => str_starts_with($key, 'page_home_'))
+            ->all();
+
+        $this->actingAs($admin, 'admin')
+            ->put(route('admin.page-content.update'), array_merge($values, [
+                'tab' => 'home',
+                'page_home_hero_image' => UploadedFile::fake()->image('wrong-hero-ratio.png', 1600, 900),
+            ]))
+            ->assertSessionHasErrors('page_home_hero_image');
+
+        $this->assertDatabaseMissing('storefront_settings', [
+            'key' => 'page_home_hero_image_url',
+        ]);
+        Storage::disk('public')->assertDirectoryEmpty('homepage');
+    }
+
     public function test_homepage_cms_uploads_hero_image_and_persists_its_public_path(): void
     {
         Storage::fake('public');
