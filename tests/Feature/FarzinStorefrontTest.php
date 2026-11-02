@@ -1130,6 +1130,7 @@ class FarzinStorefrontTest extends TestCase
             ->assertRedirect(route('admin.login'));
 
         $admin = $this->admin();
+        $this->app['auth']->guard('web')->logout();
 
         $this->actingAs($admin, 'admin')
             ->get(route('account.index'))
@@ -1744,6 +1745,8 @@ class FarzinStorefrontTest extends TestCase
             ->assertOk()
             ->assertJsonPath('ok', true)
             ->assertHeader('Cache-Control', 'no-store, private');
+
+        $this->app['auth']->guard('admin')->logout();
 
         $this->actingAs($customer, 'web')
             ->get(route('admin.session.heartbeat'))
