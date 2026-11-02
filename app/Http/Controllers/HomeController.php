@@ -121,8 +121,18 @@ class HomeController extends Controller
             ->where('is_active', true)
             ->first(['warranty_summary', 'shipping_summary', 'installation_summary']);
 
+        $homeWidthOptions = Product::query()
+            ->active()
+            ->publicCatalogue()
+            ->availableForPurchase()
+            ->whereNotNull('width_cm')
+            ->distinct()
+            ->orderBy('width_cm')
+            ->pluck('width_cm');
+
         return view('home.index', [
             'publicContactSettings' => $publicContactSettings,
+            'homeWidthOptions' => $homeWidthOptions,
             'categories' => $categories,
             'heroProduct' => $heroProduct,
             'featuredProducts' => $featuredProducts,
