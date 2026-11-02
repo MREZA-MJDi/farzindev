@@ -38,6 +38,8 @@ class AuthController extends Controller
             $request->session()->flash('warning', 'نشست مدیریت شما منقضی شده است؛ برای ادامه دوباره وارد شوید.');
         }
 
+        $request->session()->put('url.intended', route('admin.dashboard'));
+
         return view('auth.login', [
             'brandProduct' => $this->authShowcaseProduct(),
             'adminLogin' => true,
@@ -98,6 +100,7 @@ class AuthController extends Controller
 
         if (! $authenticated || ! $roleAllowed) {
             Auth::logout();
+            $request->session()->invalidate();
             $request->session()->regenerateToken();
             RateLimiter::hit($throttleKey, 60);
 
@@ -115,7 +118,7 @@ class AuthController extends Controller
 
         if ($adminOnly) {
             return redirect()
-                ->intended(route('admin.dashboard'))
+                ->route('admin.dashboard')
                 ->with('success', 'به پنل مدیریت خوش آمدید.');
         }
 
