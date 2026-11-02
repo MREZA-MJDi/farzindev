@@ -341,6 +341,13 @@ class FarzinStorefrontTest extends TestCase
             'email' => 'hello@farajihome.com',
             'address' => 'تهران، نشانی آزمایشی',
             'hours' => 'شنبه تا چهارشنبه',
+            'whatsapp' => '09121234567',
+            'instagram_url' => 'https://instagram.com/farzin.example',
+            'telegram_url' => 'https://t.me/farzin.example',
+            'eitaa_url' => 'https://eitaa.com/farzin.example',
+            'warranty_summary' => '۱۲ ماه ضمانت رسمی ثبت‌شده',
+            'shipping_summary' => 'ارسال به نشانی ثبت‌شده طبق هزینه نمایش‌داده‌شده',
+            'installation_summary' => 'نصب با هماهنگی قبلی در محدوده خدمت‌رسانی',
             'is_active' => true,
         ]);
 
@@ -350,7 +357,39 @@ class FarzinStorefrontTest extends TestCase
             ->assertOk()
             ->assertSee('tel:02112345678', false)
             ->assertSee('hello@farajihome.com')
-            ->assertSee('تهران، نشانی آزمایشی');
+            ->assertSee('تهران، نشانی آزمایشی')
+            ->assertSee('href="https://wa.me/989121234567"', false)
+            ->assertSee('https://eitaa.com/farzin.example')
+            ->assertSee('۱۲ ماه ضمانت رسمی ثبت‌شده')
+            ->assertSee('نصب با هماهنگی قبلی در محدوده خدمت‌رسانی')
+            ->assertSee('مشاوره در واتساپ')
+            ->assertDontSee('سبد خرید شخصی')
+            ->assertDontSee('سوابق سفارش');
+    }
+
+    public function test_contact_page_hides_empty_map_and_social_channels(): void
+    {
+        $this->get(route('contact'))
+            ->assertOk()
+            ->assertDontSee('fz-contact-map-column', false)
+            ->assertDontSee('fz-contact-social', false)
+            ->assertDontSee('fz-contact-hours', false)
+            ->assertSee('fz-contact-form-panel', false);
+    }
+
+    public function test_admin_and_customer_login_pages_have_separate_forms(): void
+    {
+        $this->get(route('login'))
+            ->assertOk()
+            ->assertSee('action="' . route('login.store') . '"', false)
+            ->assertSee('ایجاد حساب جدید');
+
+        $this->get(route('admin.login'))
+            ->assertOk()
+            ->assertSee('ورود به مدیریت')
+            ->assertSee('action="' . route('admin.login.store') . '"', false)
+            ->assertDontSee('ایجاد حساب جدید')
+            ->assertSee('ورود به حساب مشتری');
     }
 
     public function test_homepage_uses_a_static_hero_buying_guides_and_one_six_product_grid(): void
