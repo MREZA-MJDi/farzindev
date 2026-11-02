@@ -270,6 +270,29 @@
 
     <x-layout.mobile-bottom-bar :cart-count="$storefrontCartCount" />
 
+    @php
+        $floatingPhone = preg_replace('/[^0-9+]/', '', (string) data_get($storefrontContact, 'phone', ''));
+        $floatingWhatsapp = preg_replace('/\D+/', '', (string) data_get($storefrontContact, 'whatsapp', ''));
+        if ($floatingWhatsapp !== '' && str_starts_with($floatingWhatsapp, '0')) {
+            $floatingWhatsapp = '98' . substr($floatingWhatsapp, 1);
+        } elseif ($floatingWhatsapp !== '' && ! str_starts_with($floatingWhatsapp, '98')) {
+            $floatingWhatsapp = '98' . $floatingWhatsapp;
+        }
+    @endphp
+    @if(($storefrontSettings['floating_contact_enabled'] ?? '0') === '1' && ($floatingPhone !== '' || $floatingWhatsapp !== ''))
+        <div class="fixed bottom-24 left-4 z-[75] flex flex-col gap-2 lg:bottom-6" aria-label="راه‌های ارتباط سریع">
+            @if($floatingWhatsapp !== '')
+                <a href="https://wa.me/{{ $floatingWhatsapp }}" target="_blank" rel="noopener noreferrer" class="rounded-full bg-emerald-700 px-4 py-3 text-sm font-bold text-white shadow-xl">واتساپ</a>
+            @endif
+            @if($floatingPhone !== '')
+                <a href="tel:{{ $floatingPhone }}" class="rounded-full bg-slate-900 px-4 py-3 text-sm font-bold text-white shadow-xl">تماس با ما</a>
+            @endif
+            <a href="{{ route('contact') }}#contact-form" class="rounded-full border border-slate-300 bg-white px-4 py-3 text-sm font-bold text-slate-900 shadow-xl">پرسش</a>
+        </div>
+    @endif
+
+
+
 </div>
 
 @stack('scripts')
