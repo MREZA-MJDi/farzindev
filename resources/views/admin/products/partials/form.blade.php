@@ -1269,7 +1269,7 @@
             */
 
             const form =
-                document.querySelector('form');
+                document.querySelector('[data-admin-product-form]');
 
             const priceInput =
                 document.getElementById('price');

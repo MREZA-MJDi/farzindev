@@ -23,6 +23,7 @@
         action="{{ route('admin.products.store') }}"
         method="POST"
         enctype="multipart/form-data"
+        data-admin-product-form
     >
         @include('admin.products.partials.form')
     </form>
