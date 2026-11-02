@@ -26,7 +26,7 @@
                 </p>
 
                 <p class="mt-0.5 text-[9px] uppercase tracking-[0.16em] text-[var(--admin-muted)]">
-                    Administration
+                    پنل مدیریت
                 </p>
 
             </div>
@@ -74,7 +74,7 @@
         <div class="mb-5">
 
             <p class="px-3 text-[9px] font-bold uppercase tracking-[0.2em] text-[var(--admin-muted)]">
-                OVERVIEW
+                نمای کلی
             </p>
 
             <div class="mt-2 space-y-1">
@@ -165,12 +165,12 @@
 
 
         {{-- =====================================================
-             CATALOG
+             مدیریت کالا
         ====================================================== --}}
         <div class="mb-5">
 
             <p class="px-3 text-[9px] font-bold uppercase tracking-[0.2em] text-[var(--admin-muted)]">
-                CATALOG
+                مدیریت کالا
             </p>
 
             <div class="mt-2 space-y-1">
@@ -318,7 +318,7 @@
                         'text-[var(--admin-text-soft)] hover:bg-[var(--admin-surface)] hover:text-[var(--admin-text)]' => !request()->routeIs('admin.blog-posts.*'),
                     ])
                 >
-                    <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[var(--admin-surface)] text-[var(--admin-muted)]" aria-hidden="true">BLOG</span>
+                    <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[var(--admin-surface)] text-[var(--admin-muted)]" aria-hidden="true">مجله</span>
                     <span class="flex-1">مقالات و بلاگ</span>
                     @if(request()->routeIs('admin.blog-posts.*'))
                         <span class="h-1.5 w-1.5 rounded-full bg-[var(--admin-accent)]"></span>
@@ -331,12 +331,12 @@
 
 
         {{-- =====================================================
-             SALES
+             فروش و سفارش‌ها
         ====================================================== --}}
         <div class="mb-5">
 
             <p class="px-3 text-[9px] font-bold uppercase tracking-[0.2em] text-[var(--admin-muted)]">
-                SALES
+                فروش و سفارش‌ها
             </p>
 
             <div class="mt-2 space-y-1">
@@ -464,7 +464,7 @@
                     ])
                 >
                     <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-white/70 text-sm" aria-hidden="true">↪</span>
-                    <span class="min-w-0 flex-1 truncate">مدیریت Redirectها</span>
+                    <span class="min-w-0 flex-1 truncate">مدیریت تغییرمسیرها</span>
                 </a>
 
                 {{-- Contact Messages --}}
@@ -521,7 +521,7 @@
 
 
         {{-- =====================================================
-             STORE TOOLS
+             ابزارهای فروشگاه
         ====================================================== --}}
         <div class="mb-5">
 
@@ -581,7 +581,7 @@
 
 
     {{-- =========================================================
-         BOTTOM USER PANEL
+         اطلاعات کاربر
     ========================================================== --}}
     <div class="shrink-0 border-t border-[var(--admin-border)] p-3">
 
