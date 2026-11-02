@@ -3853,6 +3853,11 @@ class FarzinStorefrontTest extends TestCase
             ->assertSee('نشانی مجموعه')
             ->assertSee('fz-contact-map-column', false)
             ->assertSee('fz-contact-left-column', false)
+            ->assertSee(
+                'https://www.google.com/maps?q='.urlencode('Tehran, Vanak Square, Farzin showroom').'&amp;z=15&amp;output=embed',
+                false
+            )
+            ->assertSee('مسیریابی در Google Maps')
             ->assertSee('name="message"', false)
             ->assertSee('https://wa.me/989123456789', false)
             ->assertSee('https://instagram.com/farzin.test', false);
