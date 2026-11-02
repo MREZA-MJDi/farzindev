@@ -50,6 +50,7 @@ class AuthController extends Controller
         }
 
         RateLimiter::clear($key);
+        Auth::guard('web')->logout();
         $request->session()->regenerate();
 
         return redirect()
