@@ -121,7 +121,11 @@ class FarzinStorefrontTest extends TestCase
             route('admin.blog-posts.index'),
             route('admin.blog-posts.create'),
             route('admin.blog-posts.edit', $post),
+            route('admin.blog-terms.index'),
+            route('admin.blog-terms.create'),
+            route('admin.blog-appearance.edit'),
             route('admin.seo-settings.edit'),
+            route('admin.seo-redirects.index'),
             route('admin.storefront-settings.edit'),
             route('admin.contact-messages.index'),
             route('admin.contact-messages.show', $message),
@@ -146,6 +150,20 @@ class FarzinStorefrontTest extends TestCase
             ->assertOk()
             ->assertSee('name="show_in_home_gallery"', false)
             ->assertSee('نمایش در گالری تصویری صفحه اصلی');
+
+        $this->get(route('admin.product-images.index', ['product_id' => $product->id]))
+            ->assertRedirect(route('admin.products.edit', $product));
+
+        $this->get(route('admin.product-variants.index', ['product_id' => $product->id]))
+            ->assertRedirect(route('admin.products.edit', $product));
+
+        $dashboard = $this->get(route('admin.dashboard'))->assertOk();
+        $dashboard
+            ->assertSee(route('admin.seo-settings.edit'), false)
+            ->assertSee(route('admin.seo-redirects.index'), false)
+            ->assertDontSee(route('admin.product-images.index'), false)
+            ->assertDontSee(route('admin.product-variants.index'), false);
+
     }
 
     public function test_admin_can_choose_a_media_library_asset_as_the_primary_product_image(): void
