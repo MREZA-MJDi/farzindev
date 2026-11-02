@@ -210,6 +210,12 @@ class PageContentController extends Controller
             };
         }
 
+        $previousHeroImagePath = $tab === 'home'
+            ? (string) StorefrontSetting::query()
+                ->where('key', 'page_home_hero_image_url')
+                ->value('value')
+            : '';
+
         $newHeroImagePath = null;
         if ($heroImageUpload !== null) {
             $newHeroImagePath = $images->store($heroImageUpload, 'homepage');
@@ -243,6 +249,14 @@ class PageContentController extends Controller
             }
 
             throw $exception;
+        }
+
+        if (
+            $newHeroImagePath !== null
+            && $previousHeroImagePath !== ''
+            && $previousHeroImagePath !== $newHeroImagePath
+        ) {
+            $images->delete($previousHeroImagePath);
         }
 
         $content->clearCache();
