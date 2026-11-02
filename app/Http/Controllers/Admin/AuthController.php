@@ -38,7 +38,7 @@ class AuthController extends Controller
 
         if (RateLimiter::tooManyAttempts($key, 5)) {
             return back()
-                ->onlyInput('email')
+                ->withInput($request->only('email'))
                 ->withErrors(['email' => 'تعداد تلاش‌ها بیش از حد مجاز است. کمی بعد دوباره تلاش کنید.']);
         }
 
