@@ -239,7 +239,7 @@
                                 </div>
                             @endif
 
-                            <form action="{{ route('contact.store') }}" method="POST" class="fz-contact-form">
+                            <form action="{{ route('contact.store') }}" method="POST" enctype="multipart/form-data" class="fz-contact-form">
                                 @csrf
 
                                 <div class="fz-contact-form__row">
@@ -260,6 +260,31 @@
                                     <input id="email" name="email" type="email" value="{{ old('email', auth()->user()?->email) }}" autocomplete="email" dir="ltr" placeholder="you@example.com" maxlength="255" @error('email') aria-invalid="true" @enderror>
                                     @error('email')<small class="fz-contact-field__error">{{ $message }}</small>@enderror
                                 </div>
+
+                                <div class="fz-contact-form__row">
+                                    <div class="fz-contact-field">
+                                        <label for="product_model">نام یا مدل محصول <small>اختیاری</small></label>
+                                        <input id="product_model" name="product_model" type="text" value="{{ old('product_model') }}" maxlength="120" placeholder="مثلاً H105 یا مدل سینک">
+                                        @error('product_model')<small class="fz-contact-field__error">{{ $message }}</small>@enderror
+                                    </div>
+                                    <div class="fz-contact-field">
+                                        <label for="width_cm">عرض موردنیاز (سانتی‌متر) <small>اختیاری</small></label>
+                                        <input id="width_cm" name="width_cm" type="number" min="1" max="500" step="1" value="{{ old('width_cm') }}" inputmode="numeric" placeholder="مثلاً ۷۰">
+                                        @error('width_cm')<small class="fz-contact-field__error">{{ $message }}</small>@enderror
+                                    </div>
+                                </div>
+
+                                <div class="fz-contact-field">
+                                    <label for="photo">عکس محل نصب یا محصول <small>اختیاری · حداکثر ۱۰ مگابایت</small></label>
+                                    <input id="photo" name="photo" type="file" accept="image/jpeg,image/png,image/webp" class="w-full rounded-xl border border-[var(--livora-border)] bg-[var(--livora-surface)] px-3 py-3 text-xs">
+                                    <small class="fz-contact-field__hint">فرمت‌های JPG، PNG و WEBP پذیرفته می‌شوند. تصویر فقط برای بررسی درخواست در دسترس مدیر قرار می‌گیرد.</small>
+                                    @error('photo')<small class="fz-contact-field__error">{{ $message }}</small>@enderror
+                                </div>
+
+                                <label class="flex cursor-pointer items-start gap-3 rounded-xl border border-[var(--livora-border)] bg-[var(--livora-surface)] p-4 text-xs leading-6">
+                                    <input type="checkbox" name="callback_requested" value="1" @checked(old('callback_requested')) class="mt-1 h-4 w-4 rounded border-[var(--livora-border)]">
+                                    <span>لطفاً برای راهنمایی با من تماس بگیرید.</span>
+                                </label>
 
                                 <div class="fz-contact-field">
                                     <label for="subject">موضوع پیام <span>*</span></label>
