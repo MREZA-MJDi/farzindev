@@ -34,7 +34,7 @@
 
         <div>
             <p class="text-[10px] font-medium uppercase tracking-[0.18em] text-[var(--livora-accent)]">
-                {{ strtoupper($typeLabel) }}
+                {{ $typeLabel }}
             </p>
 
             <h3 class="mt-1 text-sm font-semibold text-[var(--livora-text)]">
@@ -151,7 +151,7 @@
                         @if($isUnavailable)
                             <span class="text-[10px] text-red-600">ناموجود</span>
                         @elseif($optionStock !== null)
-                            <span class="text-[10px] text-[var(--livora-stone)]">{{ number_format($optionStock) }} عدد</span>
+                            <span class="text-[10px] text-[var(--livora-stone)]">{{ \App\Helpers\PersianNumberHelper::format($optionStock) }} عدد</span>
                         @endif
                     </span>
 
