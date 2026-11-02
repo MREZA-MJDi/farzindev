@@ -5,6 +5,7 @@
 
 <a
     class="fz-category-card fz-category-card--editorial fz-reveal"
+    @if($category->hoverMedia?->is_animated_preview) data-farzin-gif-card @endif
     style="--fz-category-delay: {{ max(0, (int) $index) * 90 }}ms"
     href="{{ route('categories.show', $category) }}"
     aria-label="مشاهده دسته‌بندی {{ $category->name }}"
