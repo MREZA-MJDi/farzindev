@@ -123,6 +123,9 @@
 
                     @php
                         $primaryImage = $product->images->first();
+                        $displayStock = $product->variants_count > 0
+                            ? (int) ($product->active_variants_stock ?? 0)
+                            : (int) $product->stock;
                     @endphp
 
                     <tr>
@@ -206,7 +209,7 @@
                         </td>
 
                         <td>
-                            @if($product->stock > 0)
+                            @if($displayStock > 0)
                                 <span class="admin-badge admin-badge-success">
                                         {{ \App\Helpers\PersianNumberHelper::format($product->stock) }}
                                     </span>
