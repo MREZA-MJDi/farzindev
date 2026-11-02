@@ -49,6 +49,12 @@ return Application::configure(
                 : route('login')
         );
 
+        $middleware->redirectUsersTo(fn (Request $request) =>
+            $request->is($adminPath, $adminPath . '/*')
+                ? route('admin.dashboard')
+                : route('home')
+        );
+
         $middleware->alias([
             'admin' => AdminMiddleware::class,
             'customer' => CustomerMiddleware::class,
