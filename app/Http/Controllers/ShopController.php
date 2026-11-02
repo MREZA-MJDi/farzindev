@@ -128,13 +128,27 @@ class ShopController extends Controller
             $query->where('installment_enabled', true);
         }
 
+        $hasBestSellerSales = Product::query()
+            ->active()
+            ->publicCatalogue()
+            ->whereHas('orderItems', function ($orderItems): void {
+                $orderItems->whereHas('order', function ($orders): void {
+                    $orders
+                        ->where('payment_status', 'paid')
+                        ->where('status', '!=', 'cancelled');
+                });
+            })
+            ->exists();
+
         /*
         |--------------------------------------------------------------------------
         | Sorting
         |--------------------------------------------------------------------------
         */
 
-        match ($filters['sort'] ?? 'newest') {
+        match (($filters['sort'] ?? 'newest') === 'popular' && ! $hasBestSellerSales
+            ? 'newest'
+            : ($filters['sort'] ?? 'newest')) {
 
             'price_asc' => $query->orderBy('price')->orderBy('id'),
 
@@ -197,18 +211,6 @@ class ShopController extends Controller
         | View
         |--------------------------------------------------------------------------
         */
-
-        $hasBestSellerSales = Product::query()
-            ->active()
-            ->publicCatalogue()
-            ->whereHas('orderItems', function ($orderItems): void {
-                $orderItems->whereHas('order', function ($orders): void {
-                    $orders
-                        ->where('payment_status', 'paid')
-                        ->where('status', '!=', 'cancelled');
-                });
-            })
-            ->exists();
 
         $settings = StorefrontSetting::query()
             ->whereIn('key', [
