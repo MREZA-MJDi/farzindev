@@ -183,7 +183,7 @@ class PageContentController extends Controller
                 'nullable',
                 'image',
                 'mimes:jpg,jpeg,png,webp',
-                'dimensions:min_width=1200,min_height=700',
+                'dimensions:min_width=1200,min_height=750,ratio=16/10',
                 'max:20480',
             ];
         }
@@ -194,7 +194,7 @@ class PageContentController extends Controller
             'page_typography_content_width.between' => 'عرض محتوا باید بین ۱۱۲۰ تا ۱۴۴۰ پیکسل باشد.',
             'page_home_hero_image.image' => 'فایل Hero باید یک تصویر معتبر باشد.',
             'page_home_hero_image.mimes' => 'فرمت تصویر Hero باید JPG، PNG یا WEBP باشد.',
-            'page_home_hero_image.dimensions' => 'ابعاد تصویر Hero حداقل باید ۱۲۰۰ در ۷۰۰ پیکسل باشد.',
+            'page_home_hero_image.dimensions' => 'خروجی Hero باید نسبت ۱۶:۱۰ و حداقل ابعاد ۱۲۰۰ در ۷۵۰ پیکسل داشته باشد.',
             'page_home_hero_image.max' => 'حجم تصویر Hero نباید بیشتر از ۲۰ مگابایت باشد.',
         ]);
 
