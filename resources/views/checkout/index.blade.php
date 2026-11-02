@@ -151,14 +151,20 @@
 
 
                 @if($checkoutPreview)
-                    <div class="mb-6 flex items-start gap-4 rounded-2xl border border-[var(--fz-line)] bg-white p-5" role="status">
-                        <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[var(--fz-paper-soft)] text-lg text-[var(--fz-accent)]" aria-hidden="true">i</span>
-                        <div class="min-w-0">
-                            <p class="text-sm font-semibold text-[var(--fz-ink)]">پیش‌نمایش تسویه حساب</p>
-                            <p class="mt-1 text-xs leading-7 text-[var(--fz-muted)]">
-                                سبد فعلی شما و مراحل تحویل را می‌بینید. برای ثبت سفارش باید با حساب مشتری وارد شوید.
-                                تا زمان اتصال و تأیید درگاه واقعی، هیچ پرداختی از این صفحه انجام نمی‌شود.
-                            </p>
+                    <div class="mb-6 rounded-xl border border-[var(--fz-line)] bg-white p-5" role="status">
+                        <div class="flex items-start gap-3">
+                            <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-[var(--fz-paper-soft)] text-lg text-[var(--fz-accent)]" aria-hidden="true">i</span>
+                            <div class="min-w-0">
+                                <p class="text-sm font-semibold text-[var(--fz-ink)]">پیش‌نمایش تسویه حساب</p>
+                                <p class="mt-1 text-xs leading-7 text-[var(--fz-muted)]">
+                                    سبد فعلی و مراحل تحویل را می‌بینید. برای ثبت سفارش باید وارد حساب مشتری شوید یا حساب بسازید؛ سبد مهمان پس از ورود به حساب منتقل می‌شود.
+                                    تا زمان اتصال و تأیید درگاه واقعی، پرداختی از این صفحه انجام نمی‌شود.
+                                </p>
+                                <div class="fz-checkout-preview__actions" data-checkout-auth>
+                                    <a href="{{ route('login', ['intended' => '/checkout']) }}">ورود و ادامه خرید</a>
+                                    <a href="{{ route('register', ['intended' => '/checkout']) }}">ساخت حساب و ادامه خرید</a>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 @endif
