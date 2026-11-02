@@ -106,7 +106,7 @@
             <div>
 
                 <div class="mb-2 text-[10px] font-medium uppercase tracking-[0.22em] text-[var(--admin-accent)]">
-                    فرزین / ADMIN
+                    فرزین / مدیریت
                 </div>
 
                 <h1 class="admin-title">
