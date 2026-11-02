@@ -104,6 +104,14 @@ class Category extends Model
     {
         return $this->hasOne(Product::class)
             ->where('status', 'active')
+            ->where(function ($query): void {
+                $query->whereNull('sku')
+                    ->orWhere(function ($realProductQuery): void {
+                        $realProductQuery
+                            ->where('sku', 'not like', 'FZ-SEED-%')
+                            ->where('sku', 'not like', 'LIV-%');
+                    });
+            })
             ->latestOfMany('updated_at');
     }
 
