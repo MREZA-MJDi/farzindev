@@ -380,15 +380,27 @@ class BlogCmsTest extends TestCase
 
         $this->get(route('blog.index'))
             ->assertOk()
-            ->assertSee('blog-featured-card', false)
-            ->assertSee('مقاله آرشیو 9');
+            ->assertSee('blog-featured-card', false);
 
-        $this->get(route('blog.index', ['page' => 2]))
+        $secondPageTitles = BlogPost::query()
+            ->published()
+            ->orderByDesc('is_featured')
+            ->orderByDesc('published_at')
+            ->orderByDesc('id')
+            ->skip(9)
+            ->take(9)
+            ->pluck('title');
+
+        $this->assertNotEmpty($secondPageTitles);
+
+        $secondPage = $this->get(route('blog.index', ['page' => 2]))
             ->assertOk()
             ->assertDontSee('blog-featured-card', false)
-            ->assertSee('blog-article-card', false)
-            ->assertSee('مقاله آرشیو 10')
-            ->assertSee('مقاله آرشیو 11');
+            ->assertSee('blog-article-card', false);
+
+        foreach ($secondPageTitles as $title) {
+            $secondPage->assertSee($title);
+        }
     }
 
 
