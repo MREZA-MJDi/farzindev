@@ -682,7 +682,7 @@ test('admin homepage hero preview matches the fixed 16:10 crop and updates its c
     await loginForm.locator('input[name="email"]').fill('browser-admin@example.test');
     await loginForm.locator('input[name="password"]').fill('browser-smoke-password');
     await loginForm.locator('button[type="submit"]').click();
-    await expect(page).toHaveURL(/\\/admin(?:\\/dashboard)?(?:\\?.*)?$/);
+    await expect(page).toHaveURL(/\/admin(?:\/dashboard)?(?:\?.*)?$/);
 
     await page.goto('/admin/page-content?tab=home', { waitUntil: 'domcontentloaded' });
     await expect(page.locator('[data-home-hero-preview]')).toBeVisible();
