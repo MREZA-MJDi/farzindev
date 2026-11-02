@@ -28,6 +28,18 @@ class FarzinStorefrontTest extends TestCase
 {
     use RefreshDatabase;
 
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        // Other checkout tests explicitly assume that free shipping is enabled.
+        // A separate test removes this row to verify the safe unconfigured state.
+        StorefrontSetting::updateOrCreate(
+            ['key' => 'shipping_flat_rate'],
+            ['value' => '0']
+        );
+    }
+
     public function test_admin_can_render_every_crud_dashboard_surface_with_real_records(): void
     {
         $admin = $this->admin();
@@ -3636,6 +3648,64 @@ class FarzinStorefrontTest extends TestCase
             ])
             ->assertRedirect(route('checkout.payment', $order))
             ->assertSessionHasErrors('gateway');
+    }
+
+    public function test_checkout_does_not_assume_free_shipping_when_no_rate_is_configured(): void
+    {
+        StorefrontSetting::query()->where('key', 'shipping_flat_rate')->delete();
+
+        $customer = $this->customer();
+        $category = $this->category(['slug' => 'shipping-not-configured']);
+        $product = $this->product($category, [
+            'name' => 'هود با هزینه ارسال نامشخص',
+            'slug' => 'hood-shipping-not-configured',
+            'sku' => 'FAR-SHIPPING-NOT-CONFIGURED',
+            'price' => 3000000,
+            'stock' => 4,
+        ]);
+
+        $cart = Cart::create([
+            'user_id' => $customer->id,
+            'session_id' => null,
+            'status' => 'active',
+        ]);
+
+        CartItem::create([
+            'cart_id' => $cart->id,
+            'product_id' => $product->id,
+            'product_variant_id' => null,
+            'variant_key' => 'base',
+            'variant_options' => null,
+            'quantity' => 1,
+            'unit_price' => 3000000,
+        ]);
+
+        $this->actingAs($customer);
+
+        $this->get(route('checkout.index'))
+            ->assertOk()
+            ->assertSee('هزینه ارسال هنوز در جمع محاسبه نشده است.')
+            ->assertSee('پس از ثبت نرخ ارسال یا هماهنگی با مجموعه مشخص می‌شود.')
+            ->assertSee('رایگان نشده', false)
+            ->assertSee('ثبت سفارش پس از تعیین هزینه ارسال')
+            ->assertSee('disabled', false)
+            ->assertDontSee('3000000 تومان</p>', false);
+
+        $this->post(route('checkout.place'), [
+            'first_name' => 'Farzin',
+            'last_name' => 'Buyer',
+            'phone' => '09123456789',
+            'email' => 'buyer@farzin.test',
+            'province' => 'تهران',
+            'city' => 'تهران',
+            'address' => 'خیابان نمونه، پلاک ۱',
+            'postal_code' => '1234567890',
+        ])
+            ->assertRedirect(route('checkout.index'))
+            ->assertSessionHas('error', 'هزینه ارسال هنوز توسط مجموعه ثبت نشده است. برای جلوگیری از اعلام مبلغ نادرست، تا ثبت نرخ ارسال امکان نهایی‌کردن سفارش وجود ندارد.');
+
+        $this->assertDatabaseCount('orders', 0);
+        $this->assertDatabaseHas('cart_items', ['cart_id' => $cart->id]);
     }
 
     public function test_checkout_applies_configured_flat_shipping_and_free_shipping_threshold(): void
