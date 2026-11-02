@@ -27,6 +27,27 @@ class AdminAuthenticationTest extends TestCase
         $this->assertGuest('web');
     }
 
+    public function test_admin_guard_does_not_leak_into_a_following_customer_request(): void
+    {
+        $admin = User::factory()->create([
+            'role' => 'admin',
+            'password' => 'password',
+        ]);
+
+        $this->post(route('admin.login.store'), [
+            'email' => $admin->email,
+            'password' => 'password',
+        ])->assertRedirect(route('admin.dashboard'));
+
+        $this->get(route('admin.dashboard'))->assertOk();
+
+        $this->get(route('account.index'))
+            ->assertRedirect(route('login'));
+
+        $this->assertAuthenticatedAs($admin, 'admin');
+        $this->assertGuest('web');
+    }
+
     public function test_customer_guard_cannot_access_admin_routes(): void
     {
         $customer = User::factory()->create(['role' => 'customer']);
