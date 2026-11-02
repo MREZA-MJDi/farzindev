@@ -43,7 +43,7 @@ class LoginRequest extends FormRequest
     {
         return [
             'phone.required' => 'شماره موبایل را وارد کنید.',
-            'phone.email' => 'برای ورود با ایمیل مدیر، یک ایمیل معتبر وارد کنید.',
+            'phone.email' => 'برای ورود با ایمیل، نشانی معتبر وارد کنید.',
             'phone.regex' => 'شماره موبایل باید مانند 09123456789 باشد.',
             'password.required' => 'رمز عبور را وارد کنید.',
             'password.min' => 'رمز عبور باید حداقل ۸ کاراکتر باشد.',
