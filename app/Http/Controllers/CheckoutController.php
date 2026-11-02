@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\Checkout\PlaceOrderRequest;
 use App\Models\Cart;
+use App\Models\Province;
 use App\Services\Checkout\CheckoutOrderService;
 use App\Models\Order;
 use App\Services\Installments\InstallmentPlanService;
@@ -61,10 +62,34 @@ class CheckoutController extends Controller
             ? $user->defaultAddress()->first()
             : null;
 
+        $provinceId = $request->old('province_id');
+        if (! filled($provinceId) && filled($defaultAddress?->province)) {
+            $provinceId = Province::query()
+                ->where('name', $defaultAddress->province)
+                ->value('id');
+        }
+
+        $selectedProvince = $provinceId
+            ? Province::query()->find($provinceId)
+            : null;
+
+        $cityId = $request->old('city_id');
+        if (! filled($cityId) && $selectedProvince && filled($defaultAddress?->city)) {
+            $cityId = $selectedProvince->cities()
+                ->where('name', $defaultAddress->city)
+                ->value('id');
+        }
+
+        $selectedCity = $selectedProvince && filled($cityId)
+            ? $selectedProvince->cities()->whereKey($cityId)->first()
+            : null;
+
         return view('checkout.index', [
             'cart' => $cart,
             'defaultAddress' => $defaultAddress,
             'checkoutPreview' => $checkoutPreview,
+            'selectedProvince' => $selectedProvince,
+            'selectedCity' => $selectedCity,
         ]);
     }
 
