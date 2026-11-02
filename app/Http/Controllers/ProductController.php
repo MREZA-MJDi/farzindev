@@ -24,6 +24,7 @@ class ProductController extends Controller
             ->where('slug', $slug)
             ->firstOrFail();
 
+        $product->setRelation('images', $product->images->filter(fn ($image) => filled($image->url))->values());
         $variantGroups = $product->variants->groupBy('type');
         $canPurchase = $variantGroups->isNotEmpty()
             ? $variantGroups->every(fn ($options) => $options->contains(
