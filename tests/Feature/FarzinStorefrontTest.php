@@ -91,7 +91,7 @@ class FarzinStorefrontTest extends TestCase
             'status' => 'unread',
         ]);
 
-        $this->actingAs($admin);
+        $this->actingAs($admin, 'admin');
 
         $urls = [
             route('admin.dashboard'),
@@ -167,7 +167,7 @@ class FarzinStorefrontTest extends TestCase
             'alt' => 'تصویر اصلی از کتابخانه',
         ]);
 
-        $this->actingAs($admin)
+        $this->actingAs($admin, 'admin')
             ->get(route('admin.products.create'))
             ->assertOk()
             ->assertSee('انتخاب تصویر اصلی از کتابخانه رسانه')
@@ -1131,11 +1131,11 @@ class FarzinStorefrontTest extends TestCase
 
         $admin = $this->admin();
 
-        $this->actingAs($admin)
+        $this->actingAs($admin, 'admin')
             ->get(route('account.index'))
             ->assertForbidden();
 
-        $this->actingAs($admin)
+        $this->actingAs($admin, 'admin')
             ->get(route('admin.dashboard'))
             ->assertOk()
             ->assertSee('x-data="adminQuickSearch"', false)
@@ -1144,7 +1144,7 @@ class FarzinStorefrontTest extends TestCase
             ->assertDontSee('page.title +', false)
             ->assertDontSee('window.location.assign', false);
 
-        $this->actingAs($admin)
+        $this->actingAs($admin, 'admin')
             ->get(route('admin.products.index'))
             ->assertOk()
             ->assertSee('admin-products-table-wrap', false)
@@ -1177,7 +1177,7 @@ class FarzinStorefrontTest extends TestCase
         $admin = $this->admin();
         $category = $this->category(['slug' => 'hoods']);
 
-        $this->actingAs($admin)
+        $this->actingAs($admin, 'admin')
             ->post(route('admin.products.store'), [
                 'category_id' => $category->id,
                 'name' => 'Farzin Hood 90',
@@ -1216,7 +1216,7 @@ class FarzinStorefrontTest extends TestCase
         $admin = $this->admin();
         $category = $this->category(['slug' => 'low-resolution-hoods']);
 
-        $this->actingAs($admin)
+        $this->actingAs($admin, 'admin')
             ->from(route('admin.products.create'))
             ->post(route('admin.products.store'), [
                 'category_id' => $category->id,
@@ -1505,7 +1505,7 @@ class FarzinStorefrontTest extends TestCase
             'stock' => 2,
         ]);
 
-        $response = $this->actingAs($admin)->get(route('admin.dashboard'))->assertOk();
+        $response = $this->actingAs($admin, 'admin')->get(route('admin.dashboard'))->assertOk();
 
         $response->assertViewHas('lowStockProducts', 2);
         $response->assertViewHas('outOfStockProducts', 1);
@@ -1739,7 +1739,7 @@ class FarzinStorefrontTest extends TestCase
         $admin = $this->admin();
         $customer = $this->customer();
 
-        $this->actingAs($admin)
+        $this->actingAs($admin, 'admin')
             ->get(route('admin.session.heartbeat'))
             ->assertOk()
             ->assertJsonPath('ok', true)
@@ -1958,7 +1958,7 @@ class FarzinStorefrontTest extends TestCase
     {
         $admin = $this->admin();
 
-        $this->actingAs($admin)
+        $this->actingAs($admin, 'admin')
             ->post(route('admin.categories.store'), [
                 'name' => 'هودهای جزیره‌ای',
                 'slug' => 'island-hoods',
@@ -2003,21 +2003,21 @@ class FarzinStorefrontTest extends TestCase
             'stock' => 4,
         ]);
 
-        $this->actingAs($admin)
+        $this->actingAs($admin, 'admin')
             ->get(route('admin.products.edit', $product))
             ->assertOk()
             ->assertSee('تصاویر عمومی گالری محصول')
             ->assertSee(route('admin.products.images.store', $product), false);
 
-        $this->actingAs($admin)
+        $this->actingAs($admin, 'admin')
             ->get(route('admin.product-images.index', ['product_id' => $product->id]))
             ->assertRedirect(route('admin.products.edit', $product));
 
-        $this->actingAs($admin)
+        $this->actingAs($admin, 'admin')
             ->get(route('admin.product-variants.index', ['product_id' => $product->id]))
             ->assertRedirect(route('admin.products.edit', $product));
 
-        $this->actingAs($admin)
+        $this->actingAs($admin, 'admin')
             ->post(route('admin.products.images.store', $product), [
                 'alt' => 'نمای عمومی محصول',
                 'images' => [
@@ -2061,13 +2061,13 @@ class FarzinStorefrontTest extends TestCase
             'alt' => 'هود از کتابخانه رسانه',
         ]);
 
-        $this->actingAs($admin)
+        $this->actingAs($admin, 'admin')
             ->get(route('admin.products.edit', $product))
             ->assertOk()
             ->assertSee('کتابخانه رسانه')
             ->assertSee('media_ids[]', false);
 
-        $this->actingAs($admin)
+        $this->actingAs($admin, 'admin')
             ->post(route('admin.products.images.store', $product), [
                 'media_ids' => [$media->id],
                 'alt' => 'هود استفاده‌شده از کتابخانه',
@@ -2205,7 +2205,7 @@ class FarzinStorefrontTest extends TestCase
             'is_primary' => true,
         ]);
 
-        $this->actingAs($admin)
+        $this->actingAs($admin, 'admin')
             ->post(route('admin.product-variants.store'), [
                 'product_id' => $product->id,
                 'type' => 'color',
@@ -2246,14 +2246,14 @@ class FarzinStorefrontTest extends TestCase
             ->assertSee($uploadedImage->url, false)
             ->assertSee('مشکی');
 
-        $this->actingAs($admin)
+        $this->actingAs($admin, 'admin')
             ->get(route('admin.products.edit', $product))
             ->assertOk()
             ->assertSee('رنگ‌ها و تنوع‌های محصول')
             ->assertSee('افزودن عکس‌های جدید برای همین تنوع', false)
             ->assertSee('مشکی');
 
-        $this->actingAs($admin)
+        $this->actingAs($admin, 'admin')
             ->put(route('admin.product-variants.update', $variant), [
                 'product_id' => $product->id,
                 'type' => 'color',
@@ -2285,7 +2285,7 @@ class FarzinStorefrontTest extends TestCase
             'stock' => 10,
         ]);
 
-        $this->actingAs($admin)
+        $this->actingAs($admin, 'admin')
             ->post(route('admin.product-variants.store'), [
                 'product_id' => $product->id,
                 'type' => 'color',
@@ -2339,7 +2339,7 @@ class FarzinStorefrontTest extends TestCase
             'is_primary' => true,
         ]);
 
-        $this->actingAs($admin)
+        $this->actingAs($admin, 'admin')
             ->post(route('admin.product-images.store'), [
                 'product_id' => $product->id,
                 'image' => UploadedFile::fake()->image('hood-angle.png', 800, 600),
@@ -2373,7 +2373,7 @@ class FarzinStorefrontTest extends TestCase
         Storage::fake('public');
         $admin = $this->admin();
 
-        $this->actingAs($admin)
+        $this->actingAs($admin, 'admin')
             ->post(route('admin.media.store'), [
                 'file' => UploadedFile::fake()->create('farzin-catalog.pdf', 100, 'application/pdf'),
                 'alt' => 'کاتالوگ فرزین',
@@ -2399,7 +2399,7 @@ class FarzinStorefrontTest extends TestCase
         Storage::fake('public');
         $admin = $this->admin();
 
-        $this->actingAs($admin)
+        $this->actingAs($admin, 'admin')
             ->post(route('admin.media.store'), [
                 'file' => UploadedFile::fake()->create('hood-preview.mp4', 1024, 'video/mp4'),
                 'alt' => 'پیش‌نمایش هود',
@@ -2421,7 +2421,7 @@ class FarzinStorefrontTest extends TestCase
         Storage::fake('public');
         $admin = $this->admin();
 
-        $this->actingAs($admin)
+        $this->actingAs($admin, 'admin')
             ->post(route('admin.media.store'), [
                 'file' => UploadedFile::fake()->create('category-motion.mp4', 1024, 'video/mp4'),
                 'alt' => 'پیش‌نمایش دسته‌بندی',
@@ -2433,13 +2433,13 @@ class FarzinStorefrontTest extends TestCase
         $media = Media::query()->firstOrFail();
         Storage::disk('public')->assertExists($media->path);
 
-        $this->actingAs($admin)
+        $this->actingAs($admin, 'admin')
             ->get(route('admin.categories.create'))
             ->assertOk()
             ->assertSee('category-motion.mp4')
             ->assertSee('hover_media_id', false);
 
-        $this->actingAs($admin)
+        $this->actingAs($admin, 'admin')
             ->post(route('admin.categories.store'), [
                 'name' => 'دسته‌بندی با پیش‌نمایش',
                 'slug' => 'category-motion-preview',
@@ -2457,7 +2457,7 @@ class FarzinStorefrontTest extends TestCase
 
         $this->assertSame($media->id, $category->hover_media_id);
 
-        $this->actingAs($admin)
+        $this->actingAs($admin, 'admin')
             ->get(route('admin.categories.edit', $category))
             ->assertOk()
             ->assertSee('category-motion.mp4');
@@ -2468,7 +2468,7 @@ class FarzinStorefrontTest extends TestCase
         $admin = $this->admin();
         $order = $this->order($this->customer());
 
-        $this->actingAs($admin)
+        $this->actingAs($admin, 'admin')
             ->patch(route('admin.orders.status', $order), [
                 'status' => 'processing',
             ])
@@ -2501,7 +2501,7 @@ class FarzinStorefrontTest extends TestCase
             'payment_status' => 'paid',
         ]);
 
-        $this->actingAs($admin)
+        $this->actingAs($admin, 'admin')
             ->from(route('admin.orders.show', $order))
             ->patch(route('admin.orders.status', $order), [
                 'status' => 'cancelled',
@@ -2528,7 +2528,7 @@ class FarzinStorefrontTest extends TestCase
             'status' => 'unread',
         ]);
 
-        $this->actingAs($admin)
+        $this->actingAs($admin, 'admin')
             ->get(route('admin.contact-messages.show', $message))
             ->assertOk();
 
@@ -2624,7 +2624,7 @@ class FarzinStorefrontTest extends TestCase
         ]);
         $blackVariant->images()->attach($blackImage->id, ['sort_order' => 0]);
 
-        $this->actingAs($admin)
+        $this->actingAs($admin, 'admin')
             ->put(route('admin.products.update', $product), [
                 'category_id' => $category->id,
                 'name' => 'Variant Main Image Hood',
@@ -2674,7 +2674,7 @@ class FarzinStorefrontTest extends TestCase
             'stock' => 4,
         ]);
 
-        $this->actingAs($admin)
+        $this->actingAs($admin, 'admin')
             ->put(route('admin.products.update', $product), [
                 'category_id' => $category->id,
                 'name' => 'Updated Farzin Hood',
@@ -2703,7 +2703,7 @@ class FarzinStorefrontTest extends TestCase
             ->assertOk()
             ->assertSee('Updated Farzin Hood');
 
-        $this->actingAs($admin)
+        $this->actingAs($admin, 'admin')
             ->delete(route('admin.products.destroy', $product))
             ->assertRedirect(route('admin.products.index'))
             ->assertSessionHas('success');
@@ -2720,7 +2720,7 @@ class FarzinStorefrontTest extends TestCase
             'slug' => 'temporary-category',
         ]);
 
-        $this->actingAs($admin)
+        $this->actingAs($admin, 'admin')
             ->put(route('admin.categories.update', $category), [
                 'name' => 'هود توکار',
                 'slug' => 'built-in-hoods',
@@ -2764,7 +2764,7 @@ class FarzinStorefrontTest extends TestCase
             'is_active' => true,
         ]);
 
-        $this->actingAs($admin)
+        $this->actingAs($admin, 'admin')
             ->put(route('admin.product-variants.update', $variant), [
                 'product_id' => $product->id,
                 'type' => 'color',
@@ -2824,7 +2824,7 @@ class FarzinStorefrontTest extends TestCase
             'is_primary' => false,
         ]);
 
-        $this->actingAs($admin)
+        $this->actingAs($admin, 'admin')
             ->delete(route('admin.product-images.destroy', $primary))
             ->assertRedirect(route('admin.product-images.index', [
                 'product_id' => $product->id,
@@ -2852,7 +2852,7 @@ class FarzinStorefrontTest extends TestCase
             'email' => 'unchanged@farzin.test',
         ]);
 
-        $this->actingAs($admin)
+        $this->actingAs($admin, 'admin')
             ->put(route('admin.customers.update', $customer), [
                 'name' => 'Updated Customer',
                 'email' => 'updated@farzin.test',
@@ -3100,7 +3100,7 @@ class FarzinStorefrontTest extends TestCase
         ]);
         $variant->images()->attach($image->id, ['sort_order' => 0]);
 
-        $this->actingAs($admin)
+        $this->actingAs($admin, 'admin')
             ->put(route('admin.product-images.update', $image), [
                 'product_id' => $product->id,
                 'alt' => 'عنوان نباید تغییر کند',
@@ -3110,7 +3110,7 @@ class FarzinStorefrontTest extends TestCase
             ->assertRedirect(route('admin.products.edit', $product))
             ->assertSessionHas('error');
 
-        $this->actingAs($admin)
+        $this->actingAs($admin, 'admin')
             ->delete(route('admin.product-images.destroy', $image))
             ->assertRedirect(route('admin.products.edit', $product))
             ->assertSessionHas('error');
@@ -3153,7 +3153,7 @@ class FarzinStorefrontTest extends TestCase
             'is_primary' => false,
         ]);
 
-        $this->actingAs($admin)
+        $this->actingAs($admin, 'admin')
             ->put(route('admin.product-images.update', $secondary), [
                 'product_id' => $product->id,
                 'image' => UploadedFile::fake()->image('hood-updated.webp', 800, 600),
@@ -3589,7 +3589,7 @@ class FarzinStorefrontTest extends TestCase
         ]);
         $product->delete();
 
-        $this->actingAs($admin)
+        $this->actingAs($admin, 'admin')
             ->delete(route('admin.categories.destroy', $category))
             ->assertRedirect(route('admin.categories.index'))
             ->assertSessionHas('error');
@@ -3618,7 +3618,7 @@ class FarzinStorefrontTest extends TestCase
         Storage::fake('public');
         $admin = $this->admin();
 
-        $this->actingAs($admin)
+        $this->actingAs($admin, 'admin')
             ->get(route('admin.storefront-settings.edit'))
             ->assertOk()
             ->assertSee('بنر صفحه فروشگاه')
@@ -3677,7 +3677,7 @@ class FarzinStorefrontTest extends TestCase
     {
         $admin = $this->admin();
 
-        $this->actingAs($admin)
+        $this->actingAs($admin, 'admin')
             ->put(route('admin.storefront-settings.update'), [
                 'shop_banner_title' => 'فروشگاه فرزین',
                 'shop_banner_subtitle' => 'راهنمای انتخاب هود و سینک',
@@ -3706,7 +3706,7 @@ class FarzinStorefrontTest extends TestCase
     {
         $admin = $this->admin();
 
-        $this->actingAs($admin)
+        $this->actingAs($admin, 'admin')
             ->from(route('admin.storefront-settings.edit'))
             ->put(route('admin.storefront-settings.update'), [
                 'shop_banner_title' => 'فروشگاه فرزین',
