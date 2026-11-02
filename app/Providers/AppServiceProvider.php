@@ -43,7 +43,7 @@ class AppServiceProvider extends ServiceProvider
             ), [], report: false);
 
             $view->with('storefrontPublicSettings', $settings);
-            $view->with('storefrontBrandName', $settings['brand_name'] ?? config('app.name', 'فرزین'));
+            $view->with('storefrontBrandName', filled($settings['brand_name'] ?? null) ? $settings['brand_name'] : 'فرزین');
             $view->with('storefrontBrandLogoUrl', filled($settings['brand_logo'] ?? null)
                 ? Storage::disk('public')->url($settings['brand_logo'])
                 : null);
