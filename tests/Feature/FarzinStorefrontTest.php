@@ -679,17 +679,42 @@ class FarzinStorefrontTest extends TestCase
         $this->assertStringContainsString('موجود و آماده سفارش', $html);
     }
 
-    public function test_homepage_cms_exposes_a_real_image_uploader_and_focal_position_control(): void
+    public function test_homepage_cms_shows_live_hero_crop_and_the_same_real_offer_card(): void
     {
+        $category = $this->category();
+        $product = $this->product($category, [
+            'name' => 'محصول واقعی پیشنهاد فرزین',
+            'slug' => 'real-farzin-hero-offer',
+            'stock' => 3,
+        ]);
+
+        ProductImage::create([
+            'product_id' => $product->id,
+            'path' => 'https://cdn.example.test/real-farzin-hero-offer.webp',
+            'alt' => 'تصویر محصول پیشنهاد فرزین',
+            'sort_order' => 0,
+            'is_primary' => true,
+        ]);
+
         $admin = $this->admin();
 
         $this->actingAs($admin, 'admin')
             ->get(route('admin.page-content.edit', ['tab' => 'home']))
             ->assertOk()
             ->assertSee('enctype="multipart/form-data"', false)
+            ->assertSee('data-home-hero-preview', false)
+            ->assertSee('data-home-hero-preview-title', false)
+            ->assertSee('data-home-hero-preview-description', false)
             ->assertSee('name="page_home_hero_image"', false)
-            ->assertSee('page_home_hero_image_position')
-            ->assertSee('نقطه تمرکز تصویر Hero');
+            ->assertSee('data-image-editor-input', false)
+            ->assertSee('data-image-editor-default-ratio="16:10"', false)
+            ->assertSee('data-image-editor-min-width="1200"', false)
+            ->assertSee('data-image-editor-min-height="750"', false)
+            ->assertSee('data-image-editor-canvas', false)
+            ->assertSee('class="fz-home-hero-offer"', false)
+            ->assertSee('محصول واقعی پیشنهاد فرزین')
+            ->assertDontSee('page_home_hero_image_position')
+            ->assertDontSee('نقطه تمرکز تصویر Hero');
     }
 
     public function test_homepage_cms_uploads_hero_image_and_persists_its_public_path(): void
@@ -705,7 +730,6 @@ class FarzinStorefrontTest extends TestCase
             ->put(route('admin.page-content.update'), array_merge($values, [
                 'tab' => 'home',
                 'page_home_hero_image' => UploadedFile::fake()->image('farzin-real-kitchen.webp', 1600, 1000),
-                'page_home_hero_image_position' => 'center 35%',
             ]))
             ->assertRedirect(route('admin.page-content.edit', ['tab' => 'home']))
             ->assertSessionHas('success');
@@ -720,7 +744,7 @@ class FarzinStorefrontTest extends TestCase
         $this->get(route('home'))
             ->assertOk()
             ->assertSee(Storage::disk('public')->url($path), false)
-            ->assertSee('object-position: center 35%', false);
+            ->assertDontSee('object-position: center 35%', false);
     }
 
     public function test_homepage_renders_category_video_and_gif_with_the_correct_media_elements(): void
