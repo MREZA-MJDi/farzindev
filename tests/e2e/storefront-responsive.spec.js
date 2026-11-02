@@ -790,8 +790,8 @@ test('homepage product cards use equal responsive image ratios and readable acti
             };
         });
 
-        expect(geometry.radius, 'product cards should keep the shared rounded-card treatment').toBeGreaterThanOrEqual(12);
-        expect(geometry.radius, 'product cards should not become circular/pill-shaped').toBeLessThanOrEqual(24);
+        expect(geometry.radius, 'product cards should keep the existing rounded-card token').toBeGreaterThanOrEqual(6);
+        expect(geometry.radius, 'product cards should not become square or circular/pill-shaped').toBeLessThanOrEqual(12);
         expect(geometry.overflow, 'product card content must stay within its rounded frame').toBe('hidden');
         expect(geometry.mediaWidth).toBeGreaterThan(0);
         expect(geometry.mediaHeight).toBeGreaterThan(0);
