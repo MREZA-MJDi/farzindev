@@ -25,6 +25,9 @@ class HomeController extends Controller
             ->withCount([
                 'products' => fn ($query) => $query->active()->publicCatalogue()->availableForPurchase(),
             ])
+            ->withMin([
+                'products as starting_price' => fn ($query) => $query->active()->publicCatalogue()->availableForPurchase(),
+            ], 'price')
             ->orderBy('sort_order')
             ->limit(4)
             ->get();
