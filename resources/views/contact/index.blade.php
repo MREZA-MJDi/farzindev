@@ -24,6 +24,16 @@
         $mapQuery = $hasMapCoordinates
             ? (string) $mapLatitude . ',' . (string) $mapLongitude
             : $mapAddress;
+        $mapEmbedUrl = null;
+        if ($hasMapCoordinates) {
+            $latitude = (float) $mapLatitude;
+            $longitude = (float) $mapLongitude;
+            $mapBounds = sprintf('%F,%F,%F,%F', $longitude - 0.01, $latitude - 0.01, $longitude + 0.01, $latitude + 0.01);
+            $mapEmbedUrl = 'https://www.openstreetmap.org/export/embed.html?bbox=' . urlencode($mapBounds) . '&layer=mapnik&marker=' . urlencode($latitude . ',' . $longitude);
+        }
+        $mapDirectionsUrl = $hasMapCoordinates
+            ? 'https://www.openstreetmap.org/?mlat=' . urlencode((string) $mapLatitude) . '&mlon=' . urlencode((string) $mapLongitude) . '#map=16/' . urlencode((string) $mapLatitude) . '/' . urlencode((string) $mapLongitude)
+            : ($mapAddress !== '' ? 'https://www.openstreetmap.org/search?query=' . urlencode($mapAddress) : null);
         $whatsappDigits = \App\Support\StorefrontContact::whatsapp($contactSetting?->whatsapp);
     @endphp
 
