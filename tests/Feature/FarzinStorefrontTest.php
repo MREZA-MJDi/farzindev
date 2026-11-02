@@ -1133,7 +1133,7 @@ class FarzinStorefrontTest extends TestCase
 
         $this->actingAs($admin, 'admin')
             ->get(route('account.index'))
-            ->assertRedirect(route('login'));
+            ->assertForbidden();
 
         $this->actingAs($admin, 'admin')
             ->get(route('admin.dashboard'))
@@ -1747,7 +1747,7 @@ class FarzinStorefrontTest extends TestCase
 
         $this->actingAs($customer)
             ->get(route('admin.session.heartbeat'))
-            ->assertRedirect(route('admin.login'));
+            ->assertForbidden();
     }
 
     public function test_unknown_payment_callback_gateway_is_rejected(): void
