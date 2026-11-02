@@ -18,6 +18,7 @@ class HomeController extends Controller
         // a new category that has not received its first product yet.
         $categories = Category::query()
             ->active()
+            ->whereHas('products', fn (Builder $query) => $query->active())
             ->with([
                 'hoverMedia:id,path,mime_type,original_name,extension,size',
                 'latestActiveProduct.images' => fn ($query) => $query
@@ -93,7 +94,6 @@ class HomeController extends Controller
             ->when($heroProduct, fn (Builder $query) => $query->whereKeyNot($heroProduct->id))
             ->whereHas('category', fn (Builder $query) => $query->where('is_active', true))
             ->whereHas('images')
-            ->when(true, $onlyInStock)
             ->with($productRelations)
             ->withSum([
                 'orderItems as sold_quantity' => function (Builder $orderItemQuery): void {
@@ -111,7 +111,7 @@ class HomeController extends Controller
             ->limit(60)
             ->get()
             ->filter(fn (Product $product) => $isPurchasable($product) && $hasPublicImage($product))
-            ->take(6)
+            ->take(8)
             ->values();
 
         $installmentProduct = Product::query()
@@ -148,7 +148,7 @@ class HomeController extends Controller
 
         $contactSetting = ContactSetting::query()
             ->where('is_active', true)
-            ->first(['phone', 'whatsapp', 'email']);
+            ->first(['phone', 'whatsapp', 'email', 'address']);
 
         // Guide links are data-driven from real, active catalogue categories.
         // The view must never reference an undefined optional collection.
