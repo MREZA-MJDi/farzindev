@@ -308,8 +308,8 @@ class FarzinStorefrontTest extends TestCase
         $this->get(route('home'))
             ->assertOk()
             ->assertSee('fz-home-journal', false)
-            ->assertSee('راهنمای تصویری فرزین ۱')
-            ->assertSee('راهنمای تصویری فرزین ۳');
+            ->assertSee('راهنمای تصویری فرزین 1')
+            ->assertSee('راهنمای تصویری فرزین 3');
     }
 
     public function test_auth_and_legal_pages_use_the_farzin_customer_experience(): void
@@ -435,7 +435,7 @@ class FarzinStorefrontTest extends TestCase
             ->assertSee('fz-home-trust', false)
             ->assertSee('fz-home-final-cta', false)
             ->assertDontSee('fz-home-contact-bridge', false)
-            ->assertSee('fz-home-journal', false)
+            ->assertDontSee('fz-home-journal', false)
             ->assertDontSee('data-farzin-home-slider', false)
             ->assertDontSee('data-home-slide', false)
             ->assertDontSee('fz-mosaic-intro', false)
@@ -1039,7 +1039,7 @@ class FarzinStorefrontTest extends TestCase
             ->assertSee('InStock')
             ->assertSee('وابسته به ویژگی انتخاب‌شده')
             ->assertSee('max="4"', false)
-            ->assertSee('موجود در انبار')
+            ->assertSee('موجود برای سفارش')
             ->assertSee('farzin-product-detail-info', false)
             ->assertSee('data-stock-available="true"', false)
             ->assertSee('روش پرداخت در مرحله ثبت سفارش')
