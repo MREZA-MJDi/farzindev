@@ -182,7 +182,13 @@ class Product extends Model
                     ->where('name', 'not like', '%تی‌شرت%')
                     ->where('name', 'not like', '%تی شرت%')
                     ->where('name', 'not like', '%تیشرت%')
-                    ->where('name', 'not like', '%t-shirt%');
+                    ->where('name', 'not like', '%t-shirt%')
+                    ->where('name', 'not like', '%میز%');
+            })
+            ->whereDoesntHave('category', function ($category): void {
+                $category
+                    ->whereIn('slug', ['furniture', 'chairs', 'tables', 'decor', 'accessories'])
+                    ->orWhere('name', 'like', '%میز%');
             });
     }
 
