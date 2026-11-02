@@ -27,7 +27,7 @@
         <form action="{{ route('login.store') }}" method="POST" class="fz-auth__form">
             @csrf
             @if(request()->query('intended') === '/checkout' || session()->has('url.intended'))<div class="fz-auth__checkout-note">برای ادامه خرید وارد شوید؛ پس از ورود به مرحله تسویه برمی‌گردید.</div>@endif
-            <div class="fz-auth__field"><label for="login-identifier">شماره موبایل یا ایمیل مدیر</label><input id="login-identifier" type="text" name="phone" value="{{ old('phone') }}" placeholder="09123456789" autocomplete="username" inputmode="text" required autofocus>@error('phone')<small role="alert">{{ $message }}</small>@enderror</div>
+            <div class="fz-auth__field"><label for="login-identifier">شماره موبایل یا ایمیل</label><input id="login-identifier" type="text" name="phone" value="{{ old('phone') }}" placeholder="09123456789" autocomplete="username" inputmode="text" required autofocus>@error('phone')<small role="alert">{{ $message }}</small>@enderror</div>
             <div class="fz-auth__field"><div class="fz-auth__field-heading"><label for="login-password">رمز عبور</label><a href="{{ route('contact') }}">برای بازیابی رمز با پشتیبانی تماس بگیرید</a></div><input id="login-password" type="password" name="password" placeholder="رمز عبور" autocomplete="current-password" required aria-invalid="{{ $errors->has('password') ? 'true' : 'false' }}">@error('password')<small role="alert">{{ $message }}</small>@enderror</div>
             <label class="fz-auth__remember"><input type="checkbox" name="remember" value="1" @checked(old('remember'))><span>مرا به خاطر بسپار</span></label>
             <button class="fz-auth__submit" type="submit">ورود به حساب <span aria-hidden="true">←</span></button>
