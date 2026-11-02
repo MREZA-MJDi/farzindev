@@ -41,21 +41,24 @@
 @endphp
 
 <article class="farzin-product-card group fz-home-product-card {{ $isAvailable ? '' : 'is-unavailable' }}" data-farzin-reveal>
-    <a class="fz-home-product-card__media" href="{{ route('product.show', $product->slug) }}" aria-label="مشاهده {{ $product->name }}">
-        @if($imageUrl)
-            <img
-                src="{{ $imageUrl }}"
-                @if($imageSrcset) srcset="{{ $imageSrcset }}" sizes="(max-width: 767px) 46vw, (max-width: 1279px) 22vw, 300px" @endif
-                alt="{{ $image?->alt ?: $product->name }}"
-                width="800"
-                height="600"
-                loading="lazy"
-                decoding="async"
-            >
-        @endif
-    </a>
+    <div class="farzin-product-card__media fz-home-product-card__media">
+        <a class="farzin-product-card__image-link" href="{{ route('product.show', $product->slug) }}" aria-label="مشاهده {{ $product->name }}">
+            @if($imageUrl)
+                <img
+                    class="farzin-product-card__image"
+                    src="{{ $imageUrl }}"
+                    @if($imageSrcset) srcset="{{ $imageSrcset }}" sizes="(max-width: 767px) 46vw, (max-width: 1279px) 22vw, 300px" @endif
+                    alt="{{ $image?->alt ?: $product->name }}"
+                    width="800"
+                    height="600"
+                    loading="lazy"
+                    decoding="async"
+                >
+            @endif
+        </a>
+    </div>
 
-    <div class="fz-home-product-card__body">
+    <div class="farzin-product-card__content fz-home-product-card__body">
         <h3 class="fz-home-product-card__title">
             <a href="{{ route('product.show', $product->slug) }}">{{ \Illuminate\Support\Str::limit($product->name, 58) }}</a>
         </h3>
