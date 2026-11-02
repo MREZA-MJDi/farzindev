@@ -45,7 +45,7 @@
                             >
                             <div class="absolute inset-0 bg-gradient-to-l from-black/75 via-black/25 to-transparent"></div>
                             <div class="farzin-shop-banner__content absolute inset-y-0 right-0 flex max-w-2xl flex-col justify-center p-6 text-white sm:p-10 lg:p-14">
-                                <p class="farzin-shop-banner__eyebrow text-[10px] font-medium uppercase tracking-[0.22em] text-white/70">FARZIN / CATALOG</p>
+                                <p class="farzin-shop-banner__eyebrow text-[10px] font-medium uppercase tracking-[0.22em] text-white/70">فروشگاه فرزین</p>
                                 <h1 class="farzin-shop-banner__title mt-3 text-3xl font-semibold leading-tight sm:text-4xl lg:text-5xl">{{ $shopBanner['title'] }}</h1>
                                 @if (filled($shopBanner['subtitle']))
                                     <p class="farzin-shop-banner__description mt-4 max-w-xl text-sm leading-8 text-white/80 sm:text-base">{{ $shopBanner['subtitle'] }}</p>
@@ -99,7 +99,7 @@
                                     <div>
 
                                         <p class="text-[10px] uppercase tracking-[0.18em] text-[var(--livora-accent)]">
-                                            DISCOVER
+                                            پیدا کردن محصول
                                         </p>
 
                                         <h2 class="mt-2 text-sm font-semibold">
@@ -226,7 +226,7 @@
                                 <div class="min-w-0">
 
                                     <p class="text-[10px] uppercase tracking-[0.18em] text-[var(--livora-accent)]">
-                                        CURATED PRODUCTS
+                                        محصولات فروشگاه
                                     </p>
 
                                     <p class="mt-2 text-sm font-medium text-[var(--livora-text)]">
@@ -240,6 +240,7 @@
 
                                     <x-shop.sorting
                                         :products="$products"
+                                        :has-best-seller-sales="$hasBestSellerSales"
                                     />
 
                                 </div>
