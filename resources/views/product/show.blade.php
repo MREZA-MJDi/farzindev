@@ -8,6 +8,9 @@
     $mainImage = $product->images->first(fn ($image) => filled($image->url));
 
     $productPrice = (float) $product->price;
+    $productPriceMin = (float) ($productPriceRange['min'] ?? $productPrice);
+    $productPriceMax = (float) ($productPriceRange['max'] ?? $productPrice);
+    $hasProductPriceRange = $productPriceMax - $productPriceMin >= 0.01;
     $phone = \App\Support\StorefrontContact::phone($contactSetting?->phone);
     $whatsappDigits = \App\Support\StorefrontContact::whatsapp($contactSetting?->whatsapp);
 
@@ -82,7 +85,7 @@
     @if($mainImage)
         <meta property="og:image:alt" content="{{ $product->name }}">
     @endif
-    <meta property="product:price:amount" content="{{ (int) round($productPrice * 10) }}">
+    <meta property="product:price:amount" content="{{ (int) round($productPriceMin * 10) }}">
     <meta property="product:price:currency" content="IRR">
     @php
         $productSchema = [
@@ -92,13 +95,22 @@
             'description' => $pageDescription,
             'url' => $pageCanonical,
             'brand' => ['@type' => 'Brand', 'name' => 'فرزین'],
-            'offers' => [
-                '@type' => 'Offer',
-                'url' => $pageCanonical,
-                'priceCurrency' => 'IRR',
-                'price' => (string) (int) round($productPrice * 10),
-                'availability' => $availability,
-            ],
+            'offers' => $hasProductPriceRange
+                ? [
+                    '@type' => 'AggregateOffer',
+                    'url' => $pageCanonical,
+                    'priceCurrency' => 'IRR',
+                    'lowPrice' => (string) (int) round($productPriceMin * 10),
+                    'highPrice' => (string) (int) round($productPriceMax * 10),
+                    'availability' => $availability,
+                ]
+                : [
+                    '@type' => 'Offer',
+                    'url' => $pageCanonical,
+                    'priceCurrency' => 'IRR',
+                    'price' => (string) (int) round($productPrice * 10),
+                    'availability' => $availability,
+                ],
         ];
 
         if (filled($product->sku)) {
