@@ -1090,7 +1090,7 @@ class FarzinStorefrontTest extends TestCase
             ->assertDontSee('خرید اقساطی؛ پیش‌پرداخت');
     }
 
-    public function test_homepage_hides_empty_categories_out_of_stock_products_and_sparse_featured_section(): void
+    public function test_homepage_shows_active_empty_categories_and_hides_out_of_stock_product_recommendations(): void
     {
         $category = $this->category([
             'name' => 'دسته دارای دو محصول موجود',
@@ -1137,10 +1137,11 @@ class FarzinStorefrontTest extends TestCase
         $response = $this->get(route('home'))
             ->assertOk()
             ->assertSee('دسته دارای دو محصول موجود')
-            ->assertDontSee('دسته بدون محصول')
+            ->assertSee('دسته بدون محصول')
+            ->assertSee('۰ محصول فعال')
+            ->assertSee('href="' . route('categories.show', 'empty-home-category') . '"', false)
             ->assertDontSee($outOfStock->name)
-            ->assertDontSee('fz-home-featured-section', false)
-            ->assertDontSee('۰ محصول فعال');
+            ->assertDontSee('fz-home-featured-section', false);
 
         $this->assertSame(0, substr_count($response->getContent(), 'farzin-product-card--round-media'));
     }
