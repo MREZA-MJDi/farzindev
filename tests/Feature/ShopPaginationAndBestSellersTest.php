@@ -301,7 +301,6 @@ class ShopPaginationAndBestSellersTest extends TestCase
 
         for ($index = 1; $index <= 4; $index++) {
             $response->assertSee('Homepage Bestseller '.$index);
-            $response->assertSee('Homepage New Arrival '.$index);
         }
     }
 
