@@ -130,6 +130,8 @@
                                     <x-shop.filters
                                         :categories="$categories"
                                         :selected-category="request('category')"
+                                        :width-options="$widthOptions"
+                                        :installation-types="$installationTypes"
                                     />
 
                                 </form>
