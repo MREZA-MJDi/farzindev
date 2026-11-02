@@ -26,6 +26,8 @@ class ProductController extends Controller
     public function index(Request $request): View
     {
         $query = Product::query()
+            ->withCount('variants')
+            ->withSum('variants as active_variants_stock', 'stock')
             ->with([
                 'category',
                 'images' => fn ($query) => $query
@@ -54,11 +56,28 @@ class ProductController extends Controller
 
         $stock = $request->query('stock');
         if ($stock === 'out') {
-            $query->where('stock', '<=', 0);
+            $query->where(function ($builder): void {
+                $builder->where(fn ($base) => $base
+                    ->whereDoesntHave('variants')
+                    ->where('stock', '<=', 0))
+                    ->orWhere(fn ($variants) => $variants
+                        ->whereHas('variants')
+                        ->whereDoesntHave('variants', fn ($variant) => $variant->where('stock', '>', 0)));
+            });
         } elseif ($stock === 'low') {
-            $query->whereBetween('stock', [1, 5]);
+            $query->where(function ($builder): void {
+                $builder->where(fn ($base) => $base
+                    ->whereDoesntHave('variants')
+                    ->whereBetween('stock', [1, 5]))
+                    ->orWhereHas('variants', fn ($variant) => $variant->whereBetween('stock', [1, 5]));
+            });
         } elseif ($stock === 'available') {
-            $query->where('stock', '>', 5);
+            $query->where(function ($builder): void {
+                $builder->where(fn ($base) => $base
+                    ->whereDoesntHave('variants')
+                    ->where('stock', '>', 5))
+                    ->orWhereHas('variants', fn ($variant) => $variant->where('stock', '>', 5));
+            });
         }
 
         $completeness = $request->query('completeness');
