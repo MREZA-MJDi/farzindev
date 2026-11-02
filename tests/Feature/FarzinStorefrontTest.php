@@ -290,7 +290,7 @@ class FarzinStorefrontTest extends TestCase
             ->assertOk()
             ->assertSee('fz-auth__layout', false)
             ->assertSee('ورود به حساب')
-            ->assertDontSee('livora-accent', false);
+            ->assertSee('fz-auth__submit', false);
 
         $this->get(route('register'))
             ->assertOk()
