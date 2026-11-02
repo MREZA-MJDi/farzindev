@@ -219,6 +219,42 @@ class FarzinStorefrontTest extends TestCase
         $this->assertSame('1000.00', $product->fresh()->price);
     }
 
+    public function test_admin_seo_redirect_manager_rejects_chains_and_loops(): void
+    {
+        $admin = $this->admin();
+
+        SeoRedirect::create([
+            'source_path' => '/legacy-source',
+            'target_url' => '/legacy-target',
+            'status_code' => 301,
+            'is_active' => true,
+        ]);
+
+        $this->actingAs($admin, 'admin')
+            ->post(route('admin.seo-redirects.store'), [
+                'source_path' => '/legacy-target',
+                'target_url' => '/current-page',
+                'status_code' => 301,
+                'is_active' => '1',
+            ])
+            ->assertSessionHasErrors('target_url');
+
+        $this->assertDatabaseMissing('seo_redirects', [
+            'source_path' => '/legacy-target',
+        ]);
+
+        $this->post(route('admin.seo-redirects.store'), [
+            'source_path' => '/new-source',
+            'target_url' => '/legacy-source',
+            'status_code' => 301,
+            'is_active' => '1',
+        ])->assertSessionHasErrors('target_url');
+
+        $this->assertDatabaseMissing('seo_redirects', [
+            'source_path' => '/new-source',
+        ]);
+    }
+
     public function test_admin_can_choose_a_media_library_asset_as_the_primary_product_image(): void
     {
         Storage::fake('public');
