@@ -82,7 +82,7 @@ class ProductController extends Controller
             'max' => max(0, round($priceMaximum, 2)),
         ];
 
-        $installmentPlan = $this->resolveInstallmentPlan($product);
+        $installmentPlan = $canPurchase ? $this->resolveInstallmentPlan($product) : null;
         $safeShortDescription = $this->publicCopy($product->short_description);
         $safeDescription = $this->publicCopy($product->description);
 
