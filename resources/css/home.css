@@ -2848,11 +2848,6 @@ body.home-body {
     border-radius: 1.2rem;
     background: #fff;
     box-shadow: 0 12px 32px rgba(6,40,79,.06);
-    transition: transform .22s ease, box-shadow .22s ease;
-}
-.fz-home-category-grid .fz-category-card:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 20px 44px rgba(6,40,79,.1);
 }
 .fz-home-category-grid .fz-category-card__art {
     width: 100%;
