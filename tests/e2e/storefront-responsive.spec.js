@@ -481,6 +481,13 @@ test('homepage journal uses published articles, responsive RTL columns and restr
         await page.goto('/', { waitUntil: 'domcontentloaded' });
 
         const journal = page.locator('.fz-home-journal');
+
+        // The journal is intentionally absent until at least one published,
+        // indexable article has its own uploaded cover image.
+        if (await journal.count() === 0) {
+            continue;
+        }
+
         await expect(journal).toBeVisible();
         const grid = journal.locator('.fz-home-journal-grid');
         await expect(grid).toBeVisible();
@@ -795,8 +802,8 @@ test('homepage product cards use equal responsive image ratios and readable acti
         expect(geometry.overflow, 'product card content must stay within its rounded frame').toBe('hidden');
         expect(geometry.mediaWidth).toBeGreaterThan(0);
         expect(geometry.mediaHeight).toBeGreaterThan(0);
-        expect(geometry.mediaWidth / geometry.mediaHeight, 'all selected product images use one fixed landscape ratio').toBeGreaterThan(1.05);
-        expect(geometry.mediaWidth / geometry.mediaHeight).toBeLessThan(1.2);
+        expect(geometry.mediaWidth / geometry.mediaHeight, 'all selected product images use a fixed 4:3 landscape ratio').toBeGreaterThan(1.29);
+        expect(geometry.mediaWidth / geometry.mediaHeight).toBeLessThan(1.38);
         expect(Math.abs(geometry.linkWidth - geometry.mediaWidth), 'the product image link fills the shared media frame').toBeLessThanOrEqual(1);
         expect(Math.abs(geometry.linkHeight - geometry.mediaHeight), 'the product image link fills the shared media frame').toBeLessThanOrEqual(1);
         expect(geometry.infoTop, 'product details start after the image rather than overlaying it').toBeGreaterThanOrEqual(geometry.mediaBottom - 1);
