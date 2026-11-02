@@ -929,6 +929,70 @@ class FarzinStorefrontTest extends TestCase
         $response->assertDontSee('پرفروش‌ترین');
     }
 
+    public function test_product_detail_renders_only_verified_structured_specifications_and_schema(): void
+    {
+        $product = $this->product($this->category(['slug' => 'specification-hoods']), [
+            'name' => 'هود فرزین H105',
+            'slug' => 'farzin-hood-h105-specification',
+            'sku' => 'FAR-H105-SPECS',
+            'width_cm' => 70,
+            'installation_type' => 'مخفی',
+            'material' => 'استیل',
+            'suction_power_m3h' => 650,
+            'noise_db' => 58,
+            'power_watts' => 180,
+            'warranty_months' => 12,
+        ]);
+
+        $this->get(route('product.show', $product->slug))
+            ->assertOk()
+            ->assertSee('مشخصات فنی')
+            ->assertSee('عرض')
+            ->assertSee('۷۰ سانتی‌متر')
+            ->assertSee('مخفی')
+            ->assertSee('استیل')
+            ->assertSee('۶۵۰ مترمکعب بر ساعت')
+            ->assertSee('۵۸ دسی‌بل')
+            ->assertSee('۱۸۰ وات')
+            ->assertSee('۱۲ ماه')
+            ->assertSee('additionalProperty', false)
+            ->assertSee('BreadcrumbList', false);
+    }
+
+    public function test_shop_and_category_filters_use_only_saved_product_width_and_installation_values(): void
+    {
+        $category = $this->category(['slug' => 'filterable-hoods']);
+        $hidden = $this->product($category, [
+            'name' => 'هود عرض هفتاد مخفی',
+            'slug' => 'filter-hood-70-hidden',
+            'sku' => 'FAR-FILTER-70-HIDDEN',
+            'width_cm' => 70,
+            'installation_type' => 'مخفی',
+        ]);
+        $angled = $this->product($category, [
+            'name' => 'هود عرض نود مورب',
+            'slug' => 'filter-hood-90-angled',
+            'sku' => 'FAR-FILTER-90-ANGLED',
+            'width_cm' => 90,
+            'installation_type' => 'مورب',
+        ]);
+
+        $shop = $this->get(route('shop.index', [
+            'width_cm' => 70,
+            'installation_type' => 'مخفی',
+        ]))->assertOk();
+        $shop->assertSee($hidden->name)->assertDontSee($angled->name);
+
+        $categoryResponse = $this->get(route('categories.show', [
+            'category' => $category->slug,
+            'width_cm' => 70,
+            'installation_type' => 'مخفی',
+        ]))->assertOk();
+
+        $categoryResponse->assertSee($hidden->name)->assertDontSee($angled->name);
+        $categoryResponse->assertSee('اعمال فیلتر');
+    }
+
     public function test_variant_product_detail_uses_variant_stock_for_availability_and_quantity(): void
     {
         $product = $this->product($this->category(['slug' => 'hoods']), [
