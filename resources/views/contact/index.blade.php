@@ -39,7 +39,7 @@
             || filled($contactSetting?->telegram_url)
             || filled($contactSetting?->eitaa_url);
         $hasDirectChannels = filled($contactSetting?->phone) || filled($contactSetting?->email);
-        $hasPublicContact = $hasSocialChannels || $hasDirectChannels || filled($contactSetting?->hours);
+        $hasContactChannels = $hasSocialChannels || $hasDirectChannels;
     @endphp
 
     <div class="fz-contact-page">
@@ -197,7 +197,7 @@
 
                     {{-- راه‌های تماس فقط وقتی مقدار واقعی دارند نمایش داده می‌شوند. --}}
                     <div class="fz-contact-left-column">
-                        @if($hasPublicContact)
+                        @if($hasContactChannels)
                         <section class="fz-contact-panel fz-contact-channels" data-fz-reveal>
                             <div class="fz-contact-panel__header">
                                 <div>
