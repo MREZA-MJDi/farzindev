@@ -64,7 +64,7 @@ class CategorySeoMetadataTest extends TestCase
         $this->get(route('home'))
             ->assertOk()
             ->assertSee('دسته فعال بدون محصول')
-            ->assertSee('href="/categories/active-empty-category"', false);
+            ->assertSee('href="' . route('categories.show', 'active-empty-category') . '"', false);
 
         $this->get(route('categories.index'))
             ->assertOk()
@@ -88,8 +88,8 @@ class CategorySeoMetadataTest extends TestCase
 
         $this->get(route('home'))
             ->assertOk()
-            ->assertSee('href="/categories/public-category-link"', false)
-            ->assertDontSee('href="/categories/1"', false);
+            ->assertSee('href="' . route('categories.show', 'public-category-link') . '"', false)
+            ->assertDontSee('href="' . url('/categories/1') . '"', false);
     }
 
     public function test_admin_can_create_persian_category_without_manual_slug_and_it_is_public(): void
