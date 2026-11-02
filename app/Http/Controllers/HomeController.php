@@ -134,13 +134,6 @@ class HomeController extends Controller
             ->where('is_active', true)
             ->first(['phone', 'whatsapp', 'email', 'address']);
 
-        // Guide links are data-driven from real, active catalogue categories.
-        // The view must never reference an undefined optional collection.
-        $homeGuides = $categories
-            ->filter(fn (Category $category): bool => filled(trim((string) $category->description)))
-            ->take(2)
-            ->values();
-
         return view('home.index', [
             'categories' => $categories,
             'featuredProducts' => $featuredProducts,
@@ -148,7 +141,6 @@ class HomeController extends Controller
             'shippingSettings' => $shippingSettings,
             'contactSetting' => $contactSetting,
             'blogPosts' => $blogPosts,
-            'homeGuides' => $homeGuides,
         ]);
     }
 }
