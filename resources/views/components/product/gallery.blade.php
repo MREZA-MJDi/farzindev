@@ -37,16 +37,6 @@
         $resolvedProduct?->name
         ?? 'محصول فرزین';
 
-    /*
-    |--------------------------------------------------------------------------
-    | Product SKU
-    |--------------------------------------------------------------------------
-    */
-
-    $productSku =
-        $resolvedProduct?->sku
-        ?? null;
-
     $imageCount =
         $resolvedImages->count();
 @endphp
@@ -452,7 +442,7 @@
         <div>
 
             <p class="text-[10px] uppercase tracking-[0.18em] text-[var(--livora-stone)]">
-                PRODUCT GALLERY
+                گالری تصاویر
             </p>
 
             <p class="mt-1 text-xs text-[var(--livora-stone)]">
@@ -473,13 +463,7 @@
         </div>
 
 
-        @if($productSku)
 
-            <span class="text-[10px] text-[var(--livora-stone)]">
-                SKU: {{ $productSku }}
-            </span>
-
-        @endif
 
     </div>
 
