@@ -1,23 +1,40 @@
-@props(['contact' => []])
+@props(['contact' => [], 'settings' => [], 'brandLogoUrl' => null])
 @php
     $footerPhone = \App\Support\StorefrontContact::phone(data_get($contact, 'phone'));
     $footerWhatsapp = \App\Support\StorefrontContact::whatsapp(data_get($contact, 'whatsapp'));
     $footerEmail = trim((string) data_get($contact, 'email', ''));
     $footerAddress = trim((string) data_get($contact, 'address', ''));
     $footerHours = trim((string) data_get($contact, 'hours', ''));
+    $footerEitaa = trim((string) data_get($settings, 'eitaa_url', ''));
+    $footerBale = trim((string) data_get($settings, 'bale_url', ''));
+    $footerEnamad = trim((string) data_get($storefrontPageContent ?? [], 'page_home_enamad_url', ''));
+    if (! \Illuminate\Support\Str::startsWith($footerEnamad, 'https://')) {
+        $footerEnamad = '';
+    }
 @endphp
 <footer class="farzin-site-footer farzin-site-footer--editorial fz-store-footer">
     <x-layout.container class="fz-store-footer__container">
         <div class="fz-store-footer__main">
             <div class="fz-store-footer__brand">
-                <a href="{{ route('home') }}" class="fz-store-footer__logo farzin-footer-editorial__logo" aria-label="فرزین، صفحه اصلی">فرزین</a>
+                <a href="{{ route('home') }}" class="fz-store-footer__logo farzin-footer-editorial__logo" aria-label="فرزین، صفحه اصلی">
+                    @if($brandLogoUrl)
+                        <img src="{{ $brandLogoUrl }}" alt="فرزین" width="160" height="48" loading="lazy" decoding="async" class="fz-store-footer__logo-image">
+                    @else
+                        فرزین
+                    @endif
+                </a>
                 
                 <p>کاتالوگ آنلاین هود و سینک آشپزخانه؛ مشخصات و قیمت مدل‌ها را بررسی کنید و انتخابتان را آگاهانه انجام دهید.</p>
                 <div class="fz-store-footer__socials" aria-label="شبکه‌های اجتماعی">
                     @if(filled(data_get($contact, 'instagram_url')))<a href="{{ data_get($contact, 'instagram_url') }}" target="_blank" rel="noopener noreferrer" aria-label="اینستاگرام فرزین">اینستاگرام</a>@endif
                     @if(filled(data_get($contact, 'telegram_url')))<a href="{{ data_get($contact, 'telegram_url') }}" target="_blank" rel="noopener noreferrer" aria-label="تلگرام فرزین">تلگرام</a>@endif
                     @if($footerWhatsapp)<a href="https://wa.me/{{ $footerWhatsapp }}" target="_blank" rel="noopener noreferrer" aria-label="واتساپ فرزین">واتساپ</a>@endif
+                    @if($footerEitaa !== '')<a href="{{ $footerEitaa }}" target="_blank" rel="noopener noreferrer" aria-label="ایتا فرزین">ایتا</a>@endif
+                    @if($footerBale !== '')<a href="{{ $footerBale }}" target="_blank" rel="noopener noreferrer" aria-label="بله فرزین">بله</a>@endif
                 </div>
+                @if($footerEnamad !== '')
+                    <a class="fz-store-footer__trust-link mt-3 inline-flex items-center gap-1 text-xs font-bold text-[var(--livora-accent)]" href="{{ $footerEnamad }}" target="_blank" rel="noopener noreferrer">نماد اعتماد الکترونیکی <span aria-hidden="true">↗</span></a>
+                @endif
             </div>
             <nav class="fz-store-footer__column farzin-footer-editorial__nav" aria-label="پیوندهای اصلی">
                 <h2>فروشگاه</h2><a href="{{ route('home') }}">خانه</a><a href="{{ route('shop.index') }}">همه محصولات</a><a href="{{ route('categories.index') }}">دسته‌بندی‌ها</a><a href="{{ route('blog.index') }}">راهنمای خرید و مجله</a><a href="{{ route('about') }}">درباره فرزین</a><a href="{{ route('contact') }}">تماس با ما</a>

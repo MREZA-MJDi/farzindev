@@ -4643,6 +4643,104 @@ class FarzinStorefrontTest extends TestCase
         ]);
     }
 
+    public function test_homepage_renders_only_real_discounts_and_excludes_seed_or_test_products(): void
+    {
+        $category = $this->category([
+            'name' => 'هودهای صفحه اصلی',
+            'slug' => 'homepage-real-hoods',
+        ]);
+
+        $discounted = $this->product($category, [
+            'name' => 'هود واقعی فرزین با تخفیف',
+            'slug' => 'homepage-real-discounted-hood',
+            'sku' => 'FAR-HOME-DISCOUNT-01',
+            'price' => 10000000,
+            'compare_at_price' => 15000000,
+            'stock' => 4,
+            'show_in_home_gallery' => true,
+        ]);
+        ProductImage::create([
+            'product_id' => $discounted->id,
+            'path' => 'https://cdn.example.test/homepage-real-discounted-hood.webp',
+            'alt' => $discounted->name,
+            'sort_order' => 0,
+            'is_primary' => true,
+        ]);
+
+        $placeholder = $this->product($category, [
+            'name' => 'هود تستی مرورگر که نباید منتشر شود',
+            'slug' => 'homepage-browser-fixture-hood',
+            'sku' => 'FZ-SEED-HOOD-99',
+            'price' => 8000000,
+            'compare_at_price' => 12000000,
+            'stock' => 6,
+            'show_in_home_gallery' => true,
+        ]);
+        ProductImage::create([
+            'product_id' => $placeholder->id,
+            'path' => 'https://cdn.example.test/homepage-browser-fixture-hood.webp',
+            'alt' => $placeholder->name,
+            'sort_order' => 0,
+            'is_primary' => true,
+        ]);
+
+        $this->get(route('home'))
+            ->assertOk()
+            ->assertSee('پیشنهاد ویژه')
+            ->assertSee($discounted->name)
+            ->assertDontSee($placeholder->name)
+            ->assertDontSee('شمارنده معکوس');
+    }
+
+    public function test_homepage_hides_the_special_offer_shelf_when_no_real_price_reduction_exists(): void
+    {
+        $category = $this->category([
+            'name' => 'سینک‌های صفحه اصلی',
+            'slug' => 'homepage-regular-sinks',
+        ]);
+
+        $regular = $this->product($category, [
+            'name' => 'سینک رسمی بدون تخفیف',
+            'slug' => 'homepage-regular-sink',
+            'sku' => 'FAR-HOME-REGULAR-01',
+            'price' => 9200000,
+            'compare_at_price' => null,
+            'stock' => 3,
+            'is_new' => true,
+            'show_in_home_gallery' => false,
+        ]);
+        ProductImage::create([
+            'product_id' => $regular->id,
+            'path' => 'https://cdn.example.test/homepage-regular-sink.webp',
+            'alt' => $regular->name,
+            'sort_order' => 0,
+            'is_primary' => true,
+        ]);
+
+        $this->get(route('home'))
+            ->assertOk()
+            ->assertSee($regular->name)
+            ->assertSee('جدیدترین‌ها')
+            ->assertDontSee('id="fz-home-discounts-title"', false);
+    }
+
+    public function test_homepage_cms_exposes_four_independent_managed_banner_slots(): void
+    {
+        $admin = $this->admin();
+
+        $response = $this->actingAs($admin, 'admin')
+            ->get(route('admin.page-content.edit', ['tab' => 'home']))
+            ->assertOk()
+            ->assertSee('اسلایدر بنرهای اصلی');
+
+        for ($index = 1; $index <= 4; $index++) {
+            $response
+                ->assertSee("page_home_banner_{$index}_image", false)
+                ->assertSee("page_home_banner_{$index}_title", false)
+                ->assertSee("page_home_banner_{$index}_description", false);
+        }
+    }
+
     private function checkoutLocationPayload(): array
     {
         if ($this->checkoutLocationCache !== null) {

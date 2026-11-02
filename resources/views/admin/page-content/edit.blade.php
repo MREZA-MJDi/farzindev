@@ -197,6 +197,131 @@
                             @enderror
                         </div>
                     </section>
+
+                    <section class="space-y-4" aria-labelledby="fz-home-banners-admin-title">
+                        <div>
+                            <h3 id="fz-home-banners-admin-title" class="text-sm font-bold text-[var(--admin-text)]">اسلایدر بنرهای اصلی</h3>
+                            <p class="mt-1 text-xs leading-6 text-[var(--admin-muted)]">تا چهار بنر واقعی ثبت کنید. هر اسلاید فقط وقتی در سایت نمایش داده می‌شود که تصویر و عنوان ذخیره شده داشته باشد. تصویرها حداقل ۱۲۰۰×۳۷۵ و نسبت ۱۶:۶ باشند؛ متن هر اسلاید را در فیلدهای همین صفحه وارد کنید.</p>
+                        </div>
+                        <div class="grid gap-4 xl:grid-cols-2">
+                            @php
+                                $bannerImagePath1 = trim((string) ($values['page_home_banner_1_image_url'] ?? ''));
+                                $bannerImageUrl1 = $bannerImagePath1 !== '' ? \Illuminate\Support\Facades\Storage::disk('public')->url($bannerImagePath1) : '';
+                            @endphp
+                            <article class="rounded-2xl border border-[var(--admin-border)] bg-[var(--admin-surface-soft)] p-4">
+                                <div class="flex items-center justify-between gap-3">
+                                    <h4 class="text-sm font-bold text-[var(--admin-text)]">بنر 1</h4>
+                                    @if($bannerImageUrl1 !== '')
+                                        <span class="text-[10px] font-semibold text-emerald-700">تصویر ذخیره‌شده</span>
+                                    @else
+                                        <span class="text-[10px] text-[var(--admin-muted)]">بدون تصویر</span>
+                                    @endif
+                                </div>
+                                @if($bannerImageUrl1 !== '')
+                                    <img src="{{ $bannerImageUrl1 }}" alt="پیش‌نمایش بنر 1" width="1200" height="450" loading="lazy" decoding="async" class="mt-3 aspect-[16/6] w-full rounded-xl object-cover">
+                                @endif
+                                <label for="page_home_banner_1_image" class="admin-label mt-4 block">تصویر بنر 1</label>
+                                <input id="page_home_banner_1_image" name="page_home_banner_1_image" type="file" accept="image/jpeg,image/png,image/webp" class="admin-input mt-2 w-full p-2">
+                                <p class="mt-1 text-[10px] leading-5 text-[var(--admin-muted)]">JPG، PNG یا WEBP؛ نسبت ۱۶:۶؛ حداقل ۱۲۰۰×۳۷۵؛ حداکثر ۲۰ مگابایت.</p>
+                                @error('page_home_banner_1_image')
+                                    <p role="alert" class="mt-2 text-xs text-[var(--admin-danger)]">{{ $message }}</p>
+                                @enderror
+                                @if($bannerImageUrl1 !== '')
+                                    <label class="mt-3 flex items-center gap-2 text-xs text-[var(--admin-text)]">
+                                        <input type="checkbox" name="remove_page_home_banner_1_image" value="1" class="admin-checkbox h-4 w-4">
+                                        حذف تصویر فعلی بنر 1
+                                    </label>
+                                @endif
+                            </article>
+                            @php
+                                $bannerImagePath2 = trim((string) ($values['page_home_banner_2_image_url'] ?? ''));
+                                $bannerImageUrl2 = $bannerImagePath2 !== '' ? \Illuminate\Support\Facades\Storage::disk('public')->url($bannerImagePath2) : '';
+                            @endphp
+                            <article class="rounded-2xl border border-[var(--admin-border)] bg-[var(--admin-surface-soft)] p-4">
+                                <div class="flex items-center justify-between gap-3">
+                                    <h4 class="text-sm font-bold text-[var(--admin-text)]">بنر 2</h4>
+                                    @if($bannerImageUrl2 !== '')
+                                        <span class="text-[10px] font-semibold text-emerald-700">تصویر ذخیره‌شده</span>
+                                    @else
+                                        <span class="text-[10px] text-[var(--admin-muted)]">بدون تصویر</span>
+                                    @endif
+                                </div>
+                                @if($bannerImageUrl2 !== '')
+                                    <img src="{{ $bannerImageUrl2 }}" alt="پیش‌نمایش بنر 2" width="1200" height="450" loading="lazy" decoding="async" class="mt-3 aspect-[16/6] w-full rounded-xl object-cover">
+                                @endif
+                                <label for="page_home_banner_2_image" class="admin-label mt-4 block">تصویر بنر 2</label>
+                                <input id="page_home_banner_2_image" name="page_home_banner_2_image" type="file" accept="image/jpeg,image/png,image/webp" class="admin-input mt-2 w-full p-2">
+                                <p class="mt-1 text-[10px] leading-5 text-[var(--admin-muted)]">JPG، PNG یا WEBP؛ نسبت ۱۶:۶؛ حداقل ۱۲۰۰×۳۷۵؛ حداکثر ۲۰ مگابایت.</p>
+                                @error('page_home_banner_2_image')
+                                    <p role="alert" class="mt-2 text-xs text-[var(--admin-danger)]">{{ $message }}</p>
+                                @enderror
+                                @if($bannerImageUrl2 !== '')
+                                    <label class="mt-3 flex items-center gap-2 text-xs text-[var(--admin-text)]">
+                                        <input type="checkbox" name="remove_page_home_banner_2_image" value="1" class="admin-checkbox h-4 w-4">
+                                        حذف تصویر فعلی بنر 2
+                                    </label>
+                                @endif
+                            </article>
+                            @php
+                                $bannerImagePath3 = trim((string) ($values['page_home_banner_3_image_url'] ?? ''));
+                                $bannerImageUrl3 = $bannerImagePath3 !== '' ? \Illuminate\Support\Facades\Storage::disk('public')->url($bannerImagePath3) : '';
+                            @endphp
+                            <article class="rounded-2xl border border-[var(--admin-border)] bg-[var(--admin-surface-soft)] p-4">
+                                <div class="flex items-center justify-between gap-3">
+                                    <h4 class="text-sm font-bold text-[var(--admin-text)]">بنر 3</h4>
+                                    @if($bannerImageUrl3 !== '')
+                                        <span class="text-[10px] font-semibold text-emerald-700">تصویر ذخیره‌شده</span>
+                                    @else
+                                        <span class="text-[10px] text-[var(--admin-muted)]">بدون تصویر</span>
+                                    @endif
+                                </div>
+                                @if($bannerImageUrl3 !== '')
+                                    <img src="{{ $bannerImageUrl3 }}" alt="پیش‌نمایش بنر 3" width="1200" height="450" loading="lazy" decoding="async" class="mt-3 aspect-[16/6] w-full rounded-xl object-cover">
+                                @endif
+                                <label for="page_home_banner_3_image" class="admin-label mt-4 block">تصویر بنر 3</label>
+                                <input id="page_home_banner_3_image" name="page_home_banner_3_image" type="file" accept="image/jpeg,image/png,image/webp" class="admin-input mt-2 w-full p-2">
+                                <p class="mt-1 text-[10px] leading-5 text-[var(--admin-muted)]">JPG، PNG یا WEBP؛ نسبت ۱۶:۶؛ حداقل ۱۲۰۰×۳۷۵؛ حداکثر ۲۰ مگابایت.</p>
+                                @error('page_home_banner_3_image')
+                                    <p role="alert" class="mt-2 text-xs text-[var(--admin-danger)]">{{ $message }}</p>
+                                @enderror
+                                @if($bannerImageUrl3 !== '')
+                                    <label class="mt-3 flex items-center gap-2 text-xs text-[var(--admin-text)]">
+                                        <input type="checkbox" name="remove_page_home_banner_3_image" value="1" class="admin-checkbox h-4 w-4">
+                                        حذف تصویر فعلی بنر 3
+                                    </label>
+                                @endif
+                            </article>
+                            @php
+                                $bannerImagePath4 = trim((string) ($values['page_home_banner_4_image_url'] ?? ''));
+                                $bannerImageUrl4 = $bannerImagePath4 !== '' ? \Illuminate\Support\Facades\Storage::disk('public')->url($bannerImagePath4) : '';
+                            @endphp
+                            <article class="rounded-2xl border border-[var(--admin-border)] bg-[var(--admin-surface-soft)] p-4">
+                                <div class="flex items-center justify-between gap-3">
+                                    <h4 class="text-sm font-bold text-[var(--admin-text)]">بنر 4</h4>
+                                    @if($bannerImageUrl4 !== '')
+                                        <span class="text-[10px] font-semibold text-emerald-700">تصویر ذخیره‌شده</span>
+                                    @else
+                                        <span class="text-[10px] text-[var(--admin-muted)]">بدون تصویر</span>
+                                    @endif
+                                </div>
+                                @if($bannerImageUrl4 !== '')
+                                    <img src="{{ $bannerImageUrl4 }}" alt="پیش‌نمایش بنر 4" width="1200" height="450" loading="lazy" decoding="async" class="mt-3 aspect-[16/6] w-full rounded-xl object-cover">
+                                @endif
+                                <label for="page_home_banner_4_image" class="admin-label mt-4 block">تصویر بنر 4</label>
+                                <input id="page_home_banner_4_image" name="page_home_banner_4_image" type="file" accept="image/jpeg,image/png,image/webp" class="admin-input mt-2 w-full p-2">
+                                <p class="mt-1 text-[10px] leading-5 text-[var(--admin-muted)]">JPG، PNG یا WEBP؛ نسبت ۱۶:۶؛ حداقل ۱۲۰۰×۳۷۵؛ حداکثر ۲۰ مگابایت.</p>
+                                @error('page_home_banner_4_image')
+                                    <p role="alert" class="mt-2 text-xs text-[var(--admin-danger)]">{{ $message }}</p>
+                                @enderror
+                                @if($bannerImageUrl4 !== '')
+                                    <label class="mt-3 flex items-center gap-2 text-xs text-[var(--admin-text)]">
+                                        <input type="checkbox" name="remove_page_home_banner_4_image" value="1" class="admin-checkbox h-4 w-4">
+                                        حذف تصویر فعلی بنر 4
+                                    </label>
+                                @endif
+                            </article>
+                        </div>
+                    </section>
                 @elseif($tab === 'about')
                     <div class="rounded-xl border border-[var(--admin-border)] bg-[var(--admin-surface-soft)] p-4 text-xs leading-6 text-[var(--admin-muted)]">
                         اطلاعات فنی و ادعاهای تجاری را فقط با داده تأییدشده مجموعه جایگزین کنید. این فیلدها متن ساده‌اند و HTML یا اسکریپت اجرا نمی‌کنند.

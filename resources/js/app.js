@@ -99,6 +99,12 @@ window.addEventListener('product-variant-selected', () => {
  * Load only functional modules on pages that need them. Storefront and blog
  * content is server-rendered and never waits for reveal/scroll JavaScript.
  */
+if (document.querySelector('[data-fz-home]')) {
+    import('./home.js').catch((error) => {
+        console.error('Unable to initialize the homepage sliders.', error);
+    });
+}
+
 if (document.querySelector('[data-image-editor-input]')) {
     import('./admin-image-editor.js').catch((error) => {
         console.error('Unable to load the product image editor.', error);
