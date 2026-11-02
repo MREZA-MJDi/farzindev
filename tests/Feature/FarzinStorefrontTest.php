@@ -736,7 +736,7 @@ class FarzinStorefrontTest extends TestCase
         $this->assertDatabaseMissing('storefront_settings', [
             'key' => 'page_home_hero_image_url',
         ]);
-        Storage::disk('public')->assertDirectoryEmpty('homepage');
+        $this->assertSame([], Storage::disk('public')->allFiles('homepage'));
     }
 
     public function test_homepage_cms_uploads_hero_image_and_persists_its_public_path(): void
