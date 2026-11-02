@@ -40,14 +40,16 @@ class DatabaseSeeder extends Seeder
             }
         }
 
-        $this->call([
-            CategorySeeder::class,
-        ]);
+        if (app()->environment('local')) {
+            $this->call([
+                CategorySeeder::class,
+            ]);
+        }
 
         // ProductSeeder creates preview catalogue records whose specifications
         // and prices still require staff verification. Never create them in
         // the production database; publish verified products through the admin.
-        if (! app()->environment('production')) {
+        if (app()->environment('local')) {
             $this->call(ProductSeeder::class);
         }
 
