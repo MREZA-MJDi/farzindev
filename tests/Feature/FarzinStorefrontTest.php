@@ -1747,7 +1747,7 @@ class FarzinStorefrontTest extends TestCase
 
         $this->actingAs($customer)
             ->get(route('admin.session.heartbeat'))
-            ->assertForbidden();
+            ->assertRedirect(route('admin.login'));
     }
 
     public function test_unknown_payment_callback_gateway_is_rejected(): void
