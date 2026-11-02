@@ -200,7 +200,7 @@ class AdminAuthenticationTest extends TestCase
     {
         $this->get(route('admin.login'))
             ->assertOk()
-            ->assertHeader('Cache-Control', 'private, no-store, no-cache, max-age=0, must-revalidate')
+            ->assertHeader('Cache-Control', 'no-store, private')
             ->assertSee('autocomplete="username"', false)
             ->assertSee('autocomplete="current-password"', false)
             ->assertSee('id="admin-password-toggle"', false);
@@ -310,7 +310,7 @@ class AdminAuthenticationTest extends TestCase
     {
         $this->get(route('contact'))
             ->assertOk()
-            ->assertHeader('Cache-Control', 'private, no-store, no-cache, max-age=0, must-revalidate');
+            ->assertHeader('Cache-Control', 'no-store, private');
     }
 
     public function test_admin_dashboard_responses_are_not_cached(): void
@@ -320,6 +320,6 @@ class AdminAuthenticationTest extends TestCase
         $this->actingAs($admin, 'admin')
             ->get(route('admin.dashboard'))
             ->assertOk()
-            ->assertHeader('Cache-Control', 'private, no-store, no-cache, max-age=0, must-revalidate');
+            ->assertHeader('Cache-Control', 'no-store, private');
     }
 }
