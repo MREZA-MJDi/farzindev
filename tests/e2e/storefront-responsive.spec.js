@@ -175,6 +175,9 @@ test('homepage category GIF preview starts on hover and the first touch tap', as
         card.id = 'category-preview-test-fixture';
         card.href = '/categories';
         card.className = 'fz-category-card';
+        // Keep the deterministic fixture inside the viewport so the real
+        // IntersectionObserver cleanup does not immediately stop its preview.
+        card.style.cssText = 'position:fixed;top:0;left:0;width:120px;height:120px;z-index:99999;';
         card.setAttribute('data-farzin-gif-card', '');
         card.innerHTML = `
             <span class="fz-category-card__art">
