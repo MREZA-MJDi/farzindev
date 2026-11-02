@@ -86,6 +86,8 @@ class AuthController extends Controller
 
         if ($request->user('web')?->isAdmin()) {
             Auth::guard('web')->logout();
+            Auth::guard('admin')->logout();
+            Auth::shouldUse('web');
             RateLimiter::hit($throttleKey, 60);
             $request->session()->regenerate();
 
