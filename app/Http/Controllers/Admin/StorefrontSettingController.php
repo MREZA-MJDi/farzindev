@@ -25,6 +25,9 @@ class StorefrontSettingController extends Controller
                 'shop_banner_subtitle',
                 'shipping_flat_rate',
                 'shipping_free_threshold',
+                'brand_name', 'brand_logo', 'eitaa_url', 'bale_url',
+                'warranty_text', 'shipping_text', 'installation_text', 'returns_text',
+                'floating_contact_enabled',
             ])
             ->pluck('value', 'key');
 
@@ -37,6 +40,7 @@ class StorefrontSettingController extends Controller
             'shopBannerUrl' => $bannerPath ? Storage::disk('public')->url($bannerPath) : null,
             'shippingFlatRate' => (int) ($settings->get('shipping_flat_rate') ?? 0),
             'shippingFreeThreshold' => (int) ($settings->get('shipping_free_threshold') ?? 0),
+            'storefrontSettings' => $settings,
             'contactSetting' => ContactSetting::query()->first(),
         ]);
     }
@@ -56,6 +60,16 @@ class StorefrontSettingController extends Controller
             'shipping_flat_rate' => ['sometimes', 'nullable', 'integer', 'min:0', 'max:1000000000000'],
             'shipping_free_threshold' => ['sometimes', 'nullable', 'integer', 'min:0', 'max:1000000000000'],
             'remove_shop_banner' => ['nullable', 'boolean'],
+            'brand_name' => ['required', 'string', 'max:100'],
+            'brand_logo' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp,svg', 'max:5120'],
+            'remove_brand_logo' => ['nullable', 'boolean'],
+            'eitaa_url' => ['nullable', 'url', 'max:255'],
+            'bale_url' => ['nullable', 'url', 'max:255'],
+            'warranty_text' => ['nullable', 'string', 'max:1000'],
+            'shipping_text' => ['nullable', 'string', 'max:1000'],
+            'installation_text' => ['nullable', 'string', 'max:1000'],
+            'returns_text' => ['nullable', 'string', 'max:1000'],
+            'floating_contact_enabled' => ['nullable', 'boolean'],
 
             'phone' => ['nullable', 'string', 'max:50'],
             'email' => ['nullable', 'email:rfc', 'max:255'],
@@ -82,6 +96,12 @@ class StorefrontSettingController extends Controller
             'whatsapp.regex' => 'شماره واتساپ را فقط با رقم و علامت‌های متداول وارد کنید.',
             'instagram_url.url' => 'لینک اینستاگرام معتبر نیست.',
             'telegram_url.url' => 'لینک تلگرام معتبر نیست.',
+            'brand_name.required' => 'نام برند الزامی است.',
+            'brand_logo.image' => 'لوگوی برند باید تصویر معتبر باشد.',
+            'brand_logo.mimes' => 'فرمت لوگو باید JPG، PNG، WEBP یا SVG باشد.',
+            'brand_logo.max' => 'حجم لوگو نباید بیشتر از ۵ مگابایت باشد.',
+            'eitaa_url.url' => 'لینک ایتا معتبر نیست.',
+            'bale_url.url' => 'لینک بله معتبر نیست.',
             'latitude.required_with' => 'برای ثبت مختصات نقشه، طول و عرض جغرافیایی را هر دو وارد کنید.',
             'longitude.required_with' => 'برای ثبت مختصات نقشه، طول و عرض جغرافیایی را هر دو وارد کنید.',
             'latitude.numeric' => 'عرض جغرافیایی باید عددی باشد.',
@@ -95,6 +115,16 @@ class StorefrontSettingController extends Controller
             ->value('value');
 
         $newPath = null;
+        $oldBrandLogoPath = StorefrontSetting::query()->where('key', 'brand_logo')->value('value');
+        $newBrandLogoPath = null;
+
+        if ($request->hasFile('brand_logo')) {
+            $newBrandLogoPath = $request->file('brand_logo')->store('brand', 'public');
+
+            if (! $newBrandLogoPath) {
+                return back()->withInput()->withErrors(['brand_logo' => 'ذخیره لوگو انجام نشد؛ فایل قبلی حفظ شد.']);
+            }
+        }
 
         if ($request->hasFile('shop_banner_image')) {
             $newPath = $images->store($request->file('shop_banner_image'), 'banners');
@@ -110,9 +140,11 @@ class StorefrontSettingController extends Controller
 
         $removeBanner = $newPath === null
             && $request->boolean('remove_shop_banner');
+        $removeBrandLogo = $newBrandLogoPath === null
+            && $request->boolean('remove_brand_logo');
 
         try {
-            DB::transaction(function () use ($data, $newPath, $removeBanner): void {
+            DB::transaction(function () use ($data, $newPath, $removeBanner, $newBrandLogoPath, $removeBrandLogo, $request): void {
                 if ($newPath !== null || $removeBanner) {
                     StorefrontSetting::query()->updateOrCreate(
                         ['key' => 'shop_banner_image'],
@@ -144,6 +176,28 @@ class StorefrontSettingController extends Controller
                     );
                 }
 
+                $globalSettings = [
+                    'brand_name' => $data['brand_name'],
+                    'eitaa_url' => $data['eitaa_url'] ?? null,
+                    'bale_url' => $data['bale_url'] ?? null,
+                    'warranty_text' => $data['warranty_text'] ?? null,
+                    'shipping_text' => $data['shipping_text'] ?? null,
+                    'installation_text' => $data['installation_text'] ?? null,
+                    'returns_text' => $data['returns_text'] ?? null,
+                    'floating_contact_enabled' => $request->boolean('floating_contact_enabled') ? '1' : '0',
+                ];
+
+                if ($newBrandLogoPath !== null || $removeBrandLogo) {
+                    $globalSettings['brand_logo'] = $newBrandLogoPath;
+                }
+
+                foreach ($globalSettings as $key => $value) {
+                    StorefrontSetting::query()->updateOrCreate(
+                        ['key' => $key],
+                        ['value' => $value]
+                    );
+                }
+
                 $contact = ContactSetting::query()->first() ?? new ContactSetting();
                 $contact->fill([
                     'phone' => $data['phone'] ?? null,
@@ -166,11 +220,15 @@ class StorefrontSettingController extends Controller
                 $contact->save();
                 Cache::forget('storefront.seo-contact-location.v1');
                 Cache::forget('storefront.public-contact.v1');
+                Cache::forget('storefront.public-brand-settings.v1');
             });
         } catch (Throwable $e) {
             // Keep the currently published image if the database update fails.
             if ($newPath !== null) {
                 $images->delete($newPath);
+            }
+            if ($newBrandLogoPath !== null) {
+                Storage::disk('public')->delete($newBrandLogoPath);
             }
 
             throw $e;
@@ -183,6 +241,14 @@ class StorefrontSettingController extends Controller
             && $oldPath !== $newPath
         ) {
             $images->delete($oldPath);
+        }
+
+        if (
+            ($newBrandLogoPath !== null || $removeBrandLogo)
+            && $oldBrandLogoPath
+            && $oldBrandLogoPath !== $newBrandLogoPath
+        ) {
+            Storage::disk('public')->delete($oldBrandLogoPath);
         }
 
         return redirect()
