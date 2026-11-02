@@ -41,16 +41,14 @@ return Application::configure(
         |--------------------------------------------------------------------------
         */
 
-        $adminPath = trim((string) config('farzin.admin_path', 'admin'), '/') ?: 'admin';
-
         $middleware->redirectGuestsTo(fn (Request $request) =>
-            $request->is($adminPath, $adminPath . '/*')
+            str_starts_with((string) $request->route()?->getName(), 'admin.')
                 ? route('admin.login')
                 : route('login')
         );
 
         $middleware->redirectUsersTo(fn (Request $request) =>
-            $request->is($adminPath, $adminPath . '/*')
+            str_starts_with((string) $request->route()?->getName(), 'admin.')
                 ? route('admin.dashboard')
                 : route('home')
         );
