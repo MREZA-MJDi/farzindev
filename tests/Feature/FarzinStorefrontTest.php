@@ -177,6 +177,48 @@ class FarzinStorefrontTest extends TestCase
 
     }
 
+    public function test_admin_product_forms_reject_zero_or_negative_prices(): void
+    {
+        $admin = $this->admin();
+        $category = $this->category(['slug' => 'positive-price-category']);
+
+        $payload = [
+            'category_id' => $category->id,
+            'name' => 'Invalid Zero Price Hood',
+            'slug' => 'invalid-zero-price-hood',
+            'sku' => 'FAR-ZERO-PRICE-HOOD',
+            'short_description' => 'محصول آزمایشی برای اعتبارسنجی قیمت',
+            'description' => 'این محصول نباید با قیمت صفر ذخیره شود.',
+            'price' => '0',
+            'stock' => '1',
+            'status' => 'draft',
+            'is_featured' => '0',
+            'is_new' => '0',
+        ];
+
+        $this->actingAs($admin, 'admin')
+            ->post(route('admin.products.store'), $payload)
+            ->assertSessionHasErrors('price');
+
+        $this->assertDatabaseMissing('products', ['sku' => 'FAR-ZERO-PRICE-HOOD']);
+
+        $product = $this->product($category, [
+            'name' => 'Existing Positive Price Hood',
+            'slug' => 'existing-positive-price-hood',
+            'sku' => 'FAR-EXISTING-POSITIVE-PRICE',
+            'price' => 1000,
+        ]);
+
+        $this->put(route('admin.products.update', $product), array_merge($payload, [
+            'name' => $product->name,
+            'slug' => $product->slug,
+            'sku' => $product->sku,
+            'price' => '-1',
+        ]))->assertSessionHasErrors('price');
+
+        $this->assertSame('1000.00', $product->fresh()->price);
+    }
+
     public function test_admin_can_choose_a_media_library_asset_as_the_primary_product_image(): void
     {
         Storage::fake('public');
