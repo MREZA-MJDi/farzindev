@@ -209,8 +209,8 @@
                             </div>
 
                             <div class="fz-contact-channel-grid">
-                                @if(filled($contactSetting?->phone))
-                                    <a class="fz-contact-channel" href="tel:{{ $contactSetting->phone }}">
+                                @if($publicPhone)
+                                    <a class="fz-contact-channel" href="{{ $publicPhone['href'] }}">
                                         <span class="fz-contact-channel__icon" aria-hidden="true">
                                             <svg viewBox="0 0 24 24" fill="none"><path d="M7 3.8 4.9 5.1c-.8.5-1.1 1.6-.7 2.5 2.4 5.3 6.8 9.7 12.1 12.1.9.4 2 0 2.5-.7l1.3-2.1-4.1-2.5-1.4 1.7a16 16 0 0 1-6.7-6.7l1.7-1.4L7 3.8Z" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
                                         </span>
@@ -229,19 +229,19 @@
                                     </a>
                                 @endif
 
-                                @if(! $publicPhone && !filled($contactSetting?->email))
+                                @if(! $publicPhone && !filled($contactSetting?->email) && ! $whatsappDigits && !filled($contactSetting?->instagram_url) && !filled($contactSetting?->telegram_url))
                                     <div class="fz-contact-empty-channel">شماره تماس و ایمیل پس از ثبت در تنظیمات تماس نمایش داده می‌شوند.</div>
                                 @endif
                             </div>
 
-                            @if($whatsappDigits !== '' || filled($contactSetting?->instagram_url) || filled($contactSetting?->telegram_url))
+                            @if($whatsappDigits || filled($contactSetting?->instagram_url) || filled($contactSetting?->telegram_url))
                                 <div class="fz-contact-social">
                                     <div class="fz-contact-social__heading">
                                         <span class="fz-contact-kicker">شبکه‌های اجتماعی</span>
                                         <h3>در فضای مجازی هم کنار شماییم</h3>
                                     </div>
                                     <div class="fz-contact-social__links">
-                                        @if($whatsappDigits !== '')
+                                        @if($whatsappDigits)
                                             <a href="https://wa.me/{{ $whatsappDigits }}" target="_blank" rel="noopener noreferrer" class="fz-contact-social__link fz-contact-social__link--whatsapp">
                                                 <span aria-hidden="true">W</span> واتساپ
                                             </a>
