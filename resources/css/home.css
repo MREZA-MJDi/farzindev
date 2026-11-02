@@ -2051,14 +2051,6 @@ body.home-body {
 .fz-home-final-cta__panel--text-only .fz-home-final-cta__copy {
     max-width: 54rem;
 }
-.farzin-site-header__action {
-    min-width: 44px;
-    min-height: 44px;
-}
-.farzin-product-card__wishlist {
-    min-width: 44px;
-    min-height: 44px;
-}
 @media (max-width: 767px) {
     .fz-home-installment__panel {
         grid-template-columns: minmax(0, 1fr);
