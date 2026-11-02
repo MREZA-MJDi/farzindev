@@ -164,6 +164,28 @@ class Product extends Model
     }
 
 
+
+    /**
+     * Exclude known preview, demo and test catalogue entries from public pages.
+     * Rows stay in the database for audit/history; this is a visibility scope,
+     * not destructive cleanup.
+     */
+    public function scopePublicCatalogue(Builder $query): Builder
+    {
+        return $query
+            ->where('sku', 'not like', '%SEED%')
+            ->where('sku', 'not like', '%DEMO%')
+            ->where('sku', 'not like', '%TEST%')
+            ->where('slug', 'not like', '%preview%')
+            ->where(function (Builder $name): void {
+                $name
+                    ->where('name', 'not like', '%تی‌شرت%')
+                    ->where('name', 'not like', '%تی شرت%')
+                    ->where('name', 'not like', '%تیشرت%')
+                    ->where('name', 'not like', '%t-shirt%');
+            });
+    }
+
     /**
      * Products that can be purchased with the current base or option stock.
      * For variant-backed products, every active option type must have at least
