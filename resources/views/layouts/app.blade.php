@@ -274,7 +274,9 @@
     @php
         $floatingPhone = preg_replace('/[^0-9+]/', '', (string) data_get($storefrontContact, 'phone', ''));
         $floatingWhatsapp = preg_replace('/\D+/', '', (string) data_get($storefrontContact, 'whatsapp', ''));
-        if ($floatingWhatsapp !== '' && str_starts_with($floatingWhatsapp, '0')) {
+        if (str_starts_with($floatingWhatsapp, '0098')) {
+            $floatingWhatsapp = substr($floatingWhatsapp, 2);
+        } elseif ($floatingWhatsapp !== '' && str_starts_with($floatingWhatsapp, '0')) {
             $floatingWhatsapp = '98' . substr($floatingWhatsapp, 1);
         } elseif ($floatingWhatsapp !== '' && ! str_starts_with($floatingWhatsapp, '98')) {
             $floatingWhatsapp = '98' . $floatingWhatsapp;
