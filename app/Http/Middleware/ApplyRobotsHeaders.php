@@ -23,6 +23,22 @@ class ApplyRobotsHeaders
             'login', 'register', 'forgot-password', 'reset-password/*', 'logout'
         );
 
+        $csrfSensitiveRoute = $request->is(
+            $adminPath, $adminPath . '/*',
+            'contact', 'product/*',
+            'cart', 'cart/*',
+            'checkout', 'checkout/*',
+            'login', 'register', 'logout'
+        );
+
+        // Never let a browser, reverse proxy, or CDN reuse HTML containing a
+        // session-bound CSRF token. Admin and storefront form pages stay private.
+        if ($csrfSensitiveRoute) {
+            $response->headers->set('Cache-Control', 'private, no-store, no-cache, max-age=0, must-revalidate');
+            $response->headers->set('Pragma', 'no-cache');
+            $response->headers->set('Expires', '0');
+        }
+
         // Private dashboards and customer-specific responses remain excluded
         // even after the public SEO release switch is intentionally turned off.
         if ($privateRoute) {
@@ -30,8 +46,6 @@ class ApplyRobotsHeaders
                 'X-Robots-Tag',
                 'noindex, nofollow, noarchive, nosnippet, noimageindex'
             );
-
-            return $response;
         }
 
         // The service combines the global development lock with global robots
