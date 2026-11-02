@@ -44,9 +44,8 @@ class HomeController extends Controller
             'images.media:id,path',
         ];
 
-        // A public recommendation must be active, explicitly selected for the
-        // homepage, stocked for at least one valid option combination, and
-        // backed by an image that resolves to a usable public URL.
+        // The lead hero pick is purchasable; the selected-products grid below
+        // may include sold-out items, but always sorts purchasable ones first.
         $onlyInStock = static function (Builder $query): void {
             $query->where(function (Builder $stockQuery): void {
                 $stockQuery
