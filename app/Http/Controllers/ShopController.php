@@ -57,6 +57,14 @@ class ShopController extends Controller
         |--------------------------------------------------------------------------
         */
 
+        if (! empty($filters['width_cm'])) {
+            $query->where('width_cm', (int) $filters['width_cm']);
+        }
+
+        if (! empty($filters['installation_type'])) {
+            $query->where('installation_type', $filters['installation_type']);
+        }
+
         if (!empty($filters['search'])) {
             $search = trim($filters['search']);
 
@@ -195,6 +203,9 @@ class ShopController extends Controller
             ->withCount([
                 'products' => fn ($query) => $query->active()->publicCatalogue(),
             ])
+            ->withMin([
+                'products as starting_price' => fn ($query) => $query->active()->publicCatalogue()->availableForPurchase(),
+            ], 'price')
             // Category::active() adds its own sort order. Reset it so a
             // selected category outside the first 100 is promoted before cap.
             ->reorder()
@@ -212,6 +223,25 @@ class ShopController extends Controller
         |--------------------------------------------------------------------------
         */
 
+        $widthOptions = Product::query()
+            ->active()
+            ->publicCatalogue()
+            ->whereHas('category', fn ($categoryQuery) => $categoryQuery->where('is_active', true))
+            ->whereNotNull('width_cm')
+            ->distinct()
+            ->orderBy('width_cm')
+            ->pluck('width_cm');
+
+        $installationTypes = Product::query()
+            ->active()
+            ->publicCatalogue()
+            ->whereHas('category', fn ($categoryQuery) => $categoryQuery->where('is_active', true))
+            ->whereNotNull('installation_type')
+            ->where('installation_type', '!=', '')
+            ->distinct()
+            ->orderBy('installation_type')
+            ->pluck('installation_type');
+
         $settings = StorefrontSetting::query()
             ->whereIn('key', [
                 'shop_banner_image',
@@ -226,6 +256,8 @@ class ShopController extends Controller
             'products' => $products,
             'categories' => $categories,
             'hasBestSellerSales' => $hasBestSellerSales,
+            'widthOptions' => $widthOptions,
+            'installationTypes' => $installationTypes,
             'shopBanner' => [
                 'image_url' => $bannerPath ? Storage::disk('public')->url($bannerPath) : null,
                 'image_srcset' => $bannerPath ? $images->srcset($bannerPath) : null,
