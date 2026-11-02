@@ -681,7 +681,7 @@ test('admin contact location preview updates the existing map frame when address
     await loginForm.locator('input[name="email"]').fill('browser-admin@example.test');
     await loginForm.locator('input[name="password"]').fill('browser-smoke-password');
     await loginForm.locator('button[type="submit"]').click();
-    await expect(page).toHaveURL(/\\/admin(?:\\/dashboard)?(?:\\?.*)?$/);
+    await expect(page).toHaveURL(/\/admin(?:\/dashboard)?(?:\?.*)?$/);
 
     await page.goto('/admin/storefront-settings', { waitUntil: 'domcontentloaded' });
 
