@@ -671,6 +671,37 @@ class FarzinStorefrontTest extends TestCase
             ->assertSee('نقطه تمرکز تصویر Hero');
     }
 
+    public function test_homepage_cms_uploads_hero_image_and_persists_its_public_path(): void
+    {
+        Storage::fake('public');
+        $admin = $this->admin();
+
+        $values = collect(app(\\App\\Services\\StorefrontPageContent::class)->defaults())
+            ->filter(fn ($value, $key) => str_starts_with($key, 'page_home_'))
+            ->all();
+
+        $this->actingAs($admin, 'admin')
+            ->put(route('admin.page-content.update'), array_merge($values, [
+                'tab' => 'home',
+                'page_home_hero_image' => UploadedFile::fake()->image('farzin-real-kitchen.webp', 1600, 1000),
+                'page_home_hero_image_position' => 'center 35%',
+            ]))
+            ->assertRedirect(route('admin.page-content.edit', ['tab' => 'home']))
+            ->assertSessionHas('success');
+
+        $path = StorefrontSetting::query()
+            ->where('key', 'page_home_hero_image_url')
+            ->value('value');
+
+        $this->assertNotEmpty($path);
+        Storage::disk('public')->assertExists($path);
+
+        $this->get(route('home'))
+            ->assertOk()
+            ->assertSee(Storage::disk('public')->url($path), false)
+            ->assertSee('object-position: center 35%', false);
+    }
+
     public function test_homepage_renders_category_video_and_gif_with_the_correct_media_elements(): void
     {
         $videoCategory = $this->category([
