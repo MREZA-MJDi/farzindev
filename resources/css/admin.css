@@ -2102,32 +2102,32 @@ p {
     position: relative;
     width: 100%;
     min-width: 0;
+    overflow: visible;
+}
+.fz-admin-home-hero-preview__saved {
+    position: relative;
+    display: block;
+    width: 100%;
     aspect-ratio: 16 / 10;
     overflow: visible;
     border: 1px solid rgba(6,40,79,.1);
     border-radius: 1.1rem;
-    background: #dce4ed;
+    background: #edf2f7;
     box-shadow: 0 14px 32px rgba(6,40,79,.12);
 }
-.fz-admin-home-hero-preview__saved {
+.fz-admin-home-hero-preview__saved > img {
     position: absolute;
     inset: 0;
     display: block;
     width: 100%;
     height: 100%;
-    overflow: hidden;
     border-radius: inherit;
-    background: #edf2f7;
-}
-.fz-admin-home-hero-preview__saved > img {
-    display: block;
-    width: 100%;
-    height: 100%;
     object-fit: cover;
 }
 .fz-admin-home-hero-preview__placeholder {
-    position: absolute;
-    inset: 0;
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 10;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -2157,9 +2157,9 @@ p {
     line-height: 1.8;
 }
 .fz-admin-home-hero-crop-panel {
-    position: absolute;
+    position: relative;
     z-index: 4;
-    inset: 0;
+    margin-top: .8rem;
 }
 .fz-admin-home-hero-crop-frame {
     position: relative;
@@ -2182,9 +2182,7 @@ p {
     touch-action: none;
 }
 .fz-admin-home-hero-crop-controls {
-    position: absolute;
-    top: calc(100% + .8rem);
-    inset-inline: 0;
+    position: relative;
     display: grid;
     gap: .75rem;
     padding: .9rem;
@@ -2227,14 +2225,14 @@ p {
 .fz-admin-home-hero-preview .fz-home-hero-offer {
     position: absolute;
     z-index: 3;
-    inset-inline-start: .75rem;
-    inset-block-end: .75rem;
+    inset-inline-start: 1.15rem;
+    inset-block-end: 1.15rem;
     display: grid;
-    width: min(340px, calc(100% - 1.5rem));
-    grid-template-columns: 3.75rem minmax(0, 1fr) auto;
+    width: min(390px, calc(100% - 2.3rem));
+    grid-template-columns: 4.5rem minmax(0, 1fr) auto;
     align-items: center;
-    gap: .55rem;
-    padding: .65rem .75rem;
+    gap: .85rem;
+    padding: .9rem 1rem;
     border: 1px solid rgba(6,40,79,.08);
     border-radius: .85rem;
     background: rgba(255,255,255,.96);
@@ -2248,8 +2246,8 @@ p {
     font-weight: 900;
 }
 .fz-admin-home-hero-preview .fz-home-hero-offer > img {
-    width: 3.75rem;
-    height: 3.35rem;
+    width: 4.5rem;
+    height: 4rem;
     border-radius: .6rem;
     background: #f2f5f8;
     object-fit: contain;
@@ -2258,7 +2256,7 @@ p {
 .fz-admin-home-hero-preview .fz-home-hero-offer__details h2 {
     overflow: hidden;
     color: #06284f;
-    font-size: .7rem;
+    font-size: .78rem;
     font-weight: 900;
     line-height: 1.6;
     text-overflow: ellipsis;
@@ -2266,33 +2264,33 @@ p {
 }
 .fz-admin-home-hero-preview .fz-home-hero-offer__details > strong {
     display: block;
-    margin-top: .15rem;
+    margin-top: .2rem;
     color: #06284f;
-    font-size: .78rem;
+    font-size: .88rem;
     font-weight: 950;
 }
 .fz-admin-home-hero-preview .fz-home-hero-offer__details > strong small { font-size: .57rem; }
 .fz-admin-home-hero-preview .fz-home-hero-offer__stock {
     display: inline-flex;
     align-items: center;
-    gap: .3rem;
-    margin-top: .18rem;
+    gap: .35rem;
+    margin-top: .25rem;
     color: #187a49;
-    font-size: .57rem;
+    font-size: .62rem;
     font-weight: 800;
 }
 .fz-admin-home-hero-preview .fz-home-hero-offer__stock i {
-    width: .38rem;
-    height: .38rem;
+    width: .4rem;
+    height: .4rem;
     border-radius: 50%;
     background: #1c9a5b;
 }
 .fz-admin-home-hero-preview .fz-home-hero-offer > a {
     display: inline-flex;
     align-items: center;
-    gap: .25rem;
+    gap: .3rem;
     color: #06284f;
-    font-size: .62rem;
+    font-size: .68rem;
     font-weight: 900;
     white-space: nowrap;
 }
@@ -2317,15 +2315,16 @@ p {
     .fz-admin-home-hero-preview__toolbar { flex-direction: column; }
     .fz-admin-home-hero-preview__layout { grid-template-columns: minmax(0, 1fr); gap: 1rem; }
     .fz-admin-home-hero-preview__copy h2 { max-width: none; font-size: 1.35rem; }
-    .fz-admin-home-hero-preview__visual { min-height: 0; }
     .fz-admin-home-hero-preview .fz-home-hero-offer {
         position: relative;
         inset: auto;
         width: auto;
-        margin: -1rem .65rem 0;
-        grid-template-columns: 3.3rem minmax(0, 1fr) auto;
-        padding: .6rem;
+        margin: -1.1rem .75rem 0;
+        grid-template-columns: 3.8rem minmax(0, 1fr) auto;
+        padding: .75rem;
     }
-    .fz-admin-home-hero-preview .fz-home-hero-offer > img { width: 3.3rem; height: 3rem; }
+    .fz-admin-home-hero-preview .fz-home-hero-offer > img { width: 3.8rem; height: 3.5rem; }
+    .fz-admin-home-hero-preview .fz-home-hero-offer__details h2 { font-size: .72rem; }
+    .fz-admin-home-hero-preview .fz-home-hero-offer__details > strong { font-size: .8rem; }
     .fz-admin-home-hero-preview__upload { grid-template-columns: minmax(0, 1fr); }
 }
