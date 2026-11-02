@@ -145,7 +145,16 @@ class Product extends Model
 
     public function scopeActive($query)
     {
-        return $query->where('status', 'active');
+        return $query
+            ->where('status', 'active')
+            ->where(function ($skuQuery): void {
+                $skuQuery->whereNull('sku')
+                    ->orWhere(function ($realProductQuery): void {
+                        $realProductQuery
+                            ->where('sku', 'not like', 'FZ-SEED-%')
+                            ->where('sku', 'not like', 'LIV-%');
+                    });
+            });
     }
 
     public function scopeFeatured($query)
