@@ -289,7 +289,7 @@
                                         </div>
                                     </div>
                                     @if($hasMapCoordinates)
-                                        <a href="https://www.google.com/maps/dir/?api=1&amp;destination={{ urlencode($mapQuery) }}" class="fz-contact-directions" target="_blank" rel="noopener noreferrer">مسیریابی</a>
+                                        <p class="fz-contact-coordinates">مختصات ثبت‌شده: {{ $contactSetting->latitude }}, {{ $contactSetting->longitude }}</p>
                                     @endif
                                 @endif
                                 @if(filled($contactSetting?->hours))
