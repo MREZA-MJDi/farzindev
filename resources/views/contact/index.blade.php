@@ -158,7 +158,6 @@
                                 </span>
                             </div>
 
-                            @if($hasMapCoordinates || $mapAddress !== '')
                                 <div class="fz-contact-map-frame">
                                     <iframe
                                         title="نقشه موقعیت مجموعه فرزین"
