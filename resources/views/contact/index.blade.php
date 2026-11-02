@@ -231,11 +231,7 @@
 
                             </div>
 
-                            @if(filled($contactSetting?->hours))
-                            <div class="fz-contact-hours"><span class="fz-contact-hours__icon" aria-hidden="true">◷</span><div><span>ساعات کاری</span><p>{{ $contactSetting->hours }}</p></div></div>
-                        @endif
-
-                        @if($hasSocialChannels)
+                            @if($hasSocialChannels)
                                 <div class="fz-contact-social">
                                     <div class="fz-contact-social__heading">
                                         <span class="fz-contact-kicker">شبکه‌های اجتماعی</span>
