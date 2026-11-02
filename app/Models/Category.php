@@ -143,9 +143,9 @@ class Category extends Model
         $query->where('is_active', true);
 
         if (! app()->environment(['local', 'testing'])) {
-            $query
-                ->whereNotIn('slug', ['furniture', 'chairs', 'tables', 'decor', 'accessories'])
-                ->whereHas('products', fn ($productQuery) => $productQuery->active());
+            // Hide only the known legacy catalogue groups. An active category
+            // must remain reachable even before its first product is published.
+            $query->whereNotIn('slug', ['furniture', 'chairs', 'tables', 'decor', 'accessories']);
         }
 
         return $query->orderBy('sort_order');

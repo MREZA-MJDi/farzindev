@@ -1095,7 +1095,7 @@
 
                     <option
                         value="draft"
-                        @selected(old('status', $product->status ?? 'draft') === 'draft')
+                        @selected(old('status', $product->status ?? 'active') === 'draft')
                     >
                     پیش‌نویس
                     </option>
@@ -1103,7 +1103,7 @@
 
                     <option
                         value="active"
-                        @selected(old('status', $product->status ?? '') === 'active')
+                        @selected(old('status', $product->status ?? 'active') === 'active')
                     >
                     فعال
                     </option>
@@ -1118,6 +1118,14 @@
 
                 </select>
 
+
+                <p class="mt-2 text-xs leading-6 text-[var(--admin-muted)]">
+                    فقط محصولات «فعال» در فروشگاه، صفحه دسته‌بندی و صفحه محصول برای مشتری قابل مشاهده‌اند. پیش‌نویس و آرشیو عمومی نیستند.
+                </p>
+
+                <p class="mt-2 text-xs leading-6 text-[var(--admin-muted)]">
+                    محصول جدید به‌صورت پیش‌فرض منتشر می‌شود. برای آماده‌سازی و بازبینی قبل از انتشار، «پیش‌نویس» را انتخاب کنید.
+                </p>
 
                 @error('status')
                 <p class="mt-2 text-xs text-[var(--admin-danger)]">
@@ -1201,7 +1209,7 @@
                     </span>
                 </label>
 
-                {{-- Homepage Mosaic Gallery --}}
+                {{-- Homepage product selection --}}
                 <label class="flex cursor-pointer items-start gap-3 rounded-xl border border-[var(--admin-border)] bg-[var(--admin-surface-soft)] p-4">
                     <input type="hidden" name="show_in_home_gallery" value="0">
                     <input
@@ -1212,9 +1220,9 @@
                         @checked(old('show_in_home_gallery', $product->show_in_home_gallery ?? !$editing))
                     >
                     <span>
-                        <span class="block text-sm font-semibold text-[var(--admin-text)]">نمایش در گالری تصویری صفحه اصلی</span>
+                        <span class="block text-sm font-semibold text-[var(--admin-text)]">نمایش در بخش محصولات منتخب صفحه اصلی</span>
                         <span class="mt-1 block text-xs leading-6 text-[var(--admin-muted)]">
-                            تصویر اصلی این محصول در گالری موزاییکی صفحه خانه نمایش داده می‌شود. برای نتیجه بهتر، تصویر اصلی معتبر ثبت کنید.
+                            با فعال‌کردن این گزینه، محصول در بخش محصولات منتخب صفحه اصلی هم نمایش داده می‌شود. محصول برای حضور در فروشگاه و صفحه دسته‌بندی باید وضعیت «فعال» داشته باشد.
                         </span>
                     </span>
                 </label>

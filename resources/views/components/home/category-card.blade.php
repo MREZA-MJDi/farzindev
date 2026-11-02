@@ -6,7 +6,7 @@
 <a
     class="fz-category-card fz-category-card--editorial fz-reveal"
     style="--fz-category-delay: {{ max(0, (int) $index) * 90 }}ms"
-    href="{{ route('categories.show', $category) }}"
+    href="{{ route('categories.show', $category->slug) }}"
     aria-label="مشاهده دسته‌بندی {{ $category->name }}، {{ \App\Helpers\PersianNumberHelper::format($category->products_count) }} محصول فعال"
 >
     <span class="fz-category-card__art">

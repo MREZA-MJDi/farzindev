@@ -168,6 +168,7 @@ class ShopPaginationAndBestSellersTest extends TestCase
             'status' => 'active',
             'is_featured' => false,
             'is_new' => false,
+            'show_in_home_gallery' => true,
             'installment_enabled' => false,
         ], $attributes));
     }

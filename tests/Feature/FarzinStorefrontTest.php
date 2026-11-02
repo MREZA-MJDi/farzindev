@@ -150,7 +150,7 @@ class FarzinStorefrontTest extends TestCase
         $this->get(route('admin.products.edit', $product))
             ->assertOk()
             ->assertSee('name="show_in_home_gallery"', false)
-            ->assertSee('نمایش در گالری تصویری صفحه اصلی')
+            ->assertSee('نمایش در بخش محصولات منتخب صفحه اصلی')
             ->assertSee('role="tablist"', false)
             ->assertSee('role="tabpanel"', false)
             ->assertSee('اطلاعات و تنظیمات محصول')
@@ -2853,6 +2853,10 @@ class FarzinStorefrontTest extends TestCase
             ->assertRedirect(route('admin.products.edit', $product))
             ->assertSessionHas('success');
 
+        $this->get('/product/original-hood')
+            ->assertRedirect('/product/updated-farzin-hood')
+            ->assertStatus(301);
+
         $product->refresh();
 
         $this->assertSame('Updated Farzin Hood', $product->name);
@@ -2870,6 +2874,19 @@ class FarzinStorefrontTest extends TestCase
 
         $this->assertSoftDeleted('products', ['id' => $product->id]);
         $this->get(route('product.show', $product->slug))->assertNotFound();
+    }
+
+    public function test_new_product_editor_defaults_to_publication_not_draft(): void
+    {
+        $admin = $this->admin();
+
+        $response = $this->actingAs($admin, 'admin')
+            ->get(route('admin.products.create'))
+            ->assertOk();
+
+        $html = $response->getContent();
+        $this->assertMatchesRegularExpression('/<option[^>]*value="active"[^>]*selected/', $html);
+        $this->assertDoesNotMatchRegularExpression('/<option[^>]*value="draft"[^>]*selected/', $html);
     }
 
     public function test_admin_can_update_and_delete_an_empty_category(): void
@@ -2897,6 +2914,10 @@ class FarzinStorefrontTest extends TestCase
             'slug' => 'built-in-hoods',
             'sort_order' => 2,
         ]);
+
+        $this->get('/categories/temporary-category')
+            ->assertRedirect('/categories/built-in-hoods')
+            ->assertStatus(301);
 
         $this->delete(route('admin.categories.destroy', $category->refresh()))
             ->assertRedirect(route('admin.categories.index'))
@@ -4055,6 +4076,110 @@ class FarzinStorefrontTest extends TestCase
         ]);
     }
 
+    public function test_admin_published_products_flow_to_customer_pages_and_homepage_selection_is_respected(): void
+    {
+        $admin = $this->admin();
+        $category = $this->category([
+            'name' => 'دسته محصولات منتشرشده',
+            'slug' => 'published-kitchen-products',
+        ]);
+
+        $selectedResponse = $this->actingAs($admin, 'admin')
+            ->post(route('admin.products.store'), [
+                'category_id' => $category->id,
+                'name' => 'محصول منتخب صفحه اصلی',
+                'slug' => 'homepage-selected-product',
+                'sku' => 'FAR-HOME-SELECTED-01',
+                'short_description' => 'محصول منتشرشده برای آزمون جریان عمومی.',
+                'description' => 'این محصول از پنل مدیریت ایجاد شده است.',
+                'price' => '12500000',
+                'stock' => '5',
+                'status' => 'active',
+                'is_featured' => '1',
+                'is_new' => '0',
+                'show_in_home_gallery' => '1',
+                'installment_enabled' => '0',
+            ]);
+
+        $selectedResponse->assertRedirect();
+        $selectedResponse->assertSessionHasNoErrors();
+
+        $selected = Product::query()
+            ->where('sku', 'FAR-HOME-SELECTED-01')
+            ->firstOrFail();
+
+        $hiddenResponse = $this->actingAs($admin, 'admin')
+            ->post(route('admin.products.store'), [
+                'category_id' => $category->id,
+                'name' => 'محصول فقط در فروشگاه',
+                'slug' => 'shop-only-product',
+                'sku' => 'FAR-SHOP-ONLY-01',
+                'short_description' => 'این محصول در صفحه اصلی انتخاب نشده است.',
+                'description' => 'این محصول در فروشگاه و دسته‌بندی منتشر می‌شود.',
+                'price' => '9800000',
+                'stock' => '4',
+                'status' => 'active',
+                'is_featured' => '0',
+                'is_new' => '0',
+                'show_in_home_gallery' => '0',
+                'installment_enabled' => '0',
+            ]);
+
+        $hiddenResponse->assertRedirect();
+        $hiddenResponse->assertSessionHasNoErrors();
+
+        $shopOnly = Product::query()
+            ->where('sku', 'FAR-SHOP-ONLY-01')
+            ->firstOrFail();
+
+        $this->get(route('home'))
+            ->assertOk()
+            ->assertSee($selected->name)
+            ->assertDontSee($shopOnly->name);
+
+        $this->get(route('shop.index'))
+            ->assertOk()
+            ->assertSee($selected->name)
+            ->assertSee($shopOnly->name);
+
+        $this->get(route('categories.show', $category->slug))
+            ->assertOk()
+            ->assertSee($selected->name)
+            ->assertSee($shopOnly->name);
+
+        $this->get(route('product.show', $shopOnly->slug))
+            ->assertOk()
+            ->assertSee($shopOnly->name);
+    }
+
+    public function test_admin_cannot_create_a_public_product_with_reserved_preview_sku_prefix(): void
+    {
+        $admin = $this->admin();
+        $category = $this->category(['slug' => 'reserved-sku-test']);
+
+        $this->actingAs($admin, 'admin')
+            ->from(route('admin.products.create'))
+            ->post(route('admin.products.store'), [
+                'category_id' => $category->id,
+                'name' => 'محصول با SKU رزرو شده',
+                'slug' => 'reserved-preview-sku-product',
+                'sku' => 'FZ-SEED-REAL-PRODUCT',
+                'price' => '10000000',
+                'stock' => '3',
+                'status' => 'active',
+                'is_featured' => '0',
+                'is_new' => '0',
+                'show_in_home_gallery' => '1',
+                'installment_enabled' => '0',
+            ])
+            ->assertRedirect(route('admin.products.create'))
+            ->assertSessionHasErrors('sku');
+
+        $this->assertDatabaseMissing('products', [
+            'sku' => 'FZ-SEED-REAL-PRODUCT',
+        ]);
+    }
+
     private function category(array $attributes = []): Category
     {
         return Category::create(array_merge([
@@ -4084,6 +4209,7 @@ class FarzinStorefrontTest extends TestCase
             'status' => 'active',
             'is_featured' => false,
             'is_new' => false,
+            'show_in_home_gallery' => true,
             'installment_enabled' => false,
         ], $attributes));
     }

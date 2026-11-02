@@ -3,11 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Models\Product;
+use App\Models\SeoRedirect;
 use Illuminate\Contracts\View\View;
+use Illuminate\Http\RedirectResponse;
 
 class ProductController extends Controller
 {
-    public function show(string $slug): View
+    public function show(string $slug): View|RedirectResponse
     {
         $product = Product::query()
             ->with([
@@ -19,7 +21,20 @@ class ProductController extends Controller
             ->whereHas('category', fn ($categoryQuery) => $categoryQuery
                 ->where('is_active', true))
             ->where('slug', $slug)
-            ->firstOrFail();
+            ->first();
+
+        if (! $product) {
+            $redirect = SeoRedirect::query()
+                ->where('source_path', route('product.show', $slug, false))
+                ->where('is_active', true)
+                ->first();
+
+            if ($redirect) {
+                return redirect()->to($redirect->target_url, $redirect->status_code);
+            }
+
+            abort(404);
+        }
 
         $relatedProducts = Product::query()
             ->active()

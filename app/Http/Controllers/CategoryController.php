@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Category;
+use App\Models\SeoRedirect;
 use Illuminate\Contracts\View\View;
+use Illuminate\Http\RedirectResponse;
 
 class CategoryController extends Controller
 {
@@ -25,13 +27,27 @@ class CategoryController extends Controller
         ]);
     }
 
-    public function show(Category $category): View
+    public function show(string $slug): View|RedirectResponse
     {
+        $category = Category::query()->where('slug', $slug)->first();
+
+        if (! $category) {
+            $redirect = SeoRedirect::query()
+                ->where('source_path', route('categories.show', $slug, false))
+                ->where('is_active', true)
+                ->first();
+
+            if ($redirect) {
+                return redirect()->to($redirect->target_url, $redirect->status_code);
+            }
+
+            abort(404);
+        }
+
+        // Publication belongs to the category itself. Do not make its URL
+        // disappear merely because its products are still drafts or not added.
         abort_unless(
-            $category->is_active && (
-                app()->environment(['local', 'testing'])
-                || $category->products()->active()->exists()
-            ),
+            Category::query()->active()->whereKey($category->getKey())->exists(),
             404
         );
 

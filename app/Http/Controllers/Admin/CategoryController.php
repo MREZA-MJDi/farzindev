@@ -7,6 +7,7 @@ use App\Http\Requests\Admin\Category\StoreCategoryRequest;
 use App\Http\Requests\Admin\Category\UpdateCategoryRequest;
 use App\Models\Category;
 use App\Models\Media;
+use App\Models\SeoRedirect;
 use App\Services\Media\ResponsiveImageService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\DB;
@@ -131,9 +132,10 @@ class CategoryController extends Controller
         }
 
         $oldImage = null;
+        $oldSlug = (string) $category->slug;
 
         try {
-            DB::transaction(function () use ($category, $data, $newImage, &$oldImage): void {
+            DB::transaction(function () use ($category, $data, $newImage, &$oldImage, $oldSlug): void {
                 $lockedCategory = Category::query()
                     ->whereKey($category->id)
                     ->lockForUpdate()
@@ -147,6 +149,26 @@ class CategoryController extends Controller
                 }
 
                 $lockedCategory->update($payload);
+
+                if ($oldSlug !== $lockedCategory->slug) {
+                    $oldPath = route('categories.show', $oldSlug, false);
+                    $newPath = route('categories.show', $lockedCategory->slug, false);
+
+                    // Keep earlier aliases pointing directly to the latest URL.
+                    SeoRedirect::query()
+                        ->where('target_url', $oldPath)
+                        ->update(['target_url' => $newPath]);
+
+                    SeoRedirect::query()->updateOrCreate(
+                        ['source_path' => $oldPath],
+                        [
+                            'target_url' => $newPath,
+                            'status_code' => 301,
+                            'is_active' => true,
+                            'notes' => 'تغییر خودکار مسیر دسته‌بندی ' . $lockedCategory->id,
+                        ]
+                    );
+                }
             });
         } catch (Throwable $e) {
             if ($newImage !== null) {

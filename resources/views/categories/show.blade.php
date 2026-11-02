@@ -18,7 +18,7 @@
 @section('og_type', 'website')
 @section('og_title', $categoryOgTitle)
 @section('og_description', $categoryOgDescription)
-@section('og_image', $category->image_url ?? '')
+@section('og_image', $category->homepage_image_url ?? '')
 
 
 
@@ -113,11 +113,11 @@
                         {{-- Category image --}}
                         <div class="overflow-hidden rounded-[2rem] bg-[var(--livora-surface)]" data-farzin-reveal>
 
-                            @if($category->image)
+                            @if($category->homepage_image_url)
 
                                 <img
-                                    src="{{ $category->image_url }}"
-                                    @if($category->image_srcset) srcset="{{ $category->image_srcset }}" sizes="(max-width: 767px) 100vw, 50vw" @endif
+                                    src="{{ $category->homepage_image_url }}"
+                                    @if($category->homepage_image_srcset) srcset="{{ $category->homepage_image_srcset }}" sizes="(max-width: 767px) 100vw, 50vw" @endif
                                     alt="{{ $category->name }}"
                                     class="aspect-[4/3] h-full w-full object-cover transition duration-700 hover:scale-[1.03]"
                                 >
