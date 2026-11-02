@@ -1127,13 +1127,13 @@ class FarzinStorefrontTest extends TestCase
 
         $this->actingAs($this->customer())
             ->get(route('admin.dashboard'))
-            ->assertForbidden();
+            ->assertRedirect(route('admin.login'));
 
         $admin = $this->admin();
 
         $this->actingAs($admin, 'admin')
             ->get(route('account.index'))
-            ->assertForbidden();
+            ->assertRedirect(route('login'));
 
         $this->actingAs($admin, 'admin')
             ->get(route('admin.dashboard'))
