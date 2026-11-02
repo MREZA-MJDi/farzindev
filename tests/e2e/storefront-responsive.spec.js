@@ -15,7 +15,7 @@ const publicRoutes = [
     '/shop',
     '/categories',
     '/categories/hoods',
-    '/product/farzin-hood-preview-01',
+    '/product/farzin-hood-e2e-01',
     '/blog',
     '/blog/choosing-kitchen-hood',
     '/about',
@@ -334,7 +334,7 @@ test('storefront sections never disappear while entrance motion initializes', as
 test('customer and admin endpoints redirect guests to login', async ({ page }) => {
     for (const path of ['/account', '/admin', '/admin/blog-posts']) {
         await page.goto(path, { waitUntil: 'domcontentloaded' });
-        await expect(page).toHaveURL(/\/login(?:\?.*)?$/);
+        await expect(page).toHaveURL(path.startsWith('/admin') ? /\/admin\/login(?:\?.*)?$/ : /\/login(?:\?.*)?$/);
     }
 });
 
@@ -451,7 +451,7 @@ test('admin mobile quick search and list filters remain reachable without horizo
     }
 });
 
-test('homepage journal uses published articles, responsive RTL columns and restrained card radii', async ({ page }) => {
+test('homepage journal stays hidden until three real image-backed articles exist', async ({ page }) => {
     for (const viewport of [
         { width: 390, height: 844 },
         { width: 768, height: 900 },
@@ -459,36 +459,11 @@ test('homepage journal uses published articles, responsive RTL columns and restr
     ]) {
         await page.setViewportSize(viewport);
         await page.goto('/', { waitUntil: 'domcontentloaded' });
-
-        const journal = page.locator('.fz-home-journal');
-        await expect(journal).toBeVisible();
-        await expect(journal.locator('.fz-home-journal__featured')).toBeVisible();
-        await expect(journal.locator('.fz-home-journal__featured-copy h3 a')).toHaveAttribute('href', /\/blog\//);
-        await expect(journal.locator('.fz-home-journal__aside')).toBeVisible();
-        await expect(journal.locator('.fz-home-journal__all')).toHaveAttribute('href', /\/blog$/);
-
-        const layout = await journal.evaluate((section) => {
-            const grid = section.querySelector('.fz-home-journal__layout');
-            const featured = section.querySelector('.fz-home-journal__featured');
-            const style = window.getComputedStyle(grid);
-            const cardStyle = window.getComputedStyle(featured);
-            const columns = style.gridTemplateColumns.split(' ').length;
-
-            return {
-                direction: style.direction,
-                columns,
-                radius: Number.parseFloat(cardStyle.borderTopLeftRadius),
-                background: window.getComputedStyle(document.body).backgroundColor,
-                overflow: Math.max(document.documentElement.scrollWidth, document.body.scrollWidth)
-                    - document.documentElement.clientWidth,
-            };
-        });
-
-        expect(layout.direction, 'homepage journal must keep RTL reading order').toBe('rtl');
-        expect(layout.columns, 'journal becomes one column on mobile and two columns on desktop/tablet').toBe(viewport.width <= 767 ? 1 : 2);
-        expect(layout.radius, 'journal card corner radius must remain restrained').toBeLessThanOrEqual(12);
-        expect(layout.overflow, 'homepage journal must not cause horizontal overflow').toBeLessThanOrEqual(1);
+        await expect(page.locator('.fz-home-journal')).toHaveCount(0);
     }
+
+    await page.goto('/blog', { waitUntil: 'domcontentloaded' });
+    await expect(page.locator('.blog-featured-card')).toBeVisible();
 });
 
 test('blog archive renders the editorial magazine layout without horizontal overflow', async ({ page }) => {
@@ -756,7 +731,7 @@ test('category index cards keep their copy readable above the image treatment', 
 
 test('product detail exposes one branded quantity stepper and preloads primary fonts', async ({ page }) => {
     await page.setViewportSize({ width: 1280, height: 900 });
-    await page.goto('/product/farzin-hood-preview-01', { waitUntil: 'domcontentloaded' });
+    await page.goto('/product/farzin-hood-e2e-01', { waitUntil: 'domcontentloaded' });
 
     const stepper = page.locator('[data-quantity-control]');
     await expect(stepper).toHaveCount(1);
