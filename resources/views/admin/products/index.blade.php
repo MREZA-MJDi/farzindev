@@ -211,7 +211,7 @@
                         <td>
                             @if($displayStock > 0)
                                 <span class="admin-badge admin-badge-success">
-                                        {{ \App\Helpers\PersianNumberHelper::format($product->stock) }}
+                                        {{ \App\Helpers\PersianNumberHelper::format($displayStock) }}
                                     </span>
                             @else
                                 <span class="admin-badge admin-badge-danger">
