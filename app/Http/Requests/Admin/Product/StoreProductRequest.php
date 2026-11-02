@@ -54,6 +54,7 @@ class StoreProductRequest extends FormRequest
                 'string',
                 'max:255',
                 'unique:products,sku',
+                'not_regex:/^(?:FZ-SEED-|LIV-)/i',
             ],
 
             'short_description' => [
@@ -212,6 +213,7 @@ class StoreProductRequest extends FormRequest
             'sku.string' => 'SKU محصول باید متنی باشد.',
             'sku.max' => 'SKU نباید بیشتر از ۲۵۵ کاراکتر باشد.',
             'sku.unique' => 'این SKU قبلاً استفاده شده است.',
+            'sku.not_regex' => 'پیشوندهای FZ-SEED- و LIV- رزرو شده‌اند؛ برای محصول واقعی یک SKU مستقل وارد کنید.',
 
             'short_description.max' => 'توضیح کوتاه نباید بیشتر از ۲۵۵ کاراکتر باشد.',
 
