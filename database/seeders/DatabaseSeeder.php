@@ -16,7 +16,7 @@ class DatabaseSeeder extends Seeder
         $adminPassword = (string) config('farzin.admin.password', '');
 
         if ($adminEmail === '' || ! filter_var($adminEmail, FILTER_VALIDATE_EMAIL)) {
-            throw new \\RuntimeException(
+            throw new RuntimeException(
                 'Set a valid ADMIN_EMAIL before running the database seeder.'
             );
         }
@@ -26,7 +26,7 @@ class DatabaseSeeder extends Seeder
             ->first();
 
         if ($emailOwner && ! $emailOwner->isAdmin()) {
-            throw new \\RuntimeException(
+            throw new RuntimeException(
                 'ADMIN_EMAIL belongs to a non-admin account. Choose a dedicated administrator email before seeding.'
             );
         }
@@ -34,7 +34,7 @@ class DatabaseSeeder extends Seeder
         $hasAnyAdmin = User::query()->where('role', 'admin')->exists();
 
         if (! $hasAnyAdmin && ($adminPassword === '' || mb_strlen($adminPassword) < 12)) {
-            throw new \\RuntimeException(
+            throw new RuntimeException(
                 'Set a strong ADMIN_PASSWORD of at least 12 characters before creating the initial administrator.'
             );
         }
