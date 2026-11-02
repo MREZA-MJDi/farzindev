@@ -105,7 +105,7 @@ class Category extends Model
         $query = $this->hasOne(Product::class)
             ->where('status', 'active');
 
-        if (! app()->environment('local')) {
+        if (! app()->environment(['local', 'testing'])) {
             $query->where(function ($skuQuery): void {
                 $skuQuery->whereNull('sku')
                     ->orWhere(function ($realProductQuery): void {
@@ -142,12 +142,12 @@ class Category extends Model
     {
         $query->where('is_active', true);
 
-        if (! app()->environment('local')) {
-            $query->whereNotIn('slug', ['furniture', 'chairs', 'tables', 'decor', 'accessories']);
+        if (! app()->environment(['local', 'testing'])) {
+            $query
+                ->whereNotIn('slug', ['furniture', 'chairs', 'tables', 'decor', 'accessories'])
+                ->whereHas('products', fn ($productQuery) => $productQuery->active());
         }
 
-        return $query
-            ->whereHas('products', fn ($productQuery) => $productQuery->active())
-            ->orderBy('sort_order');
+        return $query->orderBy('sort_order');
     }
 }
