@@ -42,7 +42,7 @@
         "
         role="dialog"
         aria-modal="true"
-        aria-label="منوی اصلی فرزین"
+        aria-label="منوی اصلی {{ $brandName }}"
         tabindex="-1"
         data-farzin-mobile-menu-panel
         class="absolute right-0 top-0 flex h-full h-[100dvh] min-h-0 w-[min(88%,26rem)] max-w-md flex-col overflow-hidden border-l border-[var(--livora-border)] bg-[var(--livora-cream)] pb-[env(safe-area-inset-bottom)] shadow-2xl"
@@ -199,7 +199,7 @@
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" class="h-5 w-5" width="20" height="20"><circle cx="12" cy="8" r="3.5"/><path stroke-linecap="round" stroke-linejoin="round" d="M5 20a7 7 0 0 1 14 0"/></svg>
                             </span>
                             <span class="mt-3 block text-sm font-semibold text-[var(--livora-text)]">ورود / ثبت‌نام</span>
-                            <span class="mt-1 block text-[11px] text-[var(--livora-stone)]">حساب کاربری فرزین</span>
+                            <span class="mt-1 block text-[11px] text-[var(--livora-stone)]">حساب کاربری {{ $brandName }}</span>
                         </a>
                     @endauth
                 </div>
@@ -230,7 +230,7 @@
         <div class="shrink-0 border-t border-[var(--livora-border)] bg-white px-5 py-4">
             <div class="flex items-center justify-between gap-4">
                 <div>
-                    <p class="text-sm font-bold text-[var(--livora-ink)]">فرزین</p>
+                    <p class="text-sm font-bold text-[var(--livora-ink)]">{{ $brandName }}</p>
                     <p class="mt-0.5 text-[10px] text-[var(--livora-stone)]">تجهیزات مدرن آشپزخانه</p>
                 </div>
                 <a
