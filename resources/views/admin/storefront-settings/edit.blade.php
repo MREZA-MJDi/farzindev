@@ -120,13 +120,16 @@
             <section class="admin-card p-5 sm:p-7">
                 <div class="mb-6">
                     <h2 class="text-base font-bold text-[var(--admin-text)]">هزینه ارسال</h2>
-                    <p class="mt-2 text-xs leading-6 text-[var(--admin-muted)]">مبالغ به تومان هستند. هزینه ثابت برای سفارش‌هایی که به حد ارسال رایگان نرسند اعمال می‌شود؛ مقدار صفر یعنی ارسال رایگان.</p>
+                    <p class="mt-2 text-xs leading-6 text-[var(--admin-muted)]">مبالغ به تومان هستند. تا وقتی این نرخ را ذخیره نکرده‌اید، سایت هزینه ارسال را رایگان فرض نمی‌کند و امکان نهایی‌کردن سفارش فعال نمی‌شود. اگر ارسال واقعاً برای همه سفارش‌ها رایگان است، عدد صفر را عمداً ذخیره کنید.</p>
+                    @if(!$shippingFlatRateConfigured)
+                        <p class="mt-3 rounded-xl border border-amber-200 bg-amber-50 p-3 text-xs leading-6 text-amber-900" role="status">نرخ ارسال هنوز ثبت نشده است. تا تعیین این مقدار، سفارش نهایی نمی‌شود.</p>
+                    @endif
                 </div>
 
                 <div class="grid gap-5 sm:grid-cols-2">
                     <div>
                         <label for="shipping_flat_rate" class="admin-label">هزینه ثابت ارسال (تومان)</label>
-                        <input id="shipping_flat_rate" name="shipping_flat_rate" type="number" min="0" max="1000000000000" step="1" required value="{{ old('shipping_flat_rate', $shippingFlatRate) }}" class="admin-input" inputmode="numeric">
+                        <input id="shipping_flat_rate" name="shipping_flat_rate" type="number" min="0" max="1000000000000" step="1" required value="{{ old('shipping_flat_rate', $shippingFlatRate) }}" class="admin-input" inputmode="numeric" placeholder="برای ارسال رایگان، صفر وارد کنید">
                         @error('shipping_flat_rate')<p class="mt-2 text-xs text-[var(--admin-danger)]">{{ $message }}</p>@enderror
                     </div>
                     <div>
