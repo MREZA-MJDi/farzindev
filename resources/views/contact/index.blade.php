@@ -57,7 +57,7 @@
 
                 <div class="fz-contact-hero__layout">
                     <div class="fz-contact-copy" data-fz-reveal>
-                        <p class="fz-contact-eyebrow"><span aria-hidden="true"></span> راه‌های ارتباط با مجموعه
+                        <p class="fz-contact-eyebrow"><span aria-hidden="true"></span> راه‌های ارتباط با مجموعه</p>
                         <h1 id="contact-hero-title" class="fz-contact-title">
                             ارتباط خوب،<br>
                             <span>از یک گفت‌وگو شروع می‌شود.</span>
@@ -125,11 +125,11 @@
                         </div>
                         <div class="fz-contact-art__floating fz-contact-art__floating--message">
                             <span class="fz-contact-art__floating-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4" aria-hidden="true"><path d="M20 11.5a7.5 7.5 0 0 1-7.5 7.5H6l-3 2v-9.5A7.5 7.5 0 0 1 10.5 4h2A7.5 7.5 0 0 1 20 11.5Z" /><path d="M8 11h8m-8 3h5" /></svg></span>
-                            <span><b>LET'S TALK</b><small>پاسخ‌گویی به پرسش شما</small></span>
+                            <span><b>گفت‌وگو با ما</b><small>پاسخ‌گویی به پرسش شما</small></span>
                         </div>
                         <div class="fz-contact-art__floating fz-contact-art__floating--pin">
                             <span class="fz-contact-art__pin-dot" aria-hidden="true"></span>
-                            <span><b>LOCATION</b><small>نقشه و آدرس مجموعه</small></span>
+                            <span><b>موقعیت</b><small>نقشه و آدرس مجموعه</small></span>
                         </div>
                     </div>
                 </div>
@@ -138,14 +138,14 @@
 
         <section class="fz-contact-workspace" aria-label="راه‌های ارتباط و فرم تماس">
             <x-layout.container>
-                <div class="fz-contact-grid {{ $hasMap ? '' : 'fz-contact-grid--single' }}">
+                <div class="fz-contact-grid {{ $hasMap ? '' : '!grid-cols-1' }}">
                     {{-- Right column in RTL: location and map --}}
                     @if($hasMap)
                     <aside class="fz-contact-map-column" data-fz-reveal>
                         <div class="fz-contact-panel fz-contact-map-panel">
                             <div class="fz-contact-panel__header">
                                 <div>
-                                    <p class="fz-contact-kicker">FIND FARZIN</p>
+                                    <p class="fz-contact-kicker">موقعیت مجموعه</p>
                                     <h2>موقعیت ما روی نقشه</h2>
                                     <p>آدرس مجموعه را ببینید و مسیر رسیدن را باز کنید.</p>
                                 </div>
@@ -186,12 +186,6 @@
                                     target="_blank"
                                     rel="noopener noreferrer"
                                 ><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4" aria-hidden="true"><path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z" /><circle cx="12" cy="10" r="2.5" /></svg> مسیریابی به نشانی فرزین در Google Maps</a>
-                            @if(filled($contactSetting?->hours))
-                                <div class="fz-contact-hours">
-                                    <span class="fz-contact-hours__icon" aria-hidden="true">◷</span>
-                                    <div><span>ساعات پاسخ‌گویی</span><p>{{ $contactSetting->hours }}</p></div>
-                                </div>
-                            @endif
                         </div>
 
                         <div class="fz-contact-map-note">
@@ -220,7 +214,7 @@
                                         <span class="fz-contact-channel__icon" aria-hidden="true">
                                             <svg viewBox="0 0 24 24" fill="none"><path d="M7 3.8 4.9 5.1c-.8.5-1.1 1.6-.7 2.5 2.4 5.3 6.8 9.7 12.1 12.1.9.4 2 0 2.5-.7l1.3-2.1-4.1-2.5-1.4 1.7a16 16 0 0 1-6.7-6.7l1.7-1.4L7 3.8Z" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
                                         </span>
-                                        <span class="fz-contact-channel__copy"><small>PHONE / تماس تلفنی</small><strong>{{ $contactSetting->phone_label ?: 'تماس مستقیم' }}</strong><em dir="ltr">{{ $contactSetting->phone }}</em></span>
+                                        <span class="fz-contact-channel__copy"><small>تماس تلفنی</small><strong>{{ $contactSetting->phone_label ?: 'تماس مستقیم' }}</strong><em dir="ltr">{{ $contactSetting->phone }}</em></span>
 
                                     </a>
                                 @endif
@@ -230,14 +224,18 @@
                                         <span class="fz-contact-channel__icon" aria-hidden="true">
                                             <svg viewBox="0 0 24 24" fill="none"><rect x="3" y="5" width="18" height="14" rx="2.5" stroke="currentColor" stroke-width="1.6"/><path d="m4 7 8 6 8-6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
                                         </span>
-                                        <span class="fz-contact-channel__copy"><small>EMAIL / ایمیل</small><strong>{{ $contactSetting->email_label ?: 'ارتباط ایمیلی' }}</strong><em dir="ltr">{{ $contactSetting->email }}</em></span>
+                                        <span class="fz-contact-channel__copy"><small>ایمیل</small><strong>{{ $contactSetting->email_label ?: 'ارتباط ایمیلی' }}</strong><em dir="ltr">{{ $contactSetting->email }}</em></span>
 
                                     </a>
                                 @endif
 
                             </div>
 
-                            @if($hasSocialChannels)
+                            @if(filled($contactSetting?->hours))
+                            <div class="fz-contact-hours"><span class="fz-contact-hours__icon" aria-hidden="true">◷</span><div><span>ساعات کاری</span><p>{{ $contactSetting->hours }}</p></div></div>
+                        @endif
+
+                        @if($hasSocialChannels)
                                 <div class="fz-contact-social">
                                     <div class="fz-contact-social__heading">
                                         <span class="fz-contact-kicker">شبکه‌های اجتماعی</span>
@@ -277,7 +275,7 @@
                         <section class="fz-contact-panel fz-contact-form-panel" id="contact-form" data-fz-reveal aria-labelledby="contact-form-title">
                             <div class="fz-contact-panel__header">
                                 <div>
-                                    <p class="fz-contact-kicker">YOUR MESSAGE / 02</p>
+                                    <p class="fz-contact-kicker">ارسال پیام</p>
                                     <h2 id="contact-form-title">پیام خود را برای ما بنویسید</h2>
                                     <p>فرم را تکمیل کنید تا بتوانیم دقیق‌تر راهنمایی‌تان کنیم.</p>
                                 </div>
@@ -353,7 +351,7 @@
             <x-layout.container>
                 <div class="fz-contact-bottom__inner" data-fz-reveal>
                     <div>
-                        <p class="fz-contact-kicker">NEED PRODUCT GUIDANCE?</p>
+                        <p class="fz-contact-kicker">مشاوره انتخاب محصول</p>
                         <h2>برای انتخاب دقیق‌تر، از کاتالوگ شروع کنید.</h2>
                         <p>مدل‌ها و مشخصات هود و سینک را ببینید؛ هر سؤال دیگری داشتید، همین‌جا به ما پیام بدهید.</p>
                     </div>
