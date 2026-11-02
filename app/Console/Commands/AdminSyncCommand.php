@@ -17,13 +17,13 @@ class AdminSyncCommand extends Command
         $password = (string) config('farzin.admin.password', '');
         $name = trim((string) config('farzin.admin.name', 'Farzin Admin'));
 
-        if ($email === '' || $password === '') {
+        if ($email === '' || ! filter_var($email, FILTER_VALIDATE_EMAIL) || $password === '') {
             $this->error('ADMIN_EMAIL و ADMIN_PASSWORD باید در محیط برنامه تنظیم شده باشند.');
 
             return self::FAILURE;
         }
 
-        if (strlen($password) < 12) {
+        if (mb_strlen($password) < 12) {
             $this->error('رمز مدیر باید حداقل ۱۲ نویسه داشته باشد.');
 
             return self::FAILURE;
@@ -64,7 +64,7 @@ class AdminSyncCommand extends Command
                 'name' => $name !== '' ? $name : 'Farzin Admin',
                 'email' => $email,
                 'role' => 'admin',
-                'password' => $password,
+                'password' => Hash::make($password),
             ]
         );
 
