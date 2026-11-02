@@ -119,7 +119,13 @@
             <div class="fz-category-heading fz-reveal">
                 <p class="fz-eyebrow"><span></span> دسته‌بندی محصولات</p>
                 <h2 id="fz-category-heading">از دسته‌ی موردنیازتان شروع کنید.</h2>
-                <p>فقط دسته‌هایی را می‌بینید که دست‌کم یک محصول فعال دارند.</p>
+                <p>دسته‌های فعال را ببینید و وارد صفحه هر دسته شوید؛ محصول‌های هر دسته در همان صفحه نمایش داده می‌شوند.</p>
+                <a class="fz-category-heading__link fz-text-link" href="{{ route('categories.index') }}">
+                    مشاهده همه دسته‌بندی‌ها
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M19 12H5m7 7-7-7 7-7"/>
+                    </svg>
+                </a>
             </div>
             <div class="fz-category-grid">
                 @foreach($categories as $index => $category)
