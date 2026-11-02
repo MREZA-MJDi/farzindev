@@ -756,7 +756,11 @@
         activeTrigger?.setAttribute('aria-expanded', 'true');
         previousBodyOverflow = document.body.style.overflow;
         document.body.style.overflow = 'hidden';
-        loadOptions(type).finally(() => search.focus({ preventScroll: true }));
+        loadOptions(type).finally(() => {
+            if (!modal.hidden && activeType === type) {
+                search.focus({ preventScroll: true });
+            }
+        });
     }
 
     function closeModal(restoreFocus = true) {
