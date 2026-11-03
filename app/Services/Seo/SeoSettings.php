@@ -346,6 +346,7 @@ class SeoSettings
             'seo_custom_meta_tags' => '[]',
             'seo_custom_link_tags' => '[]',
             'seo_default_og_image' => null,
+            'seo_default_og_image_media_id' => null,
             'seo_development_mode' => '1',
             'seo_robots_noindex' => '0',
             'seo_noindex_shop_filters' => '1',
