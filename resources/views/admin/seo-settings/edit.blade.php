@@ -501,7 +501,7 @@ document.addEventListener('DOMContentLoaded', function () {
         let temporaryPreviewUrl = null;
         const showPreview = function (source) {
             if (!previewWrap || !preview) return;
-            if (temporaryPreviewUrl) {
+            if (temporaryPreviewUrl && temporaryPreviewUrl !== source) {
                 URL.revokeObjectURL(temporaryPreviewUrl);
                 temporaryPreviewUrl = null;
             }
