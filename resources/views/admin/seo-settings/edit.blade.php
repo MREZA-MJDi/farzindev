@@ -247,21 +247,44 @@
                     <p class="mt-2 text-xs leading-6 text-[var(--admin-muted)]">تصویر عمومی برای پیش‌نمایش شبکه‌های اجتماعی به‌کار می‌رود. اندازهٔ پیشنهادی حداقل ۱۲۰۰×۶۳۰ و حداکثر حجم ۵ مگابایت است.</p>
                 </div>
 
-                <label class="block text-sm text-[var(--admin-text)]">
-                    آپلود تصویر Open Graph
-                    <input name="seo_default_og_image_upload" type="file" accept="image/jpeg,image/png,image/webp" class="admin-input mt-2 w-full p-2">
-                </label>
+                <div class="rounded-xl border border-[var(--admin-border)] p-4" data-og-image-source-picker>
+                    <label class="block text-sm text-[var(--admin-text)]">
+                        انتخاب از Media Library
+                        <select name="seo_default_og_image_media_id" data-og-media-select class="admin-input mt-2 w-full">
+                            <option value="">بدون تغییر از کتابخانه (آپلود یا URL را انتخاب کنید)</option>
+                            @foreach($ogMediaImages as $ogMedia)
+                                <option value="{{ $ogMedia->id }}" @selected((string) old('seo_default_og_image_media_id', $settings['seo_default_og_image_media_id'] ?? '') === (string) $ogMedia->id)>
+                                    {{ $ogMedia->original_name ?: $ogMedia->filename }} · {{ number_format($ogMedia->size / 1024) }} KB
+                                </option>
+                            @endforeach
+                        </select>
+                        <span class="mt-2 block text-xs leading-6 text-[var(--admin-muted)]">فقط تصاویر JPG، PNG و WEBP از کتابخانه نمایش داده می‌شوند؛ فایل باید حداقل ۱۲۰۰×۶۳۰ پیکسل باشد. انتخاب، فایل اصلی کتابخانه را تغییر نمی‌دهد.</span>
+                        @if($ogMediaImages->isEmpty())
+                            <span class="mt-2 block text-xs text-[var(--admin-muted)]">هنوز تصویر سازگار در Media Library وجود ندارد؛ ابتدا تصویر را در بخش رسانه آپلود کنید.</span>
+                        @endif
+                    </label>
+
+                    <label class="mt-4 block text-sm text-[var(--admin-text)]">
+                        آپلود تصویر Open Graph
+                        <input name="seo_default_og_image_upload" data-og-image-upload type="file" accept="image/jpeg,image/png,image/webp" class="admin-input mt-2 w-full p-2">
+                    </label>
+
+                    <label class="mt-4 block text-sm text-[var(--admin-text)]">
+                        یا آدرس تصویر خارجی (URL کامل)
+                        <input name="seo_default_og_image" data-og-image-url type="url" value="{{ old('seo_default_og_image', filter_var($settings['seo_default_og_image'], FILTER_VALIDATE_URL) ? $settings['seo_default_og_image'] : '') }}" maxlength="2048" placeholder="https://example.com/seo-cover.webp" class="admin-input mt-2 w-full" dir="ltr">
+                    </label>
+
+                    <label class="mt-4 flex items-start gap-3 rounded-xl border border-[var(--admin-border)] p-3 text-sm text-[var(--admin-text)]">
+                        <input type="checkbox" name="seo_default_og_image_clear" value="1" data-og-image-clear class="admin-checkbox mt-0.5 h-4 w-4">
+                        حذف تصویر Open Graph فعلی
+                    </label>
+                </div>
                 @if($ogImageUrl)
                     <div>
                         <p class="mb-2 text-xs text-[var(--admin-muted)]">پیش‌نمایش تصویر فعلی</p>
                         <img src="{{ $ogImageUrl }}" alt="پیش‌نمایش تصویر Open Graph" loading="lazy" class="max-h-64 w-full rounded-xl border border-[var(--admin-border)] object-contain object-right">
                     </div>
                 @endif
-
-                <label class="block text-sm text-[var(--admin-text)]">
-                    یا آدرس تصویر خارجی (URL کامل)
-                    <input name="seo_default_og_image" type="url" value="{{ old('seo_default_og_image', filter_var($settings['seo_default_og_image'], FILTER_VALIDATE_URL) ? $settings['seo_default_og_image'] : '') }}" maxlength="2048" placeholder="https://example.com/seo-cover.webp" class="admin-input mt-2 w-full" dir="ltr">
-                </label>
 
                 <div class="grid gap-5 sm:grid-cols-2">
                     <label class="block text-sm text-[var(--admin-text)]">
@@ -466,6 +489,38 @@
             </div>
         </form>
     </div>
+
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('[data-og-image-source-picker]').forEach(function (picker) {
+        const media = picker.querySelector('[data-og-media-select]');
+        const upload = picker.querySelector('[data-og-image-upload]');
+        const url = picker.querySelector('[data-og-image-url]');
+        const clear = picker.querySelector('[data-og-image-clear]');
+        const resetOtherSources = function (source) {
+            if (source !== 'media' && media) media.value = '';
+            if (source !== 'upload' && upload) upload.value = '';
+            if (source !== 'url' && url) url.value = '';
+            if (source !== 'clear' && clear) clear.checked = false;
+        };
+
+        media?.addEventListener('change', function () {
+            if (media.value) resetOtherSources('media');
+        });
+        upload?.addEventListener('change', function () {
+            if (upload.files && upload.files.length) resetOtherSources('upload');
+        });
+        url?.addEventListener('input', function () {
+            if (url.value.trim()) resetOtherSources('url');
+        });
+        clear?.addEventListener('change', function () {
+            if (clear.checked) resetOtherSources('clear');
+        });
+    });
+});
+</script>
+</@push>
 @endsection
 
 @push('scripts')
