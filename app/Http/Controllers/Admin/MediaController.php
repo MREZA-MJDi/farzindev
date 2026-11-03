@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\Media\MediaUploadRequest;
 use App\Models\Media;
 use App\Models\ProductImage;
+use App\Models\StorefrontSetting;
 use App\Models\Category;
 use App\Services\Media\ResponsiveImageService;
 use Illuminate\Http\RedirectResponse;
@@ -98,13 +99,19 @@ class MediaController extends Controller
         $usedByProduct = $media->productImages()->exists()
             || ProductImage::query()->where('path', $media->path)->exists();
         $usedByCategory = Category::query()->where('hover_media_id', $media->id)->exists();
+        $usedForOpenGraph = StorefrontSetting::query()
+            ->where('key', 'seo_default_og_image_media_id')
+            ->where('value', (string) $media->id)
+            ->exists();
 
-        if ($usedByProduct || $usedByCategory) {
+        if ($usedByProduct || $usedByCategory || $usedForOpenGraph) {
             return redirect()
                 ->route('admin.media.index')
-                ->with('error', $usedByCategory
-                    ? 'این رسانه برای پیش‌نمایش یک دسته‌بندی استفاده می‌شود؛ ابتدا آن اتصال را بردارید.'
-                    : 'این رسانه به گالری یک یا چند محصول یا تنوع متصل است؛ ابتدا اتصال آن را از ویرایش محصولات بردارید.');
+                ->with('error', $usedForOpenGraph
+                    ? 'این رسانه به‌عنوان تصویر Open Graph سایت انتخاب شده است؛ ابتدا تصویر سئو را تغییر دهید یا حذف کنید.'
+                    : ($usedByCategory
+                        ? 'این رسانه برای پیش‌نمایش یک دسته‌بندی استفاده می‌شود؛ ابتدا آن اتصال را بردارید.'
+                        : 'این رسانه به گالری یک یا چند محصول یا تنوع متصل است؛ ابتدا اتصال آن را از ویرایش محصولات بردارید.'));
         }
 
         $disk = $media->disk;
