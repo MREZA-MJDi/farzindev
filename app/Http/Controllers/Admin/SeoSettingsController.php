@@ -3,12 +3,14 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Media;
 use App\Models\StorefrontSetting;
 use App\Services\Seo\SeoSettings;
 use App\Services\Media\ResponsiveImageService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
@@ -34,6 +36,12 @@ class SeoSettingsController extends Controller
         return view('admin.seo-settings.edit', [
             'settings' => $settings,
             'ogImageUrl' => $seoSettings->resolvePublicAssetUrl($settings['seo_default_og_image'] ?? null),
+            'ogMediaImages' => Media::query()
+                ->where('disk', 'public')
+                ->whereIn('mime_type', ['image/jpeg', 'image/png', 'image/webp'])
+                ->latest('id')
+                ->limit(60)
+                ->get(),
             'customMetaTags' => $seoSettings->customMetaTags(),
             'customLinkTags' => $seoSettings->customLinkTags(),
         ]);
@@ -73,6 +81,8 @@ class SeoSettingsController extends Controller
             'seo_custom_link_tags.*.as' => ['nullable', 'string', Rule::in(self::PRELOAD_AS_VALUES)],
             'seo_custom_link_tags.*.crossorigin' => ['nullable', 'string', Rule::in(['anonymous', 'use-credentials'])],
             'seo_default_og_image' => ['nullable', 'url', 'max:2048'],
+            'seo_default_og_image_media_id' => ['nullable', 'integer', 'exists:media,id'],
+            'seo_default_og_image_clear' => ['sometimes', 'boolean'],
             'seo_default_og_image_upload' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'dimensions:min_width=1200,min_height=630', 'max:5120'],
             'seo_development_mode' => ['sometimes', 'boolean'],
             'seo_robots_noindex' => ['sometimes', 'boolean'],
@@ -152,9 +162,27 @@ class SeoSettingsController extends Controller
         $oldImageValue = StorefrontSetting::query()
             ->where('key', 'seo_default_og_image')
             ->value('value');
+        $oldImageMediaId = StorefrontSetting::query()
+            ->where('key', 'seo_default_og_image_media_id')
+            ->value('value');
+
+        $selectedMediaId = $validated['seo_default_og_image_media_id'] ?? null;
+        $hasImageUpload = $request->hasFile('seo_default_og_image_upload');
+        $externalImageUrl = trim((string) ($validated['seo_default_og_image'] ?? ''));
+        $clearImage = $request->boolean('seo_default_og_image_clear');
+        $imageChoiceCount = (int) filled($selectedMediaId)
+            + (int) $hasImageUpload
+            + (int) ($externalImageUrl !== '')
+            + (int) $clearImage;
+
+        if ($imageChoiceCount > 1) {
+            return back()->withInput()->withErrors([
+                'seo_default_og_image_media_id' => 'برای تصویر Open Graph فقط یک منبع انتخاب کنید: کتابخانه رسانه، آپلود، URL یا حذف تصویر.',
+            ]);
+        }
 
         $newImagePath = null;
-        if ($request->hasFile('seo_default_og_image_upload')) {
+        if ($hasImageUpload) {
             $newImagePath = $images->store($request->file('seo_default_og_image_upload'), 'seo');
             if (! $newImagePath) {
                 return back()->withInput()->withErrors([
@@ -162,13 +190,52 @@ class SeoSettingsController extends Controller
                 ]);
             }
             $validated['seo_default_og_image'] = $newImagePath;
-        } elseif (blank($validated['seo_default_og_image'] ?? null) && filled($oldImageValue)) {
-            // A path-backed upload is intentionally not echoed into the URL field.
-            // Preserve the existing image when other SEO settings are saved.
+            $validated['seo_default_og_image_media_id'] = null;
+        } elseif ($externalImageUrl !== '') {
+            $validated['seo_default_og_image'] = $externalImageUrl;
+            $validated['seo_default_og_image_media_id'] = null;
+        } elseif (filled($selectedMediaId)) {
+            $media = Media::query()->findOrFail((int) $selectedMediaId);
+            $disk = Storage::disk($media->disk);
+
+            if (
+                $media->disk !== 'public'
+                || ! in_array($media->mime_type, ['image/jpeg', 'image/png', 'image/webp'], true)
+                || ! $disk->exists($media->path)
+                || (int) $disk->size($media->path) > 20 * 1024 * 1024
+            ) {
+                return back()->withInput()->withErrors([
+                    'seo_default_og_image_media_id' => 'رسانه انتخاب‌شده در دسترس نیست یا تصویر قابل استفاده برای Open Graph نیست.',
+                ]);
+            }
+
+            $contents = $disk->get($media->path);
+            $imageInfo = is_string($contents) ? @getimagesizefromstring($contents) : false;
+            unset($contents);
+
+            if (
+                ! is_array($imageInfo)
+                || ! in_array($imageInfo['mime'] ?? '', ['image/jpeg', 'image/png', 'image/webp'], true)
+                || (int) ($imageInfo[0] ?? 0) < 1200
+                || (int) ($imageInfo[1] ?? 0) < 630
+            ) {
+                return back()->withInput()->withErrors([
+                    'seo_default_og_image_media_id' => 'تصویر انتخاب‌شده باید فایل تصویری معتبر با ابعاد حداقل ۱۲۰۰ در ۶۳۰ پیکسل باشد.',
+                ]);
+            }
+
+            $validated['seo_default_og_image'] = $media->path;
+            $validated['seo_default_og_image_media_id'] = (string) $media->id;
+        } elseif ($clearImage) {
+            $validated['seo_default_og_image'] = null;
+            $validated['seo_default_og_image_media_id'] = null;
+        } else {
+            // Empty selection means keep the current image while editing other SEO settings.
             $validated['seo_default_og_image'] = $oldImageValue;
+            $validated['seo_default_og_image_media_id'] = $oldImageMediaId;
         }
 
-        unset($validated['seo_default_og_image_upload']);
+        unset($validated['seo_default_og_image_upload'], $validated['seo_default_og_image_clear']);
 
         try {
             DB::transaction(function () use ($validated): void {
@@ -188,6 +255,7 @@ class SeoSettingsController extends Controller
 
         if (
             $oldImageValue
+            && blank($oldImageMediaId)
             && $oldImageValue !== ($validated['seo_default_og_image'] ?? null)
             && ! filter_var($oldImageValue, FILTER_VALIDATE_URL)
             && ! str_starts_with($oldImageValue, '/')

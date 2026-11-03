@@ -3,6 +3,11 @@
 @section('page_title', 'Redirect Manager')
 
 @section('content')
+    @php
+        $redirectTargetUrls = collect($redirectTargets)->pluck('url')->all();
+        $createSelection = old('target_selection', '__custom__');
+        $createIsCustom = $createSelection === '__custom__' || ($createSelection !== '' && ! in_array($createSelection, $redirectTargetUrls, true));
+    @endphp
     <div class="mb-7">
         <p class="text-[10px] font-semibold uppercase tracking-[0.2em] text-[var(--admin-accent)]">SEO / REDIRECTS</p>
         <h1 class="admin-title mt-2">مدیریت ریدایرکت‌ها</h1>
@@ -22,9 +27,16 @@
         <label class="block text-xs">مسیر قدیمی
             <input name="source_path" value="{{ old('source_path') }}" required maxlength="255" dir="ltr" placeholder="/old-url" class="admin-input mt-2 w-full text-left">
         </label>
-        <label class="block text-xs">مقصد جدید
-            <input name="target_url" value="{{ old('target_url') }}" required maxlength="2048" dir="ltr" placeholder="/new-url یا https://..." class="admin-input mt-2 w-full text-left">
-        </label>
+        <div class="block text-xs">
+            <label for="redirect-target-create">مقصد جدید</label>
+            <select id="redirect-target-create" name="target_selection" data-redirect-target-select class="admin-select mt-2 w-full">
+                @foreach($redirectTargets as $target)
+                    <option value="{{ $target['url'] }}" @selected($createSelection === $target['url'])>{{ $target['label'] }} — {{ $target['url'] }}</option>
+                @endforeach
+                <option value="__custom__" @selected($createIsCustom)>ورود دستی مسیر داخلی یا HTTPS</option>
+            </select>
+            <input name="target_url_custom" value="{{ old('target_url_custom', old('target_url')) }}" maxlength="2048" dir="ltr" placeholder="/new-url یا https://..." data-redirect-target-custom @if(! $createIsCustom) hidden @endif class="admin-input mt-2 w-full text-left">
+        </div>
         <label class="block text-xs">کد
             <select name="status_code" class="admin-select mt-2 w-full"><option value="301">301 دائمی</option><option value="302">302 موقت</option></select>
         </label>
@@ -39,17 +51,30 @@
             <thead><tr><th>مسیر مبدأ</th><th>مقصد</th><th>کد</th><th>آخرین تغییر</th><th>وضعیت</th><th>عملیات</th></tr></thead>
             <tbody>
                 @forelse($redirects as $redirect)
+                    @php
+                        $selectionKey = 'target_selection.' . $redirect->id;
+                        $customKey = 'target_url_custom.' . $redirect->id;
+                        $storedTargetSelection = old($selectionKey, in_array($redirect->target_url, $redirectTargetUrls, true) ? $redirect->target_url : '__custom__');
+                        $isCustomTarget = $storedTargetSelection === '__custom__' || ! in_array($storedTargetSelection, $redirectTargetUrls, true);
+                    @endphp
                     <tr>
                         <td colspan="6">
-                            <form method="POST" action="{{ route('admin.seo-redirects.update', $redirect) }}" class="grid min-w-[900px] items-end gap-3 lg:grid-cols-[1fr_1.2fr_110px_90px_80px_auto]">
+                            <form method="POST" action="{{ route('admin.seo-redirects.update', $redirect) }}" class="grid min-w-[980px] items-end gap-3 lg:grid-cols-[1fr_1.2fr_110px_90px_80px_auto]">
                                 @csrf
                                 @method('PUT')
                                 <label class="block text-xs">مبدأ
                                     <input name="source_path" value="{{ $redirect->source_path }}" required maxlength="255" dir="ltr" class="admin-input mt-2 w-full text-left">
                                 </label>
-                                <label class="block text-xs">مقصد
-                                    <input name="target_url" value="{{ $redirect->target_url }}" required maxlength="2048" dir="ltr" class="admin-input mt-2 w-full text-left">
-                                </label>
+                                <div class="block text-xs">
+                                    <label for="redirect-target-{{ $redirect->id }}">مقصد</label>
+                                    <select id="redirect-target-{{ $redirect->id }}" name="target_selection[{{ $redirect->id }}]" data-redirect-target-select class="admin-select mt-2 w-full">
+                                        @foreach($redirectTargets as $target)
+                                            <option value="{{ $target['url'] }}" @selected($storedTargetSelection === $target['url'])>{{ $target['label'] }} — {{ $target['url'] }}</option>
+                                        @endforeach
+                                        <option value="__custom__" @selected($isCustomTarget)>ورود دستی مسیر داخلی یا HTTPS</option>
+                                    </select>
+                                    <input name="target_url_custom[{{ $redirect->id }}]" value="{{ old($customKey, $isCustomTarget ? $redirect->target_url : '') }}" maxlength="2048" dir="ltr" placeholder="/new-url یا https://..." data-redirect-target-custom @if(! $isCustomTarget) hidden @endif class="admin-input mt-2 w-full text-left">
+                                </div>
                                 <label class="block text-xs">کد
                                     <select name="status_code" class="admin-select mt-2 w-full">
                                         <option value="301" @selected($redirect->status_code === 301)>301</option>
@@ -83,3 +108,25 @@
     </div>
     <div class="mt-6">{{ $redirects->links() }}</div>
 @endsection
+
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('[data-redirect-target-select]').forEach(function (select) {
+        const form = select.closest('form');
+        const customInput = form && form.querySelector('[data-redirect-target-custom]');
+        if (!customInput) return;
+
+        const syncTargetInput = function () {
+            const isCustom = select.value === '__custom__';
+            customInput.hidden = !isCustom;
+            customInput.required = isCustom;
+            if (!isCustom) customInput.value = '';
+        };
+
+        select.addEventListener('change', syncTargetInput);
+        syncTargetInput();
+    });
+});
+</script>
+@endpush

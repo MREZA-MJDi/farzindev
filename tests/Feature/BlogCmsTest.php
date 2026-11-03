@@ -332,6 +332,49 @@ class BlogCmsTest extends TestCase
     }
 
 
+    public function test_redirect_manager_offers_real_published_blog_destinations_and_persists_the_selected_target(): void
+    {
+        $admin = User::factory()->create(['role' => 'admin']);
+        $published = BlogPost::create([
+            'title' => 'راهنمای مقصد ریدایرکت',
+            'slug' => 'redirect-picker-published-guide',
+            'body' => 'مقاله منتشرشده برای فهرست مقصدها.',
+            'status' => 'published',
+            'published_at' => now()->subMinute(),
+        ]);
+        BlogPost::create([
+            'title' => 'پیش‌نویس نباید مقصد پیشنهادی باشد',
+            'slug' => 'redirect-picker-draft-guide',
+            'body' => 'پیش‌نویس',
+            'status' => 'draft',
+        ]);
+
+        $this->actingAs($admin, 'admin')
+            ->get(route('admin.seo-redirects.index'))
+            ->assertOk()
+            ->assertSee('data-redirect-target-select', false)
+            ->assertSee('value="/blog/redirect-picker-published-guide"', false)
+            ->assertSee('راهنمای مقصد ریدایرکت')
+            ->assertDontSee('value="/blog/redirect-picker-draft-guide"', false);
+
+        $this->actingAs($admin, 'admin')
+            ->post(route('admin.seo-redirects.store'), [
+                'source_path' => '/legacy-selected-target',
+                'target_selection' => route('blog.show', $published->slug, false),
+                'status_code' => '301',
+                'is_active' => '1',
+            ])
+            ->assertRedirect(route('admin.seo-redirects.index'))
+            ->assertSessionHasNoErrors();
+
+        $this->assertDatabaseHas('seo_redirects', [
+            'source_path' => '/legacy-selected-target',
+            'target_url' => route('blog.show', $published->slug, false),
+            'status_code' => 301,
+        ]);
+        $this->get('/legacy-selected-target')->assertRedirect(route('blog.show', $published->slug));
+    }
+
     public function test_blog_archive_uses_the_editorial_magazine_layout(): void
     {
         $featured = BlogPost::create([

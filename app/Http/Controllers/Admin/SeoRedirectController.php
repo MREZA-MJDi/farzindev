@@ -3,6 +3,9 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\BlogPost;
+use App\Models\Category;
+use App\Models\Product;
 use App\Models\SeoRedirect;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -18,7 +21,46 @@ class SeoRedirectController extends Controller
             ->orderByDesc('updated_at')
             ->paginate(25);
 
-        return view('admin.seo-redirects.index', compact('redirects'));
+        $redirectTargets = collect([
+            ['label' => 'صفحه اصلی', 'url' => route('home', [], false)],
+            ['label' => 'فروشگاه', 'url' => route('shop.index', [], false)],
+            ['label' => 'همه دسته‌بندی‌ها', 'url' => route('categories.index', [], false)],
+            ['label' => 'مجله', 'url' => route('blog.index', [], false)],
+            ['label' => 'درباره ما', 'url' => route('about', [], false)],
+            ['label' => 'تماس با ما', 'url' => route('contact', [], false)],
+        ])->merge(
+            Category::query()
+                ->where('is_active', true)
+                ->orderBy('name')
+                ->limit(100)
+                ->get(['name', 'slug'])
+                ->map(fn (Category $category): array => [
+                    'label' => 'دسته‌بندی: ' . $category->name,
+                    'url' => route('categories.show', $category->slug, false),
+                ])
+        )->merge(
+            Product::query()
+                ->active()
+                ->orderBy('name')
+                ->limit(100)
+                ->get(['name', 'slug'])
+                ->map(fn (Product $product): array => [
+                    'label' => 'محصول: ' . $product->name,
+                    'url' => route('product.show', $product->slug, false),
+                ])
+        )->merge(
+            BlogPost::query()
+                ->published()
+                ->orderByDesc('published_at')
+                ->limit(100)
+                ->get(['title', 'slug'])
+                ->map(fn (BlogPost $post): array => [
+                    'label' => 'مقاله: ' . $post->title,
+                    'url' => route('blog.show', $post->slug, false),
+                ])
+        )->unique('url')->values();
+
+        return view('admin.seo-redirects.index', compact('redirects', 'redirectTargets'));
     }
 
     public function store(Request $request): RedirectResponse
@@ -123,6 +165,24 @@ class SeoRedirectController extends Controller
 
     private function validateRedirect(Request $request, ?SeoRedirect $redirect = null): array
     {
+        $selectionKey = $redirect ? (string) $redirect->id : null;
+        $selection = $request->input('target_selection');
+        $customTarget = $request->input('target_url_custom');
+
+        if (is_array($selection)) {
+            $selection = $selection[$selectionKey] ?? null;
+        }
+
+        if (is_array($customTarget)) {
+            $customTarget = $customTarget[$selectionKey] ?? null;
+        }
+
+        if ($selection === '__custom__') {
+            $request->merge(['target_url' => $customTarget]);
+        } elseif (is_string($selection) && $selection !== '') {
+            $request->merge(['target_url' => $selection]);
+        }
+
         return $request->validate([
             'source_path' => [
                 'required',

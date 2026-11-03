@@ -5,9 +5,12 @@ namespace Tests\Feature;
 use App\Models\BlogPost;
 use App\Models\BlogTerm;
 use App\Models\Media;
+use App\Models\StorefrontSetting;
 use App\Models\User;
 use App\Services\Blog\BlogAppearance;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
 class BlogAppearanceTest extends TestCase
@@ -116,6 +119,54 @@ class BlogAppearanceTest extends TestCase
             ->assertSee('تصویر نمونه درون مقاله')
             ->assertSee('editor-library-sample.webp')
             ->assertSee('data-media-url="/storage/media/editor-library-sample.webp"', false);
+    }
+
+    public function test_hero_and_closing_image_crops_are_saved_as_independent_slot_assets(): void
+    {
+        Storage::fake('public');
+        $admin = User::factory()->create(['role' => 'admin']);
+
+        $this->actingAs($admin, 'admin')
+            ->put(route('admin.blog-appearance.update'), [
+                'hero_art_image_upload' => UploadedFile::fake()->image('shared-source.jpg', 1600, 1200),
+                'hero_art_alt' => 'کراپ مستقل Hero',
+                'hero_art_fit' => 'cover',
+                'hero_art_scale' => 112,
+                'hero_art_position' => 'right',
+            ])
+            ->assertRedirect(route('admin.blog-appearance.edit'))
+            ->assertSessionHasNoErrors();
+
+        $heroPath = StorefrontSetting::query()->where('key', 'blog_hero_art_image')->value('value');
+        $this->assertNotEmpty($heroPath);
+        Storage::disk('public')->assertExists($heroPath);
+
+        $this->actingAs($admin, 'admin')
+            ->put(route('admin.blog-appearance.update'), [
+                'closing_art_image_upload' => UploadedFile::fake()->image('shared-source.jpg', 1600, 1200),
+                'closing_art_alt' => 'کراپ مستقل بخش پایانی',
+                'closing_art_fit' => 'contain',
+                'closing_art_scale' => 86,
+                'closing_art_position' => 'bottom',
+            ])
+            ->assertRedirect(route('admin.blog-appearance.edit'))
+            ->assertSessionHasNoErrors();
+
+        $closingPath = StorefrontSetting::query()->where('key', 'blog_closing_art_image')->value('value');
+
+        $this->assertNotEmpty($closingPath);
+        $this->assertNotSame($heroPath, $closingPath);
+        Storage::disk('public')->assertExists($heroPath);
+        Storage::disk('public')->assertExists($closingPath);
+
+        $appearance = app(BlogAppearance::class);
+        $appearance->clearCache();
+        $this->assertSame($heroPath, $appearance->all()['hero']['image_path']);
+        $this->assertSame($closingPath, $appearance->all()['closing']['image_path']);
+        $this->assertSame(112, $appearance->all()['hero']['scale']);
+        $this->assertSame(86, $appearance->all()['closing']['scale']);
+        $this->assertSame('right center', $appearance->all()['hero']['object_position']);
+        $this->assertSame('center bottom', $appearance->all()['closing']['object_position']);
     }
 
     public function test_category_and_tag_archives_receive_the_shared_blog_appearance(): void

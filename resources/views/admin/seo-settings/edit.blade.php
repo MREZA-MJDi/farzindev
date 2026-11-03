@@ -247,21 +247,42 @@
                     <p class="mt-2 text-xs leading-6 text-[var(--admin-muted)]">تصویر عمومی برای پیش‌نمایش شبکه‌های اجتماعی به‌کار می‌رود. اندازهٔ پیشنهادی حداقل ۱۲۰۰×۶۳۰ و حداکثر حجم ۵ مگابایت است.</p>
                 </div>
 
-                <label class="block text-sm text-[var(--admin-text)]">
-                    آپلود تصویر Open Graph
-                    <input name="seo_default_og_image_upload" type="file" accept="image/jpeg,image/png,image/webp" class="admin-input mt-2 w-full p-2">
-                </label>
-                @if($ogImageUrl)
-                    <div>
-                        <p class="mb-2 text-xs text-[var(--admin-muted)]">پیش‌نمایش تصویر فعلی</p>
-                        <img src="{{ $ogImageUrl }}" alt="پیش‌نمایش تصویر Open Graph" loading="lazy" class="max-h-64 w-full rounded-xl border border-[var(--admin-border)] object-contain object-right">
-                    </div>
-                @endif
+                <div class="rounded-xl border border-[var(--admin-border)] p-4" data-og-image-source-picker>
+                    <label class="block text-sm text-[var(--admin-text)]">
+                        انتخاب از Media Library
+                        <select name="seo_default_og_image_media_id" data-og-media-select class="admin-input mt-2 w-full">
+                            <option value="">بدون تغییر از کتابخانه (آپلود یا URL را انتخاب کنید)</option>
+                            @foreach($ogMediaImages as $ogMedia)
+                                <option value="{{ $ogMedia->id }}" data-media-url="{{ $ogMedia->url }}" @selected((string) old('seo_default_og_image_media_id', $settings['seo_default_og_image_media_id'] ?? '') === (string) $ogMedia->id)>
+                                    {{ $ogMedia->original_name ?: $ogMedia->filename }} · {{ $ogMedia->human_size }}
+                                </option>
+                            @endforeach
+                        </select>
+                        <span class="mt-2 block text-xs leading-6 text-[var(--admin-muted)]">فقط تصاویر JPG، PNG و WEBP از کتابخانه نمایش داده می‌شوند؛ فایل باید حداقل ۱۲۰۰×۶۳۰ پیکسل باشد. انتخاب، فایل اصلی کتابخانه را تغییر نمی‌دهد.</span>
+                        @if($ogMediaImages->isEmpty())
+                            <span class="mt-2 block text-xs text-[var(--admin-muted)]">هنوز تصویر سازگار در Media Library وجود ندارد؛ ابتدا تصویر را در بخش رسانه آپلود کنید.</span>
+                        @endif
+                    </label>
 
-                <label class="block text-sm text-[var(--admin-text)]">
-                    یا آدرس تصویر خارجی (URL کامل)
-                    <input name="seo_default_og_image" type="url" value="{{ old('seo_default_og_image', filter_var($settings['seo_default_og_image'], FILTER_VALIDATE_URL) ? $settings['seo_default_og_image'] : '') }}" maxlength="2048" placeholder="https://example.com/seo-cover.webp" class="admin-input mt-2 w-full" dir="ltr">
-                </label>
+                    <label class="mt-4 block text-sm text-[var(--admin-text)]">
+                        آپلود تصویر Open Graph
+                        <input name="seo_default_og_image_upload" data-og-image-upload type="file" accept="image/jpeg,image/png,image/webp" class="admin-input mt-2 w-full p-2">
+                    </label>
+
+                    <label class="mt-4 block text-sm text-[var(--admin-text)]">
+                        یا آدرس تصویر خارجی (URL کامل)
+                        <input name="seo_default_og_image" data-og-image-url type="url" value="{{ old('seo_default_og_image', filter_var($settings['seo_default_og_image'], FILTER_VALIDATE_URL) ? $settings['seo_default_og_image'] : '') }}" maxlength="2048" placeholder="https://example.com/seo-cover.webp" class="admin-input mt-2 w-full" dir="ltr">
+                    </label>
+
+                    <label class="mt-4 flex items-start gap-3 rounded-xl border border-[var(--admin-border)] p-3 text-sm text-[var(--admin-text)]">
+                        <input type="checkbox" name="seo_default_og_image_clear" value="1" data-og-image-clear class="admin-checkbox mt-0.5 h-4 w-4">
+                        حذف تصویر Open Graph فعلی
+                    </label>
+                </div>
+                <div data-og-image-preview-wrap class="{{ $ogImageUrl ? '' : 'hidden' }}">
+                    <p class="mb-2 text-xs text-[var(--admin-muted)]">پیش‌نمایش تصویر انتخاب‌شده</p>
+                    <img data-og-current-preview @if($ogImageUrl) src="{{ $ogImageUrl }}" @endif alt="پیش‌نمایش تصویر Open Graph" loading="lazy" class="max-h-64 w-full rounded-xl border border-[var(--admin-border)] object-contain object-right">
+                </div>
 
                 <div class="grid gap-5 sm:grid-cols-2">
                     <label class="block text-sm text-[var(--admin-text)]">
@@ -466,6 +487,72 @@
             </div>
         </form>
     </div>
+
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('[data-og-image-source-picker]').forEach(function (picker) {
+        const media = picker.querySelector('[data-og-media-select]');
+        const upload = picker.querySelector('[data-og-image-upload]');
+        const url = picker.querySelector('[data-og-image-url]');
+        const clear = picker.querySelector('[data-og-image-clear]');
+        const previewWrap = picker.parentElement.querySelector('[data-og-image-preview-wrap]');
+        const preview = previewWrap && previewWrap.querySelector('[data-og-current-preview]');
+        let temporaryPreviewUrl = null;
+        const showPreview = function (source) {
+            if (!previewWrap || !preview) return;
+            if (temporaryPreviewUrl && temporaryPreviewUrl !== source) {
+                URL.revokeObjectURL(temporaryPreviewUrl);
+                temporaryPreviewUrl = null;
+            }
+            if (!source) {
+                preview.removeAttribute('src');
+                previewWrap.classList.add('hidden');
+                return;
+            }
+            preview.src = source;
+            previewWrap.classList.remove('hidden');
+        };
+        const resetOtherSources = function (source) {
+            if (source !== 'media' && media) media.value = '';
+            if (source !== 'upload' && upload) upload.value = '';
+            if (source !== 'url' && url) url.value = '';
+            if (source !== 'clear' && clear) clear.checked = false;
+        };
+
+        media?.addEventListener('change', function () {
+            if (media.value) {
+                resetOtherSources('media');
+                showPreview(media.selectedOptions[0]?.dataset.mediaUrl || '');
+            }
+        });
+        upload?.addEventListener('change', function () {
+            const file = upload.files && upload.files[0];
+            if (!file) return;
+            resetOtherSources('upload');
+            temporaryPreviewUrl = URL.createObjectURL(file);
+            showPreview(temporaryPreviewUrl);
+        });
+        url?.addEventListener('change', function () {
+            if (url.value.trim()) {
+                resetOtherSources('url');
+                showPreview(url.value.trim());
+            }
+        });
+        clear?.addEventListener('change', function () {
+            if (clear.checked) {
+                resetOtherSources('clear');
+                showPreview('');
+            }
+        });
+        picker.closest('form')?.addEventListener('submit', function () {
+            if (temporaryPreviewUrl) URL.revokeObjectURL(temporaryPreviewUrl);
+            temporaryPreviewUrl = null;
+        });
+    });
+});
+</script>
+@endpush
 @endsection
 
 @push('scripts')

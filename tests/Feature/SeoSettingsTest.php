@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Models\Media;
 use App\Models\StorefrontSetting;
 use App\Models\User;
 use App\Services\Seo\SeoSettings;
@@ -420,5 +421,104 @@ class SeoSettingsTest extends TestCase
             ->assertHeader('X-Robots-Tag', 'noindex, nofollow, noarchive, nosnippet, noimageindex');
     }
 
+
+
+
+    public function test_admin_can_select_an_existing_media_library_image_for_open_graph_without_copying_or_losing_it(): void
+    {
+        Storage::fake('public');
+        $admin = User::factory()->create(['role' => 'admin']);
+        $file = UploadedFile::fake()->image('farzin-social-library.png', 1200, 630);
+        $path = $file->store('media', 'public');
+        $media = Media::create([
+            'user_id' => $admin->id,
+            'disk' => 'public',
+            'path' => $path,
+            'filename' => basename($path),
+            'original_name' => 'farzin-social-library.png',
+            'mime_type' => 'image/png',
+            'extension' => 'png',
+            'size' => Storage::disk('public')->size($path),
+            'alt' => 'تصویر شبکه اجتماعی فرزین',
+        ]);
+
+        $this->actingAs($admin, 'admin')
+            ->get(route('admin.seo-settings.edit'))
+            ->assertOk()
+            ->assertSee('name="seo_default_og_image_media_id"', false)
+            ->assertSee('farzin-social-library.png');
+
+        $this->actingAs($admin, 'admin')
+            ->put(route('admin.seo-settings.update'), [
+                'seo_canonical_base_url' => 'https://farajihome.com',
+                'seo_site_name' => 'فرزین',
+                'seo_default_title' => 'عنوان پیش‌فرض فرزین',
+                'seo_default_description' => 'توضیحات پیش‌فرض فرزین.',
+                'seo_default_og_image_media_id' => (string) $media->id,
+                'seo_development_mode' => '1',
+                'seo_robots_txt_rules' => "User-agent: *\\nAllow: /",
+                'seo_sitemap_enabled' => '1',
+            ])
+            ->assertRedirect(route('admin.seo-settings.edit'))
+            ->assertSessionHasNoErrors();
+
+        $this->assertDatabaseHas('storefront_settings', [
+            'key' => 'seo_default_og_image',
+            'value' => $path,
+        ]);
+        $this->assertDatabaseHas('storefront_settings', [
+            'key' => 'seo_default_og_image_media_id',
+            'value' => (string) $media->id,
+        ]);
+        Storage::disk('public')->assertExists($path);
+
+        $this->get(route('home'))
+            ->assertOk()
+            ->assertSee('property="og:image" content="https://farajihome.com/storage/' . ltrim($path, '/') . '"', false)
+            ->assertSee('twitter:image', false);
+
+        $this->actingAs($admin, 'admin')
+            ->delete(route('admin.media.destroy', $media))
+            ->assertRedirect(route('admin.media.index'))
+            ->assertSessionHas('error');
+
+        $this->assertDatabaseHas('media', ['id' => $media->id]);
+        Storage::disk('public')->assertExists($path);
+    }
+
+    public function test_admin_cannot_select_a_media_library_image_below_open_graph_minimum_dimensions(): void
+    {
+        Storage::fake('public');
+        $admin = User::factory()->create(['role' => 'admin']);
+        $file = UploadedFile::fake()->image('too-small-og.jpg', 900, 500);
+        $path = $file->store('media', 'public');
+        $media = Media::create([
+            'user_id' => $admin->id,
+            'disk' => 'public',
+            'path' => $path,
+            'filename' => basename($path),
+            'original_name' => 'too-small-og.jpg',
+            'mime_type' => 'image/jpeg',
+            'extension' => 'jpg',
+            'size' => Storage::disk('public')->size($path),
+        ]);
+
+        $this->actingAs($admin, 'admin')
+            ->from(route('admin.seo-settings.edit'))
+            ->put(route('admin.seo-settings.update'), [
+                'seo_canonical_base_url' => 'https://farajihome.com',
+                'seo_site_name' => 'فرزین',
+                'seo_default_title' => 'عنوان',
+                'seo_default_description' => 'توضیحات',
+                'seo_default_og_image_media_id' => (string) $media->id,
+                'seo_robots_txt_rules' => "User-agent: *\\nAllow: /",
+            ])
+            ->assertRedirect(route('admin.seo-settings.edit'))
+            ->assertSessionHasErrors('seo_default_og_image_media_id');
+
+        $this->assertDatabaseMissing('storefront_settings', [
+            'key' => 'seo_default_og_image',
+        ]);
+    }
 
 }
