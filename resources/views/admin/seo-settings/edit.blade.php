@@ -253,8 +253,8 @@
                         <select name="seo_default_og_image_media_id" data-og-media-select class="admin-input mt-2 w-full">
                             <option value="">بدون تغییر از کتابخانه (آپلود یا URL را انتخاب کنید)</option>
                             @foreach($ogMediaImages as $ogMedia)
-                                <option value="{{ $ogMedia->id }}" @selected((string) old('seo_default_og_image_media_id', $settings['seo_default_og_image_media_id'] ?? '') === (string) $ogMedia->id)>
-                                    {{ $ogMedia->original_name ?: $ogMedia->filename }} · {{ number_format($ogMedia->size / 1024) }} KB
+                                <option value="{{ $ogMedia->id }}" data-media-url="{{ $ogMedia->url }}" @selected((string) old('seo_default_og_image_media_id', $settings['seo_default_og_image_media_id'] ?? '') === (string) $ogMedia->id)>
+                                    {{ $ogMedia->original_name ?: $ogMedia->filename }} · {{ $ogMedia->human_size }}
                                 </option>
                             @endforeach
                         </select>
@@ -279,12 +279,10 @@
                         حذف تصویر Open Graph فعلی
                     </label>
                 </div>
-                @if($ogImageUrl)
-                    <div>
-                        <p class="mb-2 text-xs text-[var(--admin-muted)]">پیش‌نمایش تصویر فعلی</p>
-                        <img src="{{ $ogImageUrl }}" alt="پیش‌نمایش تصویر Open Graph" loading="lazy" class="max-h-64 w-full rounded-xl border border-[var(--admin-border)] object-contain object-right">
-                    </div>
-                @endif
+                <div data-og-image-preview-wrap class="{{ $ogImageUrl ? '' : 'hidden' }}">
+                    <p class="mb-2 text-xs text-[var(--admin-muted)]">پیش‌نمایش تصویر انتخاب‌شده</p>
+                    <img data-og-current-preview @if($ogImageUrl) src="{{ $ogImageUrl }}" @endif alt="پیش‌نمایش تصویر Open Graph" loading="lazy" class="max-h-64 w-full rounded-xl border border-[var(--admin-border)] object-contain object-right">
+                </div>
 
                 <div class="grid gap-5 sm:grid-cols-2">
                     <label class="block text-sm text-[var(--admin-text)]">
@@ -498,6 +496,23 @@ document.addEventListener('DOMContentLoaded', function () {
         const upload = picker.querySelector('[data-og-image-upload]');
         const url = picker.querySelector('[data-og-image-url]');
         const clear = picker.querySelector('[data-og-image-clear]');
+        const previewWrap = picker.parentElement.querySelector('[data-og-image-preview-wrap]');
+        const preview = previewWrap && previewWrap.querySelector('[data-og-current-preview]');
+        let temporaryPreviewUrl = null;
+        const showPreview = function (source) {
+            if (!previewWrap || !preview) return;
+            if (temporaryPreviewUrl) {
+                URL.revokeObjectURL(temporaryPreviewUrl);
+                temporaryPreviewUrl = null;
+            }
+            if (!source) {
+                preview.removeAttribute('src');
+                previewWrap.classList.add('hidden');
+                return;
+            }
+            preview.src = source;
+            previewWrap.classList.remove('hidden');
+        };
         const resetOtherSources = function (source) {
             if (source !== 'media' && media) media.value = '';
             if (source !== 'upload' && upload) upload.value = '';
@@ -506,16 +521,33 @@ document.addEventListener('DOMContentLoaded', function () {
         };
 
         media?.addEventListener('change', function () {
-            if (media.value) resetOtherSources('media');
+            if (media.value) {
+                resetOtherSources('media');
+                showPreview(media.selectedOptions[0]?.dataset.mediaUrl || '');
+            }
         });
         upload?.addEventListener('change', function () {
-            if (upload.files && upload.files.length) resetOtherSources('upload');
+            const file = upload.files && upload.files[0];
+            if (!file) return;
+            resetOtherSources('upload');
+            temporaryPreviewUrl = URL.createObjectURL(file);
+            showPreview(temporaryPreviewUrl);
         });
-        url?.addEventListener('input', function () {
-            if (url.value.trim()) resetOtherSources('url');
+        url?.addEventListener('change', function () {
+            if (url.value.trim()) {
+                resetOtherSources('url');
+                showPreview(url.value.trim());
+            }
         });
         clear?.addEventListener('change', function () {
-            if (clear.checked) resetOtherSources('clear');
+            if (clear.checked) {
+                resetOtherSources('clear');
+                showPreview('');
+            }
+        });
+        picker.closest('form')?.addEventListener('submit', function () {
+            if (temporaryPreviewUrl) URL.revokeObjectURL(temporaryPreviewUrl);
+            temporaryPreviewUrl = null;
         });
     });
 });
