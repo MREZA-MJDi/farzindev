@@ -1,10 +1,10 @@
 <?php
 
-namespace Tests\\Feature\\Storefront;
+namespace Tests\Feature\Storefront;
 
-use Illuminate\\Foundation\\Testing\\RefreshDatabase;
-use Illuminate\\Support\\Facades\\Schema;
-use Tests\\TestCase;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Schema;
+use Tests\TestCase;
 
 class CartIndexOptimizationTest extends TestCase
 {
