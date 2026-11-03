@@ -520,7 +520,7 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 });
 </script>
-</@push>
+@endpush
 @endsection
 
 @push('scripts')
