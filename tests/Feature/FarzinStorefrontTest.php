@@ -472,6 +472,25 @@ class FarzinStorefrontTest extends TestCase
             ->assertSee('چک‌لیست ساده پیش از ثبت سفارش');
     }
 
+    public function test_about_page_uses_dashboard_copy_and_section_visibility(): void
+    {
+        StorefrontSetting::query()->updateOrCreate(
+            ['key' => 'page_about_hero_title'],
+            ['value' => 'درباره فرزین، روایت تازه']
+        );
+        StorefrontSetting::query()->updateOrCreate(
+            ['key' => 'page_about_show_values'],
+            ['value' => '0']
+        );
+
+        app(\\App\\Services\\StorefrontPageContent::class)->clearCache();
+
+        $this->get(route('about'))
+            ->assertOk()
+            ->assertSee('درباره فرزین، روایت تازه')
+            ->assertDontSee('تمرکز مجموعه فرزین.');
+    }
+
     public function test_auth_and_legal_pages_use_the_farzin_customer_experience(): void
     {
         $this->get(route('login'))
