@@ -312,6 +312,9 @@ test('shared footer keeps the same brand, navigation and dashboard-driven contac
                 logoColor: logoStyle.color,
                 logoWidth: Number(logo.getBoundingClientRect().width.toFixed(1)),
                 logoHeight: Number(logo.getBoundingClientRect().height.toFixed(1)),
+                logoImageFit: logo.querySelector('img') ? getComputedStyle(logo.querySelector('img')).objectFit : null,
+                logoImageWidth: logo.querySelector('img') ? Number(logo.querySelector('img').getBoundingClientRect().width.toFixed(1)) : null,
+                logoImageHeight: logo.querySelector('img') ? Number(logo.querySelector('img').getBoundingClientRect().height.toFixed(1)) : null,
                 hasPlaceholderLink: Array.from(footer.querySelectorAll('a')).some((anchor) => anchor.getAttribute('href') === '#'),
             };
         }));

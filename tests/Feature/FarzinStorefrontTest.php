@@ -701,7 +701,7 @@ class FarzinStorefrontTest extends TestCase
 
         $admin = $this->admin();
 
-        $this->actingAs($admin, 'admin')
+        $cmsResponse = $this->actingAs($admin, 'admin')
             ->get(route('admin.page-content.edit', ['tab' => 'home']))
             ->assertOk()
             ->assertSee('enctype="multipart/form-data"', false)
@@ -714,11 +714,18 @@ class FarzinStorefrontTest extends TestCase
             ->assertSee('data-image-editor-min-width="1200"', false)
             ->assertSee('data-image-editor-min-height="750"', false)
             ->assertSee('data-image-editor-canvas', false)
-            ->assertSee('class="fz-home-technology"', false)
-            ->assertSee('id="fz-home-featured"', false)
-            ->assertSee('محصول واقعی پیشنهاد فرزین')
+            ->assertSee('name="page_home_technology_title"', false)
+            ->assertSee('name="page_home_technology_body"', false)
+            ->assertSee('name="page_home_technology_image"', false)
+            ->assertSee('name="page_home_show_technology"', false)
             ->assertDontSee('page_home_hero_image_position')
             ->assertDontSee('نقطه تمرکز تصویر Hero');
+
+        $this->get(route('home'))
+            ->assertOk()
+            ->assertSee('class="fz-home-technology"', false)
+            ->assertSee('id="fz-home-featured"', false)
+            ->assertSee('محصول واقعی پیشنهاد فرزین');
     }
 
     public function test_homepage_cms_rejects_hero_images_outside_the_fixed_crop_ratio(): void
@@ -994,12 +1001,33 @@ class FarzinStorefrontTest extends TestCase
             'price' => 20000000,
             'stock' => 5,
         ]);
-        $this->product($category, [
+        $premium = $this->product($category, [
             'name' => 'Farzin Hood 90',
             'slug' => 'farzin-hood-90',
             'sku' => 'FAR-HOOD-90',
             'price' => 80000000,
             'stock' => 3,
+        ]);
+                ProductImage::create([
+            'product_id' => $product->id,
+            'path' => 'https://cdn.example.test/'.$product->slug.'.webp',
+            'alt' => $product->name,
+            'sort_order' => 0,
+            'is_primary' => true,
+        ]);
+        ProductImage::create([
+            'product_id' => $budget->id,
+            'path' => 'https://cdn.example.test/farzin-hood-60.webp',
+            'alt' => $budget->name,
+            'sort_order' => 0,
+            'is_primary' => true,
+        ]);
+        ProductImage::create([
+            'product_id' => $premium->id,
+            'path' => 'https://cdn.example.test/farzin-hood-90.webp',
+            'alt' => $premium->name,
+            'sort_order' => 0,
+            'is_primary' => true,
         ]);
         $this->product($category, [
             'name' => 'Archived Hood',
@@ -1030,6 +1058,13 @@ class FarzinStorefrontTest extends TestCase
         $product = $this->product($category, [
             'name' => 'Generic Kitchen Model',
             'slug' => 'generic-kitchen-model',
+        ]);
+        ProductImage::create([
+            'product_id' => $product->id,
+            'path' => 'https://cdn.example.test/generic-kitchen-model.webp',
+            'alt' => $product->name,
+            'sort_order' => 0,
+            'is_primary' => true,
         ]);
 
         $this->get(route('shop.index', ['search' => 'Granite Kitchen Sinks']))
@@ -1062,6 +1097,13 @@ class FarzinStorefrontTest extends TestCase
             'sku' => 'FAR-VARIANT-STOCK',
             'stock' => 0,
         ]);
+        ProductImage::create([
+            'product_id' => $variantProduct->id,
+            'path' => 'https://cdn.example.test/variant-stock-hood.webp',
+            'alt' => $variantProduct->name,
+            'sort_order' => 0,
+            'is_primary' => true,
+        ]);
         ProductVariant::create([
             'product_id' => $variantProduct->id,
             'type' => 'color',
@@ -1080,6 +1122,13 @@ class FarzinStorefrontTest extends TestCase
             // Parent stock must not override option-level stock when active variants exist.
             'stock' => 9,
         ]);
+        ProductImage::create([
+            'product_id' => $unavailableProduct->id,
+            'path' => 'https://cdn.example.test/out-of-stock-hood.webp',
+            'alt' => $unavailableProduct->name,
+            'sort_order' => 0,
+            'is_primary' => true,
+        ]);
         ProductVariant::create([
             'product_id' => $unavailableProduct->id,
             'type' => 'color',
@@ -1096,6 +1145,13 @@ class FarzinStorefrontTest extends TestCase
             'slug' => 'out-of-stock-mixed-variant-groups',
             'sku' => 'FAR-MULTI-GROUP-OUT',
             'stock' => 12,
+        ]);
+        ProductImage::create([
+            'product_id' => $multiGroupProduct->id,
+            'path' => 'https://cdn.example.test/multi-group-out-of-stock.webp',
+            'alt' => $multiGroupProduct->name,
+            'sort_order' => 0,
+            'is_primary' => true,
         ]);
         foreach ([
             ['type' => 'color', 'name' => 'رنگ', 'value' => 'silver', 'stock' => 5],
