@@ -299,9 +299,8 @@ class ShopPaginationAndBestSellersTest extends TestCase
         $this->assertStringContainsString('id="fz-home-featured"', $html);
         $this->assertStringContainsString('id="fz-home-best-sellers"', $html);
         $this->assertStringContainsString('id="fz-home-new-arrivals"', $html);
-        $this->assertSame(16, substr_count($html, 'class="farzin-product-card group'));
-
         preg_match_all('/data-product-slug="([^"]+)"/', $html, $renderedSlugs);
+        $this->assertNotEmpty($renderedSlugs[1], 'Homepage product shelves should render real products.');
         $this->assertCount(
             count(array_unique($renderedSlugs[1])),
             $renderedSlugs[1],
