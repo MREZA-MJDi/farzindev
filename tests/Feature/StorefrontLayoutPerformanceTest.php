@@ -79,10 +79,10 @@ class StorefrontLayoutPerformanceTest extends TestCase
         $this->assertSame(2, substr_count($html, '>3</span>'));
     }
 
-    public function test_storefront_shared_data_composer_runs_only_for_the_layout_not_nested_views(): void
+    public function test_storefront_shared_data_composer_runs_only_for_layout_and_cms_page_not_nested_views(): void
     {
         $content = \Mockery::mock(StorefrontPageContent::class);
-        $content->shouldReceive('all')->once()->andReturn([]);
+        $content->shouldReceive('all')->twice()->andReturn([]);
 
         $this->app->instance(StorefrontPageContent::class, $content);
 
