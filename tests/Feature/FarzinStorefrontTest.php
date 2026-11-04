@@ -483,7 +483,7 @@ class FarzinStorefrontTest extends TestCase
             ['value' => '0']
         );
 
-        app(\\App\\Services\\StorefrontPageContent::class)->clearCache();
+        app(\App\Services\StorefrontPageContent::class)->clearCache();
 
         $this->get(route('about'))
             ->assertOk()
