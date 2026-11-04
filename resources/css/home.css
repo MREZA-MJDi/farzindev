@@ -2097,3 +2097,29 @@ body.home-body{
     font-weight:800;
     text-overflow:ellipsis;
 }
+
+
+/* The technology feature must size its media from the grid track, not from
+   the taller copy column. Without an explicit track width, aspect-ratio plus
+   the grid's stretched row can create a wider-than-track media frame. */
+.home-body .fz-home-technology__layout > .fz-home-technology__visual {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    min-height: 0;
+    align-self: start;
+    aspect-ratio: 16 / 10;
+}
+
+.home-body .fz-home-technology__visual > img,
+.home-body .fz-home-technology__visual > .fz-home-technology__placeholder {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+}
+
+@media (max-width: 767px) {
+    .home-body .fz-home-technology__layout > .fz-home-technology__visual {
+        min-height: 0;
+    }
+}
