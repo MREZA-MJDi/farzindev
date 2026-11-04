@@ -121,6 +121,48 @@
         </section>
     @endif
 
+    @if($showBenefits && $benefits->isNotEmpty())
+        <section class="fz-home-benefits" aria-label="خدمات و مزیت‌های ثبت‌شده فرزین">
+            <div class="fz-home-container">
+                <div class="fz-home-benefits__grid">
+                    @foreach($benefits as $benefit)
+                        <article class="fz-home-benefit">
+                            <span class="fz-home-benefit__mark" aria-hidden="true">
+                                @switch($benefit['key'])
+                                    @case('shipping')
+                                        <svg viewBox="0 0 24 24"><path d="M3 7h11v10H3zM14 10h4l3 3v4h-7zM7 20a2 2 0 1 0 0-4 2 2 0 0 0 0 4Zm11 0a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z"/></svg>
+                                        @break
+                                    @case('installation')
+                                        <svg viewBox="0 0 24 24"><path d="m14.5 6.5 3 3M4 20l8.5-8.5m2-8A5 5 0 0 0 21 10l-4 4-7-7 4-4A5 5 0 0 0 7 9l-3 3 8 8 3-3"/></svg>
+                                        @break
+                                    @case('warranty')
+                                        <svg viewBox="0 0 24 24"><path d="m12 3 7 3v5c0 4.5-2.9 7.8-7 10-4.1-2.2-7-5.5-7-10V6l7-3Z"/><path d="m9 12 2 2 4-4"/></svg>
+                                        @break
+                                    @case('installment')
+                                        <svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 10h18M7 15h4"/></svg>
+                                        @break
+                                @endswitch
+                            </span>
+                            <div class="fz-home-benefit__copy">
+                                <h3>{{ $benefit['title'] }}</h3>
+                                <p>{{ $benefit['description'] }}</p>
+                            </div>
+                        </article>
+                    @endforeach
+                </div>
+            </div>
+        </section>
+    @endif
+
+    @if($showProducts && $featuredProducts->isNotEmpty())
+        <x-home.product-carousel-section
+            id="fz-home-featured"
+            :title="$productShelfTitle"
+            :eyebrow="$productShelfEyebrow"
+            :products="$featuredProducts"
+        />
+    @endif
+
     @if(($homeTechnology['show'] ?? false) && (filled($homeTechnology['title'] ?? null) || filled($homeTechnology['body'] ?? null)))
         <section class="fz-home-technology" aria-labelledby="fz-home-technology-title">
             <div class="fz-home-container fz-home-technology__layout">
@@ -161,48 +203,6 @@
                         </div>
                     @endif
                     <span class="fz-home-technology__index" aria-hidden="true">01 / 03</span>
-                </div>
-            </div>
-        </section>
-    @endif
-
-    @if($showProducts && $featuredProducts->isNotEmpty())
-        <x-home.product-carousel-section
-            id="fz-home-featured"
-            :title="$productShelfTitle"
-            :eyebrow="$productShelfEyebrow"
-            :products="$featuredProducts"
-        />
-    @endif
-
-    @if($showBenefits && $benefits->isNotEmpty())
-        <section class="fz-home-benefits" aria-label="خدمات و مزیت‌های ثبت‌شده فرزین">
-            <div class="fz-home-container">
-                <div class="fz-home-benefits__grid">
-                    @foreach($benefits as $benefit)
-                        <article class="fz-home-benefit">
-                            <span class="fz-home-benefit__mark" aria-hidden="true">
-                                @switch($benefit['key'])
-                                    @case('shipping')
-                                        <svg viewBox="0 0 24 24"><path d="M3 7h11v10H3zM14 10h4l3 3v4h-7zM7 20a2 2 0 1 0 0-4 2 2 0 0 0 0 4Zm11 0a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z"/></svg>
-                                        @break
-                                    @case('installation')
-                                        <svg viewBox="0 0 24 24"><path d="m14.5 6.5 3 3M4 20l8.5-8.5m2-8A5 5 0 0 0 21 10l-4 4-7-7 4-4A5 5 0 0 0 7 9l-3 3 8 8 3-3"/></svg>
-                                        @break
-                                    @case('warranty')
-                                        <svg viewBox="0 0 24 24"><path d="m12 3 7 3v5c0 4.5-2.9 7.8-7 10-4.1-2.2-7-5.5-7-10V6l7-3Z"/><path d="m9 12 2 2 4-4"/></svg>
-                                        @break
-                                    @case('installment')
-                                        <svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 10h18M7 15h4"/></svg>
-                                        @break
-                                @endswitch
-                            </span>
-                            <div class="fz-home-benefit__copy">
-                                <h3>{{ $benefit['title'] }}</h3>
-                                <p>{{ $benefit['description'] }}</p>
-                            </div>
-                        </article>
-                    @endforeach
                 </div>
             </div>
         </section>
