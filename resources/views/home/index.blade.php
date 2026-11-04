@@ -157,7 +157,7 @@
                         <div class="fz-home-technology__placeholder" aria-label="فضای تصویر فناوری فرزین">
                             <span>FARZIN / ENGINEERING</span>
                             <strong>فرم، عملکرد، جزئیات</strong>
-                            <small>تصویر واقعی تولید یا جزئیات محصول را از داشبورد بارگذاری کنید.</small>
+                            <small>نگاهی نزدیک به جزئیات ساخت، انتخاب متریال و تجربه استفاده روزمره.</small>
                         </div>
                     @endif
                     <span class="fz-home-technology__index" aria-hidden="true">01 / 03</span>
