@@ -29,7 +29,10 @@ class AppServiceProvider extends ServiceProvider
         Paginator::defaultView('vendor.pagination.farzin');
         Paginator::defaultSimpleView('vendor.pagination.farzin-simple');
 
-        View::composer('*', function ($view): void {
+        // These values are consumed by the public storefront shell/footer only.
+        // A wildcard composer also runs for every nested Blade component (including
+        // each product card), repeating cache lookups and filesystem checks per view.
+        View::composer('layouts.app', function ($view): void {
             $settings = rescue(fn (): array => Cache::remember(
                 'storefront.public-brand-settings.v1',
                 now()->addMinutes(10),
