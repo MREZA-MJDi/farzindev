@@ -310,6 +310,8 @@ test('shared footer keeps the same brand, navigation and dashboard-driven contac
                 contactLinks: contact.querySelectorAll('a').length,
                 logoFont: logoStyle.font,
                 logoColor: logoStyle.color,
+                logoWidth: Number(logo.getBoundingClientRect().width.toFixed(1)),
+                logoHeight: Number(logo.getBoundingClientRect().height.toFixed(1)),
                 hasPlaceholderLink: Array.from(footer.querySelectorAll('a')).some((anchor) => anchor.getAttribute('href') === '#'),
             };
         }));
@@ -864,6 +866,8 @@ test('homepage product cards use the shared carousel card and fixed image ratio'
                 radius: Number.parseFloat(getComputedStyle(element).borderTopLeftRadius),
                 overflow: getComputedStyle(element).overflow,
                 imageRatio: imageRect.width / imageRect.height,
+                installmentSlotHeight: element.querySelector('.farzin-product-card__installment-slot')?.getBoundingClientRect().height ?? 0,
+                installmentSeal: Boolean(element.querySelector('.farzin-installment-seal')),
                 imageAlt: image?.getAttribute('alt')?.trim(),
                 mediaBottom: mediaRect.bottom,
                 contentTop: contentRect.top,
@@ -876,8 +880,9 @@ test('homepage product cards use the shared carousel card and fixed image ratio'
         expect(geometry.radius).toBeGreaterThanOrEqual(10);
         expect(geometry.radius).toBeLessThanOrEqual(24);
         expect(geometry.overflow).toBe('hidden');
-        expect(geometry.imageRatio).toBeGreaterThan(1.05);
-        expect(geometry.imageRatio).toBeLessThan(1.2);
+        expect(geometry.imageRatio).toBeGreaterThan(1.28);
+        expect(geometry.imageRatio).toBeLessThan(1.38);
+        expect(geometry.installmentSlotHeight).toBe(0);
         expect(geometry.imageAlt).toBeTruthy();
         expect(geometry.contentTop).toBeGreaterThanOrEqual(geometry.mediaBottom - 1);
         expect(geometry.contentBottom).toBeLessThanOrEqual(geometry.cardBottom + 1);

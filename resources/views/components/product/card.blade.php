@@ -132,6 +132,14 @@
             </h3>
         </a>
 
+        @if($specifications->isNotEmpty())
+            <ul class="farzin-product-card__specifications" aria-label="مشخصات کلیدی محصول">
+                @foreach($specifications as $specification)
+                    <li><span>{{ $specification['label'] }}</span><strong>{{ \Illuminate\Support\Str::limit($specification['value'], 18) }}</strong></li>
+                @endforeach
+            </ul>
+        @endif
+
         <div class="farzin-product-card__price-row mt-2 flex min-w-0 flex-wrap items-center gap-x-2 gap-y-1">
             <p class="farzin-product-card__price-current">
                 {{ \App\Helpers\PersianNumberHelper::format((float) $product->price) }}

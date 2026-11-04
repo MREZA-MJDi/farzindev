@@ -615,7 +615,7 @@ class FarzinStorefrontTest extends TestCase
 
         $this->assertSame(
             6,
-            substr_count($response->getContent(), 'class="fz-home-round-category"'),
+            substr_count($response->getContent(), 'class="fz-home-category-card"'),
             'All active categories that contain active products should appear on the homepage.'
         );
     }
@@ -714,7 +714,8 @@ class FarzinStorefrontTest extends TestCase
             ->assertSee('data-image-editor-min-width="1200"', false)
             ->assertSee('data-image-editor-min-height="750"', false)
             ->assertSee('data-image-editor-canvas', false)
-            ->assertSee('class="fz-home-hero-offer"', false)
+            ->assertSee('class="fz-home-technology"', false)
+            ->assertSee('id="fz-home-featured"', false)
             ->assertSee('محصول واقعی پیشنهاد فرزین')
             ->assertDontSee('page_home_hero_image_position')
             ->assertDontSee('نقطه تمرکز تصویر Hero');
@@ -1090,10 +1091,30 @@ class FarzinStorefrontTest extends TestCase
             'is_active' => true,
         ]);
 
+        $multiGroupProduct = $this->product($category, [
+            'name' => 'Out Of Stock Mixed Variant Groups',
+            'slug' => 'out-of-stock-mixed-variant-groups',
+            'sku' => 'FAR-MULTI-GROUP-OUT',
+            'stock' => 12,
+        ]);
+        foreach ([
+            ['type' => 'color', 'name' => 'رنگ', 'value' => 'silver', 'stock' => 5],
+            ['type' => 'installation', 'name' => 'نوع نصب', 'value' => 'built-in', 'stock' => 0],
+        ] as $option) {
+            ProductVariant::create([
+                'product_id' => $multiGroupProduct->id,
+                ...$option,
+                'sku' => 'FAR-MULTI-GROUP-'.strtoupper($option['type']),
+                'price_adjustment' => 0,
+                'is_active' => true,
+            ]);
+        }
+
         $this->get(route('shop.index', ['in_stock' => 1]))
             ->assertOk()
             ->assertSee($variantProduct->name)
-            ->assertDontSee($unavailableProduct->name);
+            ->assertDontSee($unavailableProduct->name)
+            ->assertDontSee($multiGroupProduct->name);
     }
 
     public function test_shop_rejects_invalid_price_ranges_and_sort_options(): void
@@ -4687,7 +4708,7 @@ class FarzinStorefrontTest extends TestCase
 
         $this->get(route('home'))
             ->assertOk()
-            ->assertSee('پیشنهاد ویژه')
+            ->assertSee('منتخب فرزین')
             ->assertSee($discounted->name)
             ->assertDontSee($placeholder->name)
             ->assertDontSee('شمارنده معکوس');
@@ -4721,8 +4742,9 @@ class FarzinStorefrontTest extends TestCase
         $this->get(route('home'))
             ->assertOk()
             ->assertSee($regular->name)
-            ->assertSee('جدیدترین‌ها')
-            ->assertDontSee('id="fz-home-discounts-title"', false);
+            ->assertSee('منتخب فرزین')
+            ->assertDontSee('id="fz-home-discounts-title"', false)
+            ->assertDontSee('id="fz-home-newest-title"', false);
     }
 
     public function test_homepage_cms_exposes_four_independent_managed_banner_slots(): void

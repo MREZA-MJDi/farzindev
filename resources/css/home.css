@@ -2031,3 +2031,69 @@ body.home-body{
 .home-body .farzin-product-card--home-shelf .farzin-product-card__image-link { aspect-ratio:4/3!important;border-radius:0!important;background:#F0F2F4; }
 .home-body .farzin-product-card--home-shelf .farzin-product-card__image { object-fit:cover!important;padding:0!important; }
 .home-body .farzin-product-card--home-shelf .farzin-product-card__media { padding:0!important; }
+
+/* Match the global footer logo frame even though Home loads its page stylesheet last. */
+.home-body .farzin-site-footer .farzin-footer-editorial__logo {
+    width: 180px;
+    height: 60px;
+    min-height: 60px;
+    flex-basis: 180px;
+}
+.home-body .farzin-site-footer .fz-store-footer__logo-image {
+    max-width: 164px;
+    max-height: 52px;
+    object-position: center;
+}
+@media(max-width:767px) {
+    .home-body .farzin-site-footer .farzin-footer-editorial__logo {
+        width: 164px;
+        height: 54px;
+        min-height: 54px;
+        flex-basis: 164px;
+    }
+    .home-body .farzin-site-footer .fz-store-footer__logo-image {
+        max-width: 152px;
+        max-height: 46px;
+    }
+}
+
+/* Keep key product specs visible in one short row without inflating card height. */
+.home-body .farzin-product-card__specifications,
+.storefront-content .farzin-product-card__specifications {
+    display:flex;
+    min-height:0;
+    flex-wrap:nowrap;
+    gap:.25rem;
+    overflow:hidden;
+    margin-top:.4rem;
+}
+.home-body .farzin-product-card__specifications li,
+.storefront-content .farzin-product-card__specifications li {
+    display:inline-flex;
+    min-width:0;
+    flex:0 1 auto;
+    align-items:center;
+    gap:.18rem;
+    overflow:hidden;
+    padding:.16rem .3rem;
+    border:1px solid #E3E8ED;
+    border-radius:5px;
+    color:#607286;
+    background:#F5F7F9;
+    font-size:.53rem;
+    line-height:1.5;
+    white-space:nowrap;
+}
+.home-body .farzin-product-card__specifications li span,
+.storefront-content .farzin-product-card__specifications li span {
+    flex:0 0 auto;
+    color:#8995A3;
+}
+.home-body .farzin-product-card__specifications li strong,
+.storefront-content .farzin-product-card__specifications li strong {
+    min-width:0;
+    overflow:hidden;
+    color:#30465D;
+    font-weight:800;
+    text-overflow:ellipsis;
+}
