@@ -438,7 +438,7 @@
                             href="{{ route('shop.index') }}"
                             class="mt-8 inline-flex items-center rounded-2xl bg-[var(--livora-white)] px-6 py-4 text-sm font-medium text-[var(--livora-text)] transition hover:bg-[var(--livora-cream)]"
                         >
-                            مشاهده محصولات
+                            {{ $aboutText('page_about_installment_cta', 'مشاهده محصولات') }}
                         </a>
 
                     </div>
