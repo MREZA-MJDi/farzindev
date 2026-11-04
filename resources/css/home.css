@@ -2026,3 +2026,8 @@ body.home-body{
  .fz-home-shelf .farzin-product-card__cta{min-height:38px;font-size:.64rem}
 }
 @media(max-width:380px){.fz-home-category-card__body{padding:.48rem}.fz-home-category-card__body strong{font-size:.68rem}.fz-home-technology__copy h2{font-size:1.18rem}.fz-home-shelf__item{flex-basis:78vw}}
+
+/* The saved 4:3 Admin crop is preserved on homepage product cards. */
+.home-body .farzin-product-card--home-shelf .farzin-product-card__image-link { aspect-ratio:4/3!important;border-radius:0!important;background:#F0F2F4; }
+.home-body .farzin-product-card--home-shelf .farzin-product-card__image { object-fit:cover!important;padding:0!important; }
+.home-body .farzin-product-card--home-shelf .farzin-product-card__media { padding:0!important; }

@@ -6032,3 +6032,72 @@ body.home-body,
  .storefront-content .farzin-shop-product-grid{gap:.65rem}
  .storefront-content .farzin-product-gallery .product-gallery-stage{border-radius:10px!important}
 }
+
+/* Footer mark is framed identically on every Farzin public page. */
+.farzin-site-footer .farzin-footer-editorial__logo {
+    display:flex;width:180px;height:60px;min-height:60px;flex:0 0 180px;
+    align-items:center;justify-content:center;overflow:hidden;color:#fff;
+    font-size:2rem;font-weight:900;line-height:1;text-align:center;
+}
+.farzin-site-footer .fz-store-footer__logo-image {
+    display:block;width:auto;height:auto;max-width:164px;max-height:52px;
+    object-fit:contain;object-position:center;
+}
+.farzin-site-footer .farzin-footer-editorial__brand {
+    display:flex;min-width:0;align-items:center;flex-direction:column;gap:.6rem;
+}
+.farzin-site-footer .farzin-footer-editorial__brand p { max-width:28rem; }
+@media(max-width:767px) {
+    .farzin-site-footer .farzin-footer-editorial__logo { width:164px;height:54px;min-height:54px;flex-basis:164px; }
+    .farzin-site-footer .fz-store-footer__logo-image { max-width:152px;max-height:46px; }
+}
+
+/* Unified banners, shop toolbar, search and category/product grids. */
+.storefront-content .farzin-shop-banner__image { aspect-ratio:16/5!important;min-height:0!important;border-radius:12px!important;background:#082A4D; }
+.storefront-content .farzin-shop-banner__image > img { object-fit:cover;object-position:center; }
+.storefront-content .farzin-shop-banner__content { max-width:58%;padding:clamp(1.2rem,3.5vw,3.3rem); }
+.storefront-content .farzin-shop-banner__title { font-size:clamp(1.45rem,3vw,3rem);line-height:1.5; }
+.storefront-content .farzin-shop-banner__action { border-radius:8px!important; }
+.storefront-content .farzin-shop-toolbar { display:grid;grid-template-columns:minmax(0,1fr) minmax(190px,240px);align-items:center;gap:.9rem; }
+.storefront-content .farzin-shop-search { display:flex;min-width:0;align-items:center;gap:.5rem; }
+.storefront-content .farzin-shop-search__input {
+    display:block;width:100%;min-width:0;min-height:46px;padding:.65rem .9rem;
+    border:1px solid var(--fz-line);border-radius:8px;outline:0;color:var(--fz-ink);
+    background:var(--fz-paper);font:inherit;font-size:.76rem;
+}
+.storefront-content .farzin-shop-search__input:focus { border-color:var(--fz-accent);box-shadow:0 0 0 3px rgba(123,13,26,.09); }
+.storefront-content .farzin-shop-search__submit {
+    flex:0 0 auto;min-height:46px;padding:.6rem 1rem;border:1px solid var(--fz-ink);
+    border-radius:8px;color:#fff;background:var(--fz-ink);font-size:.72rem;font-weight:800;
+}
+.storefront-content .farzin-shop-search__submit:hover { border-color:var(--fz-accent);background:var(--fz-accent); }
+.storefront-content .farzin-shop-search__clear { flex:0 0 auto;color:var(--fz-stone);font-size:.65rem;text-decoration:underline;text-underline-offset:3px; }
+.storefront-content .farzin-shop-toolbar__sort { min-width:0; }
+.storefront-content .farzin-category-product-grid { align-items:stretch;gap:clamp(.7rem,1.5vw,1.15rem); }
+.storefront-content .farzin-category-product-grid > article { min-width:0; }
+.storefront-content .farzin-product-gallery .product-gallery-stage {
+    aspect-ratio:4/3!important;height:auto!important;max-height:none!important;min-height:0!important;
+    border-radius:12px!important;background:#F0F2F4;
+}
+.storefront-content .farzin-product-gallery .product-gallery-stage > img {
+    width:100%;height:100%;padding:0!important;object-fit:cover!important;object-position:center!important;
+}
+.storefront-content .farzin-product-gallery .product-gallery-shell { border-radius:12px!important; }
+.storefront-content .farzin-product-gallery .farzin-gallery-zoom { border-radius:7px!important; }
+.storefront-content .farzin-search-overlay__panel { border-radius:0 0 12px 12px!important; }
+.storefront-content .farzin-search-overlay input[type="search"] { border-radius:9px!important; }
+.storefront-content .farzin-search-overlay a { border-radius:9px!important; }
+.storefront-content .farzin-site-header__search-input { border-radius:8px!important; }
+@media(max-width:767px) {
+    .storefront-content .farzin-shop-banner__image { aspect-ratio:16/9!important;min-height:0!important;border-radius:10px!important; }
+    .storefront-content .farzin-shop-banner__content { max-width:100%;padding:1rem; }
+    .storefront-content .farzin-shop-banner__title { max-width:16ch;font-size:clamp(1.15rem,5vw,1.6rem); }
+    .storefront-content .farzin-shop-banner__description { max-width:34ch;margin-top:.4rem;font-size:.68rem;line-height:1.8; }
+    .storefront-content .farzin-shop-toolbar { grid-template-columns:minmax(0,1fr);gap:.65rem; }
+    .storefront-content .farzin-shop-search { gap:.35rem; }
+    .storefront-content .farzin-shop-search__input { min-height:42px;padding:.55rem .65rem;font-size:.68rem; }
+    .storefront-content .farzin-shop-search__submit { min-height:42px;padding-inline:.75rem;font-size:.66rem; }
+    .storefront-content .farzin-shop-search__clear { font-size:.58rem; }
+    .storefront-content .farzin-category-product-grid { gap:.65rem; }
+    .storefront-content .farzin-product-gallery .product-gallery-stage { aspect-ratio:4/3!important; }
+}
