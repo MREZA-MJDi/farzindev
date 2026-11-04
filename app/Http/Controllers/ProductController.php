@@ -6,6 +6,7 @@ use App\Models\ContactSetting;
 use App\Models\Product;
 use App\Models\SeoRedirect;
 use App\Models\StorefrontSetting;
+use App\Support\ProductPurchaseRules;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Str;
@@ -48,11 +49,7 @@ class ProductController extends Controller
         // Product::variants() already scopes to active variants. Stock rules
         // must use the same active option set as the cart and checkout.
         $variantGroups = $product->variants->groupBy('type');
-        $canPurchase = $variantGroups->isNotEmpty()
-            ? $variantGroups->every(fn ($options) => $options->contains(
-                fn ($option) => (int) $option->stock > 0
-            ))
-            : (int) $product->stock > 0;
+        $canPurchase = ProductPurchaseRules::isAvailable($product, $product->variants);
 
         // This is the largest quantity that could be purchased for at least
         // one combination. A small client-side listener tightens it further
@@ -82,7 +79,9 @@ class ProductController extends Controller
             'max' => max(0, round($priceMaximum, 2)),
         ];
 
-        $installmentPlan = $canPurchase ? $this->resolveInstallmentPlan($product) : null;
+        $installmentPlan = ProductPurchaseRules::hasValidInstallmentPlan($product, $product->variants)
+            ? $this->resolveInstallmentPlan($product)
+            : null;
         $safeShortDescription = $this->publicCopy($product->short_description);
         $safeDescription = $this->publicCopy($product->description);
 
