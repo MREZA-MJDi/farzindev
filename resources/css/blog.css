@@ -1022,14 +1022,6 @@
     font-size: .6rem;
 }
 
-/* Editorial content is visible immediately; no scroll observer is required. */
-.blog-reveal-ready,
-.blog-reveal-ready.is-visible {
-    opacity: 1;
-    visibility: visible;
-    transform: none;
-    transition: none;
-}
 .blog-shell :where(a, button):focus-visible,
 .blog-article-page :where(a, button):focus-visible {
     outline: 2px solid #7B0D1A;
@@ -1212,10 +1204,6 @@
         animation: none !important;
         transition: none !important;
         scroll-behavior: auto !important;
-    }
-    .blog-reveal-ready {
-        opacity: 1 !important;
-        transform: none !important;
     }
 }
 
