@@ -130,7 +130,9 @@
                                     @checked((string) old('primary_media_id', $primaryImage?->media_id ?? '') === (string) $mediaItem->id)
                                     class="admin-checkbox h-4 w-4 shrink-0"
                                 >
-                                <img src="{{ $mediaItem->url }}" alt="{{ $mediaItem->alt ?: $mediaItem->original_name }}" loading="lazy" class="h-14 w-14 shrink-0 rounded-lg object-cover">
+                                <span class="admin-media-choice-preview h-14 w-20 shrink-0 overflow-hidden rounded-lg">
+                                    <img src="{{ $mediaItem->url }}" alt="{{ $mediaItem->alt ?: $mediaItem->original_name }}" loading="lazy" class="h-full w-full object-cover">
+                                </span>
                                 <span class="min-w-0">
                                     <span class="block truncate font-medium">{{ $mediaItem->alt ?: $mediaItem->original_name }}</span>
                                     <span class="mt-1 block text-[10px] text-[var(--admin-muted)]">{{ $mediaItem->human_size }}</span>
@@ -170,7 +172,8 @@
                 <p class="text-xs leading-6 text-[var(--admin-muted)]">تصویر را با ماوس یا لمس بکشید، نسبت کادر را انتخاب کنید و زوم یا چرخش را تنظیم کنید. پیش‌نمایش با خروجی آپلود هماهنگ است.</p>
                 <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
                     <label class="block text-xs text-[var(--admin-text)]">نسبت کادر
-                        <select data-image-editor-ratio class="admin-select mt-2"><option value="1:1">مربع ۱:۱</option><option value="4:3" selected>استاندارد ۴:۳</option><option value="4:5">پرتره ۴:۵</option><option value="16:9">عریض ۱۶:۹</option></select>
+                        <input type="hidden" data-image-editor-ratio value="4:3">
+                    <p class="mt-2 rounded-lg border border-[var(--admin-border)] bg-[var(--admin-card)] px-3 py-2 text-xs leading-6 text-[var(--admin-muted)]">نسبت تصویر اصلی محصول ۴:۳ است؛ همین قاب در کارت فروشگاه و گالری جزئیات نمایش داده می‌شود. برای تنظیم دقیق، تصویر را جابه‌جا یا بزرگ‌نمایی کنید.</p>
                     </label>
                     <label class="block text-xs text-[var(--admin-text)]">بزرگ‌نمایی <span data-image-editor-zoom-label>۱×</span>
                         <input data-image-editor-zoom type="range" min="1" max="3" step="0.05" value="1" class="mt-3 w-full">

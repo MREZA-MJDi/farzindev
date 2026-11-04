@@ -221,29 +221,23 @@
 
                         <div class="rounded-3xl border border-[var(--livora-border)] bg-[var(--livora-white)] p-4 sm:p-5">
 
-                            <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-
-                                <div class="min-w-0">
-
-                                    <p class="text-[10px] uppercase tracking-[0.18em] text-[var(--livora-accent)]">
-                                        CURATED PRODUCTS
-                                    </p>
-
-                                    <p class="mt-2 text-sm font-medium text-[var(--livora-text)]">
-                                        مجموعه فرزین
-                                    </p>
-
+                            <div class="farzin-shop-toolbar">
+                                <form action="{{ route('shop.index') }}" method="GET" role="search" aria-label="جستجوی کاتالوگ هود و سینک" class="farzin-shop-search">
+                                    @foreach(request()->except(['search', 'page']) as $filterName => $filterValue)
+                                        @if(is_scalar($filterValue) && (string) $filterValue !== '')
+                                            <input type="hidden" name="{{ $filterName }}" value="{{ $filterValue }}">
+                                        @endif
+                                    @endforeach
+                                    <label for="shop-catalog-search" class="sr-only">نام محصول، مدل، کد یا مشخصات را جستجو کنید</label>
+                                    <input id="shop-catalog-search" name="search" type="search" inputmode="search" enterkeyhint="search" autocomplete="off" value="{{ request('search', '') }}" placeholder="جستجوی هود، سینک، مدل یا کد محصول..." class="farzin-shop-search__input">
+                                    <button type="submit" class="farzin-shop-search__submit">جستجو</button>
+                                    @if(request()->filled('search'))
+                                        <a href="{{ route('shop.index', request()->except(['search', 'page'])) }}" class="farzin-shop-search__clear">پاک کردن</a>
+                                    @endif
+                                </form>
+                                <div class="farzin-shop-toolbar__sort">
+                                    <x-shop.sorting :products="$products" />
                                 </div>
-
-
-                                <div class="w-full sm:min-w-[220px] sm:w-auto">
-
-                                    <x-shop.sorting
-                                        :products="$products"
-                                    />
-
-                                </div>
-
                             </div>
 
                         </div>
