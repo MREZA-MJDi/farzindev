@@ -1,44 +1,48 @@
-import { test } from '@playwright/test';
+import { expect, test } from '@playwright/test';
 
-test('diagnose homepage horizontal overflow by reporting actual overflowing elements', async ({ page }) => {
-    for (const width of [1023, 1024, 1440]) {
+test('homepage technology media stays inside its responsive grid track', async ({ page }) => {
+    for (const width of [360, 390, 768, 900, 1023, 1024, 1100, 1280, 1440, 1920]) {
         await page.setViewportSize({ width, height: 960 });
         await page.goto('/', { waitUntil: 'domcontentloaded' });
 
-        const report = await page.evaluate(() => {
-            const viewport = document.documentElement.clientWidth;
-            const elements = Array.from(document.querySelectorAll('body *')).map((element) => {
-                const rect = element.getBoundingClientRect();
-                const style = getComputedStyle(element);
-                return {
-                    tag: element.tagName.toLowerCase(),
-                    id: element.id || null,
-                    className: typeof element.className === 'string' ? element.className.slice(0, 180) : '',
-                    left: Math.round(rect.left * 10) / 10,
-                    right: Math.round(rect.right * 10) / 10,
-                    width: Math.round(rect.width * 10) / 10,
-                    scrollWidth: element.scrollWidth,
-                    clientWidth: element.clientWidth,
-                    position: style.position,
-                    transform: style.transform,
-                    overflowX: style.overflowX,
-                };
-            }).filter((item) => item.width > 0 && (
-                item.right > viewport + 1 || item.left < -1 ||
-                item.scrollWidth > item.clientWidth + 2
-            ));
+        const layout = await page.locator('.fz-home-technology__layout').evaluate((container) => {
+            const visual = container.querySelector('.fz-home-technology__visual');
+            const containerRect = container.getBoundingClientRect();
+            const visualRect = visual.getBoundingClientRect();
 
             return {
-                viewport,
+                viewport: document.documentElement.clientWidth,
                 documentWidth: document.documentElement.scrollWidth,
                 bodyWidth: document.body.scrollWidth,
-                scrollX: window.scrollX,
-                offenders: elements
-                    .sort((a, b) => (b.right - viewport) - (a.right - viewport))
-                    .slice(0, 35),
+                containerLeft: containerRect.left,
+                containerRight: containerRect.right,
+                containerScrollWidth: container.scrollWidth,
+                containerClientWidth: container.clientWidth,
+                visualLeft: visualRect.left,
+                visualRight: visualRect.right,
+                visualWidth: visualRect.width,
+                visualTrackWidth: visual.getBoundingClientRect().width,
             };
         });
 
-        console.log('FARZIN_OVERFLOW_DIAGNOSTIC ' + JSON.stringify(report));
+        expect(
+            layout.visualLeft,
+            'technology media must not escape the left edge of its grid at ' + width + 'px: ' + JSON.stringify(layout)
+        ).toBeGreaterThanOrEqual(layout.containerLeft - 1);
+
+        expect(
+            layout.visualRight,
+            'technology media must not escape the right edge of its grid at ' + width + 'px: ' + JSON.stringify(layout)
+        ).toBeLessThanOrEqual(layout.containerRight + 1);
+
+        expect(
+            layout.containerScrollWidth - layout.containerClientWidth,
+            'technology grid must not have intrinsic horizontal overflow at ' + width + 'px: ' + JSON.stringify(layout)
+        ).toBeLessThanOrEqual(1);
+
+        expect(
+            Math.max(layout.documentWidth, layout.bodyWidth) - layout.viewport,
+            'homepage document must not overflow at ' + width + 'px: ' + JSON.stringify(layout)
+        ).toBeLessThanOrEqual(1);
     }
 });
