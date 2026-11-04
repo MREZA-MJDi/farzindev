@@ -85,15 +85,18 @@
         </div>
     </div>
 
-    @if($navCategories->isNotEmpty())
-        <div class="fz-home-header__categories">
-            <div class="fz-home-header__categories-inner" aria-label="دسته‌بندی‌های فعال">
-                @foreach($navCategories as $category)
+    <div class="fz-home-header__categories">
+        <div class="fz-home-header__categories-inner" aria-label="منوی اصلی و دسته‌بندی‌ها">
+            <a href="{{ route('home') }}" @if(request()->routeIs('home')) aria-current="page" @endif>خانه</a>
+            <a href="{{ route('shop.index') }}" @if(request()->routeIs('shop.*')) aria-current="page" @endif>فروشگاه</a>
+            <a href="{{ route('blog.index') }}" @if(request()->routeIs('blog.*')) aria-current="page" @endif>مجله</a>
+            <a href="{{ route('about') }}" @if(request()->routeIs('about')) aria-current="page" @endif>درباره فرزین</a>
+            <a href="{{ route('contact') }}" @if(request()->routeIs('contact')) aria-current="page" @endif>تماس با ما</a>
+            @foreach($navCategories as $category)
                     <a href="{{ route('categories.show', $category->slug) }}" @if(request()->routeIs('categories.show') && request()->route('slug') === $category->slug) aria-current="page" @endif>
                         {{ $category->name }}
                     </a>
                 @endforeach
-            </div>
         </div>
-    @endif
+    </div>
 </nav>
