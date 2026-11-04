@@ -329,10 +329,6 @@ class HomeController extends Controller
             ->filter()
             ->values();
 
-        $firstCategoryImage = $categories->first()?->home_category_image_url;
-        $technologyFallbackImage = $categories->skip(1)->first()?->home_category_image_url
-            ?: $firstCategoryImage;
-
         if ($bannerSlides->isEmpty()) {
             $bannerSlides = collect([[
                 'image' => $resolveImageUrl($copy['page_home_hero_image_url'] ?? null) ?: $firstCategoryImage,
@@ -374,7 +370,7 @@ class HomeController extends Controller
             'title' => trim((string) ($copy['page_home_technology_title'] ?? 'فناوری در جزئیات؛ از طراحی تا عملکرد')),
             'body' => trim((string) ($copy['page_home_technology_body'] ?? '')),
             'button_label' => trim((string) ($copy['page_home_technology_cta'] ?? 'آشنایی با فرزین')),
-            'image_url' => $technologyImageUrl ?: $technologyFallbackImage,
+            'image_url' => $technologyImageUrl,
             'image_srcset' => $technologyImagePath !== '' && ! Str::startsWith($technologyImagePath, ['http://', 'https://', '//'])
                 ? $responsiveImages->srcset($technologyImagePath)
                 : null,
