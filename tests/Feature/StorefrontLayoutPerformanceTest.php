@@ -9,6 +9,7 @@ use App\Models\Product;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
+use App\Services\StorefrontPageContent;
 use Tests\TestCase;
 
 class StorefrontLayoutPerformanceTest extends TestCase
@@ -77,4 +78,15 @@ class StorefrontLayoutPerformanceTest extends TestCase
         $this->assertSame(2, substr_count($html, 'data-cart-count'));
         $this->assertSame(2, substr_count($html, '>3</span>'));
     }
+
+    public function test_storefront_shared_data_composer_runs_only_for_layout_and_cms_page_not_nested_views(): void
+    {
+        $content = \Mockery::mock(StorefrontPageContent::class);
+        $content->shouldReceive('all')->twice()->andReturn([]);
+
+        $this->app->instance(StorefrontPageContent::class, $content);
+
+        $this->get(route('about'))->assertOk();
+    }
+
 }
