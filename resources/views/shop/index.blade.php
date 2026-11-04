@@ -326,7 +326,7 @@
 
                         @if($products->isNotEmpty())
 
-                            <div class="mt-8 grid grid-cols-2 gap-x-3 gap-y-6 sm:gap-x-4 sm:gap-y-8 md:grid-cols-3 2xl:grid-cols-4">
+                            <div class="farzin-shop-product-grid mt-8 grid grid-cols-2 gap-x-3 gap-y-6 sm:gap-x-4 sm:gap-y-8 md:grid-cols-3 2xl:grid-cols-4">
 
                                 @foreach($products as $product)
 

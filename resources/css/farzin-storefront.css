@@ -5985,3 +5985,50 @@ body.home-body,
         font-size: .54rem;
     }
 }
+
+/* Farzin product-first refinement: compact geometry and one shared image frame. */
+:root { --fz-radius-card: 12px; --fz-radius-panel: 14px; --fz-radius-control: 9px; }
+.storefront-content .farzin-product-card { border-radius:12px; box-shadow:0 5px 18px rgba(6,40,79,.055); }
+.storefront-content .farzin-product-card:hover,.storefront-content .farzin-product-card:focus-within { transform:translateY(-2px); border-color:rgba(123,13,26,.25); box-shadow:0 10px 24px rgba(6,40,79,.10); }
+.storefront-content .farzin-product-card__media { border-radius:11px 11px 0 0; }
+.storefront-content .farzin-product-card__image-link { display:block; width:100%; aspect-ratio:4/3; padding:0; overflow:hidden; border-radius:0; background:#F0F2F4; }
+.storefront-content .farzin-product-card__image { display:block; width:100%; height:100%; padding:0!important; object-fit:cover; object-position:center; mix-blend-mode:normal; }
+.storefront-content .farzin-product-card:hover .farzin-product-card__image,.storefront-content .farzin-product-card:focus-within .farzin-product-card__image { transform:scale(1.025); }
+.storefront-content .farzin-product-card__image-fallback { display:flex; width:100%; height:100%; min-height:0; flex-direction:column; align-items:center; justify-content:center; gap:.35rem; color:#728197; background:linear-gradient(135deg,rgba(6,40,79,.035),transparent 55%),#F0F2F4; }
+.storefront-content .farzin-product-card__image-fallback strong { color:#6B7F95; font-size:1.5rem; font-weight:900; letter-spacing:.12em; }
+.storefront-content .farzin-product-card__image-fallback small { font-size:.65rem; }
+.storefront-content .farzin-product-card__content { gap:0; padding:.85rem; }
+.storefront-content .farzin-product-card__meta { min-height:1rem; font-size:.64rem; }
+.storefront-content .farzin-product-card__title { min-height:2.9em; max-height:2.9em; margin-top:.25rem; font-size:.9rem; line-height:1.45; -webkit-line-clamp:2; }
+.storefront-content .farzin-product-card__price-row { min-height:0; margin-top:.45rem; }
+.storefront-content .farzin-product-card__price-current { font-size:.92rem; }
+.storefront-content .farzin-product-card__availability { min-height:1.1rem; margin-top:.3rem; font-size:.64rem; }
+.storefront-content .farzin-product-card__installment-slot { display:none!important; min-height:0!important; flex:0 0 0!important; margin:0!important; }
+.storefront-content .farzin-product-card__cta { min-height:40px; border-radius:8px; font-size:.72rem; }
+.storefront-content .farzin-installment-seal { position:absolute; z-index:12; inset-block-start:.65rem; inset-inline-end:.65rem; display:flex; width:58px; height:58px; flex-direction:column; align-items:center; justify-content:center; gap:.02rem; border:2px solid rgba(255,255,255,.92); border-radius:50%; color:#fff; background:#7B0D1A; box-shadow:0 4px 14px rgba(4,24,46,.22); outline:1px solid rgba(123,13,26,.65); outline-offset:2px; text-align:center; transform:rotate(-7deg); }
+.storefront-content .farzin-installment-seal strong { color:inherit; font-size:.58rem; font-weight:800; line-height:1.25; }
+.storefront-content .farzin-installment-seal span { color:inherit; font-size:.76rem; font-weight:950; line-height:1.25; }
+.storefront-content .farzin-product-card__wishlist { width:36px; height:36px; min-width:36px; min-height:36px; }
+.storefront-content .farzin-product-gallery .product-gallery-stage { aspect-ratio:4/3!important; height:auto!important; min-height:0!important; border-radius:12px!important; }
+.storefront-content .farzin-product-gallery .product-gallery-stage > img { width:100%; height:100%; padding:0!important; object-fit:cover!important; object-position:center!important; }
+.storefront-content .farzin-product-gallery button[aria-label^="نمایش تصویر"] { border-radius:8px!important; }
+.storefront-content .farzin-product-detail-info,.storefront-content .farzin-shop-banner__image,.storefront-content .farzin-category-detail-banner { border-radius:12px; }
+.storefront-content .farzin-shop-banner__image { overflow:hidden; }
+.storefront-content .farzin-shop-product-grid { align-items:stretch; gap:clamp(.7rem,1.5vw,1.15rem); }
+.storefront-content .farzin-shop-product-grid > article { min-width:0; }
+.storefront-content .farzin-shop-catalog .rounded-3xl { border-radius:12px!important; }
+.storefront-content .farzin-shop-catalog .rounded-2xl { border-radius:10px!important; }
+.storefront-content .farzin-shop-catalog .farzin-product-card__content { padding:.85rem; }
+@media(max-width:767px){
+ .storefront-content .farzin-product-card__content{padding:.62rem}
+ .storefront-content .farzin-product-card__title{min-height:2.9em;max-height:2.9em;font-size:.76rem}
+ .storefront-content .farzin-product-card__price-current{font-size:.8rem}
+ .storefront-content .farzin-product-card__price-current span{font-size:.58rem}
+ .storefront-content .farzin-product-card__cta{min-height:38px;padding:.45rem .55rem;font-size:.64rem}
+ .storefront-content .farzin-installment-seal{inset-block-start:.45rem;inset-inline-end:.45rem;width:46px;height:46px;border-width:1.5px}
+ .storefront-content .farzin-installment-seal strong{font-size:.48rem}
+ .storefront-content .farzin-installment-seal span{font-size:.62rem}
+ .storefront-content .farzin-shop-banner__image{min-height:150px!important;border-radius:10px!important}
+ .storefront-content .farzin-shop-product-grid{gap:.65rem}
+ .storefront-content .farzin-product-gallery .product-gallery-stage{border-radius:10px!important}
+}
