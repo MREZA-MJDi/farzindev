@@ -1,18 +1,10 @@
 @extends('layouts.app')
 
-@php
-    $aboutCopy = $storefrontPageContent ?? [];
-    $aboutText = static fn (string $key, string $fallback): string =>
-        filled($aboutCopy[$key] ?? null) ? trim((string) $aboutCopy[$key]) : $fallback;
-    $aboutVisible = static fn (string $key): bool =>
-        (string) ($aboutCopy[$key] ?? '1') === '1';
-@endphp
-
-@section('title', $aboutText('page_about_hero_title', 'درباره فرزین فرجی') . ' | تولید هود و سینک آشپزخانه')
+@section('title', 'درباره فرزین فرجی | تولید هود و سینک آشپزخانه')
 
 @section(
     'description',
-    $aboutText('page_about_hero_description', 'با فرزین فرجی و مجموعه فعال در حوزه تولید هود و سینک آشپزخانه آشنا شوید؛ معرفی مجموعه، رویکرد تولید و کاتالوگ محصولات.')
+    'با فرزین فرجی و مجموعه فعال در حوزه تولید هود و سینک آشپزخانه آشنا شوید؛ معرفی مجموعه، رویکرد تولید و کاتالوگ محصولات.'
 )
 
 @section('canonical', route('about'))
@@ -71,13 +63,13 @@
                         <div class="max-w-4xl">
 
                             <p class="text-[10px] font-medium uppercase tracking-[0.24em] text-[var(--livora-accent)]">
-                                {{ $aboutText('page_about_hero_eyebrow', 'ABOUT FARZIN') }}
+                                ABOUT FARZIN
                             </p>
 
                             <h1 class="mt-5 text-5xl font-semibold leading-[1.02] tracking-tight sm:text-6xl lg:text-7xl">
-                                {{ $aboutText('page_about_hero_title', 'فرزین فرجی؛') }}
+                                فرزین فرجی؛
                                 <span class="block text-[var(--livora-accent)]">
-                                    {{ $aboutText('page_about_hero_highlight', 'از تولید تا جزئیات آشپزخانه.') }}
+                                    از تولید تا جزئیات آشپزخانه.
                                 </span>
                             </h1>
 
@@ -86,14 +78,16 @@
                         <div>
 
                             <p class="text-sm leading-8 text-[var(--livora-stone)] sm:text-base">
-                                {{ $aboutText('page_about_hero_description', 'فرزین فرجی در حوزه تولید هود و سینک آشپزخانه فعالیت می‌کند. این وب‌سایت برای معرفی مجموعه، نمایش محصولات و کمک به شناخت دقیق‌تر مدل‌ها و مشخصات آن‌ها طراحی شده است. جزئیات هر محصول را می‌توانید در کاتالوگ فرزین {{ $aboutText('page_about_step_2_title', 'بررسی') }} کنید.') }}
+                                فرزین فرجی در حوزه تولید هود و سینک آشپزخانه فعالیت می‌کند.
+                                این وب‌سایت برای معرفی مجموعه، نمایش محصولات و کمک به شناخت دقیق‌تر مدل‌ها و مشخصات آن‌ها طراحی شده است.
+                                جزئیات هر محصول را می‌توانید در کاتالوگ فرزین بررسی کنید.
                             </p>
 
                             <a
                                 href="{{ route('shop.index') }}"
                                 class="mt-7 inline-flex items-center rounded-2xl bg-[var(--livora-ink)] px-6 py-4 text-sm font-medium !text-white transition-colors duration-300 hover:bg-[var(--livora-accent)] hover:!text-white"
                             >
-                                {{ $aboutText('page_about_hero_cta', 'مشاهده محصولات فرزین') }}
+                                مشاهده محصولات فرزین
                             </a>
                         </div>
 
@@ -109,8 +103,7 @@
         {{-- =========================================================
              BRAND STATEMENT
         ========================================================== --}}
-        @if($aboutVisible('page_about_show_statement'))
-<section class="border-b border-[var(--livora-border)]">
+        <section class="border-b border-[var(--livora-border)]">
 
             <x-layout.container>
 
@@ -119,11 +112,11 @@
                     <div>
 
                         <p class="text-[10px] font-medium uppercase tracking-[0.22em] text-[var(--livora-accent)]">
-                            {{ $aboutText('page_about_statement_eyebrow', 'THE MAKER AND THE WORK') }}
+                            THE MAKER AND THE WORK
                         </p>
 
                         <h2 class="mt-4 text-3xl font-semibold tracking-tight sm:text-4xl">
-                            {{ $aboutText('page_about_statement_title', 'تولید، محصول و تجربه‌ی استفاده.') }}
+                            تولید، محصول و تجربه‌ی استفاده.
                         </h2>
 
                     </div>
@@ -131,11 +124,14 @@
                     <div class="max-w-3xl">
 
                         <p class="text-lg leading-9 text-[var(--livora-text)] sm:text-xl">
-                            {{ $aboutText('page_about_statement_body_1', 'محصول برای ما فقط یک تصویر یا نام در کاتالوگ نیست؛ ابعاد، {{ $aboutText('page_about_value_1_title', 'کاربرد') }} و مشخصات آن باید برای خریدار قابل بررسی باشد. معرفی روشن محصول کمک می‌کند {{ $aboutText('page_about_step_3_title', 'انتخاب') }} بر پایه‌ی نیاز واقعی آشپزخانه انجام شود.') }}
+                            محصول برای ما فقط یک تصویر یا نام در کاتالوگ نیست؛
+                            ابعاد، کاربرد و مشخصات آن باید برای خریدار قابل بررسی باشد.
+                            معرفی روشن محصول کمک می‌کند انتخاب بر پایه‌ی نیاز واقعی آشپزخانه انجام شود.
                         </p>
 
                         <p class="mt-6 text-sm leading-8 text-[var(--livora-stone)]">
-                            {{ $aboutText('page_about_statement_body_2', 'در کنار معرفی مجموعه و مسیر کاری آن، کاتالوگ محصولات نیز بخشی از همین تجربه است: اطلاعات هر مدل باید کمک کند خریدار پیش از سفارش، تفاوت‌ها و تناسب آن را با فضای خود بررسی کند.') }}
+                            در کنار معرفی مجموعه و مسیر کاری آن، کاتالوگ محصولات نیز بخشی از همین تجربه است:
+                            اطلاعات هر مدل باید کمک کند خریدار پیش از سفارش، تفاوت‌ها و تناسب آن را با فضای خود بررسی کند.
                         </p>
 
                     </div>
@@ -145,45 +141,43 @@
             </x-layout.container>
 
         </section>
-@endif
 
 
         {{-- =========================================================
              FACTORY AND WORK
         ========================================================== --}}
-        @if($aboutVisible('page_about_show_factory'))
-<section class="relative overflow-hidden bg-[var(--livora-ink)] text-white">
+        <section class="relative overflow-hidden bg-[var(--livora-ink)] text-white">
             <div aria-hidden="true" class="pointer-events-none absolute -right-24 top-0 h-72 w-72 rounded-full bg-[var(--livora-accent)]/20 blur-3xl"></div>
             <x-layout.container>
                 <div class="relative grid gap-10 py-16 sm:py-20 lg:grid-cols-[0.85fr_1.15fr] lg:items-end lg:py-24">
                     <div>
-                        <p class="text-[10px] font-semibold uppercase tracking-[0.24em] text-[#b7c9cb]">{{ $aboutText('page_about_factory_eyebrow', 'FACTORY & PROCESS') }}</p>
+                        <p class="text-[10px] font-semibold uppercase tracking-[0.24em] text-[#b7c9cb]">FACTORY & PROCESS</p>
                         <h2 class="mt-5 text-3xl font-semibold leading-tight sm:text-4xl lg:text-5xl">
-                            {{ $aboutText('page_about_factory_title', 'پشت محصول را هم بشناسید.') }}
+                            پشت محصول را هم بشناسید.
                         </h2>
                     </div>
                     <div class="max-w-3xl">
                         <p class="text-base leading-9 text-white/80 sm:text-lg">
-                            {{ $aboutText('page_about_factory_body_1', 'برای شناخت یک هود یا سینک، ظاهر محصول تنها بخشی از ماجراست. ابعاد، نوع نصب، جنس، امکانات و شیوه نگهداری هم اهمیت دارند. معرفی فرزین قرار است مسیر آشنایی با مجموعه و محصولات را روشن‌تر کند.') }}
+                            برای شناخت یک هود یا سینک، ظاهر محصول تنها بخشی از ماجراست.
+                            ابعاد، نوع نصب، جنس، امکانات و شیوه نگهداری هم اهمیت دارند.
+                            معرفی فرزین قرار است مسیر آشنایی با مجموعه و محصولات را روشن‌تر کند.
                         </p>
                         <p class="mt-5 text-sm leading-8 text-white/60">
-                            {{ $aboutText('page_about_factory_body_2', 'اطلاعات اختصاصی هر مدل باید با مشخصات فنی تأییدشده همان محصول همراه باشد؛ به همین دلیل ویژگی‌ها و جزئیات قابل‌بررسی در صفحه محصول ارائه می‌شوند.') }}
+                            اطلاعات اختصاصی هر مدل باید با مشخصات فنی تأییدشده همان محصول همراه باشد؛
+                            به همین دلیل ویژگی‌ها و جزئیات قابل‌بررسی در صفحه محصول ارائه می‌شوند.
                         </p>
                         <a href="{{ route('shop.index') }}" class="mt-7 inline-flex items-center gap-3 rounded-xl bg-[var(--livora-accent)] px-5 py-3.5 text-sm font-semibold text-white transition hover:bg-[var(--livora-white)] hover:text-[var(--livora-text)]">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4 shrink-0" aria-hidden="true"><path d="M3.5 9h17l-1 11h-15l-1-11Z" /><path d="M8 9V6.5a4 4 0 0 1 8 0V9" /></svg> {{ $aboutText('page_about_factory_cta', 'دیدن کاتالوگ محصولات') }}
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4 shrink-0" aria-hidden="true"><path d="M3.5 9h17l-1 11h-15l-1-11Z" /><path d="M8 9V6.5a4 4 0 0 1 8 0V9" /></svg> دیدن کاتالوگ محصولات
                         </a>
                     </div>
                 </div>
             </x-layout.container>
         </section>
-@endif
 
         {{-- =========================================================
              VALUES
         ========================================================== --}}
-        @if($aboutVisible('page_about_show_values'))
-@if($aboutVisible('page_about_show_experience'))
-<section class="bg-[var(--livora-surface)]">
+        <section class="bg-[var(--livora-surface)]">
 
             <x-layout.container>
 
@@ -192,11 +186,11 @@
                     <div class="max-w-2xl">
 
                         <p class="text-[10px] font-medium uppercase tracking-[0.22em] text-[var(--livora-accent)]">
-{{ $aboutText('page_about_values_eyebrow', 'OUR FOCUS') }}
+OUR FOCUS
                         </p>
 
                         <h2 class="mt-4 text-3xl font-semibold tracking-tight sm:text-4xl">
-                            {{ $aboutText('page_about_values_title', 'تمرکز مجموعه فرزین.') }}
+                            تمرکز مجموعه فرزین.
                         </h2>
 
                     </div>
@@ -214,7 +208,7 @@
                             </h3>
 
                             <p class="mt-3 text-sm leading-8 text-[var(--livora-stone)]">
-                                {{ $aboutText('page_about_value_1_description', 'فرم و ظاهر باید در خدمت فضای شما باشد، نه اینکه فضا را تحت‌الشعاع قرار دهد.') }}
+                                فرم و ظاهر باید در خدمت فضای شما باشد، نه اینکه فضا را تحت‌الشعاع قرار دهد.
                             </p>
 
                         </article>
@@ -226,11 +220,11 @@
                         </span>
 
                             <h3 class="mt-8 text-lg font-semibold">
-                                {{ $aboutText('page_about_value_2_title', 'مشخصات روشن') }}
+                                مشخصات روشن
                             </h3>
 
                             <p class="mt-3 text-sm leading-8 text-[var(--livora-stone)]">
-                                {{ $aboutText('page_about_value_2_description', 'انتخاب متریال و ساخت خوب، چیزی است که ارزش یک محصول را در طول زمان حفظ می‌کند.') }}
+                                انتخاب متریال و ساخت خوب، چیزی است که ارزش یک محصول را در طول زمان حفظ می‌کند.
                             </p>
 
                         </article>
@@ -242,11 +236,11 @@
                         </span>
 
                             <h3 class="mt-8 text-lg font-semibold">
-                                {{ $aboutText('page_about_value_3_title', 'انتخاب مناسب') }}
+                                انتخاب مناسب
                             </h3>
 
                             <p class="mt-3 text-sm leading-8 text-[var(--livora-stone)]">
-                                {{ $aboutText('page_about_value_3_description', 'قیمت، مشخصات، موجودی و شرایط {{ $aboutText('page_about_step_4_title', 'پرداخت') }} باید قبل از تصمیم‌گیری روشن باشند.') }}
+                                قیمت، مشخصات، موجودی و شرایط پرداخت باید قبل از تصمیم‌گیری روشن باشند.
                             </p>
 
                         </article>
@@ -258,11 +252,11 @@
                         </span>
 
                             <h3 class="mt-8 text-lg font-semibold">
-                                {{ $aboutText('page_about_value_4_title', 'مسیر تولید') }}
+                                مسیر تولید
                             </h3>
 
                             <p class="mt-3 text-sm leading-8 text-[var(--livora-stone)]">
-                                {{ $aboutText('page_about_value_4_description', 'خرید باید ساده و آرام باشد؛ از اولین مشاهده محصول تا سفارش نهایی.') }}
+                                خرید باید ساده و آرام باشد؛ از اولین مشاهده محصول تا سفارش نهایی.
                             </p>
 
                         </article>
@@ -274,8 +268,6 @@
             </x-layout.container>
 
         </section>
-@endif
-@endif
 
 
         {{-- =========================================================
@@ -290,15 +282,16 @@
                     <div>
 
                         <p class="text-[10px] font-medium uppercase tracking-[0.22em] text-[var(--livora-accent)]">
-                            {{ $aboutText('page_about_experience_eyebrow', 'THE EXPERIENCE') }}
+                            THE EXPERIENCE
                         </p>
 
                         <h2 class="mt-4 text-3xl font-semibold tracking-tight sm:text-4xl">
-                            {{ $aboutText('page_about_experience_title', 'از {{ $aboutText('page_about_step_1_title', 'کشف') }} تا انتخاب.') }}
+                            از کشف تا انتخاب.
                         </h2>
 
                         <p class="mt-4 text-sm leading-8 text-[var(--livora-stone)]">
-                            {{ $aboutText('page_about_experience_description', 'تجربه فرزین فقط به صفحه محصول محدود نمی‌شود. تمام مسیر برای انتخاب راحت‌تر طراحی شده است.') }}
+                            تجربه فرزین فقط به صفحه محصول محدود نمی‌شود.
+                            تمام مسیر برای انتخاب راحت‌تر طراحی شده است.
                         </p>
 
                     </div>
@@ -320,7 +313,7 @@
                                     </h3>
 
                                     <p class="mt-2 text-xs leading-7 text-[var(--livora-stone)]">
-                                        {{ $aboutText('page_about_step_1_description', 'دسته‌بندی‌ها و مجموعه‌های مختلف را بررسی می‌کنید و محصول مناسب فضای خود را پیدا می‌کنید.') }}
+                                        دسته‌بندی‌ها و مجموعه‌های مختلف را بررسی می‌کنید و محصول مناسب فضای خود را پیدا می‌کنید.
                                     </p>
 
                                 </div>
@@ -344,7 +337,7 @@
                                     </h3>
 
                                     <p class="mt-2 text-xs leading-7 text-[var(--livora-stone)]">
-                                        {{ $aboutText('page_about_step_2_description', 'قیمت، مشخصات، موجودی و در صورت وجود، شرایط خرید اقساطی محصول را می‌بینید.') }}
+                                        قیمت، مشخصات، موجودی و در صورت وجود، شرایط خرید اقساطی محصول را می‌بینید.
                                     </p>
 
                                 </div>
@@ -368,7 +361,7 @@
                                     </h3>
 
                                     <p class="mt-2 text-xs leading-7 text-[var(--livora-stone)]">
-                                        {{ $aboutText('page_about_step_3_description', 'محصول و ویژگی‌های موردنظر را انتخاب و وارد سبد خرید می‌کنید.') }}
+                                        محصول و ویژگی‌های موردنظر را انتخاب و وارد سبد خرید می‌کنید.
                                     </p>
 
                                 </div>
@@ -392,7 +385,7 @@
                                     </h3>
 
                                     <p class="mt-2 text-xs leading-7 text-[var(--livora-stone)]">
-                                        {{ $aboutText('page_about_step_4_description', 'روش پرداخت قابل استفاده برای سفارش، پیش از نهایی‌کردن خرید به‌صورت روشن اعلام می‌شود.') }}
+                                        مسیر پرداخت متناسب با سفارش انتخاب می‌شود و شرایط اقساطی در صورت فعال بودن، شفاف نمایش داده خواهد شد.
                                     </p>
 
                                 </div>
@@ -413,8 +406,7 @@
         {{-- =========================================================
              INSTALLMENT
         ========================================================== --}}
-        @if($aboutVisible('page_about_show_installment') && $aboutInstallmentProduct)
-<section class="border-t border-white/10 bg-[var(--livora-ink)] text-white">
+        <section class="border-t border-white/10 bg-[var(--livora-ink)] text-white">
 
             <x-layout.container>
 
@@ -423,15 +415,16 @@
                     <div>
 
                         <p class="text-[10px] font-medium uppercase tracking-[0.22em] text-white/45">
-                            {{ $aboutText('page_about_installment_eyebrow', 'FLEXIBLE PAYMENT') }}
+                            FLEXIBLE PAYMENT
                         </p>
 
                         <h2 class="mt-4 max-w-2xl text-3xl font-semibold tracking-tight sm:text-4xl">
-                            {{ $aboutText('page_about_installment_title', 'انتخاب خوب نباید فقط به بودجه امروز محدود شود.') }}
+                            انتخاب خوب نباید فقط به بودجه امروز محدود شود.
                         </h2>
 
                         <p class="mt-5 max-w-2xl text-sm leading-8 text-white/55">
-                            {{ $aboutText('page_about_installment_description', 'شرایط اقساطی، در صورت فعال بودن برای محصول، همراه با درصد پیش‌پرداخت، تعداد چک و فاصله سررسید نمایش داده می‌شود.') }}
+                            برخی محصولات فرزین می‌توانند با شرایط اقساطی تعریف‌شده توسط فروشگاه خریداری شوند.
+                            درصد پیش‌پرداخت، تعداد چک و فاصله سررسید برای هر محصول مشخص است.
                         </p>
 
                         <a
@@ -444,21 +437,51 @@
                     </div>
 
                     <div class="grid grid-cols-2 gap-3">
+
                         <div class="rounded-3xl border border-white/10 bg-white/5 p-5 sm:p-6">
-                            <p class="text-[10px] uppercase tracking-[0.18em] text-white/40">پیش‌پرداخت</p>
-                            <p class="mt-4 text-3xl font-semibold">{{ \\App\\Helpers\\PersianNumberHelper::format((int) $aboutInstallmentProduct->installment_cash_percent) }}٪</p>
-                            <p class="mt-2 text-xs leading-6 text-white/55">از مبلغ پایه محصول منتخب</p>
+
+                            <p class="text-[10px] uppercase tracking-[0.18em] text-white/40">
+                                TODAY
+                            </p>
+
+                            <p class="mt-4 text-3xl font-semibold">
+                                50٪
+                            </p>
+
+                            <p class="mt-2 text-xs leading-6 text-white/40">
+                                نمونه پیش‌پرداخت
+                            </p>
+
                         </div>
+
                         <div class="rounded-3xl border border-white/10 bg-white/5 p-5 sm:p-6">
-                            <p class="text-[10px] uppercase tracking-[0.18em] text-white/40">تعداد چک</p>
-                            <p class="mt-4 text-3xl font-semibold">{{ \\App\\Helpers\\PersianNumberHelper::format((int) $aboutInstallmentProduct->installment_cheque_count) }}</p>
-                            <p class="mt-2 text-xs leading-6 text-white/55">برای محصول منتخب</p>
+
+                            <p class="text-[10px] uppercase tracking-[0.18em] text-white/40">
+                                SCHEDULE
+                            </p>
+
+                            <p class="mt-4 text-3xl font-semibold">
+                                2+
+                            </p>
+
+                            <p class="mt-2 text-xs leading-6 text-white/40">
+                                فقره چک قابل تنظیم
+                            </p>
+
                         </div>
+
                         <div class="col-span-2 rounded-3xl border border-white/10 bg-white/[0.07] p-5 sm:p-6">
-                            <p class="text-sm font-semibold">{{ $aboutInstallmentProduct->name }}</p>
-                            <p class="mt-2 text-xs leading-7 text-white/55">سررسید هر {{ \\App\\Helpers\\PersianNumberHelper::format((int) $aboutInstallmentProduct->installment_interval_months) }} ماه؛ جزئیات کامل شرایط در صفحه همین محصول آمده است.</p>
-                            <a href="{{ route('product.show', $aboutInstallmentProduct->slug) }}" class="mt-4 inline-flex text-sm font-semibold text-white underline underline-offset-4">مشاهده محصول و شرایط اقساطی</a>
+
+                            <p class="text-sm font-semibold">
+                                شرایط هر محصول در صفحه خودش نمایش داده می‌شود.
+                            </p>
+
+                            <p class="mt-2 text-xs leading-7 text-white/45">
+                                قبل از افزودن محصول به سبد، مبلغ پیش‌پرداخت و برنامه تسویه را بررسی کنید.
+                            </p>
+
                         </div>
+
                     </div>
 
                 </div>
@@ -466,14 +489,12 @@
             </x-layout.container>
 
         </section>
-@endif
 
 
         {{-- =========================================================
              FINAL STATEMENT
         ========================================================== --}}
-        @if($aboutVisible('page_about_show_final'))
-<section class="border-t border-[var(--livora-border)] bg-[var(--livora-surface)]">
+        <section class="border-t border-[var(--livora-border)] bg-[var(--livora-surface)]">
 
             <x-layout.container>
 
@@ -486,11 +507,12 @@
                         </p>
 
                         <h2 class="mt-5 text-4xl font-semibold tracking-tight sm:text-5xl">
-                            {{ $aboutText('page_about_final_title', 'برای فضاهایی که قرار است ماندگار باشند.') }}
+                            برای فضاهایی که قرار است ماندگار باشند.
                         </h2>
 
                         <p class="mx-auto mt-5 max-w-2xl text-sm leading-8 text-[var(--livora-stone)]">
-                            {{ $aboutText('page_about_final_description', 'مجموعه فرزین را ببین و محصولی را پیدا کن که فقط خانه را پر نکند؛ بلکه بخشی از شخصیت آن شود.') }}
+                            مجموعه فرزین را ببین و محصولی را پیدا کن که فقط خانه را پر نکند؛
+                            بلکه بخشی از شخصیت آن شود.
                         </p>
 
                         <div class="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
@@ -499,14 +521,14 @@
                                 href="{{ route('shop.index') }}"
                                 class="inline-flex items-center justify-center rounded-2xl bg-[var(--livora-ink)] px-7 py-4 text-sm font-medium text-white transition hover:bg-[var(--livora-accent)]"
                             >
-                                {{ $aboutText('page_about_final_shop_cta', 'ورود به فروشگاه') }}
+                                ورود به فروشگاه
                             </a>
 
                             <a
                                 href="{{ route('contact') }}"
                                 class="inline-flex items-center justify-center rounded-2xl border border-[var(--livora-border)] bg-[var(--livora-white)] px-7 py-4 text-sm font-medium text-[var(--livora-text)] transition hover:border-[var(--livora-ink)]"
                             >
-                                {{ $aboutText('page_about_final_contact_cta', 'تماس با ما') }}
+                                تماس با ما
                             </a>
 
                         </div>
@@ -518,7 +540,6 @@
             </x-layout.container>
 
         </section>
-@endif
 
     </div>
 
