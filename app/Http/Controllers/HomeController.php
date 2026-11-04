@@ -360,13 +360,10 @@ class HomeController extends Controller
             ->take(3)
             ->values();
 
-        $featuredProducts = $selectedProducts
-            ->concat($discountProducts)
-            ->concat($bestSellingProducts)
-            ->concat($newestProducts)
-            ->unique('id')
-            ->take(8)
-            ->values();
+        // The featured shelf contains only editor-selected products. The other
+        // shelves render discounts, best sellers and new arrivals independently;
+        // combining them here would repeat the same products on the homepage.
+        $featuredProducts = $selectedProducts;
 
         $technologyImagePath = trim((string) ($copy['page_home_technology_image_url'] ?? ''));
         $technologyImageUrl = $resolveImageUrl($technologyImagePath !== '' ? $technologyImagePath : null);
