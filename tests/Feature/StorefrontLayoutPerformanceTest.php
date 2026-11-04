@@ -81,7 +81,7 @@ class StorefrontLayoutPerformanceTest extends TestCase
 
     public function test_storefront_shared_data_composer_runs_only_for_the_layout_not_nested_views(): void
     {
-        $content = Mockery::mock(StorefrontPageContent::class);
+        $content = \Mockery::mock(StorefrontPageContent::class);
         $content->shouldReceive('all')->once()->andReturn([]);
 
         $this->app->instance(StorefrontPageContent::class, $content);
