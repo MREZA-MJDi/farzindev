@@ -1008,13 +1008,6 @@ class FarzinStorefrontTest extends TestCase
             'price' => 80000000,
             'stock' => 3,
         ]);
-                ProductImage::create([
-            'product_id' => $product->id,
-            'path' => 'https://cdn.example.test/'.$product->slug.'.webp',
-            'alt' => $product->name,
-            'sort_order' => 0,
-            'is_primary' => true,
-        ]);
         ProductImage::create([
             'product_id' => $budget->id,
             'path' => 'https://cdn.example.test/farzin-hood-60.webp',

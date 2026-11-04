@@ -107,7 +107,7 @@ class ShopPaginationAndBestSellersTest extends TestCase
 
         $response = $this->get(route('home'))
             ->assertOk()
-            ->assertSee('id="fz-home-bestsellers"', false);
+            ->assertSee('id="fz-home-featured"', false);
 
         $html = $response->getContent();
         $this->assertLessThan(
