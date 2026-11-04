@@ -46,6 +46,11 @@ class PageContentController extends Controller
                 'page_home_enamad_url' => ['label' => 'پیوند رسمی نماد اعتماد الکترونیکی (HTTPS)', 'type' => 'text', 'max' => 500],
                 'page_home_warranty_text' => ['label' => 'توضیح ضمانت در صفحه اصلی', 'type' => 'textarea', 'max' => 300],
                 'page_home_hero_primary_label' => ['label' => 'متن دکمه اصلی', 'type' => 'text', 'max' => 80],
+                'page_home_technology_eyebrow' => ['label' => 'فناوری — برچسب', 'type' => 'text', 'max' => 120],
+                'page_home_technology_title' => ['label' => 'فناوری — عنوان', 'type' => 'text', 'max' => 160],
+                'page_home_technology_body' => ['label' => 'فناوری — توضیح', 'type' => 'textarea', 'max' => 1000],
+                'page_home_technology_cta' => ['label' => 'فناوری — متن دکمه', 'type' => 'text', 'max' => 80],
+                'page_home_show_technology' => ['label' => 'نمایش سکشن فناوری در صفحه اصلی', 'type' => 'toggle'],
                 'page_home_categories_eyebrow' => ['label' => 'برچسب دسته‌بندی‌ها', 'type' => 'text', 'max' => 120],
                 'page_home_categories_title' => ['label' => 'عنوان بخش دسته‌بندی‌ها', 'type' => 'text', 'max' => 160],
                 'page_home_categories_description' => ['label' => 'توضیح بخش دسته‌بندی‌ها', 'type' => 'textarea', 'max' => 500],
@@ -206,6 +211,13 @@ class PageContentController extends Controller
                 'dimensions:min_width=1200,min_height=750,ratio=16/10',
                 'max:20480',
             ];
+            $rules['page_home_technology_image'] = [
+                'nullable',
+                'image',
+                'mimes:jpg,jpeg,png,webp',
+                'dimensions:min_width=1200,min_height=750,ratio=16/10',
+                'max:20480',
+            ];
 
             for ($index = 1; $index <= 4; $index++) {
                 $rules["page_home_banner_{$index}_image"] = [
@@ -248,6 +260,9 @@ class PageContentController extends Controller
             'page_home_hero_image.mimes' => 'فرمت تصویر Hero باید JPG، PNG یا WEBP باشد.',
             'page_home_hero_image.dimensions' => 'خروجی Hero باید نسبت ۱۶:۱۰ و حداقل ابعاد ۱۲۰۰ در ۷۵۰ پیکسل داشته باشد.',
             'page_home_hero_image.max' => 'حجم تصویر Hero نباید بیشتر از ۲۰ مگابایت باشد.',
+            'page_home_technology_image.image' => 'فایل سکشن فناوری باید یک تصویر معتبر باشد.',
+            'page_home_technology_image.dimensions' => 'تصویر فناوری باید نسبت ۱۶:۱۰ و حداقل ابعاد ۱۲۰۰ در ۷۵۰ پیکسل داشته باشد.',
+            'page_home_technology_image.max' => 'حجم تصویر فناوری نباید بیشتر از ۲۰ مگابایت باشد.',
             'page_home_banner_1_image.image' => 'فایل بنر 1 باید یک تصویر معتبر باشد.',
             'page_home_banner_1_image.dimensions' => 'تصویر بنر 1 باید حداقل ۱۲۰۰×۳۷۵ و با نسبت ۱۶:۶ باشد.',
             'page_home_banner_1_image.max' => 'حجم تصویر بنر 1 نباید بیشتر از ۲۰ مگابایت باشد.',
@@ -263,7 +278,8 @@ class PageContentController extends Controller
         ]);
 
         $heroImageUpload = $validated['page_home_hero_image'] ?? null;
-        unset($validated['page_home_hero_image']);
+        $technologyImageUpload = $validated['page_home_technology_image'] ?? null;
+        unset($validated['page_home_hero_image'], $validated['page_home_technology_image']);
 
         $bannerImageUploads = [];
         $removeBannerImages = [];
@@ -307,6 +323,25 @@ class PageContentController extends Controller
             }
         }
 
+        $previousTechnologyImagePath = $tab === 'home'
+            ? (string) StorefrontSetting::query()->where('key', 'page_home_technology_image_url')->value('value')
+            : '';
+        $newTechnologyImagePath = null;
+
+        if ($technologyImageUpload !== null) {
+            $newTechnologyImagePath = $images->store($technologyImageUpload, 'homepage/technology');
+
+            if (! $newTechnologyImagePath) {
+                if ($newHeroImagePath !== null) {
+                    $images->delete($newHeroImagePath);
+                }
+
+                return back()->withInput()->withErrors([
+                    'page_home_technology_image' => 'ذخیره تصویر فناوری انجام نشد؛ تصویر قبلی حفظ شد.',
+                ]);
+            }
+        }
+
         $newBannerImagePaths = [];
         $bannerImageChanges = [];
 
@@ -317,6 +352,9 @@ class PageContentController extends Controller
                 if (! $storedPath) {
                     if ($newHeroImagePath !== null) {
                         $images->delete($newHeroImagePath);
+                    }
+                    if ($newTechnologyImagePath !== null) {
+                        $images->delete($newTechnologyImagePath);
                     }
                     foreach ($newBannerImagePaths as $storedBannerPath) {
                         $images->delete($storedBannerPath);
@@ -335,7 +373,7 @@ class PageContentController extends Controller
         }
 
         try {
-            DB::transaction(function () use ($normalized, $newHeroImagePath, $bannerImageChanges): void {
+            DB::transaction(function () use ($normalized, $newHeroImagePath, $newTechnologyImagePath, $bannerImageChanges): void {
                 foreach ($normalized as $key => $value) {
                     StorefrontSetting::query()->updateOrCreate(
                         ['key' => $key],
@@ -350,6 +388,13 @@ class PageContentController extends Controller
                     );
                 }
 
+                if ($newTechnologyImagePath !== null) {
+                    StorefrontSetting::query()->updateOrCreate(
+                        ['key' => 'page_home_technology_image_url'],
+                        ['value' => $newTechnologyImagePath]
+                    );
+                }
+
                 foreach ($bannerImageChanges as $index => $path) {
                     StorefrontSetting::query()->updateOrCreate(
                         ['key' => "page_home_banner_{$index}_image_url"],
@@ -360,6 +405,9 @@ class PageContentController extends Controller
         } catch (\Throwable $exception) {
             if ($newHeroImagePath !== null) {
                 $images->delete($newHeroImagePath);
+            }
+            if ($newTechnologyImagePath !== null) {
+                $images->delete($newTechnologyImagePath);
             }
             foreach ($newBannerImagePaths as $storedBannerPath) {
                 $images->delete($storedBannerPath);
@@ -381,6 +429,14 @@ class PageContentController extends Controller
             && $previousHeroImagePath !== $newHeroImagePath
         ) {
             $images->delete($previousHeroImagePath);
+        }
+
+        if (
+            $newTechnologyImagePath !== null
+            && $previousTechnologyImagePath !== ''
+            && $previousTechnologyImagePath !== $newTechnologyImagePath
+        ) {
+            $images->delete($previousTechnologyImagePath);
         }
 
         $content->clearCache();
