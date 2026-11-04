@@ -436,52 +436,15 @@ OUR FOCUS
 
                     </div>
 
-                    <div class="grid grid-cols-2 gap-3">
-
-                        <div class="rounded-3xl border border-white/10 bg-white/5 p-5 sm:p-6">
-
-                            <p class="text-[10px] uppercase tracking-[0.18em] text-white/40">
-                                TODAY
-                            </p>
-
-                            <p class="mt-4 text-3xl font-semibold">
-                                50٪
-                            </p>
-
-                            <p class="mt-2 text-xs leading-6 text-white/40">
-                                نمونه پیش‌پرداخت
-                            </p>
-
-                        </div>
-
-                        <div class="rounded-3xl border border-white/10 bg-white/5 p-5 sm:p-6">
-
-                            <p class="text-[10px] uppercase tracking-[0.18em] text-white/40">
-                                SCHEDULE
-                            </p>
-
-                            <p class="mt-4 text-3xl font-semibold">
-                                2+
-                            </p>
-
-                            <p class="mt-2 text-xs leading-6 text-white/40">
-                                فقره چک قابل تنظیم
-                            </p>
-
-                        </div>
-
-                        <div class="col-span-2 rounded-3xl border border-white/10 bg-white/[0.07] p-5 sm:p-6">
-
-                            <p class="text-sm font-semibold">
-                                شرایط هر محصول در صفحه خودش نمایش داده می‌شود.
-                            </p>
-
-                            <p class="mt-2 text-xs leading-7 text-white/45">
-                                قبل از افزودن محصول به سبد، مبلغ پیش‌پرداخت و برنامه تسویه را بررسی کنید.
-                            </p>
-
-                        </div>
-
+                    <div class="rounded-3xl border border-white/10 bg-white/[0.06] p-6 sm:p-8">
+                        <span class="text-[10px] font-semibold uppercase tracking-[0.2em] text-white/45">PRODUCT-SPECIFIC TERMS</span>
+                        <h3 class="mt-4 text-xl font-semibold">شرایط اقساطی هر محصول، جداگانه و شفاف</h3>
+                        <p class="mt-3 max-w-2xl text-sm leading-8 text-white/65">
+                            اگر برای محصولی خرید اقساطی فعال باشد، درصد پیش‌پرداخت، تعداد چک و فاصله سررسید در صفحه همان محصول نمایش داده می‌شود. شرایط را پیش از افزودن به سبد بررسی کنید.
+                        </p>
+                        <a href="{{ route('shop.index') }}" class="mt-6 inline-flex items-center rounded-xl bg-white px-5 py-3 text-sm font-semibold text-[var(--livora-ink)] transition hover:bg-[var(--livora-cream)]">
+                            مشاهده محصولات
+                        </a>
                     </div>
 
                 </div>
