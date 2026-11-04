@@ -4826,6 +4826,7 @@ class FarzinStorefrontTest extends TestCase
                 'name' => 'سینک گرانیتی فرزین '.$index,
                 'slug' => 'farzin-granite-sink-'.$index,
                 'sku' => 'FAR-GRANITE-'.$index,
+                'price' => 10000000 + $index,
                 'show_in_home_gallery' => false,
             ]);
 
@@ -4838,7 +4839,7 @@ class FarzinStorefrontTest extends TestCase
             ]);
         }
 
-        $pageOne = $this->get(route('shop.index', ['search' => 'سینک گرانيتی']))
+        $pageOne = $this->get(route('shop.index', ['search' => 'سینک گرانيتی', 'sort' => 'price_asc']))
             ->assertOk()
             ->assertSee('shop-catalog-search', false)
             ->assertSee('سینک گرانیتی فرزین 1')
@@ -4851,7 +4852,7 @@ class FarzinStorefrontTest extends TestCase
 
         $this->assertStringContainsString('page=2', $pageOne->getContent());
 
-        $this->get(route('shop.index', ['search' => 'سینک گرانيتی', 'page' => 2]))
+        $this->get(route('shop.index', ['search' => 'سینک گرانيتی', 'sort' => 'price_asc', 'page' => 2]))
             ->assertOk()
             ->assertSee('سینک گرانیتی فرزین 13')
             ->assertViewHas('products', fn ($products): bool =>
