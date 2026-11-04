@@ -4,7 +4,6 @@
     <span class="fz-home-category-card__image">
         <img
             src="{{ $category->home_category_image_url }}"
-            @if($category->home_category_image_srcset) srcset="{{ $category->home_category_image_srcset }}" sizes="(max-width: 767px) 44vw, 250px" @endif
             alt="{{ $category->name }}"
             width="640"
             height="480"
