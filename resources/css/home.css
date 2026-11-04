@@ -2123,3 +2123,84 @@ body.home-body{
         min-height: 0;
     }
 }
+
+
+/* Homepage refresh: compact category cards, consistent white canvas and restrained radii. */
+.home-body,
+.home-body #app,
+.home-body .storefront-content,
+.home-body .fz-home-market,
+.home-body .fz-home-categories,
+.home-body .fz-home-benefits,
+.home-body .fz-home-shelf,
+.home-body .fz-home-journal,
+.home-body .fz-home-enamad {
+    background: #fff !important;
+}
+.home-body .fz-home-header {
+    display: block !important;
+    position: sticky !important;
+    inset-block-start: 0;
+    z-index: 1000 !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+}
+.home-body .fz-home-category-rail {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 168px), 1fr));
+    align-items: stretch;
+    gap: clamp(.65rem, 1.2vw, 1rem);
+}
+.home-body .fz-home-category-card {
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(6,40,79,.045);
+}
+.home-body .fz-home-category-card__image {
+    aspect-ratio: 4 / 3;
+    background: #f5f6f7;
+}
+.home-body .fz-home-category-card__image img {
+    object-fit: contain;
+    object-position: center;
+    transform: none !important;
+}
+.home-body .fz-home-category-card__body { padding: .65rem .75rem; }
+.home-body .fz-home-category-card__body strong { font-size: .82rem; }
+.home-body .fz-home-category-card__arrow { width: 30px; height: 30px; border-radius: 7px; }
+.home-body .fz-home-shelf,
+.home-body .fz-home-journal,
+.home-body .fz-home-benefits { border-color: #edf0f3; background: #fff !important; }
+.home-body .fz-home-shelf .farzin-product-card,
+.home-body .fz-home-journal .fz-home-article-card,
+.home-body .fz-home-benefit,
+.home-body .fz-home-technology__visual {
+    border-radius: 10px;
+}
+.home-body .fz-home-technology {
+    color: var(--fz-market-ink, #06284f);
+    background: #fff !important;
+}
+.home-body .fz-home-technology__copy h2 { color: #06284f; }
+.home-body .fz-home-technology__copy p { color: #687789; }
+.home-body .fz-home-technology__eyebrow { color: #718096; }
+.home-body .fz-home-technology__signals span {
+    border-color: #dce3ea;
+    color: #40546a;
+    background: #f7f9fb;
+}
+.home-body .fz-home-technology__link {
+    border-color: #d3dce6;
+    color: #06284f;
+    background: #fff;
+    border-radius: 8px;
+}
+.home-body .fz-home-technology__visual {
+    border: 1px solid #e1e6ec;
+}
+.home-body .fz-home-shelf:nth-of-type(even) { background: #fff !important; }
+.home-body .fz-home-shelf__track { scrollbar-color: #c5d0dc transparent; }
+@media (max-width: 767px) {
+    .home-body .fz-home-category-rail { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .home-body .fz-home-category-card__image { aspect-ratio: 4 / 3; }
+    .home-body .fz-home-category-card__body { padding: .55rem .6rem; }
+}
