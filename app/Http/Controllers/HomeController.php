@@ -121,6 +121,9 @@ class HomeController extends Controller
             );
         }
 
+        // Keep the legacy hero fallback independent from the technology feature image.
+        $firstCategoryImage = $categories->first()?->home_category_image_url;
+
         $discountProducts = $baseProducts()
             ->whereNotNull('compare_at_price')
             ->whereColumn('compare_at_price', '>', 'price')
