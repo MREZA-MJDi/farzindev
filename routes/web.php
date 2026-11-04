@@ -1,7 +1,6 @@
 <?php
 
 use App\Http\Controllers\AccountController;
-use App\Http\Controllers\AboutController;
 use App\Http\Controllers\Admin\AuthController as AdminAuthController;
 use App\Http\Controllers\Admin\ContactMessageController;
 use App\Http\Controllers\Admin\MediaController;
@@ -95,7 +94,7 @@ Route::get(
     [CategoryController::class, 'show']
 )->name('categories.show');
 
-Route::get('/about', [AboutController::class, 'index'])
+Route::view('/about', 'about.index')
     ->name('about');
 
 Route::view('/terms', 'legal.terms')
