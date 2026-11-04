@@ -4764,6 +4764,110 @@ class FarzinStorefrontTest extends TestCase
         }
     }
 
+
+    public function test_shop_search_is_persian_normalized_and_server_paginated(): void
+    {
+        $category = $this->category([
+            'name' => 'سینک‌های گرانیتی',
+            'slug' => 'granite-sinks',
+        ]);
+
+        foreach (range(1, 13) as $index) {
+            $product = $this->product($category, [
+                'name' => 'سینک گرانیتی فرزین '.$index,
+                'slug' => 'farzin-granite-sink-'.$index,
+                'sku' => 'FAR-GRANITE-'.$index,
+                'show_in_home_gallery' => false,
+            ]);
+
+            ProductImage::create([
+                'product_id' => $product->id,
+                'path' => 'https://cdn.example.test/farzin-granite-sink-'.$index.'.webp',
+                'alt' => $product->name,
+                'sort_order' => 0,
+                'is_primary' => true,
+            ]);
+        }
+
+        $pageOne = $this->get(route('shop.index', ['search' => 'سینک گرانيتی']))
+            ->assertOk()
+            ->assertSee('shop-catalog-search', false)
+            ->assertSee('سینک گرانیتی فرزین 1')
+            ->assertViewHas('products', fn ($products): bool =>
+                $products->total() === 13
+                && $products->perPage() === 12
+                && $products->currentPage() === 1
+                && $products->hasPages()
+            );
+
+        $this->assertStringContainsString('page=2', $pageOne->getContent());
+
+        $this->get(route('shop.index', ['search' => 'سینک گرانيتی', 'page' => 2]))
+            ->assertOk()
+            ->assertSee('سینک گرانیتی فرزین 13')
+            ->assertViewHas('products', fn ($products): bool =>
+                $products->total() === 13 && $products->currentPage() === 2
+            );
+    }
+
+    public function test_checkout_normalizes_persian_digits_before_validating_contact_and_location_fields(): void
+    {
+        $customer = $this->customer();
+        $location = $this->checkoutLocationPayload();
+        $toPersian = static fn ($value): string => strtr((string) $value, [
+            '0' => '۰', '1' => '۱', '2' => '۲', '3' => '۳', '4' => '۴',
+            '5' => '۵', '6' => '۶', '7' => '۷', '8' => '۸', '9' => '۹',
+        ]);
+
+        $this->actingAs($customer)
+            ->from(route('cart.index'))
+            ->post(route('checkout.place'), [
+                'first_name' => 'مینا',
+                'last_name' => 'خریدار',
+                'phone' => '۰۹۱۲۳۴۵۶۷۸۹',
+                'email' => 'persian-digits@farzin.test',
+                'province_id' => $toPersian($location['province_id']),
+                'city_id' => $toPersian($location['city_id']),
+                'province' => 'متن ارسالی نادیده گرفته می‌شود',
+                'city' => 'متن ارسالی نادیده گرفته می‌شود',
+                'address' => 'تهران، خیابان نمونه، پلاک ۱۲',
+                'postal_code' => '۱۲۳۴۵۶۷۸۹۰',
+            ])
+            ->assertRedirect(route('cart.index'))
+            ->assertSessionHas('error', 'سبد خرید شما خالی است.')
+            ->assertSessionMissing('errors');
+    }
+
+    public function test_shop_product_card_uses_a_compact_installment_seal_without_reserved_space(): void
+    {
+        $category = $this->category(['slug' => 'hoods']);
+        $product = $this->product($category, [
+            'name' => 'هود اقساطی فرزین',
+            'slug' => 'farzin-installment-hood',
+            'sku' => 'FAR-INSTALLMENT-HOOD',
+            'stock' => 4,
+            'installment_enabled' => true,
+            'installment_cash_percent' => 50,
+            'installment_remainder_method' => 'cheque',
+            'installment_cheque_count' => 2,
+            'installment_interval_months' => 1,
+        ]);
+        ProductImage::create([
+            'product_id' => $product->id,
+            'path' => 'https://cdn.example.test/farzin-installment-hood.webp',
+            'alt' => $product->name,
+            'sort_order' => 0,
+            'is_primary' => true,
+        ]);
+
+        $this->get(route('shop.index'))
+            ->assertOk()
+            ->assertSee('farzin-installment-seal', false)
+            ->assertSee('خرید')
+            ->assertSee('اقساطی')
+            ->assertDontSee('farzin-product-card__installment-slot', false);
+    }
+
     private function checkoutLocationPayload(): array
     {
         if ($this->checkoutLocationCache !== null) {
