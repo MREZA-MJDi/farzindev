@@ -55,8 +55,11 @@ class CategoryController extends Controller
             ->products()
             ->active()
             ->whereHas('images', fn ($imageQuery) => $imageQuery
-                ->whereNotNull('path')
-                ->where('path', '<>', ''))
+                ->where(function ($imageSource): void {
+                    $imageSource
+                        ->where(fn ($path) => $path->whereNotNull('path')->where('path', '<>', ''))
+                        ->orWhereHas('media');
+                }))
             ->with([
                 'category',
                 // Product cards only render the first image; avoid loading full galleries for 12 rows.

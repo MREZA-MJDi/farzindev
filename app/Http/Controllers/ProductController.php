@@ -90,14 +90,29 @@ class ProductController extends Controller
             ->whereKeyNot($product->id)
             ->where('category_id', $product->category_id)
             ->whereHas('category', fn (Builder $query) => $query->where('is_active', true))
-            ->whereHas('images')
+            ->whereHas('images', fn (Builder $imageQuery) => $imageQuery
+                ->where(function (Builder $imageSource): void {
+                    $imageSource
+                        ->where(fn (Builder $path) => $path->whereNotNull('path')->where('path', '<>', ''))
+                        ->orWhereHas('media');
+                }))
             ->where(function (Builder $stockQuery): void {
                 $stockQuery
-                    ->whereHas('variants', fn (Builder $variants) => $variants->where('stock', '>', 0))
-                    ->orWhere(function (Builder $simpleProduct): void {
-                        $simpleProduct
-                            ->whereDoesntHave('variants')
-                            ->where('stock', '>', 0);
+                    ->where(function (Builder $simpleProduct): void {
+                        $simpleProduct->whereDoesntHave('variants')->where('stock', '>', 0);
+                    })
+                    ->orWhere(function (Builder $configuredProduct): void {
+                        $configuredProduct
+                            ->whereHas('variants')
+                            ->whereNotExists(function (\Illuminate\Database\Query\Builder $unavailableType): void {
+                                $unavailableType
+                                    ->selectRaw('1')
+                                    ->from('product_variants as required_variants')
+                                    ->whereColumn('required_variants.product_id', 'products.id')
+                                    ->where('required_variants.is_active', true)
+                                    ->groupBy('required_variants.type')
+                                    ->havingRaw('SUM(CASE WHEN required_variants.stock > 0 THEN 1 ELSE 0 END) = 0');
+                            });
                     });
             })
             ->with([
