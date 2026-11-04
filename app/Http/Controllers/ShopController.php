@@ -7,6 +7,8 @@ use App\Models\Category;
 use App\Models\Product;
 use App\Models\StorefrontSetting;
 use App\Services\Media\ResponsiveImageService;
+use App\Support\ProductPurchaseRules;
+use App\Support\PersianDigits;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Contracts\View\View;
 
@@ -30,11 +32,17 @@ class ShopController extends Controller
                     ->select(['id', 'product_id', 'media_id', 'path', 'alt', 'sort_order', 'is_primary'])
                     ->limit(1),
                 'images.media:id,path',
-                'variants:id,product_id,stock',
+                'variants:id,product_id,type,name,value,stock,price_adjustment,is_active',
             ])
             ->active()
             ->whereHas('category', fn ($categoryQuery) => $categoryQuery
-                ->where('is_active', true));
+                ->where('is_active', true))
+            ->whereHas('images', fn ($imageQuery) => $imageQuery
+                ->where(function ($imageSource): void {
+                    $imageSource
+                        ->where(fn ($path) => $path->whereNotNull('path')->where('path', '<>', ''))
+                        ->orWhereHas('media');
+                }));
 
         /*
         |--------------------------------------------------------------------------
@@ -57,7 +65,7 @@ class ShopController extends Controller
         */
 
         if (!empty($filters['search'])) {
-            $search = trim($filters['search']);
+            $search = trim(str_replace(['ي', 'ى', 'ك', "\u{200C}", "\u{200D}", 'ـ'], ['ی', 'ی', 'ک', ' ', ' ', ''], PersianDigits::toEnglish($filters['search']) ?? $filters['search']));
 
             $query->where(function ($productQuery) use ($search) {
                 $productQuery
@@ -65,6 +73,10 @@ class ShopController extends Controller
                     ->orWhere('sku', 'like', "%{$search}%")
                     ->orWhere('short_description', 'like', "%{$search}%")
                     ->orWhere('description', 'like', "%{$search}%")
+                    ->orWhereHas('variants', fn ($variantQuery) => $variantQuery
+                        ->where('name', 'like', "%{$search}%")
+                        ->orWhere('value', 'like', "%{$search}%")
+                        ->orWhere('sku', 'like', "%{$search}%"))
                     ->orWhereHas('category', fn ($categoryQuery) => $categoryQuery
                         ->where('name', 'like', "%{$search}%")
                         ->orWhere('slug', 'like', "%{$search}%"));
@@ -112,20 +124,7 @@ class ShopController extends Controller
         */
 
         if (! empty($filters['in_stock'])) {
-            // Stock belongs to the parent product only when no variants are
-            // configured. Variant-backed products must use option-level stock.
-            $query->where(function ($stockQuery): void {
-                $stockQuery
-                    ->where(function ($baseStock): void {
-                        $baseStock
-                            ->whereDoesntHave('variants', fn ($variantQuery) => $variantQuery
-                                ->where('is_active', true))
-                            ->where('products.stock', '>', 0);
-                    })
-                    ->orWhereHas('variants', fn ($variantQuery) => $variantQuery
-                        ->where('is_active', true)
-                        ->where('stock', '>', 0));
-            });
+            ProductPurchaseRules::applyAvailableQuery($query);
         }
 
         if (!empty($filters['featured'])) {
@@ -137,7 +136,7 @@ class ShopController extends Controller
         }
 
         if (!empty($filters['installment'])) {
-            $query->where('installment_enabled', true);
+            ProductPurchaseRules::applyInstallmentQuery($query);
         }
 
         /*

@@ -462,7 +462,7 @@ class FarzinStorefrontTest extends TestCase
         $this->get(route('about'))
             ->assertOk()
             ->assertSee('فرزین فرجی')
-            ->assertSee('FACTORY & PROCESS', false);
+            ->assertSee('FACTORY &amp; PROCESS', false);
 
         $this->get(route('blog.index'))
             ->assertOk()
@@ -470,6 +470,25 @@ class FarzinStorefrontTest extends TestCase
             ->assertSee('تازه‌های مجله')
             ->assertSee('قبل از خرید هود آشپزخانه چه چیزهایی را بررسی کنیم؟')
             ->assertSee('چک‌لیست ساده پیش از ثبت سفارش');
+    }
+
+    public function test_about_page_uses_dashboard_copy_and_section_visibility(): void
+    {
+        StorefrontSetting::query()->updateOrCreate(
+            ['key' => 'page_about_hero_title'],
+            ['value' => 'درباره فرزین، روایت تازه']
+        );
+        StorefrontSetting::query()->updateOrCreate(
+            ['key' => 'page_about_show_values'],
+            ['value' => '0']
+        );
+
+        app(\App\Services\StorefrontPageContent::class)->clearCache();
+
+        $this->get(route('about'))
+            ->assertOk()
+            ->assertSee('درباره فرزین، روایت تازه')
+            ->assertDontSee('تمرکز مجموعه فرزین.');
     }
 
     public function test_auth_and_legal_pages_use_the_farzin_customer_experience(): void
@@ -615,7 +634,7 @@ class FarzinStorefrontTest extends TestCase
 
         $this->assertSame(
             6,
-            substr_count($response->getContent(), 'class="fz-home-round-category"'),
+            substr_count($response->getContent(), 'class="fz-home-category-card"'),
             'All active categories that contain active products should appear on the homepage.'
         );
     }
@@ -701,7 +720,7 @@ class FarzinStorefrontTest extends TestCase
 
         $admin = $this->admin();
 
-        $this->actingAs($admin, 'admin')
+        $cmsResponse = $this->actingAs($admin, 'admin')
             ->get(route('admin.page-content.edit', ['tab' => 'home']))
             ->assertOk()
             ->assertSee('enctype="multipart/form-data"', false)
@@ -714,10 +733,18 @@ class FarzinStorefrontTest extends TestCase
             ->assertSee('data-image-editor-min-width="1200"', false)
             ->assertSee('data-image-editor-min-height="750"', false)
             ->assertSee('data-image-editor-canvas', false)
-            ->assertSee('class="fz-home-hero-offer"', false)
-            ->assertSee('محصول واقعی پیشنهاد فرزین')
+            ->assertSee('name="page_home_technology_title"', false)
+            ->assertSee('name="page_home_technology_body"', false)
+            ->assertSee('name="page_home_technology_image"', false)
+            ->assertSee('name="page_home_show_technology"', false)
             ->assertDontSee('page_home_hero_image_position')
             ->assertDontSee('نقطه تمرکز تصویر Hero');
+
+        $this->get(route('home'))
+            ->assertOk()
+            ->assertSee('class="fz-home-technology"', false)
+            ->assertSee('id="fz-home-featured"', false)
+            ->assertSee('محصول واقعی پیشنهاد فرزین');
     }
 
     public function test_homepage_cms_rejects_hero_images_outside_the_fixed_crop_ratio(): void
@@ -993,12 +1020,26 @@ class FarzinStorefrontTest extends TestCase
             'price' => 20000000,
             'stock' => 5,
         ]);
-        $this->product($category, [
+        $premium = $this->product($category, [
             'name' => 'Farzin Hood 90',
             'slug' => 'farzin-hood-90',
             'sku' => 'FAR-HOOD-90',
             'price' => 80000000,
             'stock' => 3,
+        ]);
+        ProductImage::create([
+            'product_id' => $budget->id,
+            'path' => 'https://cdn.example.test/farzin-hood-60.webp',
+            'alt' => $budget->name,
+            'sort_order' => 0,
+            'is_primary' => true,
+        ]);
+        ProductImage::create([
+            'product_id' => $premium->id,
+            'path' => 'https://cdn.example.test/farzin-hood-90.webp',
+            'alt' => $premium->name,
+            'sort_order' => 0,
+            'is_primary' => true,
         ]);
         $this->product($category, [
             'name' => 'Archived Hood',
@@ -1029,6 +1070,13 @@ class FarzinStorefrontTest extends TestCase
         $product = $this->product($category, [
             'name' => 'Generic Kitchen Model',
             'slug' => 'generic-kitchen-model',
+        ]);
+        ProductImage::create([
+            'product_id' => $product->id,
+            'path' => 'https://cdn.example.test/generic-kitchen-model.webp',
+            'alt' => $product->name,
+            'sort_order' => 0,
+            'is_primary' => true,
         ]);
 
         $this->get(route('shop.index', ['search' => 'Granite Kitchen Sinks']))
@@ -1061,6 +1109,13 @@ class FarzinStorefrontTest extends TestCase
             'sku' => 'FAR-VARIANT-STOCK',
             'stock' => 0,
         ]);
+        ProductImage::create([
+            'product_id' => $variantProduct->id,
+            'path' => 'https://cdn.example.test/variant-stock-hood.webp',
+            'alt' => $variantProduct->name,
+            'sort_order' => 0,
+            'is_primary' => true,
+        ]);
         ProductVariant::create([
             'product_id' => $variantProduct->id,
             'type' => 'color',
@@ -1079,6 +1134,13 @@ class FarzinStorefrontTest extends TestCase
             // Parent stock must not override option-level stock when active variants exist.
             'stock' => 9,
         ]);
+        ProductImage::create([
+            'product_id' => $unavailableProduct->id,
+            'path' => 'https://cdn.example.test/out-of-stock-hood.webp',
+            'alt' => $unavailableProduct->name,
+            'sort_order' => 0,
+            'is_primary' => true,
+        ]);
         ProductVariant::create([
             'product_id' => $unavailableProduct->id,
             'type' => 'color',
@@ -1090,10 +1152,37 @@ class FarzinStorefrontTest extends TestCase
             'is_active' => true,
         ]);
 
+        $multiGroupProduct = $this->product($category, [
+            'name' => 'Out Of Stock Mixed Variant Groups',
+            'slug' => 'out-of-stock-mixed-variant-groups',
+            'sku' => 'FAR-MULTI-GROUP-OUT',
+            'stock' => 12,
+        ]);
+        ProductImage::create([
+            'product_id' => $multiGroupProduct->id,
+            'path' => 'https://cdn.example.test/multi-group-out-of-stock.webp',
+            'alt' => $multiGroupProduct->name,
+            'sort_order' => 0,
+            'is_primary' => true,
+        ]);
+        foreach ([
+            ['type' => 'color', 'name' => 'رنگ', 'value' => 'silver', 'stock' => 5],
+            ['type' => 'installation', 'name' => 'نوع نصب', 'value' => 'built-in', 'stock' => 0],
+        ] as $option) {
+            ProductVariant::create([
+                'product_id' => $multiGroupProduct->id,
+                ...$option,
+                'sku' => 'FAR-MULTI-GROUP-'.strtoupper($option['type']),
+                'price_adjustment' => 0,
+                'is_active' => true,
+            ]);
+        }
+
         $this->get(route('shop.index', ['in_stock' => 1]))
             ->assertOk()
             ->assertSee($variantProduct->name)
-            ->assertDontSee($unavailableProduct->name);
+            ->assertDontSee($unavailableProduct->name)
+            ->assertDontSee($multiGroupProduct->name);
     }
 
     public function test_shop_rejects_invalid_price_ranges_and_sort_options(): void
@@ -4687,7 +4776,7 @@ class FarzinStorefrontTest extends TestCase
 
         $this->get(route('home'))
             ->assertOk()
-            ->assertSee('پیشنهاد ویژه')
+            ->assertSee('منتخب فرزین')
             ->assertSee($discounted->name)
             ->assertDontSee($placeholder->name)
             ->assertDontSee('شمارنده معکوس');
@@ -4721,8 +4810,9 @@ class FarzinStorefrontTest extends TestCase
         $this->get(route('home'))
             ->assertOk()
             ->assertSee($regular->name)
-            ->assertSee('جدیدترین‌ها')
-            ->assertDontSee('id="fz-home-discounts-title"', false);
+            ->assertSee('منتخب فرزین')
+            ->assertDontSee('id="fz-home-discounts-title"', false)
+            ->assertDontSee('id="fz-home-newest-title"', false);
     }
 
     public function test_homepage_cms_exposes_four_independent_managed_banner_slots(): void
@@ -4740,6 +4830,111 @@ class FarzinStorefrontTest extends TestCase
                 ->assertSee("page_home_banner_{$index}_title", false)
                 ->assertSee("page_home_banner_{$index}_description", false);
         }
+    }
+
+
+    public function test_shop_search_is_persian_normalized_and_server_paginated(): void
+    {
+        $category = $this->category([
+            'name' => 'سینک‌های گرانیتی',
+            'slug' => 'granite-sinks',
+        ]);
+
+        foreach (range(1, 13) as $index) {
+            $product = $this->product($category, [
+                'name' => 'سینک گرانیتی فرزین '.$index,
+                'slug' => 'farzin-granite-sink-'.$index,
+                'sku' => 'FAR-GRANITE-'.$index,
+                'price' => 10000000 + $index,
+                'show_in_home_gallery' => false,
+            ]);
+
+            ProductImage::create([
+                'product_id' => $product->id,
+                'path' => 'https://cdn.example.test/farzin-granite-sink-'.$index.'.webp',
+                'alt' => $product->name,
+                'sort_order' => 0,
+                'is_primary' => true,
+            ]);
+        }
+
+        $pageOne = $this->get(route('shop.index', ['search' => 'سینک گرانيتی', 'sort' => 'price_asc']))
+            ->assertOk()
+            ->assertSee('shop-catalog-search', false)
+            ->assertSee('سینک گرانیتی فرزین 1')
+            ->assertViewHas('products', fn ($products): bool =>
+                $products->total() === 13
+                && $products->perPage() === 12
+                && $products->currentPage() === 1
+                && $products->hasPages()
+            );
+
+        $this->assertStringContainsString('page=2', $pageOne->getContent());
+
+        $this->get(route('shop.index', ['search' => 'سینک گرانيتی', 'sort' => 'price_asc', 'page' => 2]))
+            ->assertOk()
+            ->assertSee('سینک گرانیتی فرزین 13')
+            ->assertViewHas('products', fn ($products): bool =>
+                $products->total() === 13 && $products->currentPage() === 2
+            );
+    }
+
+    public function test_checkout_normalizes_persian_digits_before_validating_contact_and_location_fields(): void
+    {
+        $customer = $this->customer();
+        $location = $this->checkoutLocationPayload();
+        $toPersian = static fn ($value): string => strtr((string) $value, [
+            '0' => '۰', '1' => '۱', '2' => '۲', '3' => '۳', '4' => '۴',
+            '5' => '۵', '6' => '۶', '7' => '۷', '8' => '۸', '9' => '۹',
+        ]);
+
+        $this->actingAs($customer)
+            ->from(route('cart.index'))
+            ->post(route('checkout.place'), [
+                'first_name' => 'مینا',
+                'last_name' => 'خریدار',
+                'phone' => '۰۹۱۲۳۴۵۶۷۸۹',
+                'email' => 'persian-digits@farzin.test',
+                'province_id' => $toPersian($location['province_id']),
+                'city_id' => $toPersian($location['city_id']),
+                'province' => 'متن ارسالی نادیده گرفته می‌شود',
+                'city' => 'متن ارسالی نادیده گرفته می‌شود',
+                'address' => 'تهران، خیابان نمونه، پلاک ۱۲',
+                'postal_code' => '۱۲۳۴۵۶۷۸۹۰',
+            ])
+            ->assertRedirect(route('cart.index'))
+            ->assertSessionHas('error', 'سبد خرید شما خالی است.')
+            ->assertSessionMissing('errors');
+    }
+
+    public function test_shop_product_card_uses_a_compact_installment_seal_without_reserved_space(): void
+    {
+        $category = $this->category(['slug' => 'hoods']);
+        $product = $this->product($category, [
+            'name' => 'هود اقساطی فرزین',
+            'slug' => 'farzin-installment-hood',
+            'sku' => 'FAR-INSTALLMENT-HOOD',
+            'stock' => 4,
+            'installment_enabled' => true,
+            'installment_cash_percent' => 50,
+            'installment_remainder_method' => 'cheque',
+            'installment_cheque_count' => 2,
+            'installment_interval_months' => 1,
+        ]);
+        ProductImage::create([
+            'product_id' => $product->id,
+            'path' => 'https://cdn.example.test/farzin-installment-hood.webp',
+            'alt' => $product->name,
+            'sort_order' => 0,
+            'is_primary' => true,
+        ]);
+
+        $this->get(route('shop.index'))
+            ->assertOk()
+            ->assertSee('farzin-installment-seal', false)
+            ->assertSee('خرید')
+            ->assertSee('اقساطی')
+            ->assertDontSee('farzin-product-card__installment-slot', false);
     }
 
     private function checkoutLocationPayload(): array

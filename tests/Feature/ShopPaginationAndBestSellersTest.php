@@ -19,11 +19,12 @@ class ShopPaginationAndBestSellersTest extends TestCase
         $category = $this->category();
 
         for ($index = 1; $index <= 13; $index++) {
-            $this->product($category, [
+            $product = $this->product($category, [
                 'name' => 'Pagination Product '.str_pad((string) $index, 2, '0', STR_PAD_LEFT),
                 'slug' => 'pagination-product-'.$index,
                 'sku' => 'FAR-PAGINATION-'.$index,
             ]);
+            $this->addProductImage($product);
         }
 
         $this->get(route('shop.index', ['sort' => 'price_desc']))
@@ -52,6 +53,8 @@ class ShopPaginationAndBestSellersTest extends TestCase
             'slug' => 'best-seller-hood',
             'sku' => 'FAR-BEST-SELLER',
         ]);
+        $this->addProductImage($lowSales);
+        $this->addProductImage($bestSeller);
 
         $order = $this->paidOrder();
         $this->addOrderItem($order, $lowSales, 1);
@@ -104,7 +107,7 @@ class ShopPaginationAndBestSellersTest extends TestCase
 
         $response = $this->get(route('home'))
             ->assertOk()
-            ->assertSee('id="fz-home-bestsellers"', false);
+            ->assertSee('id="fz-home-featured"', false);
 
         $html = $response->getContent();
         $this->assertLessThan(
@@ -134,7 +137,14 @@ class ShopPaginationAndBestSellersTest extends TestCase
             'slug' => 'installment-filter-hood',
             'sku' => 'FAR-INSTALLMENT-FILTER',
             'installment_enabled' => true,
+            'installment_cash_percent' => 50,
+            'installment_remainder_method' => 'cheque',
+            'installment_cheque_count' => 2,
+            'installment_interval_months' => 1,
         ]);
+        foreach ([$featured, $new, $installment] as $listedProduct) {
+            $this->addProductImage($listedProduct);
+        }
 
         $this->get(route('shop.index', ['featured' => 1]))
             ->assertOk()
@@ -239,12 +249,12 @@ class ShopPaginationAndBestSellersTest extends TestCase
             'total' => $product->price * $quantity,
         ]);
     }
-    public function test_homepage_displays_unique_best_seller_newest_and_curated_shelves(): void
+    public function test_homepage_displays_one_compact_featured_product_shelf_with_unique_items(): void
     {
         $category = $this->category();
 
-        // Best sellers and new arrivals have their own shelves. Curated products
-        // remain visible only when they have not already appeared in an earlier shelf.
+        // The public Home page intentionally has one focused product shelf.
+        // Curated, best-selling and newest products are combined without duplicates.
         $heroGalleryProductIds = [];
         for ($index = 1; $index <= 2; $index++) {
             $galleryProduct = $this->product($category, [
@@ -286,10 +296,11 @@ class ShopPaginationAndBestSellersTest extends TestCase
         $response = $this->get(route('home'))->assertOk();
         $html = $response->getContent();
 
-        $this->assertStringContainsString('id="fz-home-newest"', $html);
-        $this->assertStringContainsString('id="fz-home-bestsellers"', $html);
-        $this->assertStringContainsString('id="fz-home-selected"', $html);
-        $this->assertSame(10, substr_count($html, 'class="farzin-product-card group'));
+        $this->assertStringContainsString('id="fz-home-featured"', $html);
+        $this->assertSame(8, substr_count($html, 'class="farzin-product-card group'));
+        $this->assertStringNotContainsString('id="fz-home-newest"', $html);
+        $this->assertStringNotContainsString('id="fz-home-bestsellers"', $html);
+        $this->assertStringNotContainsString('id="fz-home-selected"', $html);
         $this->assertStringNotContainsString('fz-new-section', $html);
         $this->assertStringNotContainsString('grid__image', $html);
         foreach ($heroGalleryProductIds as $productId) {

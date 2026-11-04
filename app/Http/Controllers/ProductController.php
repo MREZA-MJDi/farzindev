@@ -6,6 +6,7 @@ use App\Models\ContactSetting;
 use App\Models\Product;
 use App\Models\SeoRedirect;
 use App\Models\StorefrontSetting;
+use App\Support\ProductPurchaseRules;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Str;
@@ -48,11 +49,7 @@ class ProductController extends Controller
         // Product::variants() already scopes to active variants. Stock rules
         // must use the same active option set as the cart and checkout.
         $variantGroups = $product->variants->groupBy('type');
-        $canPurchase = $variantGroups->isNotEmpty()
-            ? $variantGroups->every(fn ($options) => $options->contains(
-                fn ($option) => (int) $option->stock > 0
-            ))
-            : (int) $product->stock > 0;
+        $canPurchase = ProductPurchaseRules::isAvailable($product, $product->variants);
 
         // This is the largest quantity that could be purchased for at least
         // one combination. A small client-side listener tightens it further
@@ -82,7 +79,9 @@ class ProductController extends Controller
             'max' => max(0, round($priceMaximum, 2)),
         ];
 
-        $installmentPlan = $canPurchase ? $this->resolveInstallmentPlan($product) : null;
+        $installmentPlan = ProductPurchaseRules::hasValidInstallmentPlan($product, $product->variants)
+            ? $this->resolveInstallmentPlan($product)
+            : null;
         $safeShortDescription = $this->publicCopy($product->short_description);
         $safeDescription = $this->publicCopy($product->description);
 
@@ -91,14 +90,29 @@ class ProductController extends Controller
             ->whereKeyNot($product->id)
             ->where('category_id', $product->category_id)
             ->whereHas('category', fn (Builder $query) => $query->where('is_active', true))
-            ->whereHas('images')
+            ->whereHas('images', fn (Builder $imageQuery) => $imageQuery
+                ->where(function (Builder $imageSource): void {
+                    $imageSource
+                        ->where(fn (Builder $path) => $path->whereNotNull('path')->where('path', '<>', ''))
+                        ->orWhereHas('media');
+                }))
             ->where(function (Builder $stockQuery): void {
                 $stockQuery
-                    ->whereHas('variants', fn (Builder $variants) => $variants->where('stock', '>', 0))
-                    ->orWhere(function (Builder $simpleProduct): void {
-                        $simpleProduct
-                            ->whereDoesntHave('variants')
-                            ->where('stock', '>', 0);
+                    ->where(function (Builder $simpleProduct): void {
+                        $simpleProduct->whereDoesntHave('variants')->where('stock', '>', 0);
+                    })
+                    ->orWhere(function (Builder $configuredProduct): void {
+                        $configuredProduct
+                            ->whereHas('variants')
+                            ->whereNotExists(function (\Illuminate\Database\Query\Builder $unavailableType): void {
+                                $unavailableType
+                                    ->selectRaw('1')
+                                    ->from('product_variants as required_variants')
+                                    ->whereColumn('required_variants.product_id', 'products.id')
+                                    ->where('required_variants.is_active', true)
+                                    ->groupBy('required_variants.type')
+                                    ->havingRaw('SUM(CASE WHEN required_variants.stock > 0 THEN 1 ELSE 0 END) = 0');
+                            });
                     });
             })
             ->with([

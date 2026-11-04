@@ -322,6 +322,34 @@
                             </article>
                         </div>
                     </section>
+
+                    @php
+                        $technologyImagePath = trim((string) ($values['page_home_technology_image_url'] ?? ''));
+                        $technologyImagePreview = $technologyImagePath === ''
+                            ? ''
+                            : (\Illuminate\Support\Str::startsWith($technologyImagePath, ['http://', 'https://', '//'])
+                                ? $technologyImagePath
+                                : \Illuminate\Support\Facades\Storage::disk('public')->url(
+                                    preg_replace('#^(public/|storage/)#', '', ltrim($technologyImagePath, '/')) ?? $technologyImagePath
+                                ));
+                    @endphp
+                    <section class="rounded-xl border border-[var(--admin-border)] bg-[var(--admin-surface-soft)] p-4 sm:p-5" aria-labelledby="home-technology-image-title">
+                        <div class="mb-4">
+                            <h3 id="home-technology-image-title" class="text-sm font-bold text-[var(--admin-text)]">تصویر سکشن فناوری و جزئیات ساخت</h3>
+                            <p class="mt-1 text-xs leading-6 text-[var(--admin-muted)]">این تصویر در صفحه اصلی با قاب ثابت ۱۶:۱۰ نمایش داده می‌شود. برای معرفی واقعی فضای تولید، جزئیات فنی یا محصول از عکس مجموعه استفاده کنید.</p>
+                        </div>
+                        @if($technologyImagePreview !== '')
+                            <img src="{{ $technologyImagePreview }}" alt="پیش‌نمایش تصویر سکشن فناوری" width="1200" height="750" loading="lazy" decoding="async" class="mb-4 aspect-[16/10] w-full max-w-2xl border border-[var(--admin-border)] object-cover">
+                        @else
+                            <div class="mb-4 flex aspect-[16/10] w-full max-w-2xl items-center justify-center border border-dashed border-[var(--admin-border)] bg-[var(--admin-card)] text-xs text-[var(--admin-muted)]">هنوز تصویری برای سکشن فناوری ثبت نشده است.</div>
+                        @endif
+                        <label for="page_home_technology_image" class="admin-label">بارگذاری تصویر ۱۶:۱۰</label>
+                        <input id="page_home_technology_image" name="page_home_technology_image" type="file" accept="image/jpeg,image/png,image/webp" class="admin-input mt-2 w-full max-w-2xl p-2">
+                        <p class="mt-1 text-[10px] leading-5 text-[var(--admin-muted)]">JPG، PNG یا WEBP؛ حداقل ۱۲۰۰×۷۵۰ و دقیقاً نسبت ۱۶:۱۰؛ حداکثر ۲۰ مگابایت. فایل قبلی تا ذخیره موفق تصویر جدید باقی می‌ماند.</p>
+                        @error('page_home_technology_image')
+                            <p role="alert" class="mt-2 text-xs text-[var(--admin-danger)]">{{ $message }}</p>
+                        @enderror
+                    </section>
                 @elseif($tab === 'about')
                     <div class="rounded-xl border border-[var(--admin-border)] bg-[var(--admin-surface-soft)] p-4 text-xs leading-6 text-[var(--admin-muted)]">
                         اطلاعات فنی و ادعاهای تجاری را فقط با داده تأییدشده مجموعه جایگزین کنید. این فیلدها متن ساده‌اند و HTML یا اسکریپت اجرا نمی‌کنند.

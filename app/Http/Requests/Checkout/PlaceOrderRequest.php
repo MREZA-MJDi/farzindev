@@ -3,6 +3,8 @@
 namespace App\Http\Requests\Checkout;
 
 use App\Models\Province;
+use App\Support\IranianMobile;
+use App\Support\PersianDigits;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -15,8 +17,8 @@ class PlaceOrderRequest extends FormRequest
 
     protected function prepareForValidation(): void
     {
-        $provinceId = filter_var($this->input('province_id'), FILTER_VALIDATE_INT) ?: null;
-        $cityId = filter_var($this->input('city_id'), FILTER_VALIDATE_INT) ?: null;
+        $provinceId = filter_var(PersianDigits::toEnglish($this->input('province_id')), FILTER_VALIDATE_INT) ?: null;
+        $cityId = filter_var(PersianDigits::toEnglish($this->input('city_id')), FILTER_VALIDATE_INT) ?: null;
 
         $province = $provinceId
             ? Province::query()->find($provinceId)
@@ -29,6 +31,10 @@ class PlaceOrderRequest extends FormRequest
             : null;
 
         $this->merge([
+            'phone' => IranianMobile::normalize($this->input('phone')),
+            'postal_code' => PersianDigits::toEnglish($this->input('postal_code')),
+            'province_id' => $provinceId,
+            'city_id' => $cityId,
             'province' => $province?->name,
             'city' => $city?->name,
         ]);

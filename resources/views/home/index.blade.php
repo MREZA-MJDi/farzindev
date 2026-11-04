@@ -17,8 +17,10 @@
     $showBenefits = ($homeCopy['page_home_show_trust'] ?? '1') === '1';
     $showJournal = ($homeCopy['page_home_show_journal'] ?? '1') === '1';
     $categoriesEyebrow = trim((string) ($homeCopy['page_home_categories_eyebrow'] ?? ''));
-    $categoriesTitle = trim((string) ($homeCopy['page_home_categories_title'] ?? 'دسته‌بندی محصولات')); 
-    $categoriesDescription = trim((string) ($homeCopy['page_home_categories_description'] ?? ''));
+    $categoriesTitle = trim((string) ($homeCopy['page_home_categories_title'] ?? 'دسته‌بندی محصولات'));
+    $featuredProducts = $featuredProducts ?? collect();
+    $productShelfTitle = trim((string) ($homeCopy['page_home_products_title'] ?? 'منتخب فرزین')) ?: 'منتخب فرزین';
+    $productShelfEyebrow = trim((string) ($homeCopy['page_home_products_eyebrow'] ?? 'کاتالوگ هود و سینک'));
     $enamadUrl = trim((string) ($enamadUrl ?? ''));
     if (!\Illuminate\Support\Str::startsWith($enamadUrl, 'https://')) {
         $enamadUrl = '';
@@ -26,7 +28,6 @@
 @endphp
 
 <div class="fz-home-market" data-fz-home>
-    {{-- Main banner carousel. A single CMS-backed fallback slide is used when no image slides are configured. --}}
     @if($bannerSlides->isNotEmpty())
         <section class="fz-market-hero" aria-label="بنرهای اصلی فرزین" data-fz-hero-slider>
             <div class="fz-market-hero__container">
@@ -94,7 +95,6 @@
         </section>
     @endif
 
-    {{-- Circular entry points use active categories and their own/fallback product photography. --}}
     @if($showCategories && $categories->isNotEmpty())
         <section class="fz-home-categories" aria-labelledby="fz-home-categories-title">
             <div class="fz-home-container">
@@ -106,8 +106,8 @@
                         @if($categoriesTitle !== '')
                             <h2 id="fz-home-categories-title">{{ $categoriesTitle }}</h2>
                         @endif
-                        @if($categoriesDescription !== '')
-                            <p>{{ $categoriesDescription }}</p>
+                        @if(filled($homeCopy['page_home_categories_description'] ?? null))
+                            <p>{{ $homeCopy['page_home_categories_description'] }}</p>
                         @endif
                     </div>
                     <a href="{{ route('categories.index') }}" class="fz-home-section-head__link">همه دسته‌ها <span aria-hidden="true">←</span></a>
@@ -121,45 +121,6 @@
         </section>
     @endif
 
-    {{-- Only genuine compare-at-price reductions are eligible. There is no discount-expiry field in the current schema. --}}
-    @if($showProducts && $discountProducts->isNotEmpty())
-        <x-home.product-carousel-section
-            id="fz-home-discounts"
-            title="پیشنهاد ویژه"
-            eyebrow="قیمت‌های به‌روزشده"
-            :products="$discountProducts"
-        />
-    @endif
-
-    @if($showProducts && $newestProducts->isNotEmpty())
-        <x-home.product-carousel-section
-            id="fz-home-newest"
-            title="جدیدترین‌ها"
-            eyebrow="تازه‌های کاتالوگ"
-            :products="$newestProducts"
-        />
-    @endif
-
-    @if($showProducts && $bestSellingProducts->isNotEmpty())
-        <x-home.product-carousel-section
-            id="fz-home-bestsellers"
-            title="پرفروش‌ترین‌ها"
-            eyebrow="بر اساس سفارش‌های پرداخت‌شده"
-            :products="$bestSellingProducts"
-        />
-    @endif
-
-    {{-- Keep the existing admin-managed homepage selection, without mixing it with sales rankings. --}}
-    @if($showProducts && $selectedProducts->isNotEmpty())
-        <x-home.product-carousel-section
-            id="fz-home-selected"
-            title="منتخب فرزین"
-            eyebrow="انتخاب‌شده از مدیریت محصولات"
-            :products="$selectedProducts"
-        />
-    @endif
-
-    {{-- This strip is assembled from configured shipping, installation, warranty and installment data only. --}}
     @if($showBenefits && $benefits->isNotEmpty())
         <section class="fz-home-benefits" aria-label="خدمات و مزیت‌های ثبت‌شده فرزین">
             <div class="fz-home-container">
@@ -188,6 +149,60 @@
                             </div>
                         </article>
                     @endforeach
+                </div>
+            </div>
+        </section>
+    @endif
+
+    @if($showProducts && $featuredProducts->isNotEmpty())
+        <x-home.product-carousel-section
+            id="fz-home-featured"
+            :title="$productShelfTitle"
+            :eyebrow="$productShelfEyebrow"
+            :products="$featuredProducts"
+        />
+    @endif
+
+    @if(($homeTechnology['show'] ?? false) && (filled($homeTechnology['title'] ?? null) || filled($homeTechnology['body'] ?? null)))
+        <section class="fz-home-technology" aria-labelledby="fz-home-technology-title">
+            <div class="fz-home-container fz-home-technology__layout">
+                <div class="fz-home-technology__copy">
+                    @if(filled($homeTechnology['eyebrow'] ?? null))
+                        <span class="fz-home-technology__eyebrow">{{ $homeTechnology['eyebrow'] }}</span>
+                    @endif
+                    <h2 id="fz-home-technology-title">{{ $homeTechnology['title'] }}</h2>
+                    @if(filled($homeTechnology['body'] ?? null))
+                        <p>{{ $homeTechnology['body'] }}</p>
+                    @endif
+                    <div class="fz-home-technology__signals" aria-label="محورهای توجه فرزین">
+                        <span>طراحی و تناسب</span>
+                        <span>جنس و پرداخت</span>
+                        <span>کاربری و نصب</span>
+                    </div>
+                    <a href="{{ route('about') }}" class="fz-home-technology__link">
+                        {{ $homeTechnology['button_label'] ?: 'آشنایی با فرزین' }}
+                        <span aria-hidden="true">←</span>
+                    </a>
+                </div>
+                <div class="fz-home-technology__visual">
+                    @if(filled($homeTechnology['image_url'] ?? null))
+                        <img
+                            src="{{ $homeTechnology['image_url'] }}"
+                            @if(filled($homeTechnology['image_srcset'] ?? null)) srcset="{{ $homeTechnology['image_srcset'] }}" sizes="(max-width: 767px) 94vw, 48vw" @endif
+                            alt="{{ $homeTechnology['title'] }}"
+                            width="1200"
+                            height="750"
+                            loading="lazy"
+                            decoding="async"
+                        >
+                    @else
+                        <div class="fz-home-technology__placeholder" aria-label="فضای تصویر فناوری فرزین">
+                            <span>FARZIN / ENGINEERING</span>
+                            <strong>فرم، عملکرد، جزئیات</strong>
+                            <small>نگاهی نزدیک به جزئیات ساخت، انتخاب متریال و تجربه استفاده روزمره.</small>
+                        </div>
+                    @endif
+                    <span class="fz-home-technology__index" aria-hidden="true">01 / 03</span>
                 </div>
             </div>
         </section>

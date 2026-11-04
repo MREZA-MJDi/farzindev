@@ -290,7 +290,12 @@ test('homepage uses the sticky commerce header, a real banner fallback and the s
 test('shared footer keeps the same brand, navigation and dashboard-driven contacts on every storefront page', async ({ page }) => {
     const snapshots = [];
 
-    for (const path of ['/', '/shop', '/categories/hoods', '/contact']) {
+    await page.goto('/shop', { waitUntil: 'domcontentloaded' });
+    const productHref = await page.locator('.farzin-product-card a[href*="/product/"]').first().getAttribute('href');
+    const paths = ['/', '/shop', '/categories', '/categories/hoods', '/about', '/contact'];
+    if (productHref) paths.push(productHref);
+
+    for (const path of paths) {
         await page.goto(path, { waitUntil: 'domcontentloaded' });
 
         snapshots.push(await page.locator('.farzin-site-footer').evaluate((footer) => {
@@ -310,6 +315,11 @@ test('shared footer keeps the same brand, navigation and dashboard-driven contac
                 contactLinks: contact.querySelectorAll('a').length,
                 logoFont: logoStyle.font,
                 logoColor: logoStyle.color,
+                logoWidth: Number(logo.getBoundingClientRect().width.toFixed(1)),
+                logoHeight: Number(logo.getBoundingClientRect().height.toFixed(1)),
+                logoImageFit: logo.querySelector('img') ? getComputedStyle(logo.querySelector('img')).objectFit : null,
+                logoImageWidth: logo.querySelector('img') ? Number(logo.querySelector('img').getBoundingClientRect().width.toFixed(1)) : null,
+                logoImageHeight: logo.querySelector('img') ? Number(logo.querySelector('img').getBoundingClientRect().height.toFixed(1)) : null,
                 hasPlaceholderLink: Array.from(footer.querySelectorAll('a')).some((anchor) => anchor.getAttribute('href') === '#'),
             };
         }));
@@ -864,6 +874,8 @@ test('homepage product cards use the shared carousel card and fixed image ratio'
                 radius: Number.parseFloat(getComputedStyle(element).borderTopLeftRadius),
                 overflow: getComputedStyle(element).overflow,
                 imageRatio: imageRect.width / imageRect.height,
+                installmentSlotHeight: element.querySelector('.farzin-product-card__installment-slot')?.getBoundingClientRect().height ?? 0,
+                installmentSeal: Boolean(element.querySelector('.farzin-installment-seal')),
                 imageAlt: image?.getAttribute('alt')?.trim(),
                 mediaBottom: mediaRect.bottom,
                 contentTop: contentRect.top,
@@ -876,8 +888,9 @@ test('homepage product cards use the shared carousel card and fixed image ratio'
         expect(geometry.radius).toBeGreaterThanOrEqual(10);
         expect(geometry.radius).toBeLessThanOrEqual(24);
         expect(geometry.overflow).toBe('hidden');
-        expect(geometry.imageRatio).toBeGreaterThan(1.05);
-        expect(geometry.imageRatio).toBeLessThan(1.2);
+        expect(geometry.imageRatio).toBeGreaterThan(1.28);
+        expect(geometry.imageRatio).toBeLessThan(1.38);
+        expect(geometry.installmentSlotHeight).toBe(0);
         expect(geometry.imageAlt).toBeTruthy();
         expect(geometry.contentTop).toBeGreaterThanOrEqual(geometry.mediaBottom - 1);
         expect(geometry.contentBottom).toBeLessThanOrEqual(geometry.cardBottom + 1);
@@ -930,4 +943,51 @@ test('product detail exposes one branded quantity stepper and preloads primary f
 
     const fontPreloads = await page.locator('link[rel="preload"][as="font"]').count();
     expect(fontPreloads, 'regular and extra-bold Farzin font files must start before first paint').toBe(2);
+});
+
+
+test('public shop and product detail keep the same 4:3 image crop on mobile and desktop', async ({ page }) => {
+    for (const viewport of [
+        { width: 390, height: 844 },
+        { width: 1440, height: 960 },
+    ]) {
+        await page.setViewportSize(viewport);
+        await page.goto('/shop', { waitUntil: 'domcontentloaded' });
+
+        const card = page.locator('.farzin-product-card').first();
+        await expect(card).toBeVisible();
+        const productHref = await card.locator('a[href*="/product/"]').first().getAttribute('href');
+        expect(productHref).toBeTruthy();
+        const cardRatio = await card.locator('.farzin-product-card__image-link').evaluate((element) => {
+            const rect = element.getBoundingClientRect();
+            return rect.width / rect.height;
+        });
+        expect(cardRatio).toBeGreaterThan(1.30);
+        expect(cardRatio).toBeLessThan(1.36);
+
+        await page.goto(productHref, { waitUntil: 'domcontentloaded' });
+        const gallery = page.locator('.farzin-product-gallery .product-gallery-stage').first();
+        await expect(gallery).toBeVisible();
+        const detailRatio = await gallery.evaluate((element) => {
+            const rect = element.getBoundingClientRect();
+            return rect.width / rect.height;
+        });
+        expect(detailRatio).toBeGreaterThan(1.30);
+        expect(detailRatio).toBeLessThan(1.36);
+    }
+});
+
+test('shop catalogue search is a real GET form and preserves active filters', async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto('/shop?sort=price_asc&featured=1', { waitUntil: 'domcontentloaded' });
+
+    const search = page.locator('#shop-catalog-search');
+    await expect(search).toBeVisible();
+    await expect(search).toHaveAttribute('name', 'search');
+    await search.fill('هود');
+    await page.locator('.farzin-shop-search__submit').click();
+    await expect(page).toHaveURL(/search=/);
+    await expect(page).toHaveURL(/sort=price_asc/);
+    await expect(page).toHaveURL(/featured=1/);
+    await expect(page.locator('.farzin-shop-toolbar__sort')).toBeVisible();
 });

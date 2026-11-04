@@ -8,6 +8,8 @@ use App\Models\ContactSetting;
 use App\Models\Product;
 use App\Models\StorefrontSetting;
 use App\Services\StorefrontPageContent;
+use App\Services\Media\ResponsiveImageService;
+use App\Support\ProductPurchaseRules;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Storage;
@@ -15,7 +17,7 @@ use Illuminate\Support\Str;
 
 class HomeController extends Controller
 {
-    public function index(StorefrontPageContent $pageContent): View
+    public function index(StorefrontPageContent $pageContent, ResponsiveImageService $responsiveImages): View
     {
         $copy = $pageContent->all();
 
@@ -49,7 +51,7 @@ class HomeController extends Controller
 
         $productRelations = [
             'category:id,name,slug',
-            'variants:id,product_id,type,name,value,stock,is_active',
+            'variants:id,product_id,type,name,value,stock,is_active,price_adjustment',
             'images' => fn ($query) => $query
                 ->select(['id', 'product_id', 'media_id', 'path', 'alt', 'sort_order', 'is_primary'])
                 ->orderByDesc('is_primary')
@@ -63,15 +65,8 @@ class HomeController extends Controller
             static fn ($image): bool => filled($image->url)
         );
 
-        $isPurchasable = static function (Product $product): bool {
-            $groups = $product->variants->groupBy('type');
-
-            return $groups->isNotEmpty()
-                ? $groups->every(static fn ($options): bool => $options->contains(
-                    static fn ($option): bool => (int) $option->stock > 0
-                ))
-                : (int) $product->stock > 0;
-        };
+        $isPurchasable = static fn (Product $product): bool =>
+            ProductPurchaseRules::isAvailable($product, $product->variants);
 
         $baseProducts = static function () use ($applyPublicProductRules, $productRelations): Builder {
             $query = Product::query();
@@ -214,10 +209,12 @@ class HomeController extends Controller
             ->where('installment_enabled', true)
             ->whereBetween('installment_cash_percent', [1, 99])
             ->where('installment_remainder_method', 'cheque')
-            ->where('installment_cheque_count', '>', 0)
-            ->where('installment_interval_months', '>', 0)
+            ->whereBetween('installment_cheque_count', [1, 36])
+            ->whereBetween('installment_interval_months', [1, 24])
             ->get()
-            ->first($isPurchasable);
+            ->first(static fn (Product $product): bool =>
+                ProductPurchaseRules::hasValidInstallmentPlan($product, $product->variants)
+            );
 
         $storeSettings = StorefrontSetting::query()
             ->whereIn('key', [
@@ -332,9 +329,13 @@ class HomeController extends Controller
             ->filter()
             ->values();
 
+        $firstCategoryImage = $categories->first()?->home_category_image_url;
+        $technologyFallbackImage = $categories->skip(1)->first()?->home_category_image_url
+            ?: $firstCategoryImage;
+
         if ($bannerSlides->isEmpty()) {
             $bannerSlides = collect([[
-                'image' => $resolveImageUrl($copy['page_home_hero_image_url'] ?? null),
+                'image' => $resolveImageUrl($copy['page_home_hero_image_url'] ?? null) ?: $firstCategoryImage,
                 'alt' => trim((string) ($copy['page_home_hero_title'] ?? 'تجهیزات آشپزخانه فرزین')),
                 'eyebrow' => trim((string) ($copy['page_home_hero_eyebrow'] ?? '')),
                 'title' => trim((string) ($copy['page_home_hero_title'] ?? 'هود و سینک آشپزخانه فرزین')),
@@ -359,6 +360,29 @@ class HomeController extends Controller
             ->take(3)
             ->values();
 
+        $featuredProducts = $selectedProducts
+            ->concat($discountProducts)
+            ->concat($bestSellingProducts)
+            ->concat($newestProducts)
+            ->unique('id')
+            ->take(8)
+            ->values();
+
+        $technologyImagePath = trim((string) ($copy['page_home_technology_image_url'] ?? ''));
+        $technologyImageUrl = $resolveImageUrl($technologyImagePath !== '' ? $technologyImagePath : null);
+
+        $homeTechnology = [
+            'show' => ($copy['page_home_show_technology'] ?? '1') === '1',
+            'eyebrow' => trim((string) ($copy['page_home_technology_eyebrow'] ?? 'فناوری و جزئیات ساخت')),
+            'title' => trim((string) ($copy['page_home_technology_title'] ?? 'فناوری در جزئیات؛ از طراحی تا عملکرد')),
+            'body' => trim((string) ($copy['page_home_technology_body'] ?? '')),
+            'button_label' => trim((string) ($copy['page_home_technology_cta'] ?? 'آشنایی با فرزین')),
+            'image_url' => $technologyImageUrl ?: $technologyFallbackImage,
+            'image_srcset' => $technologyImagePath !== '' && ! Str::startsWith($technologyImagePath, ['http://', 'https://', '//'])
+                ? $responsiveImages->srcset($technologyImagePath)
+                : null,
+        ];
+
         $contactSetting = ContactSetting::query()
             ->where('is_active', true)
             ->first([
@@ -377,6 +401,8 @@ class HomeController extends Controller
             'newestProducts' => $newestProducts,
             'bestSellingProducts' => $bestSellingProducts,
             'selectedProducts' => $selectedProducts,
+            'featuredProducts' => $featuredProducts,
+            'homeTechnology' => $homeTechnology,
             'benefits' => collect($benefits),
             'blogPosts' => $blogPosts,
             'contactSetting' => $contactSetting,

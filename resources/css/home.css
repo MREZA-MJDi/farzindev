@@ -1960,3 +1960,166 @@ body.home-body{
 
 .farzin-product-card--home-shelf .farzin-product-card__availability.is-unavailable > span{ background:#99a2ae; }
 
+/* Editorial industrial Home: rectangular category tiles, one technology feature, one compact product shelf. */
+.fz-home-market{--fz-home-radius:12px}
+.fz-home-category-rail{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,230px),1fr));gap:clamp(.65rem,1.5vw,1.1rem)}
+.fz-home-category-card{display:grid;min-width:0;overflow:hidden;border:1px solid #DCE3EA;border-radius:11px;color:#06284F;background:#fff;box-shadow:0 4px 16px rgba(6,40,79,.045);transition:border-color .2s ease,box-shadow .2s ease,transform .2s ease}
+.fz-home-category-card:hover,.fz-home-category-card:focus-visible{color:#06284F;border-color:rgba(123,13,26,.38);box-shadow:0 10px 24px rgba(6,40,79,.09);transform:translateY(-2px)}
+.fz-home-category-card__image{display:block;overflow:hidden;aspect-ratio:5/3.4;background:#EEF1F4}
+.fz-home-category-card__image img{display:block;width:100%;height:100%;object-fit:cover;object-position:center;transition:transform .35s ease}
+.fz-home-category-card:hover .fz-home-category-card__image img{transform:scale(1.025)}
+.fz-home-category-card__body{display:grid;min-width:0;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:.18rem .65rem;padding:.85rem .95rem}
+.fz-home-category-card__body strong{grid-column:1;color:#06284F;font-size:.94rem;font-weight:850}
+.fz-home-category-card__body small{grid-column:1;color:#758497;font-size:.66rem}
+.fz-home-category-card__arrow{grid-column:2;grid-row:1/span 2;display:grid;width:34px;height:34px;place-items:center;border:1px solid #E0E6ED;border-radius:8px;color:#06284F;background:#F4F6F8;font-size:1rem;transition:color .18s ease,background .18s ease,border-color .18s ease}
+.fz-home-category-card:hover .fz-home-category-card__arrow{color:#fff;border-color:#7B0D1A;background:#7B0D1A}
+.fz-home-technology{padding-block:clamp(2.2rem,4.5vw,4.4rem);color:#fff;background:#082A4D}
+.fz-home-technology__layout{display:grid;grid-template-columns:minmax(0,.92fr) minmax(0,1.08fr);align-items:stretch;gap:clamp(1.5rem,4vw,4rem)}
+.fz-home-technology__copy{display:flex;min-width:0;flex-direction:column;align-items:flex-start;justify-content:center;padding-block:clamp(.5rem,2vw,1.5rem)}
+.fz-home-technology__eyebrow{display:inline-flex;align-items:center;gap:.55rem;color:#B8C9D9;font-size:.68rem;font-weight:800;letter-spacing:.13em;direction:ltr}
+.fz-home-technology__eyebrow:before{width:24px;height:2px;background:#B15C66;content:""}
+.fz-home-technology__copy h2{max-width:15ch;margin-top:.9rem;color:#fff;font-size:clamp(1.55rem,2.65vw,2.65rem);font-weight:900;line-height:1.65}
+.fz-home-technology__copy p{max-width:58ch;margin-top:.9rem;color:rgba(255,255,255,.78);font-size:clamp(.8rem,1vw,.92rem);line-height:2.15}
+.fz-home-technology__signals{display:flex;flex-wrap:wrap;gap:.5rem;margin-top:1.15rem}
+.fz-home-technology__signals span{padding:.42rem .68rem;border:1px solid rgba(255,255,255,.2);border-radius:7px;color:rgba(255,255,255,.9);background:rgba(255,255,255,.07);font-size:.64rem}
+.fz-home-technology__link{display:inline-flex;min-height:44px;align-items:center;gap:1rem;margin-top:1.5rem;padding:.7rem 1rem;border:1px solid rgba(255,255,255,.36);border-radius:8px;color:#fff;background:rgba(255,255,255,.08);font-size:.75rem;font-weight:800;transition:background .18s ease,border-color .18s ease}
+.fz-home-technology__link:hover{color:#fff;border-color:#7B0D1A;background:#7B0D1A}
+.fz-home-technology__visual{position:relative;min-width:0;min-height:280px;overflow:hidden;aspect-ratio:16/10;border:1px solid rgba(255,255,255,.16);border-radius:11px;background:#173A5C}
+.fz-home-technology__visual>img{display:block;width:100%;height:100%;object-fit:cover;object-position:center}
+.fz-home-technology__placeholder{display:flex;width:100%;height:100%;min-height:280px;flex-direction:column;align-items:flex-start;justify-content:flex-end;gap:.6rem;padding:clamp(1.2rem,3vw,2.4rem);background:linear-gradient(145deg,rgba(4,21,40,.15),rgba(4,21,40,.7)),repeating-linear-gradient(135deg,rgba(255,255,255,.045) 0 1px,transparent 1px 22px),radial-gradient(ellipse at 72% 22%,#54718B 0%,#254561 38%,#112F4E 100%)}
+.fz-home-technology__placeholder span{color:rgba(255,255,255,.7);font-size:.62rem;font-weight:800;letter-spacing:.18em;direction:ltr}
+.fz-home-technology__placeholder strong{color:#fff;font-size:clamp(1.3rem,2.5vw,2.2rem);font-weight:900}
+.fz-home-technology__placeholder small{max-width:34ch;color:rgba(255,255,255,.7);font-size:.7rem;line-height:1.8}
+.fz-home-technology__index{position:absolute;inset-inline-start:.85rem;inset-block-end:.75rem;padding:.3rem .48rem;border:1px solid rgba(255,255,255,.35);border-radius:5px;color:#fff;background:rgba(3,20,38,.56);font-size:.55rem;letter-spacing:.12em;direction:ltr}
+.fz-home-shelf{padding-block:clamp(2rem,3.2vw,3rem)}
+.fz-home-shelf__item{flex-basis:clamp(218px,21vw,258px)}
+.fz-home-shelf .farzin-product-card{height:100%;border-radius:11px}
+.fz-home-shelf .farzin-product-card__media{padding:0}
+.fz-home-shelf .farzin-product-card__content{padding:.85rem}
+.fz-home-shelf .farzin-product-card__title{min-height:2.9em;max-height:2.9em;font-size:.88rem}
+.fz-home-shelf .farzin-product-card__cta{min-height:40px;font-size:.71rem}
+.fz-home-section-head{margin-bottom:1.1rem}
+.fz-home-section-head h2{font-size:clamp(1.2rem,1.8vw,1.65rem);font-weight:900}
+.fz-home-journal .fz-home-article-card,.fz-home-benefit{border-radius:10px}
+@media(max-width:900px){.fz-home-technology__layout{grid-template-columns:minmax(0,1fr);gap:1.15rem}.fz-home-technology__visual{order:-1}.fz-home-technology__copy{padding-block:.2rem}.fz-home-technology__copy h2{max-width:22ch}}
+@media(max-width:767px){
+ .fz-home-container{width:calc(100% - 1.2rem)}
+ .fz-home-category-rail{grid-template-columns:repeat(2,minmax(0,1fr));gap:.6rem}
+ .fz-home-category-card__image{aspect-ratio:4/3}
+ .fz-home-category-card__body{gap:.15rem .35rem;padding:.62rem}
+ .fz-home-category-card__body strong{font-size:.75rem}
+ .fz-home-category-card__body small{font-size:.55rem}
+ .fz-home-category-card__arrow{width:28px;height:28px}
+ .fz-home-technology{padding-block:1.55rem}
+ .fz-home-technology__layout{gap:.85rem}
+ .fz-home-technology__visual,.fz-home-technology__placeholder{min-height:0}
+ .fz-home-technology__copy h2{margin-top:.55rem;font-size:1.35rem}
+ .fz-home-technology__copy p{margin-top:.55rem;font-size:.72rem;line-height:2}
+ .fz-home-technology__signals{gap:.35rem;margin-top:.8rem}
+ .fz-home-technology__signals span{padding:.35rem .48rem;font-size:.56rem}
+ .fz-home-technology__link{min-height:42px;margin-top:.9rem;font-size:.66rem}
+ .fz-home-shelf{padding-block:1.4rem}
+ .fz-home-shelf__item{flex-basis:clamp(190px,72vw,250px)}
+ .fz-home-shelf .farzin-product-card__content{padding:.62rem}
+ .fz-home-shelf .farzin-product-card__title{font-size:.76rem}
+ .fz-home-shelf .farzin-product-card__price-current{font-size:.8rem}
+ .fz-home-shelf .farzin-product-card__cta{min-height:38px;font-size:.64rem}
+}
+@media(max-width:380px){.fz-home-category-card__body{padding:.48rem}.fz-home-category-card__body strong{font-size:.68rem}.fz-home-technology__copy h2{font-size:1.18rem}.fz-home-shelf__item{flex-basis:78vw}}
+
+/* The saved 4:3 Admin crop is preserved on homepage product cards. */
+.home-body .farzin-product-card--home-shelf .farzin-product-card__image-link { aspect-ratio:4/3!important;border-radius:0!important;background:#F0F2F4; }
+.home-body .farzin-product-card--home-shelf .farzin-product-card__image { object-fit:cover!important;padding:0!important; }
+.home-body .farzin-product-card--home-shelf .farzin-product-card__media { padding:0!important; }
+
+/* Match the global footer logo frame even though Home loads its page stylesheet last. */
+.home-body .farzin-site-footer .farzin-footer-editorial__logo {
+    width: 180px;
+    height: 60px;
+    min-height: 60px;
+    flex-basis: 180px;
+}
+.home-body .farzin-site-footer .fz-store-footer__logo-image {
+    max-width: 164px;
+    max-height: 52px;
+    object-position: center;
+}
+@media(max-width:767px) {
+    .home-body .farzin-site-footer .farzin-footer-editorial__logo {
+        width: 164px;
+        height: 54px;
+        min-height: 54px;
+        flex-basis: 164px;
+    }
+    .home-body .farzin-site-footer .fz-store-footer__logo-image {
+        max-width: 152px;
+        max-height: 46px;
+    }
+}
+
+/* Keep key product specs visible in one short row without inflating card height. */
+.home-body .farzin-product-card__specifications,
+.storefront-content .farzin-product-card__specifications {
+    display:flex;
+    min-height:0;
+    flex-wrap:nowrap;
+    gap:.25rem;
+    overflow:hidden;
+    margin-top:.4rem;
+}
+.home-body .farzin-product-card__specifications li,
+.storefront-content .farzin-product-card__specifications li {
+    display:inline-flex;
+    min-width:0;
+    flex:0 1 auto;
+    align-items:center;
+    gap:.18rem;
+    overflow:hidden;
+    padding:.16rem .3rem;
+    border:1px solid #E3E8ED;
+    border-radius:5px;
+    color:#607286;
+    background:#F5F7F9;
+    font-size:.53rem;
+    line-height:1.5;
+    white-space:nowrap;
+}
+.home-body .farzin-product-card__specifications li span,
+.storefront-content .farzin-product-card__specifications li span {
+    flex:0 0 auto;
+    color:#8995A3;
+}
+.home-body .farzin-product-card__specifications li strong,
+.storefront-content .farzin-product-card__specifications li strong {
+    min-width:0;
+    overflow:hidden;
+    color:#30465D;
+    font-weight:800;
+    text-overflow:ellipsis;
+}
+
+
+/* The technology feature must size its media from the grid track, not from
+   the taller copy column. Without an explicit track width, aspect-ratio plus
+   the grid's stretched row can create a wider-than-track media frame. */
+.home-body .fz-home-technology__layout > .fz-home-technology__visual {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    min-height: 0;
+    align-self: start;
+    aspect-ratio: 16 / 10;
+}
+
+.home-body .fz-home-technology__visual > img,
+.home-body .fz-home-technology__visual > .fz-home-technology__placeholder {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+}
+
+@media (max-width: 767px) {
+    .home-body .fz-home-technology__layout > .fz-home-technology__visual {
+        min-height: 0;
+    }
+}

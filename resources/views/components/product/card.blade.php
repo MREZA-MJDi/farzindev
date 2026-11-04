@@ -18,27 +18,12 @@
         ? (int) round((((float) $product->compare_at_price - (float) $product->price) / (float) $product->compare_at_price) * 100)
         : 0;
 
-    $installmentEnabled = (bool) $product->installment_enabled;
-    $cashPercent = $installmentEnabled ? (int) ($product->installment_cash_percent ?? 0) : 0;
-    $chequeCount = $installmentEnabled ? (int) ($product->installment_cheque_count ?? 0) : 0;
-    $cashAmount = $installmentEnabled && $cashPercent > 0
-        ? round((float) $product->price * ($cashPercent / 100), 2)
-        : 0;
-    $showInstallment = $cashAmount > 0
-        && $cashPercent < 100
-        && $product->installment_remainder_method === 'cheque'
-        && $chequeCount > 0
-        && (int) ($product->installment_interval_months ?? 0) > 0;
-
     $activeVariants = $product->relationLoaded('variants')
         ? $product->getRelation('variants')
         : $product->variants()->get();
     $hasActiveVariants = $activeVariants->isNotEmpty();
-    $isAvailable = $hasActiveVariants
-        ? $activeVariants->groupBy('type')->every(
-            fn ($options) => $options->contains(fn ($option) => (int) $option->stock > 0)
-        )
-        : (int) $product->stock > 0;
+    $isAvailable = \App\Support\ProductPurchaseRules::isAvailable($product, $activeVariants);
+    $showInstallment = \App\Support\ProductPurchaseRules::hasValidInstallmentPlan($product, $activeVariants);
     $availabilityLabel = $isAvailable
         ? ($hasActiveVariants ? 'موجود در گزینه‌ها' : 'موجود')
         : 'ناموجود';
@@ -79,12 +64,17 @@
                     src="{{ $image }}"
                     @if($imageSrcset) srcset="{{ $imageSrcset }}" sizes="(max-width: 639px) 46vw, (max-width: 1279px) 30vw, 320px" @endif
                     alt="{{ $imageAlt }}"
-                    width="720"
-                    height="900"
+                    width="800"
+                    height="600"
                     loading="lazy"
                     decoding="async"
-                    class="farzin-product-card__image h-full w-full object-contain"
+                    class="farzin-product-card__image h-full w-full object-cover"
                 >
+            @else
+                <span class="farzin-product-card__image-fallback" aria-label="تصویر محصول در دسترس نیست">
+                    <strong>FZ</strong>
+                    <small>تصویر محصول</small>
+                </span>
             @endif
         </a>
 
@@ -100,9 +90,10 @@
         </div>
 
         @if($showInstallment)
-            <div class="absolute right-3 top-3 z-10">
-                <span class="farzin-product-badge farzin-product-badge--dark">خرید اقساطی</span>
-            </div>
+            <span class="farzin-installment-seal" aria-label="این محصول امکان خرید اقساطی دارد">
+                <strong>خرید</strong>
+                <span>اقساطی</span>
+            </span>
         @endif
 
         @auth
@@ -144,12 +135,12 @@
         @if($specifications->isNotEmpty())
             <ul class="farzin-product-card__specifications" aria-label="مشخصات کلیدی محصول">
                 @foreach($specifications as $specification)
-                    <li><span>{{ $specification['label'] }}</span><strong>{{ \Illuminate\Support\Str::limit($specification['value'], 22) }}</strong></li>
+                    <li><span>{{ $specification['label'] }}</span><strong>{{ \Illuminate\Support\Str::limit($specification['value'], 18) }}</strong></li>
                 @endforeach
             </ul>
         @endif
 
-        <div class="farzin-product-card__price-row mt-3 flex min-h-10 min-w-0 flex-wrap items-center gap-x-2 gap-y-1">
+        <div class="farzin-product-card__price-row mt-2 flex min-w-0 flex-wrap items-center gap-x-2 gap-y-1">
             <p class="farzin-product-card__price-current">
                 {{ \App\Helpers\PersianNumberHelper::format((float) $product->price) }}
                 <span>تومان</span>
@@ -164,29 +155,7 @@
         @if($showAvailability)
             <div class="farzin-product-card__availability {{ $isAvailable ? 'is-available' : 'is-unavailable' }}" aria-label="وضعیت موجودی: {{ $availabilityLabel }}"><span aria-hidden="true"></span>{{ $availabilityLabel }}</div>
         @endif
-        <div class="farzin-product-card__installment-slot mt-3">
-            @if($showInstallment)
-                <div class="farzin-product-card__installment flex w-full items-center justify-between gap-3 rounded-xl p-3">
-                    <div class="min-w-0">
-                        <p class="text-[10px] text-[var(--livora-stone)]">پیش‌پرداخت</p>
-                        <p class="farzin-product-card__installment-value mt-1 text-xs font-semibold text-[var(--livora-text)]">
-                            {{ \App\Helpers\PersianNumberHelper::format($cashAmount) }} تومان
-                        </p>
-                    </div>
-                    <div class="min-w-0 text-left">
-                        <p class="text-[10px] text-[var(--livora-stone)]">شرایط</p>
-                        <p class="farzin-product-card__installment-value mt-1 text-xs font-semibold text-[var(--livora-accent)]">
-                            {{ \App\Helpers\PersianNumberHelper::format($cashPercent) }}٪
-                            @if($chequeCount)
-                                + {{ \App\Helpers\PersianNumberHelper::format($chequeCount) }} چک
-                            @endif
-                        </p>
-                    </div>
-                </div>
-            @endif
-        </div>
-
-        <div class="mt-auto grid gap-2 pt-3">
+        <div class="mt-auto grid gap-1.5 pt-2">
             @if($isAvailable && ! $hasActiveVariants)
                 <form action="{{ route('cart.add', $product) }}" method="POST">
                     @csrf

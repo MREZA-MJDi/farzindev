@@ -54,6 +54,12 @@ class CategoryController extends Controller
         $products = $category
             ->products()
             ->active()
+            ->whereHas('images', fn ($imageQuery) => $imageQuery
+                ->where(function ($imageSource): void {
+                    $imageSource
+                        ->where(fn ($path) => $path->whereNotNull('path')->where('path', '<>', ''))
+                        ->orWhereHas('media');
+                }))
             ->with([
                 'category',
                 // Product cards only render the first image; avoid loading full galleries for 12 rows.
@@ -61,7 +67,7 @@ class CategoryController extends Controller
                     ->select(['id', 'product_id', 'media_id', 'path', 'alt', 'sort_order', 'is_primary'])
                     ->limit(1),
                 'images.media:id,path',
-                'variants:id,product_id,stock',
+                'variants:id,product_id,type,name,value,stock,price_adjustment,is_active',
             ])
             ->latest()
             ->paginate(12)

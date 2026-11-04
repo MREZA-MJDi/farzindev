@@ -129,6 +129,7 @@
 @push('styles')
 <style>
     .fz-product-layout{display:grid;grid-template-columns:minmax(0,1fr);align-items:start;gap:1rem}
+    .fz-product-panel{border-radius:12px!important}
     .fz-product-panel{min-width:0}
     .fz-product-panel__title{font-size:clamp(1.05rem,2vw,1.85rem);line-height:1.65}
     .fz-product-action{display:inline-flex;min-height:44px;align-items:center;justify-content:center;gap:.5rem;border-radius:1rem;padding:.75rem 1rem;font-size:.82rem;font-weight:700;text-align:center}
@@ -138,10 +139,10 @@
     .fz-product-accordion[open] summary svg{transform:rotate(180deg)}
     .fz-product-sticky{padding-bottom:max(.75rem,env(safe-area-inset-bottom))}
     @media(max-width:767px){
-        .fz-product-layout{grid-template-columns:minmax(0,.88fr) minmax(0,1.12fr);gap:.7rem}
-        .fz-product-gallery .product-gallery-shell{border-radius:1rem}
-        .fz-product-gallery .product-gallery-stage{aspect-ratio:1/1;max-height:none;height:auto}
-        .fz-product-gallery .product-gallery-stage img{padding:.35rem}
+        .fz-product-layout{grid-template-columns:minmax(0,1fr);gap:1rem}
+        .fz-product-gallery .product-gallery-shell{border-radius:12px}
+        .fz-product-gallery .product-gallery-stage{aspect-ratio:4/3;max-height:none;height:auto}
+        .fz-product-gallery .product-gallery-stage img{padding:0;object-fit:cover}
         .fz-product-gallery .farzin-gallery-arrow{width:2.75rem;height:2.75rem}
         .fz-product-gallery .farzin-gallery-zoom{right:.4rem;bottom:.4rem;padding:.35rem .5rem;font-size:9px}
         .fz-product-gallery .mt-4.flex.gap-3{gap:.4rem;margin-top:.5rem}
