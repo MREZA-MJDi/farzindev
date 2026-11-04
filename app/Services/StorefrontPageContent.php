@@ -152,7 +152,7 @@ class StorefrontPageContent
             'page_about_step_3_title' => 'انتخاب',
             'page_about_step_3_description' => 'محصول و ویژگی‌های موردنظر را انتخاب و وارد سبد خرید می‌کنید.',
             'page_about_step_4_title' => 'پرداخت',
-            'page_about_step_4_description' => 'مسیر پرداخت متناسب با سفارش انتخاب می‌شود و شرایط اقساطی در صورت فعال بودن، شفاف نمایش داده خواهد شد.',
+            'page_about_step_4_description' => 'روش پرداخت قابل استفاده برای سفارش، پیش از نهایی‌کردن خرید به‌صورت روشن اعلام می‌شود.',
             'page_about_installment_eyebrow' => 'FLEXIBLE PAYMENT',
             'page_about_installment_title' => 'انتخاب خوب نباید فقط به بودجه امروز محدود شود.',
             'page_about_installment_description' => 'برخی محصولات فرزین می‌توانند با شرایط اقساطی تعریف‌شده توسط فروشگاه خریداری شوند. درصد پیش‌پرداخت، تعداد چک و فاصله سررسید برای هر محصول مشخص است.',
