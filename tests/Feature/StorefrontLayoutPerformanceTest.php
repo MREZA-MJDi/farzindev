@@ -9,6 +9,7 @@ use App\Models\Product;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
+use App\Services\StorefrontPageContent;
 use Tests\TestCase;
 
 class StorefrontLayoutPerformanceTest extends TestCase
