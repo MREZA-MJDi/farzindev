@@ -2141,7 +2141,7 @@ body.home-body{
     display: block !important;
     position: sticky !important;
     inset-block-start: 0;
-    z-index: 1000 !important;
+    z-index: 120 !important;
     visibility: visible !important;
     opacity: 1 !important;
 }
