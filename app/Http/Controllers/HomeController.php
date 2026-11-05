@@ -121,6 +121,9 @@ class HomeController extends Controller
             );
         }
 
+        // Keep the legacy hero fallback independent from the technology feature image.
+        $firstCategoryImage = $categories->first()?->home_category_image_url;
+
         $discountProducts = $baseProducts()
             ->whereNotNull('compare_at_price')
             ->whereColumn('compare_at_price', '>', 'price')
@@ -329,10 +332,6 @@ class HomeController extends Controller
             ->filter()
             ->values();
 
-        $firstCategoryImage = $categories->first()?->home_category_image_url;
-        $technologyFallbackImage = $categories->skip(1)->first()?->home_category_image_url
-            ?: $firstCategoryImage;
-
         if ($bannerSlides->isEmpty()) {
             $bannerSlides = collect([[
                 'image' => $resolveImageUrl($copy['page_home_hero_image_url'] ?? null) ?: $firstCategoryImage,
@@ -360,13 +359,10 @@ class HomeController extends Controller
             ->take(3)
             ->values();
 
-        $featuredProducts = $selectedProducts
-            ->concat($discountProducts)
-            ->concat($bestSellingProducts)
-            ->concat($newestProducts)
-            ->unique('id')
-            ->take(8)
-            ->values();
+        // The featured shelf contains only editor-selected products. The other
+        // shelves render discounts, best sellers and new arrivals independently;
+        // combining them here would repeat the same products on the homepage.
+        $featuredProducts = $selectedProducts;
 
         $technologyImagePath = trim((string) ($copy['page_home_technology_image_url'] ?? ''));
         $technologyImageUrl = $resolveImageUrl($technologyImagePath !== '' ? $technologyImagePath : null);
@@ -377,7 +373,7 @@ class HomeController extends Controller
             'title' => trim((string) ($copy['page_home_technology_title'] ?? 'فناوری در جزئیات؛ از طراحی تا عملکرد')),
             'body' => trim((string) ($copy['page_home_technology_body'] ?? '')),
             'button_label' => trim((string) ($copy['page_home_technology_cta'] ?? 'آشنایی با فرزین')),
-            'image_url' => $technologyImageUrl ?: $technologyFallbackImage,
+            'image_url' => $technologyImageUrl,
             'image_srcset' => $technologyImagePath !== '' && ! Str::startsWith($technologyImagePath, ['http://', 'https://', '//'])
                 ? $responsiveImages->srcset($technologyImagePath)
                 : null,

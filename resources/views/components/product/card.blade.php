@@ -62,7 +62,6 @@
             @if($image)
                 <img
                     src="{{ $image }}"
-                    @if($imageSrcset) srcset="{{ $imageSrcset }}" sizes="(max-width: 639px) 46vw, (max-width: 1279px) 30vw, 320px" @endif
                     alt="{{ $imageAlt }}"
                     width="800"
                     height="600"

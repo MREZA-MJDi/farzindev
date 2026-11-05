@@ -163,6 +163,33 @@
         />
     @endif
 
+    @if($showProducts && $discountProducts->isNotEmpty())
+        <x-home.product-carousel-section
+            id="fz-home-discounts"
+            title="پیشنهادهای ویژه"
+            eyebrow="فرصت‌های خرید فرزین"
+            :products="$discountProducts"
+        />
+    @endif
+
+    @if($showProducts && $bestSellingProducts->isNotEmpty())
+        <x-home.product-carousel-section
+            id="fz-home-best-sellers"
+            title="پرفروش‌های فرزین"
+            eyebrow="محبوب میان خریداران"
+            :products="$bestSellingProducts"
+        />
+    @endif
+
+    @if($showProducts && $newestProducts->isNotEmpty())
+        <x-home.product-carousel-section
+            id="fz-home-new-arrivals"
+            title="تازه‌رسیده‌ها"
+            eyebrow="جدیدترین مدل‌ها"
+            :products="$newestProducts"
+        />
+    @endif
+
     @if(($homeTechnology['show'] ?? false) && (filled($homeTechnology['title'] ?? null) || filled($homeTechnology['body'] ?? null)))
         <section class="fz-home-technology" aria-labelledby="fz-home-technology-title">
             <div class="fz-home-container fz-home-technology__layout">

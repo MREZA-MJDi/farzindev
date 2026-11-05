@@ -249,12 +249,12 @@ class ShopPaginationAndBestSellersTest extends TestCase
             'total' => $product->price * $quantity,
         ]);
     }
-    public function test_homepage_displays_one_compact_featured_product_shelf_with_unique_items(): void
+    public function test_homepage_displays_separate_product_shelves_with_unique_items(): void
     {
         $category = $this->category();
 
-        // The public Home page intentionally has one focused product shelf.
-        // Curated, best-selling and newest products are combined without duplicates.
+        // The homepage keeps editor-selected, newest and best-selling products
+        // in separate shelves; products must never be repeated between them.
         $heroGalleryProductIds = [];
         for ($index = 1; $index <= 2; $index++) {
             $galleryProduct = $this->product($category, [
@@ -297,10 +297,15 @@ class ShopPaginationAndBestSellersTest extends TestCase
         $html = $response->getContent();
 
         $this->assertStringContainsString('id="fz-home-featured"', $html);
-        $this->assertSame(8, substr_count($html, 'class="farzin-product-card group'));
-        $this->assertStringNotContainsString('id="fz-home-newest"', $html);
-        $this->assertStringNotContainsString('id="fz-home-bestsellers"', $html);
-        $this->assertStringNotContainsString('id="fz-home-selected"', $html);
+        $this->assertStringContainsString('id="fz-home-best-sellers"', $html);
+        $this->assertStringContainsString('id="fz-home-new-arrivals"', $html);
+        preg_match_all('/data-product-slug="([^"]+)"/', $html, $renderedSlugs);
+        $this->assertNotEmpty($renderedSlugs[1], 'Homepage product shelves should render real products.');
+        $this->assertCount(
+            count(array_unique($renderedSlugs[1])),
+            $renderedSlugs[1],
+            'A product must not be repeated across homepage shelves.'
+        );
         $this->assertStringNotContainsString('fz-new-section', $html);
         $this->assertStringNotContainsString('grid__image', $html);
         foreach ($heroGalleryProductIds as $productId) {

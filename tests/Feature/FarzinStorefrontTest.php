@@ -634,7 +634,7 @@ class FarzinStorefrontTest extends TestCase
 
         $this->assertSame(
             6,
-            substr_count($response->getContent(), 'class="fz-home-category-card"'),
+            substr_count($response->getContent(), 'class="fz-home-round-category"'),
             'All active categories that contain active products should appear on the homepage.'
         );
     }
@@ -4776,7 +4776,7 @@ class FarzinStorefrontTest extends TestCase
 
         $this->get(route('home'))
             ->assertOk()
-            ->assertSee('منتخب فرزین')
+            ->assertSee('id="fz-home-discounts"', false)
             ->assertSee($discounted->name)
             ->assertDontSee($placeholder->name)
             ->assertDontSee('شمارنده معکوس');
@@ -4810,7 +4810,8 @@ class FarzinStorefrontTest extends TestCase
         $this->get(route('home'))
             ->assertOk()
             ->assertSee($regular->name)
-            ->assertSee('منتخب فرزین')
+            ->assertSee('id="fz-home-new-arrivals"', false)
+            ->assertDontSee('منتخب فرزین')
             ->assertDontSee('id="fz-home-discounts-title"', false)
             ->assertDontSee('id="fz-home-newest-title"', false);
     }

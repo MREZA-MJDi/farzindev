@@ -2123,3 +2123,288 @@ body.home-body{
         min-height: 0;
     }
 }
+
+
+/* Homepage refresh: compact category cards, consistent white canvas and restrained radii. */
+.home-body,
+.home-body #app,
+.home-body .storefront-content,
+.home-body .fz-home-market,
+.home-body .fz-home-categories,
+.home-body .fz-home-benefits,
+.home-body .fz-home-shelf,
+.home-body .fz-home-journal,
+.home-body .fz-home-enamad {
+    background: #fff !important;
+}
+.home-body .fz-home-header {
+    display: block !important;
+    position: sticky !important;
+    inset-block-start: 0;
+    z-index: 120 !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+}
+.home-body .fz-home-category-rail {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 168px), 1fr));
+    align-items: stretch;
+    gap: clamp(.65rem, 1.2vw, 1rem);
+}
+.home-body .fz-home-category-card {
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(6,40,79,.045);
+}
+.home-body .fz-home-category-card__image {
+    aspect-ratio: 4 / 3;
+    background: #f5f6f7;
+}
+.home-body .fz-home-category-card__image img {
+    object-fit: contain;
+    object-position: center;
+    transform: none !important;
+}
+.home-body .fz-home-category-card__body { padding: .65rem .75rem; }
+.home-body .fz-home-category-card__body strong { font-size: .82rem; }
+.home-body .fz-home-category-card__arrow { width: 30px; height: 30px; border-radius: 7px; }
+.home-body .fz-home-shelf,
+.home-body .fz-home-journal,
+.home-body .fz-home-benefits { border-color: #edf0f3; background: #fff !important; }
+.home-body .fz-home-shelf .farzin-product-card,
+.home-body .fz-home-journal .fz-home-article-card,
+.home-body .fz-home-benefit,
+.home-body .fz-home-technology__visual {
+    border-radius: 10px;
+}
+.home-body .fz-home-technology {
+    color: var(--fz-market-ink, #06284f);
+    background: #fff !important;
+}
+.home-body .fz-home-technology__copy h2 { color: #06284f; }
+.home-body .fz-home-technology__copy p { color: #687789; }
+.home-body .fz-home-technology__eyebrow { color: #718096; }
+.home-body .fz-home-technology__signals span {
+    border-color: #dce3ea;
+    color: #40546a;
+    background: #f7f9fb;
+}
+.home-body .fz-home-technology__link {
+    border-color: #d3dce6;
+    color: #06284f;
+    background: #fff;
+    border-radius: 8px;
+}
+.home-body .fz-home-technology__visual {
+    border: 1px solid #e1e6ec;
+}
+.home-body .fz-home-shelf:nth-of-type(even) { background: #fff !important; }
+.home-body .fz-home-shelf__track { scrollbar-color: #c5d0dc transparent; }
+@media (max-width: 767px) {
+    .home-body .fz-home-category-rail { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .home-body .fz-home-category-card__image { aspect-ratio: 4 / 3; }
+    .home-body .fz-home-category-card__body { padding: .55rem .6rem; }
+}
+
+
+/* Homepage visual contract: compact round category thumbnails and predictable
+   image frames for every editorial/commerce section. Kept home-scoped so the
+   catalog, product gallery and admin previews retain their own crop rules. */
+.home-body .fz-home-category-rail {
+    display: flex;
+    align-items: flex-start;
+    justify-content: flex-start;
+    gap: clamp(.9rem, 1.45vw, 1.25rem);
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding: .25rem .1rem .8rem;
+    overscroll-behavior-inline: contain;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: thin;
+}
+
+.home-body .fz-home-round-category {
+    display: flex;
+    flex: 0 0 88px;
+    min-width: 0;
+    flex-direction: column;
+    align-items: center;
+    gap: .42rem;
+    color: #06284F;
+    text-align: center;
+    scroll-snap-align: start;
+    text-decoration: none;
+}
+
+.home-body .fz-home-round-category__image {
+    display: block;
+    width: 76px;
+    height: 76px;
+    aspect-ratio: 1;
+    overflow: hidden;
+    border: 1px solid #DCE4EC;
+    border-radius: 50%;
+    background: #F1F4F7;
+    box-shadow: 0 4px 13px rgba(6, 40, 79, .07);
+}
+
+.home-body .fz-home-round-category__image img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    border-radius: inherit;
+    object-fit: cover;
+    object-position: center;
+    transform: none;
+    transition: transform .28s ease;
+}
+
+.home-body .fz-home-round-category:hover .fz-home-round-category__image img,
+.home-body .fz-home-round-category:focus-visible .fz-home-round-category__image img {
+    transform: scale(1.035);
+}
+
+.home-body .fz-home-round-category__body {
+    display: flex;
+    width: 100%;
+    min-width: 0;
+    flex-direction: column;
+    align-items: center;
+    gap: .08rem;
+}
+
+.home-body .fz-home-round-category strong {
+    display: block;
+    max-width: 100%;
+    overflow: hidden;
+    color: #233A55;
+    font-size: .7rem;
+    font-weight: 850;
+    line-height: 1.65;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.home-body .fz-home-round-category small {
+    color: #7C8795;
+    font-size: .58rem;
+    line-height: 1.5;
+}
+
+.home-body .fz-home-round-category:focus-visible {
+    border-radius: .65rem;
+    outline: 3px solid #6485A8;
+    outline-offset: 4px;
+}
+
+.home-body .fz-home-category-rail + * {
+    scroll-margin-top: var(--fz-header-height, 80px);
+}
+
+/* Keep each section's imagery stable: admin's 4:3 product crop, wide
+   editorial imagery and the technology feature keep separate proportions. */
+.home-body .fz-home-shelf .farzin-product-card--home-shelf .farzin-product-card__image-link {
+    width: 100%;
+    aspect-ratio: 4 / 3 !important;
+    overflow: hidden;
+    background: #F0F2F4;
+}
+
+.home-body .fz-home-shelf .farzin-product-card--home-shelf .farzin-product-card__image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover !important;
+    object-position: center;
+    padding: 0 !important;
+}
+
+.home-body .fz-home-technology__layout > .fz-home-technology__visual {
+    width: 100%;
+    min-width: 0;
+    min-height: 0;
+    align-self: start;
+    aspect-ratio: 16 / 10;
+    overflow: hidden;
+}
+
+.home-body .fz-home-technology__visual > img,
+.home-body .fz-home-technology__visual > .fz-home-technology__placeholder {
+    display: block;
+    width: 100%;
+    height: 100%;
+    min-width: 0;
+    object-fit: cover;
+    object-position: center;
+}
+
+.home-body .fz-home-journal .fz-home-article-card__media {
+    display: block;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+    background: #E9EEF3;
+}
+
+.home-body .fz-home-journal .fz-home-article-card__media img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+}
+
+@media (max-width: 1023px) {
+    .home-body .fz-home-shelf__item {
+        flex-basis: clamp(218px, 30vw, 250px);
+    }
+}
+
+@media (max-width: 767px) {
+    .home-body .fz-home-category-rail {
+        gap: .7rem;
+        padding-block-end: .65rem;
+    }
+
+    .home-body .fz-home-round-category {
+        flex-basis: 76px;
+        gap: .32rem;
+    }
+
+    .home-body .fz-home-round-category__image {
+        width: 66px;
+        height: 66px;
+    }
+
+    .home-body .fz-home-round-category strong {
+        font-size: .65rem;
+    }
+
+    .home-body .fz-home-round-category small {
+        font-size: .54rem;
+    }
+
+    .home-body .fz-home-shelf__item {
+        flex-basis: clamp(205px, 72vw, 248px);
+    }
+
+    .home-body .fz-home-journal .fz-home-article-card__media {
+        min-height: 0;
+        aspect-ratio: 4 / 3;
+    }
+}
+
+@media (max-width: 380px) {
+    .home-body .fz-home-round-category {
+        flex-basis: 72px;
+    }
+
+    .home-body .fz-home-round-category__image {
+        width: 62px;
+        height: 62px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .home-body .fz-home-round-category__image img {
+        transition: none;
+    }
+}
