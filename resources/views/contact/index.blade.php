@@ -346,6 +346,7 @@
                                     <small class="fz-contact-field__hint">حداقل ۱۰ کاراکتر · اطلاعات تماس فقط برای پاسخ‌گویی استفاده می‌شوند.</small>
                                 </div>
 
+                                <x-security.turnstile />
                                 <button type="submit" class="fz-contact-submit">
                                     <span>ارسال پیام به تیم فرزین</span><span aria-hidden="true">↙</span>
                                 </button>
