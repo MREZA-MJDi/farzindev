@@ -37,7 +37,6 @@ class VerifyTurnstile
         $expectedAction = match ($request->route()?->getName()) {
             'login.store' => 'login',
             'register.store' => 'signup',
-            'admin.login.store' => 'admin-login',
             'checkout.place' => 'checkout',
             'contact.store' => 'contact',
             default => null,
