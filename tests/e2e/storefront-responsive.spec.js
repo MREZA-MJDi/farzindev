@@ -991,3 +991,49 @@ test('shop catalogue search is a real GET form and preserves active filters', as
     await expect(page).toHaveURL(/featured=1/);
     await expect(page.locator('.farzin-shop-toolbar__sort')).toBeVisible();
 });
+
+
+test('homepage category thumbnails stay compact and the image fills a true circle', async ({ page }) => {
+    for (const viewport of [
+        { width: 390, height: 844 },
+        { width: 768, height: 900 },
+        { width: 1440, height: 960 },
+    ]) {
+        await page.setViewportSize(viewport);
+        await page.goto('/', { waitUntil: 'domcontentloaded' });
+
+        const categories = page.locator('.fz-home-category-rail .fz-home-round-category');
+        const count = await categories.count();
+        if (count === 0) {
+            await expect(page.locator('.fz-home-category-rail')).toHaveCount(0);
+            continue;
+        }
+
+        const category = categories.first();
+        await expect(category).toBeVisible();
+        const geometry = await category.evaluate((element) => {
+            const frame = element.querySelector('.fz-home-round-category__image');
+            const image = frame.querySelector('img');
+            const frameRect = frame.getBoundingClientRect();
+            const imageRect = image.getBoundingClientRect();
+            return {
+                frameWidth: frameRect.width,
+                frameHeight: frameRect.height,
+                frameRadius: getComputedStyle(frame).borderTopLeftRadius,
+                imageWidth: imageRect.width,
+                imageHeight: imageRect.height,
+                imageFit: getComputedStyle(image).objectFit,
+                titleVisible: Boolean(element.querySelector('strong')?.textContent.trim()),
+            };
+        });
+
+        expect(geometry.frameWidth).toBeGreaterThanOrEqual(60);
+        expect(geometry.frameWidth).toBeLessThanOrEqual(viewport.width < 768 ? 68 : 78);
+        expect(Math.abs(geometry.frameWidth - geometry.frameHeight)).toBeLessThanOrEqual(1);
+        expect(geometry.frameRadius).toBe('50%');
+        expect(Math.abs(geometry.imageWidth - geometry.frameWidth)).toBeLessThanOrEqual(1);
+        expect(Math.abs(geometry.imageHeight - geometry.frameHeight)).toBeLessThanOrEqual(1);
+        expect(geometry.imageFit).toBe('cover');
+        expect(geometry.titleVisible).toBeTruthy();
+    }
+});
