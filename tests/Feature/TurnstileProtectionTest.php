@@ -23,12 +23,29 @@ class TurnstileProtectionTest extends TestCase
             'services.turnstile.hostnames' => ['localhost'],
         ]);
 
-        Http::fake([
-            self::VERIFY_URL => Http::response([
-                'success' => false,
-                'error-codes' => ['invalid-input-response'],
-            ], 200),
-        ]);
+        Http::fake(function ($request) {
+            return match ($request['response'] ?? null) {
+                'valid-test-token' => Http::response([
+                    'success' => true,
+                    'hostname' => 'localhost',
+                    'action' => 'signup',
+                ], 200),
+                'wrong-action-token' => Http::response([
+                    'success' => true,
+                    'hostname' => 'localhost',
+                    'action' => 'contact',
+                ], 200),
+                'wrong-host-token' => Http::response([
+                    'success' => true,
+                    'hostname' => 'attacker.example',
+                    'action' => 'signup',
+                ], 200),
+                default => Http::response([
+                    'success' => false,
+                    'error-codes' => ['invalid-input-response'],
+                ], 200),
+            };
+        });
     }
 
     public function test_customer_login_is_blocked_when_turnstile_fails(): void
@@ -74,15 +91,6 @@ class TurnstileProtectionTest extends TestCase
 
     public function test_registration_accepts_a_valid_signup_token_for_the_expected_hostname(): void
     {
-        Http::fake([
-            self::VERIFY_URL => Http::response([
-                'success' => true,
-                'hostname' => 'localhost',
-                'action' => 'signup',
-                'challenge_ts' => now()->toIso8601String(),
-            ], 200),
-        ]);
-
         $this->post(route('register.store'), [
             'first_name' => 'Test',
             'last_name' => 'Customer',
@@ -106,14 +114,6 @@ class TurnstileProtectionTest extends TestCase
 
     public function test_registration_rejects_a_token_generated_for_another_action(): void
     {
-        Http::fake([
-            self::VERIFY_URL => Http::response([
-                'success' => true,
-                'hostname' => 'localhost',
-                'action' => 'contact',
-            ], 200),
-        ]);
-
         $this->from(route('register'))
             ->post(route('register.store'), [
                 'first_name' => 'Test',
@@ -182,14 +182,6 @@ class TurnstileProtectionTest extends TestCase
 
     public function test_wrong_siteverify_hostname_is_rejected(): void
     {
-        Http::fake([
-            self::VERIFY_URL => Http::response([
-                'success' => true,
-                'hostname' => 'attacker.example',
-                'action' => 'signup',
-            ], 200),
-        ]);
-
         $this->from(route('register'))
             ->post(route('register.store'), [
                 'first_name' => 'Test',
