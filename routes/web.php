@@ -407,7 +407,7 @@ Route::prefix(config('farzin.admin_path', 'admin'))
             ->name('login');
 
         Route::post('login', [AdminAuthController::class, 'store'])
-            ->middleware(['guest:admin', 'throttle:10,1', VerifyTurnstile::class])
+            ->middleware(['guest:admin', 'throttle:10,1'])
             ->name('login.store');
 
         Route::post('logout', [AdminAuthController::class, 'destroy'])
