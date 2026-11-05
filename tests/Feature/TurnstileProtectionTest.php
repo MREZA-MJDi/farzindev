@@ -9,6 +9,8 @@ use Tests\TestCase;
 
 class TurnstileProtectionTest extends TestCase
 {
+    use RefreshDatabase;
+
     private const VERIFY_URL = 'https://challenges.cloudflare.com/turnstile/v0/siteverify';
 
     protected function setUp(): void
