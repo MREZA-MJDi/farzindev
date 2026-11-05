@@ -601,6 +601,9 @@
                                     </a>
                                 @endif
                             @else
+                                <div class="mt-6">
+                                    <x-security.turnstile />
+                                </div>
                                 <button
                                     type="submit"
                                     class="mt-6 flex w-full items-center justify-center gap-3 rounded-2xl bg-[var(--livora-ink)] px-6 py-4 text-sm font-medium text-white transition hover:bg-[var(--livora-accent)]"
