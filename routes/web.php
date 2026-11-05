@@ -23,6 +23,7 @@ use App\Http\Controllers\RobotsController;
 use App\Http\Controllers\ShopController;
 use App\Http\Controllers\SitemapController;
 use App\Http\Controllers\WishlistController;
+use App\Http\Middleware\VerifyTurnstile;
 use App\Http\Controllers\Admin\CategoryController as AdminCategoryController;
 use App\Http\Controllers\Admin\CustomerController as AdminCustomerController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
@@ -122,7 +123,7 @@ Route::get(
 Route::post(
     '/contact',
     [ContactController::class, 'store']
-)->middleware('throttle:5,1')
+)->middleware(['throttle:5,1', VerifyTurnstile::class])
     ->name('contact.store');
 
 
@@ -181,7 +182,7 @@ Route::middleware('guest:web')->group(function () {
     Route::post(
         '/login',
         [AuthController::class, 'login']
-    )->middleware('throttle:5,1')
+    )->middleware(['throttle:5,1', VerifyTurnstile::class])
         ->name('login.store');
 
     Route::get(
@@ -192,7 +193,7 @@ Route::middleware('guest:web')->group(function () {
     Route::post(
         '/register',
         [AuthController::class, 'register']
-    )->middleware('throttle:10,1')
+    )->middleware(['throttle:10,1', VerifyTurnstile::class])
         ->name('register.store');
 });
 
@@ -263,7 +264,7 @@ Route::middleware(['auth:web', 'customer'])->group(function () {
             Route::post(
                 '/',
                 [CheckoutController::class, 'placeOrder']
-            )->name('place');
+            )->middleware(['throttle:5,1', VerifyTurnstile::class])->name('place');
 
             Route::get(
                 '/payment/{order}',
@@ -406,7 +407,7 @@ Route::prefix(config('farzin.admin_path', 'admin'))
             ->name('login');
 
         Route::post('login', [AdminAuthController::class, 'store'])
-            ->middleware('guest:admin')
+            ->middleware(['guest:admin', 'throttle:10,1', VerifyTurnstile::class])
             ->name('login.store');
 
         Route::post('logout', [AdminAuthController::class, 'destroy'])
