@@ -32,6 +32,7 @@
             </div>
             <label class="fz-auth__terms"><input type="checkbox" name="terms" value="1" @checked(old('terms')) required><span>با <a href="{{ route('terms') }}" target="_blank" rel="noopener">قوانین و شرایط استفاده</a> موافقم.</span></label>
             @error('terms')<small class="fz-auth__terms-error" role="alert">{{ $message }}</small>@enderror
+            <x-security.turnstile />
             <button class="fz-auth__submit" type="submit">ایجاد حساب <span aria-hidden="true">←</span></button>
         </form>
         <div class="fz-auth__switch"><span>قبلاً حساب ساخته‌اید؟</span><a href="{{ route('login', request()->only('intended')) }}">ورود به حساب</a></div>
