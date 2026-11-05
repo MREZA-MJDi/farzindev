@@ -602,7 +602,7 @@
                                 @endif
                             @else
                                 <div class="mt-6">
-                                    <x-security.turnstile />
+                                    <x-security.turnstile action="checkout" />
                                 </div>
                                 <button
                                     type="submit"
