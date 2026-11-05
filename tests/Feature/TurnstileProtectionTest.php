@@ -40,6 +40,14 @@ class TurnstileProtectionTest extends TestCase
                     'hostname' => 'attacker.example',
                     'action' => 'signup',
                 ], 200),
+                'bad-secret-token' => Http::response([
+                    'success' => false,
+                    'error-codes' => ['invalid-input-secret'],
+                ], 200),
+                'expired-token' => Http::response([
+                    'success' => false,
+                    'error-codes' => ['timeout-or-duplicate'],
+                ], 200),
                 default => Http::response([
                     'success' => false,
                     'error-codes' => ['invalid-input-response'],
@@ -174,6 +182,46 @@ class TurnstileProtectionTest extends TestCase
 
         $this->assertDatabaseCount('contact_messages', 0);
         $this->assertTurnstileWasCalled('invalid-token');
+    }
+
+    public function test_invalid_server_secret_returns_a_clear_configuration_error(): void
+    {
+        $this->from(route('register'))
+            ->post(route('register.store'), [
+                'first_name' => 'Test',
+                'last_name' => 'Customer',
+                'phone' => '09123456789',
+                'password' => 'StrongPass123',
+                'password_confirmation' => 'StrongPass123',
+                'terms' => '1',
+                'cf-turnstile-response' => 'bad-secret-token',
+            ])
+            ->assertRedirect(route('register'))
+            ->assertSessionHasErrors([
+                'captcha' => 'کلید محرمانه Turnstile روی سرور معتبر نیست. مقدار TURNSTILE_SECRET را از همین Widget بررسی و تنظیمات Laravel را تازه‌سازی کنید.',
+            ]);
+
+        $this->assertDatabaseCount('users', 0);
+    }
+
+    public function test_expired_or_reused_turnstile_token_prompts_a_fresh_challenge(): void
+    {
+        $this->from(route('register'))
+            ->post(route('register.store'), [
+                'first_name' => 'Test',
+                'last_name' => 'Customer',
+                'phone' => '09123456789',
+                'password' => 'StrongPass123',
+                'password_confirmation' => 'StrongPass123',
+                'terms' => '1',
+                'cf-turnstile-response' => 'expired-token',
+            ])
+            ->assertRedirect(route('register'))
+            ->assertSessionHasErrors([
+                'captcha' => 'توکن کپچا منقضی شده یا قبلاً استفاده شده است. صفحه را تازه‌سازی کنید، کپچا را دوباره تکمیل کنید و بلافاصله ارسال کنید.',
+            ]);
+
+        $this->assertDatabaseCount('users', 0);
     }
 
     public function test_wrong_siteverify_hostname_is_rejected(): void
