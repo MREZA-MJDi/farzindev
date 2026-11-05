@@ -14,6 +14,15 @@ return [
     |
     */
 
+    'turnstile' => [
+        'site_key' => env('TURNSTILE_SITE_KEY', '0x4AAAAAAF0rMntaUnR8HMGy'),
+        'secret' => env('TURNSTILE_SECRET'),
+        'hostnames' => array_values(array_filter(array_map(
+            static fn (string $host): string => strtolower(trim($host)),
+            explode(',', (string) env('TURNSTILE_HOSTNAMES', ''))
+        ))),
+    ],
+
     'postmark' => [
         'key' => env('POSTMARK_API_KEY'),
     ],
