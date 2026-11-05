@@ -81,6 +81,11 @@ APP_URL=https://YOUR_DOMAIN
 APP_LOCALE=fa
 APP_FALLBACK_LOCALE=fa
 
+# Cloudflare Turnstile: never commit TURNSTILE_SECRET or place it in frontend variables.
+TURNSTILE_SITE_KEY=0x4AAAAAAF0rMntaUnR8HMGy
+TURNSTILE_SECRET=SET_THE_ROTATED_TURNSTILE_SECRET_HERE
+TURNSTILE_HOSTNAMES=farajihome.com,www.farajihome.com
+
 DB_CONNECTION=mysql
 DB_HOST=localhost
 DB_PORT=3306
