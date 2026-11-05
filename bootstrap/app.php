@@ -6,6 +6,7 @@ use App\Console\Commands\OptimizeResponsiveImages;
 use App\Http\Middleware\AdminMiddleware;
 use App\Http\Middleware\CustomerMiddleware;
 use App\Http\Middleware\RequestIdMiddleware;
+use App\Http\Middleware\ResolveCloudflareClientIp;
 use App\Http\Middleware\ApplyRobotsHeaders;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Auth\AuthenticationException;
@@ -61,6 +62,9 @@ return Application::configure(
             'admin' => AdminMiddleware::class,
             'customer' => CustomerMiddleware::class,
         ]);
+
+        // Resolve the visitor IP before route-level throttles use Request::ip().
+        $middleware->prepend(ResolveCloudflareClientIp::class);
 
         // Give every request a safe identifier that can be matched to server logs.
         $middleware->prepend(RequestIdMiddleware::class);
