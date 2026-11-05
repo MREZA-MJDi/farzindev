@@ -50,7 +50,6 @@
                     <input type="checkbox" name="remember" value="1" class="rounded border-slate-300">
                     مرا به خاطر بسپار
                 </label>
-                <x-security.turnstile />
                 <button type="submit" class="w-full rounded-xl bg-slate-900 px-5 py-3.5 font-bold text-white transition hover:bg-emerald-800">ورود به پنل مدیریت</button>
             </form>
             <a href="{{ route('home') }}" class="mt-6 block text-center text-sm text-slate-500 hover:text-slate-900">بازگشت به فروشگاه</a>
