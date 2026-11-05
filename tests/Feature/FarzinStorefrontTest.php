@@ -634,7 +634,7 @@ class FarzinStorefrontTest extends TestCase
 
         $this->assertSame(
             6,
-            substr_count($response->getContent(), 'class="fz-home-category-card"'),
+            substr_count($response->getContent(), 'class="fz-home-round-category"'),
             'All active categories that contain active products should appear on the homepage.'
         );
     }
