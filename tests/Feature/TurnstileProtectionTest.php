@@ -92,7 +92,8 @@ class TurnstileProtectionTest extends TestCase
             'password_confirmation' => 'StrongPass123',
             'terms' => '1',
             'cf-turnstile-response' => 'valid-test-token',
-        ])->assertRedirect();
+        ])->assertRedirect(route('account.index'))
+            ->assertSessionHasNoErrors();
 
         $this->assertDatabaseHas('users', [
             'phone' => '09123456789',
