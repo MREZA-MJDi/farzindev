@@ -30,6 +30,7 @@
             <div class="fz-auth__field"><label for="login-identifier">شماره موبایل یا ایمیل</label><input id="login-identifier" type="text" name="phone" value="{{ old('phone') }}" placeholder="09123456789" autocomplete="username" inputmode="text" required autofocus>@error('phone')<small role="alert">{{ $message }}</small>@enderror</div>
             <div class="fz-auth__field"><div class="fz-auth__field-heading"><label for="login-password">رمز عبور</label><a href="{{ route('contact') }}">برای بازیابی رمز با پشتیبانی تماس بگیرید</a></div><input id="login-password" type="password" name="password" placeholder="رمز عبور" autocomplete="current-password" required aria-invalid="{{ $errors->has('password') ? 'true' : 'false' }}">@error('password')<small role="alert">{{ $message }}</small>@enderror</div>
             <label class="fz-auth__remember"><input type="checkbox" name="remember" value="1" @checked(old('remember'))><span>مرا به خاطر بسپار</span></label>
+            <x-security.turnstile />
             <button class="fz-auth__submit" type="submit">ورود به حساب <span aria-hidden="true">←</span></button>
         </form>
         <div class="fz-auth__switch"><span>هنوز حساب ندارید؟</span><a href="{{ route('register', request()->only('intended')) }}">ایجاد حساب جدید</a></div>
