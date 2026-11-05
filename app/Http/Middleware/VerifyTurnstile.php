@@ -100,15 +100,33 @@ class VerifyTurnstile
         }
 
         if (! $verification->successful() || $verification->json('success') !== true) {
+            $errorCodes = $verification->json('error-codes', []);
+            $errorCode = is_array($errorCodes) && isset($errorCodes[0])
+                ? (string) $errorCodes[0]
+                : 'unknown';
+
             Log::notice('Cloudflare Turnstile rejected submitted token.', [
                 'route' => $request->route()?->getName(),
-                'error_codes' => $verification->json('error-codes', []),
+                'error_codes' => $errorCodes,
+                'http_status' => $verification->status(),
             ]);
 
-            return $this->reject(
-                $request,
-                'تأیید ضدربات ناموفق بود. لطفاً کپچا را دوباره تکمیل کنید.'
-            );
+            $message = match ($errorCode) {
+                'missing-input-secret', 'invalid-input-secret' =>
+                    'کلید محرمانه Turnstile روی سرور معتبر نیست. مقدار TURNSTILE_SECRET را از همین Widget بررسی و تنظیمات Laravel را تازه‌سازی کنید.',
+                'missing-input-response' =>
+                    'توکن کپچا به سرور نرسیده است. صفحه را تازه‌سازی و دوباره تلاش کنید.',
+                'timeout-or-duplicate', 'invalid-input-response' =>
+                    'توکن کپچا منقضی شده یا قبلاً استفاده شده است. صفحه را تازه‌سازی کنید، کپچا را دوباره تکمیل کنید و بلافاصله ارسال کنید.',
+                'internal-error' =>
+                    'سرویس Cloudflare موقتاً در اعتبارسنجی مشکل دارد. چند لحظه بعد دوباره تلاش کنید.',
+                'bad-request' =>
+                    'درخواست اعتبارسنجی کپچا کامل نیست. صفحه را تازه‌سازی کنید و دوباره تلاش کنید.',
+                default =>
+                    'Cloudflare توکن کپچا را تأیید نکرد. صفحه را تازه‌سازی و دوباره تلاش کنید.',
+            };
+
+            return $this->reject($request, $message);
         }
 
         $hostname = strtolower((string) $verification->json('hostname', ''));
