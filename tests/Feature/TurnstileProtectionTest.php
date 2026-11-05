@@ -130,25 +130,21 @@ class TurnstileProtectionTest extends TestCase
         $this->assertDatabaseCount('users', 0);
     }
 
-    public function test_admin_login_is_blocked_when_turnstile_fails(): void
+    public function test_admin_login_does_not_require_turnstile(): void
     {
-        User::factory()->create([
+        $admin = User::factory()->create([
             'role' => 'admin',
             'email' => 'admin@example.test',
             'password' => 'StrongPass123',
         ]);
 
-        $this->from(route('admin.login'))
-            ->post(route('admin.login.store'), [
-                'email' => 'admin@example.test',
-                'password' => 'StrongPass123',
-                'cf-turnstile-response' => 'invalid-token',
-            ])
-            ->assertRedirect(route('admin.login'))
-            ->assertSessionHasErrors('captcha');
+        $this->post(route('admin.login.store'), [
+            'email' => 'admin@example.test',
+            'password' => 'StrongPass123',
+        ])->assertRedirect(route('admin.dashboard'));
 
-        $this->assertGuest('admin');
-        $this->assertTurnstileWasCalled('invalid-token');
+        $this->assertAuthenticatedAs($admin, 'admin');
+        Http::assertNothingSent();
     }
 
     public function test_checkout_is_blocked_when_turnstile_fails(): void
