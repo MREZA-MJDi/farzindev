@@ -27,10 +27,42 @@ class StorefrontPageContent
                 ->pluck('value', 'key')
                 ->all();
 
-            return array_replace($defaults, array_map(
+            $values = array_replace($defaults, array_map(
                 static fn ($value): string => (string) ($value ?? ''),
                 $stored
             ));
+
+            // Translate only the legacy built-in labels. Custom editor copy is
+            // preserved verbatim so the content manager remains authoritative.
+            $legacyLabels = [
+                'page_home_technology_eyebrow' => [
+                    'ENGINEERING / DETAIL / PERFORMANCE' => 'مهندسی • جزئیات • عملکرد',
+                ],
+                'page_about_hero_eyebrow' => [
+                    'ABOUT FARZIN' => 'درباره فرزین',
+                ],
+                'page_about_statement_eyebrow' => [
+                    'THE MAKER AND THE WORK' => 'تولید و مسیر کار',
+                ],
+                'page_about_factory_eyebrow' => [
+                    'FACTORY & PROCESS' => 'کارخانه و فرایند تولید',
+                ],
+                'page_about_values_eyebrow' => [
+                    'OUR FOCUS' => 'آنچه برای ما مهم است',
+                ],
+                'page_about_experience_eyebrow' => [
+                    'THE EXPERIENCE' => 'تجربه خرید',
+                ],
+                'page_about_installment_eyebrow' => [
+                    'FLEXIBLE PAYMENT' => 'شرایط پرداخت',
+                ],
+            ];
+
+            foreach ($legacyLabels as $key => $translations) {
+                $values[$key] = $translations[$values[$key]] ?? $values[$key];
+            }
+
+            return $values;
         });
     }
 
@@ -56,7 +88,7 @@ class StorefrontPageContent
             'page_home_reviews_text' => '',
             'page_home_hero_primary_label' => 'مشاهده محصولات',
             'page_home_hero_secondary_label' => '',
-            'page_home_technology_eyebrow' => 'ENGINEERING / DETAIL / PERFORMANCE',
+            'page_home_technology_eyebrow' => 'مهندسی • جزئیات • عملکرد',
             'page_home_technology_title' => 'فناوری در جزئیات؛ از طراحی تا عملکرد',
             'page_home_technology_body' => 'در هود و سینک، تجربه بهتر از توجه به جزئیات شکل می‌گیرد؛ از فرم و ابعاد تا جنس، نوع نصب و کاربری روزمره. فرزین تلاش می‌کند مشخصات هر مدل را روشن و قابل‌بررسی ارائه کند تا انتخاب شما بر پایه نیاز واقعی آشپزخانه باشد.',
             'page_home_technology_cta' => 'آشنایی با محصولات فرزین',
@@ -118,21 +150,21 @@ class StorefrontPageContent
             'page_home_banner_4_image_url' => '',
 
             // About page copy.
-            'page_about_hero_eyebrow' => 'ABOUT FARZIN',
+            'page_about_hero_eyebrow' => 'درباره فرزین',
             'page_about_hero_title' => 'فرزین فرجی؛',
             'page_about_hero_highlight' => 'از تولید تا جزئیات آشپزخانه.',
             'page_about_hero_description' => 'فرزین فرجی در حوزه تولید هود و سینک آشپزخانه فعالیت می‌کند. این وب‌سایت برای معرفی مجموعه، نمایش محصولات و کمک به شناخت دقیق‌تر مدل‌ها و مشخصات آن‌ها طراحی شده است. جزئیات هر محصول را می‌توانید در کاتالوگ فرزین بررسی کنید.',
             'page_about_hero_cta' => 'مشاهده محصولات فرزین',
-            'page_about_statement_eyebrow' => 'THE MAKER AND THE WORK',
+            'page_about_statement_eyebrow' => 'تولید و مسیر کار',
             'page_about_statement_title' => 'تولید، محصول و تجربه‌ی استفاده.',
             'page_about_statement_body_1' => 'محصول برای ما فقط یک تصویر یا نام در کاتالوگ نیست؛ ابعاد، کاربرد و مشخصات آن باید برای خریدار قابل بررسی باشد. معرفی روشن محصول کمک می‌کند انتخاب بر پایه‌ی نیاز واقعی آشپزخانه انجام شود.',
             'page_about_statement_body_2' => 'در کنار معرفی مجموعه و مسیر کاری آن، کاتالوگ محصولات نیز بخشی از همین تجربه است: اطلاعات هر مدل باید کمک کند خریدار پیش از سفارش، تفاوت‌ها و تناسب آن را با فضای خود بررسی کند.',
-            'page_about_factory_eyebrow' => 'FACTORY & PROCESS',
+            'page_about_factory_eyebrow' => 'کارخانه و فرایند تولید',
             'page_about_factory_title' => 'پشت محصول را هم بشناسید.',
             'page_about_factory_body_1' => 'برای شناخت یک هود یا سینک، ظاهر محصول تنها بخشی از ماجراست. ابعاد، نوع نصب، جنس، امکانات و شیوه نگهداری هم اهمیت دارند. معرفی فرزین قرار است مسیر آشنایی با مجموعه و محصولات را روشن‌تر کند.',
             'page_about_factory_body_2' => 'اطلاعات اختصاصی هر مدل باید با مشخصات فنی تأییدشده همان محصول همراه باشد؛ به همین دلیل ویژگی‌ها و جزئیات قابل‌بررسی در صفحه محصول ارائه می‌شوند.',
             'page_about_factory_cta' => 'دیدن کاتالوگ محصولات',
-            'page_about_values_eyebrow' => 'OUR FOCUS',
+            'page_about_values_eyebrow' => 'آنچه برای ما مهم است',
             'page_about_values_title' => 'تمرکز مجموعه فرزین.',
             'page_about_value_1_title' => 'کاربرد',
             'page_about_value_1_description' => 'فرم و ظاهر باید در خدمت فضای شما باشد، نه اینکه فضا را تحت‌الشعاع قرار دهد.',
@@ -142,7 +174,7 @@ class StorefrontPageContent
             'page_about_value_3_description' => 'قیمت، مشخصات، موجودی و شرایط پرداخت باید قبل از تصمیم‌گیری روشن باشند.',
             'page_about_value_4_title' => 'مسیر تولید',
             'page_about_value_4_description' => 'خرید باید ساده و آرام باشد؛ از اولین مشاهده محصول تا سفارش نهایی.',
-            'page_about_experience_eyebrow' => 'THE EXPERIENCE',
+            'page_about_experience_eyebrow' => 'تجربه خرید',
             'page_about_experience_title' => 'از کشف تا انتخاب.',
             'page_about_experience_description' => 'تجربه فرزین فقط به صفحه محصول محدود نمی‌شود. تمام مسیر برای انتخاب راحت‌تر طراحی شده است.',
             'page_about_step_1_title' => 'کشف',
@@ -153,7 +185,7 @@ class StorefrontPageContent
             'page_about_step_3_description' => 'محصول و ویژگی‌های موردنظر را انتخاب و وارد سبد خرید می‌کنید.',
             'page_about_step_4_title' => 'پرداخت',
             'page_about_step_4_description' => 'روش پرداخت قابل استفاده برای سفارش، پیش از نهایی‌کردن خرید به‌صورت روشن اعلام می‌شود.',
-            'page_about_installment_eyebrow' => 'FLEXIBLE PAYMENT',
+            'page_about_installment_eyebrow' => 'شرایط پرداخت',
             'page_about_installment_title' => 'انتخاب خوب نباید فقط به بودجه امروز محدود شود.',
             'page_about_installment_description' => 'برخی محصولات فرزین می‌توانند با شرایط اقساطی تعریف‌شده توسط فروشگاه خریداری شوند. درصد پیش‌پرداخت، تعداد چک و فاصله سررسید برای هر محصول مشخص است.',
             'page_about_installment_cta' => 'مشاهده محصولات',
