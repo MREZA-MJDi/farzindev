@@ -648,7 +648,7 @@ class FarzinStorefrontTest extends TestCase
 
         for ($index = 1; $index <= 13; $index++) {
             $product = $this->product($category, [
-                'name' => 'محصول دسته‌بندی ' . $index,
+                'name' => 'محصول دسته‌بندی ' . str_pad((string) $index, 2, '0', STR_PAD_LEFT),
                 'slug' => 'category-pagination-product-' . $index,
                 'sku' => 'FAR-CATEGORY-PAGE-' . $index,
                 'show_in_home_gallery' => false,
@@ -665,7 +665,7 @@ class FarzinStorefrontTest extends TestCase
 
         $this->get(route('categories.show', $category->slug))
             ->assertOk()
-            ->assertSee('محصول دسته‌بندی 1')
+            ->assertSee('محصول دسته‌بندی 01')
             ->assertSee('محصول دسته‌بندی 12')
             ->assertDontSee('محصول دسته‌بندی 13')
             ->assertSee('page=2', false);
