@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Media;
 use App\Models\Product;
 use App\Models\StorefrontSetting;
 use App\Services\StorefrontPageContent;
@@ -185,6 +186,13 @@ class PageContentController extends Controller
             'groups' => self::GROUPS,
             'values' => $content->all(),
             'heroProductPreview' => $tab === 'home' ? $this->homepageHeroProductPreview() : null,
+            'technologyMediaImages' => $tab === 'home'
+                ? Media::query()->where('disk', 'public')->where('mime_type', 'like', 'image/%')->latest()->limit(100)->get()
+                    ->filter(fn (Media $media): bool => filled($media->url))->values()
+                : collect(),
+            'selectedTechnologyMediaId' => $tab === 'home'
+                ? Media::query()->where('disk', 'public')->where('path', $content->all()['page_home_technology_image_url'] ?? '')->value('id')
+                : null,
         ]);
     }
 
@@ -217,6 +225,12 @@ class PageContentController extends Controller
                 'mimes:jpg,jpeg,png,webp',
                 'dimensions:min_width=1200,min_height=750,ratio=16/10',
                 'max:20480',
+            ];
+            $rules['page_home_technology_media_id'] = [
+                'nullable',
+                Rule::exists('media', 'id')->where(fn ($query) => $query
+                    ->where('disk', 'public')
+                    ->where('mime_type', 'like', 'image/%')),
             ];
 
             for ($index = 1; $index <= 4; $index++) {
@@ -279,7 +293,12 @@ class PageContentController extends Controller
 
         $heroImageUpload = $validated['page_home_hero_image'] ?? null;
         $technologyImageUpload = $validated['page_home_technology_image'] ?? null;
-        unset($validated['page_home_hero_image'], $validated['page_home_technology_image']);
+        $technologyMediaId = $validated['page_home_technology_media_id'] ?? null;
+        unset(
+            $validated['page_home_hero_image'],
+            $validated['page_home_technology_image'],
+            $validated['page_home_technology_media_id']
+        );
 
         $bannerImageUploads = [];
         $removeBannerImages = [];
@@ -327,6 +346,7 @@ class PageContentController extends Controller
             ? (string) StorefrontSetting::query()->where('key', 'page_home_technology_image_url')->value('value')
             : '';
         $newTechnologyImagePath = null;
+        $technologyImageIsMediaLibraryAsset = false;
 
         if ($technologyImageUpload !== null) {
             $newTechnologyImagePath = $images->store($technologyImageUpload, 'homepage/technology');
@@ -340,6 +360,21 @@ class PageContentController extends Controller
                     'page_home_technology_image' => 'ذخیره تصویر فناوری انجام نشد؛ تصویر قبلی حفظ شد.',
                 ]);
             }
+        } elseif ($technologyMediaId !== null && $technologyMediaId !== '') {
+            $selectedTechnologyMedia = Media::query()
+                ->whereKey($technologyMediaId)
+                ->where('disk', 'public')
+                ->where('mime_type', 'like', 'image/%')
+                ->firstOrFail();
+
+            if (! $selectedTechnologyMedia->url) {
+                return back()->withInput()->withErrors([
+                    'page_home_technology_media_id' => 'فایل انتخاب‌شده در کتابخانه رسانه در دسترس نیست.',
+                ]);
+            }
+
+            $newTechnologyImagePath = $selectedTechnologyMedia->path;
+            $technologyImageIsMediaLibraryAsset = true;
         }
 
         $newBannerImagePaths = [];
@@ -433,8 +468,10 @@ class PageContentController extends Controller
 
         if (
             $newTechnologyImagePath !== null
+            && ! $technologyImageIsMediaLibraryAsset
             && $previousTechnologyImagePath !== ''
             && $previousTechnologyImagePath !== $newTechnologyImagePath
+            && ! Media::query()->where('disk', 'public')->where('path', $previousTechnologyImagePath)->exists()
         ) {
             $images->delete($previousTechnologyImagePath);
         }
