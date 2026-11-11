@@ -1073,7 +1073,7 @@ test('hood and sink imagery remains fully visible in product detail galleries', 
         await page.setViewportSize(viewport);
         await page.goto('/product/farzin-hood-preview-01', { waitUntil: 'domcontentloaded' });
 
-        const image = page.locator('.fz-product-gallery .product-gallery-stage img').first();
+        const image = page.locator('.farzin-product-gallery .product-gallery-stage img').first();
         await expect(image).toBeVisible();
 
         const imageStyle = await image.evaluate((element) => ({
