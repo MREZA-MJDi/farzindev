@@ -122,7 +122,7 @@ class ProductController extends Controller
                     ->orderByDesc('is_primary')
                     ->orderBy('sort_order')
                     ->limit(5),
-                'images.media:id,path',
+                'images.media:id,path,disk',
                 'variants:id,product_id,type,stock',
             ])
             ->latest()
