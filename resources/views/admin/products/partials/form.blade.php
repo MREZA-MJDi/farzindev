@@ -138,7 +138,7 @@
                                     class="admin-checkbox h-4 w-4 shrink-0"
                                 >
                                 <span class="admin-media-choice-preview h-14 w-20 shrink-0 overflow-hidden rounded-lg">
-                                    <img src="{{ $mediaItem->url }}" alt="{{ $mediaItem->alt ?: $mediaItem->original_name }}" loading="lazy" class="h-full w-full object-cover">
+                                    <img src="{{ $mediaItem->url }}" alt="{{ $mediaItem->alt ?: $mediaItem->original_name }}" loading="lazy" class="h-full w-full object-contain p-1">
                                 </span>
                                 <span class="min-w-0">
                                     <span class="block truncate font-medium">{{ $mediaItem->alt ?: $mediaItem->original_name }}</span>
