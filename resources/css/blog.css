@@ -1620,68 +1620,24 @@
 }
 
 
-/* Article cards: editorial image occupies the complete card width on every viewport. */
+/* Archive cards use one consistent, responsive media frame. */
 .blog-article-card {
-    display: flex !important;
-    flex-direction: column !important;
+    display: flex;
+    flex-direction: column;
     min-width: 0;
 }
-.blog-article-card__media {
-    display: block;
-    width: 100%;
-    height: auto;
-    min-height: 0;
-    aspect-ratio: 16 / 9 !important;
-    flex: 0 0 auto;
-}
-.blog-article-card__media img,
-.blog-article-card__media .blog-art-fallback {
-    display: block;
-    width: 100%;
-    height: 100%;
-    min-height: 0;
-    object-fit: cover;
-    object-position: center;
-}
-.blog-article-card__body {
-    width: 100%;
-    min-height: 0;
-    padding: 1rem 1.05rem 1.1rem;
-}
-@media (max-width: 560px) {
-    .blog-article-card {
-        display: flex !important;
-        flex-direction: column !important;
-    }
-    .blog-article-card__media {
-        width: 100%;
-        height: auto;
-        min-height: 0;
-        aspect-ratio: 16 / 9 !important;
-    }
-    .blog-article-card__body {
-        min-height: 0;
-        padding: .9rem;
-    }
-    .blog-article-card__body > p {
-        display: -webkit-box;
-        -webkit-box-orient: vertical;
-        -webkit-line-clamp: 3;
-    }
-}
-@media (max-width: 380px) {
-    .blog-article-card__media { aspect-ratio: 16 / 9 !important; }
-    .blog-article-card__body { padding: .8rem; }
-}
-
-/* Blog card media: every real cover fills its complete media frame on all viewports. */
 .blog-featured-card__media,
 .blog-article-card__media {
     position: relative;
     display: block;
+    width: 100%;
+    height: auto;
     min-width: 0;
+    min-height: 0;
     overflow: hidden;
     isolation: isolate;
+    aspect-ratio: 16 / 9;
+    flex: 0 0 auto;
 }
 .blog-featured-card__media img,
 .blog-article-card__media img {
@@ -1692,10 +1648,7 @@
     max-width: none;
     padding: 0;
     object-fit: cover !important;
-    transform: none;
-}
-.blog-featured-card:hover .blog-featured-card__media img,
-.blog-article-card:hover .blog-article-card__media img {
+    object-position: center;
     transform: none;
 }
 .blog-featured-card__media .blog-art-fallback,
@@ -1704,4 +1657,24 @@
     inset: 0;
     width: 100%;
     height: 100%;
+}
+.blog-article-card__body {
+    width: 100%;
+    min-height: 0;
+}
+@media (max-width: 560px) {
+    .blog-article-card__body {
+        padding: .9rem;
+    }
+    .blog-article-card__body > p {
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 3;
+        overflow: hidden;
+    }
+}
+@media (max-width: 380px) {
+    .blog-article-card__body {
+        padding: .8rem;
+    }
 }
