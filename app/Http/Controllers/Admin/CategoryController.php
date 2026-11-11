@@ -138,7 +138,8 @@ class CategoryController extends Controller
         $data = $request->validated();
         $uploadedImage = $request->file('image');
         $uploadedContentImage = $request->file('content_image');
-        unset($data['image'], $data['content_image']);
+        $removeContentImage = (bool) ($data['remove_content_image'] ?? false);
+        unset($data['image'], $data['content_image'], $data['remove_content_image']);
 
         $newImage = null;
         $newContentImage = null;
