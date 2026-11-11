@@ -416,11 +416,11 @@ body {
     border-radius: 0 !important;
 }
 
-#app .home-body .fz-home-hero__slide-stage,
-#app .home-body .fz-home-hero__showcase,
-#app .home-body .fz-home-journal__featured,
-#app .home-body .fz-home-journal__aside,
-#app .home-body .fz-home-purchase-cta__inner,
+body.home-body #app .fz-home-hero__slide-stage,
+body.home-body #app .fz-home-hero__showcase,
+body.home-body #app .fz-home-journal__featured,
+body.home-body #app .fz-home-journal__aside,
+body.home-body #app .fz-home-purchase-cta__inner,
 #app .blog-masthead__visual,
 #app .blog-article-cover,
 #app .blog-article-panel,
