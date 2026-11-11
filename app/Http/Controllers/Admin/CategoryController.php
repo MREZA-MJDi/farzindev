@@ -211,7 +211,9 @@ class CategoryController extends Controller
             })
             ->latest()
             ->limit(60)
-            ->get(['id', 'original_name', 'mime_type', 'extension', 'size']);
+            ->get(['id', 'path', 'disk', 'original_name', 'mime_type', 'extension', 'size'])
+            ->filter(fn (Media $media) => filled($media->url))
+            ->values();
     }
 
     /**
