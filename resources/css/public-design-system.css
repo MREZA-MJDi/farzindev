@@ -116,6 +116,26 @@ body {
     border-radius: 0 !important;
 }
 
+/* Public utility classes must not sneak rounded geometry back into any page. */
+#app :where([class*="rounded-"]) {
+    border-radius: 0 !important;
+}
+
+.storefront-content :where(
+    article,
+    [class*="banner"],
+    [class*="hero"],
+    [class*="gallery"],
+    [class*="panel"]
+) {
+    border-radius: 0 !important;
+}
+
+/* The small homepage category thumbnails are image masks, not cards or controls. */
+#app .storefront-content .fz-home-round-category__image {
+    border-radius: 50% !important;
+}
+
 /* Square geometry must still feel finished: edges, hierarchy and depth do the work. */
 .storefront-content :where(
     .farzin-product-card,
