@@ -41,12 +41,16 @@
             $primaryImage = null;
 
             if ($editing) {
-                $primaryImage = $product->relationLoaded('images')
-                    ? ($product->images->firstWhere('is_primary', true) ?? $product->images->first())
+                $availableProductImages = $product->relationLoaded('images')
+                    ? $product->images->filter(fn ($image) => filled($image->url))->values()
                     : $product->images()
                         ->orderByDesc('is_primary')
                         ->orderBy('sort_order')
-                        ->first();
+                        ->get()
+                        ->filter(fn ($image) => filled($image->url))
+                        ->values();
+                $primaryImage = $availableProductImages->firstWhere('is_primary', true)
+                    ?? $availableProductImages->first();
             }
 
             $productImageUrl = $primaryImage?->url;
@@ -72,7 +76,7 @@
                 <img
                     id="product-image-preview"
                     data-image-editor-existing-preview
-                    src="{{ $productImageUrl ?: '' }}"
+                    @if($productImageUrl) src="{{ $productImageUrl }}" @endif
                     alt="{{ $primaryImage?->alt ?: ($product->name ?? 'تصویر محصول') }}"
                     class="admin-image {{ $productImageUrl ? '' : 'hidden' }}"
                 >
