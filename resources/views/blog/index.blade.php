@@ -47,7 +47,7 @@
 @endpush
 
 @section('content')
-<div class="blog-shell" data-blog-motion style="--blog-container-width: {{ $appearance['container_width'] }}px;">
+<div class="blog-shell" style="--blog-container-width: {{ $appearance['container_width'] }}px;">
     <section class="blog-masthead" aria-labelledby="blog-page-title">
         <x-layout.container>
             <div class="blog-masthead__top">
@@ -65,7 +65,7 @@
             </div>
 
             <div class="blog-masthead__layout">
-                <div class="blog-masthead__copy" data-blog-reveal>
+                <div class="blog-masthead__copy">
                     <p class="blog-eyebrow">
                         <span class="blog-eyebrow__dot" aria-hidden="true"></span>
                         مجله فرزین
@@ -98,7 +98,7 @@
                     </div>
                 </div>
 
-                <div class="blog-masthead__visual" data-blog-reveal>
+                <div class="blog-masthead__visual">
                     @if($appearance['hero']['image_url'])
                         <div class="blog-user-art" style="--blog-image-fit: {{ $appearance['hero']['fit'] }}; --blog-image-position: {{ $appearance['hero']['object_position'] }}; --blog-image-scale: {{ number_format($appearance['hero']['scale'] / 100, 2, '.', '') }};">
                             <img
@@ -107,7 +107,7 @@
                                 alt="{{ $appearance['hero']['alt'] ?: 'تصویر مجله فرزین' }}"
                                 width="960"
                                 height="640"
-                                fetchpriority="high"
+                                loading="lazy"
                                 decoding="async"
                             >
                         </div>
@@ -125,7 +125,7 @@
     @if($featuredPost)
         <section id="blog-featured" class="blog-section blog-featured-section" aria-labelledby="blog-featured-title">
             <x-layout.container>
-                <div class="blog-section-heading" data-blog-reveal>
+                <div class="blog-section-heading">
                     <div>
                         <p class="blog-section-kicker">مطلب منتخب مجله <span>— 01</span></p>
                         <h2 id="blog-featured-title">پیشنهاد مطالعه</h2>
@@ -137,7 +137,7 @@
                     $featuredCategory = $featuredPost->terms->firstWhere('type', 'category');
                 @endphp
 
-                <article class="blog-featured-card" data-blog-reveal>
+                <article class="blog-featured-card">
                     <div class="blog-featured-card__content">
                         <div class="blog-featured-card__topline">
                             <span class="blog-featured-card__badge">
@@ -207,7 +207,7 @@
 
     <section id="blog-articles" class="blog-section blog-articles-section" aria-labelledby="blog-articles-title">
         <x-layout.container>
-            <div class="blog-section-heading blog-section-heading--articles" data-blog-reveal>
+            <div class="blog-section-heading blog-section-heading--articles">
                 <div>
                     <p class="blog-section-kicker">آرشیو مقالات <span>— 02</span></p>
                     <h2 id="blog-articles-title">{{ $term ? 'مقاله‌های ' . $term->name : 'تازه‌های مجله' }}</h2>
@@ -216,7 +216,7 @@
             </div>
 
             @if($topics->isNotEmpty() || $term)
-                <nav class="blog-topics" aria-label="دسته‌بندی مقالات" data-blog-reveal>
+                <nav class="blog-topics" aria-label="دسته‌بندی مقالات">
                     <a href="{{ route('blog.index') }}" @class(['blog-topic', 'is-active' => ! $term])>همه مقاله‌ها</a>
                     @if($term && $term->type === 'tag')
                         <a href="{{ route('blog.tag', $term->slug) }}" class="blog-topic is-active">{{ $term->name }}</a>
@@ -240,7 +240,7 @@
                     @endforeach
                 </div>
             @elseif(! $featuredPost)
-                <div class="blog-empty-state" data-blog-reveal>
+                <div class="blog-empty-state">
                     <span class="blog-empty-state__mark" aria-hidden="true">F.</span>
                     <p class="blog-section-kicker">مجله فرزین</p>
                     <h3>{{ $term ? 'هنوز مقاله‌ای در این دسته منتشر نشده است.' : 'هنوز مقاله‌ای منتشر نشده است.' }}</h3>
@@ -249,7 +249,7 @@
             @endif
 
             @if($posts->hasPages())
-                <div class="blog-pagination" data-blog-reveal>
+                <div class="blog-pagination">
                     {{ $posts->links() }}
                 </div>
             @endif
