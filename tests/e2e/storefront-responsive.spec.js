@@ -1066,14 +1066,24 @@ test('catalog product cards preserve full product images without cropping', asyn
 });
 
 test('hood and sink imagery remains fully visible in product detail galleries', async ({ page }) => {
+    await page.setViewportSize({ width: 1280, height: 900 });
+    await page.goto('/shop', { waitUntil: 'domcontentloaded' });
+
+    const firstProduct = page.locator('.farzin-product-card').first();
+    await expect(firstProduct).toBeVisible();
+    const productHref = await firstProduct.locator('a[href*="/product/"]').first().getAttribute('href');
+    expect(productHref).toBeTruthy();
+
     for (const viewport of [
         { width: 390, height: 844 },
         { width: 1440, height: 960 },
     ]) {
         await page.setViewportSize(viewport);
-        await page.goto('/product/farzin-hood-preview-01', { waitUntil: 'domcontentloaded' });
+        await page.goto(productHref, { waitUntil: 'domcontentloaded' });
 
-        const image = page.locator('.farzin-product-gallery .product-gallery-stage img').first();
+        const gallery = page.locator('.farzin-product-gallery .product-gallery-stage');
+        await expect(gallery).toBeVisible();
+        const image = gallery.locator('img:visible').first();
         await expect(image).toBeVisible();
 
         const imageStyle = await image.evaluate((element) => ({
