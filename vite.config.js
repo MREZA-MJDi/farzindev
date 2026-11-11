@@ -10,6 +10,7 @@ export default defineConfig({
                 'resources/css/public-design-system.css',
                 'resources/css/home.css',
                 'resources/css/blog.css',
+                'resources/css/product.css',
                 'resources/css/admin.css',
                 'resources/js/app.js',
             ],
