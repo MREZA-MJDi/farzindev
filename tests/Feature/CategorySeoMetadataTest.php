@@ -21,7 +21,9 @@ class CategorySeoMetadataTest extends TestCase
             ->post(route('admin.categories.store'), [
                 'name' => 'هود مخفی',
                 'slug' => 'built-in-hoods',
-                'description' => 'راهنمای انتخاب هود مخفی',
+                'description' => 'توضیح کوتاه برای داده‌های متا',
+                'content_title' => 'راهنمای انتخاب هود مخفی',
+                'content_body' => 'برای انتخاب هود به ابعاد و قدرت مکش توجه کنید.',
                 'meta_title' => 'خرید هود مخفی آشپزخانه | فرزین',
                 'meta_description' => 'مدل‌های هود مخفی فرزین را با مشخصات و قیمت بررسی کنید.',
                 'is_active' => '1',
@@ -38,7 +40,10 @@ class CategorySeoMetadataTest extends TestCase
         $this->get(route('categories.show', $category->slug))
             ->assertOk()
             ->assertSee('<title>خرید هود مخفی آشپزخانه | فرزین</title>', false)
-            ->assertSee('name="description" content="مدل‌های هود مخفی فرزین را با مشخصات و قیمت بررسی کنید."', false);
+            ->assertSee('name="description" content="مدل‌های هود مخفی فرزین را با مشخصات و قیمت بررسی کنید."', false)
+            ->assertSee('راهنمای انتخاب هود مخفی')
+            ->assertSee('برای انتخاب هود به ابعاد و قدرت مکش توجه کنید.')
+            ->assertDontSee('farzin-category-detail__description', false);
     }
 
     public function test_active_category_created_in_admin_remains_visible_in_production_without_products(): void
@@ -173,6 +178,44 @@ class CategorySeoMetadataTest extends TestCase
             ->assertSee('دسته جدید');
     }
 
+    public function test_admin_can_manage_category_guide_content_and_image(): void
+    {
+        $admin = User::factory()->create(['role' => 'admin']);
+        $category = Category::create([
+            'name' => 'هود آشپزخانه',
+            'slug' => 'kitchen-hoods',
+            'is_active' => true,
+            'sort_order' => 1,
+        ]);
+        $image = \Illuminate\Http\UploadedFile::fake()->image('hood-guide.webp', 1200, 675);
+
+        $this->actingAs($admin, 'admin')
+            ->put(route('admin.categories.update', $category), [
+                'name' => $category->name,
+                'slug' => $category->slug,
+                'content_title' => 'راهنمای خرید هود',
+                'content_body' => 'پیش از انتخاب، عرض اجاق و مسیر خروج هوا را بررسی کنید.',
+                'content_image' => $image,
+                'is_active' => '1',
+                'sort_order' => '1',
+            ])
+            ->assertRedirect(route('admin.categories.index'))
+            ->assertSessionHasNoErrors();
+
+        $category->refresh();
+
+        $this->assertSame('راهنمای خرید هود', $category->content_title);
+        $this->assertSame('پیش از انتخاب، عرض اجاق و مسیر خروج هوا را بررسی کنید.', $category->content_body);
+        $this->assertNotEmpty($category->content_image);
+        $this->assertNotNull($category->content_image_url);
+
+        $this->get(route('categories.show', $category->slug))
+            ->assertOk()
+            ->assertSee('راهنمای خرید هود')
+            ->assertSee('پیش از انتخاب، عرض اجاق و مسیر خروج هوا را بررسی کنید.')
+            ->assertSee($category->content_image_url, false);
+    }
+
     public function test_category_image_forms_use_the_shared_preview_and_crop_editor(): void
     {
         $admin = User::factory()->create(['role' => 'admin']);
@@ -191,6 +234,9 @@ class CategorySeoMetadataTest extends TestCase
             $this->actingAs($admin, 'admin')
                 ->get($url)
                 ->assertOk()
+                ->assertSee('name="content_title"', false)
+                ->assertSee('name="content_body"', false)
+                ->assertSee('name="content_image"', false)
                 ->assertSee('data-image-editor-input', false)
                 ->assertSee('data-image-editor-existing-preview', false)
                 ->assertSee('data-image-editor-placeholder', false)
