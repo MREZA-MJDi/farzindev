@@ -1,0 +1,260 @@
+/*
+ * Farzin public storefront design system.
+ *
+ * Geometry is intentionally architectural: square edges, measured borders,
+ * restrained depth and strong editorial spacing. Keep this file last in the
+ * public layout so page-level utilities cannot silently reintroduce rounded
+ * cards, banners or controls.
+ */
+
+:root {
+    --fz-radius-card: 0;
+    --fz-radius-panel: 0;
+    --fz-radius-control: 0;
+    --fz-radius-sm: 0;
+    --fz-radius-md: 0;
+    --fz-radius-lg: 0;
+    --fz-radius-xl: 0;
+    --livora-radius-sm: 0;
+    --livora-radius-md: 0;
+    --livora-radius-lg: 0;
+    --livora-radius-xl: 0;
+    --fz-public-line: var(--fz-line, #e1e5eb);
+    --fz-public-line-strong: var(--fz-line-strong, #cbd3dd);
+    --fz-public-depth: 0 1px 0 rgba(6, 40, 79, .035), 0 12px 30px rgba(6, 40, 79, .055);
+    --fz-public-depth-hover: 0 2px 0 rgba(6, 40, 79, .04), 0 18px 38px rgba(6, 40, 79, .10);
+}
+
+body {
+    color: var(--fz-text, #26313b);
+    font-family: var(--fz-font-ui, inherit);
+    font-synthesis: none;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+}
+
+.storefront-content {
+    min-width: 0;
+    line-height: 1.85;
+}
+
+.storefront-content :where(h1, h2, h3, h4) {
+    text-wrap: balance;
+    letter-spacing: -.018em;
+}
+
+.storefront-content :where(p, li, dd) {
+    text-wrap: pretty;
+}
+
+.storefront-content :where(
+    .fz-market-hero__slides,
+    .fz-market-hero__slide,
+    .fz-home-article-card,
+    .fz-home-proof-card,
+    .fz-home-guide-card,
+    .fz-home-product-card,
+    .farzin-product-card,
+    .farzin-product-card__media,
+    .farzin-product-card__image-link,
+    .blog-masthead,
+    .blog-featured-card,
+    .blog-article-card,
+    .blog-topic,
+    .blog-pagination,
+    .fz-category-card,
+    .farzin-shop-category-card,
+    .fz-product-panel,
+    .fz-product-accordion,
+    .product-gallery-shell,
+    .farzin-gallery-lightbox,
+    .cart-item,
+    .cart-panel,
+    .cart-summary,
+    .contact-panel,
+    .contact-form,
+    .auth-panel,
+    .auth-card,
+    .storefront-content__panel
+) {
+    border-radius: 0 !important;
+}
+
+.storefront-content :where(
+    .fz-market-hero__button,
+    .fz-sales-button,
+    .fz-home-text-link,
+    .farzin-product-card__cta,
+    .farzin-product-card__button,
+    .fz-product-action,
+    .farzin-gallery-arrow,
+    .farzin-gallery-lightbox-close,
+    .farzin-gallery-lightbox-arrow,
+    .farzin-site-footer a[role="button"],
+    button,
+    [role="button"]
+) {
+    border-radius: 0 !important;
+}
+
+.storefront-content :where(input, select, textarea, .form-control) {
+    border-radius: 0 !important;
+}
+
+#app :where(.farzin-site-header, .fz-home-header, .farzin-site-footer) :where(
+    button,
+    [role="button"],
+    a.rounded-full,
+    a.rounded-xl,
+    a.rounded-2xl
+) {
+    border-radius: 0 !important;
+}
+
+/* Square geometry must still feel finished: edges, hierarchy and depth do the work. */
+.storefront-content :where(
+    .farzin-product-card,
+    .fz-home-article-card,
+    .blog-article-card,
+    .blog-featured-card,
+    .fz-category-card,
+    .farzin-shop-category-card,
+    .fz-product-panel,
+    .fz-product-accordion,
+    .product-gallery-shell,
+    .cart-panel,
+    .cart-summary,
+    .contact-panel,
+    .contact-form,
+    .auth-panel,
+    .auth-card
+) {
+    border: 1px solid var(--fz-public-line, #e1e5eb);
+    box-shadow: var(--fz-public-depth);
+}
+
+.storefront-content :where(
+    .farzin-product-card,
+    .fz-home-article-card,
+    .blog-article-card,
+    .blog-featured-card,
+    .fz-category-card,
+    .farzin-shop-category-card
+):hover {
+    border-color: var(--fz-public-line-strong, #cbd3dd);
+    box-shadow: var(--fz-public-depth-hover);
+}
+
+.storefront-content :where(
+    .farzin-product-card__media,
+    .fz-home-article-card__media,
+    .blog-article-card__media,
+    .blog-featured-card__media,
+    .fz-category-card__art,
+    .farzin-shop-category-card__media,
+    .product-gallery-shell
+) {
+    border-radius: 0 !important;
+    background-color: var(--fz-paper-soft, #eef1f4);
+}
+
+.storefront-content :where(
+    .farzin-product-card__image,
+    .fz-home-product-card__image,
+    .fz-market-hero__image
+) {
+    border-radius: 0 !important;
+}
+
+/* Product photography: show the complete hood/sink silhouette, never crop it. */
+.storefront-content :where(
+    .farzin-product-card__image,
+    .fz-home-product-card__image
+) {
+    object-fit: contain;
+    object-position: center;
+}
+
+.storefront-content :where(
+    .fz-market-hero__slides,
+    .blog-masthead
+) {
+    border: 1px solid rgba(6, 40, 79, .16);
+    border-bottom: 3px solid var(--fz-accent, #7b0d1a);
+    box-shadow: 0 16px 38px rgba(6, 40, 79, .11);
+}
+
+.storefront-content :where(
+    .fz-market-hero__button,
+    .fz-sales-button,
+    .fz-product-action,
+    .farzin-product-card__cta
+) {
+    min-height: 44px;
+    font-weight: 750;
+    letter-spacing: -.01em;
+    box-shadow: none;
+    transition: color .18s ease, background-color .18s ease, border-color .18s ease;
+}
+
+.storefront-content :where(
+    .fz-home-section,
+    .blog-section,
+    .contact-section,
+    .storefront-content__section
+) {
+    scroll-margin-top: 6rem;
+}
+
+.storefront-content :where(
+    .fz-home-section__heading,
+    .blog-section__heading,
+    .storefront-content__section-heading
+) {
+    max-width: 72rem;
+    margin-inline: auto;
+}
+
+.storefront-content :where(
+    .fz-home-section__eyebrow,
+    .blog-section__eyebrow
+) {
+    letter-spacing: .035em;
+}
+
+.storefront-content :where(a, button, input, select, textarea):focus-visible {
+    outline: 3px solid var(--fz-accent, #7b0d1a);
+    outline-offset: 3px;
+    border-radius: 0 !important;
+}
+
+@media (max-width: 767px) {
+    .storefront-content :where(
+        .farzin-product-card,
+        .fz-home-article-card,
+        .blog-article-card,
+        .blog-featured-card,
+        .fz-category-card,
+        .farzin-shop-category-card,
+        .fz-product-panel,
+        .cart-panel,
+        .cart-summary,
+        .contact-panel,
+        .contact-form,
+        .auth-panel,
+        .auth-card
+    ) {
+        box-shadow: 0 1px 0 rgba(6, 40, 79, .04), 0 6px 18px rgba(6, 40, 79, .05);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .storefront-content *,
+    .storefront-content *::before,
+    .storefront-content *::after {
+        scroll-behavior: auto !important;
+        animation-duration: .01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: .01ms !important;
+    }
+}
