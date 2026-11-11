@@ -144,7 +144,7 @@
                                 <span class="blog-featured-card__badge-dot" aria-hidden="true"></span>
                                 {{ $featuredPost->is_featured ? 'پیشنهاد سردبیر' : 'آخرین مقاله' }}
                             </span>
-                            <span class="blog-featured-card__number">01 / FEATURED</span>
+                            <span class="blog-featured-card__number">۰۱ / منتخب</span>
                         </div>
 
                         @if($featuredCategory)
@@ -198,7 +198,7 @@
                                 <span class="blog-art-fallback__word">FARZIN<br>JOURNAL</span>
                             </span>
                         @endif
-                        <span class="blog-featured-card__media-label">FARZIN / FEATURED ARTICLE</span>
+                        <span class="blog-featured-card__media-label">مقاله منتخب فرزین</span>
                     </a>
                 </article>
             </x-layout.container>
