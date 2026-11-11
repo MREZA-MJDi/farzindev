@@ -9,6 +9,7 @@ The target VPS is expected to host several independent projects. Farzin must the
 - The homepage alone loads `resources/js/home.js` dynamically and `resources/css/home.css`; neither should be added to the shared app layout.
 - The admin uses a separate `resources/css/admin.css` entry.
 - `resources/css/blog.css` is loaded only by public journal pages.
+- `resources/css/product.css` is loaded only by product slug pages; keep gallery and product-detail layout rules out of Blade inline style blocks.
 - The product-image editor, homepage preview, blog appearance editor, rich-text editor and category GIF preview are dynamically imported only when their matching DOM controls are present.
 - Optional storefront motion uses native `IntersectionObserver` and the Web Animations API; it is not a GSAP/Lenis dependency and must not be described or bundled as one.
 - Page-scoped chunks must remain separate from the shared app bundle so unrelated routes do not download their code.
@@ -28,6 +29,7 @@ The production build enforces gzip budgets for all intentional CSS entries and p
 | Homepage-only CSS | 15 KB |
 | Admin-only CSS | 24 KB |
 | Blog-only CSS | 5.5 KB |
+| Product-detail-only CSS | 3.5 KB |
 
 Build and verify the production asset graph:
 
