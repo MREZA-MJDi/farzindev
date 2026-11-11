@@ -509,7 +509,7 @@ class FarzinStorefrontTest extends TestCase
         $this->get(route('about'))
             ->assertOk()
             ->assertSee('فرزین فرجی')
-            ->assertSee('FACTORY &amp; PROCESS', false);
+            ->assertSee('کارخانه و فرایند تولید');
 
         $this->get(route('blog.index'))
             ->assertOk()
@@ -517,6 +517,25 @@ class FarzinStorefrontTest extends TestCase
             ->assertSee('تازه‌های مجله')
             ->assertSee('قبل از خرید هود آشپزخانه چه چیزهایی را بررسی کنیم؟')
             ->assertSee('چک‌لیست ساده پیش از ثبت سفارش');
+    }
+
+    public function test_public_editorial_defaults_are_persian_without_overwriting_custom_dashboard_copy(): void
+    {
+        StorefrontSetting::query()->create([
+            'key' => 'page_about_factory_eyebrow',
+            'value' => 'FACTORY & PROCESS',
+        ]);
+        StorefrontSetting::query()->create([
+            'key' => 'page_about_values_eyebrow',
+            'value' => 'ساخت بر پایه نیاز واقعی',
+        ]);
+
+        app(\App\Services\StorefrontPageContent::class)->clearCache();
+        $copy = app(\App\Services\StorefrontPageContent::class)->all();
+
+        $this->assertSame('کارخانه و فرایند تولید', $copy['page_about_factory_eyebrow']);
+        $this->assertSame('ساخت بر پایه نیاز واقعی', $copy['page_about_values_eyebrow']);
+        $this->assertSame('مهندسی • جزئیات • عملکرد', $copy['page_home_technology_eyebrow']);
     }
 
     public function test_about_page_uses_dashboard_copy_and_section_visibility(): void
