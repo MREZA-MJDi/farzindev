@@ -2,6 +2,8 @@
 
 namespace Database\Seeders;
 
+use App\Models\BlogPost;
+use App\Models\BlogTerm;
 use App\Models\Category;
 use App\Models\Product;
 use App\Models\ProductImage;
