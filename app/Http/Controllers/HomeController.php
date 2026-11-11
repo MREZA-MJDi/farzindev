@@ -344,18 +344,18 @@ class HomeController extends Controller
             ]]);
         }
 
+        // Match the public journal archive: publication controls visibility,
+        // while SEO directives control indexing rather than customer discovery.
+        // Cover images are optional in the CMS; the homepage renders a designed
+        // fallback when an editor publishes an article without one.
         $blogPosts = BlogPost::query()
             ->published()
-            ->indexable()
-            ->whereNotNull('cover_image')
-            ->where('cover_image', '<>', '')
             ->with(['author:id,name', 'terms:id,type,name,slug'])
             ->orderByDesc('is_featured')
             ->orderByDesc('published_at')
             ->orderByDesc('id')
             ->limit(6)
             ->get()
-            ->filter(static fn (BlogPost $post): bool => filled($post->cover_image_url))
             ->take(3)
             ->values();
 
