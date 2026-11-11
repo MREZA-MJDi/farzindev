@@ -2,6 +2,8 @@
 
 namespace App\Http\Requests\Admin\Product;
 
+use App\Models\Category;
+use App\Models\Media;
 use Illuminate\Foundation\Http\FormRequest;
 use App\Http\Requests\Admin\Product\Concerns\PreparesProductInput;
 use Illuminate\Validation\Rule;
@@ -22,6 +24,48 @@ class UpdateProductRequest extends FormRequest
                 $validator->errors()->add(
                     'primary_media_id',
                     'تصویر آپلودی و تصویر کتابخانه را هم‌زمان انتخاب نکنید.'
+                );
+            }
+
+            if (
+                filled($this->input('primary_media_id'))
+                && ! $validator->errors()->has('primary_media_id')
+            ) {
+                $selectedMedia = Media::query()->find($this->input('primary_media_id'));
+
+                if (! $selectedMedia || blank($selectedMedia->url)) {
+                    $validator->errors()->add(
+                        'primary_media_id',
+                        'فایل انتخاب‌شده در کتابخانه رسانه در دسترس نیست؛ تصویر دیگری انتخاب کنید.'
+                    );
+                }
+            }
+
+            if (
+                $this->input('status') === 'active'
+                && ! Category::query()->active()->whereKey($this->input('category_id'))->exists()
+            ) {
+                $validator->errors()->add(
+                    'category_id',
+                    'برای نمایش محصول در سایت، یک دسته‌بندی فعال و قابل‌نمایش انتخاب کنید.'
+                );
+            }
+
+            $product = $this->route('product');
+            $hasUsableExistingImage = $product
+                && $product->images()->with('media')->get()->contains(
+                    static fn ($image): bool => filled($image->url)
+                );
+
+            if (
+                $this->input('status') === 'active'
+                && ! $this->hasFile('image')
+                && blank($this->input('primary_media_id'))
+                && ! $hasUsableExistingImage
+            ) {
+                $validator->errors()->add(
+                    'image',
+                    'برای انتشار محصول در سایت، تصویر اصلی را آپلود یا از کتابخانه رسانه انتخاب کنید.'
                 );
             }
         });

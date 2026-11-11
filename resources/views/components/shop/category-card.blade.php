@@ -33,7 +33,7 @@
             <div class="farzin-category-card__content absolute inset-x-0 bottom-0 z-10 p-5 sm:p-6">
                 <div class="flex items-end justify-between gap-4">
                     <div class="min-w-0">
-                        <p class="text-[10px] font-semibold uppercase tracking-[0.22em] text-white/60">KITCHEN SYSTEMS</p>
+                        <p class="text-[10px] font-semibold uppercase tracking-[0.22em] text-white/60">تجهیزات آشپزخانه</p>
                         <h3 class="mt-2 truncate text-xl font-semibold text-white sm:text-2xl">{{ $name }}</h3>
                         @if($hasCount)
                             <p class="mt-2 text-xs text-white/65">{{ \App\Helpers\PersianNumberHelper::format($count) }} محصول</p>

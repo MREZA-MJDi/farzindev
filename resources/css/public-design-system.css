@@ -1,0 +1,471 @@
+/*
+ * Farzin public storefront design system.
+ *
+ * Geometry is intentionally architectural: square edges, measured borders,
+ * restrained depth and strong editorial spacing. Keep this file last in the
+ * public layout so page-level utilities cannot silently reintroduce rounded
+ * cards, banners or controls.
+ */
+
+:root {
+    --fz-radius-card: 0;
+    --fz-radius-panel: 0;
+    --fz-radius-control: 0;
+    --fz-radius-sm: 0;
+    --fz-radius-md: 0;
+    --fz-radius-lg: 0;
+    --fz-radius-xl: 0;
+    --livora-radius-sm: 0;
+    --livora-radius-md: 0;
+    --livora-radius-lg: 0;
+    --livora-radius-xl: 0;
+    --fz-public-line: var(--fz-line, #e1e5eb);
+    --fz-public-line-strong: var(--fz-line-strong, #cbd3dd);
+    --fz-public-depth: 0 1px 0 rgba(6, 40, 79, .035), 0 12px 30px rgba(6, 40, 79, .055);
+    --fz-public-depth-hover: 0 2px 0 rgba(6, 40, 79, .04), 0 18px 38px rgba(6, 40, 79, .10);
+}
+
+body {
+    color: var(--fz-text, #26313b);
+    font-family: var(--fz-font-ui, inherit);
+    font-synthesis: none;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+}
+
+.storefront-content {
+    min-width: 0;
+    line-height: 1.85;
+}
+
+.storefront-content :where(h1, h2, h3, h4) {
+    text-wrap: balance;
+    letter-spacing: -.018em;
+}
+
+.storefront-content :where(p, li, dd) {
+    text-wrap: pretty;
+}
+
+.storefront-content :where(
+    .fz-market-hero__slides,
+    .fz-market-hero__slide,
+    .fz-home-article-card,
+    .fz-home-proof-card,
+    .fz-home-guide-card,
+    .fz-home-product-card,
+    .farzin-product-card,
+    .farzin-product-card__media,
+    .farzin-product-card__image-link,
+    .blog-masthead,
+    .blog-featured-card,
+    .blog-article-card,
+    .blog-topic,
+    .blog-pagination,
+    .fz-category-card,
+    .farzin-shop-category-card,
+    .fz-product-panel,
+    .fz-product-accordion,
+    .product-gallery-shell,
+    .farzin-gallery-lightbox,
+    .cart-item,
+    .cart-panel,
+    .cart-summary,
+    .contact-panel,
+    .contact-form,
+    .auth-panel,
+    .auth-card,
+    .storefront-content__panel
+) {
+    border-radius: 0 !important;
+}
+
+.storefront-content :where(
+    .fz-market-hero__button,
+    .fz-sales-button,
+    .fz-home-text-link,
+    .farzin-product-card__cta,
+    .farzin-product-card__button,
+    .fz-product-action,
+    .farzin-gallery-arrow,
+    .farzin-gallery-lightbox-close,
+    .farzin-gallery-lightbox-arrow,
+    .farzin-site-footer a[role="button"],
+    button,
+    [role="button"]
+) {
+    border-radius: 0 !important;
+}
+
+.storefront-content :where(
+    a[class*="button"],
+    a[class*="action"],
+    a[class*="cta"],
+    .blog-rss-link,
+    .blog-rss-quiet
+) {
+    border-radius: 0 !important;
+}
+
+.storefront-content :where(
+    .farzin-category-card__surface,
+    .farzin-category-card__arrow,
+    .blog-masthead__visual,
+    .blog-user-art,
+    .blog-article-content img,
+    .farzin-shop-catalog aside,
+    .shop-filter-panel,
+    .farzin-shop-filters,
+    .farzin-product-detail-info,
+    .farzin-product-facts__item,
+    .farzin-product-card__installment,
+    .product-price,
+    .product-price__installment,
+    .product-gallery-stage,
+    .fz-home-benefit,
+    .fz-empty-state,
+    .home-body .grid__item,
+    .fz-hero-product,
+    .fz-hero-product__media,
+    .fz-home-purchase-cta__inner,
+    .fz-home-featured-section__visual
+) {
+    border-radius: 0 !important;
+}
+
+.storefront-content :where(input, select, textarea, .form-control) {
+    border-radius: 0 !important;
+}
+
+/* Utility-class panels (cart, forms, category filters) follow the same square geometry. */
+.storefront-content :where([class*="rounded-"][class*="border"]) {
+    border-radius: 0 !important;
+}
+
+#app :where(.farzin-site-header, .fz-home-header, .farzin-site-footer) :where(a, button, [role="button"]) {
+    border-radius: 0 !important;
+}
+
+#app .fz-home-header :where(.fz-home-header__search, .fz-home-header__account, .fz-home-header__cart) {
+    border-radius: 0 !important;
+}
+
+/* Public utility classes must not sneak rounded geometry back into any page. */
+#app .storefront-content :where(
+    a[class*="rounded-"],
+    button[class*="rounded-"],
+    [role="button"][class*="rounded-"],
+    [class*="rounded-"][class*="border"]
+) {
+    border-radius: 0 !important;
+}
+
+.storefront-content :where(
+    article,
+    [class*="banner"],
+    [class*="hero"],
+    [class*="gallery"],
+    [class*="panel"]
+) {
+    border-radius: 0 !important;
+}
+
+.storefront-content :where([class*="-card"], [class*="__card"]) {
+    border-radius: 0 !important;
+}
+
+.storefront-content :where(
+    .farzin-category-card,
+    .farzin-product-card,
+    .blog-article-card,
+    .blog-featured-card,
+    .cart-item,
+    .cart-panel,
+    .cart-summary,
+    .farzin-product-detail-info,
+    .fz-product-panel,
+    .fz-category-card,
+    .farzin-shop-category-card,
+    .auth-card,
+    .contact-panel
+) :where([class*="rounded-"]) {
+    border-radius: 0 !important;
+}
+
+.storefront-content :where(
+    article,
+    section[class*="rounded-"],
+    [class*="-card"],
+    [class*="__card"],
+    [class*="panel"]
+) :where([class*="rounded-"]) {
+    border-radius: 0 !important;
+}
+
+/* The small homepage category thumbnails are image masks, not cards or controls. */
+#app .storefront-content .fz-home-round-category__image {
+    border-radius: 50% !important;
+}
+
+/* Square geometry must still feel finished: edges, hierarchy and depth do the work. */
+.storefront-content :where(
+    .farzin-product-card,
+    .fz-home-article-card,
+    .blog-article-card,
+    .blog-featured-card,
+    .fz-category-card,
+    .farzin-shop-category-card,
+    .fz-product-panel,
+    .fz-product-accordion,
+    .product-gallery-shell,
+    .cart-panel,
+    .cart-summary,
+    .contact-panel,
+    .contact-form,
+    .auth-panel,
+    .auth-card
+) {
+    border: 1px solid var(--fz-public-line, #e1e5eb);
+    box-shadow: var(--fz-public-depth);
+}
+
+.storefront-content :where(
+    .farzin-product-card,
+    .fz-home-article-card,
+    .blog-article-card,
+    .blog-featured-card,
+    .fz-category-card,
+    .farzin-shop-category-card
+):hover {
+    border-color: var(--fz-public-line-strong, #cbd3dd);
+    box-shadow: var(--fz-public-depth-hover);
+}
+
+.storefront-content :where(
+    .farzin-product-card__media,
+    .fz-home-article-card__media,
+    .blog-article-card__media,
+    .blog-featured-card__media,
+    .fz-category-card__art,
+    .farzin-shop-category-card__media,
+    .product-gallery-shell
+) {
+    border-radius: 0 !important;
+    background-color: var(--fz-paper-soft, #eef1f4);
+}
+
+.storefront-content :where(
+    .farzin-product-card__image,
+    .fz-home-product-card__image,
+    .fz-market-hero__image
+) {
+    border-radius: 0 !important;
+}
+
+.storefront-content :where(article, [class*="-card"], [class*="__card"]) img,
+.storefront-content iframe {
+    border-radius: 0 !important;
+}
+
+/* Product photography: show the complete hood/sink silhouette, never crop it. */
+.storefront-content :where(
+    .farzin-product-card__image,
+    .fz-home-product-card__image
+) {
+    object-fit: contain;
+    object-position: center;
+}
+
+.storefront-content :where(
+    .fz-market-hero__slides,
+    .blog-masthead
+) {
+    border: 1px solid rgba(6, 40, 79, .16);
+    border-bottom: 3px solid var(--fz-accent, #7b0d1a);
+    box-shadow: 0 16px 38px rgba(6, 40, 79, .11);
+}
+
+.storefront-content :where(
+    .fz-market-hero__button,
+    .fz-sales-button,
+    .fz-product-action,
+    .farzin-product-card__cta
+) {
+    min-height: 44px;
+    font-weight: 750;
+    letter-spacing: -.01em;
+    box-shadow: none;
+    transition: color .18s ease, background-color .18s ease, border-color .18s ease;
+}
+
+.storefront-content :where(
+    .fz-home-section,
+    .blog-section,
+    .contact-section,
+    .storefront-content__section
+) {
+    scroll-margin-top: 6rem;
+}
+
+.storefront-content :where(
+    .fz-home-section__heading,
+    .blog-section__heading,
+    .storefront-content__section-heading
+) {
+    max-width: 72rem;
+    margin-inline: auto;
+}
+
+.storefront-content :where(
+    .fz-home-section__eyebrow,
+    .blog-section__eyebrow
+) {
+    letter-spacing: .035em;
+}
+
+.storefront-content :where(a, button, input, select, textarea):focus-visible {
+    outline: 3px solid var(--fz-accent, #7b0d1a);
+    outline-offset: 3px;
+    border-radius: 0 !important;
+}
+
+@media (max-width: 767px) {
+    .storefront-content :where(
+        .farzin-product-card,
+        .fz-home-article-card,
+        .blog-article-card,
+        .blog-featured-card,
+        .fz-category-card,
+        .farzin-shop-category-card,
+        .fz-product-panel,
+        .cart-panel,
+        .cart-summary,
+        .contact-panel,
+        .contact-form,
+        .auth-panel,
+        .auth-card
+    ) {
+        box-shadow: 0 1px 0 rgba(6, 40, 79, .04), 0 6px 18px rgba(6, 40, 79, .05);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .storefront-content *,
+    .storefront-content *::before,
+    .storefront-content *::after {
+        scroll-behavior: auto !important;
+        animation-duration: .01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: .01ms !important;
+    }
+}
+
+
+/*
+ * Final geometry contract. The #app scope intentionally outranks legacy
+ * page selectors that still carry old !important radius declarations.
+ */
+#app :where(
+    [class*="card"],
+    [class*="banner"],
+    [class*="panel"],
+    [class*="hero"],
+    [class*="gallery"],
+    [class*="button"],
+    [class*="action"],
+    [class*="cta"],
+    [class*="search"],
+    [class*="menu"],
+    [class*="nav"]
+) {
+    border-radius: 0 !important;
+}
+
+#app :where(button, [role="button"], a[role="button"], input, select, textarea) {
+    border-radius: 0 !important;
+}
+
+#app .farzin-product-gallery .product-gallery-stage,
+#app .farzin-product-gallery .product-gallery-shell,
+#app .farzin-product-gallery button[aria-label^="نمایش تصویر"] {
+    border-radius: 0 !important;
+}
+
+#app .farzin-product-gallery .product-gallery-stage > img {
+    object-fit: contain !important;
+    object-position: center !important;
+}
+
+#app .farzin-product-gallery .product-gallery-stage {
+    background: #F0F2F4;
+}
+
+#app .farzin-shop-banner__image,
+#app .farzin-shop-banner__action,
+#app .farzin-category-detail-banner,
+#app .farzin-search-overlay__panel,
+#app .farzin-search-overlay input[type="search"],
+#app .farzin-search-overlay a,
+#app .farzin-site-header input[type="search"],
+#app .farzin-site-header__action,
+#app .farzin-mobile-menu__link,
+#app .farzin-mobile-nav__inner,
+#app .farzin-product-detail-info .farzin-product-facts__item,
+#app .farzin-product-detail-info .product-price,
+#app .farzin-product-detail-info .product-price__installment {
+    border-radius: 0 !important;
+}
+
+body.home-body #app .fz-home-hero__slide-stage,
+body.home-body #app .fz-home-hero__showcase,
+body.home-body #app .fz-home-journal__featured,
+body.home-body #app .fz-home-journal__aside,
+body.home-body #app .fz-home-purchase-cta__inner,
+#app .blog-masthead__visual,
+#app .blog-article-cover,
+#app .blog-article-panel,
+#app .blog-article-sidebar-card,
+#app .blog-empty-state {
+    border-radius: 0 !important;
+}
+
+/* Round thumbnails are image treatments only, never card or control geometry. */
+#app .fz-home-round-category__image {
+    border-radius: 50% !important;
+}
+
+/* Final authority for kitchen hood/sink imagery: never crop the product itself. */
+#app .storefront-content .farzin-product-gallery .product-gallery-stage > img {
+    object-fit: contain !important;
+    object-position: center !important;
+    padding: clamp(12px, 2vw, 24px) !important;
+}
+
+/* Product and article card controls use the same square geometry as the rest of the shop. */
+#app .storefront-content :where(
+    .blog-pagination a,
+    .blog-pagination span[aria-current],
+    .farzin-product-card__cta,
+    .farzin-product-card__media,
+    .farzin-installment-seal,
+    .farzin-product-card__wishlist,
+    .farzin-product-gallery .product-gallery-shell,
+    .farzin-product-gallery .product-gallery-stage,
+    .farzin-product-detail-info,
+    .farzin-product-facts__item,
+    .farzin-product-detail-info .product-price,
+    .farzin-product-detail-info .product-price__installment
+) {
+    border-radius: 0 !important;
+}
+
+#app .storefront-content .farzin-product-card__image {
+    object-fit: contain !important;
+    object-position: center !important;
+    padding: clamp(8px, 1.4vw, 16px) !important;
+    transform: none !important;
+}
+
+#app .storefront-content .farzin-product-card__image-link {
+    background: #F0F2F4;
+}

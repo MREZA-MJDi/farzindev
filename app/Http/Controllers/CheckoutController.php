@@ -47,8 +47,11 @@ class CheckoutController extends Controller
             'items.product.category',
             'items.product.images' => fn ($query) => $query
                 ->select(['id', 'product_id', 'media_id', 'path', 'alt', 'sort_order', 'is_primary'])
+                ->orderByDesc('is_primary')
+                ->orderBy('sort_order')
+                ->orderBy('id')
                 ->limit(1),
-            'items.product.images.media:id,path',
+            'items.product.images.media:id,path,disk',
             'items.variant',
         ]);
 
@@ -108,8 +111,11 @@ class CheckoutController extends Controller
         $order->load([
             'items.product.images' => fn ($query) => $query
                 ->select(['id', 'product_id', 'media_id', 'path', 'alt', 'sort_order', 'is_primary'])
+                ->orderByDesc('is_primary')
+                ->orderBy('sort_order')
+                ->orderBy('id')
                 ->limit(1),
-            'items.product.images.media:id,path',
+            'items.product.images.media:id,path,disk',
             'installments',
         ]);
 
@@ -196,8 +202,11 @@ class CheckoutController extends Controller
         $order->load([
             'items.product.images' => fn ($query) => $query
                 ->select(['id', 'product_id', 'media_id', 'path', 'alt', 'sort_order', 'is_primary'])
+                ->orderByDesc('is_primary')
+                ->orderBy('sort_order')
+                ->orderBy('id')
                 ->limit(1),
-            'items.product.images.media:id,path',
+            'items.product.images.media:id,path,disk',
             'latestPayment',
             'installments',
         ]);

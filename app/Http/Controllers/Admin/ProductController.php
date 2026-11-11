@@ -33,8 +33,10 @@ class ProductController extends Controller
             ->with([
                 'category',
                 'images' => fn ($query) => $query
+                    ->orderByDesc('is_primary')
+                    ->orderBy('sort_order')
                     ->select(['id', 'product_id', 'media_id', 'path', 'alt', 'sort_order', 'is_primary'])
-                    ->limit(1),
+                    ->limit(5),
                 'images.media:id,path',
             ]);
 
@@ -121,7 +123,7 @@ class ProductController extends Controller
     public function create(): View
     {
         $categories = Category::query()
-            ->where('is_active', true)
+            ->active()
             ->orderBy('name')
             ->limit(100)
             ->get();
@@ -129,7 +131,9 @@ class ProductController extends Controller
             ->whereIn('mime_type', ['image/jpeg', 'image/png', 'image/webp'])
             ->latest('id')
             ->limit(60)
-            ->get();
+            ->get()
+            ->filter(fn (Media $media) => filled($media->url))
+            ->values();
 
         $product = new Product();
 
@@ -247,9 +251,14 @@ class ProductController extends Controller
     {
         $product->load(['images.media', 'allVariants.images.media']);
 
+        $storefrontCategoryIds = Category::query()
+            ->active()
+            ->reorder()
+            ->select('id');
+
         $categories = Category::query()
-            ->where(function ($query) use ($product): void {
-                $query->where('is_active', true)
+            ->where(function ($query) use ($product, $storefrontCategoryIds): void {
+                $query->whereIn('id', $storefrontCategoryIds)
                     ->orWhere('id', $product->category_id);
             })
             ->orderByRaw('CASE WHEN id = ? THEN 0 ELSE 1 END', [$product->category_id])
@@ -264,7 +273,9 @@ class ProductController extends Controller
             ->whereIn('mime_type', ['image/jpeg', 'image/png', 'image/webp'])
             ->latest('id')
             ->limit(60)
-            ->get();
+            ->get()
+            ->filter(fn (Media $media) => filled($media->url))
+            ->values();
 
         return view(
             'admin.products.edit',

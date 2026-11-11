@@ -248,7 +248,7 @@
                                                                 <img
                                                                     src="{{ $item->product->images->first()->url }}"
                                                                     alt="{{ $item->product_name }}"
-                                                                    class="h-full w-full object-cover"
+                                                                    class="h-full w-full object-contain p-1"
                                                                     loading="lazy"
                                                                 >
 

@@ -98,6 +98,9 @@ class BlogAppearanceTest extends TestCase
 
     public function test_blog_editor_can_select_recent_images_from_the_media_library(): void
     {
+        Storage::fake('public');
+        Storage::disk('public')->put('media/editor-library-sample.webp', 'editor library image bytes');
+
         $admin = User::factory()->create(['role' => 'admin']);
 
         Media::create([

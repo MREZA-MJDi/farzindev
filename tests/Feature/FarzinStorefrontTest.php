@@ -33,6 +33,48 @@ class FarzinStorefrontTest extends TestCase
 
     private ?array $checkoutLocationCache = null;
 
+    public function test_product_primary_image_falls_back_when_the_selected_file_is_missing(): void
+    {
+        Storage::fake('public');
+        Storage::disk('public')->put('products/available-secondary.webp', 'valid image bytes');
+
+        $category = $this->category(['slug' => 'primary-image-fallback-category']);
+        $product = $this->product($category, [
+            'name' => 'هود با تصویر جایگزین',
+            'slug' => 'hood-with-image-fallback',
+        ]);
+
+        ProductImage::create([
+            'product_id' => $product->id,
+            'path' => 'products/missing-primary.webp',
+            'alt' => 'تصویر اصلی حذف‌شده',
+            'sort_order' => 0,
+            'is_primary' => true,
+        ]);
+
+        $fallback = ProductImage::create([
+            'product_id' => $product->id,
+            'path' => 'products/available-secondary.webp',
+            'alt' => 'تصویر جایگزین سالم',
+            'sort_order' => 1,
+            'is_primary' => false,
+        ]);
+
+        // Simulate the product-card eager load that selects only the primary row.
+        $product->load([
+            'images' => fn ($query) => $query
+                ->orderByDesc('is_primary')
+                ->orderBy('sort_order')
+                ->limit(1),
+        ]);
+
+        $this->assertSame($fallback->id, $product->primaryImage()?->id);
+        $this->assertSame(
+            Storage::disk('public')->url('products/available-secondary.webp'),
+            $product->primaryImage()?->url
+        );
+    }
+
     public function test_admin_can_render_every_crud_dashboard_surface_with_real_records(): void
     {
         $admin = $this->admin();
@@ -309,6 +351,48 @@ class FarzinStorefrontTest extends TestCase
             ->assertDontSee('هود نیازمند تکمیل');
     }
 
+    public function test_admin_cannot_publish_a_product_with_a_missing_media_library_file(): void
+    {
+        Storage::fake('public');
+        $admin = $this->admin();
+        $category = $this->category(['slug' => 'missing-primary-media-category']);
+
+        $media = Media::create([
+            'user_id' => $admin->id,
+            'disk' => 'public',
+            'path' => 'media/missing-primary-product.webp',
+            'filename' => 'missing-primary-product.webp',
+            'original_name' => 'missing-primary-product.webp',
+            'mime_type' => 'image/webp',
+            'extension' => 'webp',
+            'size' => 19,
+            'alt' => 'تصویر حذف‌شده',
+        ]);
+
+        $this->actingAs($admin, 'admin')
+            ->from(route('admin.products.create'))
+            ->post(route('admin.products.store'), [
+                'category_id' => $category->id,
+                'name' => 'محصول با تصویر حذف‌شده',
+                'slug' => 'product-with-missing-primary-media',
+                'sku' => 'FAR-MISSING-PRIMARY-MEDIA',
+                'price' => '12000000',
+                'stock' => '3',
+                'status' => 'active',
+                'is_featured' => '0',
+                'is_new' => '0',
+                'show_in_home_gallery' => '1',
+                'installment_enabled' => '0',
+                'primary_media_id' => $media->id,
+            ])
+            ->assertRedirect(route('admin.products.create'))
+            ->assertSessionHasErrors('primary_media_id');
+
+        $this->assertDatabaseMissing('products', [
+            'sku' => 'FAR-MISSING-PRIMARY-MEDIA',
+        ]);
+    }
+
     public function test_admin_can_choose_a_media_library_asset_as_the_primary_product_image(): void
     {
         Storage::fake('public');
@@ -414,6 +498,10 @@ class FarzinStorefrontTest extends TestCase
 
             $response
                 ->assertSee('aria-label="ناوبری اصلی فرزین"', false)
+                ->assertSee('data-farzin-header-brand', false)
+                ->assertSee('data-farzin-header-account', false)
+                ->assertSee('data-farzin-header-cart', false)
+                ->assertSee('data-farzin-header-menu', false)
                 ->assertSee('farzin-site-footer', false)
                 ->assertDontSee('farzin-site-footer--spaced', false);
         }
@@ -426,6 +514,7 @@ class FarzinStorefrontTest extends TestCase
             ->assertSee('fz-category-hero__visual', false)
             ->assertSee('farzin-category-index-banner', false)
             ->assertSee('data-category-hero', false)
+            ->assertSee('دسته‌بندی محصولات')
             ->assertSee('id="category-list"', false)
             ->assertSee('انتخاب دسته‌بندی');
     }
@@ -462,7 +551,7 @@ class FarzinStorefrontTest extends TestCase
         $this->get(route('about'))
             ->assertOk()
             ->assertSee('فرزین فرجی')
-            ->assertSee('FACTORY &amp; PROCESS', false);
+            ->assertSee('کارخانه و فرایند تولید');
 
         $this->get(route('blog.index'))
             ->assertOk()
@@ -470,6 +559,25 @@ class FarzinStorefrontTest extends TestCase
             ->assertSee('تازه‌های مجله')
             ->assertSee('قبل از خرید هود آشپزخانه چه چیزهایی را بررسی کنیم؟')
             ->assertSee('چک‌لیست ساده پیش از ثبت سفارش');
+    }
+
+    public function test_public_editorial_defaults_are_persian_without_overwriting_custom_dashboard_copy(): void
+    {
+        StorefrontSetting::query()->create([
+            'key' => 'page_about_factory_eyebrow',
+            'value' => 'FACTORY & PROCESS',
+        ]);
+        StorefrontSetting::query()->create([
+            'key' => 'page_about_values_eyebrow',
+            'value' => 'ساخت بر پایه نیاز واقعی',
+        ]);
+
+        app(\App\Services\StorefrontPageContent::class)->clearCache();
+        $copy = app(\App\Services\StorefrontPageContent::class)->all();
+
+        $this->assertSame('کارخانه و فرایند تولید', $copy['page_about_factory_eyebrow']);
+        $this->assertSame('ساخت بر پایه نیاز واقعی', $copy['page_about_values_eyebrow']);
+        $this->assertSame('مهندسی • جزئیات • عملکرد', $copy['page_home_technology_eyebrow']);
     }
 
     public function test_about_page_uses_dashboard_copy_and_section_visibility(): void
@@ -639,6 +747,43 @@ class FarzinStorefrontTest extends TestCase
         );
     }
 
+    public function test_category_product_listing_paginates_without_losing_products(): void
+    {
+        $category = $this->category([
+            'name' => 'دسته صفحه‌بندی محصولات',
+            'slug' => 'category-product-pagination',
+        ]);
+
+        for ($index = 1; $index <= 13; $index++) {
+            $product = $this->product($category, [
+                'name' => 'محصول دسته‌بندی ' . str_pad((string) $index, 2, '0', STR_PAD_LEFT),
+                'slug' => 'category-pagination-product-' . $index,
+                'sku' => 'FAR-CATEGORY-PAGE-' . $index,
+                'show_in_home_gallery' => false,
+            ]);
+
+            ProductImage::create([
+                'product_id' => $product->id,
+                'path' => 'https://cdn.example.test/category-pagination-' . $index . '.webp',
+                'alt' => $product->name,
+                'sort_order' => 0,
+                'is_primary' => true,
+            ]);
+        }
+
+        $this->get(route('categories.show', $category->slug))
+            ->assertOk()
+            ->assertSee('محصول دسته‌بندی 01')
+            ->assertSee('محصول دسته‌بندی 12')
+            ->assertDontSee('محصول دسته‌بندی 13')
+            ->assertSee('page=2', false);
+
+        $this->get(route('categories.show', ['slug' => $category->slug, 'page' => 2]))
+            ->assertOk()
+            ->assertSee('محصول دسته‌بندی 13')
+            ->assertDontSee('محصول دسته‌بندی 01');
+    }
+
     public function test_homepage_product_cards_use_saved_specifications_and_real_stock(): void
     {
         $category = $this->category(['name' => 'هود آشپزخانه', 'slug' => 'hoods']);
@@ -745,6 +890,75 @@ class FarzinStorefrontTest extends TestCase
             ->assertSee('class="fz-home-technology"', false)
             ->assertSee('id="fz-home-featured"', false)
             ->assertSee('محصول واقعی پیشنهاد فرزین');
+    }
+
+    public function test_homepage_content_switches_control_published_products_and_articles(): void
+    {
+        $admin = $this->admin();
+        $category = $this->category([
+            'name' => 'دسته محصولات صفحه اصلی',
+            'slug' => 'homepage-content-switches',
+        ]);
+        $product = $this->product($category, [
+            'name' => 'هود قابل نمایش در صفحه اصلی',
+            'slug' => 'homepage-content-switch-product',
+            'sku' => 'FAR-HOME-SWITCH-01',
+            'show_in_home_gallery' => true,
+            'status' => 'active',
+            'stock' => 4,
+        ]);
+
+        ProductImage::create([
+            'product_id' => $product->id,
+            'path' => 'https://cdn.example.test/homepage-content-switch-product.webp',
+            'alt' => $product->name,
+            'sort_order' => 0,
+            'is_primary' => true,
+        ]);
+
+        $article = \App\Models\BlogPost::create([
+            'title' => 'مقاله قابل نمایش در صفحه اصلی',
+            'slug' => 'homepage-content-switch-article',
+            'body' => 'محتوای منتشرشده برای بررسی کلید نمایش مجله.',
+            'status' => 'published',
+            'published_at' => now(),
+            'is_featured' => true,
+        ]);
+
+        $values = collect(app(\App\Services\StorefrontPageContent::class)->defaults())
+            ->filter(fn ($value, $key) => str_starts_with($key, 'page_home_'))
+            ->all();
+
+        $this->actingAs($admin, 'admin')
+            ->put(route('admin.page-content.update'), array_merge($values, [
+                'tab' => 'home',
+                'page_home_show_products' => '0',
+                'page_home_show_journal' => '0',
+            ]))
+            ->assertRedirect(route('admin.page-content.edit', ['tab' => 'home']))
+            ->assertSessionHas('success');
+
+        $this->get(route('home'))
+            ->assertOk()
+            ->assertDontSee('id="fz-home-featured"', false)
+            ->assertDontSee($product->name)
+            ->assertDontSee('class="fz-home-journal"', false)
+            ->assertDontSee($article->title);
+
+        $this->put(route('admin.page-content.update'), array_merge($values, [
+            'tab' => 'home',
+            'page_home_show_products' => '1',
+            'page_home_show_journal' => '1',
+        ]))
+            ->assertRedirect(route('admin.page-content.edit', ['tab' => 'home']))
+            ->assertSessionHas('success');
+
+        $this->get(route('home'))
+            ->assertOk()
+            ->assertSee('id="fz-home-featured"', false)
+            ->assertSee($product->name)
+            ->assertSee('class="fz-home-journal"', false)
+            ->assertSee($article->title);
     }
 
     public function test_homepage_cms_rejects_hero_images_outside_the_fixed_crop_ratio(): void
@@ -1855,6 +2069,7 @@ class FarzinStorefrontTest extends TestCase
                 'status' => 'active',
                 'is_featured' => '1',
                 'is_new' => '1',
+                'show_in_home_gallery' => '1',
                 'image' => UploadedFile::fake()->image('farzin-hood.png', 800, 600),
             ])
             ->assertRedirect(route('admin.products.edit', Product::query()->where('slug', 'farzin-hood-90')->firstOrFail()))
@@ -1871,9 +2086,181 @@ class FarzinStorefrontTest extends TestCase
         $image = ProductImage::query()->where('product_id', $product->id)->firstOrFail();
         Storage::disk('public')->assertExists($image->path);
 
+        $responsiveSrcset = $image->responsive_srcset;
+        $this->assertNotNull($responsiveSrcset, 'The uploaded image should expose generated responsive variants.');
+
         $this->get(route('product.show', $product->slug))
             ->assertOk()
             ->assertSee($product->name);
+
+        $this->get(route('home'))
+            ->assertOk()
+            ->assertSee($product->name)
+            ->assertSee('srcset="' . $responsiveSrcset . '"', false);
+
+        $this->get(route('shop.index'))
+            ->assertOk()
+            ->assertSee($product->name);
+
+        $this->get(route('categories.show', $category->slug))
+            ->assertOk()
+            ->assertSee($product->name);
+    }
+
+    public function test_admin_cannot_publish_a_product_without_a_usable_primary_image(): void
+    {
+        $admin = $this->admin();
+        $category = $this->category(['slug' => 'image-required-category']);
+
+        $this->actingAs($admin, 'admin')
+            ->from(route('admin.products.create'))
+            ->post(route('admin.products.store'), [
+                'category_id' => $category->id,
+                'name' => 'محصول بدون تصویر اصلی',
+                'slug' => 'product-without-primary-image',
+                'sku' => 'FAR-WITHOUT-IMAGE-01',
+                'price' => '12000000',
+                'stock' => '3',
+                'status' => 'active',
+                'is_featured' => '0',
+                'is_new' => '0',
+                'show_in_home_gallery' => '1',
+                'installment_enabled' => '0',
+            ])
+            ->assertRedirect(route('admin.products.create'))
+            ->assertSessionHasErrors('image');
+
+        $this->assertDatabaseMissing('products', [
+            'sku' => 'FAR-WITHOUT-IMAGE-01',
+        ]);
+
+        $draft = $this->product($category, [
+            'name' => 'پیش‌نویس بدون تصویر',
+            'slug' => 'draft-without-image',
+            'sku' => 'FAR-DRAFT-WITHOUT-IMAGE',
+            'status' => 'draft',
+            'show_in_home_gallery' => false,
+        ]);
+
+        $this->put(route('admin.products.update', $draft), [
+            'category_id' => $category->id,
+            'name' => $draft->name,
+            'slug' => $draft->slug,
+            'sku' => $draft->sku,
+            'price' => '10000000',
+            'stock' => '0',
+            'status' => 'active',
+            'is_featured' => '0',
+            'is_new' => '0',
+            'show_in_home_gallery' => '1',
+            'installment_enabled' => '0',
+        ])->assertSessionHasErrors('image');
+
+        $this->assertSame('draft', $draft->fresh()->status);
+    }
+
+    public function test_category_motion_media_picker_only_lists_available_files(): void
+    {
+        Storage::fake('public');
+        $admin = $this->admin();
+
+        Media::create([
+            'user_id' => $admin->id,
+            'disk' => 'public',
+            'path' => 'media/missing-category-preview.gif',
+            'filename' => 'missing-category-preview.gif',
+            'original_name' => 'missing-category-preview.gif',
+            'mime_type' => 'image/gif',
+            'extension' => 'gif',
+            'size' => 1024,
+        ]);
+
+        Storage::disk('public')->put('media/available-category-preview.gif', 'gif bytes');
+        Media::create([
+            'user_id' => $admin->id,
+            'disk' => 'public',
+            'path' => 'media/available-category-preview.gif',
+            'filename' => 'available-category-preview.gif',
+            'original_name' => 'available-category-preview.gif',
+            'mime_type' => 'image/gif',
+            'extension' => 'gif',
+            'size' => 1024,
+        ]);
+
+        $this->actingAs($admin, 'admin')
+            ->get(route('admin.categories.create'))
+            ->assertOk()
+            ->assertSee('available-category-preview.gif')
+            ->assertDontSee('missing-category-preview.gif');
+    }
+
+    public function test_admin_cannot_publish_products_in_inactive_categories(): void
+    {
+        Storage::fake('public');
+
+        $admin = $this->admin();
+        $activeCategory = $this->category(['slug' => 'public-category']);
+        $inactiveCategory = $this->category([
+            'name' => 'دسته غیرفعال',
+            'slug' => 'inactive-product-category',
+            'is_active' => false,
+        ]);
+
+        $this->actingAs($admin, 'admin')
+            ->from(route('admin.products.create'))
+            ->post(route('admin.products.store'), [
+                'category_id' => $inactiveCategory->id,
+                'name' => 'محصول دسته غیرفعال',
+                'slug' => 'product-in-inactive-category',
+                'sku' => 'FAR-INACTIVE-CATEGORY-01',
+                'price' => '12000000',
+                'stock' => '3',
+                'status' => 'active',
+                'is_featured' => '0',
+                'is_new' => '0',
+                'show_in_home_gallery' => '1',
+                'installment_enabled' => '0',
+                'image' => UploadedFile::fake()->image('inactive-category-product.jpg', 1200, 900),
+            ])
+            ->assertRedirect(route('admin.products.create'))
+            ->assertSessionHasErrors('category_id');
+
+        $this->assertDatabaseMissing('products', [
+            'sku' => 'FAR-INACTIVE-CATEGORY-01',
+        ]);
+
+        $draft = $this->product($activeCategory, [
+            'name' => 'پیش‌نویس برای تغییر دسته',
+            'slug' => 'draft-for-category-change',
+            'sku' => 'FAR-DRAFT-CATEGORY-CHANGE',
+            'status' => 'draft',
+            'show_in_home_gallery' => false,
+        ]);
+
+        ProductImage::create([
+            'product_id' => $draft->id,
+            'path' => 'https://cdn.example.test/draft-category-change.webp',
+            'alt' => $draft->name,
+            'sort_order' => 0,
+            'is_primary' => true,
+        ]);
+
+        $this->put(route('admin.products.update', $draft), [
+            'category_id' => $inactiveCategory->id,
+            'name' => $draft->name,
+            'slug' => $draft->slug,
+            'sku' => $draft->sku,
+            'price' => '10000000',
+            'stock' => '0',
+            'status' => 'active',
+            'is_featured' => '0',
+            'is_new' => '0',
+            'show_in_home_gallery' => '1',
+            'installment_enabled' => '0',
+        ])->assertSessionHasErrors('category_id');
+
+        $this->assertSame($activeCategory->id, $draft->fresh()->category_id);
+        $this->assertSame('draft', $draft->fresh()->status);
     }
 
     public function test_admin_cannot_upload_a_low_resolution_product_image(): void
@@ -3350,6 +3737,13 @@ class FarzinStorefrontTest extends TestCase
             'price' => 10000000,
             'stock' => 4,
         ]);
+        ProductImage::create([
+            'product_id' => $product->id,
+            'path' => 'https://cdn.example.test/original-hood.webp',
+            'alt' => 'Original Hood',
+            'sort_order' => 0,
+            'is_primary' => true,
+        ]);
 
         $this->actingAs($admin, 'admin')
             ->put(route('admin.products.update', $product), [
@@ -4313,6 +4707,47 @@ class FarzinStorefrontTest extends TestCase
             ->assertSee('افزودن آدرس');
     }
 
+    public function test_public_shop_uses_its_textual_banner_fallback_when_the_saved_image_is_missing(): void
+    {
+        Storage::fake('public');
+
+        StorefrontSetting::query()->create([
+            'key' => 'shop_banner_image',
+            'value' => 'storefront/deleted-public-shop-banner.webp',
+        ]);
+        StorefrontSetting::query()->create([
+            'key' => 'shop_banner_title',
+            'value' => 'فروشگاه بدون تصویر بنر',
+        ]);
+
+        $this->get(route('shop.index'))
+            ->assertOk()
+            ->assertSee('فروشگاه بدون تصویر بنر')
+            ->assertDontSee('/storage/storefront/deleted-public-shop-banner.webp');
+    }
+
+    public function test_storefront_settings_editor_does_not_preview_deleted_banner_or_brand_logo_files(): void
+    {
+        Storage::fake('public');
+
+        StorefrontSetting::query()->create([
+            'key' => 'shop_banner_image',
+            'value' => 'storefront/deleted-shop-banner.webp',
+        ]);
+        StorefrontSetting::query()->create([
+            'key' => 'brand_logo',
+            'value' => 'brand/deleted-logo.webp',
+        ]);
+
+        $this->actingAs($this->admin(), 'admin')
+            ->get(route('admin.storefront-settings.edit'))
+            ->assertOk()
+            ->assertDontSee('/storage/storefront/deleted-shop-banner.webp')
+            ->assertDontSee('/storage/brand/deleted-logo.webp')
+            ->assertDontSee('لوگوی فعلی برند')
+            ->assertSee('هنوز بنری انتخاب نشده');
+    }
+
     public function test_admin_can_manage_store_banner_and_contact_channels(): void
     {
         Storage::fake('public');
@@ -4615,6 +5050,7 @@ class FarzinStorefrontTest extends TestCase
 
     public function test_admin_published_products_flow_to_customer_pages_and_homepage_selection_is_respected(): void
     {
+        Storage::fake('public');
         $admin = $this->admin();
         $category = $this->category([
             'name' => 'دسته محصولات منتشرشده',
@@ -4636,6 +5072,7 @@ class FarzinStorefrontTest extends TestCase
                 'is_new' => '0',
                 'show_in_home_gallery' => '1',
                 'installment_enabled' => '0',
+                'image' => UploadedFile::fake()->image('homepage-selected-product.jpg', 1200, 900),
             ]);
 
         $selectedResponse->assertRedirect();
@@ -4645,11 +5082,8 @@ class FarzinStorefrontTest extends TestCase
             ->where('sku', 'FAR-HOME-SELECTED-01')
             ->firstOrFail();
 
-        ProductImage::create([
+        $this->assertDatabaseHas('product_images', [
             'product_id' => $selected->id,
-            'path' => 'https://cdn.example.test/homepage-selected-product.webp',
-            'alt' => $selected->name,
-            'sort_order' => 0,
             'is_primary' => true,
         ]);
 
@@ -4668,6 +5102,7 @@ class FarzinStorefrontTest extends TestCase
                 'is_new' => '0',
                 'show_in_home_gallery' => '0',
                 'installment_enabled' => '0',
+                'image' => UploadedFile::fake()->image('shop-only-product.jpg', 1200, 900),
             ]);
 
         $hiddenResponse->assertRedirect();
@@ -4677,11 +5112,8 @@ class FarzinStorefrontTest extends TestCase
             ->where('sku', 'FAR-SHOP-ONLY-01')
             ->firstOrFail();
 
-        ProductImage::create([
+        $this->assertDatabaseHas('product_images', [
             'product_id' => $shopOnly->id,
-            'path' => 'https://cdn.example.test/shop-only-product.webp',
-            'alt' => $shopOnly->name,
-            'sort_order' => 0,
             'is_primary' => true,
         ]);
 
@@ -4703,6 +5135,63 @@ class FarzinStorefrontTest extends TestCase
         $this->get(route('product.show', $shopOnly->slug))
             ->assertOk()
             ->assertSee($shopOnly->name);
+    }
+
+    public function test_public_catalog_falls_back_to_the_next_available_product_image(): void
+    {
+        Storage::fake('public');
+        $category = $this->category([
+            'name' => 'دسته محصولات دارای گالری',
+            'slug' => 'products-with-image-fallback',
+        ]);
+        $product = $this->product($category, [
+            'name' => 'هود با تصویر اصلی حذف‌شده',
+            'slug' => 'hood-with-missing-primary-image',
+            'sku' => 'FAR-MISSING-PRIMARY-FALLBACK',
+            'is_new' => true,
+            'show_in_home_gallery' => false,
+        ]);
+
+        ProductImage::create([
+            'product_id' => $product->id,
+            'path' => 'products/deleted-primary-image.webp',
+            'alt' => 'تصویر اصلی حذف‌شده',
+            'sort_order' => 0,
+            'is_primary' => true,
+        ]);
+
+        Storage::disk('public')->put('products/available-fallback-image.webp', 'image bytes');
+
+        ProductImage::create([
+            'product_id' => $product->id,
+            'path' => 'products/available-fallback-image.webp',
+            'alt' => 'تصویر جایگزین سالم',
+            'sort_order' => 1,
+            'is_primary' => false,
+        ]);
+
+        $this->get(route('home'))
+            ->assertOk()
+            ->assertSee($product->name)
+            ->assertSee('/storage/products/available-fallback-image.webp')
+            ->assertDontSee('/storage/products/deleted-primary-image.webp');
+
+        $this->get(route('shop.index'))
+            ->assertOk()
+            ->assertSee($product->name)
+            ->assertSee('/storage/products/available-fallback-image.webp')
+            ->assertDontSee('/storage/products/deleted-primary-image.webp');
+
+        $this->get(route('categories.show', $category->slug))
+            ->assertOk()
+            ->assertSee($product->name)
+            ->assertSee('/storage/products/available-fallback-image.webp')
+            ->assertDontSee('/storage/products/deleted-primary-image.webp');
+
+        $this->get(route('product.show', $product->slug))
+            ->assertOk()
+            ->assertSee('/storage/products/available-fallback-image.webp')
+            ->assertDontSee('/storage/products/deleted-primary-image.webp');
     }
 
     public function test_admin_cannot_create_a_public_product_with_reserved_preview_sku_prefix(): void
@@ -4814,6 +5303,65 @@ class FarzinStorefrontTest extends TestCase
             ->assertDontSee('منتخب فرزین')
             ->assertDontSee('id="fz-home-discounts-title"', false)
             ->assertDontSee('id="fz-home-newest-title"', false);
+    }
+
+    public function test_homepage_omits_missing_banner_and_technology_files_instead_of_rendering_broken_images(): void
+    {
+        Storage::fake('public');
+
+        foreach ([
+            'page_home_banner_1_image_url' => 'home/banners/deleted-public-banner.webp',
+            'page_home_banner_1_title' => 'بنر دارای فایل حذف‌شده',
+            'page_home_hero_image_url' => 'home/hero/deleted-public-hero.webp',
+            'page_home_technology_image_url' => 'home/technology/deleted-public-technology.webp',
+        ] as $key => $value) {
+            StorefrontSetting::query()->create(compact('key', 'value'));
+        }
+
+        app(\App\Services\StorefrontPageContent::class)->clearCache();
+
+        $this->get(route('home'))
+            ->assertOk()
+            ->assertSee('fz-market-hero', false)
+            ->assertDontSee('/storage/home/banners/deleted-public-banner.webp')
+            ->assertDontSee('/storage/home/hero/deleted-public-hero.webp')
+            ->assertDontSee('/storage/home/technology/deleted-public-technology.webp')
+            ->assertDontSee('بنر دارای فایل حذف‌شده');
+    }
+
+    public function test_homepage_content_editor_only_previews_existing_uploaded_images(): void
+    {
+        Storage::fake('public');
+        Storage::disk('public')->put('home/banners/available-banner.webp', 'image bytes');
+
+        StorefrontSetting::query()->create([
+            'key' => 'page_home_hero_image_url',
+            'value' => 'home/hero/deleted-hero.webp',
+        ]);
+        StorefrontSetting::query()->create([
+            'key' => 'page_home_banner_1_image_url',
+            'value' => 'home/banners/deleted-banner.webp',
+        ]);
+        StorefrontSetting::query()->create([
+            'key' => 'page_home_banner_2_image_url',
+            'value' => 'home/banners/available-banner.webp',
+        ]);
+        StorefrontSetting::query()->create([
+            'key' => 'page_home_technology_image_url',
+            'value' => 'home/technology/deleted-technology.webp',
+        ]);
+
+        app(\App\Services\StorefrontPageContent::class)->clearCache();
+
+        $this->actingAs($this->admin(), 'admin')
+            ->get(route('admin.page-content.edit', ['tab' => 'home']))
+            ->assertOk()
+            ->assertSee('/storage/home/banners/available-banner.webp')
+            ->assertDontSee('/storage/home/hero/deleted-hero.webp')
+            ->assertDontSee('/storage/home/banners/deleted-banner.webp')
+            ->assertDontSee('/storage/home/technology/deleted-technology.webp')
+            ->assertSee('id="page_home_banner_1_image"', false)
+            ->assertSee('id="page_home_banner_2_image"', false);
     }
 
     public function test_homepage_cms_exposes_four_independent_managed_banner_slots(): void

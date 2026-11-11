@@ -121,8 +121,8 @@ class ProductController extends Controller
                     ->select(['id', 'product_id', 'media_id', 'path', 'alt', 'sort_order', 'is_primary'])
                     ->orderByDesc('is_primary')
                     ->orderBy('sort_order')
-                    ->limit(1),
-                'images.media:id,path',
+                    ->limit(5),
+                'images.media:id,path,disk',
                 'variants:id,product_id,type,stock',
             ])
             ->latest()

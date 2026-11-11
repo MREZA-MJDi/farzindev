@@ -5,23 +5,31 @@ The target VPS is expected to host several independent projects. Farzin must the
 ## Runtime asset graph
 
 - `resources/js/app.js` is the only shared browser entry. It owns Alpine and small common interactions.
-- `resources/css/app.css` and `resources/css/responsive.css` are the common storefront styles. The admin uses a separate `resources/css/admin.css` entry.
-- The homepage alone loads `resources/js/home.js` and `resources/css/home.css`; neither should be added to the shared app layout.
-- The product-image editor and category GIF preview are loaded with dynamic imports only when their matching DOM controls are present.
-- The optional storefront motion module uses native `IntersectionObserver` and the Web Animations API; it is not a GSAP/Lenis dependency and must not be described or bundled as one.
-- Blog editor code is also a page-only dynamic chunk; ordinary storefront pages and unrelated admin screens must not download editor code.
+- `resources/css/storefront.css` is the shared public stylesheet entry; it bundles the base, responsive and Farzin storefront source styles into one production asset.
+- The homepage alone loads `resources/js/home.js` dynamically and `resources/css/home.css`; neither should be added to the shared app layout.
+- The admin uses a separate `resources/css/admin.css` entry.
+- `resources/css/blog.css` is loaded only by public journal pages.
+- `resources/css/product.css` is loaded only by product slug pages; keep gallery and product-detail layout rules out of Blade inline style blocks.
+- The product-image editor, homepage preview, blog appearance editor, rich-text editor and category GIF preview are dynamically imported only when their matching DOM controls are present.
+- Optional storefront motion uses native `IntersectionObserver` and the Web Animations API; it is not a GSAP/Lenis dependency and must not be described or bundled as one.
+- Page-scoped chunks must remain separate from the shared app bundle so unrelated routes do not download their code.
 
-The production build runs a gzip-size gate for the six intentional entrypoints. The initial limits are conservative budgets, not performance targets to spend unnecessarily: keep optional tools in their own chunks and reduce a shared entry before raising a budget.
+The production build enforces gzip budgets for all intentional CSS entries and page-scoped JavaScript chunks. The limits are ceilings, not targets to spend unnecessarily: keep optional tools in their own chunks and reduce a shared entry before raising a budget.
 
-| Entry | Gzip budget |
+| Asset | Gzip budget |
 |---|---:|
 | Shared application JavaScript | 45 KB |
 | Homepage-only JavaScript | 8 KB |
-| Shared storefront CSS | 32 KB |
-| Shared responsive CSS | 8 KB |
-| Homepage-only CSS | 18 KB |
+| Admin image editor chunk | 18 KB |
+| Admin homepage preview chunk | 5 KB |
+| Admin blog appearance chunk | 7 KB |
+| Admin rich-text editor chunk | 16 KB |
+| Category media preview chunk | 12 KB |
+| Shared storefront CSS | 60 KB |
+| Homepage-only CSS | 15 KB |
 | Admin-only CSS | 24 KB |
-| Blog-only CSS | 5 KB |
+| Blog-only CSS | 5.5 KB |
+| Product-detail-only CSS | 3.5 KB |
 
 Build and verify the production asset graph:
 

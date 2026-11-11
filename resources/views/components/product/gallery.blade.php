@@ -360,7 +360,7 @@
                         @if($image->responsive_srcset) srcset="{{ $image->responsive_srcset }}" sizes="80px" @endif
                         alt="{{ ($image->alt ?: $productName) }}"
                         loading="lazy"
-                        class="h-full w-full object-cover transition duration-500 group-hover:scale-105"
+                        class="h-full w-full object-contain p-1 transition duration-300"
                     >
 
                 </button>
@@ -419,7 +419,7 @@
                             sizes="80px"
                             :alt="images[imageIndex].alt"
                             loading="lazy"
-                            class="h-full w-full object-cover transition duration-300 group-hover:scale-105"
+                            class="h-full w-full object-contain p-1 transition duration-300"
                         >
 
                     </button>

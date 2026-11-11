@@ -245,6 +245,8 @@ class BlogPostController extends Controller
             ->latest('id')
             ->limit(36)
             ->get(['id', 'path', 'disk', 'original_name', 'alt', 'mime_type'])
+            ->filter(fn (Media $media) => filled($media->url))
+            ->values()
             ->all();
     }
 

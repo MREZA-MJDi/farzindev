@@ -6,7 +6,7 @@
 ])
 
 @php
-    $imageModel = $product->images?->first();
+    $imageModel = $product->primaryImage();
     $image = $imageModel?->url;
     $imageAlt = $product->name;
     $imageSrcset = $imageModel?->responsive_srcset;
@@ -62,12 +62,13 @@
             @if($image)
                 <img
                     src="{{ $image }}"
+                    @if($imageSrcset) srcset="{{ $imageSrcset }}" sizes="(max-width: 639px) 50vw, (max-width: 1023px) 33vw, 280px" @endif
                     alt="{{ $imageAlt }}"
                     width="800"
                     height="600"
                     loading="lazy"
                     decoding="async"
-                    class="farzin-product-card__image h-full w-full object-cover"
+                    class="farzin-product-card__image h-full w-full object-contain"
                 >
             @else
                 <span class="farzin-product-card__image-fallback" aria-label="تصویر محصول در دسترس نیست">

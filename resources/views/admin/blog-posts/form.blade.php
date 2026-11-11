@@ -197,6 +197,9 @@
                 </select>
                 @error('status')<span class="mt-1 block text-xs text-red-600">{{ $message }}</span>@enderror
             </label>
+            <p class="rounded-xl border border-[var(--admin-border)] bg-[var(--admin-surface-soft)] px-3 py-3 text-xs leading-6 text-[var(--admin-muted)]" role="note">
+                فقط مقاله‌ای در صفحه اصلی و مجله نمایش داده می‌شود که وضعیت آن «منتشرشده» باشد و زمان انتشارش رسیده باشد. پیش‌نویس و مقاله زمان‌بندی‌شده تا زمان انتشار عمومی نیستند.
+            </p>
             <label class="block text-sm text-[var(--admin-text)]">زمان انتشار
                 <input type="datetime-local" name="published_at" value="{{ old('published_at', $post->published_at?->format('Y-m-d\TH:i')) }}" class="admin-input mt-2 w-full" dir="ltr">
                 <span class="mt-1 block text-xs leading-6 text-[var(--admin-muted)]">برای زمان‌بندی، وضعیت را منتشرشده و زمان آینده انتخاب کنید.</span>
@@ -245,7 +248,7 @@
         <section class="admin-card space-y-4 p-5">
             <div>
                 <h2 class="text-sm font-bold text-[var(--admin-text)]">تصویر شاخص مقاله</h2>
-                <p class="mt-1 text-xs leading-6 text-[var(--admin-muted)]">یک تصویر برای کارت مجله و سربرگ مقاله؛ کادر ۱۶:۹ را دقیق تنظیم کن.</p>
+                <p class="mt-1 text-xs leading-6 text-[var(--admin-muted)]">پس از انتشار، مقاله در مجله و بخش مقاله‌های صفحه اصلی نمایش داده می‌شود. تصویر شاخص اختیاری است؛ اگر انتخاب نشود، کارت با طرح جایگزین نمایش داده خواهد شد. نسبت پیشنهادی تصویر ۱۶:۹ است.</p>
             </div>
 
             <div class="admin-image-preview aspect-video">

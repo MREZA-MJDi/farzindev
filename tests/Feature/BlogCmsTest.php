@@ -9,7 +9,9 @@ use App\Models\StorefrontSetting;
 use App\Models\User;
 use App\Services\Content\RichTextSanitizer;
 use App\Services\Seo\SeoSettings;
+use App\Services\StorefrontPageContent;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
 class BlogCmsTest extends TestCase
@@ -75,6 +77,131 @@ class BlogCmsTest extends TestCase
             ->assertDontSee(route('blog.show', $scheduled->slug), false);
     }
 
+    public function test_published_article_without_cover_is_visible_on_homepage_and_blog_pages(): void
+    {
+        $admin = User::factory()->create(['role' => 'admin']);
+
+        $this->actingAs($admin, 'admin')
+            ->post(route('admin.blog-posts.store'), [
+                'title' => 'راهنمای انتخاب سینک بدون تصویر جلد',
+                'slug' => 'sink-guide-without-cover',
+                'excerpt' => 'راهنمای انتشار مقاله بدون تصویر شاخص.',
+                'body' => 'این مقاله پس از انتشار باید در صفحه اصلی و مجله قابل مشاهده باشد.',
+                'seo_robots' => 'noindex,nofollow',
+                'status' => 'published',
+            ])
+            ->assertRedirect()
+            ->assertSessionHas('success');
+
+        $post = BlogPost::query()
+            ->where('slug', 'sink-guide-without-cover')
+            ->firstOrFail();
+
+        $this->assertNull($post->cover_image);
+        $this->assertNotNull($post->published_at);
+
+        app(StorefrontPageContent::class)->clearCache();
+
+        $this->get(route('home'))
+            ->assertOk()
+            ->assertSee('fz-home-journal', false)
+            ->assertSee($post->title)
+            ->assertSee('fz-home-article-card__media-fallback', false)
+            ->assertSee('data-blog-article-card', false)
+            ->assertDontSee('src=""', false);
+
+        $this->get(route('blog.index'))
+            ->assertOk()
+            ->assertSee($post->title)
+            ->assertSee('blog-art-fallback--small', false)
+            ->assertSee('data-blog-article-card', false);
+
+        $this->get(route('blog.show', $post->slug))
+            ->assertOk()
+            ->assertSee($post->title)
+            ->assertSee('این مقاله پس از انتشار باید در صفحه اصلی و مجله قابل مشاهده باشد.');
+    }
+
+    public function test_missing_cover_file_uses_fallback_instead_of_a_broken_image(): void
+    {
+        Storage::fake('public');
+
+        $post = BlogPost::create([
+            'title' => 'مقاله با تصویر جلد حذف‌شده',
+            'slug' => 'article-with-missing-cover-file',
+            'body' => 'مقاله باید بدون تصویر شکسته قابل مشاهده بماند.',
+            'status' => 'published',
+            'published_at' => now(),
+            'is_featured' => true,
+            'cover_image' => 'blog/missing-cover.webp',
+        ]);
+
+        $this->assertNull($post->cover_image_url);
+        $this->assertNull($post->cover_image_srcset);
+
+        $this->get(route('home'))
+            ->assertOk()
+            ->assertSee($post->title)
+            ->assertSee('fz-home-article-card__media-fallback', false)
+            ->assertDontSee('/storage/blog/missing-cover.webp');
+
+        $this->get(route('blog.index'))
+            ->assertOk()
+            ->assertSee($post->title)
+            ->assertSee('blog-art-fallback', false)
+            ->assertDontSee('/storage/blog/missing-cover.webp');
+
+        $this->get(route('blog.show', $post->slug))
+            ->assertOk()
+            ->assertSee($post->title)
+            ->assertDontSee('/storage/blog/missing-cover.webp');
+    }
+
+    public function test_blog_archive_and_category_pagination_keep_all_published_articles_reachable(): void
+    {
+        $category = BlogTerm::create([
+            'type' => BlogTerm::TYPE_CATEGORY,
+            'name' => 'راهنمای انتخاب',
+            'slug' => 'pagination-buying-guides',
+            'is_active' => true,
+        ]);
+
+        $titles = [];
+
+        for ($index = 1; $index <= 10; $index++) {
+            $post = BlogPost::create([
+                'title' => 'مقاله صفحه‌بندی ' . str_pad((string) $index, 2, '0', STR_PAD_LEFT),
+                'slug' => 'pagination-article-' . $index,
+                'body' => 'متن مقاله برای آزمون صفحه‌بندی مجله.',
+                'status' => 'published',
+                'published_at' => now()->subMinutes($index),
+            ]);
+            $post->terms()->attach($category->id);
+            $titles[] = $post->title;
+        }
+
+        $this->get(route('blog.index'))
+            ->assertOk()
+            ->assertSee($titles[0])
+            ->assertSee('page=2', false)
+            ->assertDontSee($titles[9]);
+
+        $this->get(route('blog.index', ['page' => 2]))
+            ->assertOk()
+            ->assertSee($titles[9])
+            ->assertDontSee($titles[0]);
+
+        $this->get(route('blog.category', $category->slug))
+            ->assertOk()
+            ->assertSee('page=2', false)
+            ->assertSee($titles[0]);
+
+        $this->get(route('blog.category', ['slug' => $category->slug, 'page' => 2]))
+            ->assertOk()
+            ->assertSee($titles[9])
+            ->assertDontSee($titles[0]);
+    }
+
     public function test_admin_can_create_edit_and_publish_a_blog_article(): void
     {
         $admin = User::factory()->create(['role' => 'admin']);
@@ -83,6 +210,12 @@ class BlogCmsTest extends TestCase
             ->get(route('admin.blog-posts.index'))
             ->assertOk()
             ->assertSee('مقالات بلاگ');
+
+        $this->actingAs($admin, 'admin')
+            ->get(route('admin.blog-posts.create'))
+            ->assertOk()
+            ->assertSee('فقط مقاله‌ای در صفحه اصلی و مجله نمایش داده می‌شود')
+            ->assertSee('پیش‌نویس و مقاله زمان‌بندی‌شده تا زمان انتشار عمومی نیستند');
 
         $this->actingAs($admin, 'admin')
             ->post(route('admin.blog-posts.store'), [
@@ -402,7 +535,7 @@ class BlogCmsTest extends TestCase
             ->assertSee('blog-masthead', false)
             ->assertSee('blog-featured-card', false)
             ->assertSee('blog-article-card', false)
-            ->assertSee('FARZIN JOURNAL')
+            ->assertSee('مجله فرزین')
             ->assertSee($featured->title)
             ->assertSee('تازه‌های مجله');
     }

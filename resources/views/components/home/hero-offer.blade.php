@@ -1,7 +1,7 @@
 @props(['product'])
 
 @php
-    $image = $product->images?->first();
+    $image = $product->primaryImage();
 @endphp
 
 <aside class="fz-home-hero-offer" aria-label="پیشنهاد فرزین، محصول موجود">

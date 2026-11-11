@@ -57,13 +57,11 @@ class HomeController extends Controller
                 ->orderByDesc('is_primary')
                 ->orderBy('sort_order')
                 ->orderBy('id')
-                ->limit(1),
-            'images.media:id,path',
+                    ->limit(5),
+            'images.media:id,path,disk',
         ];
 
-        $hasPublicImage = static fn (Product $product): bool => $product->images->contains(
-            static fn ($image): bool => filled($image->url)
-        );
+        $hasPublicImage = static fn (Product $product): bool => $product->primaryImage() !== null;
 
         $isPurchasable = static fn (Product $product): bool =>
             ProductPurchaseRules::isAvailable($product, $product->variants);
@@ -93,11 +91,11 @@ class HomeController extends Controller
                                 ->select(['id', 'product_id', 'media_id', 'path', 'alt', 'sort_order', 'is_primary'])
                                 ->orderByDesc('is_primary')
                                 ->orderBy('sort_order')
-                                ->limit(1),
-                            'images.media:id,path',
+                                ->orderBy('id'),
+                            'images.media:id,path,disk',
                         ])
                         ->orderByDesc('updated_at')
-                        ->limit(1);
+                        ->limit(5);
                 },
             ])
             ->withCount([
@@ -110,7 +108,7 @@ class HomeController extends Controller
             ->get();
 
         foreach ($categories as $category) {
-            $fallbackImage = $category->products->first()?->images->first();
+            $fallbackImage = $category->products->first()?->primaryImage();
             $category->setAttribute(
                 'home_category_image_url',
                 $category->image_url ?: $fallbackImage?->url
@@ -287,9 +285,12 @@ class HomeController extends Controller
                 return $path;
             }
 
-            return Storage::disk('public')->url(
-                preg_replace('#^(public/|storage/)#', '', ltrim($path, '/')) ?? $path
-            );
+            $publicDisk = Storage::disk('public');
+            $storagePath = preg_replace('#^(public/|storage/)#', '', ltrim($path, '/')) ?? $path;
+
+            return $publicDisk->exists($storagePath)
+                ? $publicDisk->url($storagePath)
+                : null;
         };
 
         $safeBannerUrl = static function (?string $target): string {
@@ -344,19 +345,18 @@ class HomeController extends Controller
             ]]);
         }
 
+        // Match the public journal archive: publication controls visibility,
+        // while SEO directives control indexing rather than customer discovery.
+        // Cover images are optional in the CMS; the homepage renders a designed
+        // fallback when an editor publishes an article without one.
         $blogPosts = BlogPost::query()
             ->published()
-            ->indexable()
-            ->whereNotNull('cover_image')
-            ->where('cover_image', '<>', '')
-            ->with(['author:id,name', 'terms:id,type,name,slug'])
+            ->with(['terms:id,type,name,slug'])
             ->orderByDesc('is_featured')
             ->orderByDesc('published_at')
             ->orderByDesc('id')
-            ->limit(6)
+            ->limit(3)
             ->get()
-            ->filter(static fn (BlogPost $post): bool => filled($post->cover_image_url))
-            ->take(3)
             ->values();
 
         // The featured shelf contains only editor-selected products. The other

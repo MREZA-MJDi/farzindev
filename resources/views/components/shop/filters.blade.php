@@ -248,7 +248,7 @@
         <div>
 
             <p class="text-[10px] uppercase tracking-[0.18em] text-[var(--livora-accent)]">
-                DISCOVERY
+                فیلتر و جستجو
             </p>
 
             <h3 class="mt-2 text-sm font-semibold">

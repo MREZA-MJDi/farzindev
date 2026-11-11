@@ -707,7 +707,11 @@
     justify-content: center;
     gap: .35rem;
 }
-.blog-pagination nav > div:first-child {
+.blog-pagination .farzin-paginator__layout {
+    justify-content: center;
+}
+
+.blog-pagination .farzin-paginator__summary {
     display: none;
 }
 .blog-pagination a,

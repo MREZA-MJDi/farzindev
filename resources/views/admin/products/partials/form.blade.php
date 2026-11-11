@@ -41,12 +41,16 @@
             $primaryImage = null;
 
             if ($editing) {
-                $primaryImage = $product->relationLoaded('images')
-                    ? ($product->images->firstWhere('is_primary', true) ?? $product->images->first())
+                $availableProductImages = $product->relationLoaded('images')
+                    ? $product->images->filter(fn ($image) => filled($image->url))->values()
                     : $product->images()
                         ->orderByDesc('is_primary')
                         ->orderBy('sort_order')
-                        ->first();
+                        ->get()
+                        ->filter(fn ($image) => filled($image->url))
+                        ->values();
+                $primaryImage = $availableProductImages->firstWhere('is_primary', true)
+                    ?? $availableProductImages->first();
             }
 
             $productImageUrl = $primaryImage?->url;
@@ -72,7 +76,7 @@
                 <img
                     id="product-image-preview"
                     data-image-editor-existing-preview
-                    src="{{ $productImageUrl ?: '' }}"
+                    @if($productImageUrl) src="{{ $productImageUrl }}" @endif
                     alt="{{ $primaryImage?->alt ?: ($product->name ?? 'تصویر محصول') }}"
                     class="admin-image {{ $productImageUrl ? '' : 'hidden' }}"
                 >
@@ -104,6 +108,9 @@
             <label for="image" class="admin-label">
                 {{ $editing ? 'تغییر تصویر' : 'انتخاب تصویر اصلی' }}
             </label>
+            <p class="mb-2 text-xs leading-6 text-[var(--admin-muted)]">
+                برای انتشار محصول در سایت، تصویر اصلی و یک دسته‌بندی فعال الزامی است. پیش‌نویس را می‌توانید بدون تصویر ذخیره کنید.
+            </p>
 
             <input
                 id="image"
@@ -131,7 +138,7 @@
                                     class="admin-checkbox h-4 w-4 shrink-0"
                                 >
                                 <span class="admin-media-choice-preview h-14 w-20 shrink-0 overflow-hidden rounded-lg">
-                                    <img src="{{ $mediaItem->url }}" alt="{{ $mediaItem->alt ?: $mediaItem->original_name }}" loading="lazy" class="h-full w-full object-cover">
+                                    <img src="{{ $mediaItem->url }}" alt="{{ $mediaItem->alt ?: $mediaItem->original_name }}" loading="lazy" class="h-full w-full object-contain p-1">
                                 </span>
                                 <span class="min-w-0">
                                     <span class="block truncate font-medium">{{ $mediaItem->alt ?: $mediaItem->original_name }}</span>
@@ -1248,7 +1255,7 @@
                     <span>
                         <span class="block text-sm font-semibold text-[var(--admin-text)]">نمایش در بخش محصولات منتخب صفحه اصلی</span>
                         <span class="mt-1 block text-xs leading-6 text-[var(--admin-muted)]">
-                            با فعال‌کردن این گزینه، محصول در بخش محصولات منتخب صفحه اصلی هم نمایش داده می‌شود. محصول برای حضور در فروشگاه و صفحه دسته‌بندی باید وضعیت «فعال» داشته باشد.
+                            این گزینه برای نمایش محصول در بخش محصولات منتخب صفحه اصلی است. اگر خاموش باشد، محصول فقط در فروشگاه و دسته‌بندی خودش نمایش داده می‌شود. برای انتشار عمومی، وضعیت محصول، تصویر اصلی و دسته‌بندی فعال هم لازم است.
                         </span>
                     </span>
                 </label>

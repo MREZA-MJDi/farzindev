@@ -88,6 +88,7 @@
             <div class="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
 
                 @foreach($media as $item)
+                    @php($itemUrl = $item->url)
 
                     <div
                         class="group overflow-hidden rounded-3xl border border-[var(--admin-border)] bg-[var(--admin-surface)] transition-all duration-300 hover:-translate-y-1 hover:shadow-lg"
@@ -96,53 +97,38 @@
                         {{-- Preview --}}
                         <div class="aspect-square overflow-hidden bg-[var(--admin-bg)]">
 
-                            @if($item->is_video)
-
-                                <video
-                                    src="{{ $item->url }}"
-                                    class="h-full w-full bg-[var(--admin-surface)] object-contain"
-                                    controls muted playsinline preload="metadata"
-                                    aria-label="پیش‌نمایش {{ $item->original_name }}"
-                                ></video>
-
-                            @elseif($item->is_image)
-
-                                <img
-                                    src="{{ $item->url }}"
-                                    alt="{{ $item->alt ?: $item->original_name }}"
-                                    class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-                                    loading="lazy"
-                                >
-
-                            @else
-
-                                <div class="flex h-full flex-col items-center justify-center px-4 text-center">
-
-                                    <div class="flex h-14 w-14 items-center justify-center rounded-2xl bg-[var(--admin-surface)] text-[var(--admin-muted)]">
-
-                                        <svg
-                                            xmlns="http://www.w3.org/2000/svg"
-                                            fill="none"
-                                            viewBox="0 0 24 24"
-                                            stroke-width="1.5"
-                                            stroke="currentColor"
-                                            class="h-7 w-7"
-                                        >
-                                            <path
-                                                stroke-linecap="round"
-                                                stroke-linejoin="round"
-                                                d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5A3.375 3.375 0 0 0 10.125 2.25H8.25m2.25 0H6.375A2.625 2.625 0 0 0 3.75 4.875v14.25a2.625 2.625 0 0 0 2.625 2.625h11.25a2.625 2.625 0 0 0 2.625-2.625V14.25M10.5 2.25V5.625A2.625 2.625 0 0 0 13.125 8.25H16.5"
-                                            />
-                                        </svg>
-
+                            @if($itemUrl)
+                                @if($item->is_video)
+                                    <video
+                                        src="{{ $itemUrl }}"
+                                        class="h-full w-full bg-[var(--admin-surface)] object-contain"
+                                        controls muted playsinline preload="metadata"
+                                        aria-label="پیش‌نمایش {{ $item->original_name }}"
+                                    ></video>
+                                @elseif($item->is_image)
+                                    <img
+                                        src="{{ $itemUrl }}"
+                                        alt="{{ $item->alt ?: $item->original_name }}"
+                                        class="h-full w-full object-contain transition-transform duration-500 group-hover:scale-105"
+                                        loading="lazy"
+                                    >
+                                @else
+                                    <div class="flex h-full flex-col items-center justify-center px-4 text-center">
+                                        <div class="flex h-14 w-14 items-center justify-center rounded-2xl bg-[var(--admin-surface)] text-[var(--admin-muted)]">
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-7 w-7" aria-hidden="true">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M7 3.75h7l4.25 4.5v12H7zM14 3.75v4.5h4.25M9.5 13h6M9.5 16.5h6"/>
+                                            </svg>
+                                        </div>
+                                        <span class="mt-3 text-xs font-semibold text-[var(--admin-text)]">فایل رسانه</span>
                                     </div>
-
-                                    <span class="mt-3 rounded-lg bg-[var(--admin-surface)] px-2 py-1 text-[10px] font-medium text-[var(--admin-text-soft)]">
-                                        {{ strtoupper($item->extension ?? 'FILE') }}
-                                    </span>
-
+                                @endif
+                            @else
+                                <div class="flex h-full flex-col items-center justify-center gap-3 px-4 text-center text-[var(--admin-muted)]">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-10 w-10" aria-hidden="true">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M4 7.5h16M6.5 4.5h11M6 7.5l1 12h10l1-12M9.5 11v5m5-5v5"/>
+                                    </svg>
+                                    <span class="text-xs font-semibold">فایل رسانه در دسترس نیست</span>
                                 </div>
-
                             @endif
 
                         </div>
@@ -190,14 +176,20 @@
                             {{-- Actions --}}
                             <div class="flex items-center gap-2">
 
-                                <a
-                                    href="{{ $item->url }}"
-                                    target="_blank"
-                                    rel="noopener"
-                                    class="flex-1 rounded-xl border border-[var(--admin-border)] px-3 py-2 text-center text-[10px] font-medium text-[var(--admin-text)] transition hover:bg-[var(--admin-bg)]"
-                                >
-                                    مشاهده
-                                </a>
+                                @if($itemUrl)
+                                    <a
+                                        href="{{ $itemUrl }}"
+                                        target="_blank"
+                                        rel="noopener"
+                                        class="flex-1 rounded-xl border border-[var(--admin-border)] px-3 py-2 text-center text-[10px] font-medium text-[var(--admin-text)] transition hover:bg-[var(--admin-bg)]"
+                                    >
+                                        مشاهده
+                                    </a>
+                                @else
+                                    <span class="flex-1 rounded-xl border border-[var(--admin-border)] px-3 py-2 text-center text-[10px] text-[var(--admin-muted)]">
+                                        فایل در دسترس نیست
+                                    </span>
+                                @endif
 
 
                                 <form

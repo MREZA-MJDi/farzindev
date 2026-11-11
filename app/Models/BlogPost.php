@@ -88,7 +88,11 @@ class BlogPost extends Model
             return null;
         }
 
-        return Storage::disk('public')->url($this->cover_image);
+        $disk = Storage::disk('public');
+
+        return $disk->exists($this->cover_image)
+            ? $disk->url($this->cover_image)
+            : null;
     }
 
     public function getReadingTimeAttribute(): int

@@ -224,7 +224,7 @@
                         >
                     @else
                         <div class="fz-home-technology__placeholder" aria-label="فضای تصویر فناوری فرزین">
-                            <span>FARZIN / ENGINEERING</span>
+                            <span>فرزین / مهندسی آشپزخانه</span>
                             <strong>فرم، عملکرد، جزئیات</strong>
                             <small>نگاهی نزدیک به جزئیات ساخت، انتخاب متریال و تجربه استفاده روزمره.</small>
                         </div>
@@ -251,31 +251,7 @@
 
                 <div class="fz-home-journal__grid">
                     @foreach($blogPosts->take(3) as $article)
-                        @php($articleCategory = $article->terms->firstWhere('type', 'category'))
-                        <article class="fz-home-article-card">
-                            <a class="fz-home-article-card__media" href="{{ route('blog.show', $article->slug) }}" aria-label="مطالعه {{ $article->title }}">
-                                <img
-                                    src="{{ $article->cover_image_url }}"
-                                    @if($article->cover_image_srcset) srcset="{{ $article->cover_image_srcset }}" sizes="(max-width: 767px) 88vw, (max-width: 1023px) 45vw, 360px" @endif
-                                    alt="{{ $article->cover_image_alt ?: $article->title }}"
-                                    width="900"
-                                    height="620"
-                                    loading="lazy"
-                                    decoding="async"
-                                >
-                            </a>
-                            <div class="fz-home-article-card__body">
-                                <div class="fz-home-article-card__meta">
-                                    @if($articleCategory)<span>{{ $articleCategory->name }}</span>@endif
-                                    <span>{{ \App\Helpers\PersianNumberHelper::format($article->reading_time) }} دقیقه مطالعه</span>
-                                </div>
-                                <h3><a href="{{ route('blog.show', $article->slug) }}">{{ $article->title }}</a></h3>
-                                @if(filled($article->excerpt))
-                                    <p>{{ \Illuminate\Support\Str::limit($article->excerpt, 125) }}</p>
-                                @endif
-                                <a class="fz-home-article-card__link" href="{{ route('blog.show', $article->slug) }}">ادامه مطلب <span aria-hidden="true">←</span></a>
-                            </div>
-                        </article>
+                        <x-blog.article-card :post="$article" variant="home" />
                     @endforeach
                 </div>
             </div>

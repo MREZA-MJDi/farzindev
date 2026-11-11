@@ -27,11 +27,14 @@ class ShopController extends Controller
         $query = Product::query()
             ->with([
                 'category',
-                // Product cards only render the first image; avoid loading full galleries for 12 rows.
+                // Load ordered image candidates so cards can skip missing files and use the next available image.
                 'images' => fn ($query) => $query
                     ->select(['id', 'product_id', 'media_id', 'path', 'alt', 'sort_order', 'is_primary'])
-                    ->limit(1),
-                'images.media:id,path',
+                    ->orderByDesc('is_primary')
+                    ->orderBy('sort_order')
+                    ->orderBy('id')
+                    ->limit(5),
+                'images.media:id,path,disk',
                 'variants:id,product_id,type,name,value,stock,price_adjustment,is_active',
             ])
             ->active()
@@ -217,13 +220,15 @@ class ShopController extends Controller
             ->pluck('value', 'key');
 
         $bannerPath = $settings->get('shop_banner_image');
+        $publicDisk = Storage::disk('public');
+        $bannerAvailable = filled($bannerPath) && $publicDisk->exists($bannerPath);
 
         return view('shop.index', [
             'products' => $products,
             'categories' => $categories,
             'shopBanner' => [
-                'image_url' => $bannerPath ? Storage::disk('public')->url($bannerPath) : null,
-                'image_srcset' => $bannerPath ? $images->srcset($bannerPath) : null,
+                'image_url' => $bannerAvailable ? $publicDisk->url($bannerPath) : null,
+                'image_srcset' => $bannerAvailable ? $images->srcset($bannerPath) : null,
                 'title' => $settings->get('shop_banner_title') ?: 'فروشگاه فرزین',
                 'subtitle' => $settings->get('shop_banner_subtitle') ?: 'هود و سینک آشپزخانه؛ انتخابی دقیق برای فضای شما.',
             ],

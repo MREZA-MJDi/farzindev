@@ -81,6 +81,7 @@ class StoreCategoryRequest extends FormRequest
                         && $media->mime_type === 'image/gif'
                         && $media->size <= 10 * 1024 * 1024;
                     $validVideo = $media
+                        && filled($media->url)
                         && in_array($media->mime_type, ['video/mp4', 'video/webm'], true)
                         && $media->size <= 30 * 1024 * 1024;
 

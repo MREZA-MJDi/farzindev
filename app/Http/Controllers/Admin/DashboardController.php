@@ -371,8 +371,11 @@ class DashboardController extends Controller
                 ->with([
                     'product.images' => fn ($query) => $query
                         ->select(['id', 'product_id', 'media_id', 'path', 'alt', 'sort_order', 'is_primary'])
+                        ->orderByDesc('is_primary')
+                        ->orderBy('sort_order')
+                        ->orderBy('id')
                         ->limit(1),
-                    'product.images.media:id,path',
+                    'product.images.media:id,path,disk',
                 ])
                 ->whereHas(
                     'order',

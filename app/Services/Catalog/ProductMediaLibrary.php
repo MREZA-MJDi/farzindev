@@ -38,6 +38,7 @@ class ProductMediaLibrary
             ->whereIn('id', $ids)
             ->whereIn('mime_type', self::IMAGE_MIME_TYPES)
             ->get()
+            ->filter(fn (Media $media) => filled($media->url))
             ->keyBy('id');
 
         if ($mediaById->count() !== count($ids)) {

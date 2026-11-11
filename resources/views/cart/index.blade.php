@@ -442,7 +442,7 @@
                                                             src="{{ $product->images->first()->url }}"
                                                             alt="{{ $product->name }}"
                                                             loading="lazy"
-                                                            class="h-full w-full object-cover transition duration-500 group-hover:scale-105"
+                                                            class="h-full w-full object-contain p-2 transition duration-300"
                                                         >
 
                                                     @else

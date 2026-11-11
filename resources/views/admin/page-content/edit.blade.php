@@ -63,14 +63,18 @@
 
                 @if($tab === 'home')
                     @php
+                        $publicMediaDisk = \Illuminate\Support\Facades\Storage::disk('public');
                         $heroImageValue = trim((string) ($values['page_home_hero_image_url'] ?? ''));
                         $heroImagePreview = '';
                         if ($heroImageValue !== '') {
-                            $heroImagePreview = \Illuminate\Support\Str::startsWith($heroImageValue, ['http://', 'https://', '//'])
-                                ? $heroImageValue
-                                : \Illuminate\Support\Facades\Storage::disk('public')->url(
-                                    preg_replace('#^(public/|storage/)#', '', ltrim($heroImageValue, '/')) ?? $heroImageValue
-                                );
+                            if (\Illuminate\Support\Str::startsWith($heroImageValue, ['http://', 'https://', '//'])) {
+                                $heroImagePreview = $heroImageValue;
+                            } else {
+                                $heroImagePath = preg_replace('#^(public/|storage/)#', '', ltrim($heroImageValue, '/')) ?? $heroImageValue;
+                                $heroImagePreview = $publicMediaDisk->exists($heroImagePath)
+                                    ? $publicMediaDisk->url($heroImagePath)
+                                    : '';
+                            }
                         }
 
                         $heroTitlePreview = trim((string) old(
@@ -206,7 +210,9 @@
                         <div class="grid gap-4 xl:grid-cols-2">
                             @php
                                 $bannerImagePath1 = trim((string) ($values['page_home_banner_1_image_url'] ?? ''));
-                                $bannerImageUrl1 = $bannerImagePath1 !== '' ? \Illuminate\Support\Facades\Storage::disk('public')->url($bannerImagePath1) : '';
+                                $bannerImageUrl1 = $bannerImagePath1 !== '' && $publicMediaDisk->exists($bannerImagePath1)
+                                    ? $publicMediaDisk->url($bannerImagePath1)
+                                    : '';
                             @endphp
                             <article class="rounded-2xl border border-[var(--admin-border)] bg-[var(--admin-surface-soft)] p-4">
                                 <div class="flex items-center justify-between gap-3">
@@ -235,7 +241,9 @@
                             </article>
                             @php
                                 $bannerImagePath2 = trim((string) ($values['page_home_banner_2_image_url'] ?? ''));
-                                $bannerImageUrl2 = $bannerImagePath2 !== '' ? \Illuminate\Support\Facades\Storage::disk('public')->url($bannerImagePath2) : '';
+                                $bannerImageUrl2 = $bannerImagePath2 !== '' && $publicMediaDisk->exists($bannerImagePath2)
+                                    ? $publicMediaDisk->url($bannerImagePath2)
+                                    : '';
                             @endphp
                             <article class="rounded-2xl border border-[var(--admin-border)] bg-[var(--admin-surface-soft)] p-4">
                                 <div class="flex items-center justify-between gap-3">
@@ -264,7 +272,9 @@
                             </article>
                             @php
                                 $bannerImagePath3 = trim((string) ($values['page_home_banner_3_image_url'] ?? ''));
-                                $bannerImageUrl3 = $bannerImagePath3 !== '' ? \Illuminate\Support\Facades\Storage::disk('public')->url($bannerImagePath3) : '';
+                                $bannerImageUrl3 = $bannerImagePath3 !== '' && $publicMediaDisk->exists($bannerImagePath3)
+                                    ? $publicMediaDisk->url($bannerImagePath3)
+                                    : '';
                             @endphp
                             <article class="rounded-2xl border border-[var(--admin-border)] bg-[var(--admin-surface-soft)] p-4">
                                 <div class="flex items-center justify-between gap-3">
@@ -293,7 +303,9 @@
                             </article>
                             @php
                                 $bannerImagePath4 = trim((string) ($values['page_home_banner_4_image_url'] ?? ''));
-                                $bannerImageUrl4 = $bannerImagePath4 !== '' ? \Illuminate\Support\Facades\Storage::disk('public')->url($bannerImagePath4) : '';
+                                $bannerImageUrl4 = $bannerImagePath4 !== '' && $publicMediaDisk->exists($bannerImagePath4)
+                                    ? $publicMediaDisk->url($bannerImagePath4)
+                                    : '';
                             @endphp
                             <article class="rounded-2xl border border-[var(--admin-border)] bg-[var(--admin-surface-soft)] p-4">
                                 <div class="flex items-center justify-between gap-3">
@@ -325,13 +337,16 @@
 
                     @php
                         $technologyImagePath = trim((string) ($values['page_home_technology_image_url'] ?? ''));
-                        $technologyImagePreview = $technologyImagePath === ''
-                            ? ''
-                            : (\Illuminate\Support\Str::startsWith($technologyImagePath, ['http://', 'https://', '//'])
-                                ? $technologyImagePath
-                                : \Illuminate\Support\Facades\Storage::disk('public')->url(
-                                    preg_replace('#^(public/|storage/)#', '', ltrim($technologyImagePath, '/')) ?? $technologyImagePath
-                                ));
+                        if ($technologyImagePath === '') {
+                            $technologyImagePreview = '';
+                        } elseif (\Illuminate\Support\Str::startsWith($technologyImagePath, ['http://', 'https://', '//'])) {
+                            $technologyImagePreview = $technologyImagePath;
+                        } else {
+                            $technologyImagePath = preg_replace('#^(public/|storage/)#', '', ltrim($technologyImagePath, '/')) ?? $technologyImagePath;
+                            $technologyImagePreview = $publicMediaDisk->exists($technologyImagePath)
+                                ? $publicMediaDisk->url($technologyImagePath)
+                                : '';
+                        }
                     @endphp
                     <section class="rounded-xl border border-[var(--admin-border)] bg-[var(--admin-surface-soft)] p-4 sm:p-5" aria-labelledby="home-technology-image-title">
                         <div class="mb-4">

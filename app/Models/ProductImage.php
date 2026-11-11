@@ -63,7 +63,13 @@ class ProductImage extends Model
             return null;
         }
 
-        return app(ResponsiveImageService::class)->srcset($this->path);
+        $path = ltrim($this->path, '/');
+
+        if (! Storage::disk('public')->exists($path)) {
+            return $this->media?->responsive_srcset;
+        }
+
+        return app(ResponsiveImageService::class)->srcset($path);
     }
 
     public function getUrlAttribute(): string

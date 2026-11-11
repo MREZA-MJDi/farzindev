@@ -17,10 +17,12 @@ const publicRoutes = [
     '/categories/hoods',
     '/product/farzin-hood-preview-01',
     '/blog',
+    '/blog/category/browser-smoke-guides',
     '/blog/choosing-kitchen-hood',
     '/about',
     '/contact',
     '/cart',
+    '/checkout',
     '/login',
     '/register',
     '/terms',
@@ -41,6 +43,10 @@ for (const viewport of viewports) {
                 ? page.locator('.fz-home-header')
                 : page.locator('.farzin-site-header');
             await expect(header, path + ' header').toBeVisible();
+            await expect(header.locator('[data-farzin-header-brand]'), path + ' shared brand').toBeVisible();
+            await expect(header.locator('[data-farzin-header-account]'), path + ' shared account action').toBeAttached();
+            await expect(header.locator('[data-farzin-header-cart]'), path + ' shared cart action').toBeAttached();
+            await expect(header.locator('[data-farzin-header-menu]'), path + ' shared menu action').toBeAttached();
             await expect(page.locator('.farzin-site-footer'), path + ' footer').toBeAttached();
 
             const footerLayout = await page.locator('.farzin-site-footer').evaluate((footer) => {
@@ -132,7 +138,12 @@ test('global mobile search is available and usable on every public page', async 
     }
 
     await page.goto('/', { waitUntil: 'domcontentloaded' });
-    await page.locator('.fz-home-header .fz-home-header__menu').click();
+    await page.locator('.fz-home-header [data-farzin-header-menu]').click();
+    await expect(page.locator('[data-farzin-mobile-menu-panel]')).toBeVisible();
+
+    await page.locator('[data-farzin-mobile-menu-panel] button[aria-label="بستن منو"]').click();
+    await page.goto('/shop', { waitUntil: 'domcontentloaded' });
+    await page.locator('.farzin-site-header [data-farzin-header-menu]').click();
     await expect(page.locator('[data-farzin-mobile-menu-panel]')).toBeVisible();
 });
 
@@ -472,7 +483,7 @@ test('admin mobile quick search and list filters remain reachable without horizo
     }
 });
 
-test('homepage journal uses published image-backed articles only', async ({ page }) => {
+test('homepage journal shows published articles with optional cover images', async ({ page }) => {
     for (const viewport of [
         { width: 390, height: 844 },
         { width: 768, height: 900 },
@@ -505,6 +516,7 @@ test('homepage journal uses published image-backed articles only', async ({ page
                 columns: style.gridTemplateColumns.split(' ').length,
                 radius: Number.parseFloat(cardStyle.borderTopLeftRadius),
                 imageCount: section.querySelectorAll('.fz-home-article-card img').length,
+                fallbackCount: section.querySelectorAll('.fz-home-article-card__media-fallback').length,
                 imagesHaveAlt: Array.from(section.querySelectorAll('.fz-home-article-card img')).every((image) => image.getAttribute('alt')?.trim()),
                 overflow: Math.max(document.documentElement.scrollWidth, document.body.scrollWidth)
                     - document.documentElement.clientWidth,
@@ -514,7 +526,7 @@ test('homepage journal uses published image-backed articles only', async ({ page
         expect(layout.direction).toBe('rtl');
         expect(layout.columns).toBe(viewport.width <= 767 ? 1 : 3);
         expect(layout.radius).toBeLessThanOrEqual(24);
-        expect(layout.imageCount).toBe(await articles.count());
+        expect(layout.imageCount + layout.fallbackCount).toBe(await articles.count());
         expect(layout.imagesHaveAlt).toBeTruthy();
         expect(layout.overflow).toBeLessThanOrEqual(1);
     }
@@ -1037,3 +1049,126 @@ test('homepage category thumbnails stay compact and the image fills a true circl
         expect(geometry.titleVisible).toBeTruthy();
     }
 });
+
+
+test('catalog product cards preserve full product images without cropping', async ({ page }) => {
+    await page.setViewportSize({ width: 1280, height: 900 });
+    await page.goto('/shop', { waitUntil: 'domcontentloaded' });
+
+    const image = page.locator('.farzin-shop-catalog .farzin-product-card__image').first();
+    if (await image.count() === 0) {
+        test.skip(true, 'The current browser fixture has no visible catalog product images.');
+    }
+
+    await expect(image).toBeVisible();
+    const objectFit = await image.evaluate((element) => getComputedStyle(element).objectFit);
+    expect(objectFit).toBe('contain');
+});
+
+test('hood and sink imagery remains fully visible in product detail galleries', async ({ page }) => {
+    await page.setViewportSize({ width: 1280, height: 900 });
+    await page.goto('/shop', { waitUntil: 'domcontentloaded' });
+
+    const firstProduct = page.locator('.farzin-product-card').first();
+    await expect(firstProduct).toBeVisible();
+    const productHref = await firstProduct.locator('a[href*="/product/"]').first().getAttribute('href');
+    expect(productHref).toBeTruthy();
+
+    for (const viewport of [
+        { width: 390, height: 844 },
+        { width: 1440, height: 960 },
+    ]) {
+        await page.setViewportSize(viewport);
+        await page.goto(productHref, { waitUntil: 'domcontentloaded' });
+
+        const gallery = page.locator('.farzin-product-gallery .product-gallery-stage');
+        await expect(gallery).toBeVisible();
+        const image = gallery.locator('img:visible').first();
+        await expect(image).toBeVisible();
+
+        const imageStyle = await image.evaluate((element) => ({
+            objectFit: getComputedStyle(element).objectFit,
+            radius: getComputedStyle(element).borderTopLeftRadius,
+        }));
+
+        expect(imageStyle.objectFit).toBe('contain');
+        expect(imageStyle.radius).toBe('0px');
+    }
+});
+
+test('blog pagination layout and controls remain visible on archive pages', async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto('/blog', { waitUntil: 'domcontentloaded' });
+
+    const paginator = page.locator('.blog-pagination');
+    if (await paginator.count() === 0) {
+        test.skip(true, 'The current content fixture has fewer than two blog pages.');
+    }
+
+    const layout = paginator.locator('.farzin-paginator__layout');
+    const controls = paginator.locator('.farzin-paginator__controls');
+
+    await expect(layout).toBeVisible();
+    await expect(controls).toBeVisible();
+
+    const paginationRadii = await paginator.locator('a, span[aria-current]').evaluateAll((nodes) => (
+        nodes.map((node) => getComputedStyle(node).borderTopLeftRadius)
+    ));
+    expect(paginationRadii.length).toBeGreaterThan(0);
+    expect(paginationRadii.every((radius) => radius === '0px')).toBeTruthy();
+
+    const layoutDisplay = await layout.evaluate((element) => getComputedStyle(element).display);
+    const controlsDisplay = await controls.evaluate((element) => getComputedStyle(element).display);
+
+    expect(layoutDisplay).not.toBe('none');
+    expect(controlsDisplay).not.toBe('none');
+
+    const nextPage = controls.locator('a[rel="next"]');
+    if (await nextPage.count()) {
+        await nextPage.click();
+        await expect(page).toHaveURL(/page=2/);
+        await expect(page.locator('.blog-articles-section')).toBeVisible();
+    }
+});
+
+test('public storefront uses consistent square geometry across all key page types', async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+
+    const checks = [
+        { path: '/', selectors: ['.fz-market-hero__slides', '.fz-market-hero__button', '.farzin-product-card', '.fz-home-article-card', '.fz-home-header__search', '.fz-home-header__account', '.fz-home-header__cart', '.farzin-site-footer a'] },
+        { path: '/shop', selectors: ['.farzin-shop-banner__image', '.farzin-product-card', '.farzin-product-card__cta', '.farzin-shop-banner__action', '.farzin-shop-catalog aside', 'main button', 'main [class*="rounded-"][class*="border"]', 'main a[class*="rounded-"]', 'main button[class*="rounded-"]', 'main [class*="-card"]', 'main [class*="__card"]', 'main [class*="-card"] [class*="rounded-"]', 'main article [class*="rounded-"]'] },
+        { path: '/categories', selectors: ['.fz-category-card', '.fz-category-hero__product', '.farzin-shop-category-card', 'main button', 'main [class*="rounded-"][class*="border"]', 'main a[class*="rounded-"]', 'main button[class*="rounded-"]', 'main [class*="-card"]', 'main [class*="__card"]', 'main [class*="-card"] [class*="rounded-"]', 'main article [class*="rounded-"]'] },
+        { path: '/categories/hoods', selectors: ['.farzin-product-card', 'main button', 'main [class*="rounded-"][class*="border"]', 'main a[class*="rounded-"]', 'main button[class*="rounded-"]', 'main [class*="-card"]', 'main [class*="__card"]', 'main [class*="-card"] [class*="rounded-"]', 'main article [class*="rounded-"]'] },
+        { path: '/product/farzin-hood-preview-01', selectors: ['.fz-product-panel', '.fz-product-action', '.farzin-product-detail-info', '.farzin-product-facts__item', '.product-gallery-shell', '.product-gallery-stage', 'main button', 'main [class*="rounded-"][class*="border"]', 'main a[class*="rounded-"]', 'main button[class*="rounded-"]', 'main [class*="-card"]', 'main [class*="__card"]', 'main [class*="-card"] [class*="rounded-"]', 'main article [class*="rounded-"]'] },
+        { path: '/blog', selectors: ['.blog-featured-card', '.blog-article-card', '.blog-masthead__visual', '.blog-rss-link', 'main button', 'main [class*="rounded-"][class*="border"]', 'main a[class*="rounded-"]', 'main button[class*="rounded-"]', 'main [class*="-card"]', 'main [class*="__card"]', 'main [class*="-card"] [class*="rounded-"]', 'main article [class*="rounded-"]'] },
+        { path: '/blog/choosing-kitchen-hood', selectors: ['main button', 'main [class*="rounded-"][class*="border"]', 'main a[class*="rounded-"]', 'main button[class*="rounded-"]', 'main [class*="-card"]', 'main [class*="__card"]', 'main [class*="-card"] [class*="rounded-"]', 'main article [class*="rounded-"]'] },
+        { path: '/cart', selectors: ['main button', 'main [class*="rounded-"][class*="border"]', 'main a[class*="rounded-"]', 'main button[class*="rounded-"]', 'main [class*="-card"]', 'main [class*="__card"]', 'main [class*="-card"] [class*="rounded-"]', 'main article [class*="rounded-"]'] },
+        { path: '/contact', selectors: ['main button', 'main input', 'main textarea', 'main [class*="rounded-"][class*="border"]', 'main a[class*="rounded-"]', 'main button[class*="rounded-"]', 'main [class*="-card"]', 'main [class*="__card"]', 'main [class*="-card"] [class*="rounded-"]', 'main article [class*="rounded-"]'] },
+        { path: '/about', selectors: ['.fz-home-purchase-cta__inner', 'main button', 'main [class*="rounded-"][class*="border"]', 'main a[class*="rounded-"]', 'main button[class*="rounded-"]', 'main [class*="-card"]', 'main [class*="__card"]', 'main [class*="-card"] [class*="rounded-"]', 'main article [class*="rounded-"]'] },
+        { path: '/login', selectors: ['main button', 'main input', 'main [class*="rounded-"][class*="border"]', 'main a[class*="rounded-"]', 'main button[class*="rounded-"]', 'main [class*="-card"]', 'main [class*="__card"]', 'main [class*="-card"] [class*="rounded-"]', 'main article [class*="rounded-"]'] },
+        { path: '/register', selectors: ['main button', 'main input', 'main [class*="rounded-"][class*="border"]', 'main a[class*="rounded-"]', 'main button[class*="rounded-"]', 'main [class*="-card"]', 'main [class*="__card"]', 'main [class*="-card"] [class*="rounded-"]', 'main article [class*="rounded-"]'] },
+        { path: '/checkout', selectors: ['main button', 'main input', 'main [class*="rounded-"][class*="border"]', 'main a[class*="rounded-"]', 'main button[class*="rounded-"]', 'main [class*="-card"]', 'main [class*="__card"]', 'main [class*="-card"] [class*="rounded-"]', 'main article [class*="rounded-"]'] },
+    ];
+
+    for (const check of checks) {
+        const response = await page.goto(check.path, { waitUntil: 'domcontentloaded' });
+        expect(response?.status(), check.path + ' should render without a server error').toBeLessThan(500);
+
+        for (const selector of check.selectors) {
+            const elements = page.locator(selector);
+            const count = await elements.count();
+
+            if (!count) continue;
+
+            const radii = await elements.evaluateAll((nodes) => (
+                nodes.map((node) => getComputedStyle(node).borderTopLeftRadius)
+            ));
+
+            expect(
+                radii.every((radius) => radius === '0px'),
+                check.path + ' must keep ' + selector + ' square',
+            ).toBeTruthy();
+        }
+    }
+});
+

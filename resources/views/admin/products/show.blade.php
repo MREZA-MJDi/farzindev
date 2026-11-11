@@ -57,7 +57,11 @@
                 <div class="admin-image-preview aspect-square">
 
                     @php
-                        $primaryImage = $product->primaryImage();
+                        $availableProductImages = $product->images
+                        ->filter(fn ($image) => filled($image->url))
+                        ->values();
+                    $primaryImage = $availableProductImages->firstWhere('is_primary', true)
+                        ?? $availableProductImages->first();
                     @endphp
 
                     @if($primaryImage)
@@ -94,11 +98,11 @@
                 </div>
 
 
-                @if($product->images->count() > 1)
+                @if($availableProductImages->count() > 1)
 
                     <div class="mt-4 grid grid-cols-4 gap-2">
 
-                        @foreach($product->images->take(8) as $image)
+                        @foreach($availableProductImages->take(8) as $image)
 
                             <div class="admin-image-thumb aspect-square !h-auto">
 

@@ -7,6 +7,12 @@ const manifest = JSON.parse(await readFile(manifestPath, 'utf8'));
 
 const budgets = [
     { key: 'resources/js/app.js', label: 'Shared application JavaScript', maxGzipKb: 45 },
+    { key: 'resources/js/home.js', label: 'Homepage-only JavaScript', maxGzipKb: 8 },
+    { key: 'resources/js/admin-image-editor.js', label: 'Admin image editor chunk', maxGzipKb: 18 },
+    { key: 'resources/js/admin-home-hero-preview.js', label: 'Admin homepage preview chunk', maxGzipKb: 5 },
+    { key: 'resources/js/admin-blog-appearance.js', label: 'Admin blog appearance chunk', maxGzipKb: 7 },
+    { key: 'resources/js/admin-blog-editor.js', label: 'Admin rich-text editor chunk', maxGzipKb: 16 },
+    { key: 'resources/js/category-gif-preview.js', label: 'Category media preview chunk', maxGzipKb: 12 },
     // Public CSS is intentionally consolidated by storefront.css in Vite.
     // Budget the emitted production bundle, not its imported source fragments.
     { key: 'resources/css/storefront.css', label: 'Public storefront CSS', maxGzipKb: 60 },
@@ -15,6 +21,7 @@ const budgets = [
     // The editorial artwork controls add two dashboard-managed image slots.
     // Keep the public magazine stylesheet tightly capped while accounting for them.
     { key: 'resources/css/blog.css', label: 'Blog-only CSS', maxGzipKb: 5.5 },
+    { key: 'resources/css/product.css', label: 'Product-detail-only CSS', maxGzipKb: 3.5 },
 ];
 
 let failed = false;

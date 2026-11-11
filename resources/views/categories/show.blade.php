@@ -70,7 +70,7 @@
                         <div class="max-w-3xl">
 
                             <p class="farzin-category-detail__eyebrow text-[10px] font-medium uppercase tracking-[0.22em] text-[var(--livora-accent)]">
-                                COLLECTION
+                                دسته‌بندی محصولات
                             </p>
 
                             <h1 class="farzin-category-detail__title mt-3 text-4xl font-semibold tracking-tight sm:text-5xl">
@@ -144,7 +144,7 @@
 
 
         {{-- =========================================================
-             PRODUCTS
+             محصولات
         ========================================================== --}}
         <section>
 
@@ -157,7 +157,7 @@
                         <div>
 
                             <p class="text-[10px] font-medium uppercase tracking-[0.22em] text-[var(--livora-accent)]">
-                                PRODUCTS
+                                محصولات
                             </p>
 
                             <h2 class="mt-2 text-2xl font-semibold tracking-tight sm:text-3xl">
@@ -240,7 +240,7 @@
                 <div class="max-w-4xl py-14 sm:py-18">
 
                     <p class="text-[10px] font-medium uppercase tracking-[0.22em] text-[var(--livora-accent)]">
-                        ABOUT THIS COLLECTION
+                        درباره این دسته‌بندی
                     </p>
 
                     <h2 class="mt-4 text-2xl font-semibold tracking-tight sm:text-3xl">

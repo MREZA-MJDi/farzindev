@@ -8,16 +8,7 @@
         <div class="flex min-h-[70px] items-center justify-between gap-3 py-3 lg:min-h-[78px] lg:gap-6 lg:py-0">
 
             {{-- Brand --}}
-            <a
-                href="{{ route('home') }}"
-                class="farzin-site-header__brand group inline-flex min-w-0 shrink-0 items-center"
-                aria-label="{{ $brandName }}، صفحه اصلی"
-            >
-                <span class="farzin-wordmark">
-                    @if($brandLogo)<img src="{{ $brandLogo }}" alt="{{ $brandName }}" class="max-h-11 max-w-36 object-contain">@else<span class="farzin-wordmark__main">{{ $brandName }}</span>@endif
-                    <span class="farzin-wordmark__caption">تجهیزات مدرن آشپزخانه</span>
-                </span>
-            </a>
+            <x-layout.header-brand :brand-name="$brandName" :brand-logo="$brandLogo" />
 
             {{-- Desktop navigation --}}
             <div class="farzin-site-header__nav hidden min-w-0 flex-1 items-center justify-center gap-1 lg:flex xl:gap-2">
@@ -139,58 +130,13 @@
                 @endauth
 
                 {{-- Cart --}}
-                <a
-                    href="{{ route('cart.index') }}"
-                    aria-label="سبد خرید"
-                    title="سبد خرید"
-                    @class(['farzin-site-header__action group relative hidden h-10 w-10 items-center justify-center rounded-full transition lg:flex', 'is-active' => request()->routeIs('cart.*', 'checkout.*')])
-                >
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.7" stroke="currentColor" width="19" height="19" class="h-[19px] w-[19px] transition group-hover:scale-105" aria-hidden="true">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M3 3.75h1.6c.5 0 .94.35 1.06.84L6.3 7.5h13.1l-1.6 7.1H7.5L6.3 7.5M8.5 19.2a.9.9 0 1 1-1.8 0 .9.9 0 0 1 1.8 0Zm9.1 0a.9.9 0 1 1-1.8 0 .9.9 0 0 1 1.8 0Z"/>
-                    </svg>
-                    <span
-                        data-cart-count
-                        @class([
-                            'absolute -right-0.5 -top-0.5 flex h-[17px] min-w-[17px] items-center justify-center rounded-full bg-[var(--livora-accent)] px-1 text-[9px] font-semibold leading-none text-white',
-                            'hidden' => $cartCount < 1,
-                        ])
-                        aria-live="polite"
-                        aria-atomic="true"
-                    >{{ $cartCount }}</span>
-                </a>
+                <x-layout.header-cart-link :cart-count="$cartCount" />
 
                 {{-- Account --}}
-                @auth
-                    @if(auth()->user()->isAdmin())
-                        <a href="{{ route('admin.dashboard') }}" aria-label="پنل مدیریت" title="پنل مدیریت" class="farzin-site-header__action hidden h-10 w-10 items-center justify-center rounded-full transition lg:flex">
-                    @else
-                        <a href="{{ route('account.index') }}" aria-label="حساب کاربری" title="حساب کاربری" @class(['farzin-site-header__action hidden h-10 w-10 items-center justify-center rounded-full transition lg:flex', 'is-active' => request()->routeIs('account.*')])>
-                    @endif
-                @else
-                    <a href="{{ route('login') }}" aria-label="حساب کاربری" title="ورود / ثبت‌نام" @class(['farzin-site-header__action hidden h-10 w-10 items-center justify-center rounded-full transition lg:flex', 'is-active' => request()->routeIs('login', 'register')]) @if(request()->routeIs('login', 'register')) aria-current="page" @endif>
-                @endauth
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.7" stroke="currentColor" width="19" height="19" class="h-[19px] w-[19px]" aria-hidden="true">
-                        <circle cx="12" cy="8" r="3.5"/>
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M5 20a7 7 0 0 1 14 0"/>
-                    </svg>
-                </a>
+                <x-layout.header-account-link />
 
-                {{-- Mobile menu trigger --}}
-                <button
-                    type="button"
-                    aria-label="باز کردن منو"
-                    aria-controls="farzin-mobile-menu"
-                    :aria-expanded="mobileOpen.toString()"
-                    @click="searchOpen = false; mobileOpen = true"
-                    class="farzin-site-header__action flex h-10 w-10 shrink-0 items-center justify-center rounded-full transition lg:hidden"
-                >
-                    <svg x-show="!mobileOpen" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.7" stroke="currentColor" width="24" height="24" class="h-6 w-6" aria-hidden="true">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"/>
-                    </svg>
-                    <svg x-show="mobileOpen" x-cloak xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.7" stroke="currentColor" width="24" height="24" class="h-6 w-6" aria-hidden="true">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="m6 6 12 12M18 6 6 18"/>
-                    </svg>
-                </button>
+                                {{-- Mobile menu trigger --}}
+                <x-layout.header-menu-button />
 
             </div>
         </div>

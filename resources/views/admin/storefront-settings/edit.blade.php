@@ -151,9 +151,9 @@
                     <div>
                         <label for="brand_logo" class="admin-label">لوگوی برند (اختیاری)</label>
                         <input id="brand_logo" name="brand_logo" type="file" accept="image/jpeg,image/png,image/webp" class="admin-input p-2">
-                        @if($storefrontSettings->get('brand_logo'))
+                        @if($brandLogoUrl)
                             <div class="mt-3 flex items-center gap-3">
-                                <img src="{{ Storage::disk('public')->url($storefrontSettings->get('brand_logo')) }}" alt="لوگوی فعلی برند" class="h-14 max-w-32 object-contain">
+                                <img src="{{ $brandLogoUrl }}" alt="لوگوی فعلی برند" class="h-14 max-w-32 object-contain">
                                 <label class="flex items-center gap-2 text-xs text-[var(--admin-muted)]"><input type="checkbox" name="remove_brand_logo" value="1"> حذف لوگوی فعلی</label>
                             </div>
                         @endif

@@ -189,7 +189,7 @@
                         <div>
 
                             <p class="text-[10px] font-medium uppercase tracking-[0.2em] text-[var(--livora-accent)]">
-                                QUICK DISCOVER
+                                جستجوی سریع
                             </p>
 
                             <p class="mt-1 text-xs text-[var(--livora-stone)]">

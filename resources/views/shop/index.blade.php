@@ -45,7 +45,7 @@
                             >
                             <div class="absolute inset-0 bg-gradient-to-l from-black/75 via-black/25 to-transparent"></div>
                             <div class="farzin-shop-banner__content absolute inset-y-0 right-0 flex max-w-2xl flex-col justify-center p-6 text-white sm:p-10 lg:p-14">
-                                <p class="farzin-shop-banner__eyebrow text-[10px] font-medium uppercase tracking-[0.22em] text-white/70">FARZIN / CATALOG</p>
+                                <p class="farzin-shop-banner__eyebrow text-[10px] font-medium uppercase tracking-[0.22em] text-white/70">فرزین / فروشگاه</p>
                                 <h1 class="farzin-shop-banner__title mt-3 text-3xl font-semibold leading-tight sm:text-4xl lg:text-5xl">{{ $shopBanner['title'] }}</h1>
                                 @if (filled($shopBanner['subtitle']))
                                     <p class="farzin-shop-banner__description mt-4 max-w-xl text-sm leading-8 text-white/80 sm:text-base">{{ $shopBanner['subtitle'] }}</p>
@@ -57,7 +57,7 @@
                         <div class="mt-6 flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
                             <div>
                                 <p class="farzin-shop-banner__eyebrow text-[10px] font-medium uppercase tracking-[0.22em] text-[var(--livora-accent)]">FARZIN / CATALOG</p>
-                                <h1 class="farzin-shop-banner__title mt-3 text-3xl font-semibold tracking-tight sm:text-4xl">فروشگاه فرزین</h1>
+                                <h1 class="farzin-shop-banner__title mt-3 text-3xl font-semibold tracking-tight sm:text-4xl">{{ $shopBanner['title'] }}</h1>
                                 <p class="farzin-shop-banner__description mt-3 max-w-2xl text-sm leading-8 text-[var(--livora-stone)]">{{ $shopBanner['subtitle'] }}</p>
                             </div>
                             <a href="#shop-catalog" class="farzin-shop-banner__action inline-flex min-h-11 w-fit shrink-0 items-center gap-2 rounded-xl bg-[var(--livora-ink)] px-5 py-3 text-sm font-medium text-white transition hover:bg-[var(--livora-accent)]"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4 shrink-0" aria-hidden="true"><path d="M3.5 9h17l-1 11h-15l-1-11Z" /><path d="M8 9V6.5a4 4 0 0 1 8 0V9" /></svg> مشاهده محصولات</a>
@@ -99,7 +99,7 @@
                                     <div>
 
                                         <p class="text-[10px] uppercase tracking-[0.18em] text-[var(--livora-accent)]">
-                                            DISCOVER
+                                            راهنمای انتخاب
                                         </p>
 
                                         <h2 class="mt-2 text-sm font-semibold">
