@@ -56,7 +56,8 @@ class HomeController extends Controller
                 ->select(['id', 'product_id', 'media_id', 'path', 'alt', 'sort_order', 'is_primary'])
                 ->orderByDesc('is_primary')
                 ->orderBy('sort_order')
-                ->orderBy('id'),
+                ->orderBy('id')
+                    ->limit(5),
             'images.media:id,path',
         ];
 
