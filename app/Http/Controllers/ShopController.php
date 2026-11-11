@@ -34,7 +34,7 @@ class ShopController extends Controller
                     ->orderBy('sort_order')
                     ->orderBy('id')
                     ->limit(5),
-                'images.media:id,path',
+                'images.media:id,path,disk',
                 'variants:id,product_id,type,name,value,stock,price_adjustment,is_active',
             ])
             ->active()
