@@ -41,7 +41,9 @@ class SeoSettingsController extends Controller
                 ->whereIn('mime_type', ['image/jpeg', 'image/png', 'image/webp'])
                 ->latest('id')
                 ->limit(60)
-                ->get(),
+                ->get()
+                ->filter(fn (Media $media) => filled($media->url))
+                ->values(),
             'customMetaTags' => $seoSettings->customMetaTags(),
             'customLinkTags' => $seoSettings->customLinkTags(),
         ]);
