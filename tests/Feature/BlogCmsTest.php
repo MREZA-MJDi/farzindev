@@ -203,6 +203,32 @@ class BlogCmsTest extends TestCase
             ->assertDontSee($titles[0]);
     }
 
+    public function test_admin_can_preview_draft_with_public_article_template_without_exposing_it_publicly(): void
+    {
+        $admin = User::factory()->create(['role' => 'admin']);
+        $draft = BlogPost::create([
+            'title' => 'پیش‌نمایش خصوصی راهنمای انتخاب هود',
+            'slug' => 'private-hood-preview',
+            'excerpt' => 'خلاصه‌ای برای پیش‌نمایش مقاله.',
+            'body' => 'متن پیش‌نویس که فقط مدیر باید ببیند.',
+            'status' => 'draft',
+        ]);
+
+        $this->get(route('admin.blog-posts.preview', $draft))
+            ->assertRedirect(route('admin.login'));
+
+        $this->actingAs($admin, 'admin')
+            ->get(route('admin.blog-posts.preview', $draft))
+            ->assertOk()
+            ->assertSee($draft->title)
+            ->assertSee('پیش‌نمایش خصوصی مقاله')
+            ->assertSee('متن پیش‌نویس که فقط مدیر باید ببیند.')
+            ->assertSee('noindex,nofollow', false)
+            ->assertDontSee('rel="canonical"', false);
+
+        $this->get(route('blog.show', $draft->slug))->assertNotFound();
+    }
+
     public function test_admin_can_create_edit_and_publish_a_blog_article(): void
     {
         $admin = User::factory()->create(['role' => 'admin']);
