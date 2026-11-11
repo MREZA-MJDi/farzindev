@@ -251,7 +251,6 @@
 
                 <div class="fz-home-journal__grid">
                     @foreach($blogPosts->take(3) as $article)
-                        @php($articleCategory = $article->terms->firstWhere('type', 'category'))
                         <x-blog.article-card :post="$article" variant="home" />
                     @endforeach
                 </div>
