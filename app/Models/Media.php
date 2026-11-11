@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Facades\Storage;
 use App\Services\Media\ResponsiveImageService;
 
 class Media extends Model
@@ -40,9 +41,13 @@ class Media extends Model
     /**
      * Full public URL for the media file.
      */
-    public function getUrlAttribute(): string
+    public function getUrlAttribute(): ?string
     {
-        return asset('storage/' . ltrim($this->path, '/'));
+        $disk = Storage::disk($this->disk ?: 'public');
+
+        return $disk->exists($this->path)
+            ? $disk->url($this->path)
+            : null;
     }
 
     public function getResponsiveSrcsetAttribute(): ?string
