@@ -4646,6 +4646,28 @@ class FarzinStorefrontTest extends TestCase
             ->assertSee('افزودن آدرس');
     }
 
+    public function test_storefront_settings_editor_does_not_preview_deleted_banner_or_brand_logo_files(): void
+    {
+        Storage::fake('public');
+
+        StorefrontSetting::query()->create([
+            'key' => 'shop_banner_image',
+            'value' => 'storefront/deleted-shop-banner.webp',
+        ]);
+        StorefrontSetting::query()->create([
+            'key' => 'brand_logo',
+            'value' => 'brand/deleted-logo.webp',
+        ]);
+
+        $this->actingAs($this->admin(), 'admin')
+            ->get(route('admin.storefront-settings.edit'))
+            ->assertOk()
+            ->assertDontSee('/storage/storefront/deleted-shop-banner.webp')
+            ->assertDontSee('/storage/brand/deleted-logo.webp')
+            ->assertDontSee('لوگوی فعلی برند')
+            ->assertSee('هنوز بنری انتخاب نشده');
+    }
+
     public function test_admin_can_manage_store_banner_and_contact_channels(): void
     {
         Storage::fake('public');
