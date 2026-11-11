@@ -9,6 +9,7 @@ use App\Models\StorefrontSetting;
 use App\Models\User;
 use App\Services\Content\RichTextSanitizer;
 use App\Services\Seo\SeoSettings;
+use App\Services\StorefrontPageContent;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
