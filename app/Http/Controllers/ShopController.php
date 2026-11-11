@@ -27,7 +27,7 @@ class ShopController extends Controller
         $query = Product::query()
             ->with([
                 'category',
-                // Product cards only render the first image; avoid loading full galleries for 12 rows.
+                // Load ordered image candidates so cards can skip missing files and use the next available image.
                 'images' => fn ($query) => $query
                     ->select(['id', 'product_id', 'media_id', 'path', 'alt', 'sort_order', 'is_primary'])
                     ->orderByDesc('is_primary')
