@@ -2431,3 +2431,39 @@ body.home-body{
         transition: none;
     }
 }
+
+
+/* Home journal cards keep their cover image full-width above the article copy. */
+.home-body .fz-home-journal .fz-home-article-card {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+.home-body .fz-home-journal .fz-home-article-card__media {
+    display: block;
+    width: 100%;
+    height: auto;
+    min-height: 0;
+    aspect-ratio: 16 / 9;
+    flex: 0 0 auto;
+    overflow: hidden;
+}
+.home-body .fz-home-journal .fz-home-article-card__media img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+}
+@media (max-width: 767px) {
+    .home-body .fz-home-journal .fz-home-article-card {
+        display: flex;
+        flex-direction: column;
+    }
+    .home-body .fz-home-journal .fz-home-article-card__media {
+        width: 100%;
+        min-height: 0;
+        aspect-ratio: 16 / 9;
+    }
+    .home-body .fz-home-journal .fz-home-article-card__body { padding: .9rem; }
+}
