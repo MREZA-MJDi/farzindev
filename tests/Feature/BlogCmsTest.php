@@ -106,12 +106,14 @@ class BlogCmsTest extends TestCase
             ->assertSee('fz-home-journal', false)
             ->assertSee($post->title)
             ->assertSee('fz-home-article-card__media-fallback', false)
+            ->assertSee('data-blog-article-card', false)
             ->assertDontSee('src=""', false);
 
         $this->get(route('blog.index'))
             ->assertOk()
             ->assertSee($post->title)
-            ->assertSee('blog-art-fallback--small', false);
+            ->assertSee('blog-art-fallback--small', false)
+            ->assertSee('data-blog-article-card', false);
 
         $this->get(route('blog.show', $post->slug))
             ->assertOk()
