@@ -18,7 +18,7 @@ class WishlistController extends Controller
                 'images' => fn ($query) => $query
                     ->select(['id', 'product_id', 'media_id', 'path', 'alt', 'sort_order', 'is_primary'])
                     ->limit(1),
-                'images.media:id,path',
+                'images.media:id,path,disk',
             ])
             ->latest('wishlists.created_at')
             ->paginate(12)
