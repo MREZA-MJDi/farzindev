@@ -5168,6 +5168,30 @@ class FarzinStorefrontTest extends TestCase
             ->assertDontSee('id="fz-home-newest-title"', false);
     }
 
+    public function test_homepage_omits_missing_banner_and_technology_files_instead_of_rendering_broken_images(): void
+    {
+        Storage::fake('public');
+
+        foreach ([
+            'page_home_banner_1_image_url' => 'home/banners/deleted-public-banner.webp',
+            'page_home_banner_1_title' => 'بنر دارای فایل حذف‌شده',
+            'page_home_hero_image_url' => 'home/hero/deleted-public-hero.webp',
+            'page_home_technology_image_url' => 'home/technology/deleted-public-technology.webp',
+        ] as $key => $value) {
+            StorefrontSetting::query()->create(compact('key', 'value'));
+        }
+
+        app(\App\Services\StorefrontPageContent::class)->clearCache();
+
+        $this->get(route('home'))
+            ->assertOk()
+            ->assertSee('fz-market-hero', false)
+            ->assertDontSee('/storage/home/banners/deleted-public-banner.webp')
+            ->assertDontSee('/storage/home/hero/deleted-public-hero.webp')
+            ->assertDontSee('/storage/home/technology/deleted-public-technology.webp')
+            ->assertDontSee('بنر دارای فایل حذف‌شده');
+    }
+
     public function test_homepage_content_editor_only_previews_existing_uploaded_images(): void
     {
         Storage::fake('public');
