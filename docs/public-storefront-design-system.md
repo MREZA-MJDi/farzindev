@@ -54,6 +54,32 @@ Page-specific sections may vary in composition, but shared behaviors (navigation
 - Preserve source/original product images. Responsive variants are delivery derivatives; do not replace the original upload.
 - Do not run production seeders or mutate customer content as part of a visual release.
 
+## Dashboard-to-storefront publishing rules
+
+The following rules are intentional and should be visible to the content team when creating or editing records:
+
+### Products
+
+- A product is publicly eligible when its status is active, its category is active, its price is greater than zero, and it has a usable primary image. Products without these requirements stay in the admin catalog but are not eligible for public category/shop/home listings.
+- The homepage has separate placements: discounts require a real compare-at price above the current price; new arrivals require the `is_new` flag; best sellers require paid, non-cancelled order items; the selected-products shelf requires `show_in_home_gallery`.
+- A product already placed in a higher-priority shelf is not repeated in the selected-products shelf. This is deliberate de-duplication, not a missing product.
+- The create form preselects homepage placement. When editing, the saved `show_in_home_gallery` value is retained. The content team should confirm the placement flag before expecting a product in the selected shelf.
+- Upload a JPG/JPEG/PNG/WEBP image of at least 800×600 px and no more than 20 MB, or select an existing file from the media library. The source image is retained; generated responsive variants are delivery assets.
+
+### Blog articles
+
+- New articles start as drafts. Drafts are saved in the admin and are intentionally absent from the public blog and homepage.
+- To publish immediately, set status to published and leave the publication time empty or choose a time that has already passed. A future publication time schedules the article; it will appear only after that time.
+- Published articles can appear in the homepage journal and public blog archive. The homepage journal shows up to three latest published articles.
+- A cover image is optional. If no image is attached, or its file is missing, the public card/article uses the designed fallback instead of a broken image.
+- SEO robots directives affect indexing, not whether a currently published article is visible to customers.
+
+### Homepage content
+
+- Hero banners, technology content, benefits, categories, product shelves and the journal have independent display controls or data requirements. Saving a setting does not imply every section is enabled.
+- After editing a homepage image, confirm that the selected media file still exists on the public disk and that the section is enabled.
+- When content is intentionally unpublished or a section has no eligible records, the page should omit that shelf cleanly rather than showing fixture content or an empty visual block.
+
 ## Responsive and interaction requirements
 
 Check at 360, 390, 768, 1023, 1024 and 1440 CSS pixels:
