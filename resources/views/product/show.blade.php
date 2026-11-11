@@ -38,7 +38,53 @@
     $shippingFreeThreshold = $hasFreeShippingThreshold ? (float) $shippingSettings['shipping_free_threshold'] : null;
     $hasShippingInfo = $hasShippingFlatRate || $hasFreeShippingThreshold;
 
+    $specificationLabels = [
+        'dimensions' => 'ابعاد کلی',
+        'length' => 'طول',
+        'width' => 'عرض',
+        'height' => 'ارتفاع',
+        'installation' => 'نحوه نصب',
+        'basin_count' => 'تعداد لگن',
+        'material' => 'جنس بدنه یا صفحه',
+        'basin_depth' => 'عمق لگن',
+        'sheet_thickness' => 'ضخامت ورق',
+        'capacity_liters' => 'ظرفیت لگن',
+        'weight' => 'وزن محصول',
+        'basin_direction' => 'جهت لگن',
+        'design_type' => 'نوع طراحی',
+        'drainboard' => 'سینی',
+        'light_count' => 'تعداد لامپ',
+        'switch_type' => 'نوع کلید',
+        'hood_type' => 'نوع هود',
+        'hood_model' => 'مدل هود',
+        'suction_capacity' => 'حجم مکش',
+        'filter_type' => 'نوع فیلتر',
+        'noise_level' => 'میزان صدا',
+        'burner_count' => 'تعداد شعله',
+        'burner_position' => 'محل شعله پلوپز',
+        'knob_type' => 'نوع ولوم',
+        'ignition_type' => 'نوع فندک',
+        'safety_system' => 'سیستم ایمنی',
+        'energy_rating' => 'رده مصرف انرژی',
+        'energy_source' => 'منبع انرژی',
+        'glass_type' => 'نوع شیشه',
+        'glass_thickness' => 'ضخامت شیشه',
+        'grate_material' => 'جنس شبکه',
+        'valve_type' => 'نوع شیر',
+        'burner_material' => 'نوع سرشعله',
+        'power_cable' => 'کابل برق',
+        'accessories' => 'اقلام همراه',
+        'model_code' => 'مدل / کد کالا',
+        'other_notes' => 'سایر توضیحات',
+    ];
+    $visibleSpecifications = collect($product->specifications ?? [])
+        ->filter(fn ($value) => is_scalar($value) && filled(trim((string) $value)))
+        ->mapWithKeys(fn ($value, $key) => [$key => trim((string) $value)]);
+
     $productTabs = [];
+    if ($visibleSpecifications->isNotEmpty()) {
+        $productTabs[] = 'specifications';
+    }
     if ($safeDescription) {
         $productTabs[] = 'description';
     }
@@ -238,7 +284,8 @@
                     <details @if($index === 0) open @endif @if($tab === 'installment') id="product-installment" @endif class="fz-product-accordion rounded-2xl border border-[var(--livora-border)] bg-[var(--livora-white)] px-4 sm:px-6">
                         <summary class="text-sm font-semibold text-[var(--livora-text)]">
                             <span>
-                                @if($tab === 'description') توضیحات محصول
+                                @if($tab === 'specifications') مشخصات فنی
+                                @elseif($tab === 'description') توضیحات محصول
                                 @elseif($tab === 'installment') شرایط خرید اقساطی
                                 @elseif($tab === 'shipping') ارسال
                                 @endif
@@ -246,7 +293,16 @@
                             <svg class="h-4 w-4 shrink-0 text-[var(--livora-stone)] transition-transform" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="m6 9 6 6 6-6"/></svg>
                         </summary>
 
-                        @if($tab === 'description')
+                        @if($tab === 'specifications')
+                            <dl class="grid grid-cols-1 gap-0 border-t border-[var(--livora-border)] py-2 sm:grid-cols-2">
+                                @foreach($visibleSpecifications as $key => $value)
+                                    <div class="flex min-w-0 items-start justify-between gap-4 border-b border-[var(--livora-border)] px-1 py-3 text-sm">
+                                        <dt class="shrink-0 text-[var(--livora-stone)]">{{ $specificationLabels[$key] ?? str_replace('_', ' ', $key) }}</dt>
+                                        <dd class="min-w-0 text-left font-semibold text-[var(--livora-text)]" dir="auto">{{ $value }}</dd>
+                                    </div>
+                                @endforeach
+                            </dl>
+                        @elseif($tab === 'description')
                             @php
                                 $descriptionText = $safeDescription;
                                 $descriptionPreview = \Illuminate\Support\Str::limit($descriptionText, 420);
