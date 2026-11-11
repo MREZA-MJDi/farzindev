@@ -42,7 +42,7 @@
 
                     <div class="fz-category-hero__layout">
                         <div class="fz-category-hero__content">
-                            <p class="fz-category-hero__eyebrow">SHOP BY CATEGORY / FIND YOUR FIT</p>
+                            <p class="fz-category-hero__eyebrow">دسته‌بندی محصولات / انتخاب متناسب با آشپزخانه شما</p>
 
                             <h1 class="fz-category-hero__title">
                                 فضای مناسب خودت را پیدا کن.
