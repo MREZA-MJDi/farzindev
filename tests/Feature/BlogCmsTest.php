@@ -300,6 +300,42 @@ class BlogCmsTest extends TestCase
         $this->assertDatabaseHas('media', ['id' => $media->id, 'path' => 'media/blog-library-cover.webp']);
     }
 
+    public function test_admin_can_remove_a_blog_cover_without_deleting_shared_media(): void
+    {
+        $admin = User::factory()->create(['role' => 'admin']);
+        $media = Media::create([
+            'user_id' => $admin->id,
+            'disk' => 'public',
+            'path' => 'media/shared-cover.webp',
+            'filename' => 'shared-cover.webp',
+            'original_name' => 'تصویر مشترک.webp',
+            'mime_type' => 'image/webp',
+            'extension' => 'webp',
+            'size' => 2048,
+        ]);
+        $post = BlogPost::create([
+            'title' => 'مقاله دارای تصویر',
+            'slug' => 'article-with-removable-cover',
+            'body' => 'متن مقاله.',
+            'cover_image' => $media->path,
+            'status' => 'draft',
+        ]);
+
+        $this->actingAs($admin, 'admin')
+            ->put(route('admin.blog-posts.update', $post), [
+                'title' => $post->title,
+                'slug' => $post->slug,
+                'body' => $post->body,
+                'status' => 'draft',
+                'remove_cover_image' => '1',
+            ])
+            ->assertRedirect()
+            ->assertSessionHasNoErrors();
+
+        $this->assertDatabaseHas('blog_posts', ['id' => $post->id, 'cover_image' => null]);
+        $this->assertDatabaseHas('media', ['id' => $media->id, 'path' => $media->path]);
+    }
+
     public function test_admin_blog_slug_must_be_unique_and_url_safe(): void
     {
         $admin = User::factory()->create(['role' => 'admin']);
