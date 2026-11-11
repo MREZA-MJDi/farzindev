@@ -16,7 +16,7 @@ class OrderController extends Controller
                 'items.product.images' => fn ($query) => $query
                     ->select(['id', 'product_id', 'media_id', 'path', 'alt', 'sort_order', 'is_primary'])
                     ->limit(1),
-                'items.product.images.media:id,path',
+                'items.product.images.media:id,path,disk,disk',
             ])
             ->latest()
             ->paginate(10);
@@ -34,7 +34,7 @@ class OrderController extends Controller
             'items.product.images' => fn ($query) => $query
                 ->select(['id', 'product_id', 'media_id', 'path', 'alt', 'sort_order', 'is_primary'])
                 ->limit(1),
-            'items.product.images.media:id,path',
+            'items.product.images.media:id,path,disk,disk',
             'items.variant',
             'latestPayment',
         ]);
