@@ -77,21 +77,6 @@
                                 {{ $category->name }}
                             </h1>
 
-                            @if($category->description)
-
-                                <div class="farzin-category-detail__description mt-5 max-w-2xl text-sm leading-8 text-[var(--livora-stone)]">
-                                    {{ $category->description }}
-                                </div>
-
-                            @else
-
-                                <p class="mt-5 max-w-2xl text-sm leading-8 text-[var(--livora-stone)]">
-                                    مجموعه محصولات {{ $category->name }} را بررسی کنید؛
-                                    قیمت، ابعاد، مشخصات فنی و موجودی مدل‌ها را بررسی کنید.
-                                </p>
-
-                            @endif
-
                             <div class="mt-7 flex flex-wrap items-center gap-3">
 
                             <span class="rounded-full border border-[var(--livora-border)] px-4 py-2 text-[11px] text-[var(--livora-stone)]">
@@ -230,47 +215,28 @@
         </section>
 
 
-        {{-- =========================================================
-             CATEGORY SEO CONTENT
-        ========================================================== --}}
-        <section class="border-t border-[var(--livora-border)] bg-[var(--livora-white)]">
-
-            <x-layout.container>
-
-                <div class="max-w-4xl py-14 sm:py-18">
-
-                    <p class="text-[10px] font-medium uppercase tracking-[0.22em] text-[var(--livora-accent)]">
-                        درباره این دسته‌بندی
-                    </p>
-
-                    <h2 class="mt-4 text-2xl font-semibold tracking-tight sm:text-3xl">
-                        راهنمای انتخاب {{ $category->name }}
-                    </h2>
-
-                    <div class="mt-5 space-y-4 text-sm leading-8 text-[var(--livora-stone)]">
-
-                        @if($category->description)
-
-                            <p>
-                                {{ $category->description }}
-                            </p>
-
+        @if(filled($category->content_body) || filled($category->content_image_url))
+            <section class="border-t border-[var(--livora-border)] bg-[var(--livora-white)]">
+                <x-layout.container>
+                    <div class="grid items-center gap-8 py-12 sm:py-16 lg:grid-cols-2 lg:gap-12">
+                        <div class="min-w-0">
+                            <p class="text-[10px] font-medium tracking-[0.18em] text-[var(--livora-accent)]">راهنمای دسته‌بندی</p>
+                            <h2 class="mt-3 text-2xl font-semibold tracking-tight sm:text-3xl">
+                                {{ $category->content_title ?: 'راهنمای انتخاب ' . $category->name }}
+                            </h2>
+                            @if(filled($category->content_body))
+                                <div class="mt-5 whitespace-pre-line text-sm leading-8 text-[var(--livora-stone)]">{{ $category->content_body }}</div>
+                            @endif
+                        </div>
+                        @if($category->content_image_url)
+                            <figure class="overflow-hidden rounded-xl bg-[var(--livora-surface)]">
+                                <img src="{{ $category->content_image_url }}" alt="{{ $category->content_title ?: 'راهنمای ' . $category->name }}" loading="lazy" class="aspect-[16/9] w-full object-cover">
+                            </figure>
                         @endif
-
-                        <p>
-                            هنگام انتخاب محصول از این مجموعه، علاوه بر ظاهر،
-                            به ابعاد فضا، متریال، رنگ، کاربرد و هماهنگی آن با سایر عناصر خانه توجه کنید.
-                            فرزین تلاش می‌کند اطلاعات موردنیاز برای یک انتخاب آگاهانه را
-                            در صفحه هر محصول در اختیار شما قرار دهد.
-                        </p>
-
                     </div>
-
-                </div>
-
-            </x-layout.container>
-
-        </section>
+                </x-layout.container>
+            </section>
+        @endif
 
 
         {{-- =========================================================
