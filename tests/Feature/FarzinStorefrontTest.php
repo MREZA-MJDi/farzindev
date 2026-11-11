@@ -5489,6 +5489,7 @@ class FarzinStorefrontTest extends TestCase
 
     public function test_product_technical_specifications_are_saved_and_rendered_on_the_public_product_page(): void
     {
+        Storage::fake('public');
         $admin = $this->admin();
         $category = $this->category(['slug' => 'technical-specification-hoods']);
         $payload = [
@@ -5503,6 +5504,7 @@ class FarzinStorefrontTest extends TestCase
             'status' => 'active',
             'is_featured' => '0',
             'is_new' => '0',
+            'image' => UploadedFile::fake()->image('technical-hood.jpg', 1200, 900),
             'specifications' => [
                 'dimensions' => '۸۶×۵۰×۱۵ سانتی‌متر',
                 'burner_count' => 'پنج شعله',
