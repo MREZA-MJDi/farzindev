@@ -25,6 +25,7 @@ The storefront uses a restrained editorial / product-engineering direction:
 - \`resources/css/farzin-storefront.css\`: Farzin public components and page-specific storefront patterns.
 - \`resources/css/home.css\`: homepage-only layout and sections.
 - \`resources/css/blog.css\`: blog archive and article typography/layout.
+- `resources/css/product.css`: product slug gallery, detail layout and responsive product interactions; loaded only on product detail pages.
 - \`resources/css/public-design-system.css\`: final public-only geometry, typography and component polish. It is loaded after the page style stack so local utilities cannot reintroduce rounded cards, banners or controls.
 - \`resources/css/storefront.css\`: public CSS entry point; imports the shared public CSS layers.
 - \`vite.config.js\`: registers independently referenced CSS entrypoints in the Vite manifest.
