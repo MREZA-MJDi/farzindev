@@ -430,6 +430,7 @@ class FarzinStorefrontTest extends TestCase
             ->assertSee('fz-category-hero__visual', false)
             ->assertSee('farzin-category-index-banner', false)
             ->assertSee('data-category-hero', false)
+            ->assertSee('دسته‌بندی محصولات')
             ->assertSee('id="category-list"', false)
             ->assertSee('انتخاب دسته‌بندی');
     }
