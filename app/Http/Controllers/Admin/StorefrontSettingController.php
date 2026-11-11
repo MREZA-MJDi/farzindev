@@ -31,13 +31,16 @@ class StorefrontSettingController extends Controller
             ])
             ->pluck('value', 'key');
 
+        $publicDisk = Storage::disk('public');
         $bannerPath = $settings->get('shop_banner_image');
+        $brandLogoPath = $settings->get('brand_logo');
 
         return view('admin.storefront-settings.edit', [
             'shopBannerTitle' => $settings->get('shop_banner_title') ?: 'فروشگاه فرزین',
             'shopBannerSubtitle' => $settings->get('shop_banner_subtitle') ?: 'هود و سینک آشپزخانه؛ انتخابی دقیق برای فضای شما.',
             'shopBannerPath' => $bannerPath,
-            'shopBannerUrl' => $bannerPath ? Storage::disk('public')->url($bannerPath) : null,
+            'shopBannerUrl' => $bannerPath && $publicDisk->exists($bannerPath) ? $publicDisk->url($bannerPath) : null,
+            'brandLogoUrl' => $brandLogoPath && $publicDisk->exists($brandLogoPath) ? $publicDisk->url($brandLogoPath) : null,
             'shippingFlatRate' => (int) ($settings->get('shipping_flat_rate') ?? 0),
             'shippingFreeThreshold' => (int) ($settings->get('shipping_free_threshold') ?? 0),
             'storefrontSettings' => $settings,
