@@ -101,6 +101,11 @@ body {
     border-radius: 0 !important;
 }
 
+/* Utility-class panels (cart, forms, category filters) follow the same square geometry. */
+.storefront-content :where([class*="rounded-"][class*="border"]) {
+    border-radius: 0 !important;
+}
+
 #app :where(.farzin-site-header, .fz-home-header, .farzin-site-footer) :where(
     button,
     [role="button"],
