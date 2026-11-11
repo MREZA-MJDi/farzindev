@@ -243,6 +243,28 @@ class BlogPostController extends Controller
             ->with('success', 'تغییرات مقاله ذخیره شد.');
     }
 
+    /**
+     * Render a draft or scheduled article with the exact public article template.
+     * The route remains inside the authenticated admin middleware group.
+     */
+    public function preview(BlogPost $blogPost): View
+    {
+        $blogPost->load(['author:id,name', 'terms:id,type,name,slug']);
+
+        $relatedPosts = BlogPost::query()
+            ->published()
+            ->whereKeyNot($blogPost->id)
+            ->orderByDesc('published_at')
+            ->limit(3)
+            ->get();
+
+        return view('blog.show', [
+            'post' => $blogPost,
+            'relatedPosts' => $relatedPosts,
+            'isPreview' => true,
+        ]);
+    }
+
     public function destroy(
         BlogPost $blogPost,
         SeoSettings $seoSettings
