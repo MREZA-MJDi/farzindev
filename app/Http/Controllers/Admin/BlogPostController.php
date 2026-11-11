@@ -94,6 +94,9 @@ class BlogPostController extends Controller
         $validated['body_html'] = $sanitizer->sanitize($validated['body']);
         $validated['body'] = $this->plainText($validated['body_html']);
         $validated['cover_image'] = $uploadedPath ?: $selectedMedia?->path;
+        if ($selectedMedia !== null && blank($validated['cover_image_alt'] ?? null)) {
+            $validated['cover_image_alt'] = $selectedMedia->alt ?: $selectedMedia->original_name;
+        }
         $validated['author_id'] = $request->user()?->id;
         $validated['is_featured'] = $request->boolean('is_featured');
         $validated['seo_robots'] = $validated['seo_robots'] ?? 'inherit';
@@ -178,6 +181,9 @@ class BlogPostController extends Controller
             $validated['cover_image'] = $uploadedPath;
         } elseif ($selectedMedia !== null) {
             $validated['cover_image'] = $selectedMedia->path;
+            if (blank($validated['cover_image_alt'] ?? null)) {
+                $validated['cover_image_alt'] = $selectedMedia->alt ?: $selectedMedia->original_name;
+            }
         }
 
         $validated['is_featured'] = $request->boolean('is_featured');
