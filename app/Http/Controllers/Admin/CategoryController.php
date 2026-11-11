@@ -48,9 +48,11 @@ class CategoryController extends Controller
     {
         $data = $request->validated();
         $uploadedImage = $request->file('image');
-        unset($data['image']);
+        $uploadedContentImage = $request->file('content_image');
+        unset($data['image'], $data['content_image'], $data['remove_content_image']);
 
         $newImage = null;
+        $newContentImage = null;
 
         if ($uploadedImage) {
             $newImage = $images->store($uploadedImage, 'categories');
@@ -64,12 +66,29 @@ class CategoryController extends Controller
             }
         }
 
+        if ($uploadedContentImage) {
+            $newContentImage = $images->store($uploadedContentImage, 'category-content');
+
+            if (! $newContentImage) {
+                if ($newImage !== null) {
+                    $images->delete($newImage);
+                }
+
+                return back()->withInput()->withErrors([
+                    'content_image' => 'ذخیره تصویر راهنمای دسته‌بندی انجام نشد؛ دوباره تلاش کنید.',
+                ]);
+            }
+        }
+
         try {
-            DB::transaction(function () use ($data, $newImage): void {
+            DB::transaction(function () use ($data, $newImage, $newContentImage): void {
                 $payload = $data;
 
                 if ($newImage !== null) {
                     $payload['image'] = $newImage;
+                }
+                if ($newContentImage !== null) {
+                    $payload['content_image'] = $newContentImage;
                 }
 
                 Category::create($payload);
@@ -77,6 +96,9 @@ class CategoryController extends Controller
         } catch (Throwable $e) {
             if ($newImage !== null) {
                 $images->delete($newImage);
+            }
+            if ($newContentImage !== null) {
+                $images->delete($newContentImage);
             }
 
             throw $e;
@@ -115,9 +137,12 @@ class CategoryController extends Controller
     ): RedirectResponse {
         $data = $request->validated();
         $uploadedImage = $request->file('image');
-        unset($data['image']);
+        $uploadedContentImage = $request->file('content_image');
+        $removeContentImage = (bool) ($data['remove_content_image'] ?? false);
+        unset($data['image'], $data['content_image'], $data['remove_content_image']);
 
         $newImage = null;
+        $newContentImage = null;
 
         if ($uploadedImage) {
             $newImage = $images->store($uploadedImage, 'categories');
@@ -131,21 +156,42 @@ class CategoryController extends Controller
             }
         }
 
+        if ($uploadedContentImage) {
+            $newContentImage = $images->store($uploadedContentImage, 'category-content');
+
+            if (! $newContentImage) {
+                if ($newImage !== null) {
+                    $images->delete($newImage);
+                }
+
+                return back()->withInput()->withErrors([
+                    'content_image' => 'ذخیره تصویر راهنمای دسته‌بندی انجام نشد؛ تصاویر قبلی حفظ شدند.',
+                ]);
+            }
+        }
+
         $oldImage = null;
+        $oldContentImage = null;
         $oldSlug = (string) $category->slug;
 
         try {
-            DB::transaction(function () use ($category, $data, $newImage, &$oldImage, $oldSlug): void {
+            DB::transaction(function () use ($category, $data, $newImage, $newContentImage, $removeContentImage, &$oldImage, &$oldContentImage, $oldSlug): void {
                 $lockedCategory = Category::query()
                     ->whereKey($category->id)
                     ->lockForUpdate()
                     ->firstOrFail();
 
                 $oldImage = $lockedCategory->image;
+                $oldContentImage = $lockedCategory->content_image;
                 $payload = $data;
 
                 if ($newImage !== null) {
                     $payload['image'] = $newImage;
+                }
+                if ($newContentImage !== null) {
+                    $payload['content_image'] = $newContentImage;
+                } elseif ($removeContentImage) {
+                    $payload['content_image'] = null;
                 }
 
                 $lockedCategory->update($payload);
@@ -174,8 +220,21 @@ class CategoryController extends Controller
             if ($newImage !== null) {
                 $images->delete($newImage);
             }
+            if ($newContentImage !== null) {
+                $images->delete($newContentImage);
+            }
 
             throw $e;
+        }
+
+        if (
+            ($newContentImage !== null || $removeContentImage)
+            && $oldContentImage
+            && ! str_starts_with($oldContentImage, 'http://')
+            && ! str_starts_with($oldContentImage, 'https://')
+            && ! str_starts_with($oldContentImage, '//')
+        ) {
+            $images->delete($oldContentImage);
         }
 
         if (
@@ -233,6 +292,7 @@ class CategoryController extends Controller
         }
 
         $image = $category->image;
+        $contentImage = $category->content_image;
 
         $category->delete();
 
@@ -243,6 +303,15 @@ class CategoryController extends Controller
             && ! str_starts_with($image, '//')
         ) {
             $images->delete($image);
+        }
+
+        if (
+            $contentImage
+            && ! str_starts_with($contentImage, 'http://')
+            && ! str_starts_with($contentImage, 'https://')
+            && ! str_starts_with($contentImage, '//')
+        ) {
+            $images->delete($contentImage);
         }
 
         return redirect()

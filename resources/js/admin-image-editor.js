@@ -334,3 +334,32 @@ function initImageEditor(input) {
 }
 
 inputs.forEach(initImageEditor);
+
+
+// Lightweight previews for secondary image fields that do not need crop processing.
+document.querySelectorAll('[data-image-preview-input]').forEach((input) => {
+    const preview = document.querySelector(input.dataset.imagePreviewTarget || '');
+    const placeholder = document.querySelector(input.dataset.imagePreviewPlaceholder || '');
+    let objectUrl = null;
+
+    input.addEventListener('change', () => {
+        if (objectUrl) {
+            URL.revokeObjectURL(objectUrl);
+            objectUrl = null;
+        }
+
+        const file = input.files && input.files[0];
+        if (!file || !file.type || !file.type.startsWith('image/')) {
+            if (preview) preview.classList.add('hidden');
+            if (placeholder) placeholder.classList.remove('hidden');
+            return;
+        }
+
+        objectUrl = URL.createObjectURL(file);
+        if (preview) {
+            preview.src = objectUrl;
+            preview.classList.remove('hidden');
+        }
+        if (placeholder) placeholder.classList.add('hidden');
+    });
+});

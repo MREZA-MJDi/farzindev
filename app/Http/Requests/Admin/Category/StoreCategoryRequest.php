@@ -48,10 +48,10 @@ class StoreCategoryRequest extends FormRequest
                 'unique:categories,slug',
             ],
 
-            'description' => [
-                'nullable',
-                'string',
-            ],
+            'description' => ['nullable', 'string', 'max:1200'],
+            'content_title' => ['nullable', 'string', 'max:180'],
+            'content_body' => ['nullable', 'string', 'max:12000'],
+            'content_image' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'dimensions:min_width=800,min_height=450', 'max:20480'],
 
             'meta_title' => ['nullable', 'string', 'max:255'],
             'meta_description' => ['nullable', 'string', 'max:320'],
@@ -112,6 +112,11 @@ class StoreCategoryRequest extends FormRequest
             'slug.unique' => 'این Slug قبلاً استفاده شده است.',
 
             'description.string' => 'توضیحات باید به صورت متن باشد.',
+            'content_title.max' => 'عنوان راهنمای دسته‌بندی حداکثر ۱۸۰ کاراکتر است.',
+            'content_body.max' => 'متن راهنمای دسته‌بندی بیش از حد طولانی است.',
+            'content_image.image' => 'تصویر راهنمای دسته‌بندی معتبر نیست.',
+            'content_image.dimensions' => 'تصویر راهنما باید حداقل ۸۰۰ در ۴۵۰ پیکسل باشد.',
+            'content_image.max' => 'حجم تصویر راهنما نباید بیشتر از ۲۰ مگابایت باشد.',
             'meta_title.max' => 'عنوان SEO حداکثر ۲۵۵ کاراکتر است.',
             'meta_description.max' => 'توضیحات SEO حداکثر ۳۲۰ کاراکتر است.',
 
