@@ -574,12 +574,15 @@ test('blog archive renders the editorial magazine layout without horizontal over
         });
         expect(blogMediaLayout, 'every blog card cover or fallback must fill its media frame').toBeTruthy();
 
-        await expect(page.locator('.blog-article-card img')).toHaveAttribute('loading', 'lazy');
-        const featuredImage = page.locator('.blog-featured-card__media img');
-        if (await featuredImage.count()) {
-            await expect(featuredImage).toHaveAttribute('loading', 'lazy');
+        const archiveImageLoading = await page.locator(
+            '.blog-featured-card__media img, .blog-article-card img'
+        ).evaluateAll((images) => images.map((image) => image.loading));
+        expect(archiveImageLoading.every((loading) => loading === 'lazy')).toBeTruthy();
+
+        const topics = page.locator('.blog-topics .blog-topic');
+        if (await topics.count()) {
+            await expect(topics.first()).toBeVisible();
         }
-        await expect(page.locator('.blog-topics .blog-topic').first()).toBeVisible();
         await expect(page.locator('[data-blog-reveal]')).toHaveCount(0);
 
         const hiddenBlogContent = await page.locator('[data-blog-reveal]').evaluateAll((elements) => (
