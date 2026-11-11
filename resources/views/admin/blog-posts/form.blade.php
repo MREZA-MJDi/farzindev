@@ -307,6 +307,11 @@
                 <p data-image-editor-status class="text-xs text-[var(--admin-muted)]" aria-live="polite">کادر را تنظیم کن.</p>
             </div>
 
+            <label class="flex items-center gap-2 text-xs text-[var(--admin-muted)]">
+                <input type="checkbox" name="remove_cover_image" value="1" @checked(old('remove_cover_image')) class="rounded border-[var(--admin-border)] text-[var(--admin-accent)] focus:ring-[var(--admin-accent)]">
+                حذف تصویر شاخص فعلی
+            </label>
+
             <label class="block text-sm text-[var(--admin-text)]">متن جایگزین تصویر (Alt)
                 <input name="cover_image_alt" value="{{ old('cover_image_alt', $post->cover_image_alt) }}" maxlength="255" class="admin-input mt-2 w-full">
             </label>
