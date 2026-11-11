@@ -2,6 +2,8 @@
 
 namespace Tests\Feature;
 
+use App\Models\Media;
+use App\Models\ProductImage;
 use App\Services\Media\ResponsiveImageService;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
@@ -9,6 +11,37 @@ use Tests\TestCase;
 
 class ResponsiveImageServiceTest extends TestCase
 {
+    public function test_media_and_product_image_urls_do_not_point_to_missing_files(): void
+    {
+        Storage::fake('public');
+
+        $media = new Media([
+            'disk' => 'public',
+            'path' => 'media/missing-cover.webp',
+        ]);
+
+        $this->assertNull($media->url);
+
+        Storage::disk('public')->put('media/available-cover.webp', 'image-content');
+        $media->path = 'media/available-cover.webp';
+
+        $this->assertSame(
+            Storage::disk('public')->url('media/available-cover.webp'),
+            $media->url
+        );
+
+        $missingMedia = new Media([
+            'disk' => 'public',
+            'path' => 'media/missing-product.webp',
+        ]);
+        $productImage = new ProductImage([
+            'path' => 'media/missing-product.webp',
+        ]);
+        $productImage->setRelation('media', $missingMedia);
+
+        $this->assertSame('', $productImage->url);
+    }
+
     public function test_new_image_upload_keeps_original_and_creates_responsive_webp_sources(): void
     {
         if (! function_exists('imagewebp') || ! function_exists('imagecreatefromstring')) {
