@@ -215,7 +215,7 @@
         </section>
 
 
-        @if(filled($category->content_body) || filled($category->content_image_url))
+        @if(filled($category->content_title) || filled($category->content_body) || filled($category->content_image_url))
             <section class="border-t border-[var(--livora-border)] bg-[var(--livora-white)]">
                 <x-layout.container>
                     <div class="grid items-center gap-8 py-12 sm:py-16 lg:grid-cols-2 lg:gap-12">
