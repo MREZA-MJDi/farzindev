@@ -249,9 +249,14 @@ class ProductController extends Controller
     {
         $product->load(['images.media', 'allVariants.images.media']);
 
+        $storefrontCategoryIds = Category::query()
+            ->active()
+            ->reorder()
+            ->select('id');
+
         $categories = Category::query()
-            ->where(function ($query) use ($product): void {
-                $query->where('is_active', true)
+            ->where(function ($query) use ($product, $storefrontCategoryIds): void {
+                $query->whereIn('id', $storefrontCategoryIds)
                     ->orWhere('id', $product->category_id);
             })
             ->orderByRaw('CASE WHEN id = ? THEN 0 ELSE 1 END', [$product->category_id])
