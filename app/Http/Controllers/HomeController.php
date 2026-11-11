@@ -354,9 +354,8 @@ class HomeController extends Controller
             ->orderByDesc('is_featured')
             ->orderByDesc('published_at')
             ->orderByDesc('id')
-            ->limit(6)
+            ->limit(3)
             ->get()
-            ->take(3)
             ->values();
 
         // The featured shelf contains only editor-selected products. The other
