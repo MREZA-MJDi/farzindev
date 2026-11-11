@@ -138,7 +138,7 @@
                                     <small>بعد از انتخاب فایل، کادر قابل برش و جابه‌جایی می‌شود.</small>
                                 </div>
 
-                                <div data-image-editor-panel hidden class="fz-admin-home-hero-crop-panel">
+                                <div data-image-editor-panel data-image-editor-panel-for="page_home_hero_image" hidden class="fz-admin-home-hero-crop-panel">
                                     <div class="fz-admin-home-hero-crop-frame">
                                         <canvas
                                             data-image-editor-canvas
@@ -359,7 +359,7 @@
                         </div>
                         <label for="page_home_technology_image" class="admin-label">بارگذاری تصویر ۱۶:۱۰</label>
                         <input id="page_home_technology_image" name="page_home_technology_image" type="file" data-image-editor-input data-image-editor-default-ratio="16:10" data-image-editor-min-width="1200" data-image-editor-min-height="750" accept="image/jpeg,image/png,image/webp" class="admin-input mt-2 w-full max-w-2xl p-2"> 
-                        <div data-image-editor-panel hidden class="mt-5 max-w-2xl space-y-4 rounded-xl border border-[var(--admin-border)] bg-[var(--admin-card)] p-4">
+                        <div data-image-editor-panel-for="page_home_technology_image" hidden class="mt-5 max-w-2xl space-y-4 rounded-xl border border-[var(--admin-border)] bg-[var(--admin-card)] p-4">
                             <strong class="block text-xs font-bold text-[var(--admin-text)]">برش و پیش‌نمایش تصویر صفحه اصلی</strong>
                             <canvas data-image-editor-canvas role="img" aria-label="پیش‌نمایش زنده برش تصویر فناوری" class="mx-auto block w-full rounded-lg bg-[var(--admin-bg)]" style="height:auto;aspect-ratio:16/10;touch-action:none;cursor:grab;"></canvas>
                             <div class="grid gap-4 sm:grid-cols-2">
