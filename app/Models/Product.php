@@ -119,10 +119,19 @@ class Product extends Model
 
     public function primaryImage(): ?ProductImage
     {
-        return $this->images()
-                ->where('is_primary', true)
-                ->first()
-            ?? $this->images()->first();
+        $images = $this->relationLoaded('images')
+            ? $this->images
+            : $this->images()
+                ->orderByDesc('is_primary')
+                ->orderBy('sort_order')
+                ->get();
+
+        return $images->first(
+            fn (ProductImage $image): bool => filled($image->url)
+                && $image->is_primary
+        ) ?? $images->first(
+            fn (ProductImage $image): bool => filled($image->url)
+        );
     }
 
     public function getDiscountPercentageAttribute(): ?int
