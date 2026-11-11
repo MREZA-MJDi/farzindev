@@ -149,7 +149,12 @@ body {
 }
 
 /* Public utility classes must not sneak rounded geometry back into any page. */
-#app :where([class*="rounded-"]) {
+#app .storefront-content :where(
+    a[class*="rounded-"],
+    button[class*="rounded-"],
+    [role="button"][class*="rounded-"],
+    [class*="rounded-"][class*="border"]
+) {
     border-radius: 0 !important;
 }
 
