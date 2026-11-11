@@ -2098,6 +2098,41 @@ class FarzinStorefrontTest extends TestCase
         $this->assertSame('draft', $draft->fresh()->status);
     }
 
+    public function test_category_motion_media_picker_only_lists_available_files(): void
+    {
+        Storage::fake('public');
+        $admin = $this->admin();
+
+        Media::create([
+            'user_id' => $admin->id,
+            'disk' => 'public',
+            'path' => 'media/missing-category-preview.gif',
+            'filename' => 'missing-category-preview.gif',
+            'original_name' => 'missing-category-preview.gif',
+            'mime_type' => 'image/gif',
+            'extension' => 'gif',
+            'size' => 1024,
+        ]);
+
+        Storage::disk('public')->put('media/available-category-preview.gif', 'gif bytes');
+        Media::create([
+            'user_id' => $admin->id,
+            'disk' => 'public',
+            'path' => 'media/available-category-preview.gif',
+            'filename' => 'available-category-preview.gif',
+            'original_name' => 'available-category-preview.gif',
+            'mime_type' => 'image/gif',
+            'extension' => 'gif',
+            'size' => 1024,
+        ]);
+
+        $this->actingAs($admin, 'admin')
+            ->get(route('admin.categories.create'))
+            ->assertOk()
+            ->assertSee('available-category-preview.gif')
+            ->assertDontSee('missing-category-preview.gif');
+    }
+
     public function test_admin_cannot_publish_products_in_inactive_categories(): void
     {
         Storage::fake('public');
