@@ -118,7 +118,11 @@
                 @forelse($products as $product)
 
                     @php
-                        $primaryImage = $product->images->first();
+                        $primaryImage = $product->images->first(
+                            fn ($image) => $image->is_primary && filled($image->url)
+                        ) ?? $product->images->first(
+                            fn ($image) => filled($image->url)
+                        );
                         $displayStock = $product->variants_count > 0
                             ? (int) ($product->active_variants_stock ?? 0)
                             : (int) $product->stock;
