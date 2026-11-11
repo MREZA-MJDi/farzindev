@@ -417,7 +417,6 @@
                         ],
                     ];
                     $savedSpecifications = old('specifications', $product->specifications ?? []);
-                    $isLegacySpecificationMap = is_array($savedSpecifications) && ! array_is_list($savedSpecifications);
                     $initialSpecifications = [];
                     if (is_array($savedSpecifications) && array_is_list($savedSpecifications)) {
                         $initialSpecifications = collect($savedSpecifications)
@@ -442,20 +441,6 @@
                             ? 'hood'
                             : ((str_contains($categoryIdentifier, 'gas') || str_contains($categoryIdentifier, 'اجاق') || str_contains($categoryIdentifier, 'گاز'))
                                 ? 'gas' : ''));
-                    if ($isLegacySpecificationMap && $initialSpecificationType !== '') {
-                        $legacyKeysByType = [
-                            'sink' => ['dimensions', 'length', 'width', 'height', 'installation', 'basin_count', 'material', 'basin_depth', 'sheet_thickness', 'capacity_liters', 'weight', 'basin_direction', 'design_type', 'drainboard', 'tap_holes', 'accessories'],
-                            'hood' => ['dimensions', 'length', 'width', 'height', 'hood_type', 'hood_model', 'light_count', 'switch_type', 'material', 'suction_capacity', 'filter_type', 'motor_count', 'noise_level', 'air_outlet', 'accessories'],
-                            'gas' => ['dimensions', 'length', 'width', 'height', 'burner_count', 'size_range', 'burner_position', 'surface_material', 'material', 'glass_type', 'glass_thickness', 'grate_material', 'knob_type', 'knob_material', 'ignition_type', 'burner_type', 'valve_type', 'safety_system', 'energy_rating', 'energy_source', 'power_cable', 'accessories', 'model_code'],
-                        ];
-                        $allowedLabels = collect($legacyKeysByType[$initialSpecificationType] ?? [])
-                            ->map(fn ($key) => $specificationLabels[$key] ?? str_replace('_', ' ', $key))
-                            ->all();
-                        $initialSpecifications = array_values(array_filter(
-                            $initialSpecifications,
-                            fn ($row) => in_array($row['label'], $allowedLabels, true)
-                        ));
-                    }
                     if ($initialSpecifications === [] && $initialSpecificationType !== '') {
                         $initialSpecifications = $specificationTemplates[$initialSpecificationType];
                     }
