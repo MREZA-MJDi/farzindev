@@ -70,13 +70,28 @@
 
     if ($storedSpecifications->isNotEmpty() && array_is_list($storedSpecifications->all())
         && collect($storedSpecifications->first())->has('label')) {
+        $legacyKeyByLabel = array_flip($specificationLabels);
+        $allowedLegacyKeys = $categorySpecificationType
+            ? ($legacySpecificationGroups[$categorySpecificationType] ?? [])
+            : null;
         $visibleSpecifications = $storedSpecifications
-            ->filter(fn ($row) => is_array($row)
-                && filled(trim((string) ($row['label'] ?? '')))
-                && is_scalar($row['value'] ?? null)
-                && filled(trim((string) $row['value'])))
+            ->filter(function ($row) use ($legacyKeyByLabel, $allowedLegacyKeys): bool {
+                if (! is_array($row)
+                    || blank(trim((string) ($row['label'] ?? '')))
+                    || ! is_scalar($row['value'] ?? null)
+                    || blank(trim((string) $row['value']))) {
+                    return false;
+                }
+
+                $label = trim((string) $row['label']);
+                $legacyKey = $legacyKeyByLabel[$label] ?? $label;
+
+                return ! isset($legacyKeyByLabel[$label])
+                    || $allowedLegacyKeys === null
+                    || in_array($legacyKey, $allowedLegacyKeys, true);
+            })
             ->map(fn ($row) => [
-                'label' => trim((string) $row['label']),
+                'label' => $specificationLabels[trim((string) $row['label'])] ?? trim((string) $row['label']),
                 'value' => trim((string) $row['value']),
             ])->values();
     } else {
