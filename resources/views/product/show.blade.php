@@ -39,47 +39,59 @@
     $hasShippingInfo = $hasShippingFlatRate || $hasFreeShippingThreshold;
 
     $specificationLabels = [
-        'dimensions' => 'ابعاد کلی',
-        'length' => 'طول',
-        'width' => 'عرض',
-        'height' => 'ارتفاع',
-        'installation' => 'نحوه نصب',
-        'basin_count' => 'تعداد لگن',
-        'material' => 'جنس بدنه یا صفحه',
-        'basin_depth' => 'عمق لگن',
-        'sheet_thickness' => 'ضخامت ورق',
-        'capacity_liters' => 'ظرفیت لگن',
-        'weight' => 'وزن محصول',
-        'basin_direction' => 'جهت لگن',
-        'design_type' => 'نوع طراحی',
-        'drainboard' => 'سینی',
-        'light_count' => 'تعداد لامپ',
-        'switch_type' => 'نوع کلید',
-        'hood_type' => 'نوع هود',
-        'hood_model' => 'مدل هود',
-        'suction_capacity' => 'حجم مکش',
-        'filter_type' => 'نوع فیلتر',
-        'noise_level' => 'میزان صدا',
-        'burner_count' => 'تعداد شعله',
-        'burner_position' => 'محل شعله پلوپز',
-        'knob_type' => 'نوع ولوم',
-        'ignition_type' => 'نوع فندک',
-        'safety_system' => 'سیستم ایمنی',
-        'energy_rating' => 'رده مصرف انرژی',
-        'energy_source' => 'منبع انرژی',
-        'glass_type' => 'نوع شیشه',
-        'glass_thickness' => 'ضخامت شیشه',
-        'grate_material' => 'جنس شبکه',
-        'valve_type' => 'نوع شیر',
-        'burner_material' => 'نوع سرشعله',
-        'power_cable' => 'کابل برق',
-        'accessories' => 'اقلام همراه',
-        'model_code' => 'مدل / کد کالا',
-        'other_notes' => 'سایر توضیحات',
+        'dimensions' => 'ابعاد کلی', 'length' => 'طول', 'width' => 'عرض', 'height' => 'ارتفاع',
+        'installation' => 'نحوه نصب', 'basin_count' => 'تعداد لگن', 'material' => 'جنس بدنه',
+        'basin_depth' => 'عمق لگن', 'sheet_thickness' => 'ضخامت ورق', 'capacity_liters' => 'ظرفیت لگن',
+        'weight' => 'وزن', 'basin_direction' => 'جهت لگن', 'design_type' => 'نوع طراحی',
+        'drainboard' => 'سینی', 'tap_holes' => 'تعداد و محل سوراخ شیر', 'light_count' => 'تعداد لامپ',
+        'switch_type' => 'نوع کلید', 'hood_type' => 'نوع هود', 'hood_model' => 'مدل',
+        'suction_capacity' => 'قدرت مکش', 'filter_type' => 'نوع فیلتر', 'motor_count' => 'تعداد موتور',
+        'noise_level' => 'میزان صدا', 'air_outlet' => 'نوع خروجی هوا', 'burner_count' => 'تعداد شعله',
+        'size_range' => 'محدوده سایز', 'burner_position' => 'محل شعله پلوپز', 'surface_material' => 'جنس صفحه',
+        'glass_type' => 'نوع شیشه', 'glass_thickness' => 'ضخامت شیشه', 'grate_material' => 'جنس شبکه',
+        'knob_type' => 'نوع ولوم', 'knob_material' => 'جنس ولوم', 'ignition_type' => 'نوع فندک',
+        'burner_type' => 'نوع سرشعله', 'valve_type' => 'نوع شیر', 'safety_system' => 'سیستم ایمنی و ترموکوپل',
+        'energy_rating' => 'رده مصرف انرژی', 'energy_source' => 'منبع انرژی', 'power_cable' => 'کابل برق',
+        'accessories' => 'لوازم همراه', 'model_code' => 'مدل کالا / کد محصول',
     ];
-    $visibleSpecifications = collect($product->specifications ?? [])
-        ->filter(fn ($value) => is_scalar($value) && filled(trim((string) $value)))
-        ->mapWithKeys(fn ($value, $key) => [$key => trim((string) $value)]);
+    $storedSpecifications = collect($product->specifications ?? []);
+    $categoryIdentifier = mb_strtolower(($product->category?->slug ?? '').' '.($product->category?->name ?? ''));
+    $legacySpecificationGroups = [
+        'sink' => ['dimensions', 'length', 'width', 'height', 'installation', 'basin_count', 'material', 'basin_depth', 'sheet_thickness', 'capacity_liters', 'weight', 'basin_direction', 'design_type', 'drainboard', 'tap_holes', 'accessories'],
+        'hood' => ['dimensions', 'length', 'width', 'height', 'hood_type', 'hood_model', 'light_count', 'switch_type', 'material', 'suction_capacity', 'filter_type', 'motor_count', 'noise_level', 'air_outlet', 'accessories'],
+        'gas' => ['dimensions', 'length', 'width', 'height', 'burner_count', 'size_range', 'burner_position', 'surface_material', 'material', 'glass_type', 'glass_thickness', 'grate_material', 'knob_type', 'knob_material', 'ignition_type', 'burner_type', 'valve_type', 'safety_system', 'energy_rating', 'energy_source', 'power_cable', 'accessories', 'model_code'],
+    ];
+    $categorySpecificationType = str_contains($categoryIdentifier, 'sink') || str_contains($categoryIdentifier, 'سینک')
+        ? 'sink'
+        : ((str_contains($categoryIdentifier, 'hood') || str_contains($categoryIdentifier, 'هود'))
+            ? 'hood'
+            : ((str_contains($categoryIdentifier, 'gas') || str_contains($categoryIdentifier, 'اجاق') || str_contains($categoryIdentifier, 'گاز'))
+                ? 'gas' : null));
+
+    if ($storedSpecifications->isNotEmpty() && array_is_list($storedSpecifications->all())
+        && collect($storedSpecifications->first())->has('label')) {
+        $visibleSpecifications = $storedSpecifications
+            ->filter(fn ($row) => is_array($row)
+                && filled(trim((string) ($row['label'] ?? '')))
+                && is_scalar($row['value'] ?? null)
+                && filled(trim((string) $row['value'])))
+            ->map(fn ($row) => [
+                'label' => trim((string) $row['label']),
+                'value' => trim((string) $row['value']),
+            ])->values();
+    } else {
+        $allowedLegacyKeys = $categorySpecificationType
+            ? ($legacySpecificationGroups[$categorySpecificationType] ?? [])
+            : null;
+        $visibleSpecifications = $storedSpecifications
+            ->filter(fn ($value, $key) => is_scalar($value)
+                && filled(trim((string) $value))
+                && ($allowedLegacyKeys === null || in_array((string) $key, $allowedLegacyKeys, true)))
+            ->map(fn ($value, $key) => [
+                'label' => $specificationLabels[$key] ?? str_replace('_', ' ', (string) $key),
+                'value' => trim((string) $value),
+            ])->values();
+    }
 
     $productTabs = [];
     if ($visibleSpecifications->isNotEmpty()) {
@@ -295,10 +307,10 @@
 
                         @if($tab === 'specifications')
                             <dl class="grid grid-cols-1 gap-0 border-t border-[var(--livora-border)] py-2 sm:grid-cols-2">
-                                @foreach($visibleSpecifications as $key => $value)
+                                @foreach($visibleSpecifications as $specification)
                                     <div class="flex min-w-0 items-start justify-between gap-4 border-b border-[var(--livora-border)] px-1 py-3 text-sm">
-                                        <dt class="shrink-0 text-[var(--livora-stone)]">{{ $specificationLabels[$key] ?? str_replace('_', ' ', $key) }}</dt>
-                                        <dd class="min-w-0 text-left font-semibold text-[var(--livora-text)]" dir="auto">{{ $value }}</dd>
+                                        <dt class="shrink-0 text-[var(--livora-stone)]">{{ $specification['label'] }}</dt>
+                                        <dd class="min-w-0 text-left font-semibold text-[var(--livora-text)]" dir="auto">{{ $specification['value'] }}</dd>
                                     </div>
                                 @endforeach
                             </dl>
