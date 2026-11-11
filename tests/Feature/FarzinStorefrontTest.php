@@ -5137,6 +5137,63 @@ class FarzinStorefrontTest extends TestCase
             ->assertSee($shopOnly->name);
     }
 
+    public function test_public_catalog_falls_back_to_the_next_available_product_image(): void
+    {
+        Storage::fake('public');
+        $category = $this->category([
+            'name' => 'دسته محصولات دارای گالری',
+            'slug' => 'products-with-image-fallback',
+        ]);
+        $product = $this->product($category, [
+            'name' => 'هود با تصویر اصلی حذف‌شده',
+            'slug' => 'hood-with-missing-primary-image',
+            'sku' => 'FAR-MISSING-PRIMARY-FALLBACK',
+            'is_new' => true,
+            'show_in_home_gallery' => false,
+        ]);
+
+        ProductImage::create([
+            'product_id' => $product->id,
+            'path' => 'products/deleted-primary-image.webp',
+            'alt' => 'تصویر اصلی حذف‌شده',
+            'sort_order' => 0,
+            'is_primary' => true,
+        ]);
+
+        Storage::disk('public')->put('products/available-fallback-image.webp', 'image bytes');
+
+        ProductImage::create([
+            'product_id' => $product->id,
+            'path' => 'products/available-fallback-image.webp',
+            'alt' => 'تصویر جایگزین سالم',
+            'sort_order' => 1,
+            'is_primary' => false,
+        ]);
+
+        $this->get(route('home'))
+            ->assertOk()
+            ->assertSee($product->name)
+            ->assertSee('/storage/products/available-fallback-image.webp')
+            ->assertDontSee('/storage/products/deleted-primary-image.webp');
+
+        $this->get(route('shop.index'))
+            ->assertOk()
+            ->assertSee($product->name)
+            ->assertSee('/storage/products/available-fallback-image.webp')
+            ->assertDontSee('/storage/products/deleted-primary-image.webp');
+
+        $this->get(route('categories.show', $category->slug))
+            ->assertOk()
+            ->assertSee($product->name)
+            ->assertSee('/storage/products/available-fallback-image.webp')
+            ->assertDontSee('/storage/products/deleted-primary-image.webp');
+
+        $this->get(route('product.show', $product->slug))
+            ->assertOk()
+            ->assertSee('/storage/products/available-fallback-image.webp')
+            ->assertDontSee('/storage/products/deleted-primary-image.webp');
+    }
+
     public function test_admin_cannot_create_a_public_product_with_reserved_preview_sku_prefix(): void
     {
         $admin = $this->admin();
