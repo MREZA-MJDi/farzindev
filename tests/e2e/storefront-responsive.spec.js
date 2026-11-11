@@ -517,6 +517,17 @@ test('homepage journal shows published articles with optional cover images', asy
                 radius: Number.parseFloat(cardStyle.borderTopLeftRadius),
                 imageCount: section.querySelectorAll('.fz-home-article-card img').length,
                 fallbackCount: section.querySelectorAll('.fz-home-article-card__media-fallback').length,
+                imageFramesFill: Array.from(section.querySelectorAll('.fz-home-article-card__media')).every((media) => {
+                    const image = media.querySelector('img');
+                    const fallback = media.querySelector('.fz-home-article-card__media-fallback');
+                    const visual = image || fallback;
+                    if (!visual) return false;
+                    const mediaBox = media.getBoundingClientRect();
+                    const visualBox = visual.getBoundingClientRect();
+                    return Math.abs(mediaBox.width - visualBox.width) <= 1
+                        && Math.abs(mediaBox.height - visualBox.height) <= 1
+                        && (!image || getComputedStyle(image).objectFit === 'cover');
+                }),
                 imagesHaveAlt: Array.from(section.querySelectorAll('.fz-home-article-card img')).every((image) => image.getAttribute('alt')?.trim()),
                 overflow: Math.max(document.documentElement.scrollWidth, document.body.scrollWidth)
                     - document.documentElement.clientWidth,
@@ -527,6 +538,7 @@ test('homepage journal shows published articles with optional cover images', asy
         expect(layout.columns).toBe(viewport.width <= 767 ? 1 : 3);
         expect(layout.radius).toBeLessThanOrEqual(24);
         expect(layout.imageCount + layout.fallbackCount).toBe(await articles.count());
+        expect(layout.imageFramesFill, 'each homepage journal image or fallback must fill its media frame').toBeTruthy();
         expect(layout.imagesHaveAlt).toBeTruthy();
         expect(layout.overflow).toBeLessThanOrEqual(1);
     }
@@ -545,6 +557,22 @@ test('blog archive renders the editorial magazine layout without horizontal over
         await expect(page.locator('.blog-masthead__title')).toBeVisible();
         await expect(page.locator('.blog-featured-card')).toBeVisible();
         await expect(page.locator('.blog-article-card').first()).toBeVisible();
+
+        const blogMediaLayout = await page.evaluate(() => {
+            const mediaItems = Array.from(document.querySelectorAll(
+                '.blog-featured-card__media, .blog-article-card__media'
+            ));
+            return mediaItems.every((media) => {
+                const visual = media.querySelector('img, .blog-art-fallback');
+                if (!visual) return false;
+                const frame = media.getBoundingClientRect();
+                const image = visual.getBoundingClientRect();
+                return Math.abs(frame.width - image.width) <= 1
+                    && Math.abs(frame.height - image.height) <= 1
+                    && (!visual.matches('img') || getComputedStyle(visual).objectFit === 'cover');
+            });
+        });
+        expect(blogMediaLayout, 'every blog card cover or fallback must fill its media frame').toBeTruthy();
 
         const hiddenBlogContent = await page.locator('[data-blog-reveal]').evaluateAll((elements) => (
             elements.filter((element) => {
