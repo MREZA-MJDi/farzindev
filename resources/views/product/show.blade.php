@@ -75,7 +75,7 @@
             ? ($legacySpecificationGroups[$categorySpecificationType] ?? [])
             : null;
         $visibleSpecifications = $storedSpecifications
-            ->filter(function ($row) use ($legacyKeyByLabel, $allowedLegacyKeys): bool {
+            ->filter(function ($row) use ($legacyKeyByLabel, $allowedLegacyKeys, $specificationLabels): bool {
                 if (! is_array($row)
                     || blank(trim((string) ($row['label'] ?? '')))
                     || ! is_scalar($row['value'] ?? null)
@@ -84,9 +84,11 @@
                 }
 
                 $label = trim((string) $row['label']);
-                $legacyKey = $legacyKeyByLabel[$label] ?? $label;
+                $legacyKey = array_key_exists($label, $specificationLabels)
+                    ? $label
+                    : ($legacyKeyByLabel[$label] ?? null);
 
-                return ! isset($legacyKeyByLabel[$label])
+                return $legacyKey === null
                     || $allowedLegacyKeys === null
                     || in_array($legacyKey, $allowedLegacyKeys, true);
             })
