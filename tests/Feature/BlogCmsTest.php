@@ -529,7 +529,7 @@ class BlogCmsTest extends TestCase
             ->assertSee('blog-masthead', false)
             ->assertSee('blog-featured-card', false)
             ->assertSee('blog-article-card', false)
-            ->assertSee('FARZIN JOURNAL')
+            ->assertSee('مجله فرزین')
             ->assertSee($featured->title)
             ->assertSee('تازه‌های مجله');
     }
