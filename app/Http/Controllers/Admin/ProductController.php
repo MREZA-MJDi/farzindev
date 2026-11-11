@@ -121,7 +121,7 @@ class ProductController extends Controller
     public function create(): View
     {
         $categories = Category::query()
-            ->where('is_active', true)
+            ->active()
             ->orderBy('name')
             ->limit(100)
             ->get();
