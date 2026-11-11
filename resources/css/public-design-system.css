@@ -440,3 +440,32 @@ body.home-body #app .fz-home-purchase-cta__inner,
     object-position: center !important;
     padding: clamp(12px, 2vw, 24px) !important;
 }
+
+/* Product and article card controls use the same square geometry as the rest of the shop. */
+#app .storefront-content :where(
+    .blog-pagination a,
+    .blog-pagination span[aria-current],
+    .farzin-product-card__cta,
+    .farzin-product-card__media,
+    .farzin-installment-seal,
+    .farzin-product-card__wishlist,
+    .farzin-product-gallery .product-gallery-shell,
+    .farzin-product-gallery .product-gallery-stage,
+    .farzin-product-detail-info,
+    .farzin-product-facts__item,
+    .farzin-product-detail-info .product-price,
+    .farzin-product-detail-info .product-price__installment
+) {
+    border-radius: 0 !important;
+}
+
+#app .storefront-content .farzin-product-card__image {
+    object-fit: contain !important;
+    object-position: center !important;
+    padding: clamp(8px, 1.4vw, 16px) !important;
+    transform: none !important;
+}
+
+#app .storefront-content .farzin-product-card__image-link {
+    background: #F0F2F4;
+}
