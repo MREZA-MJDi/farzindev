@@ -6027,13 +6027,13 @@ body.home-body,
 .storefront-content .farzin-category-product-grid > article { min-width:0; }
 .storefront-content .farzin-product-gallery .product-gallery-stage {
     aspect-ratio:4/3!important;height:auto!important;max-height:none!important;min-height:0!important;
-    border-radius:12px!important;background:#F0F2F4;
+    border-radius:0!important;background:#F0F2F4;
 }
 .storefront-content .farzin-product-gallery .product-gallery-stage > img {
-    width:100%;height:100%;padding:0!important;object-fit:cover!important;object-position:center!important;
+    width:100%;height:100%;padding:clamp(12px,2vw,24px)!important;object-fit:contain!important;object-position:center!important;
 }
-.storefront-content .farzin-product-gallery .product-gallery-shell { border-radius:12px!important; }
-.storefront-content .farzin-product-gallery .farzin-gallery-zoom { border-radius:7px!important; }
+.storefront-content .farzin-product-gallery .product-gallery-shell { border-radius:0!important; }
+.storefront-content .farzin-product-gallery .farzin-gallery-zoom { border-radius:0!important; }
 .storefront-content .farzin-search-overlay__panel { border-radius:0 0 12px 12px!important; }
 .storefront-content .farzin-search-overlay input[type="search"] { border-radius:9px!important; }
 .storefront-content .farzin-search-overlay a { border-radius:9px!important; }
