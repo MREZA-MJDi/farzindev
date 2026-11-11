@@ -1909,13 +1909,17 @@ class FarzinStorefrontTest extends TestCase
         $image = ProductImage::query()->where('product_id', $product->id)->firstOrFail();
         Storage::disk('public')->assertExists($image->path);
 
+        $responsiveSrcset = $image->responsive_srcset;
+        $this->assertNotNull($responsiveSrcset, 'The uploaded image should expose generated responsive variants.');
+
         $this->get(route('product.show', $product->slug))
             ->assertOk()
             ->assertSee($product->name);
 
         $this->get(route('home'))
             ->assertOk()
-            ->assertSee($product->name);
+            ->assertSee($product->name)
+            ->assertSee('srcset="' . $responsiveSrcset . '"', false);
 
         $this->get(route('shop.index'))
             ->assertOk()
