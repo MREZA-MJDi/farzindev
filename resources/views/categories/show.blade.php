@@ -157,7 +157,7 @@
                         <div>
 
                             <p class="text-[10px] font-medium uppercase tracking-[0.22em] text-[var(--livora-accent)]">
-                                PRODUCTS
+                                محصولات
                             </p>
 
                             <h2 class="mt-2 text-2xl font-semibold tracking-tight sm:text-3xl">
