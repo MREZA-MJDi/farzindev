@@ -114,7 +114,7 @@
                     @else
                         <div class="blog-masthead__visual-fallback" aria-hidden="true">
                             <span>F.</span>
-                            <small>FARZIN JOURNAL</small>
+                            <small>مجله فرزین</small>
                         </div>
                     @endif
                 </div>
