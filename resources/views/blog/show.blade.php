@@ -78,7 +78,7 @@
                     @endforeach
                 </nav>
 
-                <p class="blog-article-kicker">FARZIN JOURNAL <span>/</span> ARTICLE</p>
+                <p class="blog-article-kicker">مجله فرزین <span>/</span> مقاله</p>
                 <h1 class="blog-article-title">{{ $post->title }}</h1>
 
                 @if($post->excerpt)
