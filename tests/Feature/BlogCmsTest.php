@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\BlogPost;
+use App\Models\Media;
 use App\Models\BlogTerm;
 use App\Models\SeoRedirect;
 use App\Models\StorefrontSetting;
@@ -260,6 +261,8 @@ class BlogCmsTest extends TestCase
     public function test_admin_can_select_a_blog_cover_from_the_shared_media_library(): void
     {
         $admin = User::factory()->create(['role' => 'admin']);
+        Storage::fake('public');
+        Storage::disk('public')->put('media/blog-library-cover.webp', 'test-image');
         $media = Media::create([
             'user_id' => $admin->id,
             'disk' => 'public',
