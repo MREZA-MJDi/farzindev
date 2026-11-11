@@ -257,6 +257,45 @@ class BlogCmsTest extends TestCase
             ->assertSee('BlogPosting', false);
     }
 
+    public function test_admin_can_select_a_blog_cover_from_the_shared_media_library(): void
+    {
+        $admin = User::factory()->create(['role' => 'admin']);
+        $media = Media::create([
+            'user_id' => $admin->id,
+            'disk' => 'public',
+            'path' => 'media/blog-library-cover.webp',
+            'filename' => 'blog-library-cover.webp',
+            'original_name' => 'تصویر کتابخانه.webp',
+            'mime_type' => 'image/webp',
+            'extension' => 'webp',
+            'size' => 2048,
+            'alt' => 'تصویر شاخص از کتابخانه',
+        ]);
+
+        $this->actingAs($admin, 'admin')
+            ->get(route('admin.blog-posts.create'))
+            ->assertOk()
+            ->assertSee('name="cover_image_media_id"', false)
+            ->assertSee('تصویر کتابخانه.webp');
+
+        $this->actingAs($admin, 'admin')
+            ->post(route('admin.blog-posts.store'), [
+                'title' => 'مقاله با تصویر کتابخانه',
+                'slug' => 'article-with-library-cover',
+                'body' => 'متن مقاله.',
+                'cover_image_media_id' => $media->id,
+                'status' => 'draft',
+            ])
+            ->assertRedirect()
+            ->assertSessionHasNoErrors();
+
+        $this->assertDatabaseHas('blog_posts', [
+            'slug' => 'article-with-library-cover',
+            'cover_image' => 'media/blog-library-cover.webp',
+        ]);
+        $this->assertDatabaseHas('media', ['id' => $media->id, 'path' => 'media/blog-library-cover.webp']);
+    }
+
     public function test_admin_blog_slug_must_be_unique_and_url_safe(): void
     {
         $admin = User::factory()->create(['role' => 'admin']);
