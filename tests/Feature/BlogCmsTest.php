@@ -295,6 +295,7 @@ class BlogCmsTest extends TestCase
         $this->assertDatabaseHas('blog_posts', [
             'slug' => 'article-with-library-cover',
             'cover_image' => 'media/blog-library-cover.webp',
+            'cover_image_alt' => 'تصویر شاخص از کتابخانه',
         ]);
         $this->assertDatabaseHas('media', ['id' => $media->id, 'path' => 'media/blog-library-cover.webp']);
     }
