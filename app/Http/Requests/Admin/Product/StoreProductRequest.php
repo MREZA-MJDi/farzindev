@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Admin\Product;
 
 use App\Models\Category;
+use App\Models\Media;
 use Illuminate\Foundation\Http\FormRequest;
 use App\Http\Requests\Admin\Product\Concerns\PreparesProductInput;
 use Illuminate\Validation\Rule;
@@ -24,6 +25,20 @@ class StoreProductRequest extends FormRequest
                     'primary_media_id',
                     'تصویر آپلودی و تصویر کتابخانه را هم‌زمان انتخاب نکنید.'
                 );
+            }
+
+            if (
+                filled($this->input('primary_media_id'))
+                && ! $validator->errors()->has('primary_media_id')
+            ) {
+                $selectedMedia = Media::query()->find($this->input('primary_media_id'));
+
+                if (! $selectedMedia || blank($selectedMedia->url)) {
+                    $validator->errors()->add(
+                        'primary_media_id',
+                        'فایل انتخاب‌شده در کتابخانه رسانه در دسترس نیست؛ تصویر دیگری انتخاب کنید.'
+                    );
+                }
             }
 
             if (
