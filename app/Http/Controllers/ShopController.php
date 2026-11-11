@@ -217,13 +217,15 @@ class ShopController extends Controller
             ->pluck('value', 'key');
 
         $bannerPath = $settings->get('shop_banner_image');
+        $publicDisk = Storage::disk('public');
+        $bannerAvailable = filled($bannerPath) && $publicDisk->exists($bannerPath);
 
         return view('shop.index', [
             'products' => $products,
             'categories' => $categories,
             'shopBanner' => [
-                'image_url' => $bannerPath ? Storage::disk('public')->url($bannerPath) : null,
-                'image_srcset' => $bannerPath ? $images->srcset($bannerPath) : null,
+                'image_url' => $bannerAvailable ? $publicDisk->url($bannerPath) : null,
+                'image_srcset' => $bannerAvailable ? $images->srcset($bannerPath) : null,
                 'title' => $settings->get('shop_banner_title') ?: 'فروشگاه فرزین',
                 'subtitle' => $settings->get('shop_banner_subtitle') ?: 'هود و سینک آشپزخانه؛ انتخابی دقیق برای فضای شما.',
             ],
