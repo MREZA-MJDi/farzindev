@@ -24,6 +24,17 @@ class StoreProductRequest extends FormRequest
                     'تصویر آپلودی و تصویر کتابخانه را هم‌زمان انتخاب نکنید.'
                 );
             }
+
+            if (
+                $this->input('status') === 'active'
+                && ! $this->hasFile('image')
+                && blank($this->input('primary_media_id'))
+            ) {
+                $validator->errors()->add(
+                    'image',
+                    'برای انتشار محصول در سایت، تصویر اصلی را آپلود یا از کتابخانه رسانه انتخاب کنید.'
+                );
+            }
         });
     }
 
