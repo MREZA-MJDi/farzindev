@@ -236,9 +236,6 @@
             @if($gridPosts->isNotEmpty())
                 <div class="blog-article-grid">
                     @foreach($gridPosts as $post)
-                        @php
-                            $postCategory = $post->terms->firstWhere('type', 'category');
-                        @endphp
                         <x-blog.article-card :post="$post" :delay="min($loop->index, 8) * 45" />
                     @endforeach
                 </div>
