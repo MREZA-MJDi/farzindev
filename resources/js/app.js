@@ -129,6 +129,12 @@ if (document.querySelector('[data-blog-rich-editor]')) {
     });
 }
 
+if (document.querySelector('[data-blog-cover-editor]')) {
+    import('./admin-blog-cover.js').catch((error) => {
+        console.error('Unable to initialize the blog cover uploader.', error);
+    });
+}
+
 if (document.querySelector('[data-farzin-gif-card]')) {
     import('./category-gif-preview.js').catch((error) => {
         console.error('Unable to initialize category GIF previews.', error);
