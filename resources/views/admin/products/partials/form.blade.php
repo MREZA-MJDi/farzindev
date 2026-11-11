@@ -363,26 +363,60 @@
                 </div>
 
 
-                {{-- Homepage product-card specifications --}}
+                {{-- Structured product specifications --}}
+                @php
+                    $specificationFields = [
+        'dimensions' => ['ابعاد کلی', 'مثلاً ۸۶×۵۰×۱۵ سانتی‌متر'],
+        'length' => ['طول', 'مثلاً ۸۶ سانتی‌متر'],
+        'width' => ['عرض', 'مثلاً ۵۰ سانتی‌متر'],
+        'height' => ['ارتفاع', 'مثلاً ۱۵ سانتی‌متر'],
+        'installation' => ['نحوه نصب', 'توکار یا روکار'],
+        'basin_count' => ['تعداد لگن', 'مثلاً دو لگن'],
+        'material' => ['جنس بدنه یا صفحه', 'استیل، شیشه، فولاد'],
+        'basin_depth' => ['عمق لگن', 'مثلاً ۲۰ سانتی‌متر'],
+        'sheet_thickness' => ['ضخامت ورق', 'مثلاً ۰٫۸ میلی‌متر'],
+        'capacity_liters' => ['ظرفیت لگن', 'مثلاً ۴۵ لیتر'],
+        'weight' => ['وزن محصول', 'مثلاً ۱۲ کیلوگرم'],
+        'basin_direction' => ['جهت لگن', 'چپ، راست یا دوطرفه'],
+        'design_type' => ['نوع طراحی', 'باکسی یا معمولی'],
+        'drainboard' => ['سینی', 'دارد یا ندارد'],
+        'light_count' => ['تعداد لامپ', 'مثلاً دو عدد'],
+        'switch_type' => ['نوع کلید', 'لمسی یا فشاری'],
+        'hood_type' => ['نوع هود', 'مخفی، مورب، شومینه‌ای'],
+        'hood_model' => ['مدل هود', 'مدل دقیق'],
+        'suction_capacity' => ['حجم مکش', 'مترمکعب بر ساعت'],
+        'filter_type' => ['نوع فیلتر', 'آلومینیومی، ذغالی'],
+        'noise_level' => ['میزان صدا', 'دسی‌بل'],
+        'burner_count' => ['تعداد شعله', 'مثلاً پنج شعله'],
+        'burner_position' => ['محل شعله پلوپز', 'وسط، راست یا چپ'],
+        'knob_type' => ['نوع ولوم', 'باکالیت'],
+        'ignition_type' => ['نوع فندک', 'فندک اتوماتیک'],
+        'safety_system' => ['سیستم ایمنی', 'ترموکوپل TOP TIME'],
+        'energy_rating' => ['رده مصرف انرژی', 'A'],
+        'energy_source' => ['منبع انرژی', 'گاز شهری'],
+        'glass_type' => ['نوع شیشه', 'سکوریت'],
+        'glass_thickness' => ['ضخامت شیشه', 'مثلاً ۱۰ میلی‌متر'],
+        'grate_material' => ['جنس شبکه', 'چدن'],
+        'valve_type' => ['نوع شیر', 'ایرانی درجه یک'],
+        'burner_material' => ['نوع سرشعله', 'ایرانی درجه یک'],
+        'power_cable' => ['کابل برق', 'دارد یا ندارد'],
+        'accessories' => ['اقلام همراه', 'دفترچه، شلنگ و بست'],
+        'model_code' => ['مدل / کد کالا', 'کد سازنده'],
+        'other_notes' => ['سایر توضیحات', 'ویژگی‌های تکمیلی تأییدشده'],
+                    ];
+                    $savedSpecifications = old('specifications', $product->specifications ?? []);
+                @endphp
                 <div class="sm:col-span-2 rounded-2xl border border-[var(--admin-border)] bg-[var(--admin-surface-soft)] p-5">
-                    <h3 class="text-sm font-bold text-[var(--admin-text)]">مشخصات کوتاه برای کارت محصول</h3>
-                    <p class="mt-1 text-xs leading-6 text-[var(--admin-muted)]">فقط مقدارهای تأییدشده همین مدل را وارد کنید. این سه مورد در کارت محصولات منتخب صفحه اصلی نمایش داده می‌شوند؛ مقدار خالی به معنی عدم نمایش چیپ است.</p>
-                    <div class="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-3">
-                        <div>
-                            <label for="specifications_width" class="admin-label">عرض</label>
-                            <input id="specifications_width" name="specifications[width]" type="text" maxlength="80" value="{{ old('specifications.width', data_get($product->specifications, 'width')) }}" class="admin-input mt-2 w-full" placeholder="مثلاً ۹۰ سانتی‌متر">
-                            @error('specifications.width')<p class="mt-2 text-xs text-[var(--admin-danger)]">{{ $message }}</p>@enderror
-                        </div>
-                        <div>
-                            <label for="specifications_installation" class="admin-label">نوع نصب</label>
-                            <input id="specifications_installation" name="specifications[installation]" type="text" maxlength="80" value="{{ old('specifications.installation', data_get($product->specifications, 'installation')) }}" class="admin-input mt-2 w-full" placeholder="مقدار واقعی نصب">
-                            @error('specifications.installation')<p class="mt-2 text-xs text-[var(--admin-danger)]">{{ $message }}</p>@enderror
-                        </div>
-                        <div>
-                            <label for="specifications_material" class="admin-label">جنس</label>
-                            <input id="specifications_material" name="specifications[material]" type="text" maxlength="80" value="{{ old('specifications.material', data_get($product->specifications, 'material')) }}" class="admin-input mt-2 w-full" placeholder="جنس تأییدشده محصول">
-                            @error('specifications.material')<p class="mt-2 text-xs text-[var(--admin-danger)]">{{ $message }}</p>@enderror
-                        </div>
+                    <h3 class="text-sm font-bold text-[var(--admin-text)]">مشخصات فنی محصول</h3>
+                    <p class="mt-1 text-xs leading-6 text-[var(--admin-muted)]">فقط موارد مرتبط با همین محصول را تکمیل کنید. مقدارهای خالی در سایت نمایش داده نمی‌شوند؛ ابعاد و واحد را هم می‌توانید به‌صورت متنی وارد کنید.</p>
+                    <div class="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                        @foreach($specificationFields as $key => [$label, $placeholder])
+                            <div>
+                                <label for="specifications_{{ $key }}" class="admin-label">{{ $label }}</label>
+                                <input id="specifications_{{ $key }}" name="specifications[{{ $key }}]" type="text" maxlength="500" value="{{ old('specifications.'.$key, data_get($savedSpecifications, $key)) }}" class="admin-input mt-2 w-full" placeholder="{{ $placeholder }}">
+                                @error('specifications.'.$key)<p class="mt-2 text-xs text-[var(--admin-danger)]">{{ $message }}</p>@enderror
+                            </div>
+                        @endforeach
                     </div>
                 </div>
 
