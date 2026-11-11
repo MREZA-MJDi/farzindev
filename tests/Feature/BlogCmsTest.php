@@ -98,7 +98,7 @@ class BlogCmsTest extends TestCase
         $this->assertNull($post->cover_image);
         $this->assertNotNull($post->published_at);
 
-        app(\\App\\Services\\StorefrontPageContent::class)->clearCache();
+        app(\App\Services\StorefrontPageContent::class)->clearCache();
 
         $this->get(route('home'))
             ->assertOk()
