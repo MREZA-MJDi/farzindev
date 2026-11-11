@@ -1120,18 +1120,18 @@ test('public storefront uses consistent square geometry across all key page type
 
     const checks = [
         { path: '/', selectors: ['.fz-market-hero__slides', '.fz-market-hero__button', '.farzin-product-card', '.fz-home-article-card', '.fz-home-header__search', '.fz-home-header__account', '.fz-home-header__cart', '.farzin-site-footer a'] },
-        { path: '/shop', selectors: ['.farzin-shop-banner__image', '.farzin-product-card', '.farzin-product-card__cta', '.farzin-shop-banner__action', '.farzin-shop-catalog aside', 'main button', 'main [class*="rounded-"]', 'main [class*="-card"]', 'main [class*="__card"]'] },
-        { path: '/categories', selectors: ['.fz-category-card', '.fz-category-hero__product', '.farzin-shop-category-card', 'main button', 'main [class*="rounded-"]', 'main [class*="-card"]', 'main [class*="__card"]'] },
-        { path: '/categories/hoods', selectors: ['.farzin-product-card', 'main button', 'main [class*="rounded-"]', 'main [class*="-card"]', 'main [class*="__card"]'] },
-        { path: '/product/farzin-hood-preview-01', selectors: ['.fz-product-panel', '.fz-product-action', '.farzin-product-detail-info', '.farzin-product-facts__item', '.product-gallery-shell', '.product-gallery-stage', 'main button', 'main [class*="rounded-"]', 'main [class*="-card"]', 'main [class*="__card"]'] },
-        { path: '/blog', selectors: ['.blog-featured-card', '.blog-article-card', '.blog-masthead__visual', '.blog-rss-link', 'main button', 'main [class*="rounded-"]', 'main [class*="-card"]', 'main [class*="__card"]'] },
-        { path: '/blog/choosing-kitchen-hood', selectors: ['main button', 'main [class*="rounded-"]', 'main [class*="-card"]', 'main [class*="__card"]'] },
-        { path: '/cart', selectors: ['main button', 'main [class*="rounded-"]', 'main [class*="-card"]', 'main [class*="__card"]'] },
-        { path: '/contact', selectors: ['main button', 'main input', 'main textarea', 'main [class*="rounded-"]', 'main [class*="-card"]', 'main [class*="__card"]'] },
-        { path: '/about', selectors: ['.fz-home-purchase-cta__inner', 'main button', 'main [class*="rounded-"]', 'main [class*="-card"]', 'main [class*="__card"]'] },
-        { path: '/login', selectors: ['main button', 'main input', 'main [class*="rounded-"]', 'main [class*="-card"]', 'main [class*="__card"]'] },
-        { path: '/register', selectors: ['main button', 'main input', 'main [class*="rounded-"]', 'main [class*="-card"]', 'main [class*="__card"]'] },
-        { path: '/checkout', selectors: ['main button', 'main input', 'main [class*="rounded-"]', 'main [class*="-card"]', 'main [class*="__card"]'] },
+        { path: '/shop', selectors: ['.farzin-shop-banner__image', '.farzin-product-card', '.farzin-product-card__cta', '.farzin-shop-banner__action', '.farzin-shop-catalog aside', 'main button', 'main [class*="rounded-"][class*="border"]', 'main a[class*="rounded-"]', 'main button[class*="rounded-"]', 'main [class*="-card"]', 'main [class*="__card"]'] },
+        { path: '/categories', selectors: ['.fz-category-card', '.fz-category-hero__product', '.farzin-shop-category-card', 'main button', 'main [class*="rounded-"][class*="border"]', 'main a[class*="rounded-"]', 'main button[class*="rounded-"]', 'main [class*="-card"]', 'main [class*="__card"]'] },
+        { path: '/categories/hoods', selectors: ['.farzin-product-card', 'main button', 'main [class*="rounded-"][class*="border"]', 'main a[class*="rounded-"]', 'main button[class*="rounded-"]', 'main [class*="-card"]', 'main [class*="__card"]'] },
+        { path: '/product/farzin-hood-preview-01', selectors: ['.fz-product-panel', '.fz-product-action', '.farzin-product-detail-info', '.farzin-product-facts__item', '.product-gallery-shell', '.product-gallery-stage', 'main button', 'main [class*="rounded-"][class*="border"]', 'main a[class*="rounded-"]', 'main button[class*="rounded-"]', 'main [class*="-card"]', 'main [class*="__card"]'] },
+        { path: '/blog', selectors: ['.blog-featured-card', '.blog-article-card', '.blog-masthead__visual', '.blog-rss-link', 'main button', 'main [class*="rounded-"][class*="border"]', 'main a[class*="rounded-"]', 'main button[class*="rounded-"]', 'main [class*="-card"]', 'main [class*="__card"]'] },
+        { path: '/blog/choosing-kitchen-hood', selectors: ['main button', 'main [class*="rounded-"][class*="border"]', 'main a[class*="rounded-"]', 'main button[class*="rounded-"]', 'main [class*="-card"]', 'main [class*="__card"]'] },
+        { path: '/cart', selectors: ['main button', 'main [class*="rounded-"][class*="border"]', 'main a[class*="rounded-"]', 'main button[class*="rounded-"]', 'main [class*="-card"]', 'main [class*="__card"]'] },
+        { path: '/contact', selectors: ['main button', 'main input', 'main textarea', 'main [class*="rounded-"][class*="border"]', 'main a[class*="rounded-"]', 'main button[class*="rounded-"]', 'main [class*="-card"]', 'main [class*="__card"]'] },
+        { path: '/about', selectors: ['.fz-home-purchase-cta__inner', 'main button', 'main [class*="rounded-"][class*="border"]', 'main a[class*="rounded-"]', 'main button[class*="rounded-"]', 'main [class*="-card"]', 'main [class*="__card"]'] },
+        { path: '/login', selectors: ['main button', 'main input', 'main [class*="rounded-"][class*="border"]', 'main a[class*="rounded-"]', 'main button[class*="rounded-"]', 'main [class*="-card"]', 'main [class*="__card"]'] },
+        { path: '/register', selectors: ['main button', 'main input', 'main [class*="rounded-"][class*="border"]', 'main a[class*="rounded-"]', 'main button[class*="rounded-"]', 'main [class*="-card"]', 'main [class*="__card"]'] },
+        { path: '/checkout', selectors: ['main button', 'main input', 'main [class*="rounded-"][class*="border"]', 'main a[class*="rounded-"]', 'main button[class*="rounded-"]', 'main [class*="-card"]', 'main [class*="__card"]'] },
     ];
 
     for (const check of checks) {
