@@ -5575,6 +5575,51 @@ class FarzinStorefrontTest extends TestCase
     }
 
 
+
+    public function test_admin_published_blog_cover_and_article_content_render_on_public_pages(): void
+    {
+        Storage::fake('public');
+        $admin = $this->admin();
+
+        $this->actingAs($admin, 'admin')
+            ->post(route('admin.blog-posts.store'), [
+                'title' => 'راهنمای انتخاب سینک فرزین',
+                'slug' => 'farzin-sink-editorial-test',
+                'excerpt' => 'راهنمای بررسی جنس و ابعاد سینک',
+                'body' => '<h2>انتخاب دقیق</h2><p>این متن باید پس از انتشار در مقاله نمایش داده شود.</p>',
+                'cover_image' => UploadedFile::fake()->image('farzin-sink-cover.jpg', 1200, 675),
+                'cover_image_alt' => 'تصویر سینک فرزین در آشپزخانه',
+                'status' => 'published',
+                'is_featured' => '0',
+            ])
+            ->assertRedirect();
+
+        $post = \\App\\Models\\BlogPost::query()
+            ->where('slug', 'farzin-sink-editorial-test')
+            ->firstOrFail();
+
+        $this->assertNotEmpty($post->cover_image);
+        Storage::disk('public')->assertExists($post->cover_image);
+
+        $coverUrl = Storage::disk('public')->url($post->cover_image);
+
+        $this->get(route('blog.show', $post->slug))
+            ->assertOk()
+            ->assertSee($coverUrl, false)
+            ->assertSee('تصویر سینک فرزین در آشپزخانه')
+            ->assertSee('انتخاب دقیق')
+            ->assertSee('این متن باید پس از انتشار در مقاله نمایش داده شود.');
+
+        $this->get(route('blog.index'))
+            ->assertOk()
+            ->assertSee('راهنمای انتخاب سینک فرزین');
+
+        $this->get(route('home'))
+            ->assertOk()
+            ->assertSee('راهنمای انتخاب سینک فرزین');
+    }
+
+
     private function checkoutLocationPayload(): array
     {
         if ($this->checkoutLocationCache !== null) {
