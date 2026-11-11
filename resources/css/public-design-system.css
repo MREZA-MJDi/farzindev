@@ -97,6 +97,36 @@ body {
     border-radius: 0 !important;
 }
 
+.storefront-content :where(
+    a[class*="button"],
+    a[class*="action"],
+    a[class*="cta"],
+    .blog-rss-link,
+    .blog-rss-quiet
+) {
+    border-radius: 0 !important;
+}
+
+.storefront-content :where(
+    .blog-masthead__visual,
+    .blog-user-art,
+    .blog-article-content img,
+    .farzin-shop-catalog aside,
+    .shop-filter-panel,
+    .farzin-shop-filters,
+    .farzin-product-detail-info,
+    .farzin-product-facts__item,
+    .farzin-product-card__installment,
+    .product-price,
+    .product-price__installment,
+    .product-gallery-stage,
+    .fz-home-benefit,
+    .fz-home-purchase-cta__inner,
+    .fz-home-featured-section__visual
+) {
+    border-radius: 0 !important;
+}
+
 .storefront-content :where(input, select, textarea, .form-control) {
     border-radius: 0 !important;
 }
@@ -106,13 +136,11 @@ body {
     border-radius: 0 !important;
 }
 
-#app :where(.farzin-site-header, .fz-home-header, .farzin-site-footer) :where(
-    button,
-    [role="button"],
-    a.rounded-full,
-    a.rounded-xl,
-    a.rounded-2xl
-) {
+#app :where(.farzin-site-header, .fz-home-header, .farzin-site-footer) :where(a, button, [role="button"]) {
+    border-radius: 0 !important;
+}
+
+#app .fz-home-header :where(.fz-home-header__search, .fz-home-header__account, .fz-home-header__cart) {
     border-radius: 0 !important;
 }
 
