@@ -610,7 +610,8 @@ class BlogCmsTest extends TestCase
 
         $this->get(route('blog.index'))
             ->assertOk()
-            ->assertSee('data-blog-motion', false)
+            ->assertDontSee('data-blog-motion', false)
+            ->assertDontSee('data-blog-reveal', false)
             ->assertSee('blog-masthead', false)
             ->assertSee('blog-featured-card', false)
             ->assertSee('blog-article-card', false)
