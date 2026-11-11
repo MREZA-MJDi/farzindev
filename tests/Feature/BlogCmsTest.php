@@ -75,6 +75,49 @@ class BlogCmsTest extends TestCase
             ->assertDontSee(route('blog.show', $scheduled->slug), false);
     }
 
+    public function test_published_article_without_cover_is_visible_on_homepage_and_blog_pages(): void
+    {
+        $admin = User::factory()->create(['role' => 'admin']);
+
+        $this->actingAs($admin, 'admin')
+            ->post(route('admin.blog-posts.store'), [
+                'title' => 'راهنمای انتخاب سینک بدون تصویر جلد',
+                'slug' => 'sink-guide-without-cover',
+                'excerpt' => 'راهنمای انتشار مقاله بدون تصویر شاخص.',
+                'body' => 'این مقاله پس از انتشار باید در صفحه اصلی و مجله قابل مشاهده باشد.',
+                'seo_robots' => 'noindex,nofollow',
+                'status' => 'published',
+            ])
+            ->assertRedirect()
+            ->assertSessionHas('success');
+
+        $post = BlogPost::query()
+            ->where('slug', 'sink-guide-without-cover')
+            ->firstOrFail();
+
+        $this->assertNull($post->cover_image);
+        $this->assertNotNull($post->published_at);
+
+        app(\\App\\Services\\StorefrontPageContent::class)->clearCache();
+
+        $this->get(route('home'))
+            ->assertOk()
+            ->assertSee('fz-home-journal', false)
+            ->assertSee($post->title)
+            ->assertSee('fz-home-article-card__media-fallback', false)
+            ->assertDontSee('src=""', false);
+
+        $this->get(route('blog.index'))
+            ->assertOk()
+            ->assertSee($post->title)
+            ->assertSee('blog-art-fallback--small', false);
+
+        $this->get(route('blog.show', $post->slug))
+            ->assertOk()
+            ->assertSee($post->title)
+            ->assertSee('این مقاله پس از انتشار باید در صفحه اصلی و مجله قابل مشاهده باشد.');
+    }
+
     public function test_admin_can_create_edit_and_publish_a_blog_article(): void
     {
         $admin = User::factory()->create(['role' => 'admin']);
