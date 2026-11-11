@@ -127,42 +127,7 @@
 @endpush
 
 @push('styles')
-<style>
-    .fz-product-layout{display:grid;grid-template-columns:minmax(0,1fr);align-items:start;gap:1rem}
-    .fz-product-panel{min-width:0}
-    .fz-product-panel__title{font-size:clamp(1.05rem,2vw,1.85rem);line-height:1.65}
-    .fz-product-action{display:inline-flex;min-height:44px;align-items:center;justify-content:center;gap:.5rem;padding:.75rem 1rem;font-size:.82rem;font-weight:700;text-align:center}
-    .fz-product-accordion summary{min-height:52px;display:flex;align-items:center;justify-content:space-between;gap:1rem;cursor:pointer;list-style:none}
-    .fz-product-accordion summary::-webkit-details-marker{display:none}
-    .fz-product-accordion summary:focus-visible,.fz-product-action:focus-visible{outline:2px solid var(--livora-accent);outline-offset:3px}
-    .fz-product-accordion[open] summary svg{transform:rotate(180deg)}
-    .fz-product-sticky{padding-bottom:max(.75rem,env(safe-area-inset-bottom))}
-    @media(max-width:767px){
-        .fz-product-layout{grid-template-columns:minmax(0,1fr);gap:1rem}
-        .farzin-product-gallery .product-gallery-stage{aspect-ratio:4/3;max-height:none;height:auto}
-        .farzin-product-gallery .product-gallery-stage img{padding:clamp(12px,2vw,24px);object-fit:contain}
-        .farzin-product-gallery .farzin-gallery-arrow{width:2.75rem;height:2.75rem}
-        .farzin-product-gallery .farzin-gallery-zoom{right:.4rem;bottom:.4rem;padding:.35rem .5rem;font-size:9px}
-        .farzin-product-gallery .mt-4.flex.gap-3{gap:.4rem;margin-top:.5rem}
-        .farzin-product-gallery .mt-4.flex.gap-3 button{width:2.75rem;height:2.75rem;min-width:44px;min-height:44px}
-        .fz-product-panel__title{font-size:clamp(.95rem,4.4vw,1.15rem);line-height:1.55}
-        .fz-product-panel .product-price__current strong{font-size:1.15rem}
-        .fz-product-panel .product-price__current span{font-size:.65rem}
-        .fz-product-panel .product-price__main{gap:.25rem}
-        .fz-product-panel__status{font-size:10px;padding:.3rem .55rem;min-height:44px}
-        .fz-product-panel .fz-product-action{width:100%;padding:.65rem .5rem;font-size:.72rem}
-        .fz-product-panel .farzin-quantity{max-width:100%}
-        .fz-product-panel .farzin-quantity__button{width:44px;height:44px}
-        .fz-product-panel .farzin-quantity__input{width:2.5rem;min-height:44px}
-        .fz-product-sku{font-size:9px}
-    }
-     .fz-product-layout--no-gallery{grid-template-columns:minmax(0,1fr)}
-    @media(min-width:768px){
-        .fz-product-layout{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:clamp(1.5rem,4vw,3.5rem)}
-    }
-    @media(min-width:1024px){.fz-product-layout{grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr)}}
-    @media(max-width:360px){.fz-product-panel__title{font-size:.9rem}.farzin-product-gallery .farzin-gallery-arrow{width:1.75rem;height:1.75rem}}
-</style>
+    @vite('resources/css/product.css')
 @endpush
 
 @section('content')
