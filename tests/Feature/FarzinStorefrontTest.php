@@ -1982,6 +1982,75 @@ class FarzinStorefrontTest extends TestCase
         $this->assertSame('draft', $draft->fresh()->status);
     }
 
+    public function test_admin_cannot_publish_products_in_inactive_categories(): void
+    {
+        Storage::fake('public');
+
+        $admin = $this->admin();
+        $activeCategory = $this->category(['slug' => 'public-category']);
+        $inactiveCategory = $this->category([
+            'name' => 'دسته غیرفعال',
+            'slug' => 'inactive-product-category',
+            'is_active' => false,
+        ]);
+
+        $this->actingAs($admin, 'admin')
+            ->from(route('admin.products.create'))
+            ->post(route('admin.products.store'), [
+                'category_id' => $inactiveCategory->id,
+                'name' => 'محصول دسته غیرفعال',
+                'slug' => 'product-in-inactive-category',
+                'sku' => 'FAR-INACTIVE-CATEGORY-01',
+                'price' => '12000000',
+                'stock' => '3',
+                'status' => 'active',
+                'is_featured' => '0',
+                'is_new' => '0',
+                'show_in_home_gallery' => '1',
+                'installment_enabled' => '0',
+                'image' => UploadedFile::fake()->image('inactive-category-product.jpg', 1200, 900),
+            ])
+            ->assertRedirect(route('admin.products.create'))
+            ->assertSessionHasErrors('category_id');
+
+        $this->assertDatabaseMissing('products', [
+            'sku' => 'FAR-INACTIVE-CATEGORY-01',
+        ]);
+
+        $draft = $this->product($activeCategory, [
+            'name' => 'پیش‌نویس برای تغییر دسته',
+            'slug' => 'draft-for-category-change',
+            'sku' => 'FAR-DRAFT-CATEGORY-CHANGE',
+            'status' => 'draft',
+            'show_in_home_gallery' => false,
+        ]);
+
+        ProductImage::create([
+            'product_id' => $draft->id,
+            'path' => 'https://cdn.example.test/draft-category-change.webp',
+            'alt' => $draft->name,
+            'sort_order' => 0,
+            'is_primary' => true,
+        ]);
+
+        $this->put(route('admin.products.update', $draft), [
+            'category_id' => $inactiveCategory->id,
+            'name' => $draft->name,
+            'slug' => $draft->slug,
+            'sku' => $draft->sku,
+            'price' => '10000000',
+            'stock' => '0',
+            'status' => 'active',
+            'is_featured' => '0',
+            'is_new' => '0',
+            'show_in_home_gallery' => '1',
+            'installment_enabled' => '0',
+        ])->assertSessionHasErrors('category_id');
+
+        $this->assertSame($activeCategory->id, $draft->fresh()->category_id);
+        $this->assertSame('draft', $draft->fresh()->status);
+    }
+
     public function test_admin_cannot_upload_a_low_resolution_product_image(): void
     {
         $admin = $this->admin();
