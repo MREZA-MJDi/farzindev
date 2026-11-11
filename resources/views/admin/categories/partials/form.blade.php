@@ -79,13 +79,14 @@
                 <div class="sm:col-span-2">
 
                     <label for="description" class="admin-label">
-                        توضیحات
+                        توضیح کوتاه دسته‌بندی (اختیاری)
                     </label>
 
                     <textarea
                         id="description"
                         name="description"
-                        rows="6"
+                        rows="3"
+                        maxlength="1200"
                         class="admin-textarea"
                     >{{ old('description', $category->description ?? '') }}</textarea>
 
@@ -101,6 +102,25 @@
 
         </div>
 
+
+        <div class="admin-card space-y-5 p-6">
+            <div>
+                <h3 class="text-base font-bold text-[var(--admin-text)]">محتوای راهنمای دسته‌بندی</h3>
+                <p class="mt-1 text-xs leading-6 text-[var(--admin-muted)]">این بخش در صفحه عمومی دسته‌بندی، زیر فهرست محصولات نمایش داده می‌شود. متن و تصویر برای هر دسته مستقل هستند.</p>
+            </div>
+
+            <label class="block text-sm font-medium text-[var(--admin-text)]">
+                عنوان بخش
+                <input name="content_title" maxlength="180" value="{{ old('content_title', $category->content_title ?? '') }}" class="admin-input mt-2 w-full" placeholder="راهنمای انتخاب {{ $category->name ?: 'این دسته' }}">
+                @error('content_title')<span class="mt-1 block text-xs text-[var(--admin-danger)]">{{ $message }}</span>@enderror
+            </label>
+
+            <label class="block text-sm font-medium text-[var(--admin-text)]">
+                متن راهنما
+                <textarea name="content_body" rows="7" maxlength="12000" class="admin-textarea mt-2 w-full" placeholder="نکات مهم انتخاب، اندازه‌گیری، جنس، نصب و نگهداری محصولات این دسته را بنویسید...">{{ old('content_body', $category->content_body ?? '') }}</textarea>
+                @error('content_body')<span class="mt-1 block text-xs text-[var(--admin-danger)]">{{ $message }}</span>@enderror
+            </label>
+        </div>
 
         <div class="admin-card p-6">
             <div class="mb-5">
@@ -330,6 +350,38 @@
 
         </div>
 
+
+        <div class="admin-card p-6">
+            <div class="mb-5">
+                <h3 class="text-base font-bold text-[var(--admin-text)]">تصویر راهنمای دسته‌بندی</h3>
+                <p class="mt-1 text-xs leading-6 text-[var(--admin-muted)]">تصویر جدا از بنر اصلی دسته است و کنار متن راهنما نمایش داده می‌شود.</p>
+            </div>
+            @php $contentImageUrl = $editing ? $category->content_image_url : null; @endphp
+            <div class="admin-image-preview mb-5 aspect-video">
+                <img data-image-editor-existing-preview src="{{ $contentImageUrl ?: '' }}" alt="{{ $category->content_title ?: $category->name }}" class="admin-image {{ $contentImageUrl ? '' : 'hidden' }}">
+                <div data-image-editor-placeholder class="{{ $contentImageUrl ? 'hidden' : 'flex' }} h-full flex-col items-center justify-center rounded-2xl border border-dashed border-[var(--admin-border)] bg-[var(--admin-surface-soft)] p-5 text-center text-xs text-[var(--admin-muted)]">
+                    تصویر راهنمایی انتخاب نشده است.
+                </div>
+            </div>
+            <label for="content_image" class="admin-label">بارگذاری یا جایگزینی تصویر</label>
+            <input id="content_image" name="content_image" type="file" accept="image/jpeg,image/png,image/webp" data-image-editor-input data-image-editor-default-ratio="16:9" data-image-editor-min-width="800" data-image-editor-min-height="450" class="admin-input p-2">
+            <div data-image-editor-panel hidden class="mt-5 space-y-4 rounded-2xl border border-[var(--admin-border)] bg-[var(--admin-surface-soft)] p-4">
+                <strong class="block text-sm font-semibold text-[var(--admin-text)]">پیش‌نمایش و برش تصویر</strong>
+                <canvas data-image-editor-canvas role="img" aria-label="پیش‌نمایش برش تصویر راهنما" class="mx-auto block max-w-full rounded-xl bg-[var(--admin-bg)]" style="width:min(100%,640px);height:auto;aspect-ratio:16/9;touch-action:none;cursor:grab;"></canvas>
+                <p class="text-xs leading-6 text-[var(--admin-muted)]">قاب تصویر را تنظیم کنید؛ خروجی با نسبت ۱۶:۹ ذخیره می‌شود.</p>
+                <label class="block text-xs text-[var(--admin-text)]">بزرگ‌نمایی <span data-image-editor-zoom-label>۱×</span>
+                    <input data-image-editor-zoom type="range" min="1" max="3" step="0.05" value="1" class="mt-3 w-full">
+                </label>
+                <div class="flex flex-wrap gap-2">
+                    <button type="button" data-image-editor-rotate="-90" class="admin-btn admin-btn-secondary">چرخش به چپ</button>
+                    <button type="button" data-image-editor-rotate="90" class="admin-btn admin-btn-secondary">چرخش به راست</button>
+                    <button type="button" data-image-editor-reset class="admin-btn admin-btn-ghost">بازنشانی</button>
+                </div>
+                <p data-image-editor-status class="text-xs text-[var(--admin-muted)]" aria-live="polite">کادر را تنظیم کنید.</p>
+            </div>
+            @error('content_image')<p role="alert" class="mt-2 text-xs text-[var(--admin-danger)]">{{ $message }}</p>@enderror
+            <p class="mt-2 text-xs leading-6 text-[var(--admin-muted)]">فرمت JPG، PNG یا WEBP؛ حداقل ۸۰۰×۴۵۰ و حداکثر ۲۰ مگابایت.</p>
+        </div>
 
         <div class="admin-card p-6">
             <div class="mb-5">
