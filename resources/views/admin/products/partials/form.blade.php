@@ -363,62 +363,100 @@
                 </div>
 
 
-                {{-- Structured product specifications --}}
+                {{-- Dynamic category-specific product specifications --}}
                 @php
-                    $specificationFields = [
-        'dimensions' => ['ابعاد کلی', 'مثلاً ۸۶×۵۰×۱۵ سانتی‌متر'],
-        'length' => ['طول', 'مثلاً ۸۶ سانتی‌متر'],
-        'width' => ['عرض', 'مثلاً ۵۰ سانتی‌متر'],
-        'height' => ['ارتفاع', 'مثلاً ۱۵ سانتی‌متر'],
-        'installation' => ['نحوه نصب', 'توکار یا روکار'],
-        'basin_count' => ['تعداد لگن', 'مثلاً دو لگن'],
-        'material' => ['جنس بدنه یا صفحه', 'استیل، شیشه، فولاد'],
-        'basin_depth' => ['عمق لگن', 'مثلاً ۲۰ سانتی‌متر'],
-        'sheet_thickness' => ['ضخامت ورق', 'مثلاً ۰٫۸ میلی‌متر'],
-        'capacity_liters' => ['ظرفیت لگن', 'مثلاً ۴۵ لیتر'],
-        'weight' => ['وزن محصول', 'مثلاً ۱۲ کیلوگرم'],
-        'basin_direction' => ['جهت لگن', 'چپ، راست یا دوطرفه'],
-        'design_type' => ['نوع طراحی', 'باکسی یا معمولی'],
-        'drainboard' => ['سینی', 'دارد یا ندارد'],
-        'light_count' => ['تعداد لامپ', 'مثلاً دو عدد'],
-        'switch_type' => ['نوع کلید', 'لمسی یا فشاری'],
-        'hood_type' => ['نوع هود', 'مخفی، مورب، شومینه‌ای'],
-        'hood_model' => ['مدل هود', 'مدل دقیق'],
-        'suction_capacity' => ['حجم مکش', 'مترمکعب بر ساعت'],
-        'filter_type' => ['نوع فیلتر', 'آلومینیومی، ذغالی'],
-        'noise_level' => ['میزان صدا', 'دسی‌بل'],
-        'burner_count' => ['تعداد شعله', 'مثلاً پنج شعله'],
-        'burner_position' => ['محل شعله پلوپز', 'وسط، راست یا چپ'],
-        'knob_type' => ['نوع ولوم', 'باکالیت'],
-        'ignition_type' => ['نوع فندک', 'فندک اتوماتیک'],
-        'safety_system' => ['سیستم ایمنی', 'ترموکوپل TOP TIME'],
-        'energy_rating' => ['رده مصرف انرژی', 'A'],
-        'energy_source' => ['منبع انرژی', 'گاز شهری'],
-        'glass_type' => ['نوع شیشه', 'سکوریت'],
-        'glass_thickness' => ['ضخامت شیشه', 'مثلاً ۱۰ میلی‌متر'],
-        'grate_material' => ['جنس شبکه', 'چدن'],
-        'valve_type' => ['نوع شیر', 'ایرانی درجه یک'],
-        'burner_material' => ['نوع سرشعله', 'ایرانی درجه یک'],
-        'power_cable' => ['کابل برق', 'دارد یا ندارد'],
-        'accessories' => ['اقلام همراه', 'دفترچه، شلنگ و بست'],
-        'model_code' => ['مدل / کد کالا', 'کد سازنده'],
-        'other_notes' => ['سایر توضیحات', 'ویژگی‌های تکمیلی تأییدشده'],
+                    $specificationLabels = [
+                        'dimensions' => 'ابعاد کلی', 'length' => 'طول', 'width' => 'عرض', 'height' => 'ارتفاع',
+                        'installation' => 'نحوه نصب', 'basin_count' => 'تعداد لگن', 'material' => 'جنس بدنه',
+                        'basin_depth' => 'عمق لگن', 'sheet_thickness' => 'ضخامت ورق', 'capacity_liters' => 'ظرفیت لگن',
+                        'weight' => 'وزن', 'basin_direction' => 'جهت لگن', 'design_type' => 'نوع طراحی',
+                        'drainboard' => 'سینی', 'tap_holes' => 'تعداد و محل سوراخ شیر', 'accessories' => 'لوازم همراه',
+                        'hood_type' => 'نوع هود', 'model' => 'مدل', 'size' => 'سایز', 'light_count' => 'تعداد لامپ',
+                        'switch_type' => 'نوع کلید', 'body_material' => 'جنس بدنه', 'suction_capacity' => 'قدرت مکش',
+                        'filter_type' => 'نوع فیلتر', 'motor_count' => 'تعداد موتور', 'noise_level' => 'میزان صدا',
+                        'air_outlet' => 'نوع خروجی هوا', 'burner_count' => 'تعداد شعله', 'size_range' => 'محدوده سایز',
+                        'burner_position' => 'محل شعله پلوپز', 'surface_material' => 'جنس صفحه', 'glass_type' => 'نوع شیشه',
+                        'glass_thickness' => 'ضخامت شیشه', 'grate_material' => 'جنس شبکه', 'knob_type' => 'نوع ولوم',
+                        'knob_material' => 'جنس ولوم', 'ignition_type' => 'نوع فندک', 'burner_type' => 'نوع سرشعله',
+                        'valve_type' => 'نوع شیر', 'safety_system' => 'سیستم ایمنی و ترموکوپل',
+                        'energy_rating' => 'رده مصرف انرژی', 'energy_source' => 'منبع انرژی',
+                        'power_cable' => 'کابل برق', 'model_code' => 'مدل کالا / کد محصول',
+                    ];
+                    $specificationTemplates = [
+                        'sink' => [
+                            ['label' => 'نحوه نصب', 'value' => ''], ['label' => 'ابعاد کلی', 'value' => ''],
+                            ['label' => 'تعداد لگن', 'value' => ''], ['label' => 'جنس بدنه', 'value' => ''],
+                            ['label' => 'عمق لگن', 'value' => ''], ['label' => 'ضخامت ورق', 'value' => ''],
+                            ['label' => 'ظرفیت لگن', 'value' => ''], ['label' => 'وزن', 'value' => ''],
+                            ['label' => 'جهت لگن', 'value' => ''], ['label' => 'نوع طراحی', 'value' => ''],
+                            ['label' => 'سینی', 'value' => ''], ['label' => 'تعداد و محل سوراخ شیر', 'value' => ''],
+                            ['label' => 'لوازم همراه', 'value' => ''],
+                        ],
+                        'hood' => [
+                            ['label' => 'نوع هود', 'value' => ''], ['label' => 'مدل', 'value' => ''],
+                            ['label' => 'سایز (سانتی‌متر)', 'value' => ''], ['label' => 'طول', 'value' => ''],
+                            ['label' => 'عرض', 'value' => ''], ['label' => 'تعداد لامپ', 'value' => ''],
+                            ['label' => 'نوع کلید', 'value' => ''], ['label' => 'جنس بدنه', 'value' => ''],
+                            ['label' => 'قدرت مکش (مترمکعب بر ساعت)', 'value' => ''], ['label' => 'نوع فیلتر', 'value' => ''],
+                            ['label' => 'تعداد موتور', 'value' => ''], ['label' => 'میزان صدا (دسی‌بل)', 'value' => ''],
+                            ['label' => 'نوع خروجی هوا', 'value' => ''], ['label' => 'لوازم همراه', 'value' => ''],
+                        ],
+                        'gas' => [
+                            ['label' => 'ابعاد کلی', 'value' => ''], ['label' => 'طول', 'value' => ''],
+                            ['label' => 'عرض', 'value' => ''], ['label' => 'ارتفاع', 'value' => ''],
+                            ['label' => 'تعداد شعله', 'value' => ''], ['label' => 'محدوده سایز', 'value' => ''],
+                            ['label' => 'محل شعله پلوپز', 'value' => ''], ['label' => 'جنس صفحه', 'value' => ''],
+                            ['label' => 'نوع شیشه', 'value' => ''], ['label' => 'ضخامت شیشه', 'value' => ''],
+                            ['label' => 'جنس شبکه', 'value' => ''], ['label' => 'نوع ولوم', 'value' => ''],
+                            ['label' => 'جنس ولوم', 'value' => ''], ['label' => 'نوع فندک', 'value' => ''],
+                            ['label' => 'نوع سرشعله', 'value' => ''], ['label' => 'نوع شیر', 'value' => ''],
+                            ['label' => 'سیستم ایمنی و ترموکوپل', 'value' => ''], ['label' => 'رده مصرف انرژی', 'value' => ''],
+                            ['label' => 'منبع انرژی', 'value' => ''], ['label' => 'کابل برق', 'value' => ''],
+                            ['label' => 'لوازم همراه', 'value' => ''], ['label' => 'مدل کالا / کد محصول', 'value' => ''],
+                        ],
                     ];
                     $savedSpecifications = old('specifications', $product->specifications ?? []);
+                    $initialSpecifications = [];
+                    if (is_array($savedSpecifications) && array_is_list($savedSpecifications)) {
+                        $initialSpecifications = collect($savedSpecifications)
+                            ->filter(fn ($row) => is_array($row) && (filled($row['label'] ?? null) || filled($row['value'] ?? null)))
+                            ->map(fn ($row) => ['label' => (string) ($row['label'] ?? ''), 'value' => (string) ($row['value'] ?? '')])
+                            ->values()->all();
+                    } elseif (is_array($savedSpecifications)) {
+                        foreach ($savedSpecifications as $key => $value) {
+                            if (is_scalar($value) && filled(trim((string) $value))) {
+                                $initialSpecifications[] = [
+                                    'label' => $specificationLabels[$key] ?? str_replace('_', ' ', (string) $key),
+                                    'value' => (string) $value,
+                                ];
+                            }
+                        }
+                    }
+                    $selectedCategory = $categories->firstWhere('id', old('category_id', $product->category_id ?? null));
+                    $categoryIdentifier = mb_strtolower(($selectedCategory?->slug ?? '').' '.($selectedCategory?->name ?? ''));
+                    $initialSpecificationType = str_contains($categoryIdentifier, 'sink') || str_contains($categoryIdentifier, 'سینک')
+                        ? 'sink'
+                        : ((str_contains($categoryIdentifier, 'hood') || str_contains($categoryIdentifier, 'هود'))
+                            ? 'hood'
+                            : ((str_contains($categoryIdentifier, 'gas') || str_contains($categoryIdentifier, 'اجاق') || str_contains($categoryIdentifier, 'گاز'))
+                                ? 'gas' : ''));
+                    if ($initialSpecifications === [] && $initialSpecificationType !== '') {
+                        $initialSpecifications = $specificationTemplates[$initialSpecificationType];
+                    }
                 @endphp
-                <div class="sm:col-span-2 rounded-2xl border border-[var(--admin-border)] bg-[var(--admin-surface-soft)] p-5">
-                    <h3 class="text-sm font-bold text-[var(--admin-text)]">مشخصات فنی محصول</h3>
-                    <p class="mt-1 text-xs leading-6 text-[var(--admin-muted)]">فقط موارد مرتبط با همین محصول را تکمیل کنید. مقدارهای خالی در سایت نمایش داده نمی‌شوند؛ ابعاد و واحد را هم می‌توانید به‌صورت متنی وارد کنید.</p>
-                    <div class="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                        @foreach($specificationFields as $key => [$label, $placeholder])
-                            <div>
-                                <label for="specifications_{{ $key }}" class="admin-label">{{ $label }}</label>
-                                <input id="specifications_{{ $key }}" name="specifications[{{ $key }}]" type="text" maxlength="500" value="{{ old('specifications.'.$key, data_get($savedSpecifications, $key)) }}" class="admin-input mt-2 w-full" placeholder="{{ $placeholder }}">
-                                @error('specifications.'.$key)<p class="mt-2 text-xs text-[var(--admin-danger)]">{{ $message }}</p>@enderror
-                            </div>
-                        @endforeach
+                <section id="product-specifications" class="sm:col-span-2 rounded-2xl border border-[var(--admin-border)] bg-[var(--admin-surface-soft)] p-5"
+                    data-specification-templates='@json($specificationTemplates)'
+                    data-specification-initial='@json($initialSpecifications)'>
+                    <div class="flex flex-wrap items-start justify-between gap-3">
+                        <div>
+                            <h3 class="text-sm font-bold text-[var(--admin-text)]">مشخصات فنی محصول</h3>
+                            <p class="mt-1 text-xs leading-6 text-[var(--admin-muted)]">با انتخاب دسته‌بندی، فهرست پیشنهادی همان کالا نمایش داده می‌شود. هر ردیف قابل ویرایش، حذف و جابه‌جایی است؛ مقدارها اختیاری و متنی هستند.</p>
+                        </div>
+                        <button type="button" id="add-product-specification" class="admin-btn admin-btn-secondary">افزودن مشخصه</button>
                     </div>
-                </div>
+                    <div id="product-specification-rows" class="mt-4 space-y-3" aria-live="polite"></div>
+                    <p class="mt-3 text-[11px] text-[var(--admin-muted)]">نمونه مقدار: ۸۶×۵۰×۱۵ سانتی‌متر · فیلدهای خالی در صفحه محصول نمایش داده نمی‌شوند.</p>
+                </section>
 
                 {{-- Description --}}
                 <div class="sm:col-span-2">
