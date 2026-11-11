@@ -247,7 +247,7 @@
             </div>
         </section>
 
-        <section class="admin-card space-y-4 p-5">
+        <section class="admin-card space-y-4 p-5" data-blog-cover-editor>
             <div>
                 <h2 class="text-sm font-bold text-[var(--admin-text)]">تصویر شاخص مقاله</h2>
                 <p class="mt-1 text-xs leading-6 text-[var(--admin-muted)]">پس از انتشار، مقاله در مجله و بخش مقاله‌های صفحه اصلی نمایش داده می‌شود. تصویر شاخص اختیاری است؛ اگر انتخاب نشود، کارت با طرح جایگزین نمایش داده خواهد شد. نسبت پیشنهادی تصویر ۱۶:۹ است.</p>
@@ -269,14 +269,15 @@
             </div>
 
             <label class="block text-sm text-[var(--admin-text)]">انتخاب تصویر جدید
-                <input type="file" name="cover_image" accept="image/jpeg,image/png,image/webp" data-image-editor-input data-image-editor-min-width="800" data-image-editor-min-height="450" data-image-editor-default-ratio="16:9" class="admin-input mt-2 w-full p-2">
+                <input type="file" name="cover_image" accept="image/jpeg,image/png,image/webp" data-blog-cover-upload data-image-editor-input data-image-editor-min-width="800" data-image-editor-min-height="450" data-image-editor-default-ratio="16:9" class="admin-input mt-2 w-full p-2">
+                <span class="mt-1 block text-xs leading-5 text-[var(--admin-muted)]">پس از انتخاب فایل، پیش‌نمایش همین‌جا به‌روز می‌شود. تصویر اصلی حفظ و نسخه‌های مناسب نمایش ساخته می‌شوند.</span>
             </label>
 
             <label class="block text-sm text-[var(--admin-text)]">یا انتخاب تصویر از کتابخانه رسانه
-                <select name="cover_image_media_id" class="admin-select mt-2 w-full">
-                    <option value="">بدون تغییر تصویر فعلی</option>
+                <select name="cover_image_media_id" data-blog-cover-media-select class="admin-select mt-2 w-full">
+                    <option value="" data-media-url="">بدون تغییر تصویر فعلی</option>
                     @foreach($mediaImages as $mediaImage)
-                        <option value="{{ $mediaImage->id }}" @selected((string) $selectedCoverMediaId === (string) $mediaImage->id)>
+                        <option value="{{ $mediaImage->id }}" data-media-url="{{ $mediaImage->url }}" @selected((string) $selectedCoverMediaId === (string) $mediaImage->id)>
                             {{ $mediaImage->original_name }}{{ $mediaImage->alt ? ' — ' . $mediaImage->alt : '' }}
                         </option>
                     @endforeach
@@ -308,7 +309,7 @@
             </div>
 
             <label class="flex items-center gap-2 text-xs text-[var(--admin-muted)]">
-                <input type="checkbox" name="remove_cover_image" value="1" @checked(old('remove_cover_image')) class="rounded border-[var(--admin-border)] text-[var(--admin-accent)] focus:ring-[var(--admin-accent)]">
+                <input type="checkbox" name="remove_cover_image" value="1" data-blog-cover-remove @checked(old('remove_cover_image')) class="rounded border-[var(--admin-border)] text-[var(--admin-accent)] focus:ring-[var(--admin-accent)]">
                 حذف تصویر شاخص فعلی
             </label>
 
@@ -321,9 +322,14 @@
         </section>
 
         <button type="submit" class="admin-btn admin-btn-primary w-full">{{ isset($isEditing) && $isEditing ? 'ذخیره تغییرات' : 'ذخیره مقاله' }}</button>
+        @if($post->exists)
+            <a href="{{ route('admin.blog-posts.preview', $post) }}" target="_blank" rel="noopener noreferrer" class="admin-btn admin-btn-secondary w-full">پیش‌نمایش واقعی مقاله</a>
+        @else
+            <p class="rounded-xl border border-[var(--admin-border)] bg-[var(--admin-surface-soft)] p-3 text-xs leading-6 text-[var(--admin-muted)]">برای مشاهده پیش‌نمایش با قالب واقعی سایت، ابتدا مقاله را ذخیره کن؛ سپس از همین صفحه پیش‌نمایش خصوصی در دسترس است.</p>
+        @endif
         <a href="{{ route('admin.blog-posts.index') }}" class="admin-btn admin-btn-ghost w-full">بازگشت به بلاگ</a>
         @if($post->exists && $post->status === 'published' && $post->published_at?->isPast())
-            <a href="{{ route('blog.show', $post->slug) }}" target="_blank" rel="noopener" class="admin-btn admin-btn-secondary w-full">مشاهده صفحه عمومی</a>
+            <a href="{{ route('blog.show', $post->slug) }}" target="_blank" rel="noopener" class="admin-btn admin-btn-ghost w-full">مشاهده صفحه عمومی</a>
         @endif
     </aside>
 </div>
