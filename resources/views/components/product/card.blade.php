@@ -6,7 +6,7 @@
 ])
 
 @php
-    $imageModel = $product->images?->first();
+    $imageModel = $product->primaryImage();
     $image = $imageModel?->url;
     $imageAlt = $product->name;
     $imageSrcset = $imageModel?->responsive_srcset;
