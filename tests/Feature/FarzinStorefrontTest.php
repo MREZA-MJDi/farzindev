@@ -487,8 +487,9 @@ class FarzinStorefrontTest extends TestCase
     {
         Storage::fake('public');
         $admin = $this->admin();
-        $path = 'media/home-technology-test.webp';
-        Storage::disk('public')->put($path, 'test-image-bytes');
+        $path = UploadedFile::fake()
+            ->image('home-technology-test.webp', 1200, 750)
+            ->storePublicly('media', 'public');
 
         $media = Media::create([
             'user_id' => $admin->id,
