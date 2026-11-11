@@ -61,6 +61,15 @@ class Category extends Model
         return Storage::disk('public')->url($path);
     }
 
+    public function getContentImageSrcsetAttribute(): ?string
+    {
+        if (! $this->content_image || Str::startsWith($this->content_image, ['http://', 'https://', '//'])) {
+            return null;
+        }
+
+        return app(ResponsiveImageService::class)->srcset($this->content_image);
+    }
+
     public function getImageUrlAttribute(): ?string
     {
         if (! $this->image) {
