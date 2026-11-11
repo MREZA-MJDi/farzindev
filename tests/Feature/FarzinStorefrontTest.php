@@ -834,7 +834,7 @@ class FarzinStorefrontTest extends TestCase
             ->assertOk()
             ->assertDontSee('id="fz-home-featured"', false)
             ->assertDontSee($product->name)
-            ->assertDontSee('id="fz-home-journal"', false)
+            ->assertDontSee('class="fz-home-journal"', false)
             ->assertDontSee($article->title);
 
         StorefrontSetting::query()->updateOrCreate(
@@ -851,7 +851,7 @@ class FarzinStorefrontTest extends TestCase
             ->assertOk()
             ->assertSee('id="fz-home-featured"', false)
             ->assertSee($product->name)
-            ->assertSee('id="fz-home-journal"', false)
+            ->assertSee('class="fz-home-journal"', false)
             ->assertSee($article->title);
     }
 
