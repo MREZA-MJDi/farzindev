@@ -1065,6 +1065,27 @@ test('catalog product cards preserve full product images without cropping', asyn
     expect(objectFit).toBe('contain');
 });
 
+test('hood and sink imagery remains fully visible in product detail galleries', async ({ page }) => {
+    for (const viewport of [
+        { width: 390, height: 844 },
+        { width: 1440, height: 960 },
+    ]) {
+        await page.setViewportSize(viewport);
+        await page.goto('/product/farzin-hood-preview-01', { waitUntil: 'domcontentloaded' });
+
+        const image = page.locator('.fz-product-gallery .product-gallery-stage img').first();
+        await expect(image).toBeVisible();
+
+        const imageStyle = await image.evaluate((element) => ({
+            objectFit: getComputedStyle(element).objectFit,
+            radius: getComputedStyle(element).borderTopLeftRadius,
+        }));
+
+        expect(imageStyle.objectFit).toBe('contain');
+        expect(imageStyle.radius).toBe('0px');
+    }
+});
+
 test('blog pagination layout and controls remain visible on archive pages', async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 });
     await page.goto('/blog', { waitUntil: 'domcontentloaded' });
