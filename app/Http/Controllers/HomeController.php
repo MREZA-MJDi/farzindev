@@ -60,9 +60,7 @@ class HomeController extends Controller
             'images.media:id,path',
         ];
 
-        $hasPublicImage = static fn (Product $product): bool => $product->images->contains(
-            static fn ($image): bool => filled($image->url)
-        );
+        $hasPublicImage = static fn (Product $product): bool => $product->primaryImage() !== null;
 
         $isPurchasable = static fn (Product $product): bool =>
             ProductPurchaseRules::isAvailable($product, $product->variants);
@@ -109,9 +107,7 @@ class HomeController extends Controller
             ->get();
 
         foreach ($categories as $category) {
-            $fallbackImage = $category->products->first()?->images->first(
-                static fn ($image): bool => filled($image->url)
-            );
+            $fallbackImage = $category->products->first()?->primaryImage();
             $category->setAttribute(
                 'home_category_image_url',
                 $category->image_url ?: $fallbackImage?->url
