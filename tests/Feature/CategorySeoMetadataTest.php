@@ -42,9 +42,27 @@ class CategorySeoMetadataTest extends TestCase
             ->assertOk()
             ->assertSee('<title>خرید هود مخفی آشپزخانه | فرزین</title>', false)
             ->assertSee('name="description" content="مدل‌های هود مخفی فرزین را با مشخصات و قیمت بررسی کنید."', false)
+            ->assertSee('توضیح کوتاه برای داده‌های متا')
+            ->assertSee('farzin-category-detail__description', false)
             ->assertSee('راهنمای انتخاب هود مخفی')
-            ->assertSee('برای انتخاب هود به ابعاد و قدرت مکش توجه کنید.')
-            ->assertDontSee('farzin-category-detail__description', false);
+            ->assertSee('برای انتخاب هود به ابعاد و قدرت مکش توجه کنید.');
+    }
+
+
+    public function test_category_hero_uses_a_clear_fallback_when_short_description_is_empty(): void
+    {
+        $category = Category::create([
+            'name' => 'سینک',
+            'slug' => 'sinks-banner-copy',
+            'description' => null,
+            'is_active' => true,
+            'sort_order' => 1,
+        ]);
+
+        $this->get(route('categories.show', $category->slug))
+            ->assertOk()
+            ->assertSee('در این مجموعه می‌توانید محصولات سینک را بررسی کنید و مشخصات، قیمت و گزینه‌های موجود را با هم مقایسه کنید.')
+            ->assertSee('farzin-category-detail__description', false);
     }
 
     public function test_active_category_created_in_admin_remains_visible_in_production_without_products(): void
