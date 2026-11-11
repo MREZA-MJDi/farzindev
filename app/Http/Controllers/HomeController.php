@@ -58,7 +58,7 @@ class HomeController extends Controller
                 ->orderBy('sort_order')
                 ->orderBy('id')
                     ->limit(5),
-            'images.media:id,path',
+            'images.media:id,path,disk',
         ];
 
         $hasPublicImage = static fn (Product $product): bool => $product->primaryImage() !== null;
@@ -92,7 +92,7 @@ class HomeController extends Controller
                                 ->orderByDesc('is_primary')
                                 ->orderBy('sort_order')
                                 ->orderBy('id'),
-                            'images.media:id,path',
+                            'images.media:id,path,disk',
                         ])
                         ->orderByDesc('updated_at')
                         ->limit(5);
