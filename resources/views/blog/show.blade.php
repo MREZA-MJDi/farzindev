@@ -24,8 +24,12 @@
 
 @section('title', $articleTitle)
 @section('description', $articleDescription)
-@section('canonical', $articleCanonical)
-@if($post->seo_robots !== 'inherit')
+@if(! ($isPreview ?? false))
+    @section('canonical', $articleCanonical)
+@endif
+@if($isPreview ?? false)
+    @section('robots', 'noindex,nofollow')
+@elseif($post->seo_robots !== 'inherit')
     @section('robots', $post->seo_robots)
 @endif
 @section('og_type', 'article')
@@ -65,6 +69,11 @@
 
 @section('content')
 <article class="blog-article-page" data-blog-motion>
+    @if($isPreview ?? false)
+        <div role="status" class="mx-auto mt-5 w-[min(92%,1200px)] border border-amber-300 bg-amber-50 px-4 py-3 text-sm font-semibold text-amber-900">
+            پیش‌نمایش خصوصی مقاله — این صفحه برای بازبینی مدیر است و در سایت عمومی یا موتورهای جست‌وجو نمایش داده نمی‌شود.
+        </div>
+    @endif
     <header class="blog-article-hero">
         <x-layout.container>
             <div class="blog-article-hero__inner">
