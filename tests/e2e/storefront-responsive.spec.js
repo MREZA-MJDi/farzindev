@@ -1037,3 +1037,33 @@ test('homepage category thumbnails stay compact and the image fills a true circl
         expect(geometry.titleVisible).toBeTruthy();
     }
 });
+
+
+test('blog pagination layout and controls remain visible on archive pages', async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto('/blog', { waitUntil: 'domcontentloaded' });
+
+    const paginator = page.locator('.blog-pagination');
+    if (await paginator.count() === 0) {
+        test.skip(true, 'The current content fixture has fewer than two blog pages.');
+    }
+
+    const layout = paginator.locator('.farzin-paginator__layout');
+    const controls = paginator.locator('.farzin-paginator__controls');
+
+    await expect(layout).toBeVisible();
+    await expect(controls).toBeVisible();
+
+    const layoutDisplay = await layout.evaluate((element) => getComputedStyle(element).display);
+    const controlsDisplay = await controls.evaluate((element) => getComputedStyle(element).display);
+
+    expect(layoutDisplay).not.toBe('none');
+    expect(controlsDisplay).not.toBe('none');
+
+    const nextPage = controls.locator('a[rel="next"]');
+    if (await nextPage.count()) {
+        await nextPage.click();
+        await expect(page).toHaveURL(/page=2/);
+        await expect(page.locator('.blog-articles-section')).toBeVisible();
+    }
+});
