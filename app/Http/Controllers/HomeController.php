@@ -287,9 +287,12 @@ class HomeController extends Controller
                 return $path;
             }
 
-            return Storage::disk('public')->url(
-                preg_replace('#^(public/|storage/)#', '', ltrim($path, '/')) ?? $path
-            );
+            $publicDisk = Storage::disk('public');
+            $storagePath = preg_replace('#^(public/|storage/)#', '', ltrim($path, '/')) ?? $path;
+
+            return $publicDisk->exists($storagePath)
+                ? $publicDisk->url($storagePath)
+                : null;
         };
 
         $safeBannerUrl = static function (?string $target): string {
