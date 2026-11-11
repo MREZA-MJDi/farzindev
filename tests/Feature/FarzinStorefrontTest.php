@@ -5506,11 +5506,11 @@ class FarzinStorefrontTest extends TestCase
             'is_new' => '0',
             'image' => UploadedFile::fake()->image('technical-hood.jpg', 1200, 900),
             'specifications' => [
-                'dimensions' => '۸۶×۵۰×۱۵ سانتی‌متر',
-                'burner_count' => 'پنج شعله',
-                'safety_system' => 'ترموکوپل TOP TIME',
-                'accessories' => 'دفترچه راهنما و شلنگ گاز',
-                'other_notes' => '',
+                ['label' => 'ابعاد کلی', 'value' => '۸۶×۵۰×۱۵ سانتی‌متر'],
+                ['label' => 'تعداد شعله', 'value' => 'پنج شعله'],
+                ['label' => 'سیستم ایمنی و ترموکوپل', 'value' => 'ترموکوپل TOP TIME'],
+                ['label' => 'لوازم همراه', 'value' => 'دفترچه راهنما و شلنگ گاز'],
+                ['label' => 'مشخصه خالی', 'value' => ''],
             ],
         ];
 
@@ -5519,8 +5519,12 @@ class FarzinStorefrontTest extends TestCase
             ->assertRedirect();
 
         $product = Product::query()->where('sku', 'FAR-TECH-SPEC-001')->firstOrFail();
-        $this->assertSame('۸۶×۵۰×۱۵ سانتی‌متر', $product->specifications['dimensions']);
-        $this->assertSame('پنج شعله', $product->specifications['burner_count']);
+        $this->assertSame([
+            ['label' => 'ابعاد کلی', 'value' => '۸۶×۵۰×۱۵ سانتی‌متر'],
+            ['label' => 'تعداد شعله', 'value' => 'پنج شعله'],
+            ['label' => 'سیستم ایمنی و ترموکوپل', 'value' => 'ترموکوپل TOP TIME'],
+            ['label' => 'لوازم همراه', 'value' => 'دفترچه راهنما و شلنگ گاز'],
+        ], $product->specifications);
 
         ProductImage::create([
             'product_id' => $product->id,
@@ -5538,7 +5542,7 @@ class FarzinStorefrontTest extends TestCase
             ->assertSee('تعداد شعله')
             ->assertSee('پنج شعله')
             ->assertSee('ترموکوپل TOP TIME')
-            ->assertDontSee('other_notes');
+            ->assertDontSee('مشخصه خالی');
     }
 
     public function test_homepage_technology_image_upload_is_available_with_crop_preview_in_admin(): void
