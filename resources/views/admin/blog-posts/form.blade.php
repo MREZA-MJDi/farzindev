@@ -245,7 +245,7 @@
         <section class="admin-card space-y-4 p-5">
             <div>
                 <h2 class="text-sm font-bold text-[var(--admin-text)]">تصویر شاخص مقاله</h2>
-                <p class="mt-1 text-xs leading-6 text-[var(--admin-muted)]">یک تصویر برای کارت مجله و سربرگ مقاله؛ کادر ۱۶:۹ را دقیق تنظیم کن.</p>
+                <p class="mt-1 text-xs leading-6 text-[var(--admin-muted)]">پس از انتشار، مقاله در مجله و بخش مقاله‌های صفحه اصلی نمایش داده می‌شود. تصویر شاخص اختیاری است؛ اگر انتخاب نشود، کارت با طرح جایگزین نمایش داده خواهد شد. نسبت پیشنهادی تصویر ۱۶:۹ است.</p>
             </div>
 
             <div class="admin-image-preview aspect-video">
