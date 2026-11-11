@@ -1099,16 +1099,18 @@ test('public storefront uses consistent square geometry across all key page type
 
     const checks = [
         { path: '/', selectors: ['.fz-market-hero__slides', '.fz-market-hero__button', '.farzin-product-card', '.fz-home-article-card'] },
-        { path: '/shop', selectors: ['.farzin-product-card', '.farzin-product-card__cta', 'main button'] },
-        { path: '/categories', selectors: ['.fz-category-card', '.farzin-shop-category-card', 'main button'] },
-        { path: '/categories/hoods', selectors: ['main button', 'main [class*="rounded-"][class*="border"]'] },
-        { path: '/product/farzin-hood-preview-01', selectors: ['.fz-product-panel', '.fz-product-action', '.product-gallery-shell', 'main button'] },
-        { path: '/blog', selectors: ['.blog-featured-card', '.blog-article-card', 'main button'] },
-        { path: '/blog/choosing-kitchen-hood', selectors: ['main button', 'main [class*="rounded-"][class*="border"]'] },
-        { path: '/cart', selectors: ['main button', 'main [class*="rounded-"][class*="border"]'] },
-        { path: '/contact', selectors: ['main button', 'main input', 'main textarea'] },
-        { path: '/login', selectors: ['main button', 'main input'] },
-        { path: '/register', selectors: ['main button', 'main input'] },
+        { path: '/shop', selectors: ['.farzin-shop-banner__image', '.farzin-product-card', '.farzin-product-card__cta', 'main button', 'main [class*="rounded-"]'] },
+        { path: '/categories', selectors: ['.fz-category-card', '.fz-category-hero__product', '.farzin-shop-category-card', 'main button', 'main [class*="rounded-"]'] },
+        { path: '/categories/hoods', selectors: ['.farzin-product-card', 'main button', 'main [class*="rounded-"]'] },
+        { path: '/product/farzin-hood-preview-01', selectors: ['.fz-product-panel', '.fz-product-action', '.product-gallery-shell', 'main button', 'main [class*="rounded-"]'] },
+        { path: '/blog', selectors: ['.blog-featured-card', '.blog-article-card', 'main button', 'main [class*="rounded-"]'] },
+        { path: '/blog/choosing-kitchen-hood', selectors: ['main button', 'main [class*="rounded-"]'] },
+        { path: '/cart', selectors: ['main button', 'main [class*="rounded-"]'] },
+        { path: '/contact', selectors: ['main button', 'main input', 'main textarea', 'main [class*="rounded-"]'] },
+        { path: '/about', selectors: ['main button', 'main [class*="rounded-"]'] },
+        { path: '/login', selectors: ['main button', 'main input', 'main [class*="rounded-"]'] },
+        { path: '/register', selectors: ['main button', 'main input', 'main [class*="rounded-"]'] },
+        { path: '/checkout', selectors: ['main button', 'main input', 'main [class*="rounded-"]'] },
     ];
 
     for (const check of checks) {
