@@ -673,7 +673,7 @@ class FarzinStorefrontTest extends TestCase
         $this->get(route('categories.show', ['slug' => $category->slug, 'page' => 2]))
             ->assertOk()
             ->assertSee('محصول دسته‌بندی 13')
-            ->assertDontSee('محصول دسته‌بندی 1');
+            ->assertDontSee('محصول دسته‌بندی 01');
     }
 
     public function test_homepage_product_cards_use_saved_specifications_and_real_stock(): void
@@ -3455,6 +3455,13 @@ class FarzinStorefrontTest extends TestCase
             'sku' => 'FAR-PRODUCT-UPDATE',
             'price' => 10000000,
             'stock' => 4,
+        ]);
+        ProductImage::create([
+            'product_id' => $product->id,
+            'path' => 'https://cdn.example.test/original-hood.webp',
+            'alt' => 'Original Hood',
+            'sort_order' => 0,
+            'is_primary' => true,
         ]);
 
         $this->actingAs($admin, 'admin')
