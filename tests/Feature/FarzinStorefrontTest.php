@@ -789,6 +789,72 @@ class FarzinStorefrontTest extends TestCase
             ->assertSee('محصول واقعی پیشنهاد فرزین');
     }
 
+    public function test_homepage_content_switches_control_published_products_and_articles(): void
+    {
+        $category = $this->category([
+            'name' => 'دسته محصولات صفحه اصلی',
+            'slug' => 'homepage-content-switches',
+        ]);
+        $product = $this->product($category, [
+            'name' => 'هود قابل نمایش در صفحه اصلی',
+            'slug' => 'homepage-content-switch-product',
+            'sku' => 'FAR-HOME-SWITCH-01',
+            'show_in_home_gallery' => true,
+            'status' => 'active',
+            'stock' => 4,
+        ]);
+
+        ProductImage::create([
+            'product_id' => $product->id,
+            'path' => 'https://cdn.example.test/homepage-content-switch-product.webp',
+            'alt' => $product->name,
+            'sort_order' => 0,
+            'is_primary' => true,
+        ]);
+
+        $article = \App\Models\BlogPost::create([
+            'title' => 'مقاله قابل نمایش در صفحه اصلی',
+            'slug' => 'homepage-content-switch-article',
+            'body' => 'محتوای منتشرشده برای بررسی کلید نمایش مجله.',
+            'status' => 'published',
+            'published_at' => now()->subMinute(),
+        ]);
+
+        StorefrontSetting::query()->updateOrCreate(
+            ['key' => 'page_home_show_products'],
+            ['value' => '0']
+        );
+        StorefrontSetting::query()->updateOrCreate(
+            ['key' => 'page_home_show_journal'],
+            ['value' => '0']
+        );
+        app(\App\Services\StorefrontPageContent::class)->clearCache();
+
+        $this->get(route('home'))
+            ->assertOk()
+            ->assertDontSee('id="fz-home-featured"', false)
+            ->assertDontSee($product->name)
+            ->assertDontSee('id="fz-home-journal"', false)
+            ->assertDontSee($article->title);
+
+        StorefrontSetting::query()->updateOrCreate(
+            ['key' => 'page_home_show_products'],
+            ['value' => '1']
+        );
+        StorefrontSetting::query()->updateOrCreate(
+            ['key' => 'page_home_show_journal'],
+            ['value' => '1']
+        );
+        app(\App\Services\StorefrontPageContent::class)->clearCache();
+
+        $this->get(route('home'))
+            ->assertOk()
+            ->assertSee('id="fz-home-featured"', false)
+            ->assertSee($product->name)
+            ->assertSee('id="fz-home-journal"', false)
+            ->assertSee($article->title);
+    }
+
     public function test_homepage_cms_rejects_hero_images_outside_the_fixed_crop_ratio(): void
     {
         Storage::fake('public');
