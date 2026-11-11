@@ -463,7 +463,7 @@
                                                 <img
                                                     src="{{ $image }}"
                                                     alt="{{ $item->product->name }}"
-                                                    class="h-full w-full object-cover"
+                                                    class="h-full w-full object-contain p-1"
                                                 >
 
                                             @else
