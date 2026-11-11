@@ -2467,3 +2467,31 @@ body.home-body{
     }
     .home-body .fz-home-journal .fz-home-article-card__body { padding: .9rem; }
 }
+
+/* Homepage journal cards use the full media frame for every cover image. */
+.fz-home-article-card__media {
+    position: relative;
+    display: block;
+    overflow: hidden;
+}
+.fz-home-article-card__media img {
+    position: absolute;
+    inset: 0;
+    display: block;
+    width: 100%;
+    height: 100%;
+    max-width: none;
+    padding: 0;
+    object-fit: cover !important;
+    object-position: center;
+    transform: none;
+}
+.fz-home-article-card:hover .fz-home-article-card__media img {
+    transform: none;
+}
+.fz-home-article-card__media-fallback {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+}
