@@ -49,7 +49,8 @@ class CategoryController extends Controller
         $data = $request->validated();
         $uploadedImage = $request->file('image');
         $uploadedContentImage = $request->file('content_image');
-        unset($data['image'], $data['content_image']);
+        $removeContentImage = (bool) ($data['remove_content_image'] ?? false);
+        unset($data['image'], $data['content_image'], $data['remove_content_image']);
 
         $newImage = null;
         $newContentImage = null;
@@ -174,7 +175,7 @@ class CategoryController extends Controller
         $oldSlug = (string) $category->slug;
 
         try {
-            DB::transaction(function () use ($category, $data, $newImage, $newContentImage, &$oldImage, &$oldContentImage, $oldSlug): void {
+            DB::transaction(function () use ($category, $data, $newImage, $newContentImage, $removeContentImage, &$oldImage, &$oldContentImage, $oldSlug): void {
                 $lockedCategory = Category::query()
                     ->whereKey($category->id)
                     ->lockForUpdate()
@@ -189,6 +190,8 @@ class CategoryController extends Controller
                 }
                 if ($newContentImage !== null) {
                     $payload['content_image'] = $newContentImage;
+                } elseif ($removeContentImage) {
+                    $payload['content_image'] = null;
                 }
 
                 $lockedCategory->update($payload);
@@ -225,7 +228,7 @@ class CategoryController extends Controller
         }
 
         if (
-            $newContentImage !== null
+            ($newContentImage !== null || $removeContentImage)
             && $oldContentImage
             && ! str_starts_with($oldContentImage, 'http://')
             && ! str_starts_with($oldContentImage, 'https://')
