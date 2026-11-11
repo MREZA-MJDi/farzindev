@@ -217,6 +217,25 @@ class CategorySeoMetadataTest extends TestCase
             ->assertSee('راهنمای خرید هود')
             ->assertSee('پیش از انتخاب، عرض اجاق و مسیر خروج هوا را بررسی کنید.')
             ->assertSee($category->content_image_url, false);
+
+        $storedImage = $category->content_image;
+
+        $this->actingAs($admin, 'admin')
+            ->put(route('admin.categories.update', $category), [
+                'name' => $category->name,
+                'slug' => $category->slug,
+                'content_title' => $category->content_title,
+                'content_body' => $category->content_body,
+                'remove_content_image' => '1',
+                'is_active' => '1',
+                'sort_order' => '1',
+            ])
+            ->assertRedirect(route('admin.categories.index'))
+            ->assertSessionHasNoErrors();
+
+        $category->refresh();
+        $this->assertNull($category->content_image);
+        Storage::disk('public')->assertMissing($storedImage);
     }
 
     public function test_category_image_forms_use_the_shared_preview_and_crop_editor(): void
