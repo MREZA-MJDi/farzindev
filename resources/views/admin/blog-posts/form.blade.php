@@ -2,6 +2,8 @@
 @php
     $categoryTerms = collect($termOptions)->where('type', 'category')->values();
     $tagTerms = collect($termOptions)->where('type', 'tag')->values();
+    $selectedCoverMedia = collect($mediaImages)->firstWhere('path', $post->cover_image);
+    $selectedCoverMediaId = old('cover_image_media_id', $selectedCoverMedia?->id);
 @endphp
 
 <div class="grid gap-6 2xl:grid-cols-[minmax(0,1fr)_360px]">
@@ -270,6 +272,19 @@
                 <input type="file" name="cover_image" accept="image/jpeg,image/png,image/webp" data-image-editor-input data-image-editor-min-width="800" data-image-editor-min-height="450" data-image-editor-default-ratio="16:9" class="admin-input mt-2 w-full p-2">
             </label>
 
+            <label class="block text-sm text-[var(--admin-text)]">یا انتخاب تصویر از کتابخانه رسانه
+                <select name="cover_image_media_id" class="admin-select mt-2 w-full">
+                    <option value="">بدون تغییر تصویر فعلی</option>
+                    @foreach($mediaImages as $mediaImage)
+                        <option value="{{ $mediaImage->id }}" @selected((string) $selectedCoverMediaId === (string) $mediaImage->id)>
+                            {{ $mediaImage->original_name }}{{ $mediaImage->alt ? ' — ' . $mediaImage->alt : '' }}
+                        </option>
+                    @endforeach
+                </select>
+                <span class="mt-1 block text-xs leading-5 text-[var(--admin-muted)]">انتخاب تصویر از کتابخانه، تصویر شاخص مقاله را با همان فایل رسانه جایگزین می‌کند؛ فایل مشترک رسانه حذف نخواهد شد.</span>
+                @error('cover_image_media_id')<span class="mt-1 block text-xs text-red-600">{{ $message }}</span>@enderror
+            </label>
+
             <div data-image-editor-panel hidden class="space-y-4 rounded-2xl border border-[var(--admin-border)] bg-[var(--admin-surface-soft)] p-4">
                 <div>
                     <h3 class="text-xs font-bold text-[var(--admin-text)]">تنظیم قاب تصویر</h3>
@@ -291,6 +306,11 @@
                 </div>
                 <p data-image-editor-status class="text-xs text-[var(--admin-muted)]" aria-live="polite">کادر را تنظیم کن.</p>
             </div>
+
+            <label class="flex items-center gap-2 text-xs text-[var(--admin-muted)]">
+                <input type="checkbox" name="remove_cover_image" value="1" @checked(old('remove_cover_image')) class="rounded border-[var(--admin-border)] text-[var(--admin-accent)] focus:ring-[var(--admin-accent)]">
+                حذف تصویر شاخص فعلی
+            </label>
 
             <label class="block text-sm text-[var(--admin-text)]">متن جایگزین تصویر (Alt)
                 <input name="cover_image_alt" value="{{ old('cover_image_alt', $post->cover_image_alt) }}" maxlength="255" class="admin-input mt-2 w-full">

@@ -74,8 +74,13 @@ class BlogPostController extends Controller
     ): RedirectResponse {
         $validated = $this->validatePost($request);
         $termIds = $validated['term_ids'] ?? [];
-        unset($validated['term_ids']);
+        $mediaId = $validated['cover_image_media_id'] ?? null;
+        $removeCoverImage = (bool) ($validated['remove_cover_image'] ?? false);
+        unset($validated['term_ids'], $validated['cover_image_media_id'], $validated['remove_cover_image']);
 
+        $selectedMedia = $mediaId
+            ? Media::query()->where('disk', 'public')->where('mime_type', 'like', 'image/%')->findOrFail($mediaId)
+            : null;
         $uploadedPath = null;
         if ($request->hasFile('cover_image')) {
             $uploadedPath = $images->store($request->file('cover_image'), 'blog');
@@ -89,7 +94,14 @@ class BlogPostController extends Controller
         $validated['slug'] = $this->uniqueSlug($validated['slug'] ?? null, $validated['title']);
         $validated['body_html'] = $sanitizer->sanitize($validated['body']);
         $validated['body'] = $this->plainText($validated['body_html']);
-        $validated['cover_image'] = $uploadedPath;
+        $validated['cover_image'] = $uploadedPath ?: $selectedMedia?->path;
+        if ($removeCoverImage && $uploadedPath === null && $selectedMedia === null) {
+            $validated['cover_image'] = null;
+            $validated['cover_image_alt'] = null;
+        }
+        if ($selectedMedia !== null && blank($validated['cover_image_alt'] ?? null)) {
+            $validated['cover_image_alt'] = $selectedMedia->alt ?: $selectedMedia->original_name;
+        }
         $validated['author_id'] = $request->user()?->id;
         $validated['is_featured'] = $request->boolean('is_featured');
         $validated['seo_robots'] = $validated['seo_robots'] ?? 'inherit';
@@ -148,8 +160,13 @@ class BlogPostController extends Controller
     ): RedirectResponse {
         $validated = $this->validatePost($request, $blogPost);
         $termIds = $validated['term_ids'] ?? [];
-        unset($validated['term_ids']);
+        $mediaId = $validated['cover_image_media_id'] ?? null;
+        $removeCoverImage = (bool) ($validated['remove_cover_image'] ?? false);
+        unset($validated['term_ids'], $validated['cover_image_media_id'], $validated['remove_cover_image']);
 
+        $selectedMedia = $mediaId
+            ? Media::query()->where('disk', 'public')->where('mime_type', 'like', 'image/%')->findOrFail($mediaId)
+            : null;
         $uploadedPath = null;
         if ($request->hasFile('cover_image')) {
             $uploadedPath = $images->store($request->file('cover_image'), 'blog');
@@ -168,6 +185,14 @@ class BlogPostController extends Controller
 
         if ($uploadedPath !== null) {
             $validated['cover_image'] = $uploadedPath;
+        } elseif ($selectedMedia !== null) {
+            $validated['cover_image'] = $selectedMedia->path;
+            if (blank($validated['cover_image_alt'] ?? null)) {
+                $validated['cover_image_alt'] = $selectedMedia->alt ?: $selectedMedia->original_name;
+            }
+        } elseif ($removeCoverImage) {
+            $validated['cover_image'] = null;
+            $validated['cover_image_alt'] = null;
         }
 
         $validated['is_featured'] = $request->boolean('is_featured');
@@ -241,6 +266,7 @@ class BlogPostController extends Controller
     private function mediaImageOptions(): array
     {
         return Media::query()
+            ->where('disk', 'public')
             ->where('mime_type', 'like', 'image/%')
             ->latest('id')
             ->limit(36)
@@ -280,6 +306,14 @@ class BlogPostController extends Controller
             'excerpt' => ['nullable', 'string', 'max:600'],
             'body' => ['required', 'string', 'max:2000000'],
             'cover_image' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'dimensions:min_width=800,min_height=450', 'max:8192'],
+            'cover_image_media_id' => [
+                'nullable',
+                'integer',
+                Rule::exists('media', 'id')->where(fn ($query) => $query
+                    ->where('disk', 'public')
+                    ->where('mime_type', 'like', 'image/%')),
+            ],
+            'remove_cover_image' => ['sometimes', 'boolean'],
             'cover_image_alt' => ['nullable', 'string', 'max:255'],
             'meta_title' => ['nullable', 'string', 'max:255'],
             'meta_description' => ['nullable', 'string', 'max:320'],
