@@ -56,8 +56,7 @@ class HomeController extends Controller
                 ->select(['id', 'product_id', 'media_id', 'path', 'alt', 'sort_order', 'is_primary'])
                 ->orderByDesc('is_primary')
                 ->orderBy('sort_order')
-                ->orderBy('id')
-                ->limit(1),
+                ->orderBy('id'),
             'images.media:id,path',
         ];
 
@@ -93,7 +92,7 @@ class HomeController extends Controller
                                 ->select(['id', 'product_id', 'media_id', 'path', 'alt', 'sort_order', 'is_primary'])
                                 ->orderByDesc('is_primary')
                                 ->orderBy('sort_order')
-                                ->limit(1),
+                                ->orderBy('id'),
                             'images.media:id,path',
                         ])
                         ->orderByDesc('updated_at')
@@ -110,7 +109,9 @@ class HomeController extends Controller
             ->get();
 
         foreach ($categories as $category) {
-            $fallbackImage = $category->products->first()?->images->first();
+            $fallbackImage = $category->products->first()?->images->first(
+                static fn ($image): bool => filled($image->url)
+            );
             $category->setAttribute(
                 'home_category_image_url',
                 $category->image_url ?: $fallbackImage?->url
