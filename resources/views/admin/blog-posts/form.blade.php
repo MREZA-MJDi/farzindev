@@ -197,6 +197,9 @@
                 </select>
                 @error('status')<span class="mt-1 block text-xs text-red-600">{{ $message }}</span>@enderror
             </label>
+            <p class="rounded-xl border border-[var(--admin-border)] bg-[var(--admin-surface-soft)] px-3 py-3 text-xs leading-6 text-[var(--admin-muted)]" role="note">
+                فقط مقاله‌ای در صفحه اصلی و مجله نمایش داده می‌شود که وضعیت آن «منتشرشده» باشد و زمان انتشارش رسیده باشد. پیش‌نویس و مقاله زمان‌بندی‌شده تا زمان انتشار عمومی نیستند.
+            </p>
             <label class="block text-sm text-[var(--admin-text)]">زمان انتشار
                 <input type="datetime-local" name="published_at" value="{{ old('published_at', $post->published_at?->format('Y-m-d\TH:i')) }}" class="admin-input mt-2 w-full" dir="ltr">
                 <span class="mt-1 block text-xs leading-6 text-[var(--admin-muted)]">برای زمان‌بندی، وضعیت را منتشرشده و زمان آینده انتخاب کنید.</span>
