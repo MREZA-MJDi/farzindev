@@ -5486,6 +5486,93 @@ class FarzinStorefrontTest extends TestCase
             ->assertDontSee('farzin-product-card__installment-slot', false);
     }
 
+
+    public function test_product_technical_specifications_are_saved_and_rendered_on_the_public_product_page(): void
+    {
+        $admin = $this->admin();
+        $category = $this->category(['slug' => 'technical-specification-hoods']);
+        $payload = [
+            'category_id' => $category->id,
+            'name' => 'هود تست مشخصات فنی',
+            'slug' => 'technical-specification-hood',
+            'sku' => 'FAR-TECH-SPEC-001',
+            'short_description' => 'هود آشپزخانه با مشخصات فنی',
+            'description' => 'توضیحات محصول',
+            'price' => 12500000,
+            'stock' => 5,
+            'status' => 'active',
+            'is_featured' => '0',
+            'is_new' => '0',
+            'specifications' => [
+                'dimensions' => '۸۶×۵۰×۱۵ سانتی‌متر',
+                'burner_count' => 'پنج شعله',
+                'safety_system' => 'ترموکوپل TOP TIME',
+                'accessories' => 'دفترچه راهنما و شلنگ گاز',
+                'other_notes' => '',
+            ],
+        ];
+
+        $this->actingAs($admin, 'admin')
+            ->post(route('admin.products.store'), $payload)
+            ->assertRedirect();
+
+        $product = Product::query()->where('sku', 'FAR-TECH-SPEC-001')->firstOrFail();
+        $this->assertSame('۸۶×۵۰×۱۵ سانتی‌متر', $product->specifications['dimensions']);
+        $this->assertSame('پنج شعله', $product->specifications['burner_count']);
+
+        ProductImage::create([
+            'product_id' => $product->id,
+            'path' => 'https://cdn.example.test/farzin-technical-specification.webp',
+            'alt' => $product->name,
+            'sort_order' => 0,
+            'is_primary' => true,
+        ]);
+
+        $this->get(route('product.show', $product->slug))
+            ->assertOk()
+            ->assertSee('مشخصات فنی')
+            ->assertSee('ابعاد کلی')
+            ->assertSee('۸۶×۵۰×۱۵ سانتی‌متر')
+            ->assertSee('تعداد شعله')
+            ->assertSee('پنج شعله')
+            ->assertSee('ترموکوپل TOP TIME')
+            ->assertDontSee('other_notes');
+    }
+
+    public function test_homepage_technology_image_upload_is_available_with_crop_preview_in_admin(): void
+    {
+        Storage::fake('public');
+        $admin = $this->admin();
+        $values = collect(app(\\App\\Services\\StorefrontPageContent::class)->defaults())
+            ->filter(fn ($value, $key) => str_starts_with($key, 'page_home_'))
+            ->all();
+
+        $this->actingAs($admin, 'admin')
+            ->get(route('admin.page-content.edit', ['tab' => 'home']))
+            ->assertOk()
+            ->assertSee('data-image-editor-input', false)
+            ->assertSee('data-image-editor-canvas', false)
+            ->assertSee('پیش‌نمایش تصویر سکشن فناوری');
+
+        $this->put(route('admin.page-content.update'), array_merge($values, [
+            'tab' => 'home',
+            'page_home_technology_image' => UploadedFile::fake()->image('technology-kitchen.webp', 1600, 1000),
+        ]))->assertRedirect(route('admin.page-content.edit', ['tab' => 'home']));
+
+        $path = StorefrontSetting::query()
+            ->where('key', 'page_home_technology_image_url')
+            ->value('value');
+
+        $this->assertNotEmpty($path);
+        Storage::disk('public')->assertExists($path);
+
+        $this->get(route('home'))
+            ->assertOk()
+            ->assertSee(Storage::disk('public')->url($path), false)
+            ->assertSee('fz-home-technology__visual', false);
+    }
+
+
     private function checkoutLocationPayload(): array
     {
         if ($this->checkoutLocationCache !== null) {
