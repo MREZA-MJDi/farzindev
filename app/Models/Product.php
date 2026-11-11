@@ -124,14 +124,38 @@ class Product extends Model
             : $this->images()
                 ->orderByDesc('is_primary')
                 ->orderBy('sort_order')
+                ->orderBy('id')
                 ->get();
 
-        return $images->first(
-            fn (ProductImage $image): bool => filled($image->url)
-                && $image->is_primary
-        ) ?? $images->first(
+        $availablePrimary = $images->first(
+            fn (ProductImage $image): bool => $image->is_primary && filled($image->url)
+        );
+
+        if ($availablePrimary) {
+            return $availablePrimary;
+        }
+
+        $availableFallback = $images->first(
             fn (ProductImage $image): bool => filled($image->url)
         );
+
+        if ($availableFallback) {
+            return $availableFallback;
+        }
+
+        // Some listing queries intentionally eager-load only one image. If that
+        // file was deleted, make one fallback query for the remaining gallery.
+        if ($this->relationLoaded('images') && $images->isNotEmpty()) {
+            return $this->images()
+                ->whereNotIn('id', $images->modelKeys())
+                ->orderByDesc('is_primary')
+                ->orderBy('sort_order')
+                ->orderBy('id')
+                ->get()
+                ->first(fn (ProductImage $image): bool => filled($image->url));
+        }
+
+        return null;
     }
 
     public function getDiscountPercentageAttribute(): ?int
