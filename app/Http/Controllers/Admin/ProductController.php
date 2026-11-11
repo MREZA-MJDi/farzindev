@@ -33,6 +33,8 @@ class ProductController extends Controller
             ->with([
                 'category',
                 'images' => fn ($query) => $query
+                    ->orderByDesc('is_primary')
+                    ->orderBy('sort_order')
                     ->select(['id', 'product_id', 'media_id', 'path', 'alt', 'sort_order', 'is_primary'])
                     ->limit(1),
                 'images.media:id,path',
