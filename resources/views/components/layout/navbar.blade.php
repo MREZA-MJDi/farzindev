@@ -8,7 +8,7 @@
         <div class="flex min-h-[70px] items-center justify-between gap-3 py-3 lg:min-h-[78px] lg:gap-6 lg:py-0">
 
             {{-- Brand --}}
-            <x-layout.header-brand :brand-name="$brandName" :brand-logo="$brandLogo" /></a>
+            <x-layout.header-brand :brand-name="$brandName" :brand-logo="$brandLogo" />
 
             {{-- Desktop navigation --}}
             <div class="farzin-site-header__nav hidden min-w-0 flex-1 items-center justify-center gap-1 lg:flex xl:gap-2">
@@ -130,13 +130,13 @@
                 @endauth
 
                 {{-- Cart --}}
-                <x-layout.header-cart-link :cart-count="$cartCount" /></a>
+                <x-layout.header-cart-link :cart-count="$cartCount" />
 
                 {{-- Account --}}
                 <x-layout.header-account-link />
 
                                 {{-- Mobile menu trigger --}}
-                <x-layout.header-menu-button /></button>
+                <x-layout.header-menu-button />
 
             </div>
         </div>
