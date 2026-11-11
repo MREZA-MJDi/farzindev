@@ -62,10 +62,12 @@ class CategoryController extends Controller
                 }))
             ->with([
                 'category',
-                // Product cards only render the first image; avoid loading full galleries for 12 rows.
+                // Load the ordered gallery so the shared card can skip missing files and fall back safely.
                 'images' => fn ($query) => $query
                     ->select(['id', 'product_id', 'media_id', 'path', 'alt', 'sort_order', 'is_primary'])
-                    ->limit(1),
+                    ->orderByDesc('is_primary')
+                    ->orderBy('sort_order')
+                    ->orderBy('id'),
                 'images.media:id,path',
                 'variants:id,product_id,type,name,value,stock,price_adjustment,is_active',
             ])
