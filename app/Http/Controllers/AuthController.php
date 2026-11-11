@@ -310,7 +310,7 @@ class AuthController extends Controller
                     ->orderByDesc('is_primary')
                     ->orderBy('sort_order')
                     ->limit(1),
-                'images.media:id,path',
+                'images.media:id,path,disk',
             ])
             ->orderByDesc('is_featured')
             ->orderByDesc('updated_at')
