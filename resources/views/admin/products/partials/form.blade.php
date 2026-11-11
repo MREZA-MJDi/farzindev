@@ -242,6 +242,7 @@
                         @foreach($categories as $category)
                             <option
                                 value="{{ $category->id }}"
+                                data-slug="{{ $category->slug }}"
                                 @selected(old('category_id', $product->category_id ?? '') == $category->id)
                             >
                             {{ $category->name }}
