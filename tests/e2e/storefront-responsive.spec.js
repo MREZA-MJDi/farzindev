@@ -472,7 +472,7 @@ test('admin mobile quick search and list filters remain reachable without horizo
     }
 });
 
-test('homepage journal uses published image-backed articles only', async ({ page }) => {
+test('homepage journal shows published articles with optional cover images', async ({ page }) => {
     for (const viewport of [
         { width: 390, height: 844 },
         { width: 768, height: 900 },
@@ -505,6 +505,7 @@ test('homepage journal uses published image-backed articles only', async ({ page
                 columns: style.gridTemplateColumns.split(' ').length,
                 radius: Number.parseFloat(cardStyle.borderTopLeftRadius),
                 imageCount: section.querySelectorAll('.fz-home-article-card img').length,
+                fallbackCount: section.querySelectorAll('.fz-home-article-card__media-fallback').length,
                 imagesHaveAlt: Array.from(section.querySelectorAll('.fz-home-article-card img')).every((image) => image.getAttribute('alt')?.trim()),
                 overflow: Math.max(document.documentElement.scrollWidth, document.body.scrollWidth)
                     - document.documentElement.clientWidth,
@@ -514,7 +515,7 @@ test('homepage journal uses published image-backed articles only', async ({ page
         expect(layout.direction).toBe('rtl');
         expect(layout.columns).toBe(viewport.width <= 767 ? 1 : 3);
         expect(layout.radius).toBeLessThanOrEqual(24);
-        expect(layout.imageCount).toBe(await articles.count());
+        expect(layout.imageCount + layout.fallbackCount).toBe(await articles.count());
         expect(layout.imagesHaveAlt).toBeTruthy();
         expect(layout.overflow).toBeLessThanOrEqual(1);
     }
