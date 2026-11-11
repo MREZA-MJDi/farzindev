@@ -315,7 +315,7 @@
                 class="admin-input p-2"
             >
 
-            <div data-image-editor-panel hidden class="mt-5 space-y-4 rounded-2xl border border-[var(--admin-border)] bg-[var(--admin-surface-soft)] p-4">
+            <div data-image-editor-panel-for="content_image" hidden class="mt-5 space-y-4 rounded-2xl border border-[var(--admin-border)] bg-[var(--admin-surface-soft)] p-4">
                 <strong class="block text-sm font-semibold text-[var(--admin-text)]">پیش‌نمایش و برش تصویر</strong>
                 <canvas data-image-editor-canvas role="img" aria-label="پیش‌نمایش برش تصویر دسته‌بندی" class="mx-auto block max-w-full rounded-xl bg-[var(--admin-bg)]" style="width:min(100%,640px);height:auto;aspect-ratio:4/3;touch-action:none;cursor:grab;"></canvas>
                 <p class="text-xs leading-6 text-[var(--admin-muted)]">تصویر را داخل کادر بکشید، نسبت را تغییر دهید و در صورت نیاز زوم یا چرخش کنید. خروجی نهایی دقیقاً مطابق همین پیش‌نمایش ذخیره می‌شود.</p>
@@ -358,7 +358,7 @@
             </div>
             @php $contentImageUrl = $editing ? $category->content_image_url : null; @endphp
             <div class="admin-image-preview mb-5 aspect-video">
-                <img data-image-editor-existing-preview src="{{ $contentImageUrl ?: '' }}" alt="{{ $category->content_title ?: $category->name }}" class="admin-image {{ $contentImageUrl ? '' : 'hidden' }}">
+                <img data-image-editor-existing-preview-for="content_image" src="{{ $contentImageUrl ?: '' }}" alt="{{ $category->content_title ?: $category->name }}" class="admin-image {{ $contentImageUrl ? '' : 'hidden' }}">
                 <div data-image-editor-placeholder class="{{ $contentImageUrl ? 'hidden' : 'flex' }} h-full flex-col items-center justify-center rounded-2xl border border-dashed border-[var(--admin-border)] bg-[var(--admin-surface-soft)] p-5 text-center text-xs text-[var(--admin-muted)]">
                     تصویر راهنمایی انتخاب نشده است.
                 </div>
@@ -369,6 +369,7 @@
                 <strong class="block text-sm font-semibold text-[var(--admin-text)]">پیش‌نمایش و برش تصویر</strong>
                 <canvas data-image-editor-canvas role="img" aria-label="پیش‌نمایش برش تصویر راهنما" class="mx-auto block max-w-full rounded-xl bg-[var(--admin-bg)]" style="width:min(100%,640px);height:auto;aspect-ratio:16/9;touch-action:none;cursor:grab;"></canvas>
                 <p class="text-xs leading-6 text-[var(--admin-muted)]">قاب تصویر را تنظیم کنید؛ خروجی با نسبت ۱۶:۹ ذخیره می‌شود.</p>
+                <input type="hidden" data-image-editor-ratio value="16:9">
                 <label class="block text-xs text-[var(--admin-text)]">بزرگ‌نمایی <span data-image-editor-zoom-label>۱×</span>
                     <input data-image-editor-zoom type="range" min="1" max="3" step="0.05" value="1" class="mt-3 w-full">
                 </label>
