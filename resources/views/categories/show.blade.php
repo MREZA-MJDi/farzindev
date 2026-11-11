@@ -77,6 +77,12 @@
                                 {{ $category->name }}
                             </h1>
 
+                            <p class="farzin-category-detail__description mt-4 max-w-2xl text-sm leading-8 text-[var(--livora-stone)] sm:text-base">
+                                {{ filled($category->description)
+                                    ? $category->description
+                                    : 'در این مجموعه می‌توانید محصولات ' . $category->name . ' را بررسی کنید و مشخصات، قیمت و گزینه‌های موجود را با هم مقایسه کنید.' }}
+                            </p>
+
                             <div class="mt-7 flex flex-wrap items-center gap-3">
 
                             <span class="rounded-full border border-[var(--livora-border)] px-4 py-2 text-[11px] text-[var(--livora-stone)]">
