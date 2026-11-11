@@ -212,6 +212,12 @@ class BlogCmsTest extends TestCase
             ->assertSee('مقالات بلاگ');
 
         $this->actingAs($admin, 'admin')
+            ->get(route('admin.blog-posts.create'))
+            ->assertOk()
+            ->assertSee('فقط مقاله‌ای در صفحه اصلی و مجله نمایش داده می‌شود')
+            ->assertSee('پیش‌نویس و مقاله زمان‌بندی‌شده تا زمان انتشار عمومی نیستند');
+
+        $this->actingAs($admin, 'admin')
             ->post(route('admin.blog-posts.store'), [
                 'title' => 'انتخاب سینک مناسب',
                 'slug' => 'choosing-a-sink',
