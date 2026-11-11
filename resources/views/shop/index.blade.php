@@ -99,7 +99,7 @@
                                     <div>
 
                                         <p class="text-[10px] uppercase tracking-[0.18em] text-[var(--livora-accent)]">
-                                            DISCOVER
+                                            راهنمای انتخاب
                                         </p>
 
                                         <h2 class="mt-2 text-sm font-semibold">
