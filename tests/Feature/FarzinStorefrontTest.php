@@ -4646,6 +4646,25 @@ class FarzinStorefrontTest extends TestCase
             ->assertSee('افزودن آدرس');
     }
 
+    public function test_public_shop_uses_its_textual_banner_fallback_when_the_saved_image_is_missing(): void
+    {
+        Storage::fake('public');
+
+        StorefrontSetting::query()->create([
+            'key' => 'shop_banner_image',
+            'value' => 'storefront/deleted-public-shop-banner.webp',
+        ]);
+        StorefrontSetting::query()->create([
+            'key' => 'shop_banner_title',
+            'value' => 'فروشگاه بدون تصویر بنر',
+        ]);
+
+        $this->get(route('shop.index'))
+            ->assertOk()
+            ->assertSee('فروشگاه بدون تصویر بنر')
+            ->assertDontSee('/storage/storefront/deleted-public-shop-banner.webp');
+    }
+
     public function test_storefront_settings_editor_does_not_preview_deleted_banner_or_brand_logo_files(): void
     {
         Storage::fake('public');
