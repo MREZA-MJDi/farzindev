@@ -5487,6 +5487,25 @@ class FarzinStorefrontTest extends TestCase
     }
 
 
+    public function test_admin_product_form_exposes_category_specific_editable_specification_templates(): void
+    {
+        $this->category(['name' => 'سینک ظرفشویی', 'slug' => 'sinks']);
+        $this->category(['name' => 'هود آشپزخانه', 'slug' => 'hoods']);
+        $this->category(['name' => 'اجاق گاز صفحه‌ای', 'slug' => 'gas-stoves']);
+
+        $this->actingAs($this->admin(), 'admin')
+            ->get(route('admin.products.create'))
+            ->assertOk()
+            ->assertSee('id="product-specifications"', false)
+            ->assertSee('id="add-product-specification"', false)
+            ->assertSee('data-specification-templates', false)
+            ->assertSee('نحوه نصب')
+            ->assertSee('قدرت مکش')
+            ->assertSee('تعداد شعله')
+            ->assertSee('افزودن مشخصه')
+            ->assertSee('حذف');
+    }
+
     public function test_product_technical_specifications_are_saved_and_rendered_on_the_public_product_page(): void
     {
         Storage::fake('public');
