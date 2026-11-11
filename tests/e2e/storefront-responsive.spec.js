@@ -1192,3 +1192,49 @@ test('public storefront uses consistent square geometry across all key page type
     }
 });
 
+
+test('shop banner image fills its frame and catalogue has a small separation', async ({ page }) => {
+    for (const viewport of [
+        { width: 390, height: 844 },
+        { width: 1440, height: 960 },
+    ]) {
+        await page.setViewportSize(viewport);
+        await page.goto('/shop', { waitUntil: 'domcontentloaded' });
+
+        const banner = page.locator('.farzin-shop-banner__image');
+        const image = banner.locator(':scope > img');
+        const catalog = page.locator('.farzin-shop-catalog');
+
+        if (await image.count() === 0) {
+            test.skip(true, 'The current shop fixture has no configured banner image.');
+        }
+
+        await expect(banner).toBeVisible();
+        await expect(image).toBeVisible();
+        await expect(catalog).toBeVisible();
+
+        const geometry = await page.evaluate(() => {
+            const frame = document.querySelector('.farzin-shop-banner__image');
+            const image = frame?.querySelector(':scope > img');
+            const catalog = document.querySelector('.farzin-shop-catalog');
+            const frameRect = frame.getBoundingClientRect();
+            const imageRect = image.getBoundingClientRect();
+            const catalogRect = catalog.getBoundingClientRect();
+
+            return {
+                frameWidth: frameRect.width,
+                frameHeight: frameRect.height,
+                imageWidth: imageRect.width,
+                imageHeight: imageRect.height,
+                objectFit: getComputedStyle(image).objectFit,
+                separation: catalogRect.top - frameRect.bottom,
+            };
+        });
+
+        expect(Math.abs(geometry.imageWidth - geometry.frameWidth)).toBeLessThanOrEqual(1);
+        expect(Math.abs(geometry.imageHeight - geometry.frameHeight)).toBeLessThanOrEqual(1);
+        expect(geometry.objectFit).toBe('cover');
+        expect(geometry.separation).toBeGreaterThanOrEqual(10);
+        expect(geometry.separation).toBeLessThanOrEqual(28);
+    }
+});
