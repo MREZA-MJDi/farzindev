@@ -47,6 +47,35 @@ class BrowserSmokeSeeder extends Seeder
             [$sinks, 'E2E-SINK-02', 'farzin-sink-e2e-02', 'سینک تست مرورگر ۲', 9800000],
         ];
 
+
+        $journalCategory = BlogTerm::query()->firstOrCreate(
+            ['slug' => 'browser-smoke-guides'],
+            [
+                'type' => BlogTerm::TYPE_CATEGORY,
+                'name' => 'راهنماهای تست مرورگر',
+                'is_active' => true,
+                'sort_order' => 1,
+            ]
+        );
+
+        for ($index = 1; $index <= 10; $index++) {
+            $post = BlogPost::query()->updateOrCreate(
+                ['slug' => 'browser-smoke-journal-' . str_pad((string) $index, 2, '0', STR_PAD_LEFT)],
+                [
+                    'title' => 'مقاله تست مرورگر ' . str_pad((string) $index, 2, '0', STR_PAD_LEFT),
+                    'excerpt' => 'مقاله آزمایشی برای بررسی آرشیو، صفحه‌بندی و کارت‌های مجله.',
+                    'body' => 'این مقاله فقط برای تست خودکار صفحات عمومی ساخته شده است.',
+                    'status' => 'published',
+                    'published_at' => now()->subMinutes($index),
+                    'seo_robots' => 'inherit',
+                    'cover_image' => null,
+                    'is_featured' => $index === 1,
+                ]
+            );
+
+            $post->terms()->syncWithoutDetaching([$journalCategory->id]);
+        }
+
         foreach ($fixtures as [$category, $sku, $slug, $name, $price]) {
             $product = Product::query()->updateOrCreate(
                 ['sku' => $sku],
