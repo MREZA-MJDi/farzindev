@@ -50,11 +50,18 @@
         <div class="overflow-x-auto">
             <table class="admin-table">
                 <thead>
-                    <tr><th>مقاله</th><th>دسته / برچسب</th><th>وضعیت</th><th>انتشار</th><th>نویسنده</th><th>آخرین تغییر</th><th>عملیات</th></tr>
+                    <tr><th>تصویر</th><th>مقاله</th><th>دسته / برچسب</th><th>وضعیت</th><th>انتشار</th><th>نویسنده</th><th>آخرین تغییر</th><th>عملیات</th></tr>
                 </thead>
                 <tbody>
                     @forelse($posts as $post)
                         <tr>
+                            <td class="w-28">
+                                @if($post->cover_image_url)
+                                    <img src="{{ $post->cover_image_url }}" alt="{{ $post->cover_image_alt ?: $post->title }}" loading="lazy" decoding="async" class="h-16 w-24 rounded-lg border border-[var(--admin-border)] object-cover">
+                                @else
+                                    <div class="flex h-16 w-24 items-center justify-center rounded-lg border border-dashed border-[var(--admin-border)] bg-[var(--admin-surface-soft)] text-[10px] text-[var(--admin-muted)]">بدون تصویر</div>
+                                @endif
+                            </td>
                             <td class="min-w-[230px]">
                                 <p class="font-semibold text-[var(--admin-text)]">{{ $post->title }}</p>
                                 <p class="mt-1 max-w-sm truncate text-xs text-[var(--admin-muted)]">{{ $post->excerpt }}</p>
@@ -88,8 +95,9 @@
                             <td>
                                 <div class="flex min-w-[150px] flex-wrap gap-2">
                                     <a href="{{ route('admin.blog-posts.edit', $post) }}" class="admin-btn admin-btn-secondary px-3 py-2">ویرایش / SEO</a>
+                                    <a href="{{ route('admin.blog-posts.preview', $post) }}" target="_blank" rel="noopener noreferrer" class="admin-btn admin-btn-ghost px-3 py-2">پیش‌نمایش واقعی</a>
                                     @if($post->status === 'published' && $post->published_at && $post->published_at->isPast())
-                                        <a href="{{ route('blog.show', $post->slug) }}" target="_blank" rel="noopener noreferrer" class="admin-btn admin-btn-ghost px-3 py-2">مشاهده</a>
+                                        <a href="{{ route('blog.show', $post->slug) }}" target="_blank" rel="noopener noreferrer" class="admin-btn admin-btn-ghost px-3 py-2">صفحه عمومی</a>
                                     @endif
                                     @if($post->status !== 'trash')
                                         <form method="POST" action="{{ route('admin.blog-posts.destroy', $post) }}" onsubmit="return confirm('مقاله به زباله‌دان منتقل شود؟ فایل تصویر حذف نخواهد شد.');">
@@ -102,7 +110,7 @@
                             </td>
                         </tr>
                     @empty
-                        <tr><td colspan="7" class="py-12 text-center text-sm text-[var(--admin-muted)]">مقاله‌ای برای این فیلتر وجود ندارد.</td></tr>
+                        <tr><td colspan="8" class="py-12 text-center text-sm text-[var(--admin-muted)]">مقاله‌ای برای این فیلتر وجود ندارد.</td></tr>
                     @endforelse
                 </tbody>
             </table>
