@@ -240,6 +240,7 @@ class CategorySeoMetadataTest extends TestCase
                 ->assertSee('name="content_title"', false)
                 ->assertSee('name="content_body"', false)
                 ->assertSee('name="content_image"', false)
+                ->assertSee('data-image-preview-input', false)
                 ->assertSee('data-image-editor-input', false)
                 ->assertSee('data-image-editor-existing-preview', false)
                 ->assertSee('data-image-editor-placeholder', false)
