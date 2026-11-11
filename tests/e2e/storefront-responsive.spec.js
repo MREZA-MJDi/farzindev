@@ -848,6 +848,26 @@ test('shop product card actions stay aligned across different content heights', 
                 .evaluate((element) => element.getBoundingClientRect().top)
         )));
 
+        const geometry = await cards.first().evaluate((card) => {
+            const image = card.querySelector('.farzin-product-card__image-link');
+            const title = card.querySelector('.farzin-product-card__title');
+            const style = getComputedStyle(card);
+
+            return {
+                radius: Number.parseFloat(style.borderTopLeftRadius),
+                imageRatio: image.getBoundingClientRect().width / image.getBoundingClientRect().height,
+                titleLineHeight: Number.parseFloat(getComputedStyle(title).lineHeight),
+                titleFontSize: Number.parseFloat(getComputedStyle(title).fontSize),
+            };
+        });
+
+        expect(geometry.radius).toBeGreaterThanOrEqual(9);
+        expect(geometry.radius).toBeLessThanOrEqual(11);
+        expect(geometry.imageRatio).toBeGreaterThan(1.28);
+        expect(geometry.imageRatio).toBeLessThan(1.38);
+        expect(geometry.titleLineHeight / geometry.titleFontSize).toBeGreaterThanOrEqual(1.6);
+        expect(geometry.titleLineHeight / geometry.titleFontSize).toBeLessThanOrEqual(1.9);
+
         expect(
             Math.abs(ctaTops[0] - ctaTops[1]),
             'the first product row must keep purchase actions aligned'
