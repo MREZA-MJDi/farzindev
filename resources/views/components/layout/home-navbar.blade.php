@@ -29,7 +29,7 @@
 <nav class="fz-home-header sticky top-0 z-[80]" aria-label="ناوبری اصلی فرزین">
     <div class="fz-home-header__main">
         <div class="fz-home-header__inner">
-            <x-layout.header-brand variant="home" :brand-name="$brandName" :brand-logo="$brandLogo" /></a>
+            <x-layout.header-brand variant="home" :brand-name="$brandName" :brand-logo="$brandLogo" />
 
             <form action="{{ route('shop.index') }}" method="GET" role="search" aria-label="جستجوی محصولات فرزین" class="fz-home-header__search">
                 <label class="sr-only" for="fz-home-search">جستجوی هود، سینک یا محصول</label>
@@ -49,9 +49,9 @@
             <div class="fz-home-header__actions">
                 <x-layout.header-account-link variant="home" />
 
-                <x-layout.header-cart-link variant="home" :cart-count="$cartCount" /></a>
+                <x-layout.header-cart-link variant="home" :cart-count="$cartCount" />
 
-                <x-layout.header-menu-button variant="home" /></button>
+                <x-layout.header-menu-button variant="home" />
             </div>
         </div>
     </div>
