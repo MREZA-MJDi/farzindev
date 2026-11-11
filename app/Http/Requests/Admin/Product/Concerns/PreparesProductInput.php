@@ -83,7 +83,7 @@ trait PreparesProductInput
                 $value = is_scalar($specification) ? trim((string) $specification) : '';
             }
 
-            if ($label === '' && $value === '') {
+            if ($value === '') {
                 continue;
             }
 
