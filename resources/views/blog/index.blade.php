@@ -68,7 +68,7 @@
                 <div class="blog-masthead__copy" data-blog-reveal>
                     <p class="blog-eyebrow">
                         <span class="blog-eyebrow__dot" aria-hidden="true"></span>
-                        FARZIN JOURNAL
+                        مجله فرزین
                         <span class="blog-eyebrow__slash">/</span>
                         مجله تخصصی فرزین
                     </p>
@@ -92,7 +92,7 @@
                         </div>
                         <span class="blog-stat-divider" aria-hidden="true"></span>
                         <div class="blog-stat">
-                            <strong>FARZIN</strong>
+                            <strong>فرزین</strong>
                             <span>مجله تجهیزات آشپزخانه</span>
                         </div>
                     </div>
