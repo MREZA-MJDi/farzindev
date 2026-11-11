@@ -88,6 +88,7 @@
             <div class="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
 
                 @foreach($media as $item)
+                    @php($itemUrl = $itemUrl)
 
                     <div
                         class="group overflow-hidden rounded-3xl border border-[var(--admin-border)] bg-[var(--admin-surface)] transition-all duration-300 hover:-translate-y-1 hover:shadow-lg"
@@ -96,17 +97,17 @@
                         {{-- Preview --}}
                         <div class="aspect-square overflow-hidden bg-[var(--admin-bg)]">
 
-                            @if($item->url)
+                            @if($itemUrl)
                                 @if($item->is_video)
                                     <video
-                                        src="{{ $item->url }}"
+                                        src="{{ $itemUrl }}"
                                         class="h-full w-full bg-[var(--admin-surface)] object-contain"
                                         controls muted playsinline preload="metadata"
                                         aria-label="پیش‌نمایش {{ $item->original_name }}"
                                     ></video>
                                 @elseif($item->is_image)
                                     <img
-                                        src="{{ $item->url }}"
+                                        src="{{ $itemUrl }}"
                                         alt="{{ $item->alt ?: $item->original_name }}"
                                         class="h-full w-full object-contain transition-transform duration-500 group-hover:scale-105"
                                         loading="lazy"
@@ -175,9 +176,9 @@
                             {{-- Actions --}}
                             <div class="flex items-center gap-2">
 
-                                @if($item->url)
+                                @if($itemUrl)
                                     <a
-                                        href="{{ $item->url }}"
+                                        href="{{ $itemUrl }}"
                                         target="_blank"
                                         rel="noopener"
                                         class="flex-1 rounded-xl border border-[var(--admin-border)] px-3 py-2 text-center text-[10px] font-medium text-[var(--admin-text)] transition hover:bg-[var(--admin-bg)]"
