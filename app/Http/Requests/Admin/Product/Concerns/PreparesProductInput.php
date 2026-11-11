@@ -17,6 +17,7 @@ trait PreparesProductInput
         $this->merge([
             'price' => $this->normalizeNumericInput($this->input('price')),
             'compare_at_price' => $this->normalizeNumericInput($this->input('compare_at_price')),
+            'specifications' => $this->normalizeSpecifications($this->input('specifications')),
             'slug' =>
                 $this->slug
                     ?: Str::slug($this->name),
@@ -60,6 +61,36 @@ trait PreparesProductInput
                     ? ($this->installment_interval_months ?? 2)
                     : null,
         ]);
+    }
+
+    /**
+     * Keep specifications as an ordered list of free-text label/value pairs.
+     * Legacy associative JSON values are converted without discarding their content.
+     */
+    private function normalizeSpecifications(mixed $specifications): ?array
+    {
+        if (! is_array($specifications)) {
+            return null;
+        }
+
+        $rows = [];
+        foreach ($specifications as $key => $specification) {
+            if (is_array($specification)) {
+                $label = trim((string) ($specification['label'] ?? ''));
+                $value = trim((string) ($specification['value'] ?? ''));
+            } else {
+                $label = (string) $key;
+                $value = is_scalar($specification) ? trim((string) $specification) : '';
+            }
+
+            if ($value === '') {
+                continue;
+            }
+
+            $rows[] = ['label' => $label, 'value' => $value];
+        }
+
+        return $rows;
     }
 
     /**

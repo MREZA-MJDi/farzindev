@@ -242,6 +242,7 @@
                         @foreach($categories as $category)
                             <option
                                 value="{{ $category->id }}"
+                                data-slug="{{ $category->slug }}"
                                 @selected(old('category_id', $product->category_id ?? '') == $category->id)
                             >
                             {{ $category->name }}
@@ -363,28 +364,100 @@
                 </div>
 
 
-                {{-- Homepage product-card specifications --}}
-                <div class="sm:col-span-2 rounded-2xl border border-[var(--admin-border)] bg-[var(--admin-surface-soft)] p-5">
-                    <h3 class="text-sm font-bold text-[var(--admin-text)]">مشخصات کوتاه برای کارت محصول</h3>
-                    <p class="mt-1 text-xs leading-6 text-[var(--admin-muted)]">فقط مقدارهای تأییدشده همین مدل را وارد کنید. این سه مورد در کارت محصولات منتخب صفحه اصلی نمایش داده می‌شوند؛ مقدار خالی به معنی عدم نمایش چیپ است.</p>
-                    <div class="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-3">
+                {{-- Dynamic category-specific product specifications --}}
+                @php
+                    $specificationLabels = [
+                        'dimensions' => 'ابعاد کلی', 'length' => 'طول', 'width' => 'عرض', 'height' => 'ارتفاع',
+                        'installation' => 'نحوه نصب', 'basin_count' => 'تعداد لگن', 'material' => 'جنس بدنه',
+                        'basin_depth' => 'عمق لگن', 'sheet_thickness' => 'ضخامت ورق', 'capacity_liters' => 'ظرفیت لگن',
+                        'weight' => 'وزن', 'basin_direction' => 'جهت لگن', 'design_type' => 'نوع طراحی',
+                        'drainboard' => 'سینی', 'tap_holes' => 'تعداد و محل سوراخ شیر', 'accessories' => 'لوازم همراه',
+                        'hood_type' => 'نوع هود', 'model' => 'مدل', 'size' => 'سایز', 'light_count' => 'تعداد لامپ',
+                        'switch_type' => 'نوع کلید', 'body_material' => 'جنس بدنه', 'suction_capacity' => 'قدرت مکش',
+                        'filter_type' => 'نوع فیلتر', 'motor_count' => 'تعداد موتور', 'noise_level' => 'میزان صدا',
+                        'air_outlet' => 'نوع خروجی هوا', 'burner_count' => 'تعداد شعله', 'size_range' => 'محدوده سایز',
+                        'burner_position' => 'محل شعله پلوپز', 'surface_material' => 'جنس صفحه', 'glass_type' => 'نوع شیشه',
+                        'glass_thickness' => 'ضخامت شیشه', 'grate_material' => 'جنس شبکه', 'knob_type' => 'نوع ولوم',
+                        'knob_material' => 'جنس ولوم', 'ignition_type' => 'نوع فندک', 'burner_type' => 'نوع سرشعله',
+                        'valve_type' => 'نوع شیر', 'safety_system' => 'سیستم ایمنی و ترموکوپل',
+                        'energy_rating' => 'رده مصرف انرژی', 'energy_source' => 'منبع انرژی',
+                        'power_cable' => 'کابل برق', 'model_code' => 'مدل کالا / کد محصول',
+                    ];
+                    $specificationTemplates = [
+                        'sink' => [
+                            ['label' => 'نحوه نصب', 'value' => ''], ['label' => 'ابعاد کلی', 'value' => ''],
+                            ['label' => 'تعداد لگن', 'value' => ''], ['label' => 'جنس بدنه', 'value' => ''],
+                            ['label' => 'عمق لگن', 'value' => ''], ['label' => 'ضخامت ورق', 'value' => ''],
+                            ['label' => 'ظرفیت لگن', 'value' => ''], ['label' => 'وزن', 'value' => ''],
+                            ['label' => 'جهت لگن', 'value' => ''], ['label' => 'نوع طراحی', 'value' => ''],
+                            ['label' => 'سینی', 'value' => ''], ['label' => 'تعداد و محل سوراخ شیر', 'value' => ''],
+                            ['label' => 'لوازم همراه', 'value' => ''],
+                        ],
+                        'hood' => [
+                            ['label' => 'نوع هود', 'value' => ''], ['label' => 'مدل', 'value' => ''],
+                            ['label' => 'سایز (سانتی‌متر)', 'value' => ''], ['label' => 'طول', 'value' => ''],
+                            ['label' => 'عرض', 'value' => ''], ['label' => 'تعداد لامپ', 'value' => ''],
+                            ['label' => 'نوع کلید', 'value' => ''], ['label' => 'جنس بدنه', 'value' => ''],
+                            ['label' => 'قدرت مکش (مترمکعب بر ساعت)', 'value' => ''], ['label' => 'نوع فیلتر', 'value' => ''],
+                            ['label' => 'تعداد موتور', 'value' => ''], ['label' => 'میزان صدا (دسی‌بل)', 'value' => ''],
+                            ['label' => 'نوع خروجی هوا', 'value' => ''], ['label' => 'لوازم همراه', 'value' => ''],
+                        ],
+                        'gas' => [
+                            ['label' => 'ابعاد کلی', 'value' => ''], ['label' => 'طول', 'value' => ''],
+                            ['label' => 'عرض', 'value' => ''], ['label' => 'ارتفاع', 'value' => ''],
+                            ['label' => 'تعداد شعله', 'value' => ''], ['label' => 'محدوده سایز', 'value' => ''],
+                            ['label' => 'محل شعله پلوپز', 'value' => ''], ['label' => 'جنس صفحه', 'value' => ''],
+                            ['label' => 'نوع شیشه', 'value' => ''], ['label' => 'ضخامت شیشه', 'value' => ''],
+                            ['label' => 'جنس شبکه', 'value' => ''], ['label' => 'نوع ولوم', 'value' => ''],
+                            ['label' => 'جنس ولوم', 'value' => ''], ['label' => 'نوع فندک', 'value' => ''],
+                            ['label' => 'نوع سرشعله', 'value' => ''], ['label' => 'نوع شیر', 'value' => ''],
+                            ['label' => 'سیستم ایمنی و ترموکوپل', 'value' => ''], ['label' => 'رده مصرف انرژی', 'value' => ''],
+                            ['label' => 'منبع انرژی', 'value' => ''], ['label' => 'کابل برق', 'value' => ''],
+                            ['label' => 'لوازم همراه', 'value' => ''], ['label' => 'مدل کالا / کد محصول', 'value' => ''],
+                        ],
+                    ];
+                    $savedSpecifications = old('specifications', $product->specifications ?? []);
+                    $initialSpecifications = [];
+                    if (is_array($savedSpecifications) && array_is_list($savedSpecifications)) {
+                        $initialSpecifications = collect($savedSpecifications)
+                            ->filter(fn ($row) => is_array($row) && (filled($row['label'] ?? null) || filled($row['value'] ?? null)))
+                            ->map(fn ($row) => ['label' => (string) ($row['label'] ?? ''), 'value' => (string) ($row['value'] ?? '')])
+                            ->values()->all();
+                    } elseif (is_array($savedSpecifications)) {
+                        foreach ($savedSpecifications as $key => $value) {
+                            if (is_scalar($value) && filled(trim((string) $value))) {
+                                $initialSpecifications[] = [
+                                    'label' => $specificationLabels[$key] ?? str_replace('_', ' ', (string) $key),
+                                    'value' => (string) $value,
+                                ];
+                            }
+                        }
+                    }
+                    $selectedCategory = $categories->firstWhere('id', old('category_id', $product->category_id ?? null));
+                    $categoryIdentifier = mb_strtolower(($selectedCategory?->slug ?? '').' '.($selectedCategory?->name ?? ''));
+                    $initialSpecificationType = str_contains($categoryIdentifier, 'sink') || str_contains($categoryIdentifier, 'سینک')
+                        ? 'sink'
+                        : ((str_contains($categoryIdentifier, 'hood') || str_contains($categoryIdentifier, 'هود'))
+                            ? 'hood'
+                            : ((str_contains($categoryIdentifier, 'gas') || str_contains($categoryIdentifier, 'اجاق') || str_contains($categoryIdentifier, 'گاز'))
+                                ? 'gas' : ''));
+                    if ($initialSpecifications === [] && $initialSpecificationType !== '') {
+                        $initialSpecifications = $specificationTemplates[$initialSpecificationType];
+                    }
+                @endphp
+                <section id="product-specifications" class="sm:col-span-2 rounded-2xl border border-[var(--admin-border)] bg-[var(--admin-surface-soft)] p-5"
+                    data-specification-templates='@json($specificationTemplates)'
+                    data-specification-initial='@json($initialSpecifications)'>
+                    <div class="flex flex-wrap items-start justify-between gap-3">
                         <div>
-                            <label for="specifications_width" class="admin-label">عرض</label>
-                            <input id="specifications_width" name="specifications[width]" type="text" maxlength="80" value="{{ old('specifications.width', data_get($product->specifications, 'width')) }}" class="admin-input mt-2 w-full" placeholder="مثلاً ۹۰ سانتی‌متر">
-                            @error('specifications.width')<p class="mt-2 text-xs text-[var(--admin-danger)]">{{ $message }}</p>@enderror
+                            <h3 class="text-sm font-bold text-[var(--admin-text)]">مشخصات فنی محصول</h3>
+                            <p class="mt-1 text-xs leading-6 text-[var(--admin-muted)]">با انتخاب دسته‌بندی، فهرست پیشنهادی همان کالا نمایش داده می‌شود. هر ردیف قابل ویرایش، حذف و جابه‌جایی است؛ مقدارها اختیاری و متنی هستند.</p>
                         </div>
-                        <div>
-                            <label for="specifications_installation" class="admin-label">نوع نصب</label>
-                            <input id="specifications_installation" name="specifications[installation]" type="text" maxlength="80" value="{{ old('specifications.installation', data_get($product->specifications, 'installation')) }}" class="admin-input mt-2 w-full" placeholder="مقدار واقعی نصب">
-                            @error('specifications.installation')<p class="mt-2 text-xs text-[var(--admin-danger)]">{{ $message }}</p>@enderror
-                        </div>
-                        <div>
-                            <label for="specifications_material" class="admin-label">جنس</label>
-                            <input id="specifications_material" name="specifications[material]" type="text" maxlength="80" value="{{ old('specifications.material', data_get($product->specifications, 'material')) }}" class="admin-input mt-2 w-full" placeholder="جنس تأییدشده محصول">
-                            @error('specifications.material')<p class="mt-2 text-xs text-[var(--admin-danger)]">{{ $message }}</p>@enderror
-                        </div>
+                        <button type="button" id="add-product-specification" class="admin-btn admin-btn-secondary">افزودن مشخصه</button>
                     </div>
-                </div>
+                    <div id="product-specification-rows" class="mt-4 space-y-3" aria-live="polite"></div>
+                    <p class="mt-3 text-[11px] text-[var(--admin-muted)]">نمونه مقدار: ۸۶×۵۰×۱۵ سانتی‌متر · فیلدهای خالی در صفحه محصول نمایش داده نمی‌شوند.</p>
+                </section>
 
                 {{-- Description --}}
                 <div class="sm:col-span-2">
@@ -2145,6 +2218,128 @@
 
             updateSeoPreview();
 
+        });
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const root = document.getElementById('product-specifications');
+            const category = document.getElementById('category_id');
+            const rowsElement = document.getElementById('product-specification-rows');
+            const addButton = document.getElementById('add-product-specification');
+            if (!root || !category || !rowsElement || !addButton) return;
+
+            const templates = JSON.parse(root.dataset.specificationTemplates || '{}');
+            let rows = JSON.parse(root.dataset.specificationInitial || '[]');
+            const detectType = () => {
+                const selected = category.options[category.selectedIndex];
+                const value = ((selected?.textContent || '') + ' ' + (selected?.dataset.slug || '')).toLocaleLowerCase('fa');
+                if (value.includes('سینک') || value.includes('sink')) return 'sink';
+                if (value.includes('هود') || value.includes('hood')) return 'hood';
+                if (value.includes('اجاق') || value.includes('گاز') || value.includes('gas')) return 'gas';
+                return '';
+            };
+            const reindex = () => {
+                [...rowsElement.querySelectorAll('[data-specification-row]')].forEach((row, index) => {
+                    row.querySelector('[data-specification-label]').name = `specifications[${index}][label]`;
+                    row.querySelector('[data-specification-value]').name = `specifications[${index}][value]`;
+                });
+            };
+            const render = () => {
+                rowsElement.replaceChildren();
+                rows.forEach((item, index) => {
+                    const row = document.createElement('div');
+                    row.dataset.specificationRow = '';
+                    row.className = 'grid grid-cols-1 gap-3 rounded-xl border border-[var(--admin-border)] bg-[var(--admin-card)] p-3 sm:grid-cols-[minmax(0,1fr)_minmax(0,1.4fr)_auto] sm:items-end';
+                    const labelWrap = document.createElement('label');
+                    labelWrap.className = 'block text-xs font-semibold text-[var(--admin-muted)]';
+                    labelWrap.textContent = 'عنوان مشخصه';
+                    const labelInput = document.createElement('input');
+                    labelInput.type = 'text';
+                    labelInput.maxLength = 100;
+                    labelInput.required = true;
+                    labelInput.className = 'admin-input mt-2 w-full';
+                    labelInput.placeholder = 'مثلاً تعداد شعله';
+                    labelInput.value = item.label || '';
+                    labelInput.dataset.specificationLabel = '';
+                    labelWrap.append(labelInput);
+
+                    const valueWrap = document.createElement('label');
+                    valueWrap.className = 'block text-xs font-semibold text-[var(--admin-muted)]';
+                    valueWrap.textContent = 'مقدار';
+                    const valueInput = document.createElement('input');
+                    valueInput.type = 'text';
+                    valueInput.maxLength = 1000;
+                    valueInput.className = 'admin-input mt-2 w-full';
+                    valueInput.placeholder = 'مقدار یا توضیح دلخواه؛ مانند ۸۶×۵۰×۱۵ سانتی‌متر';
+                    valueInput.value = item.value || '';
+                    valueInput.dataset.specificationValue = '';
+                    valueWrap.append(valueInput);
+
+                    const actions = document.createElement('div');
+                    actions.className = 'flex items-center gap-1 sm:pb-0.5';
+                    [['up', 'بالا'], ['down', 'پایین'], ['remove', 'حذف']].forEach(([action, title]) => {
+                        const button = document.createElement('button');
+                        button.type = 'button';
+                        button.dataset.specificationAction = action;
+                        button.textContent = title;
+                        button.className = 'admin-btn admin-btn-secondary px-2 py-2 text-xs';
+                        button.setAttribute('aria-label', title + ' کردن مشخصه ' + (index + 1));
+                        if ((action === 'up' && index === 0) || (action === 'down' && index === rows.length - 1)) button.disabled = true;
+                        actions.append(button);
+                    });
+                    row.append(labelWrap, valueWrap, actions);
+                    rowsElement.append(row);
+                });
+                reindex();
+            };
+            const readRows = () => {
+                rows = [...rowsElement.querySelectorAll('[data-specification-row]')].map(row => ({
+                    label: row.querySelector('[data-specification-label]').value,
+                    value: row.querySelector('[data-specification-value]').value
+                }));
+            };
+            const addRow = (item = {label: '', value: ''}) => {
+                readRows();
+                rows.push(item);
+                render();
+                rowsElement.lastElementChild?.querySelector('[data-specification-label]')?.focus();
+            };
+
+            if (!Array.isArray(rows) || rows.length === 0) {
+                const type = detectType();
+                rows = type && templates[type] ? templates[type] : [];
+            }
+            render();
+
+            category.addEventListener('change', () => {
+                readRows();
+                const type = detectType();
+                rows = type && templates[type] ? templates[type].map(item => ({...item})) : [];
+                render();
+            });
+            addButton.addEventListener('click', () => addRow());
+            rowsElement.addEventListener('input', readRows);
+            rowsElement.addEventListener('click', event => {
+                const button = event.target.closest('[data-specification-action]');
+                if (!button) return;
+                readRows();
+                const row = button.closest('[data-specification-row]');
+                const index = [...rowsElement.children].indexOf(row);
+                const action = button.dataset.specificationAction;
+                if (action === 'remove') rows.splice(index, 1);
+                if (action === 'up' && index > 0) [rows[index - 1], rows[index]] = [rows[index], rows[index - 1]];
+                if (action === 'down' && index < rows.length - 1) [rows[index + 1], rows[index]] = [rows[index], rows[index + 1]];
+                render();
+            });
+            const form = root.closest('form');
+            form?.addEventListener('submit', () => {
+                readRows();
+                rows = rows.filter(item => (item.label || '').trim() !== '' || (item.value || '').trim() !== '');
+                rowsElement.querySelectorAll('[data-specification-row]').forEach((row, index) => {
+                    row.querySelector('[data-specification-label]').name = `specifications[${index}][label]`;
+                    row.querySelector('[data-specification-value]').name = `specifications[${index}][value]`;
+                });
+            });
         });
     </script>
 @endpush

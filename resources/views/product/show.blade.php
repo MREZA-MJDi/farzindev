@@ -38,7 +38,82 @@
     $shippingFreeThreshold = $hasFreeShippingThreshold ? (float) $shippingSettings['shipping_free_threshold'] : null;
     $hasShippingInfo = $hasShippingFlatRate || $hasFreeShippingThreshold;
 
+    $specificationLabels = [
+        'dimensions' => 'ابعاد کلی', 'length' => 'طول', 'width' => 'عرض', 'height' => 'ارتفاع',
+        'installation' => 'نحوه نصب', 'basin_count' => 'تعداد لگن', 'material' => 'جنس بدنه',
+        'basin_depth' => 'عمق لگن', 'sheet_thickness' => 'ضخامت ورق', 'capacity_liters' => 'ظرفیت لگن',
+        'weight' => 'وزن', 'basin_direction' => 'جهت لگن', 'design_type' => 'نوع طراحی',
+        'drainboard' => 'سینی', 'tap_holes' => 'تعداد و محل سوراخ شیر', 'light_count' => 'تعداد لامپ',
+        'switch_type' => 'نوع کلید', 'hood_type' => 'نوع هود', 'hood_model' => 'مدل',
+        'suction_capacity' => 'قدرت مکش', 'filter_type' => 'نوع فیلتر', 'motor_count' => 'تعداد موتور',
+        'noise_level' => 'میزان صدا', 'air_outlet' => 'نوع خروجی هوا', 'burner_count' => 'تعداد شعله',
+        'size_range' => 'محدوده سایز', 'burner_position' => 'محل شعله پلوپز', 'surface_material' => 'جنس صفحه',
+        'glass_type' => 'نوع شیشه', 'glass_thickness' => 'ضخامت شیشه', 'grate_material' => 'جنس شبکه',
+        'knob_type' => 'نوع ولوم', 'knob_material' => 'جنس ولوم', 'ignition_type' => 'نوع فندک',
+        'burner_type' => 'نوع سرشعله', 'valve_type' => 'نوع شیر', 'safety_system' => 'سیستم ایمنی و ترموکوپل',
+        'energy_rating' => 'رده مصرف انرژی', 'energy_source' => 'منبع انرژی', 'power_cable' => 'کابل برق',
+        'accessories' => 'لوازم همراه', 'model_code' => 'مدل کالا / کد محصول',
+    ];
+    $storedSpecifications = collect($product->specifications ?? []);
+    $categoryIdentifier = mb_strtolower(($product->category?->slug ?? '').' '.($product->category?->name ?? ''));
+    $legacySpecificationGroups = [
+        'sink' => ['dimensions', 'length', 'width', 'height', 'installation', 'basin_count', 'material', 'basin_depth', 'sheet_thickness', 'capacity_liters', 'weight', 'basin_direction', 'design_type', 'drainboard', 'tap_holes', 'accessories'],
+        'hood' => ['dimensions', 'length', 'width', 'height', 'hood_type', 'hood_model', 'light_count', 'switch_type', 'material', 'suction_capacity', 'filter_type', 'motor_count', 'noise_level', 'air_outlet', 'accessories'],
+        'gas' => ['dimensions', 'length', 'width', 'height', 'burner_count', 'size_range', 'burner_position', 'surface_material', 'material', 'glass_type', 'glass_thickness', 'grate_material', 'knob_type', 'knob_material', 'ignition_type', 'burner_type', 'valve_type', 'safety_system', 'energy_rating', 'energy_source', 'power_cable', 'accessories', 'model_code'],
+    ];
+    $categorySpecificationType = str_contains($categoryIdentifier, 'sink') || str_contains($categoryIdentifier, 'سینک')
+        ? 'sink'
+        : ((str_contains($categoryIdentifier, 'hood') || str_contains($categoryIdentifier, 'هود'))
+            ? 'hood'
+            : ((str_contains($categoryIdentifier, 'gas') || str_contains($categoryIdentifier, 'اجاق') || str_contains($categoryIdentifier, 'گاز'))
+                ? 'gas' : null));
+
+    if ($storedSpecifications->isNotEmpty() && array_is_list($storedSpecifications->all())
+        && collect($storedSpecifications->first())->has('label')) {
+        $legacyKeyByLabel = array_flip($specificationLabels);
+        $allowedLegacyKeys = $categorySpecificationType
+            ? ($legacySpecificationGroups[$categorySpecificationType] ?? [])
+            : null;
+        $visibleSpecifications = $storedSpecifications
+            ->filter(function ($row) use ($legacyKeyByLabel, $allowedLegacyKeys, $specificationLabels): bool {
+                if (! is_array($row)
+                    || blank(trim((string) ($row['label'] ?? '')))
+                    || ! is_scalar($row['value'] ?? null)
+                    || blank(trim((string) $row['value']))) {
+                    return false;
+                }
+
+                $label = trim((string) $row['label']);
+                $legacyKey = array_key_exists($label, $specificationLabels)
+                    ? $label
+                    : ($legacyKeyByLabel[$label] ?? null);
+
+                return $legacyKey === null
+                    || $allowedLegacyKeys === null
+                    || in_array($legacyKey, $allowedLegacyKeys, true);
+            })
+            ->map(fn ($row) => [
+                'label' => $specificationLabels[trim((string) $row['label'])] ?? trim((string) $row['label']),
+                'value' => trim((string) $row['value']),
+            ])->values();
+    } else {
+        $allowedLegacyKeys = $categorySpecificationType
+            ? ($legacySpecificationGroups[$categorySpecificationType] ?? [])
+            : null;
+        $visibleSpecifications = $storedSpecifications
+            ->filter(fn ($value, $key) => is_scalar($value)
+                && filled(trim((string) $value))
+                && ($allowedLegacyKeys === null || in_array((string) $key, $allowedLegacyKeys, true)))
+            ->map(fn ($value, $key) => [
+                'label' => $specificationLabels[$key] ?? str_replace('_', ' ', (string) $key),
+                'value' => trim((string) $value),
+            ])->values();
+    }
+
     $productTabs = [];
+    if ($visibleSpecifications->isNotEmpty()) {
+        $productTabs[] = 'specifications';
+    }
     if ($safeDescription) {
         $productTabs[] = 'description';
     }
@@ -238,7 +313,8 @@
                     <details @if($index === 0) open @endif @if($tab === 'installment') id="product-installment" @endif class="fz-product-accordion rounded-2xl border border-[var(--livora-border)] bg-[var(--livora-white)] px-4 sm:px-6">
                         <summary class="text-sm font-semibold text-[var(--livora-text)]">
                             <span>
-                                @if($tab === 'description') توضیحات محصول
+                                @if($tab === 'specifications') مشخصات فنی
+                                @elseif($tab === 'description') توضیحات محصول
                                 @elseif($tab === 'installment') شرایط خرید اقساطی
                                 @elseif($tab === 'shipping') ارسال
                                 @endif
@@ -246,7 +322,16 @@
                             <svg class="h-4 w-4 shrink-0 text-[var(--livora-stone)] transition-transform" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="m6 9 6 6 6-6"/></svg>
                         </summary>
 
-                        @if($tab === 'description')
+                        @if($tab === 'specifications')
+                            <dl class="grid grid-cols-1 gap-0 border-t border-[var(--livora-border)] py-2 sm:grid-cols-2">
+                                @foreach($visibleSpecifications as $specification)
+                                    <div class="flex min-w-0 items-start justify-between gap-4 border-b border-[var(--livora-border)] px-1 py-3 text-sm">
+                                        <dt class="shrink-0 text-[var(--livora-stone)]">{{ $specification['label'] }}</dt>
+                                        <dd class="min-w-0 text-left font-semibold text-[var(--livora-text)]" dir="auto">{{ $specification['value'] }}</dd>
+                                    </div>
+                                @endforeach
+                            </dl>
+                        @elseif($tab === 'description')
                             @php
                                 $descriptionText = $safeDescription;
                                 $descriptionPreview = \Illuminate\Support\Str::limit($descriptionText, 420);

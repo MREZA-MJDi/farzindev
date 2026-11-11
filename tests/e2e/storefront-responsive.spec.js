@@ -748,20 +748,20 @@ test('admin homepage hero preview matches the fixed 16:10 crop and updates its c
     });
 
     const cropPanel = page.locator('[data-image-editor-panel]');
-    const cropCanvas = page.locator('[data-image-editor-canvas]');
+    const cropCanvas = cropPanel.locator('[data-image-editor-canvas]');
     await expect(cropPanel).toBeVisible();
     await expect(cropCanvas).toBeVisible();
-    await expect(page.locator('[data-image-editor-ratio]')).toHaveValue('16:10');
+    await expect(cropPanel.locator('[data-image-editor-ratio]')).toHaveValue('16:10');
 
     const cropRatio = await cropCanvas.evaluate((canvas) => canvas.width / canvas.height);
     expect(cropRatio, 'crop preview must use the same 16:10 frame as the public homepage').toBeCloseTo(1.6, 2);
     await expect(cropPanel.locator('[data-image-editor-status]')).toContainText('پیکسل');
 
-    await page.locator('[data-image-editor-zoom]').evaluate((input) => {
+    await cropPanel.locator('[data-image-editor-zoom]').evaluate((input) => {
         input.value = '1.5';
         input.dispatchEvent(new Event('input', { bubbles: true }));
     });
-    await expect(page.locator('[data-image-editor-zoom-label]')).toContainText('۱٫۵');
+    await expect(cropPanel.locator('[data-image-editor-zoom-label]')).toContainText('۱٫۵');
 
     await page.setViewportSize({ width: 390, height: 844 });
     const previewOverflow = await page.locator('[data-home-hero-preview]').evaluate((element) => (

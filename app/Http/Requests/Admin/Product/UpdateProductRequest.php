@@ -120,10 +120,10 @@ class UpdateProductRequest extends FormRequest
                 'max:255',
             ],
 
-            'specifications' => ['nullable', 'array'],
-            'specifications.width' => ['nullable', 'string', 'max:80'],
-            'specifications.installation' => ['nullable', 'string', 'max:80'],
-            'specifications.material' => ['nullable', 'string', 'max:80'],
+            'specifications' => ['nullable', 'array', 'max:100'],
+            'specifications.*' => ['array'],
+            'specifications.*.label' => ['required', 'string', 'max:100'],
+            'specifications.*.value' => ['nullable', 'string', 'max:1000'],
 
             'description' => [
                 'nullable',

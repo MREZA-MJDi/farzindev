@@ -138,7 +138,7 @@
                                     <small>بعد از انتخاب فایل، کادر قابل برش و جابه‌جایی می‌شود.</small>
                                 </div>
 
-                                <div data-image-editor-panel hidden class="fz-admin-home-hero-crop-panel">
+                                <div data-image-editor-panel data-image-editor-panel-for="page_home_hero_image" hidden class="fz-admin-home-hero-crop-panel">
                                     <div class="fz-admin-home-hero-crop-frame">
                                         <canvas
                                             data-image-editor-canvas
@@ -353,13 +353,30 @@
                             <h3 id="home-technology-image-title" class="text-sm font-bold text-[var(--admin-text)]">تصویر سکشن فناوری و جزئیات ساخت</h3>
                             <p class="mt-1 text-xs leading-6 text-[var(--admin-muted)]">این تصویر در صفحه اصلی با قاب ثابت ۱۶:۱۰ نمایش داده می‌شود. برای معرفی واقعی فضای تولید، جزئیات فنی یا محصول از عکس مجموعه استفاده کنید.</p>
                         </div>
-                        @if($technologyImagePreview !== '')
-                            <img src="{{ $technologyImagePreview }}" alt="پیش‌نمایش تصویر سکشن فناوری" width="1200" height="750" loading="lazy" decoding="async" class="mb-4 aspect-[16/10] w-full max-w-2xl border border-[var(--admin-border)] object-cover">
-                        @else
-                            <div class="mb-4 flex aspect-[16/10] w-full max-w-2xl items-center justify-center border border-dashed border-[var(--admin-border)] bg-[var(--admin-card)] text-xs text-[var(--admin-muted)]">هنوز تصویری برای سکشن فناوری ثبت نشده است.</div>
-                        @endif
+                        <div class="admin-image-preview mb-4 aspect-[16/10] w-full max-w-2xl">
+                            <img src="{{ $technologyImagePreview }}" alt="پیش‌نمایش تصویر سکشن فناوری" width="1200" height="750" loading="lazy" decoding="async" data-image-editor-existing-preview-for="page_home_technology_image" class="{{ $technologyImagePreview !== '' ? '' : 'hidden' }}">
+                            <div data-image-editor-placeholder-for="page_home_technology_image" class="{{ $technologyImagePreview !== '' ? 'hidden' : 'flex' }} h-full flex-col items-center justify-center gap-2 bg-[var(--admin-card)] p-5 text-center text-xs text-[var(--admin-muted)]">هنوز تصویری برای سکشن فناوری ثبت نشده است.</div>
+                        </div>
                         <label for="page_home_technology_image" class="admin-label">بارگذاری تصویر ۱۶:۱۰</label>
-                        <input id="page_home_technology_image" name="page_home_technology_image" type="file" accept="image/jpeg,image/png,image/webp" class="admin-input mt-2 w-full max-w-2xl p-2">
+                        <input id="page_home_technology_image" name="page_home_technology_image" type="file" data-image-editor-input data-image-editor-default-ratio="16:10" data-image-editor-min-width="1200" data-image-editor-min-height="750" accept="image/jpeg,image/png,image/webp" class="admin-input mt-2 w-full max-w-2xl p-2"> 
+                        <div data-image-editor-panel-for="page_home_technology_image" hidden class="mt-5 max-w-2xl space-y-4 rounded-xl border border-[var(--admin-border)] bg-[var(--admin-card)] p-4">
+                            <strong class="block text-xs font-bold text-[var(--admin-text)]">برش و پیش‌نمایش تصویر صفحه اصلی</strong>
+                            <canvas data-image-editor-canvas role="img" aria-label="پیش‌نمایش زنده برش تصویر فناوری" class="mx-auto block w-full rounded-lg bg-[var(--admin-bg)]" style="height:auto;aspect-ratio:16/10;touch-action:none;cursor:grab;"></canvas>
+                            <div class="grid gap-4 sm:grid-cols-2">
+                                <label class="text-xs text-[var(--admin-text)]">نسبت کادر
+                                    <select data-image-editor-ratio class="admin-select mt-2 w-full"><option value="16:10" selected>۱۶:۱۰</option><option value="4:3">۴:۳</option><option value="1:1">۱:۱</option></select>
+                                </label>
+                                <label class="text-xs text-[var(--admin-text)]">بزرگ‌نمایی <span data-image-editor-zoom-label>۱×</span>
+                                    <input data-image-editor-zoom type="range" min="1" max="3" step="0.05" value="1" class="mt-3 w-full">
+                                </label>
+                            </div>
+                            <div class="flex flex-wrap gap-2">
+                                <button type="button" data-image-editor-rotate="-90" class="admin-btn admin-btn-secondary">چرخش به چپ</button>
+                                <button type="button" data-image-editor-rotate="90" class="admin-btn admin-btn-secondary">چرخش به راست</button>
+                                <button type="button" data-image-editor-reset class="admin-btn admin-btn-ghost">بازنشانی</button>
+                            </div>
+                            <p data-image-editor-status class="text-xs text-[var(--admin-muted)]" aria-live="polite">کادر تصویر را تنظیم کنید.</p>
+                        </div>
                         <p class="mt-1 text-[10px] leading-5 text-[var(--admin-muted)]">JPG، PNG یا WEBP؛ حداقل ۱۲۰۰×۷۵۰ و دقیقاً نسبت ۱۶:۱۰؛ حداکثر ۲۰ مگابایت. فایل قبلی تا ذخیره موفق تصویر جدید باقی می‌ماند.</p>
                         @error('page_home_technology_image')
                             <p role="alert" class="mt-2 text-xs text-[var(--admin-danger)]">{{ $message }}</p>

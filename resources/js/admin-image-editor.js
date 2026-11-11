@@ -17,15 +17,18 @@ function imageBlob(canvas) {
 
 function initImageEditor(input) {
     const form = input.closest('form');
-    const panel = form && form.querySelector('[data-image-editor-panel]');
+    const targetedPanel = form && input.id ? form.querySelector('[data-image-editor-panel-for="' + input.id + '"]') : null;
+    const panel = targetedPanel || (form && form.querySelector('[data-image-editor-panel]'));
     const canvas = panel && panel.querySelector('[data-image-editor-canvas]');
     const ratioInput = panel && panel.querySelector('[data-image-editor-ratio]');
     const zoomInput = panel && panel.querySelector('[data-image-editor-zoom]');
     const zoomLabel = panel && panel.querySelector('[data-image-editor-zoom-label]');
     const status = panel && panel.querySelector('[data-image-editor-status]');
-    const oldPreview = form && form.querySelector('[data-image-editor-existing-preview]');
+    const targetedPreview = form && input.id ? form.querySelector('[data-image-editor-existing-preview-for="' + input.id + '"]') : null;
+    const oldPreview = targetedPreview || (form && form.querySelector('[data-image-editor-existing-preview]'));
     const previewWrap = oldPreview && (oldPreview.closest('.admin-image-preview') || oldPreview);
-    const placeholder = form && form.querySelector('[data-image-editor-placeholder]');
+    const targetedPlaceholder = form && input.id ? form.querySelector('[data-image-editor-placeholder-for="' + input.id + '"]') : null;
+    const placeholder = targetedPlaceholder || (form && form.querySelector('[data-image-editor-placeholder]'));
 
     if (!form || !panel || !(canvas instanceof HTMLCanvasElement) || !ratioInput || !zoomInput) return;
     const ctx = canvas.getContext('2d', { alpha: false });

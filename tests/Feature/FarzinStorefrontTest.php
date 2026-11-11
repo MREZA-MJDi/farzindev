@@ -5486,6 +5486,163 @@ class FarzinStorefrontTest extends TestCase
             ->assertDontSee('farzin-product-card__installment-slot', false);
     }
 
+
+    public function test_admin_product_form_exposes_category_specific_editable_specification_templates(): void
+    {
+        $this->category(['name' => 'سینک ظرفشویی', 'slug' => 'sinks']);
+        $this->category(['name' => 'هود آشپزخانه', 'slug' => 'hoods']);
+        $this->category(['name' => 'اجاق گاز صفحه‌ای', 'slug' => 'gas-stoves']);
+
+        $this->actingAs($this->admin(), 'admin')
+            ->get(route('admin.products.create'))
+            ->assertOk()
+            ->assertSee('id="product-specifications"', false)
+            ->assertSee('id="add-product-specification"', false)
+            ->assertSee('data-specification-templates', false)
+            ->assertSee('"sink"', false)
+            ->assertSee('"hood"', false)
+            ->assertSee('"gas"', false)
+            ->assertSee('افزودن مشخصه')
+            ->assertSee('حذف');
+    }
+
+    public function test_product_technical_specifications_are_saved_and_rendered_on_the_public_product_page(): void
+    {
+        Storage::fake('public');
+        $admin = $this->admin();
+        $category = $this->category(['name' => 'اجاق گاز صفحه‌ای', 'slug' => 'technical-specification-gas-stoves']);
+        $payload = [
+            'category_id' => $category->id,
+            'name' => 'گاز صفحه‌ای تست مشخصات فنی',
+            'slug' => 'technical-specification-hood',
+            'sku' => 'FAR-TECH-SPEC-001',
+            'short_description' => 'هود آشپزخانه با مشخصات فنی',
+            'description' => 'توضیحات محصول',
+            'price' => 12500000,
+            'stock' => 5,
+            'status' => 'active',
+            'is_featured' => '0',
+            'is_new' => '0',
+            'image' => UploadedFile::fake()->image('technical-hood.jpg', 1200, 900),
+            'specifications' => [
+                ['label' => 'ابعاد کلی', 'value' => '۸۶×۵۰×۱۵ سانتی‌متر'],
+                ['label' => 'تعداد شعله', 'value' => 'پنج شعله'],
+                ['label' => 'سیستم ایمنی و ترموکوپل', 'value' => 'ترموکوپل TOP TIME'],
+                ['label' => 'لوازم همراه', 'value' => 'دفترچه راهنما و شلنگ گاز'],
+                ['label' => 'مشخصه خالی', 'value' => ''],
+            ],
+        ];
+
+        $this->actingAs($admin, 'admin')
+            ->post(route('admin.products.store'), $payload)
+            ->assertRedirect();
+
+        $product = Product::query()->where('sku', 'FAR-TECH-SPEC-001')->firstOrFail();
+        $this->assertSame([
+            ['label' => 'ابعاد کلی', 'value' => '۸۶×۵۰×۱۵ سانتی‌متر'],
+            ['label' => 'تعداد شعله', 'value' => 'پنج شعله'],
+            ['label' => 'سیستم ایمنی و ترموکوپل', 'value' => 'ترموکوپل TOP TIME'],
+            ['label' => 'لوازم همراه', 'value' => 'دفترچه راهنما و شلنگ گاز'],
+        ], $product->specifications);
+
+        ProductImage::create([
+            'product_id' => $product->id,
+            'path' => 'https://cdn.example.test/farzin-technical-specification.webp',
+            'alt' => $product->name,
+            'sort_order' => 0,
+            'is_primary' => true,
+        ]);
+
+        $this->get(route('product.show', $product->slug))
+            ->assertOk()
+            ->assertSee('مشخصات فنی')
+            ->assertSee('ابعاد کلی')
+            ->assertSee('۸۶×۵۰×۱۵ سانتی‌متر')
+            ->assertSee('تعداد شعله')
+            ->assertSee('پنج شعله')
+            ->assertSee('ترموکوپل TOP TIME')
+            ->assertDontSee('مشخصه خالی');
+    }
+
+    public function test_homepage_technology_image_upload_is_available_with_crop_preview_in_admin(): void
+    {
+        Storage::fake('public');
+        $admin = $this->admin();
+        $values = collect(app(\App\Services\StorefrontPageContent::class)->defaults())
+            ->filter(fn ($value, $key) => str_starts_with($key, 'page_home_'))
+            ->all();
+
+        $this->actingAs($admin, 'admin')
+            ->get(route('admin.page-content.edit', ['tab' => 'home']))
+            ->assertOk()
+            ->assertSee('data-image-editor-input', false)
+            ->assertSee('data-image-editor-canvas', false)
+            ->assertSee('پیش‌نمایش تصویر سکشن فناوری');
+
+        $this->put(route('admin.page-content.update'), array_merge($values, [
+            'tab' => 'home',
+            'page_home_technology_image' => UploadedFile::fake()->image('technology-kitchen.webp', 1600, 1000),
+        ]))->assertRedirect(route('admin.page-content.edit', ['tab' => 'home']));
+
+        $path = StorefrontSetting::query()
+            ->where('key', 'page_home_technology_image_url')
+            ->value('value');
+
+        $this->assertNotEmpty($path);
+        Storage::disk('public')->assertExists($path);
+
+        $this->get(route('home'))
+            ->assertOk()
+            ->assertSee(Storage::disk('public')->url($path), false)
+            ->assertSee('fz-home-technology__visual', false);
+    }
+
+
+
+    public function test_admin_published_blog_cover_and_article_content_render_on_public_pages(): void
+    {
+        Storage::fake('public');
+        $admin = $this->admin();
+
+        $this->actingAs($admin, 'admin')
+            ->post(route('admin.blog-posts.store'), [
+                'title' => 'راهنمای انتخاب سینک فرزین',
+                'slug' => 'farzin-sink-editorial-test',
+                'excerpt' => 'راهنمای بررسی جنس و ابعاد سینک',
+                'body' => '<h2>انتخاب دقیق</h2><p>این متن باید پس از انتشار در مقاله نمایش داده شود.</p>',
+                'cover_image' => UploadedFile::fake()->image('farzin-sink-cover.jpg', 1200, 675),
+                'cover_image_alt' => 'تصویر سینک فرزین در آشپزخانه',
+                'status' => 'published',
+                'is_featured' => '0',
+            ])
+            ->assertRedirect();
+
+        $post = \App\Models\BlogPost::query()
+            ->where('slug', 'farzin-sink-editorial-test')
+            ->firstOrFail();
+
+        $this->assertNotEmpty($post->cover_image);
+        Storage::disk('public')->assertExists($post->cover_image);
+
+        $coverUrl = Storage::disk('public')->url($post->cover_image);
+
+        $this->get(route('blog.show', $post->slug))
+            ->assertOk()
+            ->assertSee($coverUrl, false)
+            ->assertSee('تصویر سینک فرزین در آشپزخانه')
+            ->assertSee('انتخاب دقیق')
+            ->assertSee('این متن باید پس از انتشار در مقاله نمایش داده شود.');
+
+        $this->get(route('blog.index'))
+            ->assertOk()
+            ->assertSee('راهنمای انتخاب سینک فرزین');
+
+        $this->get(route('home'))
+            ->assertOk()
+            ->assertSee('راهنمای انتخاب سینک فرزین');
+    }
+
+
     private function checkoutLocationPayload(): array
     {
         if ($this->checkoutLocationCache !== null) {
