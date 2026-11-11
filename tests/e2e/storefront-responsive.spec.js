@@ -1093,3 +1093,43 @@ test('blog pagination layout and controls remain visible on archive pages', asyn
         await expect(page.locator('.blog-articles-section')).toBeVisible();
     }
 });
+
+test('public storefront uses consistent square geometry across all key page types', async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+
+    const checks = [
+        { path: '/', selectors: ['.fz-market-hero__slides', '.fz-market-hero__button', '.farzin-product-card', '.fz-home-article-card'] },
+        { path: '/shop', selectors: ['.farzin-product-card', '.farzin-product-card__cta', 'main button'] },
+        { path: '/categories', selectors: ['.fz-category-card', '.farzin-shop-category-card', 'main button'] },
+        { path: '/categories/hoods', selectors: ['main button', 'main [class*="rounded-"][class*="border"]'] },
+        { path: '/product/farzin-hood-preview-01', selectors: ['.fz-product-panel', '.fz-product-action', '.product-gallery-shell', 'main button'] },
+        { path: '/blog', selectors: ['.blog-featured-card', '.blog-article-card', 'main button'] },
+        { path: '/blog/choosing-kitchen-hood', selectors: ['main button', 'main [class*="rounded-"][class*="border"]'] },
+        { path: '/cart', selectors: ['main button', 'main [class*="rounded-"][class*="border"]'] },
+        { path: '/contact', selectors: ['main button', 'main input', 'main textarea'] },
+        { path: '/login', selectors: ['main button', 'main input'] },
+        { path: '/register', selectors: ['main button', 'main input'] },
+    ];
+
+    for (const check of checks) {
+        const response = await page.goto(check.path, { waitUntil: 'domcontentloaded' });
+        expect(response?.status(), check.path + ' should render without a server error').toBeLessThan(500);
+
+        for (const selector of check.selectors) {
+            const elements = page.locator(selector);
+            const count = await elements.count();
+
+            if (!count) continue;
+
+            const radii = await elements.evaluateAll((nodes) => (
+                nodes.map((node) => getComputedStyle(node).borderTopLeftRadius)
+            ));
+
+            expect(
+                radii.every((radius) => radius === '0px'),
+                check.path + ' must keep ' + selector + ' square',
+            ).toBeTruthy();
+        }
+    }
+});
+
