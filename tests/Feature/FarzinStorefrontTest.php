@@ -1855,6 +1855,7 @@ class FarzinStorefrontTest extends TestCase
                 'status' => 'active',
                 'is_featured' => '1',
                 'is_new' => '1',
+                'show_in_home_gallery' => '1',
                 'image' => UploadedFile::fake()->image('farzin-hood.png', 800, 600),
             ])
             ->assertRedirect(route('admin.products.edit', Product::query()->where('slug', 'farzin-hood-90')->firstOrFail()))
@@ -1872,6 +1873,18 @@ class FarzinStorefrontTest extends TestCase
         Storage::disk('public')->assertExists($image->path);
 
         $this->get(route('product.show', $product->slug))
+            ->assertOk()
+            ->assertSee($product->name);
+
+        $this->get(route('home'))
+            ->assertOk()
+            ->assertSee($product->name);
+
+        $this->get(route('shop.index'))
+            ->assertOk()
+            ->assertSee($product->name);
+
+        $this->get(route('categories.show', $category->slug))
             ->assertOk()
             ->assertSee($product->name);
     }
@@ -4615,6 +4628,7 @@ class FarzinStorefrontTest extends TestCase
 
     public function test_admin_published_products_flow_to_customer_pages_and_homepage_selection_is_respected(): void
     {
+        Storage::fake('public');
         $admin = $this->admin();
         $category = $this->category([
             'name' => 'دسته محصولات منتشرشده',
@@ -4636,6 +4650,7 @@ class FarzinStorefrontTest extends TestCase
                 'is_new' => '0',
                 'show_in_home_gallery' => '1',
                 'installment_enabled' => '0',
+                'image' => UploadedFile::fake()->image('homepage-selected-product.jpg', 1200, 900),
             ]);
 
         $selectedResponse->assertRedirect();
@@ -4645,11 +4660,8 @@ class FarzinStorefrontTest extends TestCase
             ->where('sku', 'FAR-HOME-SELECTED-01')
             ->firstOrFail();
 
-        ProductImage::create([
+        $this->assertDatabaseHas('product_images', [
             'product_id' => $selected->id,
-            'path' => 'https://cdn.example.test/homepage-selected-product.webp',
-            'alt' => $selected->name,
-            'sort_order' => 0,
             'is_primary' => true,
         ]);
 
@@ -4668,6 +4680,7 @@ class FarzinStorefrontTest extends TestCase
                 'is_new' => '0',
                 'show_in_home_gallery' => '0',
                 'installment_enabled' => '0',
+                'image' => UploadedFile::fake()->image('shop-only-product.jpg', 1200, 900),
             ]);
 
         $hiddenResponse->assertRedirect();
@@ -4677,11 +4690,8 @@ class FarzinStorefrontTest extends TestCase
             ->where('sku', 'FAR-SHOP-ONLY-01')
             ->firstOrFail();
 
-        ProductImage::create([
+        $this->assertDatabaseHas('product_images', [
             'product_id' => $shopOnly->id,
-            'path' => 'https://cdn.example.test/shop-only-product.webp',
-            'alt' => $shopOnly->name,
-            'sort_order' => 0,
             'is_primary' => true,
         ]);
 
