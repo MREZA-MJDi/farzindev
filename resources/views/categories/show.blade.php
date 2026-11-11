@@ -230,7 +230,13 @@
                         </div>
                         @if($category->content_image_url)
                             <figure class="overflow-hidden rounded-xl bg-[var(--livora-surface)]">
-                                <img src="{{ $category->content_image_url }}" alt="{{ $category->content_title ?: 'راهنمای ' . $category->name }}" loading="lazy" class="aspect-[16/9] w-full object-cover">
+                                <img
+                                    src="{{ $category->content_image_url }}"
+                                    @if($category->content_image_srcset) srcset="{{ $category->content_image_srcset }}" sizes="(max-width: 1023px) 100vw, 50vw" @endif
+                                    alt="{{ $category->content_title ?: 'راهنمای ' . $category->name }}"
+                                    loading="lazy"
+                                    class="aspect-[16/9] w-full object-cover"
+                                >
                             </figure>
                         @endif
                     </div>
