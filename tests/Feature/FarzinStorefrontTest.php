@@ -5594,7 +5594,7 @@ class FarzinStorefrontTest extends TestCase
             ])
             ->assertRedirect();
 
-        $post = \\App\\Models\\BlogPost::query()
+        $post = \App\Models\BlogPost::query()
             ->where('slug', 'farzin-sink-editorial-test')
             ->firstOrFail();
 
