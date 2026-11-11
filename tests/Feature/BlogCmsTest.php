@@ -132,7 +132,7 @@ class BlogCmsTest extends TestCase
 
         for ($index = 1; $index <= 10; $index++) {
             $post = BlogPost::create([
-                'title' => 'مقاله صفحه‌بندی ' . $index,
+                'title' => 'مقاله صفحه‌بندی ' . str_pad((string) $index, 2, '0', STR_PAD_LEFT),
                 'slug' => 'pagination-article-' . $index,
                 'body' => 'متن مقاله برای آزمون صفحه‌بندی مجله.',
                 'status' => 'published',
