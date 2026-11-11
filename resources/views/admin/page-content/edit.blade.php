@@ -354,8 +354,8 @@
                             <p class="mt-1 text-xs leading-6 text-[var(--admin-muted)]">این تصویر در صفحه اصلی با قاب ثابت ۱۶:۱۰ نمایش داده می‌شود. برای معرفی واقعی فضای تولید، جزئیات فنی یا محصول از عکس مجموعه استفاده کنید.</p>
                         </div>
                         <div class="admin-image-preview mb-4 aspect-[16/10] w-full max-w-2xl">
-                            <img src="{{ $technologyImagePreview }}" alt="پیش‌نمایش تصویر سکشن فناوری" width="1200" height="750" loading="lazy" decoding="async" data-image-editor-existing-preview class="{{ $technologyImagePreview !== '' ? '' : 'hidden' }}">
-                            <div data-image-editor-placeholder class="{{ $technologyImagePreview !== '' ? 'hidden' : 'flex' }} h-full flex-col items-center justify-center gap-2 bg-[var(--admin-card)] p-5 text-center text-xs text-[var(--admin-muted)]">هنوز تصویری برای سکشن فناوری ثبت نشده است.</div>
+                            <img src="{{ $technologyImagePreview }}" alt="پیش‌نمایش تصویر سکشن فناوری" width="1200" height="750" loading="lazy" decoding="async" data-image-editor-existing-preview-for="page_home_technology_image" class="{{ $technologyImagePreview !== '' ? '' : 'hidden' }}">
+                            <div data-image-editor-placeholder-for="page_home_technology_image" class="{{ $technologyImagePreview !== '' ? 'hidden' : 'flex' }} h-full flex-col items-center justify-center gap-2 bg-[var(--admin-card)] p-5 text-center text-xs text-[var(--admin-muted)]">هنوز تصویری برای سکشن فناوری ثبت نشده است.</div>
                         </div>
                         <label for="page_home_technology_image" class="admin-label">بارگذاری تصویر ۱۶:۱۰</label>
                         <input id="page_home_technology_image" name="page_home_technology_image" type="file" data-image-editor-input data-image-editor-default-ratio="16:10" data-image-editor-min-width="1200" data-image-editor-min-height="750" accept="image/jpeg,image/png,image/webp" class="admin-input mt-2 w-full max-w-2xl p-2"> 
