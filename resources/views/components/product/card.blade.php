@@ -68,7 +68,7 @@
                     height="600"
                     loading="lazy"
                     decoding="async"
-                    class="farzin-product-card__image h-full w-full object-cover"
+                    class="farzin-product-card__image h-full w-full object-contain"
                 >
             @else
                 <span class="farzin-product-card__image-fallback" aria-label="تصویر محصول در دسترس نیست">
