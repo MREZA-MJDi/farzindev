@@ -75,7 +75,8 @@ class BlogPostController extends Controller
         $validated = $this->validatePost($request);
         $termIds = $validated['term_ids'] ?? [];
         $mediaId = $validated['cover_image_media_id'] ?? null;
-        unset($validated['term_ids'], $validated['cover_image_media_id']);
+        $removeCoverImage = (bool) ($validated['remove_cover_image'] ?? false);
+        unset($validated['term_ids'], $validated['cover_image_media_id'], $validated['remove_cover_image']);
 
         $selectedMedia = $mediaId
             ? Media::query()->where('disk', 'public')->where('mime_type', 'like', 'image/%')->findOrFail($mediaId)
@@ -94,6 +95,10 @@ class BlogPostController extends Controller
         $validated['body_html'] = $sanitizer->sanitize($validated['body']);
         $validated['body'] = $this->plainText($validated['body_html']);
         $validated['cover_image'] = $uploadedPath ?: $selectedMedia?->path;
+        if ($removeCoverImage && $uploadedPath === null && $selectedMedia === null) {
+            $validated['cover_image'] = null;
+            $validated['cover_image_alt'] = null;
+        }
         if ($selectedMedia !== null && blank($validated['cover_image_alt'] ?? null)) {
             $validated['cover_image_alt'] = $selectedMedia->alt ?: $selectedMedia->original_name;
         }
@@ -156,7 +161,8 @@ class BlogPostController extends Controller
         $validated = $this->validatePost($request, $blogPost);
         $termIds = $validated['term_ids'] ?? [];
         $mediaId = $validated['cover_image_media_id'] ?? null;
-        unset($validated['term_ids'], $validated['cover_image_media_id']);
+        $removeCoverImage = (bool) ($validated['remove_cover_image'] ?? false);
+        unset($validated['term_ids'], $validated['cover_image_media_id'], $validated['remove_cover_image']);
 
         $selectedMedia = $mediaId
             ? Media::query()->where('disk', 'public')->where('mime_type', 'like', 'image/%')->findOrFail($mediaId)
@@ -184,6 +190,9 @@ class BlogPostController extends Controller
             if (blank($validated['cover_image_alt'] ?? null)) {
                 $validated['cover_image_alt'] = $selectedMedia->alt ?: $selectedMedia->original_name;
             }
+        } elseif ($removeCoverImage) {
+            $validated['cover_image'] = null;
+            $validated['cover_image_alt'] = null;
         }
 
         $validated['is_featured'] = $request->boolean('is_featured');
@@ -304,6 +313,7 @@ class BlogPostController extends Controller
                     ->where('disk', 'public')
                     ->where('mime_type', 'like', 'image/%')),
             ],
+            'remove_cover_image' => ['sometimes', 'boolean'],
             'cover_image_alt' => ['nullable', 'string', 'max:255'],
             'meta_title' => ['nullable', 'string', 'max:255'],
             'meta_description' => ['nullable', 'string', 'max:320'],
