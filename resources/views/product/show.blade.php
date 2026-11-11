@@ -5,7 +5,7 @@
     $pageDescription = $product->meta_description
         ?: ($safeShortDescription ?: $safeDescription ?: $product->name);
     $pageCanonical = $product->canonical_url ?: route('product.show', $product->slug);
-    $mainImage = $product->images->first(fn ($image) => filled($image->url));
+    $mainImage = $product->primaryImage();
 
     $productPrice = (float) $product->price;
     $productPriceMin = (float) ($productPriceRange['min'] ?? $productPrice);
