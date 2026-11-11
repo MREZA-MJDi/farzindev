@@ -5510,10 +5510,10 @@ class FarzinStorefrontTest extends TestCase
     {
         Storage::fake('public');
         $admin = $this->admin();
-        $category = $this->category(['slug' => 'technical-specification-hoods']);
+        $category = $this->category(['name' => 'اجاق گاز صفحه‌ای', 'slug' => 'technical-specification-gas-stoves']);
         $payload = [
             'category_id' => $category->id,
-            'name' => 'هود تست مشخصات فنی',
+            'name' => 'گاز صفحه‌ای تست مشخصات فنی',
             'slug' => 'technical-specification-hood',
             'sku' => 'FAR-TECH-SPEC-001',
             'short_description' => 'هود آشپزخانه با مشخصات فنی',
