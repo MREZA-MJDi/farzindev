@@ -791,6 +791,7 @@ class FarzinStorefrontTest extends TestCase
 
     public function test_homepage_content_switches_control_published_products_and_articles(): void
     {
+        $admin = $this->admin();
         $category = $this->category([
             'name' => 'دسته محصولات صفحه اصلی',
             'slug' => 'homepage-content-switches',
@@ -820,15 +821,18 @@ class FarzinStorefrontTest extends TestCase
             'published_at' => now()->subMinute(),
         ]);
 
-        StorefrontSetting::query()->updateOrCreate(
-            ['key' => 'page_home_show_products'],
-            ['value' => '0']
-        );
-        StorefrontSetting::query()->updateOrCreate(
-            ['key' => 'page_home_show_journal'],
-            ['value' => '0']
-        );
-        app(\App\Services\StorefrontPageContent::class)->clearCache();
+        $values = collect(app(\App\Services\StorefrontPageContent::class)->defaults())
+            ->filter(fn ($value, $key) => str_starts_with($key, 'page_home_'))
+            ->all();
+
+        $this->actingAs($admin, 'admin')
+            ->put(route('admin.page-content.update'), array_merge($values, [
+                'tab' => 'home',
+                'page_home_show_products' => '0',
+                'page_home_show_journal' => '0',
+            ]))
+            ->assertRedirect(route('admin.page-content.edit', ['tab' => 'home']))
+            ->assertSessionHas('success');
 
         $this->get(route('home'))
             ->assertOk()
@@ -837,15 +841,13 @@ class FarzinStorefrontTest extends TestCase
             ->assertDontSee('class="fz-home-journal"', false)
             ->assertDontSee($article->title);
 
-        StorefrontSetting::query()->updateOrCreate(
-            ['key' => 'page_home_show_products'],
-            ['value' => '1']
-        );
-        StorefrontSetting::query()->updateOrCreate(
-            ['key' => 'page_home_show_journal'],
-            ['value' => '1']
-        );
-        app(\App\Services\StorefrontPageContent::class)->clearCache();
+        $this->put(route('admin.page-content.update'), array_merge($values, [
+            'tab' => 'home',
+            'page_home_show_products' => '1',
+            'page_home_show_journal' => '1',
+        ]))
+            ->assertRedirect(route('admin.page-content.edit', ['tab' => 'home']))
+            ->assertSessionHas('success');
 
         $this->get(route('home'))
             ->assertOk()
