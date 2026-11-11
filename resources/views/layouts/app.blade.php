@@ -189,12 +189,11 @@
 
     @vite([
         'resources/css/storefront.css',
+        'resources/css/public-design-system.css',
         'resources/js/app.js',
     ])
 
     @stack('styles')
-
-    @vite('resources/css/public-design-system.css')
 </head>
 
 <body class="@yield('body_class', 'min-h-screen antialiased')">
