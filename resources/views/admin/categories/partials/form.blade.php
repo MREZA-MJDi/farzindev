@@ -380,6 +380,12 @@
                 </div>
                 <p data-image-editor-status class="text-xs text-[var(--admin-muted)]" aria-live="polite">کادر را تنظیم کنید.</p>
             </div>
+            @if($editing && $contentImageUrl)
+                <label class="mt-3 flex items-center gap-2 text-xs text-[var(--admin-muted)]">
+                    <input type="checkbox" name="remove_content_image" value="1" @checked(old('remove_content_image')) class="rounded border-[var(--admin-border)]">
+                    حذف تصویر راهنما
+                </label>
+            @endif
             @error('content_image')<p role="alert" class="mt-2 text-xs text-[var(--admin-danger)]">{{ $message }}</p>@enderror
             <p class="mt-2 text-xs leading-6 text-[var(--admin-muted)]">فرمت JPG، PNG یا WEBP؛ حداقل ۸۰۰×۴۵۰ و حداکثر ۲۰ مگابایت.</p>
         </div>
