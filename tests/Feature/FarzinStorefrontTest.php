@@ -309,6 +309,48 @@ class FarzinStorefrontTest extends TestCase
             ->assertDontSee('هود نیازمند تکمیل');
     }
 
+    public function test_admin_cannot_publish_a_product_with_a_missing_media_library_file(): void
+    {
+        Storage::fake('public');
+        $admin = $this->admin();
+        $category = $this->category(['slug' => 'missing-primary-media-category']);
+
+        $media = Media::create([
+            'user_id' => $admin->id,
+            'disk' => 'public',
+            'path' => 'media/missing-primary-product.webp',
+            'filename' => 'missing-primary-product.webp',
+            'original_name' => 'missing-primary-product.webp',
+            'mime_type' => 'image/webp',
+            'extension' => 'webp',
+            'size' => 19,
+            'alt' => 'تصویر حذف‌شده',
+        ]);
+
+        $this->actingAs($admin, 'admin')
+            ->from(route('admin.products.create'))
+            ->post(route('admin.products.store'), [
+                'category_id' => $category->id,
+                'name' => 'محصول با تصویر حذف‌شده',
+                'slug' => 'product-with-missing-primary-media',
+                'sku' => 'FAR-MISSING-PRIMARY-MEDIA',
+                'price' => '12000000',
+                'stock' => '3',
+                'status' => 'active',
+                'is_featured' => '0',
+                'is_new' => '0',
+                'show_in_home_gallery' => '1',
+                'installment_enabled' => '0',
+                'primary_media_id' => $media->id,
+            ])
+            ->assertRedirect(route('admin.products.create'))
+            ->assertSessionHasErrors('primary_media_id');
+
+        $this->assertDatabaseMissing('products', [
+            'sku' => 'FAR-MISSING-PRIMARY-MEDIA',
+        ]);
+    }
+
     public function test_admin_can_choose_a_media_library_asset_as_the_primary_product_image(): void
     {
         Storage::fake('public');
