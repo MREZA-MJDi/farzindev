@@ -254,15 +254,22 @@
                         @php($articleCategory = $article->terms->firstWhere('type', 'category'))
                         <article class="fz-home-article-card">
                             <a class="fz-home-article-card__media" href="{{ route('blog.show', $article->slug) }}" aria-label="مطالعه {{ $article->title }}">
-                                <img
-                                    src="{{ $article->cover_image_url }}"
-                                    @if($article->cover_image_srcset) srcset="{{ $article->cover_image_srcset }}" sizes="(max-width: 767px) 88vw, (max-width: 1023px) 45vw, 360px" @endif
-                                    alt="{{ $article->cover_image_alt ?: $article->title }}"
-                                    width="900"
-                                    height="620"
-                                    loading="lazy"
-                                    decoding="async"
-                                >
+                                @if($article->cover_image_url)
+                                    <img
+                                        src="{{ $article->cover_image_url }}"
+                                        @if($article->cover_image_srcset) srcset="{{ $article->cover_image_srcset }}" sizes="(max-width: 767px) 88vw, (max-width: 1023px) 45vw, 360px" @endif
+                                        alt="{{ $article->cover_image_alt ?: $article->title }}"
+                                        width="900"
+                                        height="620"
+                                        loading="lazy"
+                                        decoding="async"
+                                    >
+                                @else
+                                    <span class="fz-home-article-card__media-fallback" aria-hidden="true">
+                                        <strong>F.</strong>
+                                        <small>مجله فرزین</small>
+                                    </span>
+                                @endif
                             </a>
                             <div class="fz-home-article-card__body">
                                 <div class="fz-home-article-card__meta">
