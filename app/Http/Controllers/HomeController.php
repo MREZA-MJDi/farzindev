@@ -350,7 +350,7 @@ class HomeController extends Controller
         // fallback when an editor publishes an article without one.
         $blogPosts = BlogPost::query()
             ->published()
-            ->with(['author:id,name', 'terms:id,type,name,slug'])
+            ->with(['terms:id,type,name,slug'])
             ->orderByDesc('is_featured')
             ->orderByDesc('published_at')
             ->orderByDesc('id')
