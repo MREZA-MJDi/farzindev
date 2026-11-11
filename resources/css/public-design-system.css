@@ -359,3 +359,77 @@ body {
         transition-duration: .01ms !important;
     }
 }
+
+
+/*
+ * Final geometry contract. The #app scope intentionally outranks legacy
+ * page selectors that still carry old !important radius declarations.
+ */
+#app :where(
+    [class*="card"],
+    [class*="banner"],
+    [class*="panel"],
+    [class*="hero"],
+    [class*="gallery"],
+    [class*="button"],
+    [class*="action"],
+    [class*="cta"],
+    [class*="search"],
+    [class*="menu"],
+    [class*="nav"]
+) {
+    border-radius: 0 !important;
+}
+
+#app :where(button, [role="button"], a[role="button"], input, select, textarea) {
+    border-radius: 0 !important;
+}
+
+#app .farzin-product-gallery .product-gallery-stage,
+#app .farzin-product-gallery .product-gallery-shell,
+#app .farzin-product-gallery button[aria-label^="نمایش تصویر"] {
+    border-radius: 0 !important;
+}
+
+#app .farzin-product-gallery .product-gallery-stage > img {
+    object-fit: contain !important;
+    object-position: center !important;
+}
+
+#app .farzin-product-gallery .product-gallery-stage {
+    background: #F0F2F4;
+}
+
+#app .farzin-shop-banner__image,
+#app .farzin-shop-banner__action,
+#app .farzin-category-detail-banner,
+#app .farzin-search-overlay__panel,
+#app .farzin-search-overlay input[type="search"],
+#app .farzin-search-overlay a,
+#app .farzin-site-header input[type="search"],
+#app .farzin-site-header__action,
+#app .farzin-mobile-menu__link,
+#app .farzin-mobile-nav__inner,
+#app .farzin-product-detail-info .farzin-product-facts__item,
+#app .farzin-product-detail-info .product-price,
+#app .farzin-product-detail-info .product-price__installment {
+    border-radius: 0 !important;
+}
+
+#app .home-body .fz-home-hero__slide-stage,
+#app .home-body .fz-home-hero__showcase,
+#app .home-body .fz-home-journal__featured,
+#app .home-body .fz-home-journal__aside,
+#app .home-body .fz-home-purchase-cta__inner,
+#app .blog-masthead__visual,
+#app .blog-article-cover,
+#app .blog-article-panel,
+#app .blog-article-sidebar-card,
+#app .blog-empty-state {
+    border-radius: 0 !important;
+}
+
+/* Round thumbnails are image treatments only, never card or control geometry. */
+#app .fz-home-round-category__image {
+    border-radius: 50% !important;
+}
