@@ -1111,6 +1111,12 @@ test('blog pagination layout and controls remain visible on archive pages', asyn
     await expect(layout).toBeVisible();
     await expect(controls).toBeVisible();
 
+    const paginationRadii = await paginator.locator('a, span[aria-current]').evaluateAll((nodes) => (
+        nodes.map((node) => getComputedStyle(node).borderTopLeftRadius)
+    ));
+    expect(paginationRadii.length).toBeGreaterThan(0);
+    expect(paginationRadii.every((radius) => radius === '0px')).toBeTruthy();
+
     const layoutDisplay = await layout.evaluate((element) => getComputedStyle(element).display);
     const controlsDisplay = await controls.evaluate((element) => getComputedStyle(element).display);
 
