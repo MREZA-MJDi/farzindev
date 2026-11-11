@@ -818,7 +818,8 @@ class FarzinStorefrontTest extends TestCase
             'slug' => 'homepage-content-switch-article',
             'body' => 'محتوای منتشرشده برای بررسی کلید نمایش مجله.',
             'status' => 'published',
-            'published_at' => now()->subMinute(),
+            'published_at' => now(),
+            'is_featured' => true,
         ]);
 
         $values = collect(app(\App\Services\StorefrontPageContent::class)->defaults())
