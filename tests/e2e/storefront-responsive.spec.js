@@ -848,6 +848,26 @@ test('shop product card actions stay aligned across different content heights', 
                 .evaluate((element) => element.getBoundingClientRect().top)
         )));
 
+        const geometry = await cards.first().evaluate((card) => {
+            const image = card.querySelector('.farzin-product-card__image-link');
+            const title = card.querySelector('.farzin-product-card__title');
+            const style = getComputedStyle(card);
+
+            return {
+                radius: Number.parseFloat(style.borderTopLeftRadius),
+                imageRatio: image.getBoundingClientRect().width / image.getBoundingClientRect().height,
+                titleLineHeight: Number.parseFloat(getComputedStyle(title).lineHeight),
+                titleFontSize: Number.parseFloat(getComputedStyle(title).fontSize),
+            };
+        });
+
+        expect(geometry.radius).toBeGreaterThanOrEqual(9);
+        expect(geometry.radius).toBeLessThanOrEqual(11);
+        expect(geometry.imageRatio).toBeGreaterThan(1.28);
+        expect(geometry.imageRatio).toBeLessThan(1.38);
+        expect(geometry.titleLineHeight / geometry.titleFontSize).toBeGreaterThanOrEqual(1.6);
+        expect(geometry.titleLineHeight / geometry.titleFontSize).toBeLessThanOrEqual(1.9);
+
         expect(
             Math.abs(ctaTops[0] - ctaTops[1]),
             'the first product row must keep purchase actions aligned'
@@ -1172,3 +1192,49 @@ test('public storefront uses consistent square geometry across all key page type
     }
 });
 
+
+test('shop banner image fills its frame and catalogue has a small separation', async ({ page }) => {
+    for (const viewport of [
+        { width: 390, height: 844 },
+        { width: 1440, height: 960 },
+    ]) {
+        await page.setViewportSize(viewport);
+        await page.goto('/shop', { waitUntil: 'domcontentloaded' });
+
+        const banner = page.locator('.farzin-shop-banner__image');
+        const image = banner.locator(':scope > img');
+        const catalog = page.locator('.farzin-shop-catalog');
+
+        if (await image.count() === 0) {
+            test.skip(true, 'The current shop fixture has no configured banner image.');
+        }
+
+        await expect(banner).toBeVisible();
+        await expect(image).toBeVisible();
+        await expect(catalog).toBeVisible();
+
+        const geometry = await page.evaluate(() => {
+            const frame = document.querySelector('.farzin-shop-banner__image');
+            const image = frame?.querySelector(':scope > img');
+            const catalog = document.querySelector('.farzin-shop-catalog');
+            const frameRect = frame.getBoundingClientRect();
+            const imageRect = image.getBoundingClientRect();
+            const catalogRect = catalog.getBoundingClientRect();
+
+            return {
+                frameWidth: frameRect.width,
+                frameHeight: frameRect.height,
+                imageWidth: imageRect.width,
+                imageHeight: imageRect.height,
+                objectFit: getComputedStyle(image).objectFit,
+                separation: catalogRect.top - frameRect.bottom,
+            };
+        });
+
+        expect(Math.abs(geometry.imageWidth - geometry.frameWidth)).toBeLessThanOrEqual(1);
+        expect(Math.abs(geometry.imageHeight - geometry.frameHeight)).toBeLessThanOrEqual(1);
+        expect(geometry.objectFit).toBe('cover');
+        expect(geometry.separation).toBeGreaterThanOrEqual(10);
+        expect(geometry.separation).toBeLessThanOrEqual(28);
+    }
+});
