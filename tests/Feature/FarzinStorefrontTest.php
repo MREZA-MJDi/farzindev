@@ -5499,9 +5499,9 @@ class FarzinStorefrontTest extends TestCase
             ->assertSee('id="product-specifications"', false)
             ->assertSee('id="add-product-specification"', false)
             ->assertSee('data-specification-templates', false)
-            ->assertSee('نحوه نصب')
-            ->assertSee('قدرت مکش')
-            ->assertSee('تعداد شعله')
+            ->assertSee('"sink"', false)
+            ->assertSee('"hood"', false)
+            ->assertSee('"gas"', false)
             ->assertSee('افزودن مشخصه')
             ->assertSee('حذف');
     }
