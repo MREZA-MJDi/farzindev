@@ -192,6 +192,16 @@ body {
     border-radius: 0 !important;
 }
 
+.storefront-content :where(
+    article,
+    section[class*="rounded-"],
+    [class*="-card"],
+    [class*="__card"],
+    [class*="panel"]
+) :where([class*="rounded-"]) {
+    border-radius: 0 !important;
+}
+
 /* The small homepage category thumbnails are image masks, not cards or controls. */
 #app .storefront-content .fz-home-round-category__image {
     border-radius: 50% !important;
