@@ -7,6 +7,7 @@ use App\Models\Product;
 use App\Models\ProductImage;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
 class CategorySeoMetadataTest extends TestCase
@@ -187,7 +188,8 @@ class CategorySeoMetadataTest extends TestCase
             'is_active' => true,
             'sort_order' => 1,
         ]);
-        $image = \Illuminate\Http\UploadedFile::fake()->image('hood-guide.webp', 1200, 675);
+        Storage::fake('public');
+        $image = \Illuminate\Http\UploadedFile::fake()->image('hood-guide.jpg', 1200, 675);
 
         $this->actingAs($admin, 'admin')
             ->put(route('admin.categories.update', $category), [
@@ -208,6 +210,7 @@ class CategorySeoMetadataTest extends TestCase
         $this->assertSame('پیش از انتخاب، عرض اجاق و مسیر خروج هوا را بررسی کنید.', $category->content_body);
         $this->assertNotEmpty($category->content_image);
         $this->assertNotNull($category->content_image_url);
+        Storage::disk('public')->assertExists($category->content_image);
 
         $this->get(route('categories.show', $category->slug))
             ->assertOk()
