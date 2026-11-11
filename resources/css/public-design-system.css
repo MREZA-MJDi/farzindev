@@ -262,6 +262,11 @@ body {
     border-radius: 0 !important;
 }
 
+.storefront-content :where(article, [class*="-card"], [class*="__card"]) img,
+.storefront-content iframe {
+    border-radius: 0 !important;
+}
+
 /* Product photography: show the complete hood/sink silhouette, never crop it. */
 .storefront-content :where(
     .farzin-product-card__image,
