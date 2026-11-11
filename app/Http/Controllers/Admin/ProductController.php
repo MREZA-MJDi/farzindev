@@ -36,7 +36,7 @@ class ProductController extends Controller
                     ->orderByDesc('is_primary')
                     ->orderBy('sort_order')
                     ->select(['id', 'product_id', 'media_id', 'path', 'alt', 'sort_order', 'is_primary'])
-                    ->limit(1),
+                    ->limit(5),
                 'images.media:id,path',
             ]);
 
