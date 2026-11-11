@@ -28,7 +28,7 @@ class CartController extends Controller
             'items.product.images' => fn ($query) => $query
                 ->select(['id', 'product_id', 'media_id', 'path', 'alt', 'sort_order', 'is_primary'])
                 ->limit(1),
-            'items.product.images.media:id,path',
+            'items.product.images.media:id,path,disk,disk',
             'items.product.variants',
             'items.variant',
         ]);
