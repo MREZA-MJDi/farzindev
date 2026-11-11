@@ -358,28 +358,13 @@
             </div>
             @php $contentImageUrl = $editing ? $category->content_image_url : null; @endphp
             <div class="admin-image-preview mb-5 aspect-video">
-                <img data-image-editor-existing-preview-for="content_image" src="{{ $contentImageUrl ?: '' }}" alt="{{ $category->content_title ?: $category->name }}" class="admin-image {{ $contentImageUrl ? '' : 'hidden' }}">
-                <div data-image-editor-placeholder class="{{ $contentImageUrl ? 'hidden' : 'flex' }} h-full flex-col items-center justify-center rounded-2xl border border-dashed border-[var(--admin-border)] bg-[var(--admin-surface-soft)] p-5 text-center text-xs text-[var(--admin-muted)]">
+                <img id="category-content-image-preview" src="{{ $contentImageUrl ?: '' }}" alt="{{ $category->content_title ?: $category->name }}" class="admin-image {{ $contentImageUrl ? '' : 'hidden' }}">
+                <div id="category-content-image-placeholder" class="{{ $contentImageUrl ? 'hidden' : 'flex' }} h-full flex-col items-center justify-center rounded-2xl border border-dashed border-[var(--admin-border)] bg-[var(--admin-surface-soft)] p-5 text-center text-xs text-[var(--admin-muted)]">
                     تصویر راهنمایی انتخاب نشده است.
                 </div>
             </div>
             <label for="content_image" class="admin-label">بارگذاری یا جایگزینی تصویر</label>
-            <input id="content_image" name="content_image" type="file" accept="image/jpeg,image/png,image/webp" data-image-editor-input data-image-editor-default-ratio="16:9" data-image-editor-min-width="800" data-image-editor-min-height="450" class="admin-input p-2">
-            <div data-image-editor-panel hidden class="mt-5 space-y-4 rounded-2xl border border-[var(--admin-border)] bg-[var(--admin-surface-soft)] p-4">
-                <strong class="block text-sm font-semibold text-[var(--admin-text)]">پیش‌نمایش و برش تصویر</strong>
-                <canvas data-image-editor-canvas role="img" aria-label="پیش‌نمایش برش تصویر راهنما" class="mx-auto block max-w-full rounded-xl bg-[var(--admin-bg)]" style="width:min(100%,640px);height:auto;aspect-ratio:16/9;touch-action:none;cursor:grab;"></canvas>
-                <p class="text-xs leading-6 text-[var(--admin-muted)]">قاب تصویر را تنظیم کنید؛ خروجی با نسبت ۱۶:۹ ذخیره می‌شود.</p>
-                <input type="hidden" data-image-editor-ratio value="16:9">
-                <label class="block text-xs text-[var(--admin-text)]">بزرگ‌نمایی <span data-image-editor-zoom-label>۱×</span>
-                    <input data-image-editor-zoom type="range" min="1" max="3" step="0.05" value="1" class="mt-3 w-full">
-                </label>
-                <div class="flex flex-wrap gap-2">
-                    <button type="button" data-image-editor-rotate="-90" class="admin-btn admin-btn-secondary">چرخش به چپ</button>
-                    <button type="button" data-image-editor-rotate="90" class="admin-btn admin-btn-secondary">چرخش به راست</button>
-                    <button type="button" data-image-editor-reset class="admin-btn admin-btn-ghost">بازنشانی</button>
-                </div>
-                <p data-image-editor-status class="text-xs text-[var(--admin-muted)]" aria-live="polite">کادر را تنظیم کنید.</p>
-            </div>
+            <input id="content_image" name="content_image" type="file" accept="image/jpeg,image/png,image/webp" data-image-preview-input data-image-preview-target="#category-content-image-preview" data-image-preview-placeholder="#category-content-image-placeholder" class="admin-input p-2">
             @if($editing && $contentImageUrl)
                 <label class="mt-3 flex items-center gap-2 text-xs text-[var(--admin-muted)]">
                     <input type="checkbox" name="remove_content_image" value="1" @checked(old('remove_content_image')) class="rounded border-[var(--admin-border)]">
