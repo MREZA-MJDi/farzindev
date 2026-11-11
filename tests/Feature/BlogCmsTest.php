@@ -119,6 +119,51 @@ class BlogCmsTest extends TestCase
             ->assertSee('این مقاله پس از انتشار باید در صفحه اصلی و مجله قابل مشاهده باشد.');
     }
 
+    public function test_blog_archive_and_category_pagination_keep_all_published_articles_reachable(): void
+    {
+        $category = BlogTerm::create([
+            'type' => BlogTerm::TYPE_CATEGORY,
+            'name' => 'راهنمای انتخاب',
+            'slug' => 'pagination-buying-guides',
+            'is_active' => true,
+        ]);
+
+        $titles = [];
+
+        for ($index = 1; $index <= 10; $index++) {
+            $post = BlogPost::create([
+                'title' => 'مقاله صفحه‌بندی ' . $index,
+                'slug' => 'pagination-article-' . $index,
+                'body' => 'متن مقاله برای آزمون صفحه‌بندی مجله.',
+                'status' => 'published',
+                'published_at' => now()->subMinutes($index),
+            ]);
+            $post->terms()->attach($category->id);
+            $titles[] = $post->title;
+        }
+
+        $this->get(route('blog.index'))
+            ->assertOk()
+            ->assertSee($titles[0])
+            ->assertSee('page=2', false)
+            ->assertDontSee($titles[9]);
+
+        $this->get(route('blog.index', ['page' => 2]))
+            ->assertOk()
+            ->assertSee($titles[9])
+            ->assertDontSee($titles[0]);
+
+        $this->get(route('blog.category', $category->slug))
+            ->assertOk()
+            ->assertSee('page=2', false)
+            ->assertSee($titles[0]);
+
+        $this->get(route('blog.category', ['slug' => $category->slug, 'page' => 2]))
+            ->assertOk()
+            ->assertSee($titles[9])
+            ->assertDontSee($titles[0]);
+    }
+
     public function test_admin_can_create_edit_and_publish_a_blog_article(): void
     {
         $admin = User::factory()->create(['role' => 'admin']);
