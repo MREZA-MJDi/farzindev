@@ -87,9 +87,9 @@
                                     </svg>
                                 </div>
                                 <div class="fz-category-hero__product-label">
-                                    <small>AIR / 01</small>
+                                    <small>هود / ۰۱</small>
                                     <strong>هود آشپزخانه</strong>
-                                    <em>POWER · PRECISION</em>
+                                    <em>قدرت مکش • دقت عملکرد</em>
                                 </div>
                                 <span class="fz-category-hero__index">01</span>
                             </article>
@@ -116,9 +116,9 @@
                                     </svg>
                                 </div>
                                 <div class="fz-category-hero__product-label">
-                                    <small>FORM / 02</small>
+                                    <small>سینک / ۰۲</small>
                                     <strong>سینک ظرفشویی</strong>
-                                    <em>CRAFT · DURABILITY</em>
+                                    <em>فرم دقیق • دوام بالا</em>
                                 </div>
                                 <span class="fz-category-hero__index">02</span>
                             </article>
@@ -179,7 +179,7 @@
                         </div>
 
                         <p class="mt-7 text-[10px] uppercase tracking-[0.22em] text-[var(--livora-accent)]">
-                            EMPTY
+                            هنوز محتوایی ثبت نشده است
                         </p>
 
                         <h2 class="mt-3 text-3xl font-semibold">
