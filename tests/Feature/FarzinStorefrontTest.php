@@ -509,10 +509,12 @@ class FarzinStorefrontTest extends TestCase
             ->assertSee('data-home-technology-media-select', false)
             ->assertSee('تصویر فناوری فرزین.webp');
 
-        $this->put(route('admin.page-content.update'), [
-            'tab' => 'home',
-            'page_home_technology_media_id' => $media->id,
-        ])->assertRedirect(route('admin.page-content.edit', ['tab' => 'home']))
+        $payload = app(StorefrontPageContent::class)->all();
+        $payload['tab'] = 'home';
+        $payload['page_home_technology_media_id'] = $media->id;
+
+        $this->put(route('admin.page-content.update'), $payload)
+            ->assertRedirect(route('admin.page-content.edit', ['tab' => 'home']))
             ->assertSessionHas('success');
 
         $this->assertDatabaseHas('storefront_settings', [
