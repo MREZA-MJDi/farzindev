@@ -121,6 +121,10 @@ body {
     .product-price__installment,
     .product-gallery-stage,
     .fz-home-benefit,
+    .fz-empty-state,
+    .home-body .grid__item,
+    .fz-hero-product,
+    .fz-hero-product__media,
     .fz-home-purchase-cta__inner,
     .fz-home-featured-section__visual
 ) {
