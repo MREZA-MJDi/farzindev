@@ -464,7 +464,7 @@ class PageContentController extends Controller
                     ->orderByDesc('is_primary')
                     ->orderBy('sort_order')
                     ->orderBy('id')
-                    ->limit(1),
+                    ->limit(5),
                 'images.media:id,path',
             ])
             ->withSum([
