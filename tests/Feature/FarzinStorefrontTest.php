@@ -483,6 +483,55 @@ class FarzinStorefrontTest extends TestCase
         Storage::disk('public')->assertExists($replacementMedia->path);
     }
 
+    public function test_admin_can_select_media_library_image_for_homepage_technology_section(): void
+    {
+        Storage::fake('public');
+        $admin = $this->admin();
+        $path = 'media/home-technology-test.webp';
+        Storage::disk('public')->put($path, 'test-image-bytes');
+
+        $media = Media::create([
+            'user_id' => $admin->id,
+            'disk' => 'public',
+            'path' => $path,
+            'filename' => 'home-technology-test.webp',
+            'original_name' => 'تصویر فناوری فرزین.webp',
+            'mime_type' => 'image/webp',
+            'extension' => 'webp',
+            'size' => 17,
+            'alt' => 'تصویر فناوری فرزین',
+        ]);
+
+        $this->actingAs($admin, 'admin')
+            ->get(route('admin.page-content.edit', ['tab' => 'home']))
+            ->assertOk()
+            ->assertSee('data-home-technology-media-select', false)
+            ->assertSee('تصویر فناوری فرزین.webp');
+
+        $this->put(route('admin.page-content.update'), [
+            'tab' => 'home',
+            'page_home_technology_media_id' => $media->id,
+        ])->assertRedirect(route('admin.page-content.edit', ['tab' => 'home']))
+            ->assertSessionHas('success');
+
+        $this->assertDatabaseHas('storefront_settings', [
+            'key' => 'page_home_technology_image_url',
+            'value' => $path,
+        ]);
+
+        app(StorefrontPageContent::class)->clearCache();
+        $this->get(route('home'))
+            ->assertOk()
+            ->assertSee(Storage::disk('public')->url($path), false)
+            ->assertSee('fz-home-technology__visual', false);
+
+        $this->delete(route('admin.media.destroy', $media))
+            ->assertRedirect(route('admin.media.index'))
+            ->assertSessionHas('error');
+
+        Storage::disk('public')->assertExists($path);
+    }
+
     public function test_public_pages_render_successfully(): void
     {
         foreach (['/', '/shop', '/categories', '/about', '/contact', '/blog'] as $uri) {
