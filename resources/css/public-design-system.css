@@ -433,3 +433,10 @@ body.home-body #app .fz-home-purchase-cta__inner,
 #app .fz-home-round-category__image {
     border-radius: 50% !important;
 }
+
+/* Final authority for kitchen hood/sink imagery: never crop the product itself. */
+#app .storefront-content .farzin-product-gallery .product-gallery-stage > img {
+    object-fit: contain !important;
+    object-position: center !important;
+    padding: clamp(12px, 2vw, 24px) !important;
+}
