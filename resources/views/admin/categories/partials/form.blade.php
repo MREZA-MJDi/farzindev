@@ -315,7 +315,7 @@
                 class="admin-input p-2"
             >
 
-            <div data-image-editor-panel-for="content_image" hidden class="mt-5 space-y-4 rounded-2xl border border-[var(--admin-border)] bg-[var(--admin-surface-soft)] p-4">
+            <div data-image-editor-panel hidden class="mt-5 space-y-4 rounded-2xl border border-[var(--admin-border)] bg-[var(--admin-surface-soft)] p-4">
                 <strong class="block text-sm font-semibold text-[var(--admin-text)]">پیش‌نمایش و برش تصویر</strong>
                 <canvas data-image-editor-canvas role="img" aria-label="پیش‌نمایش برش تصویر دسته‌بندی" class="mx-auto block max-w-full rounded-xl bg-[var(--admin-bg)]" style="width:min(100%,640px);height:auto;aspect-ratio:4/3;touch-action:none;cursor:grab;"></canvas>
                 <p class="text-xs leading-6 text-[var(--admin-muted)]">تصویر را داخل کادر بکشید، نسبت را تغییر دهید و در صورت نیاز زوم یا چرخش کنید. خروجی نهایی دقیقاً مطابق همین پیش‌نمایش ذخیره می‌شود.</p>
