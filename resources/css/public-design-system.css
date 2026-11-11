@@ -131,6 +131,10 @@ body {
     border-radius: 0 !important;
 }
 
+.storefront-content :where([class*="-card"], [class*="__card"]) {
+    border-radius: 0 !important;
+}
+
 /* The small homepage category thumbnails are image masks, not cards or controls. */
 #app .storefront-content .fz-home-round-category__image {
     border-radius: 50% !important;
