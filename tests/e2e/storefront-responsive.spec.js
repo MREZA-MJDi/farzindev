@@ -43,6 +43,10 @@ for (const viewport of viewports) {
                 ? page.locator('.fz-home-header')
                 : page.locator('.farzin-site-header');
             await expect(header, path + ' header').toBeVisible();
+            await expect(header.locator('[data-farzin-header-brand]'), path + ' shared brand').toBeVisible();
+            await expect(header.locator('[data-farzin-header-account]'), path + ' shared account action').toBeAttached();
+            await expect(header.locator('[data-farzin-header-cart]'), path + ' shared cart action').toBeAttached();
+            await expect(header.locator('[data-farzin-header-menu]'), path + ' shared menu action').toBeAttached();
             await expect(page.locator('.farzin-site-footer'), path + ' footer').toBeAttached();
 
             const footerLayout = await page.locator('.farzin-site-footer').evaluate((footer) => {
@@ -134,7 +138,12 @@ test('global mobile search is available and usable on every public page', async 
     }
 
     await page.goto('/', { waitUntil: 'domcontentloaded' });
-    await page.locator('.fz-home-header .fz-home-header__menu').click();
+    await page.locator('.fz-home-header [data-farzin-header-menu]').click();
+    await expect(page.locator('[data-farzin-mobile-menu-panel]')).toBeVisible();
+
+    await page.locator('[data-farzin-mobile-menu-panel] button[aria-label="بستن منو"]').click();
+    await page.goto('/shop', { waitUntil: 'domcontentloaded' });
+    await page.locator('.farzin-site-header [data-farzin-header-menu]').click();
     await expect(page.locator('[data-farzin-mobile-menu-panel]')).toBeVisible();
 });
 
