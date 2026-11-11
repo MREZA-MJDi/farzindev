@@ -17,7 +17,8 @@ function imageBlob(canvas) {
 
 function initImageEditor(input) {
     const form = input.closest('form');
-    const panel = form && form.querySelector('[data-image-editor-panel]');
+    const targetedPanel = form && input.id ? form.querySelector('[data-image-editor-panel-for="' + input.id + '"]') : null;
+    const panel = targetedPanel || (form && form.querySelector('[data-image-editor-panel]'));
     const canvas = panel && panel.querySelector('[data-image-editor-canvas]');
     const ratioInput = panel && panel.querySelector('[data-image-editor-ratio]');
     const zoomInput = panel && panel.querySelector('[data-image-editor-zoom]');
