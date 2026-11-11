@@ -108,6 +108,8 @@ body {
 }
 
 .storefront-content :where(
+    .farzin-category-card__surface,
+    .farzin-category-card__arrow,
     .blog-masthead__visual,
     .blog-user-art,
     .blog-article-content img,
@@ -169,6 +171,24 @@ body {
 }
 
 .storefront-content :where([class*="-card"], [class*="__card"]) {
+    border-radius: 0 !important;
+}
+
+.storefront-content :where(
+    .farzin-category-card,
+    .farzin-product-card,
+    .blog-article-card,
+    .blog-featured-card,
+    .cart-item,
+    .cart-panel,
+    .cart-summary,
+    .farzin-product-detail-info,
+    .fz-product-panel,
+    .fz-category-card,
+    .farzin-shop-category-card,
+    .auth-card,
+    .contact-panel
+) :where([class*="rounded-"]) {
     border-radius: 0 !important;
 }
 
