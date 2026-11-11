@@ -11,6 +11,7 @@ use App\Services\Content\RichTextSanitizer;
 use App\Services\Seo\SeoSettings;
 use App\Services\StorefrontPageContent;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
 class BlogCmsTest extends TestCase
@@ -119,6 +120,41 @@ class BlogCmsTest extends TestCase
             ->assertOk()
             ->assertSee($post->title)
             ->assertSee('این مقاله پس از انتشار باید در صفحه اصلی و مجله قابل مشاهده باشد.');
+    }
+
+    public function test_missing_cover_file_uses_fallback_instead_of_a_broken_image(): void
+    {
+        Storage::fake('public');
+
+        $post = BlogPost::create([
+            'title' => 'مقاله با تصویر جلد حذف‌شده',
+            'slug' => 'article-with-missing-cover-file',
+            'body' => 'مقاله باید بدون تصویر شکسته قابل مشاهده بماند.',
+            'status' => 'published',
+            'published_at' => now(),
+            'is_featured' => true,
+            'cover_image' => 'blog/missing-cover.webp',
+        ]);
+
+        $this->assertNull($post->cover_image_url);
+        $this->assertNull($post->cover_image_srcset);
+
+        $this->get(route('home'))
+            ->assertOk()
+            ->assertSee($post->title)
+            ->assertSee('fz-home-article-card__media-fallback', false)
+            ->assertDontSee('/storage/blog/missing-cover.webp');
+
+        $this->get(route('blog.index'))
+            ->assertOk()
+            ->assertSee($post->title)
+            ->assertSee('blog-art-fallback', false)
+            ->assertDontSee('/storage/blog/missing-cover.webp');
+
+        $this->get(route('blog.show', $post->slug))
+            ->assertOk()
+            ->assertSee($post->title)
+            ->assertDontSee('/storage/blog/missing-cover.webp');
     }
 
     public function test_blog_archive_and_category_pagination_keep_all_published_articles_reachable(): void
