@@ -33,6 +33,48 @@ class FarzinStorefrontTest extends TestCase
 
     private ?array $checkoutLocationCache = null;
 
+    public function test_product_primary_image_falls_back_when_the_selected_file_is_missing(): void
+    {
+        Storage::fake('public');
+        Storage::disk('public')->put('products/available-secondary.webp', 'valid image bytes');
+
+        $category = $this->category(['slug' => 'primary-image-fallback-category']);
+        $product = $this->product($category, [
+            'name' => 'هود با تصویر جایگزین',
+            'slug' => 'hood-with-image-fallback',
+        ]);
+
+        ProductImage::create([
+            'product_id' => $product->id,
+            'path' => 'products/missing-primary.webp',
+            'alt' => 'تصویر اصلی حذف‌شده',
+            'sort_order' => 0,
+            'is_primary' => true,
+        ]);
+
+        $fallback = ProductImage::create([
+            'product_id' => $product->id,
+            'path' => 'products/available-secondary.webp',
+            'alt' => 'تصویر جایگزین سالم',
+            'sort_order' => 1,
+            'is_primary' => false,
+        ]);
+
+        // Simulate the product-card eager load that selects only the primary row.
+        $product->load([
+            'images' => fn ($query) => $query
+                ->orderByDesc('is_primary')
+                ->orderBy('sort_order')
+                ->limit(1),
+        ]);
+
+        $this->assertSame($fallback->id, $product->primaryImage()?->id);
+        $this->assertSame(
+            Storage::disk('public')->url('products/available-secondary.webp'),
+            $product->primaryImage()?->url
+        );
+    }
+
     public function test_admin_can_render_every_crud_dashboard_surface_with_real_records(): void
     {
         $admin = $this->admin();
