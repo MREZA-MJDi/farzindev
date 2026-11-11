@@ -54,7 +54,7 @@ class UpdateCategoryRequest extends FormRequest
 
             'description' => ['nullable', 'string', 'max:1200'],
             'content_title' => ['nullable', 'string', 'max:180'],
-            'content_body' => ['nullable', 'string', 'max:12000],
+            'content_body' => ['nullable', 'string', 'max:12000'],
             'content_image' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'dimensions:min_width=800,min_height=450', 'max:20480'],
 
             'meta_title' => ['nullable', 'string', 'max:255'],
