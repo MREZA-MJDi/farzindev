@@ -1,7 +1,7 @@
 @props(['product'])
 
 @php
-    $image = $product->images?->first();
+    $image = $product->primaryImage();
     $imageUrl = $image?->url;
     $imageSrcset = $image?->responsive_srcset;
 
