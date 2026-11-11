@@ -442,6 +442,11 @@ Route::prefix(config('farzin.admin_path', 'admin'))
         Route::get('blog-appearance', [AdminBlogAppearanceController::class, 'edit'])->name('blog-appearance.edit');
         Route::put('blog-appearance', [AdminBlogAppearanceController::class, 'update'])->name('blog-appearance.update');
 
+        Route::get(
+            'blog-posts/{blogPost}/preview',
+            [AdminBlogPostController::class, 'preview']
+        )->name('blog-posts.preview');
+
         Route::resource(
             'blog-posts',
             AdminBlogPostController::class
