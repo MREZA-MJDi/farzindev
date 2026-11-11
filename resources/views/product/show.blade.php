@@ -139,12 +139,12 @@
     .fz-product-sticky{padding-bottom:max(.75rem,env(safe-area-inset-bottom))}
     @media(max-width:767px){
         .fz-product-layout{grid-template-columns:minmax(0,1fr);gap:1rem}
-        .fz-product-gallery .product-gallery-stage{aspect-ratio:4/3;max-height:none;height:auto}
-        .fz-product-gallery .product-gallery-stage img{padding:clamp(12px,2vw,24px);object-fit:contain}
-        .fz-product-gallery .farzin-gallery-arrow{width:2.75rem;height:2.75rem}
-        .fz-product-gallery .farzin-gallery-zoom{right:.4rem;bottom:.4rem;padding:.35rem .5rem;font-size:9px}
-        .fz-product-gallery .mt-4.flex.gap-3{gap:.4rem;margin-top:.5rem}
-        .fz-product-gallery .mt-4.flex.gap-3 button{width:2.75rem;height:2.75rem;min-width:44px;min-height:44px}
+        .farzin-product-gallery .product-gallery-stage{aspect-ratio:4/3;max-height:none;height:auto}
+        .farzin-product-gallery .product-gallery-stage img{padding:clamp(12px,2vw,24px);object-fit:contain}
+        .farzin-product-gallery .farzin-gallery-arrow{width:2.75rem;height:2.75rem}
+        .farzin-product-gallery .farzin-gallery-zoom{right:.4rem;bottom:.4rem;padding:.35rem .5rem;font-size:9px}
+        .farzin-product-gallery .mt-4.flex.gap-3{gap:.4rem;margin-top:.5rem}
+        .farzin-product-gallery .mt-4.flex.gap-3 button{width:2.75rem;height:2.75rem;min-width:44px;min-height:44px}
         .fz-product-panel__title{font-size:clamp(.95rem,4.4vw,1.15rem);line-height:1.55}
         .fz-product-panel .product-price__current strong{font-size:1.15rem}
         .fz-product-panel .product-price__current span{font-size:.65rem}
@@ -161,7 +161,7 @@
         .fz-product-layout{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:clamp(1.5rem,4vw,3.5rem)}
     }
     @media(min-width:1024px){.fz-product-layout{grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr)}}
-    @media(max-width:360px){.fz-product-panel__title{font-size:.9rem}.fz-product-gallery .farzin-gallery-arrow{width:1.75rem;height:1.75rem}}
+    @media(max-width:360px){.fz-product-panel__title{font-size:.9rem}.farzin-product-gallery .farzin-gallery-arrow{width:1.75rem;height:1.75rem}}
 </style>
 @endpush
 
