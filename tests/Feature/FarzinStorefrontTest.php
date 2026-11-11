@@ -639,6 +639,43 @@ class FarzinStorefrontTest extends TestCase
         );
     }
 
+    public function test_category_product_listing_paginates_without_losing_products(): void
+    {
+        $category = $this->category([
+            'name' => 'دسته صفحه‌بندی محصولات',
+            'slug' => 'category-product-pagination',
+        ]);
+
+        for ($index = 1; $index <= 13; $index++) {
+            $product = $this->product($category, [
+                'name' => 'محصول دسته‌بندی ' . $index,
+                'slug' => 'category-pagination-product-' . $index,
+                'sku' => 'FAR-CATEGORY-PAGE-' . $index,
+                'show_in_home_gallery' => false,
+            ]);
+
+            ProductImage::create([
+                'product_id' => $product->id,
+                'path' => 'https://cdn.example.test/category-pagination-' . $index . '.webp',
+                'alt' => $product->name,
+                'sort_order' => 0,
+                'is_primary' => true,
+            ]);
+        }
+
+        $this->get(route('categories.show', $category->slug))
+            ->assertOk()
+            ->assertSee('محصول دسته‌بندی 1')
+            ->assertSee('محصول دسته‌بندی 12')
+            ->assertDontSee('محصول دسته‌بندی 13')
+            ->assertSee('page=2', false);
+
+        $this->get(route('categories.show', ['slug' => $category->slug, 'page' => 2]))
+            ->assertOk()
+            ->assertSee('محصول دسته‌بندی 13')
+            ->assertDontSee('محصول دسته‌بندی 1');
+    }
+
     public function test_homepage_product_cards_use_saved_specifications_and_real_stock(): void
     {
         $category = $this->category(['name' => 'هود آشپزخانه', 'slug' => 'hoods']);
