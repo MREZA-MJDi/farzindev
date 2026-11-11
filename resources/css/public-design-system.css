@@ -469,3 +469,160 @@ body.home-body #app .fz-home-purchase-cta__inner,
 #app .storefront-content .farzin-product-card__image-link {
     background: #F0F2F4;
 }
+
+
+/* Product cards: balanced proportions, restrained corners and readable spacing.
+   Keep this override scoped to product cards; the rest of the storefront retains
+   the square editorial geometry defined above. */
+#app .storefront-content .farzin-product-card,
+#app .storefront-content a.fz-product-card--clickable {
+    border-radius: 10px !important;
+    overflow: hidden;
+}
+
+#app .storefront-content .farzin-product-card__media,
+#app .storefront-content .fz-product-card--clickable .fz-product-card__image {
+    border-radius: 10px 10px 0 0 !important;
+    overflow: hidden;
+}
+
+#app .storefront-content .farzin-product-card__image-link {
+    aspect-ratio: 4 / 3 !important;
+    border-radius: 0 !important;
+    background: #F3F5F7;
+}
+
+#app .storefront-content .farzin-product-card__content {
+    gap: .35rem;
+    padding: 14px !important;
+}
+
+#app .storefront-content .farzin-product-card__meta,
+#app .storefront-content .fz-product-card--clickable .fz-product-card__meta {
+    min-height: 0;
+    flex-wrap: wrap;
+    gap: .3rem .55rem;
+    font-size: .68rem;
+    line-height: 1.7;
+}
+
+#app .storefront-content .farzin-product-card__title,
+#app .storefront-content .fz-product-card--clickable .fz-product-card__title {
+    min-height: 0 !important;
+    max-height: 3.3em;
+    margin-block: .2rem .1rem;
+    overflow: hidden;
+    font-size: .9rem;
+    font-weight: 750;
+    line-height: 1.75;
+    overflow-wrap: anywhere;
+    text-wrap: pretty;
+}
+
+#app .storefront-content .farzin-product-card__price-row {
+    min-height: 0;
+    gap: .25rem .55rem;
+    margin-top: .3rem;
+}
+
+#app .storefront-content .farzin-product-card__price-current {
+    font-size: .94rem;
+    line-height: 1.8;
+}
+
+#app .storefront-content .farzin-product-card__availability,
+#app .storefront-content .fz-product-card__availability {
+    min-height: 1.35rem;
+    font-size: .68rem;
+    line-height: 1.6;
+}
+
+#app .storefront-content .farzin-product-card__cta,
+#app .storefront-content .fz-product-card__cta {
+    min-height: 40px;
+    border-radius: 7px !important;
+    padding: .5rem .75rem;
+    font-size: .73rem;
+    line-height: 1.6;
+    white-space: normal;
+}
+
+#app .storefront-content .farzin-product-card__specifications {
+    gap: .3rem;
+    margin-top: .35rem;
+}
+
+#app .storefront-content .farzin-product-card__specifications li {
+    max-width: 100%;
+    border-radius: 5px !important;
+    padding: .22rem .42rem;
+    font-size: .62rem;
+    line-height: 1.6;
+}
+
+#app .storefront-content .farzin-product-card__installment {
+    min-height: 0;
+    border-radius: 7px !important;
+    padding: .55rem .65rem;
+    line-height: 1.7;
+}
+
+#app .storefront-content .farzin-product-card__installment-slot {
+    min-height: 0;
+    flex-basis: auto;
+}
+
+#app .storefront-content a.fz-product-card--clickable .fz-product-card__image {
+    aspect-ratio: 4 / 3;
+}
+
+#app .storefront-content a.fz-product-card--clickable .fz-product-card__body {
+    gap: .45rem;
+    padding: 14px;
+}
+
+#app .storefront-content a.fz-product-card--clickable .fz-product-card__purchase {
+    flex-wrap: wrap;
+    align-items: center;
+    gap: .55rem;
+    padding-top: .6rem;
+}
+
+#app .storefront-content a.fz-product-card--clickable .fz-product-card__price strong {
+    font-size: .92rem;
+}
+
+@media (max-width: 767px) {
+    #app .storefront-content .farzin-product-card__content,
+    #app .storefront-content a.fz-product-card--clickable .fz-product-card__body {
+        padding: 11px !important;
+    }
+
+    #app .storefront-content .farzin-product-card__title,
+    #app .storefront-content .fz-product-card--clickable .fz-product-card__title {
+        font-size: .82rem;
+        line-height: 1.75;
+    }
+
+    #app .storefront-content .farzin-product-card__price-current {
+        font-size: .84rem;
+    }
+
+    #app .storefront-content .farzin-product-card__cta,
+    #app .storefront-content .fz-product-card__cta {
+        min-height: 38px;
+        font-size: .68rem;
+    }
+}
+
+@media (max-width: 380px) {
+    #app .storefront-content .farzin-product-card__content,
+    #app .storefront-content a.fz-product-card--clickable .fz-product-card__body {
+        padding: 9px !important;
+    }
+
+    #app .storefront-content .farzin-product-card__meta,
+    #app .storefront-content .fz-product-card--clickable .fz-product-card__meta {
+        font-size: .62rem;
+    }
+}
