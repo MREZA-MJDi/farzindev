@@ -19,6 +19,9 @@ class Category extends Model
         'name',
         'slug',
         'description',
+        'content_title',
+        'content_body',
+        'content_image',
         'meta_title',
         'meta_description',
         'canonical_url',
@@ -37,6 +40,25 @@ class Category extends Model
             'is_active' => 'boolean',
             'sort_order' => 'integer',
         ];
+    }
+
+    public function getContentImageUrlAttribute(): ?string
+    {
+        if (! $this->content_image) {
+            return null;
+        }
+
+        if (Str::startsWith($this->content_image, ['http://', 'https://', '//'])) {
+            return $this->content_image;
+        }
+
+        $path = ltrim($this->content_image, '/');
+
+        if (! Storage::disk('public')->exists($path)) {
+            return null;
+        }
+
+        return Storage::disk('public')->url($path);
     }
 
     public function getImageUrlAttribute(): ?string
