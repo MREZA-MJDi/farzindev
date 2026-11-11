@@ -414,6 +414,10 @@ class FarzinStorefrontTest extends TestCase
 
             $response
                 ->assertSee('aria-label="ناوبری اصلی فرزین"', false)
+                ->assertSee('data-farzin-header-brand', false)
+                ->assertSee('data-farzin-header-account', false)
+                ->assertSee('data-farzin-header-cart', false)
+                ->assertSee('data-farzin-header-menu', false)
                 ->assertSee('farzin-site-footer', false)
                 ->assertDontSee('farzin-site-footer--spaced', false);
         }
