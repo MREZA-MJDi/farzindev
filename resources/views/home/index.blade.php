@@ -224,7 +224,7 @@
                         >
                     @else
                         <div class="fz-home-technology__placeholder" aria-label="فضای تصویر فناوری فرزین">
-                            <span>FARZIN / ENGINEERING</span>
+                            <span>فرزین / مهندسی آشپزخانه</span>
                             <strong>فرم، عملکرد، جزئیات</strong>
                             <small>نگاهی نزدیک به جزئیات ساخت، انتخاب متریال و تجربه استفاده روزمره.</small>
                         </div>
