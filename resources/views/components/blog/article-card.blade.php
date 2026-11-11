@@ -1,7 +1,6 @@
 @props([
     'post',
     'variant' => 'archive',
-    'delay' => 0,
 ])
 
 @php
@@ -51,9 +50,7 @@
 @else
     <article
         class="blog-article-card"
-        data-blog-reveal
         data-blog-article-card
-        style="--blog-delay: {{ min(max((int) $delay, 0), 360) }}ms"
     >
         <a
             href="{{ route('blog.show', $post->slug) }}"
