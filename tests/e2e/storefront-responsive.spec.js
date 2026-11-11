@@ -1051,6 +1051,20 @@ test('homepage category thumbnails stay compact and the image fills a true circl
 });
 
 
+test('catalog product cards preserve full product images without cropping', async ({ page }) => {
+    await page.setViewportSize({ width: 1280, height: 900 });
+    await page.goto('/shop', { waitUntil: 'domcontentloaded' });
+
+    const image = page.locator('.farzin-shop-catalog .farzin-product-card__image').first();
+    if (await image.count() === 0) {
+        test.skip(true, 'The current browser fixture has no visible catalog product images.');
+    }
+
+    await expect(image).toBeVisible();
+    const objectFit = await image.evaluate((element) => getComputedStyle(element).objectFit);
+    expect(objectFit).toBe('contain');
+});
+
 test('blog pagination layout and controls remain visible on archive pages', async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 });
     await page.goto('/blog', { waitUntil: 'domcontentloaded' });
