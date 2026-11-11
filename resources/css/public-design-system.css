@@ -626,3 +626,24 @@ body.home-body #app .fz-home-purchase-cta__inner,
         font-size: .62rem;
     }
 }
+
+/* Shop banner artwork fills its complete frame; keep a measured break before the catalogue. */
+#app .storefront-content .farzin-shop-banner__image {
+    position: relative;
+    isolation: isolate;
+}
+
+#app .storefront-content .farzin-shop-banner__image > img {
+    position: absolute;
+    inset: 0;
+    display: block;
+    width: 100%;
+    height: 100%;
+    max-width: none;
+    object-fit: cover;
+    object-position: center;
+}
+
+#app .storefront-content .farzin-shop-catalog {
+    margin-block-start: 12px;
+}
