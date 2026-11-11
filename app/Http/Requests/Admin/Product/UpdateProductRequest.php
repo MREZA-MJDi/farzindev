@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Admin\Product;
 
+use App\Models\Category;
 use Illuminate\Foundation\Http\FormRequest;
 use App\Http\Requests\Admin\Product\Concerns\PreparesProductInput;
 use Illuminate\Validation\Rule;
@@ -22,6 +23,16 @@ class UpdateProductRequest extends FormRequest
                 $validator->errors()->add(
                     'primary_media_id',
                     'تصویر آپلودی و تصویر کتابخانه را هم‌زمان انتخاب نکنید.'
+                );
+            }
+
+            if (
+                $this->input('status') === 'active'
+                && ! Category::query()->active()->whereKey($this->input('category_id'))->exists()
+            ) {
+                $validator->errors()->add(
+                    'category_id',
+                    'برای نمایش محصول در سایت، یک دسته‌بندی فعال و قابل‌نمایش انتخاب کنید.'
                 );
             }
 
