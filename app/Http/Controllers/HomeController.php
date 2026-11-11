@@ -94,7 +94,7 @@ class HomeController extends Controller
                             'images.media:id,path',
                         ])
                         ->orderByDesc('updated_at')
-                        ->limit(1);
+                        ->limit(5);
                 },
             ])
             ->withCount([
