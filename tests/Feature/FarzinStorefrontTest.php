@@ -5146,6 +5146,41 @@ class FarzinStorefrontTest extends TestCase
             ->assertDontSee('id="fz-home-newest-title"', false);
     }
 
+    public function test_homepage_content_editor_only_previews_existing_uploaded_images(): void
+    {
+        Storage::fake('public');
+        Storage::disk('public')->put('home/banners/available-banner.webp', 'image bytes');
+
+        StorefrontSetting::query()->create([
+            'key' => 'page_home_hero_image_url',
+            'value' => 'home/hero/deleted-hero.webp',
+        ]);
+        StorefrontSetting::query()->create([
+            'key' => 'page_home_banner_1_image_url',
+            'value' => 'home/banners/deleted-banner.webp',
+        ]);
+        StorefrontSetting::query()->create([
+            'key' => 'page_home_banner_2_image_url',
+            'value' => 'home/banners/available-banner.webp',
+        ]);
+        StorefrontSetting::query()->create([
+            'key' => 'page_home_technology_image_url',
+            'value' => 'home/technology/deleted-technology.webp',
+        ]);
+
+        app(\App\Services\StorefrontPageContent::class)->clearCache();
+
+        $this->actingAs($this->admin(), 'admin')
+            ->get(route('admin.page-content.edit', ['tab' => 'home']))
+            ->assertOk()
+            ->assertSee('/storage/home/banners/available-banner.webp')
+            ->assertDontSee('/storage/home/hero/deleted-hero.webp')
+            ->assertDontSee('/storage/home/banners/deleted-banner.webp')
+            ->assertDontSee('/storage/home/technology/deleted-technology.webp')
+            ->assertSee('id="page_home_banner_1_image"', false)
+            ->assertSee('id="page_home_banner_2_image"', false);
+    }
+
     public function test_homepage_cms_exposes_four_independent_managed_banner_slots(): void
     {
         $admin = $this->admin();
