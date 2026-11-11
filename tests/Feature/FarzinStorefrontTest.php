@@ -1889,6 +1889,58 @@ class FarzinStorefrontTest extends TestCase
             ->assertSee($product->name);
     }
 
+    public function test_admin_cannot_publish_a_product_without_a_usable_primary_image(): void
+    {
+        $admin = $this->admin();
+        $category = $this->category(['slug' => 'image-required-category']);
+
+        $this->actingAs($admin, 'admin')
+            ->from(route('admin.products.create'))
+            ->post(route('admin.products.store'), [
+                'category_id' => $category->id,
+                'name' => 'محصول بدون تصویر اصلی',
+                'slug' => 'product-without-primary-image',
+                'sku' => 'FAR-WITHOUT-IMAGE-01',
+                'price' => '12000000',
+                'stock' => '3',
+                'status' => 'active',
+                'is_featured' => '0',
+                'is_new' => '0',
+                'show_in_home_gallery' => '1',
+                'installment_enabled' => '0',
+            ])
+            ->assertRedirect(route('admin.products.create'))
+            ->assertSessionHasErrors('image');
+
+        $this->assertDatabaseMissing('products', [
+            'sku' => 'FAR-WITHOUT-IMAGE-01',
+        ]);
+
+        $draft = $this->product($category, [
+            'name' => 'پیش‌نویس بدون تصویر',
+            'slug' => 'draft-without-image',
+            'sku' => 'FAR-DRAFT-WITHOUT-IMAGE',
+            'status' => 'draft',
+            'show_in_home_gallery' => false,
+        ]);
+
+        $this->put(route('admin.products.update', $draft), [
+            'category_id' => $category->id,
+            'name' => $draft->name,
+            'slug' => $draft->slug,
+            'sku' => $draft->sku,
+            'price' => '10000000',
+            'stock' => '0',
+            'status' => 'active',
+            'is_featured' => '0',
+            'is_new' => '0',
+            'show_in_home_gallery' => '1',
+            'installment_enabled' => '0',
+        ])->assertSessionHasErrors('image');
+
+        $this->assertSame('draft', $draft->fresh()->status);
+    }
+
     public function test_admin_cannot_upload_a_low_resolution_product_image(): void
     {
         $admin = $this->admin();
