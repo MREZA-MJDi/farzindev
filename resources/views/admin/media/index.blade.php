@@ -88,7 +88,7 @@
             <div class="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
 
                 @foreach($media as $item)
-                    @php($itemUrl = $itemUrl)
+                    @php($itemUrl = $item->url)
 
                     <div
                         class="group overflow-hidden rounded-3xl border border-[var(--admin-border)] bg-[var(--admin-surface)] transition-all duration-300 hover:-translate-y-1 hover:shadow-lg"
