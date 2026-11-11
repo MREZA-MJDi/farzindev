@@ -129,7 +129,9 @@ class ProductController extends Controller
             ->whereIn('mime_type', ['image/jpeg', 'image/png', 'image/webp'])
             ->latest('id')
             ->limit(60)
-            ->get();
+            ->get()
+            ->filter(fn (Media $media) => filled($media->url))
+            ->values();
 
         $product = new Product();
 
@@ -264,7 +266,9 @@ class ProductController extends Controller
             ->whereIn('mime_type', ['image/jpeg', 'image/png', 'image/webp'])
             ->latest('id')
             ->limit(60)
-            ->get();
+            ->get()
+            ->filter(fn (Media $media) => filled($media->url))
+            ->values();
 
         return view(
             'admin.products.edit',
