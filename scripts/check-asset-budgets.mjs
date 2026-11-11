@@ -21,6 +21,7 @@ const budgets = [
     // The editorial artwork controls add two dashboard-managed image slots.
     // Keep the public magazine stylesheet tightly capped while accounting for them.
     { key: 'resources/css/blog.css', label: 'Blog-only CSS', maxGzipKb: 5.5 },
+    { key: 'resources/css/product.css', label: 'Product-detail-only CSS', maxGzipKb: 3.5 },
 ];
 
 let failed = false;
