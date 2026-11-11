@@ -104,6 +104,9 @@
             <label for="image" class="admin-label">
                 {{ $editing ? 'تغییر تصویر' : 'انتخاب تصویر اصلی' }}
             </label>
+            <p class="mb-2 text-xs leading-6 text-[var(--admin-muted)]">
+                برای انتشار محصول در سایت، تصویر اصلی و یک دسته‌بندی فعال الزامی است. پیش‌نویس را می‌توانید بدون تصویر ذخیره کنید.
+            </p>
 
             <input
                 id="image"
