@@ -2,6 +2,7 @@
 'categories' => collect(),
 'selectedCategory' => null,
 'mobile' => false,
+'filterableAttributes' => collect(),
 ])
 
 <div class="space-y-5">
@@ -238,6 +239,39 @@
 
     </section>
 
+
+    @if($filterableAttributes->isNotEmpty())
+    <section class="border-t border-[var(--livora-border)] pt-5">
+        <p class="text-[10px] uppercase tracking-[0.18em] text-[var(--livora-accent)]">SPECIFICATIONS</p>
+        <h3 class="mt-2 text-sm font-semibold">فیلتر بر اساس مشخصات</h3>
+        <div class="mt-4 space-y-4">
+            @foreach($filterableAttributes as $attribute)
+                <div>
+                    <label class="mb-2 block text-xs font-semibold text-[var(--livora-text)]" for="attribute-filter-{{ $attribute->id }}">{{ $attribute->label }} @if($attribute->unit) ({{ $attribute->unit }}) @endif</label>
+                    @if(in_array($attribute->type,['select','multiselect'],true))
+                        <select id="attribute-filter-{{ $attribute->id }}" name="attributes[{{ $attribute->id }}]" class="w-full rounded-xl border border-[var(--livora-border)] bg-[var(--livora-surface)] px-3 py-3 text-xs">
+                            <option value="">همه</option>
+                            @foreach($attribute->options as $option)
+                                <option value="{{ $option->id }}" @selected((string) request("attributes.{$attribute->id}") === (string) $option->id)>{{ $option->label }}</option>
+                            @endforeach
+                        </select>
+                    @elseif($attribute->type === 'number')
+                        <div class="grid grid-cols-2 gap-2">
+                            <input type="text" inputmode="decimal" name="attributes[{{ $attribute->id }}][min]" value="{{ request("attributes.{$attribute->id}.min") }}" placeholder="از" aria-label="{{ $attribute->label }} از" class="w-full rounded-xl border border-[var(--livora-border)] bg-[var(--livora-surface)] px-3 py-3 text-xs">
+                            <input type="text" inputmode="decimal" name="attributes[{{ $attribute->id }}][max]" value="{{ request("attributes.{$attribute->id}.max") }}" placeholder="تا" aria-label="{{ $attribute->label }} تا" class="w-full rounded-xl border border-[var(--livora-border)] bg-[var(--livora-surface)] px-3 py-3 text-xs">
+                        </div>
+                    @elseif($attribute->type === 'boolean')
+                        <select id="attribute-filter-{{ $attribute->id }}" name="attributes[{{ $attribute->id }}]" class="w-full rounded-xl border border-[var(--livora-border)] bg-[var(--livora-surface)] px-3 py-3 text-xs">
+                            <option value="">همه</option><option value="1" @selected(request("attributes.{$attribute->id}") === '1')>بله</option><option value="0" @selected(request("attributes.{$attribute->id}") === '0')>خیر</option>
+                        </select>
+                    @else
+                        <input id="attribute-filter-{{ $attribute->id }}" type="search" name="attributes[{{ $attribute->id }}]" value="{{ request("attributes.{$attribute->id}") }}" class="w-full rounded-xl border border-[var(--livora-border)] bg-[var(--livora-surface)] px-3 py-3 text-xs" placeholder="جستجو در مقدار">
+                    @endif
+                </div>
+            @endforeach
+        </div>
+    </section>
+    @endif
 
     {{-- =========================================================
          STATUS
