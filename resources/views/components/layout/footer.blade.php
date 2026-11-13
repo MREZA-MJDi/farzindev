@@ -46,7 +46,7 @@
                 @else
                     <a href="{{ route('login', ['intended' => '/account/orders']) }}">ورود و پیگیری سفارش</a>
                 @endauth
-                <a href="{{ route('terms') }}">قوانین و شرایط</a><a href="{{ route('privacy') }}">حریم خصوصی</a>
+                <a href="{{ route('shipping-returns') }}">ارسال و مرجوعی</a><a href="{{ route('warranty') }}">ضمانت و خدمات پس از فروش</a><a href="{{ route('payment-installments') }}">خرید اقساطی</a><a href="{{ route('faq') }}">پرسش‌های متداول</a><a href="{{ route('terms') }}">قوانین و شرایط</a><a href="{{ route('privacy') }}">حریم خصوصی</a>
             </nav>
             <div class="fz-store-footer__contact farzin-footer-editorial__contact">
                 <h2>ارتباط با {{ $brandName }}</h2>
