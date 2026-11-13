@@ -50,10 +50,10 @@ class CategoryController extends Controller
             abort(404);
         }
 
-        // Publication belongs to the category itself. Do not make its URL
-        // disappear merely because its products are still drafts or not added.
+        // Keep a manually opened category guide reachable; empty categories are
+        // excluded from public category indexes, homepage cards and shop filters.
         abort_unless(
-            Category::query()->visibleInStorefront()->whereKey($category->getKey())->exists(),
+            Category::query()->active()->whereKey($category->getKey())->exists(),
             404
         );
 
