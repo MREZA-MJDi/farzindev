@@ -117,7 +117,7 @@ class ProductSeeder extends Seeder
             $products[] = [
                 'category_id' => $hoods->id,
                 'name' => "{$name} {$width} سانتی‌متر — مدل H" . str_pad((string) $number, 2, '0', STR_PAD_LEFT),
-                'slug' => 'farzin-hood-preview-' . str_pad((string) $number, 2, '0', STR_PAD_LEFT),
+                'slug' => 'faraji-hood-sample-' . str_pad((string) $number, 2, '0', STR_PAD_LEFT),
                 'sku' => 'FZ-SEED-HOOD-' . str_pad((string) $number, 2, '0', STR_PAD_LEFT),
                 'short_description' => 'اطلاعات نمایشی برای پیش‌نمایش فروشگاه؛ مشخصات نهایی باید با مدل رسمی تطبیق داده شود.',
                 'description' => 'این رکورد برای بررسی چیدمان، تصاویر و فرایند مدیریت کاتالوگ ساخته شده است. پیش از انتشار نهایی، مشخصات رسمی، ابعاد، امکانات و قیمت تأییدشده شرکت را در پنل مدیریت جایگزین کنید.',
@@ -128,8 +128,8 @@ class ProductSeeder extends Seeder
                 'is_featured' => $number <= 8,
                 'is_new' => $number >= 18 && $number <= 25,
                 'show_in_home_gallery' => true,
-                'meta_title' => "{$name} فرزین — مدل H" . str_pad((string) $number, 2, '0', STR_PAD_LEFT),
-                'meta_description' => 'پیش‌نمایش رکورد کاتالوگ هود فرزین؛ مشخصات نهایی و قیمت باید تأیید شوند.',
+                'meta_title' => "{$name} | فرجی‌هوم — مدل H" . str_pad((string) $number, 2, '0', STR_PAD_LEFT),
+                'meta_description' => 'مدل هود آشپزخانه با مشخصات فنی و اطلاعات قیمت ثبت‌شده در صفحه محصول.',
             ];
         }
 
@@ -138,9 +138,9 @@ class ProductSeeder extends Seeder
             $products[] = [
                 'category_id' => $sinks->id,
                 'name' => "{$name} — مدل S" . str_pad((string) $number, 2, '0', STR_PAD_LEFT),
-                'slug' => 'farzin-sink-preview-' . str_pad((string) $number, 2, '0', STR_PAD_LEFT),
+                'slug' => 'faraji-sink-sample-' . str_pad((string) $number, 2, '0', STR_PAD_LEFT),
                 'sku' => 'FZ-SEED-SINK-' . str_pad((string) $number, 2, '0', STR_PAD_LEFT),
-                'short_description' => "پیش‌نمایش کاتالوگ سینک فرزین، سبک {$style}؛ اطلاعات رسمی هنوز باید تأیید شود.",
+                'short_description' => "سینک ظرفشویی با طراحی {$style}؛ ابعاد و ویژگی‌های این مدل را در مشخصات محصول ببینید.",
                 'description' => 'این رکورد جهت پیش‌نمایش رابط فروشگاه و پنل مدیریت ساخته شده است. پیش از انتشار نهایی، جنس، ابعاد، تعداد لگن، روش نصب، اقلام همراه و قیمت رسمی را در پنل جایگزین کنید.',
                 'price' => $price,
                 'compare_at_price' => null,
@@ -149,8 +149,8 @@ class ProductSeeder extends Seeder
                 'is_featured' => $number <= 8,
                 'is_new' => $number >= 18 && $number <= 25,
                 'show_in_home_gallery' => true,
-                'meta_title' => "{$name} فرزین — مدل S" . str_pad((string) $number, 2, '0', STR_PAD_LEFT),
-                'meta_description' => 'پیش‌نمایش رکورد کاتالوگ سینک فرزین؛ مشخصات نهایی و قیمت باید تأیید شوند.',
+                'meta_title' => "{$name} | فرجی‌هوم — مدل S" . str_pad((string) $number, 2, '0', STR_PAD_LEFT),
+                'meta_description' => 'مدل سینک ظرفشویی با مشخصات فنی و اطلاعات قیمت ثبت‌شده در صفحه محصول.',
             ];
         }
 
