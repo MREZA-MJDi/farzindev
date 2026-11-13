@@ -90,7 +90,7 @@
 
         <strong class="fz-product-card__title">{{ $product->name }}</strong>
         @if($specifications->isNotEmpty())
-            <span class="fz-product-card__specifications" aria-label="مشخصات کلیدی محصول">
+            <span class="fz-home-product-card__specs" aria-label="مشخصات کلیدی محصول">
                 @foreach($specifications as $specification)
                     <span><b>{{ $specification['label'] }}</b> {{ $specification['value'] }}</span>
                 @endforeach
