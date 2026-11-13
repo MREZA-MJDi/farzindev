@@ -7,4 +7,5 @@ class ProductAttributeValue extends Model {
  protected function casts(): array { return ['value_number'=>'decimal:3','value_boolean'=>'boolean']; }
  public function attribute(): BelongsTo { return $this->belongsTo(ProductAttribute::class,'attribute_id'); }
  public function option(): BelongsTo { return $this->belongsTo(AttributeOption::class,'option_id'); }
+ public function product(): BelongsTo { return $this->belongsTo(Product::class); }
 }
