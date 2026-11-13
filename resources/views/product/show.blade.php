@@ -373,13 +373,8 @@
                                 @endforeach
                             </dl>
                         @elseif($tab === 'description')
-                            @php
-                                $descriptionText = $safeDescription;
-                                $descriptionPreview = \Illuminate\Support\Str::limit($descriptionText, 420);
-                                $hasMoreDescription = mb_strlen($descriptionText) > 420;
-                            @endphp
                             <div class="border-t border-[var(--livora-border)] py-4 text-sm leading-8 text-[var(--livora-stone)]" x-data="{ expanded: false }">
-                                <div x-show="!expanded">{{ nl2br(e(\\Illuminate\\Support\\Str::limit((string) $safeDescription, 420))) }}</div>
+                                <div x-show="!expanded">{{ nl2br(e(\Illuminate\Support\Str::limit((string) $safeDescription, 420))) }}</div>
                                 @if(mb_strlen((string) $safeDescription) > 420)
                                     <div x-show="expanded" x-cloak>{{ nl2br(e($safeDescription)) }}</div>
                                     <button type="button" class="mt-3 inline-flex min-h-11 items-center rounded-lg font-semibold text-[var(--livora-accent)] underline underline-offset-4" @click="expanded = !expanded" :aria-expanded="expanded.toString()">
