@@ -68,7 +68,7 @@ class CategorySeoMetadataTest extends TestCase
             ->assertSee('farzin-category-detail__description', false);
     }
 
-    public function test_active_non_gas_category_stays_hidden_until_it_has_an_active_product(): void
+    public function test_active_non_gas_category_remains_public_while_homepage_only_features_categories_with_products(): void
     {
         $admin = User::factory()->create(['role' => 'admin']);
 
@@ -76,7 +76,7 @@ class CategorySeoMetadataTest extends TestCase
             ->post(route('admin.categories.store'), [
                 'name' => 'دسته فعال بدون محصول',
                 'slug' => 'active-empty-category',
-                'description' => 'این دسته تا زمان ثبت محصول فعال در صفحات عمومی نمایش داده نمی‌شود.',
+                'description' => 'این دسته پیش از انتشار اولین محصول نیز صفحه راهنمای عمومی دارد.',
                 'is_active' => '1',
                 'sort_order' => '4',
             ])
@@ -86,13 +86,18 @@ class CategorySeoMetadataTest extends TestCase
         $category = Category::query()->where('slug', 'active-empty-category')->firstOrFail();
         $this->app['env'] = 'production';
 
-        $this->get(route('home'))->assertOk()->assertDontSee('active-empty-category');
-        $this->get(route('categories.index'))->assertOk()->assertDontSee('active-empty-category');
-        $this->get(route('categories.show', $category->slug))->assertNotFound();
+        $this->get(route('home'))
+            ->assertOk()
+            ->assertDontSee('href="' . route('categories.show', 'active-empty-category') . '"', false);
 
-        $this->createVisibleProduct($category, 'active-empty-category-first-product');
-        $this->get(route('categories.index'))->assertOk()->assertSee('دسته فعال بدون محصول');
-        $this->get(route('categories.show', $category->slug))->assertOk()->assertSee('دسته فعال بدون محصول');
+        $this->get(route('categories.index'))
+            ->assertOk()
+            ->assertSee('دسته فعال بدون محصول');
+
+        $this->get(route('categories.show', $category->slug))
+            ->assertOk()
+            ->assertSee('دسته فعال بدون محصول')
+            ->assertSee('محصولی در این دسته پیدا نشد');
     }
 
     public function test_homepage_category_card_uses_the_slug_route_parameter(): void
