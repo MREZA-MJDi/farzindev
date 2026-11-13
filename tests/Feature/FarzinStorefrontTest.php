@@ -1269,7 +1269,7 @@ class FarzinStorefrontTest extends TestCase
         $this->get(route('categories.index'))
             ->assertOk()
             ->assertSee('هود آشپزخانه')
-            ->assertDontSee('دسته‌بندی فعال بدون محصول')
+            ->assertSee('دسته‌بندی فعال بدون محصول')
             ->assertDontSee('دسته‌بندی غیرفعال دمو');
     }
 
