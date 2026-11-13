@@ -100,11 +100,6 @@ class HomeController extends Controller
                         ->limit(5);
                 },
             ])
-            ->withCount([
-                'products' => function (Builder $products) use ($applyPublicProductRules): void {
-                    $applyPublicProductRules($products);
-                },
-            ])
             ->orderBy('sort_order')
             ->orderBy('name')
             ->get();
