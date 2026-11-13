@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Category;
+use App\Models\AttributeOption;
 use App\Models\SeoRedirect;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
@@ -92,7 +93,7 @@ class CategoryController extends Controller
 
                 if (in_array($attribute->type, ['select', 'multiselect'], true)) {
                     $ids = collect((array) $selectedValue)->filter(fn ($id) => is_scalar($id) && is_numeric($id))->map(fn ($id) => (int) $id)->all();
-                    $validIds = $attribute->options->whereIn('id', $ids)->pluck('id')->all();
+                    $validIds = AttributeOption::query()->where('attribute_id', $attribute->id)->whereIn('id', $ids)->pluck('id')->all();
                     if ($validIds !== []) $productQuery->whereHas('attributeValues', fn ($values) => $values->where('attribute_id', $attribute->id)->whereIn('option_id', $validIds));
                     continue;
                 }
