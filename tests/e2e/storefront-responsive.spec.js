@@ -983,18 +983,20 @@ test('category index cards keep their copy readable above the image treatment', 
     await expect(card).toBeVisible();
     const contrast = await card.evaluate((element) => {
         const title = element.querySelector('.farzin-category-card__content h3');
-        const description = element.querySelector('.farzin-category-card__content p:not(:first-child)');
+        const eyebrow = element.querySelector('.farzin-category-card__content p');
         const shade = element.querySelector('.farzin-category-card__shade');
 
         return {
             title: getComputedStyle(title).color,
-            description: description ? getComputedStyle(description).color : null,
+            eyebrow: eyebrow ? getComputedStyle(eyebrow).color : null,
+            hasProductCount: Boolean(element.querySelector('.farzin-category-card__count')),
             shade: getComputedStyle(shade).backgroundImage,
         };
     });
 
     expect(contrast.title, 'category names must be white over the dark lower image overlay').toBe('rgb(255, 255, 255)');
-    expect(contrast.description, 'category counts must stay legible on the same overlay').toBe('rgba(255, 255, 255, 0.82)');
+    expect(contrast.eyebrow, 'category eyebrow must remain legible on the same overlay').toBe('rgba(255, 255, 255, 0.6)');
+    expect(contrast.hasProductCount, 'category cards must not show product counts').toBe(false);
     expect(contrast.shade, 'category cards must include a readable dark image gradient').toContain('linear-gradient');
 });
 
