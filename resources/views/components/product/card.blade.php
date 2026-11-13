@@ -68,7 +68,7 @@
                 $displayValue = trim((string) $value);
                 // Width values entered without a unit are shown explicitly in centimetres.
                 if ($key === 'width' && is_numeric($displayValue)) {
-                    $displayValue = \\App\\Helpers\\PersianNumberHelper::format($displayValue) . ' سانتی‌متر';
+                    $displayValue = \App\Helpers\PersianNumberHelper::format($displayValue) . ' سانتی‌متر';
                 }
                 return ['label' => $specificationLabels[$key] ?? (string) $key, 'value' => $displayValue];
             })
