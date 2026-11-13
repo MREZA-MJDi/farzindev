@@ -122,6 +122,20 @@ class ShopFilterRequest extends FormRequest
 
     protected function prepareForValidation(): void
     {
+        $attributes = $this->input('attributes', []);
+        if (is_array($attributes)) {
+            foreach ($attributes as $key => $value) {
+                if (is_array($value)) {
+                    foreach (['min', 'max'] as $bound) {
+                        if (isset($value[$bound])) $value[$bound] = $this->digits((string) $value[$bound]);
+                    }
+                    $attributes[$key] = $value;
+                } elseif (is_scalar($value)) {
+                    $attributes[$key] = $this->digits((string) $value);
+                }
+            }
+        }
+
         $this->merge([
             /*
             |--------------------------------------------------------------------------
@@ -149,10 +163,6 @@ class ShopFilterRequest extends FormRequest
             | Price
             |--------------------------------------------------------------------------
             */
-            'min_price' => $this->filled('min_price')
-                ? $this->input('min_price')
-                : null,
-
             'max_price' => $this->filled('max_price')
                 ? $this->digits((string) $this->input('max_price'))
                 : null,
@@ -169,6 +179,7 @@ class ShopFilterRequest extends FormRequest
             'featured' => $this->boolean('featured'),
             'new' => $this->boolean('new'),
             'installment' => $this->boolean('installment'),
+            'attributes' => $attributes,
         ]);
     }
 }
