@@ -77,8 +77,10 @@ class CategoryController extends Controller
                 if (! $attribute || $selectedValue === '' || $selectedValue === null) continue;
 
                 if ($attribute->type === 'number' && is_array($selectedValue)) {
-                    $minimum = $this->englishDigits((string) ($selectedValue['min'] ?? ''));
-                    $maximum = $this->englishDigits((string) ($selectedValue['max'] ?? ''));
+                    $minimumRaw = $selectedValue['min'] ?? '';
+                    $maximumRaw = $selectedValue['max'] ?? '';
+                    $minimum = is_scalar($minimumRaw) ? $this->englishDigits((string) $minimumRaw) : '';
+                    $maximum = is_scalar($maximumRaw) ? $this->englishDigits((string) $maximumRaw) : '';
                     if ((is_numeric($minimum) || is_numeric($maximum)) && (! is_numeric($minimum) || ! is_numeric($maximum) || (float) $minimum <= (float) $maximum)) {
                         $productQuery->whereHas('attributeValues', function ($values) use ($attribute, $minimum, $maximum): void {
                             $values->where('attribute_id', $attribute->id);
@@ -90,7 +92,7 @@ class CategoryController extends Controller
                 }
 
                 if (in_array($attribute->type, ['select', 'multiselect'], true)) {
-                    $ids = array_map('intval', (array) $selectedValue);
+                    $ids = collect((array) $selectedValue)->filter(fn ($id) => is_scalar($id) && is_numeric($id))->map(fn ($id) => (int) $id)->all();
                     $validIds = $attribute->options->whereIn('id', $ids)->pluck('id')->all();
                     if ($validIds !== []) $productQuery->whereHas('attributeValues', fn ($values) => $values->where('attribute_id', $attribute->id)->whereIn('option_id', $validIds));
                     continue;
