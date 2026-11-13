@@ -21,6 +21,8 @@
             </p>
         </div>
 
+        <a href="{{ route('admin.product-attributes.index') }}" class="admin-btn admin-btn-secondary">مدیریت ویژگی‌های فنی</a>
+
         <a
             href="{{ route('admin.categories.create') }}"
             class="admin-btn admin-btn-primary"
