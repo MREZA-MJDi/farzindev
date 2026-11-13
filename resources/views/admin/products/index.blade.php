@@ -177,7 +177,7 @@
                                         {{ $product->short_description ?: 'بدون توضیح کوتاه' }}
                                     </p>
                                     <p class="mt-1 text-[10px] {{ $completedAttributes === $requiredAttributes->count() ? 'text-emerald-700' : 'text-amber-700' }}">
-                                        {{ $requiredAttributes->count() ? 'تکمیل مشخصات الزامی: ' . \\App\\Helpers\\PersianNumberHelper::format($completedAttributes) . ' از ' . \\App\\Helpers\\PersianNumberHelper::format($requiredAttributes->count()) : 'ویژگی اجباری تعریف نشده' }}
+                                        {{ $requiredAttributes->count() ? 'تکمیل مشخصات الزامی: ' . \App\Helpers\PersianNumberHelper::format($completedAttributes) . ' از ' . \App\Helpers\PersianNumberHelper::format($requiredAttributes->count()) : 'ویژگی اجباری تعریف نشده' }}
                                     </p>
                                 </div>
 
