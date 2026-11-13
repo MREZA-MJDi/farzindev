@@ -13,6 +13,5 @@
     </span>
     <span class="fz-home-round-category__body">
         <strong>{{ $category->name }}</strong>
-        <small>{{ \App\Helpers\PersianNumberHelper::format($category->products_count) }} محصول</small>
     </span>
 </a>
