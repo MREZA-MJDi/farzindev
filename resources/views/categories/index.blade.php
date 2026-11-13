@@ -68,7 +68,7 @@
             <div class="py-12 sm:py-16">
                 <header class="mb-8 flex flex-col gap-4 border-b border-[var(--livora-border)] pb-6 sm:flex-row sm:items-end sm:justify-between">
                     <div>
-                        <p class="text-xs font-bold text-[var(--livora-accent)]">کاتالوگ فرجی‌هوم</p>
+                        <p class="text-xs font-bold text-[var(--livora-accent)]">دسته‌بندی‌های فرجی‌هوم</p>
                         <h2 class="mt-2 text-2xl font-black tracking-tight text-[var(--livora-ink)] sm:text-3xl">محصولات را بر اساس دسته ببینید</h2>
                         <p class="mt-3 max-w-2xl text-sm leading-8 text-[var(--livora-stone)]">وارد دسته موردنظرتان شوید تا توضیحات کاربردی، محصولات و مشخصات مدل‌ها را یک‌جا بررسی کنید.</p>
                     </div>
@@ -86,7 +86,6 @@
                                 :image-srcset="$category->image_srcset"
                                 :motion-media="$category->hoverMedia"
                                 :href="route('categories.show', $category->slug)"
-                                :count="$category->products_count"
                             />
                         @endforeach
                     </div>
@@ -96,7 +95,7 @@
                     @endif
                 @else
                     <div class="border border-[var(--livora-border)] bg-white px-6 py-20 text-center">
-                        <p class="text-xs font-bold text-[var(--livora-accent)]">کاتالوگ در حال تکمیل است</p>
+                        <p class="text-xs font-bold text-[var(--livora-accent)]">فهرست دسته‌بندی‌ها در حال تکمیل است</p>
                         <h2 class="mt-3 text-2xl font-black text-[var(--livora-ink)]">هنوز دسته فعالی برای نمایش وجود ندارد.</h2>
                         <p class="mx-auto mt-3 max-w-lg text-sm leading-8 text-[var(--livora-stone)]">برای دریافت اطلاعات محصولات موجود یا راهنمایی درباره انتخاب، با تیم فرجی‌هوم در ارتباط باشید.</p>
                         <a href="{{ route('contact') }}" class="mt-7 inline-flex min-h-12 items-center justify-center bg-[var(--livora-ink)] px-6 py-3 text-sm font-bold text-white transition hover:bg-[var(--livora-accent)]">ارتباط با ما</a>
