@@ -5,7 +5,7 @@ use App\Models\Product;
 use App\Models\ProductAttribute;
 use App\Models\ProductAttributeValue;
 class ProductAttributeManager {
- public function validateValues(int $categoryId,array $values): array {
+ public function validateValues(int $categoryId,array $values,bool $requireRequired=true): array {
   $attributes=ProductAttribute::query()->whereHas('categories',fn($q)=>$q->where('categories.id',$categoryId))->with('options')->get()->keyBy('id');
   $errors=[];
   foreach($values as $id=>$input){
@@ -16,7 +16,7 @@ class ProductAttributeManager {
    if($a->type==='multiselect'){ $ids=array_filter((array)($input['option_ids']??[]),fn($v)=>$v!==''&&$v!==null); if($a->options->whereIn('id',$ids)->count()!==count($ids)) $errors["attribute_values.$id.option_ids"]="یکی از گزینه‌های «{$a->label}» معتبر نیست."; }
    if($a->type==='boolean' && filled($value) && !in_array((string)$value,['0','1','true','false'],true)) $errors["attribute_values.$id.value"]="مقدار «{$a->label}» معتبر نیست.";
   }
-  foreach($attributes as $a){ if(!$a->pivot->is_required) continue; $input=$values[$a->id]??[]; $input=is_array($input)?$input:['value'=>$input];
+  foreach($attributes as $a){ if(!$requireRequired || !$a->pivot->is_required) continue; $input=$values[$a->id]??[]; $input=is_array($input)?$input:['value'=>$input];
    $has=match($a->type){'select'=>filled($input['option_id']??null),'multiselect'=>count(array_filter((array)($input['option_ids']??[])))>0,default=>array_key_exists('value',$input)&&$input['value']!==''&&$input['value']!==null};
    if(!$has) $errors["attribute_values.{$a->id}.value"]="تکمیل ویژگی «{$a->label}» الزامی است.";
   }
