@@ -18,7 +18,7 @@
             <div class="min-w-0">
 
                 <p class="truncate text-sm font-bold tracking-[0.18em] text-[var(--admin-text)]">
-                    {{ $storefrontBrandName ?? config('app.name', 'فرزین') }}
+                    {{ $storefrontBrandName ?? config('app.name', 'فرجی‌هوم') }}
                 </p>
 
                 <p class="mt-0.5 text-[9px] uppercase tracking-[0.16em] text-[var(--admin-muted)]">
