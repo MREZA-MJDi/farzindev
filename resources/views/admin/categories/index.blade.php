@@ -152,6 +152,8 @@
                                     </svg>
                                 </a>
 
+                                <a href="{{ route('admin.categories.attributes.edit', $category) }}" class="admin-btn admin-btn-ghost px-3" title="ویژگی‌های فنی">ویژگی‌ها</a>
+
                                 <a
                                     href="{{ route('admin.categories.edit', $category) }}"
                                     class="admin-btn admin-btn-secondary px-3"
