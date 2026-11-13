@@ -502,7 +502,7 @@ class PageContentController extends Controller
                     if ($newHeroImagePath !== null) {
                         $images->delete($newHeroImagePath);
                     }
-                    if ($newTechnologyImagePath !== null) {
+                    if ($newTechnologyImagePath !== null && ! $technologyImageIsMediaLibraryAsset) {
                         $images->delete($newTechnologyImagePath);
                     }
                     foreach ($newBannerImagePaths as $storedBannerPath) {
@@ -577,7 +577,7 @@ class PageContentController extends Controller
             if ($newHeroImagePath !== null) {
                 $images->delete($newHeroImagePath);
             }
-            if ($newTechnologyImagePath !== null) {
+            if ($newTechnologyImagePath !== null && ! $technologyImageIsMediaLibraryAsset) {
                 $images->delete($newTechnologyImagePath);
             }
             foreach ($newBannerImagePaths as $storedBannerPath) {
@@ -612,7 +612,6 @@ class PageContentController extends Controller
 
         if (
             $newTechnologyImagePath !== null
-            && ! $technologyImageIsMediaLibraryAsset
             && $previousTechnologyImagePath !== ''
             && $previousTechnologyImagePath !== $newTechnologyImagePath
             && ! Media::query()->where('disk', 'public')->where('path', $previousTechnologyImagePath)->exists()
