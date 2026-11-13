@@ -221,22 +221,9 @@
                     class="text-xs font-semibold text-[var(--livora-accent)] transition hover:text-[var(--livora-accent-dark)]"
                 >تماس با ما</a>
             </div>
-            @if(filled(data_get($storefrontContact, 'phone')) || filled(data_get($storefrontContact, 'whatsapp')) || filled(data_get($storefrontContact, 'instagram_url')) || filled(data_get($storefrontContact, 'telegram_url')))
-                <div class="mt-3 flex flex-wrap items-center justify-center gap-x-4 gap-y-2 border-t border-[var(--livora-border)] pt-3 text-[11px]">
-                    @if(filled(data_get($storefrontContact, 'phone')))
-                        <a href="tel:{{ preg_replace('/[^0-9+]/', '', (string) data_get($storefrontContact, 'phone')) }}" dir="ltr" class="font-semibold text-[var(--livora-text)]">{{ data_get($storefrontContact, 'phone') }}</a>
-                    @endif
-                    @if(filled(data_get($storefrontContact, 'whatsapp')))
-                        <a href="https://wa.me/{{ preg_replace('/\D+/', '', (string) data_get($storefrontContact, 'whatsapp')) }}" target="_blank" rel="noopener noreferrer" class="text-[var(--livora-text)]">واتساپ</a>
-                    @endif
-                    @if(filled(data_get($storefrontContact, 'instagram_url')))
-                        <a href="{{ data_get($storefrontContact, 'instagram_url') }}" target="_blank" rel="noopener noreferrer" class="text-[var(--livora-text)]">اینستاگرام</a>
-                    @endif
-                    @if(filled(data_get($storefrontContact, 'telegram_url')))
-                        <a href="{{ data_get($storefrontContact, 'telegram_url') }}" target="_blank" rel="noopener noreferrer" class="text-[var(--livora-text)]">تلگرام</a>
-                    @endif
-                </div>
-            @endif
+            <div class="mt-3 border-t border-[var(--livora-border)] pt-3">
+                <x-layout.social-links :contact="$storefrontContact" :brand-name="$brandName" />
+            </div>
         </div>
     </section>
 </div>
