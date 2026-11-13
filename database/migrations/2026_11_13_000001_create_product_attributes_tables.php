@@ -1,0 +1,13 @@
+<?php
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+return new class extends Migration {
+ public function up(): void {
+  Schema::create('attributes', function (Blueprint $table): void { $table->id(); $table->string('key',100)->unique(); $table->string('label',160); $table->string('type',20); $table->string('unit',40)->nullable(); $table->string('group',120)->nullable(); $table->text('help_text')->nullable(); $table->timestamps(); $table->index('group'); });
+  Schema::create('attribute_options', function (Blueprint $table): void { $table->id(); $table->foreignId('attribute_id')->constrained('attributes')->cascadeOnDelete(); $table->string('label',160); $table->string('value',160); $table->unsignedInteger('sort_order')->default(0); $table->timestamps(); $table->unique(['attribute_id','value']); $table->index(['attribute_id','sort_order']); });
+  Schema::create('category_attribute', function (Blueprint $table): void { $table->id(); $table->foreignId('category_id')->constrained()->cascadeOnDelete(); $table->foreignId('attribute_id')->constrained('attributes')->cascadeOnDelete(); $table->unsignedInteger('sort_order')->default(0); $table->boolean('is_required')->default(false); $table->boolean('is_recommended')->default(false); $table->boolean('is_filterable')->default(false); $table->boolean('is_key_spec')->default(false); $table->timestamps(); $table->unique(['category_id','attribute_id']); $table->index(['category_id','sort_order']); $table->index(['category_id','is_filterable']); });
+  Schema::create('product_attribute_values', function (Blueprint $table): void { $table->id(); $table->foreignId('product_id')->constrained()->cascadeOnDelete(); $table->foreignId('attribute_id')->constrained('attributes')->cascadeOnDelete(); $table->foreignId('option_id')->nullable()->constrained('attribute_options')->cascadeOnDelete(); $table->text('value_text')->nullable(); $table->decimal('value_number',12,3)->nullable(); $table->boolean('value_boolean')->nullable(); $table->timestamps(); $table->unique(['product_id','attribute_id','option_id'],'product_attribute_option_unique'); $table->index(['attribute_id','value_number']); $table->index(['attribute_id','option_id']); $table->index(['product_id','attribute_id']); });
+ }
+ public function down(): void { Schema::dropIfExists('product_attribute_values'); Schema::dropIfExists('category_attribute'); Schema::dropIfExists('attribute_options'); Schema::dropIfExists('attributes'); }
+};
