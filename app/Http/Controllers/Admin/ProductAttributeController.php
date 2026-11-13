@@ -66,6 +66,7 @@ class ProductAttributeController extends Controller
    return;
   }
   if($labels->isEmpty()) throw ValidationException::withMessages(['options'=>'برای ویژگی انتخابی حداقل یک گزینه تعریف کنید.']);
+  if($labels->count()>100 || $labels->contains(fn($label)=>mb_strlen($label)>160)) throw ValidationException::withMessages(['options'=>'حداکثر ۱۰۰ گزینه با طول حداکثر ۱۶۰ نویسه قابل ثبت است.']);
   $existing=$attribute->options()->get();
   foreach($existing as $option) {
    if(!$labels->contains($option->label) && $option->values()->exists()) {
