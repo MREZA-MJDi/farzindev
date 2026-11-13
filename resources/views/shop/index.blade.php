@@ -82,7 +82,6 @@
                             @foreach($categories as $category)
                                 <a href="{{ route('shop.index', ['category' => $category->slug]) }}" @class(['inline-flex min-h-10 items-center border px-4 py-2 text-xs font-semibold transition', 'border-[var(--livora-accent)] bg-[var(--livora-accent)] text-white' => request('category') === $category->slug, 'border-[var(--livora-border)] bg-[var(--livora-cream)] text-[var(--livora-text)] hover:border-[var(--livora-accent)] hover:text-[var(--livora-accent)]' => request('category') !== $category->slug])>
                                     {{ $category->name }}
-                                    <span class="mr-2 text-[10px] opacity-65">{{ \App\Helpers\PersianNumberHelper::format($category->products_count) }}</span>
                                 </a>
                             @endforeach
                         </div>
