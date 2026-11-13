@@ -68,7 +68,7 @@ class ProductAttributeController extends Controller
   if($labels->isEmpty()) throw ValidationException::withMessages(['options'=>'برای ویژگی انتخابی حداقل یک گزینه تعریف کنید.']);
   $existing=$attribute->options()->get();
   foreach($existing as $option) {
-   if(!$labels->contains($option->label) && $option->attribute->values()->where('option_id',$option->id)->exists()) {
+   if(!$labels->contains($option->label) && $option->values()->exists()) {
     throw ValidationException::withMessages(['options'=>'گزینه «'.$option->label.'» در محصولات استفاده شده و قابل حذف نیست.']);
    }
   }
@@ -77,6 +77,6 @@ class ProductAttributeController extends Controller
    AttributeOption::updateOrCreate(['attribute_id'=>$attribute->id,'value'=>$value],['label'=>$label,'sort_order'=>$index]);
   }
   $keep=$labels->map(fn($label)=>'opt-'.substr(sha1(mb_strtolower($label)),0,16))->all();
-  $attribute->options()->whereNotIn('value',$keep)->whereDoesntHave('attribute.values')->delete();
+  $attribute->options()->whereNotIn('value',$keep)->whereDoesntHave('values')->delete();
  }
 }
