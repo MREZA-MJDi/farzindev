@@ -114,7 +114,7 @@ class SitemapController extends Controller
     private function indexableCategories(): Builder
     {
         return Category::query()
-            ->active()
+            ->visibleInStorefront()
             ->whereIn('seo_robots', ['inherit', 'index,follow'])
             ->where(function (Builder $query): void {
                 $query->whereNull('canonical_url')
