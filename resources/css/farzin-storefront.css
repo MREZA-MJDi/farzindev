@@ -6051,3 +6051,73 @@ body.home-body,
     .storefront-content .farzin-category-product-grid { gap:.65rem; }
     .storefront-content .farzin-product-gallery .product-gallery-stage { aspect-ratio:4/3!important; }
 }
+
+
+/* Shop catalogue layout: independent sticky sidebar and viewport-safe mobile drawer. */
+.storefront-content .farzin-shop-catalog > .livora-container > .grid { align-items: start; }
+.storefront-content .farzin-shop-catalog aside { align-self: start; min-width: 0; }
+.storefront-content .farzin-shop-catalog aside > .space-y-4 { min-width: 0; }
+.storefront-content .farzin-shop-catalog aside > .space-y-4 > :first-child {
+    position: sticky; top: 6rem; max-height: calc(100vh - 7.5rem);
+    max-height: calc(100dvh - 7.5rem); overflow-y: auto;
+    overscroll-behavior: contain; scrollbar-width: thin;
+}
+.farzin-filter-drawer[x-cloak] { display: none !important; }
+.farzin-filter-drawer { position: fixed; inset: 0; z-index: 160; }
+.farzin-filter-drawer__panel { max-height: 100dvh; overscroll-behavior: contain; }
+.farzin-filter-drawer__scroll { scrollbar-width: thin; }
+@media (min-width: 1024px) { .farzin-filter-drawer { display: none !important; } }
+@media (max-width: 1023px) {
+    .storefront-content .farzin-shop-catalog aside { display: none !important; }
+    .farzin-filter-drawer { display: block; }
+}
+
+/* Equal-height catalogue cards: consistent media, specification slot and bottom actions. */
+.storefront-content .farzin-product-card--catalog {
+    display: flex; height: 100%; min-width: 0; flex-direction: column;
+}
+.storefront-content .farzin-product-card--catalog .farzin-product-card__image-link {
+    aspect-ratio: 4 / 3; background: #F7F8F9;
+}
+.storefront-content .farzin-product-card--catalog .farzin-product-card__image {
+    object-fit: contain; padding: .55rem !important;
+}
+.storefront-content .farzin-product-card--catalog .farzin-product-card__catalog-specs {
+    min-height: 3.65rem; margin-top: .35rem;
+}
+.storefront-content .farzin-product-card--catalog .farzin-product-card__specifications {
+    display: grid; gap: .2rem; margin: 0; padding: 0; list-style: none;
+}
+.storefront-content .farzin-product-card--catalog .farzin-product-card__specifications li {
+    display: flex; min-width: 0; align-items: baseline; justify-content: space-between;
+    gap: .5rem; font-size: .66rem; line-height: 1.55;
+}
+.storefront-content .farzin-product-card--catalog .farzin-product-card__specifications li span {
+    flex: 0 0 auto; color: #71839A;
+}
+.storefront-content .farzin-product-card--catalog .farzin-product-card__specifications li strong {
+    min-width: 0; overflow: hidden; color: #173452; font-weight: 700;
+    text-overflow: ellipsis; white-space: nowrap;
+}
+.storefront-content .farzin-product-card--catalog .farzin-product-card__price-row {
+    min-height: 2.6rem; margin-top: .4rem;
+}
+.storefront-content .farzin-product-card--catalog .farzin-product-card__discount-percent {
+    display: inline-flex; align-items: center; padding: .18rem .38rem;
+    border-radius: 5px; color: #7B0D1A; background: #F8EDEF;
+    font-size: .62rem; font-weight: 800; white-space: nowrap;
+}
+.storefront-content .farzin-product-card--catalog .farzin-product-card__price-old {
+    font-size: .68rem; white-space: nowrap;
+}
+.storefront-content .farzin-product-card--catalog .farzin-product-card__cta { min-height: 44px; }
+.storefront-content .farzin-product-card--catalog .farzin-product-card__availability.is-unavailable { display: none; }
+.storefront-content .farzin-product-card--catalog .farzin-installment-seal {
+    inset-inline-start: .65rem; inset-inline-end: auto;
+}
+@media (max-width: 767px) {
+    .storefront-content .farzin-product-card--catalog .farzin-product-card__content { padding: .7rem; }
+    .storefront-content .farzin-product-card--catalog .farzin-product-card__title { min-height: 2.9em; max-height: 2.9em; }
+    .storefront-content .farzin-product-card--catalog .farzin-product-card__catalog-specs { min-height: 3.4rem; }
+    .storefront-content .farzin-product-card--catalog .farzin-product-card__cta { min-height: 44px; }
+}
