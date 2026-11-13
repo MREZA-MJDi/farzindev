@@ -225,6 +225,9 @@
                                     @case('installment')
                                         <svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 10h18M7 15h4"/></svg>
                                         @break
+                                    @case('returns')
+                                        <svg viewBox="0 0 24 24"><path d="M9 14 4 9l5-5"/><path d="M4 9h9a7 7 0 0 1 0 14h-2"/><path d="M15 17h5v5"/></svg>
+                                        @break
                                 @endswitch
                             </span>
                             <div class="fz-home-benefit__copy">
