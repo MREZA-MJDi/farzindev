@@ -32,7 +32,8 @@ class ProductController extends Controller
             ->withCount('variants')
             ->withSum('variants as active_variants_stock', 'stock')
             ->with([
-                'category',
+                'category.attributes',
+                'attributeValues',
                 'images' => fn ($query) => $query
                     ->orderByDesc('is_primary')
                     ->orderBy('sort_order')
