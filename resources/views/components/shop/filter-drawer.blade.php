@@ -17,7 +17,7 @@
     x-transition:leave="transition ease-in duration-200"
     x-transition:leave-start="opacity-100"
     x-transition:leave-end="opacity-0"
-    class="farzin-filter-drawer fixed inset-0 z-[150] lg:hidden" data-farzin-filter-drawer
+    class="farzin-filter-drawer fixed inset-0 z-[160] lg:hidden" data-farzin-filter-drawer
 >
 
     {{-- =========================================================
@@ -52,7 +52,7 @@
         ====================================================== --}}
 
         <div
-            class="flex h-[76px] shrink-0 items-center justify-between border-b border-[var(--livora-border)] bg-[var(--livora-white)] px-5"
+            class="flex min-h-[68px] shrink-0 items-center justify-between border-b border-[var(--livora-border)] bg-[var(--livora-white)] px-4"
         >
 
             <div>
@@ -109,7 +109,7 @@
                  SCROLL AREA
             ================================================== --}}
 
-            <div class="farzin-filter-drawer__scroll min-h-0 flex-1 overflow-y-auto overscroll-contain px-5 py-6">
+            <div class="farzin-filter-drawer__scroll min-h-0 flex-1 overflow-y-auto overscroll-contain px-4 py-4">
 
                 <x-shop.filters
                     mobile
@@ -126,7 +126,7 @@
             ================================================== --}}
 
             <div
-                class="shrink-0 border-t border-[var(--livora-border)] bg-[var(--livora-white)] p-5"
+                class="shrink-0 border-t border-[var(--livora-border)] bg-[var(--livora-white)] p-4"
             >
 
                 <div class="grid grid-cols-2 gap-3">
