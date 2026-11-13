@@ -88,7 +88,7 @@ class ShopController extends Controller
             }
 
             if (in_array($attribute->type, ['select', 'multiselect'], true)) {
-                $optionIds = array_map('intval', (array) $selectedValue);
+                $optionIds = collect((array) $selectedValue)->filter(fn ($id) => is_scalar($id) && is_numeric($id))->map(fn ($id) => (int) $id)->all();
                 $validIds = $attribute->options->whereIn('id', $optionIds)->pluck('id')->all();
                 if ($validIds !== []) {
                     $query->whereHas('attributeValues', fn ($values) => $values
