@@ -163,7 +163,7 @@
                 <section class="blog-article-sidebar-card">
                     <p class="blog-section-kicker">FARAJI HOME / CATALOG</p>
                     <h2>حالا مدل‌ها را ببینید.</h2>
-                    <p>برای بررسی قیمت، تصاویر و مشخصات هود و سینک، وارد کاتالوگ محصولات شوید.</p>
+                    <p>برای بررسی قیمت، تصاویر و مشخصات محصولات، وارد فروشگاه شوید.</p>
                     <a href="{{ route('shop.index') }}">
                         مشاهده محصولات
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
