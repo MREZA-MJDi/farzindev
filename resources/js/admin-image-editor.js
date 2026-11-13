@@ -1,4 +1,39 @@
 const inputs = Array.from(document.querySelectorAll('[data-image-editor-input]'));
+const formEditorRegistry = new WeakMap();
+
+function registerFormEditor(form, editor) {
+    let registry = formEditorRegistry.get(form);
+
+    if (!registry) {
+        registry = { editors: [], processing: false };
+        formEditorRegistry.set(form, registry);
+
+        form.addEventListener('submit', async (event) => {
+            const pendingEditors = registry.editors.filter((item) => item.hasPendingFile());
+            if (pendingEditors.length === 0) return;
+
+            event.preventDefault();
+            if (registry.processing) return;
+
+            registry.processing = true;
+            try {
+                // Process every selected crop sequentially. Multiple editors on
+                // one form must never race or trigger duplicate form submissions.
+                for (const editorItem of pendingEditors) {
+                    await editorItem.prepare();
+                }
+
+                form.requestSubmit(event.submitter || undefined);
+            } catch (error) {
+                console.error('Unable to prepare page content images.', error);
+            } finally {
+                registry.processing = false;
+            }
+        });
+    }
+
+    registry.editors.push(editor);
+}
 const RATIOS = { '1:1': 1, '4:3': 4 / 3, '4:5': 4 / 5, '16:9': 16 / 9, '16:10': 16 / 10 };
 const MAX_EDGE = 3200;
 
@@ -283,53 +318,53 @@ function initImageEditor(input) {
     canvas.addEventListener('pointercancel', stopDragging);
     canvas.addEventListener('lostpointercapture', stopDragging);
 
-    form.addEventListener('submit', async (event) => {
-        if (!state.file || state.readyToSubmit) return;
-        event.preventDefault();
-        if (state.processing) return;
-        state.processing = true;
-        say('در حال برش تصویر با حفظ وضوح…');
+    registerFormEditor(form, {
+        hasPendingFile: () => Boolean(state.file) && !state.readyToSubmit,
+        prepare: async () => {
+            if (!state.file || state.readyToSubmit) return;
+            state.processing = true;
+            say('در حال برش تصویر با حفظ وضوح…');
 
-        try {
-            if (state.loadPromise) await state.loadPromise;
-            if (!state.stage || !state.crop) throw new Error('پیش‌نمایش هنوز آماده نیست.');
-            const crop = state.crop;
-            const scale = Math.min(1, MAX_EDGE / Math.max(crop.width, crop.height));
-            const output = document.createElement('canvas');
-            output.width = Math.max(1, Math.round(crop.width * scale));
-            output.height = Math.max(1, Math.round(crop.height * scale));
+            try {
+                if (state.loadPromise) await state.loadPromise;
+                if (!state.stage || !state.crop) throw new Error('پیش‌نمایش هنوز آماده نیست.');
+                const crop = state.crop;
+                const scale = Math.min(1, MAX_EDGE / Math.max(crop.width, crop.height));
+                const output = document.createElement('canvas');
+                output.width = Math.max(1, Math.round(crop.width * scale));
+                output.height = Math.max(1, Math.round(crop.height * scale));
 
-            if (output.width < minimumWidth() || output.height < minimumHeight()) {
-                throw new Error(
-                    'وضوح تصویر برش‌خورده کافی نیست. حداقل ابعاد موردنیاز ' +
-                    minimumWidth().toLocaleString('fa-IR') + '×' +
-                    minimumHeight().toLocaleString('fa-IR') +
-                    ' پیکسل است؛ تصویر بزرگ‌تری انتخاب کنید یا کادر را تغییر دهید.'
-                );
+                if (output.width < minimumWidth() || output.height < minimumHeight()) {
+                    throw new Error(
+                        'وضوح تصویر برش‌خورده کافی نیست. حداقل ابعاد موردنیاز ' +
+                        minimumWidth().toLocaleString('fa-IR') + '×' +
+                        minimumHeight().toLocaleString('fa-IR') +
+                        ' پیکسل است؛ تصویر بزرگ‌تری انتخاب کنید یا کادر را تغییر دهید.'
+                    );
+                }
+
+                const outputContext = output.getContext('2d');
+                if (!outputContext) throw new Error('ساخت خروجی برش ممکن نشد.');
+                outputContext.drawImage(state.stage, crop.x, crop.y, crop.width, crop.height, 0, 0, output.width, output.height);
+
+                const blob = await imageBlob(output);
+                const type = blob.type || 'image/png';
+                const extension = type === 'image/webp' ? 'webp' : (type === 'image/jpeg' ? 'jpg' : 'png');
+                const name = (state.file.name.replace(/\.[^.]+$/, '') || 'farzin-image') + '-cropped.' + extension;
+                const croppedFile = new File([blob], name, { type: type, lastModified: Date.now() });
+                const transfer = new DataTransfer();
+                transfer.items.add(croppedFile);
+                input.files = transfer.files;
+                state.file = null;
+                state.readyToSubmit = true;
+                say('تصویر برش خورد و آمادهٔ ذخیره است.');
+            } catch (error) {
+                say(error.message || 'برش تصویر انجام نشد؛ دوباره تلاش کنید.');
+                throw error;
+            } finally {
+                state.processing = false;
             }
-
-            const outputContext = output.getContext('2d');
-            if (!outputContext) throw new Error('ساخت خروجی برش ممکن نشد.');
-            outputContext.drawImage(state.stage, crop.x, crop.y, crop.width, crop.height, 0, 0, output.width, output.height);
-
-            const blob = await imageBlob(output);
-            const type = blob.type || 'image/png';
-            const extension = type === 'image/webp' ? 'webp' : (type === 'image/jpeg' ? 'jpg' : 'png');
-            const name = (state.file.name.replace(/\.[^.]+$/, '') || 'farzin-image') + '-cropped.' + extension;
-            const croppedFile = new File([blob], name, { type: type, lastModified: Date.now() });
-            const transfer = new DataTransfer();
-            transfer.items.add(croppedFile);
-            input.files = transfer.files;
-            state.file = null;
-            state.readyToSubmit = true;
-            state.processing = false;
-            say('تصویر برش خورد و آمادهٔ ذخیره است.');
-            if (event.submitter) form.requestSubmit(event.submitter);
-            else form.requestSubmit();
-        } catch (error) {
-            state.processing = false;
-            say(error.message || 'برش تصویر انجام نشد؛ دوباره تلاش کنید.');
-        }
+        },
     });
 }
 
