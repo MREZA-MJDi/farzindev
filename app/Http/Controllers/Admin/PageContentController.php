@@ -22,7 +22,8 @@ class PageContentController extends Controller
             'title' => 'صفحه اصلی',
             'description' => 'عنوان و تصویر Hero را ویرایش کنید. کلیدهای نمایش بخش محصولات و مجله را هم بررسی کنید؛ اگر خاموش باشند، حتی محصولات و مقاله‌های منتشرشده در صفحه اصلی دیده نمی‌شوند. دسته‌ها و محصولات از اطلاعات واقعی فروشگاه خوانده می‌شوند.',
             'fields' => [
-                'page_home_hero_title' => ['label' => 'عنوان کوتاه Hero', 'type' => 'text', 'max' => 120],
+                'page_home_hero_eyebrow' => ['label' => 'برچسب بالای Hero جایگزین', 'type' => 'text', 'max' => 120],
+                'page_home_hero_title' => ['label' => 'عنوان Hero جایگزین', 'type' => 'text', 'max' => 120],
                 'page_home_banner_1_eyebrow' => ['label' => 'بنر 1 — برچسب بالای عنوان', 'type' => 'text', 'max' => 100],
                 'page_home_banner_1_title' => ['label' => 'بنر 1 — عنوان', 'type' => 'text', 'max' => 140],
                 'page_home_banner_1_description' => ['label' => 'بنر 1 — توضیح', 'type' => 'textarea', 'max' => 350],
@@ -72,6 +73,7 @@ class PageContentController extends Controller
                 'page_home_journal_title' => ['label' => 'عنوان مجله', 'type' => 'text', 'max' => 160],
                 'page_home_journal_description' => ['label' => 'توضیح مجله', 'type' => 'textarea', 'max' => 300],
                 'page_home_final_title' => ['label' => 'عنوان دعوت پایانی', 'type' => 'text', 'max' => 160],
+                'page_home_final_description' => ['label' => 'توضیح دعوت پایانی', 'type' => 'textarea', 'max' => 500],
                 'page_home_final_cta' => ['label' => 'متن دکمه پایانی', 'type' => 'text', 'max' => 80],
                 'page_home_show_categories' => ['label' => 'نمایش بخش دسته‌بندی‌ها', 'type' => 'toggle'],
                 'page_home_show_products' => ['label' => 'نمایش بخش محصولات منتخب', 'type' => 'toggle'],
@@ -230,6 +232,7 @@ class PageContentController extends Controller
         return view('admin.page-content.edit', [
             'tab' => $tab,
             'group' => self::GROUPS[$tab],
+            'fieldSections' => $this->groupFields($tab),
             'groups' => self::GROUPS,
             'values' => $content->all(),
             'heroProductPreview' => $tab === 'home' ? $this->homepageHeroProductPreview() : null,
@@ -241,6 +244,67 @@ class PageContentController extends Controller
                 ? Media::query()->where('disk', 'public')->where('path', $content->all()['page_home_technology_image_url'] ?? '')->value('id')
                 : null,
         ]);
+    }
+
+    /**
+     * Group editable fields by the public section they control.
+     *
+     * @return array<int, array{title: string, description: string, fields: array}>
+     */
+    private function groupFields(string $tab): array
+    {
+        $sections = [];
+
+        foreach (self::GROUPS[$tab]['fields'] as $key => $field) {
+            $title = match (true) {
+                $tab === 'home' && preg_match('/^page_home_banner_(\\d+)_/', $key, $matches) === 1 => 'اسلایدر اصلی — بنر ' . $matches[1],
+                $tab === 'home' && str_starts_with($key, 'page_home_hero_') => 'Hero جایگزین',
+                $tab === 'home' && str_starts_with($key, 'page_home_categories_') => 'بخش دسته‌بندی‌ها',
+                $tab === 'home' && str_starts_with($key, 'page_home_products_') => 'بخش محصولات منتخب',
+                $tab === 'home' && str_starts_with($key, 'page_home_hood_guide_') => 'راهنمای هود',
+                $tab === 'home' && str_starts_with($key, 'page_home_sink_guide_') => 'راهنمای سینک',
+                $tab === 'home' && str_starts_with($key, 'page_home_gas_guide_') => 'راهنمای اجاق گاز',
+                $tab === 'home' && str_starts_with($key, 'page_home_guides_') => 'معرفی بخش راهنماها',
+                $tab === 'home' && str_starts_with($key, 'page_home_journal_') => 'مجله و مقاله‌ها',
+                $tab === 'home' && str_starts_with($key, 'page_home_technology_') => 'بخش فناوری و جزئیات ساخت',
+                $tab === 'home' && (str_starts_with($key, 'page_home_show_') || in_array($key, ['page_home_enamad_url', 'page_home_warranty_text'], true)) => 'اعتمادسازی و نمایش بخش‌ها',
+                $tab === 'about' && str_starts_with($key, 'page_about_hero_') => 'معرفی و Hero',
+                $tab === 'about' && str_starts_with($key, 'page_about_statement_') => 'بیانیه مجموعه',
+                $tab === 'about' && str_starts_with($key, 'page_about_factory_') => 'راهنمای انتخاب محصولات',
+                $tab === 'about' && preg_match('/^page_about_value_\\d+_/', $key) === 1 => 'ارزش‌های مجموعه',
+                $tab === 'about' && str_starts_with($key, 'page_about_values_') => 'ارزش‌های مجموعه',
+                $tab === 'about' && preg_match('/^page_about_step_\\d+_/', $key) === 1 => 'مراحل تجربه مشتری',
+                $tab === 'about' && str_starts_with($key, 'page_about_experience_') => 'مراحل تجربه مشتری',
+                $tab === 'about' && str_starts_with($key, 'page_about_installment_') => 'توضیح پرداخت منعطف',
+                $tab === 'about' && str_starts_with($key, 'page_about_final_') => 'دعوت پایانی و تماس',
+                $tab === 'about' && str_starts_with($key, 'page_about_show_') => 'نمایش بخش‌های درباره ما',
+                $tab === 'policies' && str_starts_with($key, 'page_shipping_') => 'ارسال و مرجوعی — /shipping-returns',
+                $tab === 'policies' && str_starts_with($key, 'page_warranty_') => 'ضمانت — /warranty',
+                $tab === 'policies' && str_starts_with($key, 'page_installments_') => 'پرداخت اقساطی — /payment-installments',
+                $tab === 'policies' && str_starts_with($key, 'page_faq_') => 'پرسش‌های متداول — /faq',
+                $tab === 'legal' && str_starts_with($key, 'page_terms_') => 'قوانین و شرایط — /terms',
+                $tab === 'legal' && str_starts_with($key, 'page_privacy_') => 'حریم خصوصی — /privacy',
+                $tab === 'typography' => 'تنظیمات عمومی صفحات',
+                default => 'سایر تنظیمات',
+            };
+
+            $sections[$title] ??= [
+                'title' => $title,
+                'description' => match (true) {
+                    str_starts_with($title, 'اسلایدر اصلی') => 'محتوای همین اسلاید را کنترل می‌کند؛ تصویر هر بنر جداگانه در همین تب انتخاب می‌شود.',
+                    $title === 'Hero جایگزین' => 'فقط زمانی نمایش داده می‌شود که هیچ بنر اصلیِ دارای تصویر و عنوان فعال نباشد.',
+                    str_contains($title, '/terms') => 'این فیلدها مستقیماً در صفحه قوانین عمومی نمایش داده می‌شوند.',
+                    str_contains($title, '/privacy') => 'این فیلدها مستقیماً در صفحه حریم خصوصی عمومی نمایش داده می‌شوند.',
+                    str_contains($title, '/shipping-returns') || str_contains($title, '/warranty') || str_contains($title, '/payment-installments') || str_contains($title, '/faq') => 'مسیر صفحه عمومی در عنوان گروه مشخص شده است.',
+                    default => 'این تنظیمات به بخش مشخص‌شده در صفحه عمومی متصل هستند؛ پیش‌نمایش بالای صفحه نسخه ذخیره‌شده را باز می‌کند.',
+                },
+                'fields' => [],
+            ];
+
+            $sections[$title]['fields'][$key] = $field;
+        }
+
+        return array_values($sections);
     }
 
     public function update(Request $request, StorefrontPageContent $content, ResponsiveImageService $images): RedirectResponse
@@ -454,8 +518,19 @@ class PageContentController extends Controller
             }
         }
 
+        $expectedSettings = $normalized;
+        if ($newHeroImagePath !== null) {
+            $expectedSettings['page_home_hero_image_url'] = $newHeroImagePath;
+        }
+        if ($newTechnologyImagePath !== null) {
+            $expectedSettings['page_home_technology_image_url'] = $newTechnologyImagePath;
+        }
+        foreach ($bannerImageChanges as $index => $path) {
+            $expectedSettings["page_home_banner_{$index}_image_url"] = (string) ($path ?? '');
+        }
+
         try {
-            DB::transaction(function () use ($normalized, $newHeroImagePath, $newTechnologyImagePath, $bannerImageChanges): void {
+            DB::transaction(function () use ($normalized, $newHeroImagePath, $newTechnologyImagePath, $bannerImageChanges, $expectedSettings): void {
                 foreach ($normalized as $key => $value) {
                     StorefrontSetting::query()->updateOrCreate(
                         ['key' => $key],
@@ -483,8 +558,19 @@ class PageContentController extends Controller
                         ['value' => $path]
                     );
                 }
+
+                $savedSettings = StorefrontSetting::query()
+                    ->whereIn('key', array_keys($expectedSettings))
+                    ->pluck('value', 'key')
+                    ->all();
+
+                foreach ($expectedSettings as $key => $expectedValue) {
+                    if ((string) ($savedSettings[$key] ?? '') !== (string) $expectedValue) {
+                        throw new \\RuntimeException('Persisted page content did not match submitted value: ' . $key);
+                    }
+                }
             });
-        } catch (\Throwable $exception) {
+        } catch (\\Throwable $exception) {
             if ($newHeroImagePath !== null) {
                 $images->delete($newHeroImagePath);
             }
@@ -493,6 +579,12 @@ class PageContentController extends Controller
             }
             foreach ($newBannerImagePaths as $storedBannerPath) {
                 $images->delete($storedBannerPath);
+            }
+
+            if ($exception instanceof \\RuntimeException) {
+                return back()->withInput()->withErrors([
+                    'page_content_save' => 'ذخیره تغییرات در پایگاه داده تأیید نشد؛ محتوای قبلی حفظ شد. دوباره تلاش کنید.',
+                ]);
             }
 
             throw $exception;
