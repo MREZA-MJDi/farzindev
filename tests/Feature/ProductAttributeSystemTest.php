@@ -52,7 +52,7 @@ class ProductAttributeSystemTest extends TestCase
             return [$attribute->id => ['value' => $text]];
         };
 
-        $payload = array_merge(
+        $payload = array_replace(
             $value('installation', 'select', 'توکار'),
             $value('length', 'number', '86'),
             $value('width', 'number', '50'),
@@ -316,9 +316,9 @@ class ProductAttributeSystemTest extends TestCase
         $this->seed(ProductAttributeSeeder::class);
         $category = Category::query()->where('slug', 'built-in-stove')->firstOrFail();
 
-        $this->get(route('categories.index'))->assertDontSee($category->name);
+        $this->get(route('categories.index'))->assertDontSee($category->slug);
         $this->get(route('categories.show', $category->slug))->assertNotFound();
-        $this->get(route('shop.index'))->assertDontSee($category->name);
+        $this->get(route('shop.index'))->assertDontSee($category->slug);
     }
 
 }
