@@ -7,7 +7,7 @@
     <div class="space-y-6" data-page-content-cms>
         <header class="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
             <div>
-                <p class="text-[10px] font-bold uppercase tracking-[0.2em] text-[var(--admin-accent)]">FARZIN / CONTENT MANAGEMENT</p>
+                <p class="text-[10px] font-bold uppercase tracking-[0.2em] text-[var(--admin-accent)]">FARAJI HOME / CONTENT MANAGEMENT</p>
                 <h1 class="admin-title mt-2">محتوا و ظاهر صفحات عمومی</h1>
                 <p class="admin-subtitle mt-2 max-w-3xl">متن‌های عمومی، نمایش بخش‌ها و تایپوگرافی را از اینجا کنترل کنید. تغییرات پس از ذخیره از همان داده‌های ذخیره‌شده در صفحات عمومی خوانده می‌شوند.</p>
             </div>
@@ -86,7 +86,7 @@
                         $heroDescriptionPreview = trim((string) old(
                             'page_home_hero_description',
                             $values['page_home_hero_description'] ?? ''
-                        )) ?: 'مدل‌های موجود فرزین را با تصویر، قیمت و مشخصات واقعی بررسی کنید.';
+                        )) ?: 'مدل‌های موجود فرجی‌هوم را با تصویر، قیمت و مشخصات واقعی بررسی کنید.';
 
                         $heroButtonPreview = trim((string) old(
                             'page_home_hero_primary_label',
@@ -109,7 +109,7 @@
 
                         <div class="fz-admin-home-hero-preview__layout">
                             <div class="fz-admin-home-hero-preview__copy">
-                                <p class="fz-admin-home-hero-preview__eyebrow">تجهیزات آشپزخانه فرزین</p>
+                                <p class="fz-admin-home-hero-preview__eyebrow">تجهیزات آشپزخانه فرجی‌هوم</p>
                                 <h2 data-home-hero-preview-title>{{ $heroTitlePreview }}</h2>
                                 <p data-home-hero-preview-description>{{ $heroDescriptionPreview }}</p>
                                 <span class="fz-admin-home-hero-preview__button" data-home-hero-preview-cta>{{ $heroButtonPreview }} <span aria-hidden="true">←</span></span>
@@ -144,7 +144,7 @@
                                         <canvas
                                             data-image-editor-canvas
                                             role="img"
-                                            aria-label="پیش‌نمایش زنده برش تصویر Hero با کارت پیشنهاد فرزین"
+                                            aria-label="پیش‌نمایش زنده برش تصویر Hero با کارت پیشنهاد فرجی‌هوم"
                                         ></canvas>
                                         @if($heroProductPreview)
                                             <x-home.hero-offer :product="$heroProductPreview" />
