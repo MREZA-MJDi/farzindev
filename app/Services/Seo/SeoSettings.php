@@ -137,6 +137,7 @@ class SeoSettings
             && collect($shopFilterParameters)->contains(
                 fn (string $parameter): bool => request()->filled($parameter)
             );
+        $hasFilteredCategoryUrl = request()->routeIs('categories.show') && request()->filled('attributes');
 
         $pageDirectives = array_values(array_filter(array_map(
             static fn (string $directive): string => trim(strtolower($directive)),
@@ -144,7 +145,7 @@ class SeoSettings
         )));
         $noIndex = $developmentMode
             || ($settings['seo_robots_noindex'] ?? '0') === '1'
-            || ($hasFilteredShopUrl && ($settings['seo_noindex_shop_filters'] ?? '1') === '1')
+            || (($hasFilteredShopUrl || $hasFilteredCategoryUrl) && ($settings['seo_noindex_shop_filters'] ?? '1') === '1')
             || in_array('noindex', $pageDirectives, true);
         $noFollow = $developmentMode
             || ($settings['seo_robots_nofollow'] ?? '0') === '1'
