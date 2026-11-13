@@ -119,6 +119,30 @@
             ])->values();
     }
 
+    $structuredSpecifications = ($product->attributeValues ?? collect())
+        ->groupBy('attribute_id')
+        ->map(function ($rows) {
+            $attribute = $rows->first()->attribute;
+            if (!$attribute) return null;
+            $values = $rows->map(function ($row) use ($attribute) {
+                if ($row->option) return $row->option->label;
+                if ($row->value_boolean !== null) return $row->value_boolean ? 'بله' : 'خیر';
+                if ($row->value_number !== null) {
+                    $number = rtrim(rtrim(number_format((float) $row->value_number, 3, '.', ''), '0'), '.');
+                    return \\App\\Helpers\\PersianNumberHelper::format($number) . ($attribute->unit ? ' ' . $attribute->unit : '');
+                }
+                return trim((string) $row->value_text);
+            })->filter(fn ($value) => $value !== '')->unique()->values();
+            if ($values->isEmpty()) return null;
+            return ['label' => $attribute->label, 'value' => $values->join('، '), 'group' => $attribute->group];
+        })
+        ->filter()
+        ->values();
+
+    if ($structuredSpecifications->isNotEmpty()) {
+        $visibleSpecifications = $structuredSpecifications;
+    }
+
     $productTabs = [];
     if ($visibleSpecifications->isNotEmpty()) {
         $productTabs[] = 'specifications';
