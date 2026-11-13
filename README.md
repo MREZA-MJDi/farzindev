@@ -1,4 +1,4 @@
-# Farzin — Kitchen Hoods & Sinks
+# فرجی‌هوم | فروشگاه تجهیزات آشپزخانه
 
 Farzin is a Persian RTL e-commerce storefront focused on kitchen range hoods and kitchen sinks. The project is built with Laravel and includes a product catalogue, category browsing, product variants and images, search/filtering, cart, customer accounts, order management, payment flows, and a dedicated admin dashboard. Payment and order workflows should be verified against the current implementation and configured gateway before production use.
 
