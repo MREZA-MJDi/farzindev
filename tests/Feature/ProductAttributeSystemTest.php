@@ -202,4 +202,60 @@ class ProductAttributeSystemTest extends TestCase
             ->assertDontSee('سینک گرانیت دسته');
     }
 
+    public function test_legacy_specification_migration_supports_dry_run_and_preserves_source_json(): void
+    {
+        $this->seed(ProductAttributeSeeder::class);
+        $sink = Category::query()->where('slug', 'sinks')->firstOrFail();
+        $legacy = [
+            ['label' => 'نحوه نصب', 'value' => 'توکار'],
+            ['label' => 'طول', 'value' => '۸۶'],
+        ];
+        $product = Product::query()->create([
+            'category_id' => $sink->id,
+            'name' => 'سینک قدیمی برای مهاجرت',
+            'slug' => 'legacy-sink-migration',
+            'sku' => 'FAR-LEGACY-MIGRATION',
+            'price' => 9000000,
+            'stock' => 1,
+            'status' => 'draft',
+            'specifications' => $legacy,
+        ]);
+
+        $this->artisan('catalog:migrate-legacy-specifications', ['--dry-run' => true])->assertExitCode(0);
+        $this->assertDatabaseMissing('product_attribute_values', ['product_id' => $product->id]);
+
+        $this->artisan('catalog:migrate-legacy-specifications')->assertExitCode(0);
+        $this->assertDatabaseHas('product_attribute_values', [
+            'product_id' => $product->id,
+            'attribute_id' => ProductAttribute::query()->where('key', 'length')->value('id'),
+            'value_number' => 86,
+        ]);
+        $this->assertSame($legacy, $product->fresh()->specifications);
+    }
+
+    public function test_legacy_migration_skips_suspicious_width_for_double_bowl_sink(): void
+    {
+        $this->seed(ProductAttributeSeeder::class);
+        $sink = Category::query()->where('slug', 'sinks')->firstOrFail();
+        $product = Product::query()->create([
+            'category_id' => $sink->id,
+            'name' => 'سینک نیازمند بررسی ابعاد',
+            'slug' => 'legacy-sink-suspicious-width',
+            'sku' => 'FAR-LEGACY-SUSPICIOUS',
+            'price' => 9000000,
+            'stock' => 1,
+            'status' => 'draft',
+            'specifications' => [
+                ['label' => 'تعداد لگن', 'value' => '۲'],
+                ['label' => 'عرض', 'value' => '۵۰'],
+            ],
+        ]);
+
+        $this->artisan('catalog:migrate-legacy-specifications')->assertExitCode(0);
+        $this->assertDatabaseMissing('product_attribute_values', [
+            'product_id' => $product->id,
+            'attribute_id' => ProductAttribute::query()->where('key', 'width')->value('id'),
+        ]);
+    }
+
 }
