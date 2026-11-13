@@ -90,7 +90,13 @@ class MigrateLegacyProductSpecifications extends Command
  private function legacyBasinCount(array $legacy): int {
   $value=$legacy['basin_count']??null;
   if(is_array($value)) $value=$value['value']??null;
-  return is_numeric($this->digits((string)$value))?(int)$this->digits((string)$value):0;
+  if($value===null){
+   foreach($legacy as $key=>$row){
+    if(is_array($row) && trim((string)($row['label']??''))==='تعداد لگن'){ $value=$row['value']??null; break; }
+   }
+  }
+  $normalized=$this->digits((string)$value);
+  return is_numeric($normalized)?(int)$normalized:0;
  }
  private function digits(string $value): string {
   return strtr($value,['۰'=>'0','۱'=>'1','۲'=>'2','۳'=>'3','۴'=>'4','۵'=>'5','۶'=>'6','۷'=>'7','۸'=>'8','۹'=>'9','٠'=>'0','١'=>'1','٢'=>'2','٣'=>'3','٤'=>'4','٥'=>'5','٦'=>'6','٧'=>'7','٨'=>'8','٩'=>'9']);
