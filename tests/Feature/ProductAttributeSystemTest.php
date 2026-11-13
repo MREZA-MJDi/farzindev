@@ -149,4 +149,57 @@ class ProductAttributeSystemTest extends TestCase
             ->assertSee('سینک استیل')
             ->assertDontSee('سینک گرانیت');
     }
+    public function test_category_faqs_render_from_database_with_faqpage_schema(): void
+    {
+        $this->seed(ProductAttributeSeeder::class);
+        $category = Category::query()->where('slug', 'sinks')->firstOrFail();
+
+        $this->get(route('categories.show', $category->slug))
+            ->assertOk()
+            ->assertSee('پرسش‌های متداول')
+            ->assertSee('FAQPage', false)
+            ->assertSee('ابعاد مناسب سینک را چطور انتخاب کنم؟');
+    }
+
+    public function test_category_page_filters_products_by_filterable_attribute(): void
+    {
+        $this->seed(ProductAttributeSeeder::class);
+        $category = Category::query()->where('slug', 'sinks')->firstOrFail();
+        $attribute = ProductAttribute::query()->where('key', 'sink_material')->firstOrFail();
+        $steel = $attribute->options()->where('label', 'استیل')->firstOrFail();
+        $granite = $attribute->options()->where('label', 'گرانیت')->firstOrFail();
+
+        foreach ([['سینک استیل دسته', $steel], ['سینک گرانیت دسته', $granite]] as $index => [$name, $option]) {
+            $product = Product::query()->create([
+                'category_id' => $category->id,
+                'name' => $name,
+                'slug' => 'category-filter-' . $index,
+                'sku' => 'FAR-CATEGORY-FILTER-' . $index,
+                'price' => 12000000,
+                'stock' => 2,
+                'status' => 'active',
+            ]);
+            ProductAttributeValue::query()->create([
+                'product_id' => $product->id,
+                'attribute_id' => $attribute->id,
+                'option_id' => $option->id,
+            ]);
+            ProductImage::query()->create([
+                'product_id' => $product->id,
+                'path' => 'https://cdn.example.test/category-filter-' . $index . '.webp',
+                'alt' => $name,
+                'sort_order' => 0,
+                'is_primary' => true,
+            ]);
+        }
+
+        $this->get(route('categories.show', [
+            'slug' => $category->slug,
+            'attributes' => [$attribute->id => $steel->id],
+        ]))
+            ->assertOk()
+            ->assertSee('سینک استیل دسته')
+            ->assertDontSee('سینک گرانیت دسته');
+    }
+
 }
