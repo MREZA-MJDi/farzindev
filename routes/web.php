@@ -489,6 +489,13 @@ Route::prefix(config('farzin.admin_path', 'admin'))
             AdminCategoryController::class
         );
 
+        Route::get('categories/{category}/attributes', [AdminCategoryAttributeController::class, 'edit'])
+            ->name('categories.attributes.edit');
+        Route::put('categories/{category}/attributes', [AdminCategoryAttributeController::class, 'update'])
+            ->name('categories.attributes.update');
+
+        Route::resource('product-attributes', AdminProductAttributeController::class)->except(['show']);
+
 
         /*
         |--------------------------------------------------------------------------
