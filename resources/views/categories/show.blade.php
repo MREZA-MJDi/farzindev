@@ -152,7 +152,7 @@
 
                         <div class="max-w-3xl">
 
-                            <p class="farzin-category-detail__eyebrow text-xs font-bold tracking-wide text-[#e8b8a8]">
+                            <p class="farzin-category-detail__eyebrow text-xs font-bold tracking-wide text-[var(--livora-accent)]">
                                 {{ $categoryGuide['eyebrow'] ?? 'محصولات فرجی‌هوم' }}
                             </p>
                             <h1 class="farzin-category-detail__title mt-4 max-w-3xl text-3xl font-black leading-[1.55] tracking-tight text-white sm:text-4xl lg:text-5xl">
@@ -172,7 +172,7 @@
 
                                 <a
                                     href="{{ route('shop.index', ['category' => $category->slug]) }}"
-                                    class="rounded-full bg-white px-5 py-3 text-xs font-bold text-[var(--livora-ink)] transition hover:bg-[#f3e5df]"
+                                    class="rounded-full bg-white px-5 py-3 text-xs font-bold text-[var(--livora-ink)] transition hover:bg-[var(--livora-accent-soft)]"
                                 >
                                     مشاهده همه محصولات
                                 </a>
