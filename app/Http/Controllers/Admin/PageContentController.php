@@ -257,7 +257,7 @@ class PageContentController extends Controller
 
         foreach (self::GROUPS[$tab]['fields'] as $key => $field) {
             $title = match (true) {
-                $tab === 'home' && preg_match('/^page_home_banner_(\\d+)_/', $key, $matches) === 1 => 'اسلایدر اصلی — بنر ' . $matches[1],
+                $tab === 'home' && preg_match('/^page_home_banner_(\d+)_/', $key, $matches) === 1 => 'اسلایدر اصلی — بنر ' . $matches[1],
                 $tab === 'home' && str_starts_with($key, 'page_home_hero_') => 'Hero جایگزین',
                 $tab === 'home' && str_starts_with($key, 'page_home_categories_') => 'بخش دسته‌بندی‌ها',
                 $tab === 'home' && str_starts_with($key, 'page_home_products_') => 'بخش محصولات منتخب',
@@ -566,11 +566,11 @@ class PageContentController extends Controller
 
                 foreach ($expectedSettings as $key => $expectedValue) {
                     if ((string) ($savedSettings[$key] ?? '') !== (string) $expectedValue) {
-                        throw new \\RuntimeException('Persisted page content did not match submitted value: ' . $key);
+                        throw new \RuntimeException('Persisted page content did not match submitted value: ' . $key);
                     }
                 }
             });
-        } catch (\\Throwable $exception) {
+        } catch (\Throwable $exception) {
             if ($newHeroImagePath !== null) {
                 $images->delete($newHeroImagePath);
             }
@@ -581,7 +581,7 @@ class PageContentController extends Controller
                 $images->delete($storedBannerPath);
             }
 
-            if ($exception instanceof \\RuntimeException) {
+            if ($exception instanceof \RuntimeException) {
                 return back()->withInput()->withErrors([
                     'page_content_save' => 'ذخیره تغییرات در پایگاه داده تأیید نشد؛ محتوای قبلی حفظ شد. دوباره تلاش کنید.',
                 ]);
