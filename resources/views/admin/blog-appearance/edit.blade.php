@@ -14,7 +14,7 @@
     <div class="space-y-6" data-blog-appearance>
         <header class="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
             <div>
-                <p class="text-[10px] font-bold uppercase tracking-[0.2em] text-[var(--admin-accent)]">FARZIN JOURNAL / ART DIRECTION</p>
+                <p class="text-[10px] font-bold uppercase tracking-[0.2em] text-[var(--admin-accent)]">FARAJI HOME JOURNAL / ART DIRECTION</p>
                 <h1 class="admin-title mt-2">استایل و تصاویر مجله</h1>
                 <p class="admin-subtitle mt-2 max-w-3xl">تصویر هدر، گرافیک بخش پایانی و عرض چیدمان را کنترل کن. کراپ، پیش‌نمایش و تنظیم جای تصویر همین‌جا انجام می‌شود.</p>
             </div>
@@ -133,9 +133,9 @@
                     <p class="text-xs font-semibold text-[var(--admin-text)]">پیش‌نمایش در قاب واقعی مجله</p>
                     <div class="blog-design-preview blog-design-preview--hero">
                         <div class="blog-design-preview__copy">
-                            <span>FARZIN JOURNAL</span>
+                            <span>FARAJI HOME JOURNAL</span>
                             <strong>برای خانه‌ای<br>که به سلیقه‌ی تو فکر شده.</strong>
-                            <small>ایده‌های خوب، انتخاب‌های آگاهانه.</small>
+                            <small>راهنماهای انتخاب، نصب و نگهداری.</small>
                         </div>
                         <div class="blog-design-preview__art" data-blog-slot-live-frame>
                             @if($hero['image_url'])
