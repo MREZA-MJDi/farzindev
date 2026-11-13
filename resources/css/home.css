@@ -1557,15 +1557,15 @@ body.home-body{
     align-items:center;
     gap:.25rem;
     padding:.24rem .48rem;
-    border:1px solid #e4eaf0;
+    border:1px solid var(--fz-line);
     border-radius:999px;
-    color:#4c5b6e;
-    background:#f8fafc;
+    color:var(--fz-text);
+    background:var(--fz-page);
     font-size:.56rem;
     line-height:1.55;
 }
 
-.farzin-product-card__specifications li span{ color:#8491a0; }
+.farzin-product-card__specifications li span{ color:var(--fz-muted); }
 
 .farzin-product-card__specifications li strong{ max-width:12rem; overflow:hidden; font-weight:800; text-overflow:ellipsis; white-space:nowrap; }
 
