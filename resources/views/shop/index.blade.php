@@ -153,6 +153,7 @@
                                     <x-shop.filters
                                         :categories="$categories"
                                         :selected-category="request('category')"
+                                        :filterable-attributes="$filterableAttributes"
                                     />
 
                                 </form>
@@ -418,6 +419,7 @@
         <x-shop.filter-drawer
             :categories="$categories"
             :selected-category="request('category')"
+                                        :filterable-attributes="$filterableAttributes"
         />
 
     </div>
