@@ -15,7 +15,7 @@ const publicRoutes = [
     '/shop',
     '/categories',
     '/categories/hoods',
-    '/product/farzin-hood-preview-01',
+    '/product/faraji-hood-sample-01',
     '/blog',
     '/blog/category/browser-smoke-guides',
     '/blog/choosing-kitchen-hood',
@@ -646,7 +646,7 @@ test('blog actions are real touch targets and the magazine stays free of heavy m
         expect(feedResponse.headers()['content-type']).toContain('application/rss+xml');
         const feedXml = await feedResponse.text();
         expect(feedXml).toContain('<rss');
-        expect(feedXml).toContain('<title>مجله فرزین</title>');
+        expect(feedXml).toContain('<title>مجله فرجی‌هوم</title>');
         await expect(page).toHaveURL(/\/blog\/feed\.xml$/);
     }
 });
@@ -1000,7 +1000,7 @@ test('category index cards keep their copy readable above the image treatment', 
 
 test('product detail exposes one branded quantity stepper and preloads primary fonts', async ({ page }) => {
     await page.setViewportSize({ width: 1280, height: 900 });
-    await page.goto('/product/farzin-hood-preview-01', { waitUntil: 'domcontentloaded' });
+    await page.goto('/product/faraji-hood-sample-01', { waitUntil: 'domcontentloaded' });
 
     const stepper = page.locator('[data-quantity-control]');
     await expect(stepper).toHaveCount(1);
@@ -1204,7 +1204,7 @@ test('public storefront cards keep restrained, consistent corner geometry', asyn
         { path: '/shop', selectors: ['.farzin-product-card'] },
         { path: '/categories', selectors: ['.fz-category-card', '.farzin-shop-category-card'] },
         { path: '/categories/hoods', selectors: ['.farzin-product-card'] },
-        { path: '/product/farzin-hood-preview-01', selectors: ['.fz-product-panel', '.farzin-product-detail-info'] },
+        { path: '/product/faraji-hood-sample-01', selectors: ['.fz-product-panel', '.farzin-product-detail-info'] },
         { path: '/blog', selectors: ['.blog-featured-card', '.blog-article-card'] },
     ];
 
