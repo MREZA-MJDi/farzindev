@@ -26,6 +26,9 @@ function registerFormEditor(form, editor) {
                 form.requestSubmit(event.submitter || undefined);
             } catch (error) {
                 console.error('Unable to prepare page content images.', error);
+                window.dispatchEvent(new CustomEvent('page-content-save-error', {
+                    detail: { message: error.message || 'برش تصویر انجام نشد؛ دوباره تلاش کن.' },
+                }));
             } finally {
                 registry.processing = false;
             }
