@@ -21,7 +21,7 @@ class MigrateLegacyProductSpecifications extends Command
  ];
  public function handle(ProductAttributeManager $manager): int
  {
-  $dry=(bool)$this->option('dry-run'); $stats=['scanned'=>0,'eligible'=>0,'migrated'=>0,'skipped'=>0,'suspicious'=>0];
+  $dry=(bool)$this->option('dry-run'); $stats=['scanned'=>0,'eligible'=>0,'migrated'=>0,'skipped'=>0,'unmatched'=>0,'suspicious'=>0];
   Product::query()->with(['category','attributeValues'])->chunkById(100,function($products) use($manager,$dry,&$stats): void {
    foreach($products as $product){
     $stats['scanned']++;
@@ -32,10 +32,12 @@ class MigrateLegacyProductSpecifications extends Command
      $value=is_array($raw)?($raw['value']??null):$raw;
      $label=is_array($raw)?trim((string)($raw['label']??'')):(string)$key;
      $legacyKey=isset($this->maps[$type][$key])?$key:($this->labels[$label]??null);
-     if(!$legacyKey || !isset($this->maps[$type][$legacyKey]) || !is_scalar($value) || trim((string)$value)==='') continue;
+     if ($type==='hood' && $label==='جنس بدنه') $legacyKey='body_material';
+     if(!$legacyKey || !isset($this->maps[$type][$legacyKey])) { $stats['unmatched']++; $this->warn("Product #{$product->id}: no exact attribute mapping for {$label}."); continue; }
+     if(!is_scalar($value) || trim((string)$value)==='') continue;
      $attributeKey=$this->maps[$type][$legacyKey];
      $attribute=ProductAttribute::where('key',$attributeKey)->with('options')->first();
-     if(!$attribute) continue;
+     if(!$attribute){$stats['unmatched']++;$this->warn("Product #{$product->id}: attribute {$attributeKey} is not seeded.");continue;}
      $text=trim((string)$value);
      if($attributeKey==='width' && (int)$this->digits($text)===50 && $this->legacyBasinCount($legacy)>=2){
       $stats['suspicious']++; $this->warn("Product #{$product->id} ({$product->sku}): width=50 with multiple basins; skipped for manual review."); continue;
