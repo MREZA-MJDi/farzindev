@@ -264,7 +264,13 @@ class PageContentController extends Controller
                 $tab === 'home' && str_starts_with($key, 'page_home_guides_') => 'معرفی بخش راهنماها',
                 $tab === 'home' && str_starts_with($key, 'page_home_journal_') => 'مجله و مقاله‌ها',
                 $tab === 'home' && str_starts_with($key, 'page_home_technology_') => 'بخش فناوری و جزئیات ساخت',
-                $tab === 'home' && (str_starts_with($key, 'page_home_show_') || in_array($key, ['page_home_enamad_url', 'page_home_warranty_text'], true)) => 'اعتمادسازی و نمایش بخش‌ها',
+                $tab === 'home' && $key === 'page_home_show_categories' => 'بخش دسته‌بندی‌ها',
+                $tab === 'home' && $key === 'page_home_show_products' => 'بخش محصولات منتخب',
+                $tab === 'home' && $key === 'page_home_show_guides' => 'معرفی بخش راهنماها',
+                $tab === 'home' && $key === 'page_home_show_journal' => 'مجله و مقاله‌ها',
+                $tab === 'home' && $key === 'page_home_show_technology' => 'بخش فناوری و جزئیات ساخت',
+                $tab === 'home' && $key === 'page_home_show_final_cta' => 'دعوت پایانی',
+                $tab === 'home' && ($key === 'page_home_show_trust' || in_array($key, ['page_home_enamad_url', 'page_home_warranty_text'], true)) => 'اعتمادسازی',
                 $tab === 'about' && str_starts_with($key, 'page_about_hero_') => 'معرفی و Hero',
                 $tab === 'about' && str_starts_with($key, 'page_about_statement_') => 'بیانیه مجموعه',
                 $tab === 'about' && str_starts_with($key, 'page_about_factory_') => 'راهنمای انتخاب محصولات',
@@ -578,9 +584,11 @@ class PageContentController extends Controller
                 $images->delete($storedBannerPath);
             }
 
-            if ($exception instanceof \RuntimeException) {
+            if ($exception instanceof \RuntimeException || $exception instanceof \Illuminate\Database\QueryException) {
+                report($exception);
+
                 return back()->withInput()->withErrors([
-                    'page_content_save' => 'ذخیره تغییرات در پایگاه داده تأیید نشد؛ محتوای قبلی حفظ شد. دوباره تلاش کنید.',
+                    'page_content_save' => 'ذخیره تغییرات در پایگاه داده تأیید نشد؛ محتوای قبلی حفظ شد. خطا ثبت شده است؛ دوباره تلاش کنید.',
                 ]);
             }
 
@@ -616,7 +624,7 @@ class PageContentController extends Controller
 
         return redirect()
             ->route('admin.page-content.edit', ['tab' => $tab])
-            ->with('success', 'محتوا و تنظیمات صفحه ذخیره شد و در خروجی عمومی قابل مشاهده است.');
+            ->with('success', 'ذخیره‌سازی تأیید شد؛ اطلاعات از پایگاه داده دوباره خوانده شدند. پیش‌نمایش بالای صفحه نسخه ذخیره‌شده را نشان می‌دهد.');
     }
 
 }
