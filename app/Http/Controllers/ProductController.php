@@ -21,6 +21,8 @@ class ProductController extends Controller
                 'category',
                 'images.media',
                 'variants.images.media',
+                'category.attributes.options',
+                'attributeValues.option',
                 'attributeValues.attribute',
                 'attributeValues.option',
             ])
