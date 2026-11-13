@@ -6,9 +6,15 @@ use App\Models\Category;
 use App\Models\SeoRedirect;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 
 class CategoryController extends Controller
 {
+    private function englishDigits(string $value): string
+    {
+        return strtr($value, ['۰'=>'0','۱'=>'1','۲'=>'2','۳'=>'3','۴'=>'4','۵'=>'5','۶'=>'6','۷'=>'7','۸'=>'8','۹'=>'9','٠'=>'0','١'=>'1','٢'=>'2','٣'=>'3','٤'=>'4','٥'=>'5','٦'=>'6','٧'=>'7','٨'=>'8','٩'=>'9']);
+    }
+
     public function index(): View
     {
         $categories = Category::query()
@@ -27,7 +33,7 @@ class CategoryController extends Controller
         ]);
     }
 
-    public function show(string $slug): View|RedirectResponse
+    public function show(Request $request, string $slug): View|RedirectResponse
     {
         $category = Category::query()->where('slug', $slug)->first();
 
@@ -51,18 +57,59 @@ class CategoryController extends Controller
             404
         );
 
-        $products = $category
-            ->products()
+        $filterableAttributes = $category->attributes()
+            ->wherePivot('is_filterable', true)
+            ->with('options')
+            ->get();
+        $productQuery = $category->products()
             ->active()
             ->whereHas('images', fn ($imageQuery) => $imageQuery
                 ->where(function ($imageSource): void {
                     $imageSource
                         ->where(fn ($path) => $path->whereNotNull('path')->where('path', '<>', ''))
                         ->orWhereHas('media');
-                }))
+                }));
+
+        $attributeFilters = $request->query('attributes', []);
+        if (is_array($attributeFilters)) {
+            foreach ($attributeFilters as $attributeId => $selectedValue) {
+                $attribute = $filterableAttributes->firstWhere('id', (int) $attributeId);
+                if (! $attribute || $selectedValue === '' || $selectedValue === null) continue;
+
+                if ($attribute->type === 'number' && is_array($selectedValue)) {
+                    $minimum = $this->englishDigits((string) ($selectedValue['min'] ?? ''));
+                    $maximum = $this->englishDigits((string) ($selectedValue['max'] ?? ''));
+                    if ((is_numeric($minimum) || is_numeric($maximum)) && (! is_numeric($minimum) || ! is_numeric($maximum) || (float) $minimum <= (float) $maximum)) {
+                        $productQuery->whereHas('attributeValues', function ($values) use ($attribute, $minimum, $maximum): void {
+                            $values->where('attribute_id', $attribute->id);
+                            if (is_numeric($minimum)) $values->where('value_number', '>=', $minimum);
+                            if (is_numeric($maximum)) $values->where('value_number', '<=', $maximum);
+                        });
+                    }
+                    continue;
+                }
+
+                if (in_array($attribute->type, ['select', 'multiselect'], true)) {
+                    $ids = array_map('intval', (array) $selectedValue);
+                    $validIds = $attribute->options->whereIn('id', $ids)->pluck('id')->all();
+                    if ($validIds !== []) $productQuery->whereHas('attributeValues', fn ($values) => $values->where('attribute_id', $attribute->id)->whereIn('option_id', $validIds));
+                    continue;
+                }
+
+                if ($attribute->type === 'boolean' && in_array((string) $selectedValue, ['0', '1'], true)) {
+                    $productQuery->whereHas('attributeValues', fn ($values) => $values->where('attribute_id', $attribute->id)->where('value_boolean', (int) $selectedValue));
+                    continue;
+                }
+
+                if (in_array($attribute->type, ['text', 'textarea'], true) && is_scalar($selectedValue)) {
+                    $productQuery->whereHas('attributeValues', fn ($values) => $values->where('attribute_id', $attribute->id)->where('value_text', 'like', '%' . addcslashes((string) $selectedValue, '%_') . '%'));
+                }
+            }
+        }
+
+        $products = $productQuery
             ->with([
                 'category',
-                // Load the ordered gallery so the shared card can skip missing files and fall back safely.
                 'images' => fn ($query) => $query
                     ->select(['id', 'product_id', 'media_id', 'path', 'alt', 'sort_order', 'is_primary'])
                     ->orderByDesc('is_primary')
@@ -76,9 +123,21 @@ class CategoryController extends Controller
             ->paginate(12)
             ->withQueryString();
 
+        $keyAttributes = $category->attributes()->wherePivot('is_key_spec', true)->with('options')->get();
+        $comparisonProducts = $category->products()->active()
+            ->whereHas('attributeValues')
+            ->with(['attributeValues.attribute', 'attributeValues.option', 'images.media'])
+            ->latest()
+            ->limit(4)
+            ->get();
+
+
         return view('categories.show', [
             'category' => $category,
             'products' => $products,
+            'filterableAttributes' => $filterableAttributes,
+            'keyAttributes' => $keyAttributes,
+            'comparisonProducts' => $comparisonProducts,
         ]);
     }
 }
