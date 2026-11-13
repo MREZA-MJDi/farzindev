@@ -59,7 +59,7 @@ class ProductAttributeController extends Controller
  private function syncOptions(ProductAttribute $attribute,string $raw): void {
   $labels=collect(preg_split('/\r\n|\r|\n/',$raw) ?: [])->map(fn($v)=>trim($v))->filter()->unique()->values();
   if(!in_array($attribute->type,['select','multiselect'],true)) {
-   if($attribute->options()->exists() && $attribute->options()->whereHas('attribute.values')->exists()) {
+   if($attribute->options()->exists() && $attribute->options()->whereHas('values')->exists()) {
     throw ValidationException::withMessages(['options'=>'گزینه‌های این ویژگی هنوز در محصولات استفاده می‌شوند.']);
    }
    $attribute->options()->delete();
