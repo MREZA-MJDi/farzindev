@@ -111,7 +111,8 @@ class CategoryController extends Controller
 
         $products = $productQuery
             ->with([
-                'category',
+                'category.attributes.options',
+                'attributeValues.option',
                 'images' => fn ($query) => $query
                     ->select(['id', 'product_id', 'media_id', 'path', 'alt', 'sort_order', 'is_primary'])
                     ->orderByDesc('is_primary')
@@ -128,7 +129,7 @@ class CategoryController extends Controller
         $keyAttributes = $category->attributes()->wherePivot('is_key_spec', true)->with('options')->get();
         $comparisonProducts = $category->products()->active()
             ->whereHas('attributeValues')
-            ->with(['attributeValues.attribute', 'attributeValues.option', 'images.media'])
+            ->with(['category.attributes.options', 'attributeValues.attribute', 'attributeValues.option', 'images.media'])
             ->latest()
             ->limit(4)
             ->get();
