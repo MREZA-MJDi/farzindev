@@ -1,8 +1,8 @@
 @props(['contact' => [], 'brandName' => 'فرجی‌هوم', 'showPhone' => true])
 
 @php
-    $phone = $showPhone ? \\App\\Support\\StorefrontContact::phone(data_get($contact, 'phone')) : null;
-    $whatsapp = \\App\\Support\\StorefrontContact::whatsapp(data_get($contact, 'whatsapp'));
+    $phone = $showPhone ? \App\\Support\\StorefrontContact::phone(data_get($contact, 'phone')) : null;
+    $whatsapp = \App\\Support\\StorefrontContact::whatsapp(data_get($contact, 'whatsapp'));
     $instagram = trim((string) data_get($contact, 'instagram_url', ''));
     $telegram = trim((string) data_get($contact, 'telegram_url', ''));
     $safeExternal = static function (string $url): bool {
