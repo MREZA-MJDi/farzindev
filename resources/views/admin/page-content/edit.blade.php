@@ -17,6 +17,7 @@
                     $previewUrl = match ($tab) {
                         'about' => route('about'),
                         'legal' => route('terms'),
+                        'policies' => route('shipping-returns'),
                         default => route('home'),
                     };
                 @endphp
