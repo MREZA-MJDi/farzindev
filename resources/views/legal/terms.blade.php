@@ -1,15 +1,43 @@
 @extends('layouts.app')
-@section('title', 'قوانین و شرایط استفاده | فرجی‌هوم')
-@section('description', 'قوانین استفاده از فروشگاه اینترنتی فرجی‌هوم و ثبت سفارش.')
+
+@php
+    $legalCopy = $storefrontPageContent ?? [];
+    $termsTitle = trim((string) ($legalCopy['page_terms_title'] ?? '')) ?: 'قوانین و شرایط استفاده';
+    $termsLead = trim((string) ($legalCopy['page_terms_lead'] ?? ''));
+    $termsSections = collect(range(1, 4))->map(function (int $index) use ($legalCopy): array {
+        return [
+            'title' => trim((string) ($legalCopy["page_terms_section_{$index}_title"] ?? '')),
+            'body' => trim((string) ($legalCopy["page_terms_section_{$index}_body"] ?? '')),
+        ];
+    })->filter(fn (array $section): bool => $section['title'] !== '' || $section['body'] !== '');
+@endphp
+
+@section('title', $termsTitle . ' | فرجی‌هوم')
+@section('description', $termsLead)
+@section('canonical', route('terms'))
+
 @section('content')
 <section class="fz-legal-page">
-    <div class="fz-legal-page__hero"><div class="fz-container"><p class="fz-eyebrow"><span></span> FARAJI HOME / CUSTOMER INFORMATION</p><h1>قوانین و شرایط استفاده</h1><p>پیش از ساخت حساب یا ثبت سفارش، نکات زیر را مطالعه کنید.</p></div></div>
+    <div class="fz-legal-page__hero">
+        <div class="fz-container">
+            <p class="fz-eyebrow"><span></span> FARAJI HOME / CUSTOMER INFORMATION</p>
+            <h1>{{ $termsTitle }}</h1>
+            @if($termsLead !== '')<p>{{ $termsLead }}</p>@endif
+        </div>
+    </div>
     <div class="fz-container fz-legal-page__body">
-        <article><h2>اطلاعات محصول</h2><p>مشخصات، تصاویر و قیمت هر کالا در صفحه همان محصول نمایش داده می‌شود. پیش از ثبت سفارش، مشخصات فنی و گزینه‌های قابل انتخاب را بررسی کنید. تصاویر برای معرفی محصول هستند و نمایش رنگ و جزئیات ممکن است با توجه به نمایشگر متفاوت باشد.</p></article>
-        <article><h2>حساب کاربری و اطلاعات سفارش</h2><p>هنگام ایجاد حساب یا ثبت سفارش، اطلاعات تماس و نشانی را دقیق وارد کنید. مسئولیت صحت اطلاعاتی که برای ارتباط و تحویل سفارش ثبت می‌کنید بر عهده کاربر است. حساب کاربری برای مشاهده سوابق سفارش و مدیریت اطلاعات استفاده می‌شود.</p></article>
-        <article><h2>ثبت سفارش و پرداخت</h2><p>ثبت اطلاعات در سبد خرید به‌تنهایی به معنی تکمیل خرید نیست. نتیجه ثبت سفارش و وضعیت پرداخت باید در صفحه مربوط به همان سفارش مشخص شود. تا زمانی که درگاه پرداخت در سایت فعال و تأیید نشده باشد، اطلاعات کارت یا رمز بانکی را در فرم‌های این سایت وارد نکنید.</p></article>
-        <article><h2>ارسال، ضمانت و خدمات پس از فروش</h2><p>شرایط ارسال، ضمانت، نصب و مرجوعی را پیش از خرید از طریق صفحه تماس با فرجی‌هوم استعلام کنید. این صفحه جایگزین تعهد یا ضمانت‌نامه اختصاصی محصول نیست؛ شرایط قطعی هر کالا باید هنگام خرید به‌صورت روشن اعلام شود.</p></article>
-        <div class="fz-legal-page__contact"><strong>پرسشی درباره شرایط خرید دارید؟</strong><a href="{{ route('contact') }}">ارتباط با فرجی‌هوم <span aria-hidden="true">←</span></a></div>
+        @forelse($termsSections as $section)
+            <article>
+                @if($section['title'] !== '')<h2>{{ $section['title'] }}</h2>@endif
+                @if($section['body'] !== '')<p>{{ $section['body'] }}</p>@endif
+            </article>
+        @empty
+            <article><p>محتوای این صفحه هنوز ثبت نشده است.</p></article>
+        @endforelse
+        <div class="fz-legal-page__contact">
+            <strong>{{ $legalCopy['page_terms_contact_title'] ?? 'پرسشی درباره شرایط خرید دارید؟' }}</strong>
+            <a href="{{ route('contact') }}">{{ $legalCopy['page_terms_contact_cta'] ?? 'ارتباط با فرجی‌هوم' }} <span aria-hidden="true">←</span></a>
+        </div>
     </div>
 </section>
 @endsection
