@@ -27,7 +27,10 @@ class UpdateCategoryRequest extends FormRequest
                 : 'category-' . now()->format('YmdHis') . '-' . Str::lower(Str::random(6));
         }
 
+        $faqs = collect($this->input('faqs', []))->filter(fn ($faq) => is_array($faq) && (filled($faq['question'] ?? null) || filled($faq['answer'] ?? null)))->values()->all();
+
         $this->merge([
+            'faqs' => $faqs,
             'slug' => $slug,
             'is_active' => $this->boolean('is_active'),
             'sort_order' => $this->sort_order ?? 0,
@@ -55,6 +58,9 @@ class UpdateCategoryRequest extends FormRequest
             'description' => ['nullable', 'string', 'max:1200'],
             'content_title' => ['nullable', 'string', 'max:180'],
             'content_body' => ['nullable', 'string', 'max:12000'],
+            'faqs' => ['nullable', 'array', 'max:7'],
+            'faqs.*.question' => ['required', 'string', 'max:180'],
+            'faqs.*.answer' => ['required', 'string', 'max:1200'],
             'content_image' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'dimensions:min_width=800,min_height=450', 'max:20480'],
             'remove_content_image' => ['sometimes', 'boolean'],
 
