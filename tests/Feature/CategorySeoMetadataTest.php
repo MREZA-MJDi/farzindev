@@ -25,8 +25,8 @@ class CategorySeoMetadataTest extends TestCase
                 'description' => 'توضیح کوتاه برای داده‌های متا',
                 'content_title' => 'راهنمای انتخاب هود مخفی',
                 'content_body' => 'برای انتخاب هود به ابعاد و قدرت مکش توجه کنید.',
-                'meta_title' => 'خرید هود مخفی آشپزخانه | فرزین',
-                'meta_description' => 'مدل‌های هود مخفی فرزین را با مشخصات و قیمت بررسی کنید.',
+                'meta_title' => 'خرید هود مخفی آشپزخانه | فرجی‌هوم',
+                'meta_description' => 'مدل‌های هود مخفی فرجی‌هوم را با مشخصات و قیمت بررسی کنید.',
                 'is_active' => '1',
                 'sort_order' => '3',
             ])
@@ -35,13 +35,14 @@ class CategorySeoMetadataTest extends TestCase
 
         $category = Category::query()->where('slug', 'built-in-hoods')->firstOrFail();
 
-        $this->assertSame('خرید هود مخفی آشپزخانه | فرزین', $category->meta_title);
-        $this->assertSame('مدل‌های هود مخفی فرزین را با مشخصات و قیمت بررسی کنید.', $category->meta_description);
+        $this->assertSame('خرید هود مخفی آشپزخانه | فرجی‌هوم', $category->meta_title);
+        $this->assertSame('مدل‌های هود مخفی فرجی‌هوم را با مشخصات و قیمت بررسی کنید.', $category->meta_description);
+        $this->createVisibleProduct($category, 'built-in-hoods-seo-product');
 
         $this->get(route('categories.show', $category->slug))
             ->assertOk()
-            ->assertSee('<title>خرید هود مخفی آشپزخانه | فرزین</title>', false)
-            ->assertSee('name="description" content="مدل‌های هود مخفی فرزین را با مشخصات و قیمت بررسی کنید."', false)
+            ->assertSee('<title>خرید هود مخفی آشپزخانه | فرجی‌هوم</title>', false)
+            ->assertSee('name="description" content="مدل‌های هود مخفی فرجی‌هوم را با مشخصات و قیمت بررسی کنید."', false)
             ->assertSee('توضیح کوتاه برای داده‌های متا')
             ->assertSee('farzin-category-detail__description', false)
             ->assertSee('راهنمای انتخاب هود مخفی')
@@ -59,13 +60,15 @@ class CategorySeoMetadataTest extends TestCase
             'sort_order' => 1,
         ]);
 
+        $this->createVisibleProduct($category, 'sinks-banner-copy-product');
+
         $this->get(route('categories.show', $category->slug))
             ->assertOk()
             ->assertSee('در این مجموعه می‌توانید محصولات سینک را بررسی کنید و مشخصات، قیمت و گزینه‌های موجود را با هم مقایسه کنید.')
             ->assertSee('farzin-category-detail__description', false);
     }
 
-    public function test_active_category_created_in_admin_remains_visible_in_production_without_products(): void
+    public function test_active_category_stays_hidden_until_it_has_an_active_product(): void
     {
         $admin = User::factory()->create(['role' => 'admin']);
 
@@ -73,33 +76,24 @@ class CategorySeoMetadataTest extends TestCase
             ->post(route('admin.categories.store'), [
                 'name' => 'دسته فعال بدون محصول',
                 'slug' => 'active-empty-category',
-                'description' => 'این دسته پیش از انتشار اولین محصول باید صفحه عمومی داشته باشد.',
+                'description' => 'این دسته تا زمان ثبت محصول فعال در صفحات عمومی نمایش داده نمی‌شود.',
                 'is_active' => '1',
                 'sort_order' => '4',
             ])
             ->assertRedirect(route('admin.categories.index'))
             ->assertSessionHasNoErrors();
 
-        $category = Category::query()
-            ->where('slug', 'active-empty-category')
-            ->firstOrFail();
-
-        // Exercise production visibility rules, not the permissive test rules.
+        $category = Category::query()->where('slug', 'active-empty-category')->firstOrFail();
         $this->app['env'] = 'production';
 
-        $this->get(route('home'))
-            ->assertOk()
-            ->assertDontSee('دسته فعال بدون محصول')
-            ->assertDontSee('href="' . route('categories.show', 'active-empty-category') . '"', false);
+        $this->get(route('home'))->assertOk()->assertDontSee('active-empty-category');
+        $this->get(route('categories.index'))->assertOk()->assertDontSee('active-empty-category');
+        $this->get(route('categories.show', $category->slug))->assertNotFound();
 
-        $this->get(route('categories.index'))
-            ->assertOk()
-            ->assertSee('دسته فعال بدون محصول');
+        $this->createVisibleProduct($category, 'active-empty-category-first-product');
 
-        $this->get(route('categories.show', $category->slug))
-            ->assertOk()
-            ->assertSee('دسته فعال بدون محصول')
-            ->assertSee('محصولی در این دسته پیدا نشد');
+        $this->get(route('categories.index'))->assertOk()->assertSee('دسته فعال بدون محصول');
+        $this->get(route('categories.show', $category->slug))->assertOk()->assertSee('دسته فعال بدون محصول');
     }
 
     public function test_homepage_category_card_uses_the_slug_route_parameter(): void
@@ -160,6 +154,7 @@ class CategorySeoMetadataTest extends TestCase
             ->firstOrFail();
 
         $this->assertMatchesRegularExpression('/^[a-z0-9][a-z0-9-]*$/', $category->slug);
+        $this->createVisibleProduct($category, 'persian-category-active-product');
 
         $this->get(route('categories.show', $category->slug))
             ->assertOk()
@@ -176,6 +171,7 @@ class CategorySeoMetadataTest extends TestCase
             'is_active' => true,
             'sort_order' => 1,
         ]);
+        $this->createVisibleProduct($category, 'old-category-active-product');
 
         $this->actingAs($admin, 'admin')
             ->put(route('admin.categories.update', $category), [
@@ -206,6 +202,7 @@ class CategorySeoMetadataTest extends TestCase
             'is_active' => true,
             'sort_order' => 1,
         ]);
+        $this->createVisibleProduct($category, 'kitchen-hood-guide-product');
         Storage::fake('public');
         $image = \Illuminate\Http\UploadedFile::fake()->image('hood-guide.jpg', 1200, 675);
 
@@ -287,6 +284,29 @@ class CategorySeoMetadataTest extends TestCase
                 ->assertSee('data-image-editor-zoom', false)
                 ->assertSee('data-image-editor-rotate', false);
         }
+    }
+
+    private function createVisibleProduct(Category $category, string $slug): Product
+    {
+        $product = Product::create([
+            'category_id' => $category->id,
+            'name' => 'محصول فعال ' . $slug,
+            'slug' => $slug,
+            'sku' => 'FAR-' . strtoupper(str_replace('-', '', $slug)),
+            'price' => 1000000,
+            'stock' => 5,
+            'status' => 'active',
+        ]);
+
+        ProductImage::create([
+            'product_id' => $product->id,
+            'path' => 'https://cdn.example.test/' . $slug . '.webp',
+            'alt' => $product->name,
+            'sort_order' => 0,
+            'is_primary' => true,
+        ]);
+
+        return $product;
     }
 
 }
