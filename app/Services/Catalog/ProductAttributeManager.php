@@ -1,12 +1,13 @@
 <?php
 namespace App\Services\Catalog;
 use App\Models\AttributeOption;
+use App\Models\Category;
 use App\Models\Product;
 use App\Models\ProductAttribute;
 use App\Models\ProductAttributeValue;
 class ProductAttributeManager {
  public function validateValues(int $categoryId,array $values,bool $requireRequired=true): array {
-  $attributes=ProductAttribute::query()->whereHas('categories',fn($q)=>$q->where('categories.id',$categoryId))->with('options')->get()->keyBy('id');
+  $attributes=Category::query()->findOrFail($categoryId)->attributes()->with('options')->get()->keyBy('id');
   $errors=[];
   foreach($values as $id=>$input){
    if(!$attributes->has((int)$id)){ $errors["attribute_values.$id"]='این ویژگی به دسته‌بندی انتخاب‌شده تعلق ندارد.'; continue; }
