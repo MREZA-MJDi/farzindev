@@ -9,10 +9,16 @@ class ProductAttributeSeeder extends Seeder
 {
  public function run(): void
  {
+  $categoryFor = function (array $slugs, string $name, array $defaults): Category {
+   $existing = Category::query()->where(function ($query) use ($slugs, $name): void {
+    $query->whereIn('slug', $slugs)->orWhere('name', $name);
+   })->first();
+   return $existing ?: Category::create($defaults);
+  };
   $categories=[
-   'sink'=>Category::firstOrCreate(['slug'=>'sinks'],['name'=>'سینک ظرفشویی','description'=>'انواع سینک ظرفشویی','is_active'=>true,'sort_order'=>2]),
-   'hood'=>Category::firstOrCreate(['slug'=>'hoods'],['name'=>'هود آشپزخانه','description'=>'انواع هود آشپزخانه','is_active'=>true,'sort_order'=>1]),
-   'gas'=>Category::firstOrCreate(['slug'=>'built-in-stove'],['name'=>'اجاق گاز صفحه‌ای','description'=>'انواع اجاق گاز صفحه‌ای','is_active'=>true,'sort_order'=>3]),
+   'sink'=>$categoryFor(['sinks'],'سینک ظرفشویی',['slug'=>'sinks','name'=>'سینک ظرفشویی','description'=>'انواع سینک ظرفشویی','is_active'=>true,'sort_order'=>2]),
+   'hood'=>$categoryFor(['hoods'],'هود آشپزخانه',['slug'=>'hoods','name'=>'هود آشپزخانه','description'=>'انواع هود آشپزخانه','is_active'=>true,'sort_order'=>1]),
+   'gas'=>$categoryFor(['built-in-stove','gas-stoves','gas-hobs','built-in-gas','built-in-hobs','gas-stove'],'اجاق گاز صفحه‌ای',['slug'=>'built-in-stove','name'=>'اجاق گاز صفحه‌ای','description'=>'انواع اجاق گاز صفحه‌ای','is_active'=>true,'sort_order'=>3]),
   ];
   $definitions=[];
   $add=function(string $key,string $label,string $type,string $unit,string $group,array $options=[],string $help='') use (&$definitions): void {
@@ -79,30 +85,30 @@ class ProductAttributeSeeder extends Seeder
 
   $map=[
    'sink'=>[
-    'installation'=>[1,1,1,1],'length'=>[1,0,0,1],'width'=>[1,1,0,1],'cutout_dimensions'=>[0,1,0,0],
+    'installation'=>[1,1,1,1],'length'=>[1,0,0,1],'width'=>[1,0,1,0],'cutout_dimensions'=>[0,1,0,0],
     'basin_count'=>[1,1,1,1],'basin_depth'=>[1,0,0,1],'basin_capacity'=>[0,1,0,0],'basin_direction'=>[0,1,0,0],
     'sink_material'=>[1,1,1,1],'sheet_thickness'=>[0,1,0,0],'sink_design'=>[0,1,0,0],'weight'=>[0,0,0,0],
     'surface_finish'=>[0,0,0,0],'color'=>[0,0,0,0],'sink_accessories'=>[0,0,0,0],'tap_holes'=>[0,0,0,0],'warranty_months'=>[0,0,0,0],
     'manufacturing_country'=>[0,0,0,0]
    ],
    'hood'=>[
-    'hood_type'=>[1,1,1,1],'hood_model'=>[1,0,0,0],'hood_body_material'=>[1,1,0,0],'switch_type'=>[1,1,0,0],
-    'hood_size'=>[1,1,1,1],'hood_length'=>[1,0,0,0],'hood_width'=>[1,0,0,0],'hood_height'=>[0,0,0,0],
-    'suction_capacity'=>[1,0,1,1],'light_count'=>[1,0,0,0],'motor_count'=>[0,0,0,0],'noise_level'=>[0,0,0,0],
+    'hood_type'=>[1,1,1,1],'hood_model'=>[1,0,0,0],'hood_body_material'=>[1,0,1,0],'switch_type'=>[1,0,1,0],
+    'hood_size'=>[1,0,1,0],'hood_length'=>[1,0,0,0],'hood_width'=>[1,0,0,0],'hood_height'=>[0,0,0,0],
+    'suction_capacity'=>[1,0,0,0],'light_count'=>[1,0,0,0],'motor_count'=>[0,0,0,0],'noise_level'=>[0,0,0,0],
     'air_outlet'=>[0,1,0,0],'air_outlet_diameter'=>[0,0,0,0],'filter_material'=>[0,0,0,0],
-    'hood_accessories'=>[0,0,0,0],'warranty_months'=>[0,0,0,0],'manufacturing_country'=>[0,0,0,0]
+    'hood_accessories'=>[0,0,0,0],'warranty_months'=>[0,0,0,0],'manufacturing_country'=>[0,0,0,0],'color'=>[0,0,0,0]
    ],
    'gas'=>[
     'gas_model'=>[1,0,0,0],'gas_length'=>[1,0,0,0],'gas_width'=>[1,0,0,0],'gas_height'=>[1,0,0,0],
     'gas_size_range'=>[0,0,0,0],'gas_weight'=>[0,0,0,0],'burner_count'=>[1,1,1,1],'burner_position'=>[0,0,0,0],
     'energy_source'=>[1,1,1,1],'energy_rating'=>[0,0,0,0],'design_model'=>[0,0,0,0],'lighting_tool'=>[0,0,0,0],
-    'safety_system'=>[0,0,0,0],'convert_lpg'=>[0,0,0,0],'surface_material'=>[1,1,0,0],'glass_type'=>[0,0,0,0],
+    'safety_system'=>[0,0,0,0],'convert_lpg'=>[0,0,0,0],'surface_material'=>[1,0,1,0],'glass_type'=>[0,0,0,0],
     'surface_thickness'=>[0,0,0,0],'grate_material'=>[0,0,0,0],'valve_type'=>[0,0,0,0],'burner_type'=>[0,0,0,0],
     'knob_type'=>[0,0,0,0],'power_cable'=>[0,0,0,0],'gas_notes'=>[0,0,0,0],'gas_accessories'=>[0,0,0,0],
     'warranty_months'=>[0,0,0,0],'manufacturing_country'=>[0,0,0,0],'color'=>[0,0,0,0]
    ]
   ];
-  $keySpecs=['sink'=>['width','basin_count','sink_material'],'hood'=>['hood_type','hood_size','suction_capacity'],'gas'=>['burner_count','energy_source','gas_length']];
+  $keySpecs=['sink'=>['width','basin_count','sink_material'],'hood'=>['hood_type','hood_size','suction_capacity'],'gas'=>['burner_count','energy_source']];
   foreach($definitions as $key=>$definition){
    $attribute=ProductAttribute::updateOrCreate(['key'=>$key],['label'=>$definition['label'],'type'=>$definition['type'],'unit'=>$definition['unit']?:null,'group'=>$definition['group'],'help_text'=>$definition['help']?:null]);
    foreach($definition['options'] as $index=>$label) AttributeOption::updateOrCreate(['attribute_id'=>$attribute->id,'value'=>Str::slug($label,'-') ?: 'option-'.$index],['label'=>$label,'sort_order'=>$index]);
