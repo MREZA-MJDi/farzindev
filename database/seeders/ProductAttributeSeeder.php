@@ -44,7 +44,7 @@ class ProductAttributeSeeder extends Seeder
    ],
   ];
   foreach($defaultFaqs as $type=>$faqs){
-   if(empty($categories[$type]->faqs)) $categories[$type]->update(['faqs'=>$faqs]);
+   if($categories[$type]->faqs === null) $categories[$type]->update(['faqs'=>$faqs]);
   }
 
   $definitions=[];
