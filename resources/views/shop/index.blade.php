@@ -396,7 +396,7 @@
                                     href="{{ route('shop.index') }}"
                                     class="mt-7 inline-flex rounded-2xl bg-[var(--livora-ink)] px-6 py-3.5 text-sm font-medium text-white transition hover:bg-[var(--livora-accent)]"
                                 >
-                                    مشاهده همه محصولات
+                                    پاک کردن فیلترها
                                 </a>
 
                             </div>
