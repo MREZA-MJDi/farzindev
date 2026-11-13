@@ -6112,9 +6112,6 @@ body.home-body,
 }
 .storefront-content .farzin-product-card--catalog .farzin-product-card__cta { min-height: 44px; }
 .storefront-content .farzin-product-card--catalog .farzin-product-card__availability.is-unavailable { display: none; }
-.storefront-content .farzin-product-card--catalog .farzin-installment-seal {
-    inset-inline-start: .65rem; inset-inline-end: auto;
-}
 @media (max-width: 767px) {
     .storefront-content .farzin-product-card--catalog .farzin-product-card__content { padding: .7rem; }
     .storefront-content .farzin-product-card--catalog .farzin-product-card__title { min-height: 2.9em; max-height: 2.9em; }
