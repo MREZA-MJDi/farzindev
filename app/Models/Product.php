@@ -117,6 +117,11 @@ class Product extends Model
         return $this->hasMany(OrderItem::class);
     }
 
+    public function attributeValues(): HasMany
+    {
+        return $this->hasMany(ProductAttributeValue::class);
+    }
+
     public function primaryImage(): ?ProductImage
     {
         $images = $this->relationLoaded('images')
