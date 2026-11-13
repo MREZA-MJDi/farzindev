@@ -311,4 +311,14 @@ class ProductAttributeSystemTest extends TestCase
             ->assertSeeInOrder(['سینک موجود', 'سینک ناموجود']);
     }
 
+    public function test_gas_category_is_hidden_from_public_until_an_active_product_exists(): void
+    {
+        $this->seed(ProductAttributeSeeder::class);
+        $category = Category::query()->where('slug', 'built-in-stove')->firstOrFail();
+
+        $this->get(route('categories.index'))->assertDontSee($category->name);
+        $this->get(route('categories.show', $category->slug))->assertNotFound();
+        $this->get(route('shop.index'))->assertDontSee($category->name);
+    }
+
 }
