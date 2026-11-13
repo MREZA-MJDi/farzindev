@@ -816,6 +816,18 @@ class FarzinStorefrontTest extends TestCase
                 'name' => $case['name'],
                 'slug' => $case['slug'],
             ]);
+            $guideProduct = $this->product($category, [
+                'name' => $case['name'] . ' مدل فعال',
+                'slug' => $case['slug'] . '-guide-product',
+                'sku' => 'FAR-GUIDE-' . strtoupper(str_replace('-', '', $case['slug'])),
+            ]);
+            ProductImage::create([
+                'product_id' => $guideProduct->id,
+                'path' => 'https://cdn.example.test/' . $case['slug'] . '-guide.webp',
+                'alt' => $guideProduct->name,
+                'sort_order' => 0,
+                'is_primary' => true,
+            ]);
 
             $this->get(route('categories.show', $category->slug))
                 ->assertOk()
@@ -1309,6 +1321,18 @@ class FarzinStorefrontTest extends TestCase
         $category = $this->category([
             'name' => 'دسته تست SEO',
             'slug' => 'seo-test-category',
+        ]);
+        $product = $this->product($category, [
+            'name' => 'محصول فعال دسته SEO',
+            'slug' => 'seo-test-category-product',
+            'sku' => 'FAR-SEO-CATEGORY-PRODUCT',
+        ]);
+        ProductImage::create([
+            'product_id' => $product->id,
+            'path' => 'https://cdn.example.test/seo-test-category.webp',
+            'alt' => $product->name,
+            'sort_order' => 0,
+            'is_primary' => true,
         ]);
 
         $this->get(route('categories.show', $category->slug))
