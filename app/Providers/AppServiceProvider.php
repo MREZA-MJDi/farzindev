@@ -32,7 +32,7 @@ class AppServiceProvider extends ServiceProvider
         // These values are consumed by the public storefront shell/footer only.
         // A wildcard composer also runs for every nested Blade component (including
         // each product card), repeating cache lookups and filesystem checks per view.
-        View::composer(['layouts.app', 'home.index', 'about.index', 'errors.*', 'auth.*', 'admin.auth.*'], function ($view): void {
+        View::composer(['layouts.app', 'home.index', 'about.index', 'legal.terms', 'legal.privacy', 'pages.policy', 'errors.*', 'auth.*', 'admin.auth.*'], function ($view): void {
             $settings = rescue(fn (): array => Cache::remember(
                 'storefront.public-brand-settings.v1',
                 now()->addMinutes(10),
