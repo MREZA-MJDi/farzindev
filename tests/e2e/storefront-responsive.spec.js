@@ -989,7 +989,7 @@ test('category index cards keep their copy readable above the image treatment', 
         return {
             title: getComputedStyle(title).color,
             eyebrow: eyebrow ? getComputedStyle(eyebrow).color : null,
-            hasProductCount: Boolean(element.querySelector('.farzin-category-card__count')),
+            hasProductCount: Boolean(element.querySelector('.farzin-category-card__content p:not(:first-child)')),
             shade: getComputedStyle(shade).backgroundImage,
         };
     });
