@@ -4,13 +4,11 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Media;
-use App\Models\Product;
 use App\Models\StorefrontSetting;
 use App\Services\StorefrontPageContent;
 use App\Services\Media\ResponsiveImageService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
 use Illuminate\View\View;
@@ -235,7 +233,6 @@ class PageContentController extends Controller
             'fieldSections' => $this->groupFields($tab),
             'groups' => self::GROUPS,
             'values' => $content->all(),
-            'heroProductPreview' => $tab === 'home' ? $this->homepageHeroProductPreview() : null,
             'technologyMediaImages' => $tab === 'home'
                 ? Media::query()->where('disk', 'public')->where('mime_type', 'like', 'image/%')->latest()->limit(100)->get()
                     ->filter(fn (Media $media): bool => filled($media->url))->values()
@@ -271,9 +268,9 @@ class PageContentController extends Controller
                 $tab === 'about' && str_starts_with($key, 'page_about_hero_') => 'معرفی و Hero',
                 $tab === 'about' && str_starts_with($key, 'page_about_statement_') => 'بیانیه مجموعه',
                 $tab === 'about' && str_starts_with($key, 'page_about_factory_') => 'راهنمای انتخاب محصولات',
-                $tab === 'about' && preg_match('/^page_about_value_\\d+_/', $key) === 1 => 'ارزش‌های مجموعه',
+                $tab === 'about' && preg_match('/^page_about_value_\d+_/', $key) === 1 => 'ارزش‌های مجموعه',
                 $tab === 'about' && str_starts_with($key, 'page_about_values_') => 'ارزش‌های مجموعه',
-                $tab === 'about' && preg_match('/^page_about_step_\\d+_/', $key) === 1 => 'مراحل تجربه مشتری',
+                $tab === 'about' && preg_match('/^page_about_step_\d+_/', $key) === 1 => 'مراحل تجربه مشتری',
                 $tab === 'about' && str_starts_with($key, 'page_about_experience_') => 'مراحل تجربه مشتری',
                 $tab === 'about' && str_starts_with($key, 'page_about_installment_') => 'توضیح پرداخت منعطف',
                 $tab === 'about' && str_starts_with($key, 'page_about_final_') => 'دعوت پایانی و تماس',
@@ -620,56 +617,6 @@ class PageContentController extends Controller
         return redirect()
             ->route('admin.page-content.edit', ['tab' => $tab])
             ->with('success', 'محتوا و تنظیمات صفحه ذخیره شد و در خروجی عمومی قابل مشاهده است.');
-    }
-    /**
-     * Return the same currently purchasable, image-backed recommendation used
-     * by the public homepage so the admin preview never invents a sample card.
-     */
-    private function homepageHeroProductPreview(): ?Product
-    {
-        $products = Product::query()
-            ->active()
-            ->where('show_in_home_gallery', true)
-            ->whereHas('category', fn (Builder $query) => $query->where('is_active', true))
-            ->whereHas('images')
-            ->with([
-                'category:id,name,slug,description',
-                'variants:id,product_id,type,name,value,stock',
-                'images' => fn ($query) => $query
-                    ->select(['id', 'product_id', 'media_id', 'path', 'alt', 'sort_order', 'is_primary'])
-                    ->orderByDesc('is_primary')
-                    ->orderBy('sort_order')
-                    ->orderBy('id')
-                    ->limit(5),
-                'images.media:id,path',
-            ])
-            ->withSum([
-                'orderItems as sold_quantity' => function (Builder $orderItemQuery): void {
-                    $orderItemQuery->whereHas('order', function (Builder $orderQuery): void {
-                        $orderQuery
-                            ->where('payment_status', 'paid')
-                            ->where('status', '!=', 'cancelled');
-                    });
-                },
-            ], 'quantity')
-            ->orderByDesc('sold_quantity')
-            ->orderByDesc('is_featured')
-            ->orderByDesc('updated_at')
-            ->orderByDesc('id')
-            ->get()
-            ->filter(fn (Product $product) => $product->images->contains(
-                fn ($image) => filled($image->url)
-            ));
-
-        return $products->first(function (Product $product): bool {
-            $groups = $product->variants->groupBy('type');
-
-            return $groups->isNotEmpty()
-                ? $groups->every(fn ($options) => $options->contains(
-                    fn ($option) => (int) $option->stock > 0
-                ))
-                : (int) $product->stock > 0;
-        });
     }
 
 }
