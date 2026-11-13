@@ -21,9 +21,6 @@ class CategoryController extends Controller
         $categories = Category::query()
             ->visibleInStorefront()
             ->with('hoverMedia')
-            ->withCount([
-                'products' => fn ($query) => $query->active(),
-            ])
             ->orderBy('sort_order')
             ->orderBy('id')
             ->paginate(12)
