@@ -91,11 +91,11 @@
 
         <strong class="fz-product-card__title">{{ $product->name }}</strong>
         @if($specifications->isNotEmpty())
-            <span class="fz-home-product-card__specs" aria-label="مشخصات کلیدی محصول">
+            <ul class="fz-home-product-card__specs" aria-label="مشخصات کلیدی محصول">
                 @foreach($specifications as $specification)
-                    <span><b>{{ $specification['label'] }}</b> {{ $specification['value'] }}</span>
+                    <li><span>{{ $specification['label'] }}</span>{{ $specification['value'] }}</li>
                 @endforeach
-            </span>
+            </ul>
         @endif
 
         <span class="fz-product-card__availability {{ $isAvailable ? 'is-available' : 'is-unavailable' }}">
