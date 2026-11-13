@@ -114,6 +114,7 @@
                     mobile
                     :categories="$categories"
                     :selected-category="$selectedCategory"
+                    :filterable-attributes="$filterableAttributes ?? collect()"
                 />
 
             </div>
