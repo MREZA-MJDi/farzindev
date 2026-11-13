@@ -47,7 +47,7 @@
                         if ($row->value_boolean !== null) return $row->value_boolean ? 'بله' : 'خیر';
                         if ($row->value_number !== null) {
                             $number = rtrim(rtrim(number_format((float) $row->value_number, 3, '.', ''), '0'), '.');
-                            return \\App\\Helpers\\PersianNumberHelper::format($number) . ($attribute->unit ? ' ' . $attribute->unit : '');
+                            return \App\Helpers\PersianNumberHelper::format($number) . ($attribute->unit ? ' ' . $attribute->unit : '');
                         }
                         return trim((string) $row->value_text);
                     })
