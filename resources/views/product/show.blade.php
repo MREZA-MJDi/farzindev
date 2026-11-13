@@ -141,7 +141,9 @@
         ->values();
 
     if ($structuredSpecifications->isNotEmpty()) {
-        $visibleSpecifications = $structuredSpecifications;
+        $structuredLabels = $structuredSpecifications->pluck('label')->map(fn ($label) => mb_strtolower(trim((string) $label)));
+        $legacyUnmapped = $visibleSpecifications->reject(fn ($specification) => $structuredLabels->contains(mb_strtolower(trim((string) ($specification['label'] ?? '')))));
+        $visibleSpecifications = $structuredSpecifications->concat($legacyUnmapped)->values();
     }
 
     $productTabs = [];
