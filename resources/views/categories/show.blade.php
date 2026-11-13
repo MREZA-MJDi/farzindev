@@ -226,7 +226,7 @@
                         <div class="mt-8 grid gap-px border border-[var(--livora-border)] bg-[var(--livora-border)] md:grid-cols-3">
                             @foreach($categoryGuide['factors'] as $index => $factor)
                                 <article class="bg-white p-6 sm:p-7">
-                                    <span class="text-xs font-bold text-[var(--livora-accent)]">۰{{ $index + ۱ }}</span>
+                                    <span class="text-xs font-bold text-[var(--livora-accent)]">{{ \\App\\Helpers\\PersianNumberHelper::format($index + 1) }}</span>
                                     <h3 class="mt-4 text-lg font-black text-[var(--livora-ink)]">{{ $factor['title'] }}</h3>
                                     <p class="mt-3 text-sm leading-8 text-[var(--livora-stone)]">{{ $factor['body'] }}</p>
                                 </article>
