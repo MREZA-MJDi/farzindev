@@ -77,6 +77,11 @@
                             @endif
                         </div>
 
+                        <div class="fz-contact-socials" aria-label="ارتباط در شبکه‌های اجتماعی">
+                            <span>ما را در شبکه‌های اجتماعی دنبال کنید</span>
+                            <x-layout.social-links :contact="$contactSetting" :brand-name="'فرجی‌هوم'" :show-phone="false" />
+                        </div>
+
                         <div class="fz-contact-hero__meta" aria-label="راه‌های ارتباط">
                             <span><i aria-hidden="true"></i> مشاوره محصول</span>
                             <span><i aria-hidden="true"></i> پیگیری سفارش</span>
