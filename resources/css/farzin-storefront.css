@@ -6118,3 +6118,69 @@ body.home-body,
     .storefront-content .farzin-product-card--catalog .farzin-product-card__catalog-specs { min-height: 3.4rem; }
     .storefront-content .farzin-product-card--catalog .farzin-product-card__cta { min-height: 44px; }
 }
+
+
+/* Shop refinement: one search entry point (site header), clean sort row, right-anchored filters. */
+@media (min-width: 1024px) {
+    .storefront-content .farzin-shop-catalog .farzin-shop-layout {
+        grid-template-columns: 270px minmax(0, 1fr);
+        column-gap: clamp(1.25rem, 2vw, 2rem);
+    }
+    .storefront-content .farzin-shop-catalog aside {
+        justify-self: end;
+        width: 100%;
+        margin-inline-start: 0;
+    }
+}
+.storefront-content .farzin-shop-sortbar {
+    min-height: 58px;
+    padding-inline: 0;
+}
+.storefront-content .farzin-shop-sortbar .farzin-shop-toolbar__sort {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+}
+.storefront-content .farzin-shop-sortbar select {
+    min-height: 42px;
+    min-width: 170px;
+    border: 1px solid var(--fz-line);
+    border-radius: 0;
+    background: var(--fz-paper);
+    padding-inline: .8rem 2rem;
+    color: var(--fz-ink);
+    font-size: .75rem;
+}
+.storefront-content .farzin-shop-product-grid {
+    align-items: stretch;
+    gap: clamp(.85rem, 1.6vw, 1.25rem);
+}
+.storefront-content .farzin-shop-product-grid > article {
+    min-width: 0;
+    height: 100%;
+}
+.storefront-content .farzin-product-card--catalog .farzin-product-card__image-link {
+    aspect-ratio: 1 / 1;
+}
+.storefront-content .farzin-product-card--catalog .farzin-product-card__image {
+    padding: .35rem !important;
+    transform: scale(1.035);
+}
+.storefront-content .farzin-product-card--catalog:hover .farzin-product-card__image {
+    transform: scale(1.065);
+}
+@media (max-width: 767px) {
+    .storefront-content .farzin-shop-sortbar {
+        min-height: 0;
+        align-items: flex-end;
+        padding-bottom: .8rem;
+    }
+    .storefront-content .farzin-shop-sortbar select {
+        min-width: 145px;
+        min-height: 40px;
+        font-size: .68rem;
+    }
+    .storefront-content .farzin-shop-product-grid {
+        gap: .75rem;
+    }
+}
