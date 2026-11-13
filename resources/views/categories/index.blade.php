@@ -24,13 +24,13 @@
                         <p class="text-xs font-bold tracking-wide text-white/65">فرجی‌هوم / راهنمای انتخاب</p>
                         <h1 class="mt-5 text-4xl font-black leading-[1.45] tracking-tight text-white sm:text-5xl lg:text-6xl">
                             دسته مناسب را پیدا کنید؛
-                            <span class="block text-[#e6b8a6]">بعد با خیال راحت مقایسه کنید.</span>
+                            <span class="block text-[var(--livora-accent)]">بعد با خیال راحت مقایسه کنید.</span>
                         </h1>
                         <p class="mt-6 max-w-2xl text-sm leading-9 text-white/75 sm:text-base">
                             برای انتخاب تجهیزات آشپزخانه، از گروه محصول شروع کنید. مدل‌ها را بر اساس نوع نصب، ابعاد، جنس و ویژگی‌های فنی بررسی کنید و مشخصات هر کالا را پیش از سفارش بخوانید.
                         </p>
                         <div class="mt-8 flex flex-wrap gap-3">
-                            <a href="#category-list" class="inline-flex min-h-12 items-center justify-center gap-3 bg-white px-6 py-3 text-sm font-bold text-[var(--livora-ink)] transition hover:bg-[#f3e9e5]">
+                            <a href="#category-list" class="inline-flex min-h-12 items-center justify-center gap-3 bg-white px-6 py-3 text-sm font-bold text-[var(--livora-ink)] transition hover:bg-[var(--livora-accent-soft)]">
                                 انتخاب دسته‌بندی <span aria-hidden="true">↓</span>
                             </a>
                             <a href="{{ route('contact') }}" class="inline-flex min-h-12 items-center justify-center border border-white/35 px-6 py-3 text-sm font-semibold text-white transition hover:border-white hover:bg-white/10">
@@ -55,7 +55,7 @@
                                 <span class="text-xs text-white/55">همراه انتخاب شما</span>
                                 <strong class="mt-2 block text-base font-bold text-white">فرجی‌هوم</strong>
                             </div>
-                            <span class="text-3xl font-light text-[#e6b8a6]" aria-hidden="true">01—02</span>
+                            <span class="text-3xl font-light text-[var(--livora-accent)]" aria-hidden="true">01—02</span>
                         </div>
                     </div>
                 </div>
