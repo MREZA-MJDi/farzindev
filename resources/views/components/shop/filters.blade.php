@@ -9,6 +9,9 @@
     @if(request()->filled('sort'))
         <input type="hidden" name="sort" value="{{ request('sort') }}">
     @endif
+    @if(request()->filled('search'))
+        <input type="hidden" name="search" value="{{ request('search') }}">
+    @endif
 
     {{-- =========================================================
          دسته‌بندی
