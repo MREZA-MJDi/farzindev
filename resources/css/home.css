@@ -1215,7 +1215,8 @@ body.home-body{
     content:"";
 }
 
-.fz-market-hero__copy h1{
+.fz-market-hero__copy h1,
+.fz-market-hero__copy h2{
     max-width:16ch;
     margin:0;
     color:#fff;
@@ -1840,7 +1841,8 @@ body.home-body{
 
     .fz-market-hero__eyebrow{ margin-bottom:.45rem; font-size:.62rem; }
 
-    .fz-market-hero__copy h1{ max-width:20ch; font-size:clamp(1.35rem,6vw,1.8rem); line-height:1.6; }
+    .fz-market-hero__copy h1,
+    .fz-market-hero__copy h2{ max-width:20ch; font-size:clamp(1.35rem,6vw,1.8rem); line-height:1.6; }
 
     .fz-market-hero__description{ max-width:40ch; margin-top:.4rem; font-size:.68rem; line-height:1.85; }
 
