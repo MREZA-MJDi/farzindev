@@ -127,8 +127,6 @@
                 <div class="mt-4 space-y-4">
                     @for($faqIndex = 0; $faqIndex < 7; $faqIndex++)
                         @php($faq = $categoryFaqs[$faqIndex] ?? [])
-
-@php($categoryImageUrl = (isset($editing) && $editing) ? ($category->image_url ?? null) : null)
                         <div class="grid gap-3 rounded-xl border border-[var(--admin-border)] p-3 sm:grid-cols-2">
                             <label class="block text-xs font-semibold">پرسش {{ $faqIndex + 1 }}<input name="faqs[{{ $faqIndex }}][question]" maxlength="180" value="{{ old("faqs.{$faqIndex}.question", $faq['question'] ?? '') }}" class="admin-input mt-2 w-full"></label>
                             <label class="block text-xs font-semibold">پاسخ<textarea name="faqs[{{ $faqIndex }}][answer]" maxlength="1200" rows="2" class="admin-textarea mt-2 w-full">{{ old("faqs.{$faqIndex}.answer", $faq['answer'] ?? '') }}</textarea></label>
@@ -288,10 +286,6 @@
                 </p>
             </div>
 
-
-            @php
-                $categoryImageUrl = (isset($editing) && $editing) ? ($category->image_url ?? null) : null;
-            @endphp
 
             <div class="admin-image-preview mb-5 aspect-[4/3]">
                 <img
