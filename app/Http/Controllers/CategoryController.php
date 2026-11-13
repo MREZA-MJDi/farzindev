@@ -12,7 +12,7 @@ class CategoryController extends Controller
     public function index(): View
     {
         $categories = Category::query()
-            ->active()
+            ->visibleInStorefront()
             ->with('hoverMedia')
             ->withCount([
                 'products' => fn ($query) => $query->active(),
@@ -47,7 +47,7 @@ class CategoryController extends Controller
         // Publication belongs to the category itself. Do not make its URL
         // disappear merely because its products are still drafts or not added.
         abort_unless(
-            Category::query()->active()->whereKey($category->getKey())->exists(),
+            Category::query()->visibleInStorefront()->whereKey($category->getKey())->exists(),
             404
         );
 
