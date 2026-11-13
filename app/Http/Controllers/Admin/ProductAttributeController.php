@@ -72,11 +72,18 @@ class ProductAttributeController extends Controller
     throw ValidationException::withMessages(['options'=>'گزینه «'.$option->label.'» در محصولات استفاده شده و قابل حذف نیست.']);
    }
   }
+  $keep=[];
   foreach($labels as $index=>$label) {
+   $existingOption=$existing->firstWhere('label',$label);
+   if($existingOption) {
+    $existingOption->update(['sort_order'=>$index]);
+    $keep[]=$existingOption->value;
+    continue;
+   }
    $value='opt-'.substr(sha1(mb_strtolower($label)),0,16);
-   AttributeOption::updateOrCreate(['attribute_id'=>$attribute->id,'value'=>$value],['label'=>$label,'sort_order'=>$index]);
+   $option=AttributeOption::updateOrCreate(['attribute_id'=>$attribute->id,'value'=>$value],['label'=>$label,'sort_order'=>$index]);
+   $keep[]=$option->value;
   }
-  $keep=$labels->map(fn($label)=>'opt-'.substr(sha1(mb_strtolower($label)),0,16))->all();
   $attribute->options()->whereNotIn('value',$keep)->whereDoesntHave('values')->delete();
  }
 }
