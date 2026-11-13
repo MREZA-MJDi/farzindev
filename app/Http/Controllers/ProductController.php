@@ -21,6 +21,8 @@ class ProductController extends Controller
                 'category',
                 'images.media',
                 'variants.images.media',
+                'attributeValues.attribute',
+                'attributeValues.option',
             ])
             ->active()
             ->whereHas('category', fn (Builder $query) => $query->where('is_active', true))
