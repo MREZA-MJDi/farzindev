@@ -20,7 +20,7 @@ class PageContentController extends Controller
     private const GROUPS = [
         'home' => [
             'title' => 'صفحه اصلی',
-            'description' => 'عنوان و تصویر Hero را ویرایش کنید. کلیدهای نمایش بخش محصولات و مجله را هم بررسی کنید؛ اگر خاموش باشند، حتی محصولات و مقاله‌های منتشرشده در صفحه اصلی دیده نمی‌شوند. دسته‌ها و محصولات از کاتالوگ واقعی خوانده می‌شوند.',
+            'description' => 'عنوان و تصویر Hero را ویرایش کنید. کلیدهای نمایش بخش محصولات و مجله را هم بررسی کنید؛ اگر خاموش باشند، حتی محصولات و مقاله‌های منتشرشده در صفحه اصلی دیده نمی‌شوند. دسته‌ها و محصولات از اطلاعات واقعی فروشگاه خوانده می‌شوند.',
             'fields' => [
                 'page_home_hero_title' => ['label' => 'عنوان کوتاه Hero', 'type' => 'text', 'max' => 120],
                 'page_home_banner_1_eyebrow' => ['label' => 'بنر 1 — برچسب بالای عنوان', 'type' => 'text', 'max' => 100],
@@ -98,7 +98,7 @@ class PageContentController extends Controller
                 'page_about_factory_title' => ['label' => 'عنوان راهنمای انتخاب', 'type' => 'text', 'max' => 160],
                 'page_about_factory_body_1' => ['label' => 'متن راهنمای انتخاب — بخش اول', 'type' => 'textarea', 'max' => 1000],
                 'page_about_factory_body_2' => ['label' => 'متن راهنمای انتخاب — بخش دوم', 'type' => 'textarea', 'max' => 1000],
-                'page_about_factory_cta' => ['label' => 'دکمه کاتالوگ محصولات', 'type' => 'text', 'max' => 80],
+                'page_about_factory_cta' => ['label' => 'دکمه مشاهده محصولات', 'type' => 'text', 'max' => 80],
                 'page_about_values_eyebrow' => ['label' => 'برچسب ارزش‌ها', 'type' => 'text', 'max' => 120],
                 'page_about_values_title' => ['label' => 'عنوان ارزش‌ها', 'type' => 'text', 'max' => 160],
                 'page_about_value_1_title' => ['label' => 'ارزش ۱ — عنوان', 'type' => 'text', 'max' => 100],
