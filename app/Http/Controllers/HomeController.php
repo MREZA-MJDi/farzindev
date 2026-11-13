@@ -51,6 +51,8 @@ class HomeController extends Controller
 
         $productRelations = [
             'category:id,name,slug',
+            'category.attributes.options',
+            'attributeValues.option',
             'variants:id,product_id,type,name,value,stock,is_active,price_adjustment',
             'images' => fn ($query) => $query
                 ->select(['id', 'product_id', 'media_id', 'path', 'alt', 'sort_order', 'is_primary'])
