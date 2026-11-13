@@ -137,6 +137,7 @@
             return ['label' => $attribute->label, 'value' => $values->join('، '), 'group' => $attribute->group];
         })
         ->filter()
+        ->sortBy('group')
         ->values();
 
     if ($structuredSpecifications->isNotEmpty()) {
@@ -357,7 +358,12 @@
 
                         @if($tab === 'specifications')
                             <dl class="grid grid-cols-1 gap-0 border-t border-[var(--livora-border)] py-2 sm:grid-cols-2">
+                                @php($currentSpecificationGroup = null)
                                 @foreach($visibleSpecifications as $specification)
+                                    @if(!empty($specification['group']) && $currentSpecificationGroup !== $specification['group'])
+                                        <div class="col-span-full border-b border-[var(--livora-border)] bg-[var(--livora-surface)] px-3 py-2 text-xs font-bold text-[var(--livora-text)]">{{ $specification['group'] }}</div>
+                                        @php($currentSpecificationGroup = $specification['group'])
+                                    @endif
                                     <div class="flex min-w-0 items-start justify-between gap-4 border-b border-[var(--livora-border)] px-1 py-3 text-sm">
                                         <dt class="shrink-0 text-[var(--livora-stone)]">{{ $specification['label'] }}</dt>
                                         <dd class="min-w-0 text-left font-semibold text-[var(--livora-text)]" dir="auto">{{ $specification['value'] }}</dd>
