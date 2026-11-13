@@ -756,7 +756,7 @@ test('admin blog image workflows expose the cropper and saved media library', as
 });
 
 
-test('admin homepage hero preview matches the fixed 16:10 crop and updates its copy live', async ({ page }) => {
+test('admin page content uses the real published preview and accurate image crop controls', async ({ page }) => {
     await page.setViewportSize({ width: 1280, height: 900 });
     await page.goto('/admin/login', { waitUntil: 'domcontentloaded' });
 
@@ -767,11 +767,12 @@ test('admin homepage hero preview matches the fixed 16:10 crop and updates its c
     await expect(page).toHaveURL(/\/admin(?:\/dashboard)?(?:\?.*)?$/);
 
     await page.goto('/admin/page-content?tab=home', { waitUntil: 'domcontentloaded' });
-    await expect(page.locator('[data-home-hero-preview]')).toBeVisible();
+    await expect(page.locator('[data-page-content-form]')).toBeVisible();
+    await expect(page.locator('[data-home-hero-preview]')).toHaveCount(0);
+    await expect(page.getByText('پیش‌نمایش نسخه ذخیره‌شده')).toBeVisible();
 
-    const previewTitle = page.locator('[data-home-hero-preview-title]');
-    await page.locator('#page_home_hero_title').fill('پیش‌نمایش زنده هود و سینک');
-    await expect(previewTitle).toHaveText('پیش‌نمایش زنده هود و سینک');
+    await page.locator('#page_home_hero_title').fill('عنوان ویرایش‌شده Hero');
+    await expect(page.locator('[data-page-content-save-state]')).toContainText('تغییرات ذخیره‌نشده');
 
     const imageBytes = await page.evaluate(async () => {
         const source = document.createElement('canvas');
@@ -798,14 +799,14 @@ test('admin homepage hero preview matches the fixed 16:10 crop and updates its c
         buffer: Buffer.from(imageBytes),
     });
 
-    const cropPanel = page.locator('[data-image-editor-panel]');
+    const cropPanel = page.locator('[data-image-editor-panel-for="page_home_hero_image"]');
     const cropCanvas = cropPanel.locator('[data-image-editor-canvas]');
     await expect(cropPanel).toBeVisible();
     await expect(cropCanvas).toBeVisible();
     await expect(cropPanel.locator('[data-image-editor-ratio]')).toHaveValue('16:10');
 
     const cropRatio = await cropCanvas.evaluate((canvas) => canvas.width / canvas.height);
-    expect(cropRatio, 'crop preview must use the same 16:10 frame as the public homepage').toBeCloseTo(1.6, 2);
+    expect(cropRatio, 'crop preview must use the required 16:10 output frame').toBeCloseTo(1.6, 2);
     await expect(cropPanel.locator('[data-image-editor-status]')).toContainText('پیکسل');
 
     await cropPanel.locator('[data-image-editor-zoom]').evaluate((input) => {
@@ -815,15 +816,21 @@ test('admin homepage hero preview matches the fixed 16:10 crop and updates its c
     await expect(cropPanel.locator('[data-image-editor-zoom-label]')).toContainText('۱٫۵');
 
     await page.setViewportSize({ width: 390, height: 844 });
-    const previewOverflow = await page.locator('[data-home-hero-preview]').evaluate((element) => (
-        Math.max(element.scrollWidth, element.getBoundingClientRect().width)
-        - element.getBoundingClientRect().width
-    ));
-    expect(previewOverflow, 'the hero crop preview must not overflow on mobile').toBeLessThanOrEqual(1);
+    const cropBounds = await cropPanel.boundingBox();
+    expect(cropBounds?.width ?? 0, 'crop editor must fit the mobile viewport').toBeLessThanOrEqual(390);
 
     await upload.setInputFiles([]);
     await expect(cropPanel).toBeHidden();
     await expect(page.locator('[data-image-editor-placeholder]')).toBeVisible();
+
+    const bannerUpload = page.locator('input[name="page_home_banner_1_image"]');
+    await bannerUpload.setInputFiles({
+        name: 'farzin-banner-preview.png',
+        mimeType: 'image/png',
+        buffer: Buffer.from(imageBytes),
+    });
+    await expect(page.locator('#page_home_banner_1_preview')).toBeVisible();
+    await expect(page.locator('#page_home_banner_1_preview')).toHaveAttribute('src', /^blob:/);
 });
 
 test('admin contact location preview updates the existing map frame when address and coordinates change', async ({ page }) => {
