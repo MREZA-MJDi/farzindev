@@ -345,6 +345,26 @@
         </section>
     @endif
 
+    @if(($homeCopy['page_home_show_final_cta'] ?? '1') === '1')
+        <section class="fz-home-final-cta" aria-labelledby="fz-home-final-cta-title">
+            <div class="fz-home-container">
+                <div class="fz-home-final-cta__inner">
+                    <div>
+                        <span class="fz-home-section-head__eyebrow">فرجی‌هوم / انتخاب آگاهانه</span>
+                        <h2 id="fz-home-final-cta-title">{{ $homeCopy['page_home_final_title'] ?? 'مدل مناسب آشپزخانه‌تان را پیدا کنید.' }}</h2>
+                        @if(filled($homeCopy['page_home_final_description'] ?? null))
+                            <p>{{ $homeCopy['page_home_final_description'] }}</p>
+                        @endif
+                    </div>
+                    <a href="{{ route('shop.index') }}" class="fz-home-final-cta__button">
+                        {{ $homeCopy['page_home_final_cta'] ?? 'ورود به فروشگاه' }}
+                        <span aria-hidden="true">←</span>
+                    </a>
+                </div>
+            </div>
+        </section>
+    @endif
+
     @if($enamadUrl !== '')
         <div class="fz-home-enamad" aria-label="نماد اعتماد الکترونیکی">
             <div class="fz-home-container">
