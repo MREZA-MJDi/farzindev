@@ -62,7 +62,7 @@ class ShopController extends Controller
         }
 
         $selectedCategory = ! empty($filters['category'])
-            ? Category::query()->where('slug', $filters['category'])->where('is_active', true)->first()
+            ? Category::query()->visibleInStorefront()->where('slug', $filters['category'])->first()
             : null;
         $filterableAttributes = $selectedCategory
             ? $selectedCategory->attributes()->wherePivot('is_filterable', true)->with('options')->get()
@@ -77,7 +77,7 @@ class ShopController extends Controller
             if ($attribute->type === 'number' && is_array($selectedValue)) {
                 $minimum = $selectedValue['min'] ?? null;
                 $maximum = $selectedValue['max'] ?? null;
-                if (is_numeric($minimum) || is_numeric($maximum)) {
+                if ((is_numeric($minimum) || is_numeric($maximum)) && (! is_numeric($minimum) || ! is_numeric($maximum) || (float) $minimum <= (float) $maximum)) {
                     $query->whereHas('attributeValues', function ($values) use ($attribute, $minimum, $maximum): void {
                         $values->where('attribute_id', $attribute->id);
                         if (is_numeric($minimum)) $values->where('value_number', '>=', $minimum);
