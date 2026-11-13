@@ -182,7 +182,24 @@ class Category extends Model
 
     public function scopeVisibleInStorefront($query)
     {
-        return $query->active()->whereHas('products', fn ($products) => $products->active());
+        $gasCategorySlugs = [
+            'built-in-stove',
+            'gas-stoves',
+            'gas-hobs',
+            'built-in-gas',
+            'built-in-hobs',
+            'gas-stove',
+        ];
+
+        return $query->active()->where(function ($visibility) use ($gasCategorySlugs): void {
+            $visibility
+                ->where(function ($nonGas) use ($gasCategorySlugs): void {
+                    $nonGas
+                        ->whereNotIn('slug', $gasCategorySlugs)
+                        ->where('name', 'not like', '%اجاق گاز%');
+                })
+                ->orWhereHas('products', fn ($products) => $products->active());
+        });
     }
 
     public function scopeActive($query)
