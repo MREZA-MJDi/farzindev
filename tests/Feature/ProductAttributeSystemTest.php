@@ -150,8 +150,8 @@ class ProductAttributeSystemTest extends TestCase
             'attributes' => [$material->id => $steel->id],
         ]))
             ->assertOk()
-            ->assertSee('سینک استیل')
-            ->assertDontSee('سینک گرانیت');
+            ->assertViewHas('products', fn ($products) => $products->total() === 1
+                && $products->getCollection()->pluck('name')->all() === ['سینک استیل']);
     }
     public function test_category_faqs_render_from_database_with_faqpage_schema(): void
     {
@@ -218,8 +218,8 @@ class ProductAttributeSystemTest extends TestCase
             'attributes' => [$attribute->id => $steel->id],
         ]))
             ->assertOk()
-            ->assertSee('سینک استیل دسته')
-            ->assertDontSee('سینک گرانیت دسته');
+            ->assertViewHas('products', fn ($products) => $products->total() === 1
+                && $products->getCollection()->pluck('name')->all() === ['سینک استیل دسته']);
     }
 
     public function test_legacy_specification_migration_supports_dry_run_and_preserves_source_json(): void
