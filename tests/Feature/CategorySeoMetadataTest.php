@@ -68,7 +68,7 @@ class CategorySeoMetadataTest extends TestCase
             ->assertSee('farzin-category-detail__description', false);
     }
 
-    public function test_active_non_gas_category_remains_public_while_homepage_only_features_categories_with_products(): void
+    public function test_active_non_gas_category_stays_hidden_until_it_has_an_active_product(): void
     {
         $admin = User::factory()->create(['role' => 'admin']);
 
@@ -87,6 +87,10 @@ class CategorySeoMetadataTest extends TestCase
         $this->app['env'] = 'production';
 
         $this->get(route('home'))->assertOk()->assertDontSee('active-empty-category');
+        $this->get(route('categories.index'))->assertOk()->assertDontSee('active-empty-category');
+        $this->get(route('categories.show', $category->slug))->assertNotFound();
+
+        $this->createVisibleProduct($category, 'active-empty-category-first-product');
         $this->get(route('categories.index'))->assertOk()->assertSee('دسته فعال بدون محصول');
         $this->get(route('categories.show', $category->slug))->assertOk()->assertSee('دسته فعال بدون محصول');
     }
