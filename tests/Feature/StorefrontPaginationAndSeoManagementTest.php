@@ -162,18 +162,18 @@ class StorefrontPaginationAndSeoManagementTest extends TestCase
     public function test_seo_dashboard_values_override_real_titles_and_descriptions_for_main_pages(): void
     {
         $settings = [
-            'seo_home_title' => 'عنوان مدیریت‌شده خانه فرزین',
-            'seo_home_description' => 'توضیحات مدیریت‌شده صفحه اصلی فرزین برای موتورهای جستجو.',
-            'seo_shop_title' => 'عنوان مدیریت‌شده فروشگاه فرزین',
-            'seo_shop_description' => 'توضیحات مدیریت‌شده برای صفحه فروشگاه فرزین.',
+            'seo_home_title' => 'عنوان مدیریت‌شده خانه فرجی‌هوم',
+            'seo_home_description' => 'توضیحات مدیریت‌شده صفحه اصلی فرجی‌هوم برای موتورهای جستجو.',
+            'seo_shop_title' => 'عنوان مدیریت‌شده فروشگاه فرجی‌هوم',
+            'seo_shop_description' => 'توضیحات مدیریت‌شده برای صفحه فروشگاه فرجی‌هوم.',
             'seo_categories_title' => 'عنوان مدیریت‌شده دسته‌بندی‌ها',
             'seo_categories_description' => 'توضیحات مدیریت‌شده برای فهرست دسته‌بندی‌ها.',
-            'seo_blog_title' => 'عنوان مدیریت‌شده مجله فرزین',
-            'seo_blog_description' => 'توضیحات مدیریت‌شده برای فهرست مقالات فرزین.',
-            'seo_about_title' => 'عنوان مدیریت‌شده درباره فرزین',
-            'seo_about_description' => 'توضیحات مدیریت‌شده درباره مجموعه فرزین.',
-            'seo_contact_title' => 'عنوان مدیریت‌شده تماس با فرزین',
-            'seo_contact_description' => 'توضیحات مدیریت‌شده برای تماس با فرزین.',
+            'seo_blog_title' => 'عنوان مدیریت‌شده مجله فرجی‌هوم',
+            'seo_blog_description' => 'توضیحات مدیریت‌شده برای فهرست مقالات فرجی‌هوم.',
+            'seo_about_title' => 'عنوان مدیریت‌شده درباره فرجی‌هوم',
+            'seo_about_description' => 'توضیحات مدیریت‌شده درباره مجموعه فرجی‌هوم.',
+            'seo_contact_title' => 'عنوان مدیریت‌شده تماس با فرجی‌هوم',
+            'seo_contact_description' => 'توضیحات مدیریت‌شده برای تماس با فرجی‌هوم.',
         ];
 
         foreach ($settings as $key => $value) {
@@ -184,13 +184,13 @@ class StorefrontPaginationAndSeoManagementTest extends TestCase
 
         $this->get(route('home'))
             ->assertOk()
-            ->assertSee('<title>عنوان مدیریت‌شده خانه فرزین</title>', false)
-            ->assertSee('name="description" content="توضیحات مدیریت‌شده صفحه اصلی فرزین برای موتورهای جستجو."', false);
+            ->assertSee('<title>عنوان مدیریت‌شده خانه فرجی‌هوم</title>', false)
+            ->assertSee('name="description" content="توضیحات مدیریت‌شده صفحه اصلی فرجی‌هوم برای موتورهای جستجو."', false);
 
         $this->get(route('shop.index'))
             ->assertOk()
-            ->assertSee('<title>عنوان مدیریت‌شده فروشگاه فرزین</title>', false)
-            ->assertSee('name="description" content="توضیحات مدیریت‌شده برای صفحه فروشگاه فرزین."', false);
+            ->assertSee('<title>عنوان مدیریت‌شده فروشگاه فرجی‌هوم</title>', false)
+            ->assertSee('name="description" content="توضیحات مدیریت‌شده برای صفحه فروشگاه فرجی‌هوم."', false);
 
         $this->get(route('categories.index'))
             ->assertOk()
@@ -199,18 +199,18 @@ class StorefrontPaginationAndSeoManagementTest extends TestCase
 
         $this->get(route('blog.index'))
             ->assertOk()
-            ->assertSee('<title>عنوان مدیریت‌شده مجله فرزین</title>', false)
-            ->assertSee('name="description" content="توضیحات مدیریت‌شده برای فهرست مقالات فرزین."', false);
+            ->assertSee('<title>عنوان مدیریت‌شده مجله فرجی‌هوم</title>', false)
+            ->assertSee('name="description" content="توضیحات مدیریت‌شده برای فهرست مقالات فرجی‌هوم."', false);
 
         $this->get(route('about'))
             ->assertOk()
-            ->assertSee('<title>عنوان مدیریت‌شده درباره فرزین</title>', false)
-            ->assertSee('name="description" content="توضیحات مدیریت‌شده درباره مجموعه فرزین."', false);
+            ->assertSee('<title>عنوان مدیریت‌شده درباره فرجی‌هوم</title>', false)
+            ->assertSee('name="description" content="توضیحات مدیریت‌شده درباره مجموعه فرجی‌هوم."', false);
 
         $this->get(route('contact'))
             ->assertOk()
-            ->assertSee('<title>عنوان مدیریت‌شده تماس با فرزین</title>', false)
-            ->assertSee('name="description" content="توضیحات مدیریت‌شده برای تماس با فرزین."', false);
+            ->assertSee('<title>عنوان مدیریت‌شده تماس با فرجی‌هوم</title>', false)
+            ->assertSee('name="description" content="توضیحات مدیریت‌شده برای تماس با فرجی‌هوم."', false);
     }
 
     public function test_shop_filter_category_dataset_remains_bounded_and_selected_category_stays_available(): void
