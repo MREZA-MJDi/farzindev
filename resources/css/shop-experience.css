@@ -388,12 +388,20 @@
     background: var(--fz-accent-dark);
 }
 
-@media (min-width: 1440px) {
-    #app .storefront-content .farzin-shop-layout {
-        grid-template-columns: 300px minmax(0, 1fr);
+@media (min-width: 1024px) {
+    #app .storefront-content .farzin-shop-catalog .farzin-shop-layout {
+        grid-template-columns: minmax(238px, 286px) minmax(0, 1fr);
+    }
+    #app .storefront-content .farzin-shop-catalog .farzin-shop-layout > aside {
+        display: block;
     }
     #app .storefront-content .farzin-shop-product-grid {
         grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+}
+@media (min-width: 1440px) {
+    #app .storefront-content .farzin-shop-catalog .farzin-shop-layout {
+        grid-template-columns: 300px minmax(0, 1fr);
     }
 }
 @media (max-width: 1023px) {
