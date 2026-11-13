@@ -1247,7 +1247,7 @@ class FarzinStorefrontTest extends TestCase
             ->assertDontSee(route('categories.show', $inactive->slug), false);
     }
 
-    public function test_public_categories_only_show_active_categories_with_active_products(): void
+    public function test_public_categories_hide_inactive_and_empty_gas_categories(): void
     {
         $active = $this->category(['name' => 'هود آشپزخانه', 'slug' => 'hoods']);
         $this->product($active, [
@@ -1259,6 +1259,10 @@ class FarzinStorefrontTest extends TestCase
         $this->category([
             'name' => 'دسته‌بندی فعال بدون محصول',
             'slug' => 'active-empty-category',
+        ]);
+        $this->category([
+            'name' => 'اجاق گاز صفحه‌ای',
+            'slug' => 'built-in-stove',
         ]);
         $this->category([
             'name' => 'دسته‌بندی غیرفعال دمو',
