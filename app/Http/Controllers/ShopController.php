@@ -202,7 +202,7 @@ class ShopController extends Controller
         match ($filters['sort'] ?? 'available_first') {
 
             'available_first' => $query
-                ->orderByRaw("CASE WHEN EXISTS (SELECT 1 FROM product_variants AS available_variants WHERE available_variants.product_id = products.id AND available_variants.is_active = 1 AND available_variants.stock > 0) OR (NOT EXISTS (SELECT 1 FROM product_variants AS any_active_variants WHERE any_active_variants.product_id = products.id AND any_active_variants.is_active = 1) AND products.stock > 0) THEN 0 ELSE 1 END")
+                ->orderByRaw("CASE WHEN (NOT EXISTS (SELECT 1 FROM product_variants AS any_active_variants WHERE any_active_variants.product_id = products.id AND any_active_variants.is_active = 1) AND products.stock > 0) OR (EXISTS (SELECT 1 FROM product_variants AS active_variants WHERE active_variants.product_id = products.id AND active_variants.is_active = 1) AND NOT EXISTS (SELECT 1 FROM product_variants AS required_variants WHERE required_variants.product_id = products.id AND required_variants.is_active = 1 GROUP BY required_variants.type HAVING SUM(CASE WHEN required_variants.stock > 0 THEN 1 ELSE 0 END) = 0)) THEN 0 ELSE 1 END")
                 ->orderByDesc('products.updated_at')
                 ->orderByDesc('products.id'),
 
