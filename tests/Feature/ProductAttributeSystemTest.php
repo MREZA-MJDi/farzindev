@@ -321,4 +321,36 @@ class ProductAttributeSystemTest extends TestCase
         $this->get(route('shop.index'))->assertDontSee($category->slug);
     }
 
+    public function test_product_specific_faqs_render_with_faqpage_schema(): void
+    {
+        $this->seed(ProductAttributeSeeder::class);
+        $category = Category::query()->where('slug', 'sinks')->firstOrFail();
+        $product = Product::query()->create([
+            'category_id' => $category->id,
+            'name' => 'سینک دارای پرسش اختصاصی',
+            'slug' => 'sink-product-faq',
+            'sku' => 'FAR-SINK-PRODUCT-FAQ',
+            'price' => 12500000,
+            'stock' => 3,
+            'status' => 'active',
+            'faqs' => [
+                ['question' => 'ابعاد برش این مدل چیست؟', 'answer' => 'ابعاد برش را با نقشه نصب همین مدل تطبیق دهید.'],
+                ['question' => 'شرایط ضمانت این مدل چیست؟', 'answer' => 'مدرک ضمانت همراه کالا را بررسی کنید.'],
+            ],
+        ]);
+        ProductImage::query()->create([
+            'product_id' => $product->id,
+            'path' => 'https://cdn.example.test/sink-product-faq.webp',
+            'alt' => $product->name,
+            'sort_order' => 0,
+            'is_primary' => true,
+        ]);
+
+        $this->get(route('product.show', $product->slug))
+            ->assertOk()
+            ->assertSee('پرسش‌های متداول')
+            ->assertSee('ابعاد برش این مدل چیست؟')
+            ->assertSee('FAQPage', false);
+    }
+
 }
