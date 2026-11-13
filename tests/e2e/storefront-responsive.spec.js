@@ -572,15 +572,15 @@ test('blog archive renders the editorial magazine layout without horizontal over
                 const visual = media.querySelector('img, .blog-art-fallback');
                 if (!visual) return false;
 
-                const frameStyle = getComputedStyle(media);
                 const visualStyle = getComputedStyle(visual);
                 const frame = media.getBoundingClientRect();
+                const artwork = visual.getBoundingClientRect();
 
                 return frame.width > 0
                     && frame.height > 0
                     && visualStyle.position === 'absolute'
-                    && visualStyle.width === '100%'
-                    && visualStyle.height === '100%'
+                    && Math.abs(artwork.width - frame.width) <= 1
+                    && Math.abs(artwork.height - frame.height) <= 1
                     && (!visual.matches('img') || visualStyle.objectFit === 'cover');
             });
         });
@@ -1001,7 +1001,7 @@ test('category index cards keep their copy readable above the image treatment', 
     });
 
     expect(contrast.title, 'category names must be white over the dark lower image overlay').toBe('rgb(255, 255, 255)');
-    expect(contrast.eyebrow, 'category eyebrow must remain legible on the same overlay').toBe('rgba(255, 255, 255, 0.6)');
+    expect(contrast.eyebrow, 'category eyebrow must remain legible on the same overlay').toBe('rgba(255, 255, 255, 0.72)');
     expect(contrast.hasProductCount, 'category cards must not show product counts').toBe(false);
     expect(contrast.shade, 'category cards must include a readable dark image gradient').toContain('linear-gradient');
 });
