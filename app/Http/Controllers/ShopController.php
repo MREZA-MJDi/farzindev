@@ -98,7 +98,7 @@ class ShopController extends Controller
                 continue;
             }
 
-            if ($attribute->type === 'boolean' && in_array((string) $selectedValue, ['0', '1'], true)) {
+            if ($attribute->type === 'boolean' && is_scalar($selectedValue) && in_array((string) $selectedValue, ['0', '1'], true)) {
                 $query->whereHas('attributeValues', fn ($values) => $values
                     ->where('attribute_id', $attribute->id)
                     ->where('value_boolean', (int) $selectedValue));
