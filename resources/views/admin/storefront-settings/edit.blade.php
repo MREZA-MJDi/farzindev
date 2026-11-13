@@ -189,7 +189,7 @@
                         <input type="hidden" name="floating_contact_enabled" value="0">
                         <label class="flex items-center gap-3 rounded-xl border border-[var(--admin-border)] p-4 text-sm font-medium text-[var(--admin-text)]">
                             <input type="checkbox" name="floating_contact_enabled" value="1" @checked(old('floating_contact_enabled', $storefrontSettings->get('floating_contact_enabled', '0')) == '1')>
-                            نمایش دکمه شناور تماس و پیام‌رسان در صفحات سایت
+                            نمایش میانبرهای شناور آیکونی تماس و شبکه‌های اجتماعی در صفحات سایت
                         </label>
                     </div>
                 </div>
@@ -198,7 +198,7 @@
             <section class="admin-card p-5 sm:p-7">
                 <div class="mb-6">
                     <h2 class="text-base font-bold text-[var(--admin-text)]">اطلاعات تماس واقعی</h2>
-                    <p class="mt-2 text-xs leading-6 text-[var(--admin-muted)]">شماره موبایل و راه‌های ارتباطی این بخش در فوتر تمام صفحات سایت استفاده می‌شوند. لینک شبکه‌های اجتماعی فقط در صورت ثبت مقدار معتبر نمایش داده خواهد شد.</p>
+                    <p class="mt-2 text-xs leading-6 text-[var(--admin-muted)]">شماره تماس، واتساپ، اینستاگرام و تلگرام از همین بخش مدیریت می‌شوند. آیکون‌های رنگی در فوتر، منوی موبایل و صفحه تماس نمایش داده می‌شوند؛ میانبر شناور نیز با فعال‌کردن گزینه پایین صفحه در دسترس است. هر راه ارتباطی که خالی باشد، در سایت نمایش داده نمی‌شود.</p>
                 </div>
 
                 @php($contact = $contactSetting)
