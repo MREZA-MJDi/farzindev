@@ -105,7 +105,7 @@
                     action="{{ route('shop.index') }}"
                     method="GET"
                     role="search"
-                    aria-label="جستجوی کاتالوگ فرجی‌هوم"
+                    aria-label="جستجوی محصولات فرجی‌هوم"
                     class="relative"
                     x-data="{ searchValue: @js((string) request('search', '')) }"
                 >
@@ -291,7 +291,7 @@
                         <div>
 
                             <p class="text-[10px] uppercase tracking-[0.2em] text-white/40">
-                                FARAJI HOME / PRODUCT SEARCH
+                                جستجوی محصولات فرجی‌هوم
                             </p>
 
                             <h2 class="mt-3 text-lg font-semibold">
