@@ -26,7 +26,7 @@ class BlogCmsTest extends TestCase
             'slug' => 'published-article-test',
             'excerpt' => 'راهنمای بررسی ابعاد و صدای هود',
             'body' => 'متن کامل مقاله منتشرشده.',
-            'meta_title' => 'خرید و انتخاب هود | فرزین',
+            'meta_title' => 'خرید و انتخاب هود | فرجی‌هوم',
             'meta_description' => 'راهنمای انتخاب هود برای آشپزخانه.',
             'status' => 'published',
             'published_at' => now()->subDay(),
@@ -57,7 +57,7 @@ class BlogCmsTest extends TestCase
 
         $this->get(route('blog.show', $published->slug))
             ->assertOk()
-            ->assertSee('خرید و انتخاب هود | فرزین')
+            ->assertSee('خرید و انتخاب هود | فرجی‌هوم')
             ->assertSee(route('blog.show', $published->slug), false)
             ->assertSee('BlogPosting', false)
             ->assertSee('راهنمای انتخاب هود برای آشپزخانه.');
@@ -224,7 +224,7 @@ class BlogCmsTest extends TestCase
                 'slug' => 'choosing-a-sink',
                 'excerpt' => 'نکات کاربردی انتخاب سینک.',
                 'body' => 'بدنه مقاله برای تست.',
-                'meta_title' => 'انتخاب سینک | فرزین',
+                'meta_title' => 'انتخاب سینک | فرجی‌هوم',
                 'meta_description' => 'راهنمای انتخاب سینک.',
                 'status' => 'draft',
             ])
@@ -241,7 +241,7 @@ class BlogCmsTest extends TestCase
                 'slug' => 'choosing-a-sink',
                 'excerpt' => 'نکات کاربردی انتخاب سینک.',
                 'body' => 'بدنه مقاله برای تست.',
-                'meta_title' => 'انتخاب سینک | فرزین',
+                'meta_title' => 'انتخاب سینک | فرجی‌هوم',
                 'meta_description' => 'راهنمای انتخاب سینک.',
                 'status' => 'published',
             ])
@@ -400,12 +400,12 @@ class BlogCmsTest extends TestCase
             'slug' => 'kitchen-hood-buying-guide',
             'excerpt' => 'راهنمای انتخاب هود آشپزخانه برای فضای پخت‌وپز.',
             'body' => '<h2>راهنمای انتخاب هود</h2><p>نکته <strong>مهم</strong>.</p><script>alert(1)</script>',
-            'meta_title' => 'راهنمای انتخاب هود آشپزخانه | فرزین',
+            'meta_title' => 'راهنمای انتخاب هود آشپزخانه | فرجی‌هوم',
             'meta_description' => 'نکات مهم برای انتخاب هود آشپزخانه متناسب با ابعاد و فضای نصب.',
             'focus_keyword' => 'انتخاب هود آشپزخانه',
             'canonical_url' => 'https://farajihome.com/blog/kitchen-hood-buying-guide',
             'og_title' => 'راهنمای انتخاب هود',
-            'og_description' => 'راهنمای فرزین برای انتخاب هود مناسب.',
+            'og_description' => 'راهنمای فرجی‌هوم برای انتخاب هود مناسب.',
             'seo_robots' => 'noindex,follow',
             'schema_type' => 'Article',
             'is_featured' => '1',
@@ -431,7 +431,7 @@ class BlogCmsTest extends TestCase
 
     public function test_blog_taxonomy_archives_and_rss_feed_show_only_published_articles(): void
     {
-        $category = BlogTerm::create(['type' => 'category', 'name' => 'راهنمای هود', 'slug' => 'hood-guides', 'meta_title' => 'راهنمای هود | مجله فرزین', 'is_active' => true]);
+        $category = BlogTerm::create(['type' => 'category', 'name' => 'راهنمای هود', 'slug' => 'hood-guides', 'meta_title' => 'راهنمای هود | مجله فرجی‌هوم', 'is_active' => true]);
         $tag = BlogTerm::create(['type' => 'tag', 'name' => 'نصب', 'slug' => 'installation', 'is_active' => true]);
         $published = BlogPost::create([
             'title' => 'نکات نصب هود',
@@ -451,7 +451,7 @@ class BlogCmsTest extends TestCase
 
         $this->get(route('blog.category', $category->slug))
             ->assertOk()->assertSee($published->title)->assertDontSee($draft->title)
-            ->assertSee('<title>راهنمای هود | مجله فرزین</title>', false);
+            ->assertSee('<title>راهنمای هود | مجله فرجی‌هوم</title>', false);
 
         $this->get(route('blog.tag', $tag->slug))
             ->assertOk()->assertSee($published->title)->assertDontSee($draft->title);
@@ -615,7 +615,7 @@ class BlogCmsTest extends TestCase
             ->assertSee('blog-masthead', false)
             ->assertSee('blog-featured-card', false)
             ->assertSee('blog-article-card', false)
-            ->assertSee('مجله فرزین')
+            ->assertSee('مجله فرجی‌هوم')
             ->assertSee($featured->title)
             ->assertSee('تازه‌های مجله');
     }
