@@ -151,20 +151,26 @@ test('shop mobile filters apply together, scroll safely and preserve the selecte
     await page.setViewportSize({ width: 360, height: 640 });
     await page.goto('/shop?sort=popular', { waitUntil: 'domcontentloaded' });
 
+    // Search stays in the single shop toolbar; the mobile drawer carries its
+    // current value as a hidden field so applying filters does not clear it.
+    await page.locator('#shop-catalog-search').fill('هود');
+    await page.locator('.farzin-shop-search__submit').click();
+    await expect(page).toHaveURL(/search=%D9%87%D9%88%D8%AF|search=هود/);
+    await expect(page).toHaveURL(/sort=popular/);
+    const initialUrl = page.url();
+
     await page.getByRole('button', { name: 'فیلترها' }).click();
 
     const drawer = page.locator('[data-farzin-filter-drawer]');
     await expect(drawer).toBeVisible();
     await expect(drawer).toHaveCount(1);
 
-    const initialUrl = page.url();
     const category = drawer.locator('input[name="category"]').first();
     await expect(category).toBeVisible();
     await category.check();
     await drawer.locator('input[name="installment"]').check();
-    await drawer.locator('input[name="search"]').fill('هود');
 
-    // Mobile controls stay in the drawer until Apply is pressed.
+    // Mobile drawer filters remain local until Apply is pressed.
     expect(page.url()).toBe(initialUrl);
 
     await drawer.getByRole('button', { name: 'اعمال فیلتر' }).click();
