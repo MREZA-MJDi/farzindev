@@ -125,16 +125,25 @@ class ShopFilterRequest extends FormRequest
     {
         $attributes = $this->input('attributes', []);
         if (is_array($attributes)) {
+            $normalizedAttributes = [];
             foreach ($attributes as $key => $value) {
-                if (is_array($value)) {
+                if (is_array($value) && array_is_list($value)) {
+                    $normalizedAttributes[$key] = array_values(array_filter($value, fn ($item) => is_scalar($item) && is_numeric($this->digits((string) $item))));
+                } elseif (is_array($value)) {
+                    $bounds = [];
                     foreach (['min', 'max'] as $bound) {
-                        if (isset($value[$bound])) $value[$bound] = $this->digits((string) $value[$bound]);
+                        if (isset($value[$bound]) && is_scalar($value[$bound])) {
+                            $bounds[$bound] = $this->digits((string) $value[$bound]);
+                        }
                     }
-                    $attributes[$key] = $value;
+                    $normalizedAttributes[$key] = $bounds;
                 } elseif (is_scalar($value)) {
-                    $attributes[$key] = $this->digits((string) $value);
+                    $normalizedAttributes[$key] = $this->digits((string) $value);
                 }
             }
+            $attributes = $normalizedAttributes;
+        } else {
+            $attributes = [];
         }
 
         $this->merge([
