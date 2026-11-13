@@ -33,7 +33,11 @@ class MigrateLegacyProductSpecifications extends Command
      $value=is_array($raw)?($raw['value']??null):$raw;
      $label=is_array($raw)?trim((string)($raw['label']??'')):(string)$key;
      $legacyKey=isset($this->maps[$type][$key])?$key:($this->labels[$label]??null);
-     if ($type==='hood' && $label==='جنس بدنه') $legacyKey='body_material';
+     if ($type==='sink' && ($key==='material' || in_array($label,['جنس بدنه','جنس'],true))) $legacyKey='sink_material';
+     if ($type==='hood' && ($key==='material' || $label==='جنس بدنه')) $legacyKey='body_material';
+     if ($type==='hood' && $key==='model') $legacyKey='hood_model';
+     if ($type==='gas' && $key==='model') $legacyKey='gas_model';
+     if ($type==='gas' && $key==='glass_thickness') $legacyKey='glass_thickness';
      if(!$legacyKey || !isset($this->maps[$type][$legacyKey])) { $stats['unmatched']++; $this->warn("Product #{$product->id}: no exact attribute mapping for {$label}."); continue; }
      if(!is_scalar($value) || trim((string)$value)==='') continue;
      $attributeKey=$this->maps[$type][$legacyKey];
