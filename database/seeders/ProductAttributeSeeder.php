@@ -112,14 +112,14 @@ class ProductAttributeSeeder extends Seeder
 
   $map=[
    'sink'=>[
-    'installation'=>[1,1,1,1],'length'=>[1,0,0,1],'width'=>[1,0,1,0],'cutout_dimensions'=>[0,1,0,0],
-    'basin_count'=>[1,1,1,1],'basin_depth'=>[1,0,0,1],'basin_capacity'=>[0,1,0,0],'basin_direction'=>[0,1,0,0],
-    'sink_material'=>[1,1,1,1],'sheet_thickness'=>[0,1,0,0],'sink_design'=>[0,1,0,0],'weight'=>[0,1,0,0],
+    'installation'=>[1,0,1,0],'length'=>[1,0,0,1],'width'=>[1,0,1,0],'cutout_dimensions'=>[0,1,0,0],
+    'basin_count'=>[1,0,1,0],'basin_depth'=>[1,0,0,1],'basin_capacity'=>[0,1,0,0],'basin_direction'=>[0,1,0,0],
+    'sink_material'=>[1,0,1,0],'sheet_thickness'=>[0,1,0,0],'sink_design'=>[0,1,0,0],'weight'=>[0,1,0,0],
     'surface_finish'=>[0,1,0,0],'color'=>[0,0,0,0],'sink_accessories'=>[0,0,0,0],'tap_holes'=>[0,0,0,0],'warranty_months'=>[0,0,0,0],
     'manufacturing_country'=>[0,0,0,0]
    ],
    'hood'=>[
-    'hood_type'=>[1,1,1,1],'hood_model'=>[1,0,0,0],'hood_body_material'=>[1,0,1,0],'switch_type'=>[1,0,1,0],
+    'hood_type'=>[1,0,1,0],'hood_model'=>[1,0,0,0],'hood_body_material'=>[1,0,1,0],'switch_type'=>[1,0,1,0],
     'hood_size'=>[1,0,1,0],'hood_length'=>[1,0,0,0],'hood_width'=>[1,0,0,0],'hood_height'=>[0,0,0,0],
     'suction_capacity'=>[1,0,0,0],'light_count'=>[1,0,0,0],'motor_count'=>[0,1,0,0],'noise_level'=>[0,1,0,0],
     'air_outlet'=>[0,1,0,0],'air_outlet_diameter'=>[0,0,0,0],'filter_material'=>[0,0,0,0],
@@ -127,8 +127,8 @@ class ProductAttributeSeeder extends Seeder
    ],
    'gas'=>[
     'gas_model'=>[1,0,0,0],'gas_length'=>[1,0,0,0],'gas_width'=>[1,0,0,0],'gas_height'=>[1,0,0,0],
-    'gas_size_range'=>[0,1,0,0],'gas_weight'=>[0,0,0,0],'burner_count'=>[1,1,1,1],'burner_position'=>[0,1,0,0],
-    'energy_source'=>[1,1,1,1],'energy_rating'=>[0,1,0,0],'design_model'=>[0,1,0,0],'lighting_tool'=>[0,1,0,0],
+    'gas_size_range'=>[0,1,0,0],'gas_weight'=>[0,0,0,0],'burner_count'=>[1,0,1,0],'burner_position'=>[0,1,0,0],
+    'energy_source'=>[1,0,1,0],'energy_rating'=>[0,1,0,0],'design_model'=>[0,1,0,0],'lighting_tool'=>[0,1,0,0],
     'safety_system'=>[0,1,0,0],'convert_lpg'=>[0,0,0,0],'surface_material'=>[1,0,1,0],'glass_type'=>[0,1,0,0],
     'surface_thickness'=>[0,0,0,0],'grate_material'=>[0,1,0,0],'valve_type'=>[0,0,0,0],'burner_type'=>[0,0,0,0],
     'knob_type'=>[0,1,0,0],'power_cable'=>[0,0,0,0],'gas_notes'=>[0,0,0,0],'gas_accessories'=>[0,0,0,0],
