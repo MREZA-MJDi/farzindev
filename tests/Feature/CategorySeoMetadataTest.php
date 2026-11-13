@@ -64,7 +64,7 @@ class CategorySeoMetadataTest extends TestCase
 
         $this->get(route('categories.show', $category->slug))
             ->assertOk()
-            ->assertSee('در این مجموعه می‌توانید محصولات سینک را بررسی کنید و مشخصات، قیمت و گزینه‌های موجود را با هم مقایسه کنید.')
+            ->assertSee('پیش از انتخاب سینک، ابعاد کابینت و برش صفحه را اندازه بگیرید.')
             ->assertSee('farzin-category-detail__description', false);
     }
 
