@@ -248,13 +248,19 @@
             @foreach($filterableAttributes as $attribute)
                 <div>
                     <label class="mb-2 block text-xs font-semibold text-[var(--livora-text)]" for="attribute-filter-{{ $attribute->id }}">{{ $attribute->label }} @if($attribute->unit) ({{ $attribute->unit }}) @endif</label>
-                    @if(in_array($attribute->type,['select','multiselect'],true))
+                    @if($attribute->type === 'select')
                         <select id="attribute-filter-{{ $attribute->id }}" name="attributes[{{ $attribute->id }}]" class="w-full rounded-xl border border-[var(--livora-border)] bg-[var(--livora-surface)] px-3 py-3 text-xs">
                             <option value="">همه</option>
                             @foreach($attribute->options as $option)
                                 <option value="{{ $option->id }}" @selected((string) request("attributes.{$attribute->id}") === (string) $option->id)>{{ $option->label }}</option>
                             @endforeach
                         </select>
+                    @elseif($attribute->type === 'multiselect')
+                        <div class="space-y-2 rounded-xl bg-[var(--livora-surface)] p-3">
+                            @foreach($attribute->options as $option)
+                                <label class="flex items-center gap-2 text-xs"><input type="checkbox" name="attributes[{{ $attribute->id }}][]" value="{{ $option->id }}" @checked(in_array((string) $option->id, array_map('strval',(array) request("attributes.{$attribute->id}",[])),true))>{{ $option->label }}</label>
+                            @endforeach
+                        </div>
                     @elseif($attribute->type === 'number')
                         <div class="grid grid-cols-2 gap-2">
                             <input type="text" inputmode="decimal" name="attributes[{{ $attribute->id }}][min]" value="{{ request("attributes.{$attribute->id}.min") }}" placeholder="از" aria-label="{{ $attribute->label }} از" class="w-full rounded-xl border border-[var(--livora-border)] bg-[var(--livora-surface)] px-3 py-3 text-xs">
