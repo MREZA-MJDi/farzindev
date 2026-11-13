@@ -130,7 +130,7 @@ class SeoSettings
         $settings = $this->all();
         $developmentMode = ($settings['seo_development_mode'] ?? '1') === '1';
         $shopFilterParameters = [
-            'search', 'category', 'min_price', 'max_price',
+            'search', 'category', 'min_price', 'max_price', 'attributes',
             'in_stock', 'featured', 'new', 'installment', 'sort',
         ];
         $hasFilteredShopUrl = request()->routeIs('shop.index')
@@ -342,15 +342,15 @@ class SeoSettings
         return [
             'seo_canonical_base_url' => rtrim((string) config('app.url', 'https://farajihome.com'), '/'),
             'seo_site_name' => 'فرجی‌هوم',
-            'seo_default_title' => 'خرید هود و سینک آشپزخانه | فرجی‌هوم',
-            'seo_default_description' => 'خرید هود و سینک آشپزخانه از فرجی‌هوم؛ مشخصات محصولات، مدل‌ها و گزینه‌های موجود را بررسی و مقایسه کنید.',
+            'seo_default_title' => 'خرید هود، سینک و اجاق گاز آشپزخانه | فرجی‌هوم',
+            'seo_default_description' => 'مدل‌های هود، سینک و اجاق گاز صفحه‌ای را در فرجی‌هوم با تصویر، قیمت، موجودی و مشخصات فنی بررسی و مقایسه کنید.',
             'seo_default_keywords' => 'خرید هود آشپزخانه، خرید سینک ظرفشویی، هود فرجی‌هوم، سینک فرجی‌هوم، تجهیزات آشپزخانه',
-            'seo_home_title' => 'خرید هود و سینک آشپزخانه | فرجی‌هوم',
-            'seo_home_description' => 'مدل‌های هود و سینک آشپزخانه فرجی‌هوم را بررسی کنید؛ مشخصات فنی، قیمت و راهنمای انتخاب محصولات.',
-            'seo_shop_title' => 'فروشگاه هود و سینک آشپزخانه | فرجی‌هوم',
-            'seo_shop_description' => 'همه محصولات هود و سینک فرجی‌هوم را مقایسه کنید؛ قیمت، مشخصات، موجودی و شرایط خرید هر مدل را ببینید.',
-            'seo_categories_title' => 'دسته‌بندی محصولات هود و سینک | فرجی‌هوم',
-            'seo_categories_description' => 'دسته‌بندی‌های محصولات فرجی‌هوم را ببینید و هود، سینک و تجهیزات متناسب با آشپزخانه خود را پیدا کنید.',
+            'seo_home_title' => 'هود، سینک و اجاق گاز، مستقیم از کارخانه | فرجی‌هوم',
+            'seo_home_description' => 'مدل‌های هود، سینک و اجاق گاز صفحه‌ای را با تصویر، قیمت و مشخصات فنی در فرجی‌هوم بررسی کنید.',
+            'seo_shop_title' => 'فروشگاه هود، سینک و اجاق گاز | فرجی‌هوم',
+            'seo_shop_description' => 'محصولات هود، سینک و اجاق گاز فرجی‌هوم را با قیمت، مشخصات فنی و موجودی مقایسه کنید.',
+            'seo_categories_title' => 'دسته‌بندی هود، سینک و اجاق گاز | فرجی‌هوم',
+            'seo_categories_description' => 'دسته‌بندی‌های فعال هود، سینک و اجاق گاز فرجی‌هوم را ببینید و مدل‌ها را بررسی کنید.',
             'seo_blog_title' => 'مجله و راهنمای خرید هود و سینک | فرجی‌هوم',
             'seo_blog_description' => 'راهنمای انتخاب، نصب و نگهداری هود و سینک آشپزخانه؛ نکته‌های کاربردی را در مجله فرجی‌هوم بخوانید.',
             'seo_about_title' => 'درباره فرجی‌هوم | تجهیزات آشپزخانه',
