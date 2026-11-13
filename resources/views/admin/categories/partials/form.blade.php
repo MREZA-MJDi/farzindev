@@ -4,6 +4,7 @@
     $editing = isset($category);
     $category = $category ?? new \App\Models\Category();
     $categoryImageUrl = $category->image_url ?? null;
+    $contentImageUrl = $category->content_image_url ?? null;
 @endphp
 
 <div class="grid grid-cols-1 gap-6 xl:grid-cols-3">
@@ -371,7 +372,6 @@
                 <h3 class="text-base font-bold text-[var(--admin-text)]">تصویر راهنمای دسته‌بندی</h3>
                 <p class="mt-1 text-xs leading-6 text-[var(--admin-muted)]">تصویر جدا از بنر اصلی دسته است و کنار متن راهنما نمایش داده می‌شود.</p>
             </div>
-            @php $contentImageUrl = $editing ? $category->content_image_url : null; @endphp
             <div class="admin-image-preview mb-5 aspect-video">
                 <img id="category-content-image-preview" src="{{ $contentImageUrl ?: '' }}" alt="{{ $category->content_title ?: $category->name }}" class="admin-image {{ $contentImageUrl ? '' : 'hidden' }}">
                 <div id="category-content-image-placeholder" class="{{ $contentImageUrl ? 'hidden' : 'flex' }} h-full flex-col items-center justify-center rounded-2xl border border-dashed border-[var(--admin-border)] bg-[var(--admin-surface-soft)] p-5 text-center text-xs text-[var(--admin-muted)]">
