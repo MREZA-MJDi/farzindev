@@ -246,6 +246,7 @@
             id="fz-home-featured"
             :title="$productShelfTitle"
             :eyebrow="$productShelfEyebrow"
+            :description="trim((string) ($homeCopy['page_home_products_description'] ?? ''))"
             :products="$featuredProducts"
         />
     @endif
