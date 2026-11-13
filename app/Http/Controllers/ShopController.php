@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\Shop\ShopFilterRequest;
 use App\Models\Category;
+use App\Models\AttributeOption;
 use App\Models\Product;
 use App\Models\StorefrontSetting;
 use App\Services\Media\ResponsiveImageService;
@@ -64,7 +65,7 @@ class ShopController extends Controller
 
         $selectedCategorySlug = trim((string) $request->input('category', $filters['category'] ?? ''));
         $selectedCategory = $selectedCategorySlug !== ''
-            ? Category::query()->where('is_active', true)->where('slug', $selectedCategorySlug)->first()
+            ? Category::query()->visibleInStorefront()->where('slug', $selectedCategorySlug)->first()
             : null;
         $filterableAttributes = $selectedCategory
             ? $selectedCategory->attributes()->wherePivot('is_filterable', true)->with('options')->get()
@@ -95,7 +96,7 @@ class ShopController extends Controller
 
             if (in_array($attribute->type, ['select', 'multiselect'], true)) {
                 $optionIds = collect((array) $selectedValue)->filter(fn ($id) => is_scalar($id) && is_numeric($id))->map(fn ($id) => (int) $id)->all();
-                $validIds = $attribute->options->whereIn('id', $optionIds)->pluck('id')->all();
+                $validIds = AttributeOption::query()->where('attribute_id', $attribute->id)->whereIn('id', $optionIds)->pluck('id')->all();
                 if ($validIds !== []) {
                     $query->whereHas('attributeValues', fn ($values) => $values
                         ->where('attribute_id', $attribute->id)
