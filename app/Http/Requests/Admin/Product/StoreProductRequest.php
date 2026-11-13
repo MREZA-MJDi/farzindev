@@ -4,6 +4,7 @@ namespace App\Http\Requests\Admin\Product;
 
 use App\Models\Category;
 use App\Models\Media;
+use App\Services\Catalog\ProductAttributeManager;
 use Illuminate\Foundation\Http\FormRequest;
 use App\Http\Requests\Admin\Product\Concerns\PreparesProductInput;
 use Illuminate\Validation\Rule;
@@ -61,6 +62,17 @@ class StoreProductRequest extends FormRequest
                     'برای انتشار محصول در سایت، تصویر اصلی را آپلود یا از کتابخانه رسانه انتخاب کنید.'
                 );
             }
+            $attributeValues = $this->input('attribute_values', []);
+            if (is_array($attributeValues) && $this->filled('category_id')) {
+                $attributeErrors = app(ProductAttributeManager::class)->validateValues(
+                    (int) $this->input('category_id'),
+                    $attributeValues,
+                    $this->input('status') === 'active'
+                );
+                foreach ($attributeErrors as $key => $message) {
+                    $validator->errors()->add($key, $message);
+                }
+            }
         });
     }
 
@@ -99,6 +111,13 @@ class StoreProductRequest extends FormRequest
                 'string',
                 'max:255',
             ],
+
+            'attribute_values' => ['nullable', 'array'],
+            'attribute_values.*' => ['array'],
+            'attribute_values.*.value' => ['nullable', 'string', 'max:2000'],
+            'attribute_values.*.option_id' => ['nullable', 'integer'],
+            'attribute_values.*.option_ids' => ['nullable', 'array'],
+            'attribute_values.*.option_ids.*' => ['integer'],
 
             'specifications' => ['nullable', 'array', 'max:100'],
             'specifications.*' => ['array'],
