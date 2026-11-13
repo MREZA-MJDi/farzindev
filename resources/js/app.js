@@ -111,11 +111,13 @@ if (document.querySelector('[data-image-editor-input]')) {
     });
 }
 
-if (document.querySelector('[data-home-hero-preview]')) {
-    import('./admin-home-hero-preview.js').catch((error) => {
-        console.error('Unable to initialize the homepage hero preview.', error);
+if (document.querySelector('[data-page-content-form]')) {
+    import('./admin-page-content.js').catch((error) => {
+        console.error('Unable to initialize page content save feedback.', error);
     });
 }
+
+
 
 if (document.querySelector('[data-blog-appearance]')) {
     import('./admin-blog-appearance.js').catch((error) => {
