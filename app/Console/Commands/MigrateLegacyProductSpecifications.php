@@ -22,7 +22,7 @@ class MigrateLegacyProductSpecifications extends Command
  ];
  public function handle(ProductAttributeManager $manager): int
  {
-  $dry=(bool)$this->option('dry-run'); $stats=['scanned'=>0,'eligible'=>0,'migrated'=>0,'skipped'=>0,'unmatched'=>0,'suspicious'=>0];
+  $dry=(bool)$this->option('dry-run'); $stats=['scanned'=>0,'eligible'=>0,'migrated'=>0,'skipped'=>0,'unmatched'=>0,'suspicious'=>0,'incomplete'=>0];
   Product::query()->with(['category','attributeValues'])->chunkById(100,function($products) use($manager,$dry,&$stats): void {
    foreach($products as $product){
     $stats['scanned']++;
@@ -50,7 +50,7 @@ class MigrateLegacyProductSpecifications extends Command
     }
     if($rows===[]){$stats['skipped']++;continue;}
     $stats['eligible']++;
-    if(!$dry){DB::transaction(fn() => $manager->sync($product,$rows));$stats['migrated']++;}
+    if(!$dry){DB::transaction(fn() => $manager->sync($product,$rows));$stats['migrated']++;$completeness=$manager->completeness($product);if(!$completeness['is_complete']){$stats['incomplete']++;$this->warn("Product #{$product->id} ({$product->sku}): {$completeness['complete']} of {$completeness['required']} required specifications are complete.");}}
    }
   });
   $this->table(['Metric','Count'],array_map(fn($key,$value)=>[$key,$value],array_keys($stats),array_values($stats)));
