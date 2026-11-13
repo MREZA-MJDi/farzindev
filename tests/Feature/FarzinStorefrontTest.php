@@ -19,6 +19,7 @@ use Database\Seeders\ProvinceCitySeeder;
 use App\Models\SeoRedirect;
 use App\Models\User;
 use App\Services\Payments\PaymentService;
+use App\Services\StorefrontPageContent;
 use App\Services\Seo\SeoSettings;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
@@ -2038,7 +2039,7 @@ class FarzinStorefrontTest extends TestCase
         $this->post(route('register.store'), [
             'first_name' => 'Farzin',
             'last_name' => 'Customer',
-            'email' => 'NEW.CUSTOMER@FARAJI HOME.TEST',
+            'email' => 'NEW.CUSTOMER@FARAJIHOME.TEST',
             'phone' => '09123456789',
             'password' => 'FarzinPass123',
             'password_confirmation' => 'FarzinPass123',
@@ -2046,12 +2047,12 @@ class FarzinStorefrontTest extends TestCase
         ])->assertRedirect(route('account.index'));
 
         $this->assertDatabaseHas('users', [
-            'email' => 'new.customer@farzin.test',
+            'email' => 'new.customer@farajihome.test',
             'role' => 'customer',
             'name' => 'Farzin Customer',
         ]);
 
-        $user = User::query()->where('email', 'new.customer@farzin.test')->firstOrFail();
+        $user = User::query()->where('email', 'new.customer@farajihome.test')->firstOrFail();
         $this->assertTrue(Hash::check('FarzinPass123', $user->password));
         $this->assertAuthenticatedAs($user);
     }
