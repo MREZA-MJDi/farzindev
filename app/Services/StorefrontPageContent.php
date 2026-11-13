@@ -39,7 +39,7 @@ class StorefrontPageContent
                     'ENGINEERING / DETAIL / PERFORMANCE' => 'مهندسی • جزئیات • عملکرد',
                 ],
                 'page_about_hero_eyebrow' => [
-                    'ABOUT FARZIN' => 'درباره فرزین',
+                    'ABOUT FARZIN' => 'درباره فرجی‌هوم',
                 ],
                 'page_about_statement_eyebrow' => [
                     'THE MAKER AND THE WORK' => 'نگاه ما به انتخاب محصول',
@@ -70,8 +70,10 @@ class StorefrontPageContent
                 'page_home_hero_description' => [
                     'هود، اجاق گاز و سینک موردنیازتان را با تصویر، مشخصات فنی، قیمت و وضعیت موجودی بررسی و مقایسه کنید.' => 'مشخصات فنی، قیمت و وضعیت موجودی مدل‌های هود، سینک و اجاق گاز را بررسی کنید.',
                 ],
-                'page_home_products_eyebrow' => [
+                 'page_home_products_eyebrow' => [
                     'کاتالوگ محصولات' => 'محصولات آشپزخانه',
+                    'کاتالوگ محصولات فرزین' => 'محصولات آشپزخانه',
+                    'کاتالوگ هود و سینک' => 'محصولات آشپزخانه',
                 ],
                 'page_home_trust_eyebrow' => [
                     'خرید آگاهانه از فرجی‌هوم' => 'خرید از فرجی‌هوم',
@@ -84,6 +86,13 @@ class StorefrontPageContent
                 ],
                 'page_about_factory_cta' => [
                     'رفتن به کاتالوگ محصولات' => 'مشاهده محصولات',
+                    'رفتن به کاتالوگ' => 'مشاهده محصولات',
+                ],
+                'page_about_hero_highlight' => [
+                    'از تولید تا جزئیات آشپزخانه.' => 'از انتخاب تا استفاده در آشپزخانه.',
+                ],
+                'page_about_hero_description' => [
+                    'فرزین فرجی در حوزه تولید هود و سینک آشپزخانه فعالیت می‌کند. این وب‌سایت برای معرفی مجموعه، نمایش محصولات و کمک به شناخت دقیق‌تر مدل‌ها و مشخصات آن‌ها طراحی شده است. جزئیات هر محصول را می‌توانید در کاتالوگ فرزین بررسی کنید.' => 'فرجی‌هوم فروشگاه تخصصی تجهیزات آشپزخانه است؛ جایی برای مشاهده و مقایسه مدل‌های هود، اجاق گاز صفحه‌ای و سینک با تصویر، قیمت و مشخصات هر محصول.',
                 ],
                 'page_about_experience_description' => [
                     'از انتخاب دسته مناسب تا بررسی مشخصات، ثبت سفارش و پیگیری آن، هر مرحله باید برای شما روشن و قابل فهم باشد.' => 'از انتخاب دسته مناسب تا بررسی مشخصات، ثبت سفارش و پیگیری آن، اطلاعات هر مرحله به‌صورت روشن در دسترس شماست.',
@@ -120,14 +129,15 @@ class StorefrontPageContent
                 $values[$key] = $translations[$values[$key] ?? ''] ?? ($values[$key] ?? '');
             }
 
-            // The former development brand was "Farzin". Keep old CMS values
-            // readable while migrating the public identity to Faraji Home.
+            // Normalize public copy saved by the former store identity without
+            // discarding editor-managed text or rewriting unrelated wording.
             foreach ($values as &$value) {
                 $value = str_ireplace(
-                    ['فرزین فرجی', 'فرزین', 'FARZIN', 'Farzin'],
-                    ['فرجی‌هوم', 'فرجی‌هوم', 'FARAJI HOME', 'Faraji Home'],
+                    ['فرزین فرجی', 'فرزین', 'FARZIN', 'Farzin', 'کاتالوگ آنلاین', 'کاتالوگ محصولات', 'کاتالوگ هود و سینک', 'کاتالوگ فرزین', 'کاتالوگ فرجی‌هوم', 'کاتالوگ'],
+                    ['فرجی‌هوم', 'فرجی‌هوم', 'FARAJI HOME', 'Faraji Home', 'فروشگاه محصولات', 'محصولات', 'محصولات', 'محصولات', 'محصولات', 'محصولات'],
                     $value
                 );
+                $value = str_ireplace(['خرید آگاهانه', 'انتخاب آگاهانه', 'آگاهانه‌تر ببینید', 'آگاهانه انتخاب کنید'], ['خرید با اطلاعات روشن', 'انتخاب با بررسی مشخصات', 'راهنمای انتخاب', 'با بررسی مشخصات انتخاب کنید'], $value);
             }
             unset($value);
 
@@ -316,9 +326,9 @@ class StorefrontPageContent
             'page_terms_section_3_title' => 'ثبت سفارش و پرداخت',
             'page_terms_section_3_body' => 'ثبت اطلاعات در سبد خرید به‌تنهایی به معنی تکمیل خرید نیست. نتیجه ثبت سفارش و وضعیت پرداخت باید در صفحه مربوط به همان سفارش مشخص شود. تا زمانی که درگاه پرداخت در سایت فعال و تأیید نشده باشد، اطلاعات کارت یا رمز بانکی را در فرم‌های این سایت وارد نکنید.',
             'page_terms_section_4_title' => 'ارسال، ضمانت و خدمات پس از فروش',
-            'page_terms_section_4_body' => 'شرایط ارسال، ضمانت، نصب و مرجوعی را پیش از خرید از طریق صفحه تماس با فرزین استعلام کنید. این صفحه جایگزین تعهد یا ضمانت‌نامه اختصاصی محصول نیست؛ شرایط قطعی هر کالا باید هنگام خرید به‌صورت روشن اعلام شود.',
+            'page_terms_section_4_body' => 'شرایط ارسال، ضمانت، نصب و مرجوعی را پیش از خرید از طریق صفحه تماس با فروشگاه استعلام کنید. این صفحه جایگزین تعهد یا ضمانت‌نامه اختصاصی محصول نیست؛ شرایط قطعی هر کالا باید هنگام خرید به‌صورت روشن اعلام شود.',
             'page_terms_contact_title' => 'پرسشی درباره شرایط خرید دارید؟',
-            'page_terms_contact_cta' => 'ارتباط با فرزین',
+            'page_terms_contact_cta' => 'ارتباط با فروشگاه',
 
             'page_privacy_title' => 'حریم خصوصی',
             'page_privacy_lead' => 'اطلاعات حساب و سفارش شما برای ارائه خدمات فروشگاه استفاده می‌شود.',
@@ -329,9 +339,9 @@ class StorefrontPageContent
             'page_privacy_section_3_title' => 'پرداخت',
             'page_privacy_section_3_body' => 'اطلاعات محرمانه کارت بانکی را در پیام یا فرم تماس ارسال نکنید. در صورت فعال بودن پرداخت آنلاین، اطلاعات پرداخت را فقط در صفحه رسمی درگاه معرفی‌شده وارد کنید.',
             'page_privacy_section_4_title' => 'درخواست اصلاح اطلاعات',
-            'page_privacy_section_4_body' => 'برای پیگیری خطا یا درخواست اصلاح اطلاعات تماس و حساب کاربری، از صفحه تماس با فرزین پیام بفرستید.',
+            'page_privacy_section_4_body' => 'برای پیگیری خطا یا درخواست اصلاح اطلاعات تماس و حساب کاربری، از صفحه تماس با فروشگاه پیام بفرستید.',
             'page_privacy_contact_title' => 'درخواست یا پرسشی درباره اطلاعات حساب دارید؟',
-            'page_privacy_contact_cta' => 'ارتباط با فرزین',
+            'page_privacy_contact_cta' => 'ارتباط با فروشگاه',
 
             // Public typography controls. Percentages are constrained in the CMS controller.
             'page_typography_font_scale' => '100',
