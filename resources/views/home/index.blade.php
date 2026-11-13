@@ -21,7 +21,7 @@
     $categoriesTitle = trim((string) ($homeCopy['page_home_categories_title'] ?? 'دسته‌بندی محصولات'));
     $featuredProducts = $featuredProducts ?? collect();
     $productShelfTitle = trim((string) ($homeCopy['page_home_products_title'] ?? 'محصولات منتخب')) ?: 'منتخب فرجی‌هوم';
-    $productShelfEyebrow = trim((string) ($homeCopy['page_home_products_eyebrow'] ?? 'کاتالوگ تجهیزات آشپزخانه'));
+    $productShelfEyebrow = trim((string) ($homeCopy['page_home_products_eyebrow'] ?? 'محصولات آشپزخانه'));
     $hoodCategory = $categories->first(fn ($category) => $category->slug === 'hoods' || \Illuminate\Support\Str::contains(mb_strtolower($category->name), 'هود'));
     $sinkCategory = $categories->first(fn ($category) => $category->slug === 'sinks' || \Illuminate\Support\Str::contains(mb_strtolower($category->name), 'سینک'));
     $gasCategory = $categories->first(fn ($category) => in_array($category->slug, ['built-in-stove', 'gas-hobs', 'built-in-gas', 'built-in-hobs', 'gas-stove', 'gas-stoves', 'stoves'], true)
