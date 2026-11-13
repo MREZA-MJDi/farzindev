@@ -675,6 +675,87 @@ class FarzinStorefrontTest extends TestCase
             ->assertSee('حریم خصوصی');
     }
 
+    public function test_page_content_cms_publishes_terms_and_privacy_copy_and_shows_real_page_links(): void
+    {
+        $admin = $this->admin();
+        $defaults = app(StorefrontPageContent::class)->defaults();
+        $legalValues = collect($defaults)
+            ->filter(fn ($value, $key) => str_starts_with($key, 'page_terms_') || str_starts_with($key, 'page_privacy_'))
+            ->all();
+
+        $legalValues['page_terms_title'] = 'قوانین اختصاصی فرجی‌هوم';
+        $legalValues['page_terms_section_1_title'] = 'شرایط ثبت سفارش';
+        $legalValues['page_terms_section_1_body'] = 'این متن از پنل محتوای صفحات عمومی ذخیره شده است.';
+        $legalValues['page_privacy_title'] = 'حریم خصوصی اختصاصی';
+        $legalValues['page_privacy_section_1_title'] = 'اطلاعات حساب';
+        $legalValues['page_privacy_section_1_body'] = 'این متن باید در صفحه عمومی حریم خصوصی نمایش داده شود.';
+
+        $this->actingAs($admin, 'admin')
+            ->get(route('admin.page-content.edit', ['tab' => 'legal']))
+            ->assertOk()
+            ->assertSee('قوانین و شرایط — /terms')
+            ->assertSee('حریم خصوصی — /privacy')
+            ->assertSee('پیش‌نمایش نسخه ذخیره‌شده');
+
+        $this->put(route('admin.page-content.update'), array_merge($legalValues, ['tab' => 'legal']))
+            ->assertRedirect(route('admin.page-content.edit', ['tab' => 'legal']))
+            ->assertSessionHas('success');
+
+        $this->get(route('terms'))
+            ->assertOk()
+            ->assertSee('قوانین اختصاصی فرجی‌هوم')
+            ->assertSee('این متن از پنل محتوای صفحات عمومی ذخیره شده است.');
+
+        $this->get(route('privacy'))
+            ->assertOk()
+            ->assertSee('حریم خصوصی اختصاصی')
+            ->assertSee('این متن باید در صفحه عمومی حریم خصوصی نمایش داده شود.');
+    }
+
+    public function test_homepage_final_cta_and_typography_controls_are_connected_to_public_output(): void
+    {
+        $admin = $this->admin();
+        $defaults = app(StorefrontPageContent::class)->defaults();
+        $homeValues = collect($defaults)
+            ->filter(fn ($value, $key) => str_starts_with($key, 'page_home_'))
+            ->all();
+
+        $homeValues['page_home_show_final_cta'] = '1';
+        $homeValues['page_home_final_title'] = 'دعوت پایانی قابل ویرایش';
+        $homeValues['page_home_final_description'] = 'این توضیح از داشبورد عمومی ذخیره می‌شود.';
+        $homeValues['page_home_final_cta'] = 'رفتن به کاتالوگ';
+
+        $this->actingAs($admin, 'admin')
+            ->put(route('admin.page-content.update'), array_merge($homeValues, ['tab' => 'home']))
+            ->assertRedirect(route('admin.page-content.edit', ['tab' => 'home']))
+            ->assertSessionHas('success');
+
+        $this->get(route('home'))
+            ->assertOk()
+            ->assertSee('id="fz-home-final-cta-title"', false)
+            ->assertSee('دعوت پایانی قابل ویرایش')
+            ->assertSee('این توضیح از داشبورد عمومی ذخیره می‌شود.')
+            ->assertSee('رفتن به کاتالوگ');
+
+        $typographyValues = collect($defaults)
+            ->filter(fn ($value, $key) => str_starts_with($key, 'page_typography_'))
+            ->all();
+        $typographyValues['page_typography_font_scale'] = '105';
+        $typographyValues['page_typography_line_height'] = '1.9';
+        $typographyValues['page_typography_content_width'] = '1360';
+
+        $this->put(route('admin.page-content.update'), array_merge($typographyValues, ['tab' => 'typography']))
+            ->assertRedirect(route('admin.page-content.edit', ['tab' => 'typography']))
+            ->assertSessionHas('success');
+
+        $this->get(route('home'))
+            ->assertOk()
+            ->assertSee('id="storefront-page-typography"', false)
+            ->assertSee('font-size: 105.00%', false)
+            ->assertSee('line-height: 1.90', false)
+            ->assertSee('max-width: 1360px', false);
+    }
+
     public function test_footer_receives_and_displays_the_active_contact_settings(): void
     {
         ContactSetting::create([
