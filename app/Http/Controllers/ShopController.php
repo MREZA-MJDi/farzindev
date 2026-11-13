@@ -69,7 +69,11 @@ class ShopController extends Controller
             ? $selectedCategory->attributes()->wherePivot('is_filterable', true)->with('options')->get()
             : collect();
 
-        foreach (($filters['attributes'] ?? []) as $attributeId => $selectedValue) {
+        $attributeFilters = $request->input('attributes', $filters['attributes'] ?? []);
+        if (! is_array($attributeFilters)) $attributeFilters = [];
+
+        foreach ($attributeFilters as $attributeId => $selectedValue) {
+            if (! is_numeric($attributeId)) continue;
             $attribute = $filterableAttributes->firstWhere('id', (int) $attributeId);
             if (! $attribute || $selectedValue === '' || $selectedValue === null) {
                 continue;
