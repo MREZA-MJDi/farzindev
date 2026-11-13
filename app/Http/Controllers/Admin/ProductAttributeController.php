@@ -43,7 +43,7 @@ class ProductAttributeController extends Controller
  }
  private function validated(Request $request,?ProductAttribute $attribute=null): array {
   return $request->validate([
-   'key'=>['required','alpha_dash:ascii','max:100',Rule::unique('attributes','key')->ignore($attribute)],
+   'key'=>['required','regex:/^[a-z0-9]+(?:-[a-z0-9]+)*$/','max:100',Rule::unique('attributes','key')->ignore($attribute)],
    'label'=>['required','string','max:160'],
    'type'=>['required',Rule::in(['text','textarea','number','select','multiselect','boolean'])],
    'unit'=>['nullable','string','max:40'],
@@ -51,7 +51,7 @@ class ProductAttributeController extends Controller
    'help_text'=>['nullable','string','max:1000'],
    'options'=>['nullable','string','max:5000'],
   ],[
-   'key.required'=>'شناسه لاتین ویژگی الزامی است.','key.alpha_dash'=>'شناسه فقط می‌تواند شامل حروف لاتین، عدد و خط تیره باشد.',
+   'key.required'=>'شناسه لاتین ویژگی الزامی است.','key.regex'=>'شناسه باید به‌صورت اسلاگ لاتین کوچک و با خط تیره نوشته شود.',
    'key.unique'=>'این شناسه قبلاً ثبت شده است.','label.required'=>'عنوان فارسی ویژگی الزامی است.',
    'type.in'=>'نوع داده انتخاب‌شده معتبر نیست.','options.max'=>'فهرست گزینه‌ها بیش از حد طولانی است.',
   ]);
