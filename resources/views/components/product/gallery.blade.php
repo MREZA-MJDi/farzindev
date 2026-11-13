@@ -35,7 +35,7 @@
 
     $productName =
         $resolvedProduct?->name
-        ?? 'محصول فرزین';
+        ?? 'تجهیزات آشپزخانه';
 
     $imageCount =
         $resolvedImages->count();

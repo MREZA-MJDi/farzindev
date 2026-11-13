@@ -1,13 +1,18 @@
 @extends('layouts.app')
 
-@section('title', 'فروشگاه هود و سینک | فرزین')
+@section('title', 'فروشگاه تجهیزات آشپزخانه | فرجی‌هوم')
 
 @section(
     'description',
-    'خرید هود و سینک آشپزخانه از فرزین؛ مشخصات محصولات، مدل‌ها و گزینه‌های موجود را بررسی و مقایسه کنید.'
+    'خرید هود، اجاق گاز صفحه‌ای و سینک آشپزخانه؛ مشخصات فنی، قیمت و موجودی مدل‌ها را در فروشگاه فرجی‌هوم بررسی و مقایسه کنید.'
 )
 
 @section('canonical', route('shop.index'))
+
+@php
+    $shopBannerTitle = str_ireplace(['فرزین فرجی', 'فرزین', 'Farzin', 'FARZIN'], ['فرجی‌هوم', 'فرجی‌هوم', 'فرجی‌هوم', 'فرجی‌هوم'], (string) ($shopBanner['title'] ?? 'فروشگاه فرجی‌هوم'));
+    $shopBannerSubtitle = str_ireplace(['فرزین فرجی', 'فرزین', 'Farzin', 'FARZIN'], ['فرجی‌هوم', 'فرجی‌هوم', 'فرجی‌هوم', 'فرجی‌هوم'], (string) ($shopBanner['subtitle'] ?? 'محصولات تجهیزات آشپزخانه را مقایسه کنید.'));
+@endphp
 
 
 
@@ -36,7 +41,7 @@
                             <img
                                 src="{{ $shopBanner['image_url'] }}"
                                 @if(!empty($shopBanner['image_srcset'])) srcset="{{ $shopBanner['image_srcset'] }}" sizes="100vw" @endif
-                                alt="{{ $shopBanner['title'] }}"
+                                alt="{{ $shopBannerTitle }}"
                                 class="absolute inset-0 h-full w-full object-cover"
                                 width="1600"
                                 height="500"
@@ -45,10 +50,10 @@
                             >
                             <div class="absolute inset-0 bg-gradient-to-l from-black/75 via-black/25 to-transparent"></div>
                             <div class="farzin-shop-banner__content absolute inset-y-0 right-0 flex max-w-2xl flex-col justify-center p-6 text-white sm:p-10 lg:p-14">
-                                <p class="farzin-shop-banner__eyebrow text-[10px] font-medium uppercase tracking-[0.22em] text-white/70">فرزین / فروشگاه</p>
-                                <h1 class="farzin-shop-banner__title mt-3 text-3xl font-semibold leading-tight sm:text-4xl lg:text-5xl">{{ $shopBanner['title'] }}</h1>
+                                <p class="farzin-shop-banner__eyebrow text-[10px] font-medium uppercase tracking-[0.22em] text-white/70">فرجی‌هوم / فروشگاه</p>
+                                <h1 class="farzin-shop-banner__title mt-3 text-3xl font-semibold leading-tight sm:text-4xl lg:text-5xl">{{ $shopBannerTitle }}</h1>
                                 @if (filled($shopBanner['subtitle']))
-                                    <p class="farzin-shop-banner__description mt-4 max-w-xl text-sm leading-8 text-white/80 sm:text-base">{{ $shopBanner['subtitle'] }}</p>
+                                    <p class="farzin-shop-banner__description mt-4 max-w-xl text-sm leading-8 text-white/80 sm:text-base">{{ $shopBannerSubtitle }}</p>
                                 @endif
                                 <a href="#shop-catalog" class="farzin-shop-banner__action mt-6 inline-flex min-h-11 w-fit items-center gap-2 rounded-xl border border-white/40 bg-white/10 px-5 py-3 text-sm font-medium text-white backdrop-blur-sm transition hover:bg-white/20"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4 shrink-0" aria-hidden="true"><rect x="3.5" y="3.5" width="7" height="7" rx="1.3" /><rect x="13.5" y="3.5" width="7" height="7" rx="1.3" /><rect x="3.5" y="13.5" width="7" height="7" rx="1.3" /><rect x="13.5" y="13.5" width="7" height="7" rx="1.3" /></svg> مشاهده کاتالوگ</a>
                             </div>
@@ -56,9 +61,9 @@
                     @else
                         <div class="mt-6 flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
                             <div>
-                                <p class="farzin-shop-banner__eyebrow text-[10px] font-medium uppercase tracking-[0.22em] text-[var(--livora-accent)]">FARZIN / CATALOG</p>
-                                <h1 class="farzin-shop-banner__title mt-3 text-3xl font-semibold tracking-tight sm:text-4xl">{{ $shopBanner['title'] }}</h1>
-                                <p class="farzin-shop-banner__description mt-3 max-w-2xl text-sm leading-8 text-[var(--livora-stone)]">{{ $shopBanner['subtitle'] }}</p>
+                                <p class="farzin-shop-banner__eyebrow text-[10px] font-medium uppercase tracking-[0.22em] text-[var(--livora-accent)]">FARAJI HOME / CATALOG</p>
+                                <h1 class="farzin-shop-banner__title mt-3 text-3xl font-semibold tracking-tight sm:text-4xl">{{ $shopBannerTitle }}</h1>
+                                <p class="farzin-shop-banner__description mt-3 max-w-2xl text-sm leading-8 text-[var(--livora-stone)]">{{ $shopBannerSubtitle }}</p>
                             </div>
                             <a href="#shop-catalog" class="farzin-shop-banner__action inline-flex min-h-11 w-fit shrink-0 items-center gap-2 rounded-xl bg-[var(--livora-ink)] px-5 py-3 text-sm font-medium text-white transition hover:bg-[var(--livora-accent)]"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4 shrink-0" aria-hidden="true"><path d="M3.5 9h17l-1 11h-15l-1-11Z" /><path d="M8 9V6.5a4 4 0 0 1 8 0V9" /></svg> مشاهده محصولات</a>
                         </div>
@@ -67,6 +72,24 @@
             </x-layout.container>
         </section>
 
+
+        @if($categories->isNotEmpty())
+            <nav aria-label="دسترسی سریع به دسته‌بندی‌ها" class="border-b border-[var(--livora-border)] bg-white">
+                <x-layout.container>
+                    <div class="flex flex-col gap-3 py-5 sm:flex-row sm:items-center sm:gap-6">
+                        <span class="shrink-0 text-xs font-bold text-[var(--livora-ink)]">انتخاب سریع دسته:</span>
+                        <div class="flex min-w-0 flex-wrap gap-2">
+                            @foreach($categories as $category)
+                                <a href="{{ route('shop.index', ['category' => $category->slug]) }}" @class(['inline-flex min-h-10 items-center border px-4 py-2 text-xs font-semibold transition', 'border-[var(--livora-accent)] bg-[var(--livora-accent)] text-white' => request('category') === $category->slug, 'border-[var(--livora-border)] bg-[var(--livora-cream)] text-[var(--livora-text)] hover:border-[var(--livora-accent)] hover:text-[var(--livora-accent)]' => request('category') !== $category->slug])>
+                                    {{ $category->name }}
+                                    <span class="mr-2 text-[10px] opacity-65">{{ \App\Helpers\PersianNumberHelper::format($category->products_count) }}</span>
+                                </a>
+                            @endforeach
+                        </div>
+                    </div>
+                </x-layout.container>
+            </nav>
+        @endif
 
         {{-- =========================================================
              SHOP CONTENT
@@ -144,7 +167,7 @@
                             <div class="rounded-3xl border border-[var(--livora-border)] bg-[var(--livora-surface)] p-5">
 
                                 <p class="text-[10px] uppercase tracking-[0.18em] text-[var(--livora-accent)]">
-                                    فرزین
+                                    فرجی‌هوم
                                 </p>
 
                                 <h3 class="mt-3 text-sm font-semibold">

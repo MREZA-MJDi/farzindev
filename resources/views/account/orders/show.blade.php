@@ -2,12 +2,12 @@
 
 @section(
     'title',
-    'سفارش ' . $order->order_number . ' | فرزین'
+    'سفارش ' . $order->order_number . ' | فرجی‌هوم'
 )
 
 @section(
     'description',
-    'جزئیات سفارش ' . $order->order_number . ' در فرزین.'
+    'جزئیات سفارش ' . $order->order_number . ' در فرجی‌هوم.'
 )
 
 @push('seo')
@@ -286,7 +286,7 @@
                                             @else
 
                                                 <div class="flex h-full w-full items-center justify-center text-[10px] tracking-wider text-[var(--livora-stone)]">
-                                                    فرزین
+                                                    فرجی‌هوم
                                                 </div>
 
                                             @endif

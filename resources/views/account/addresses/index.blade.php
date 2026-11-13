@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
-@section('title', 'آدرس‌های من | فرزین')
-@section('description', 'مدیریت آدرس‌های تحویل سفارش در فرزین.')
+@section('title', 'آدرس‌های من | فرجی‌هوم')
+@section('description', 'مدیریت آدرس‌های تحویل سفارش در فرجی‌هوم.')
 
 @push('seo')
     <meta name="robots" content="noindex,nofollow,noarchive">

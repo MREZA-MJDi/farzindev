@@ -50,7 +50,7 @@
 
     <span class="fz-product-card__body">
         <span class="fz-product-card__meta">
-            <span>{{ $product->category?->name ?? 'محصول فرزین' }}</span>
+            <span>{{ $product->category?->name ?? 'تجهیزات آشپزخانه' }}</span>
             @if(filled($product->sku))
                 <span class="fz-product-card__sku">{{ $product->sku }}</span>
             @endif

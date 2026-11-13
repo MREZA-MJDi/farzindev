@@ -1,9 +1,18 @@
 @extends('layouts.app')
 
 @php
-    $pageTitle = $product->meta_title ?: ($product->name . ' | فرزین');
+    $pageTitle = $product->meta_title ?: ($product->name . ' | فرجی‌هوم');
     $pageDescription = $product->meta_description
         ?: ($safeShortDescription ?: $safeDescription ?: $product->name);
+    $normalizeProductCopy = static fn (?string $value): string => str_ireplace(
+        ['فرزین فرجی', 'فرزین', 'FARZIN', 'Farzin'],
+        ['فرجی‌هوم', 'فرجی‌هوم', 'FARAJI HOME', 'Faraji Home'],
+        trim((string) $value)
+    );
+    $pageTitle = $normalizeProductCopy($pageTitle);
+    $pageDescription = $normalizeProductCopy($pageDescription);
+    $pageOgTitle = $normalizeProductCopy($product->og_title ?: $pageTitle);
+    $pageOgDescription = $normalizeProductCopy($product->og_description ?: $pageDescription);
     $pageCanonical = $product->canonical_url ?: route('product.show', $product->slug);
     $mainImage = $product->primaryImage();
 
@@ -151,8 +160,8 @@
     @section('robots', $product->seo_robots)
 @endif
 @section('og_type', 'product')
-@section('og_title', $product->og_title ?: $pageTitle)
-@section('og_description', $product->og_description ?: $pageDescription)
+@section('og_title', $pageOgTitle)
+@section('og_description', $pageOgDescription)
 @section('twitter_card', $mainImage ? 'summary_large_image' : 'summary')
 @section('og_image', $mainImage?->url ?? '')
 
@@ -169,7 +178,7 @@
             'name' => $product->name,
             'description' => $pageDescription,
             'url' => $pageCanonical,
-            'brand' => ['@type' => 'Brand', 'name' => 'فرزین'],
+            // Do not invent a manufacturer brand: product records may represent multiple suppliers.
             'offers' => $hasProductPriceRange
                 ? [
                     '@type' => 'AggregateOffer',

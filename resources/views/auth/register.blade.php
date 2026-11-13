@@ -1,6 +1,6 @@
 @extends('layouts.app')
-@section('title', 'ایجاد حساب | فرزین')
-@section('description', 'ساخت حساب کاربری فرزین برای ثبت و مدیریت سفارش‌ها.')
+@section('title', 'ایجاد حساب | فرجی‌هوم')
+@section('description', 'ساخت حساب کاربری فرجی‌هوم برای ثبت و مدیریت سفارش‌ها.')
 @section('body_class', 'fz-auth-body min-h-screen antialiased')
 @section('content')
 @php($brandImage = $brandProduct?->images?->first())
@@ -8,13 +8,13 @@
     <div class="fz-auth__visual">
         @if($brandImage?->url)<img class="fz-auth__product-image" src="{{ $brandImage->url }}" @if($brandImage->responsive_srcset) srcset="{{ $brandImage->responsive_srcset }}" sizes="(max-width: 900px) 100vw, 48vw" @endif alt="{{ $brandImage->alt ?: $brandProduct->name }}" width="1100" height="900" loading="eager" fetchpriority="high">@endif
         <div class="fz-auth__visual-shade"></div>
-        <a class="fz-auth__wordmark" href="{{ route('home') }}" aria-label="فرزین، صفحه اصلی">فرزین <span>FARZIN / KITCHEN EQUIPMENT</span></a>
+        <a class="fz-auth__wordmark" href="{{ route('home') }}" aria-label="فرجی‌هوم، صفحه اصلی">فرجی‌هوم <span>FARAJI HOME / KITCHEN EQUIPMENT</span></a>
         <div class="fz-auth__visual-copy"><p>خرید خود را ساده‌تر مدیریت کنید</p><h2>یک حساب،<br>برای خریدهای شما.</h2><span>اطلاعات تماس و سفارش‌های خود را یک‌جا نگه دارید و هر زمان به حساب‌تان برگردید.</span></div>
-        <span class="fz-auth__visual-foot">FARZIN · HOOD & SINK</span>
+        <span class="fz-auth__visual-foot">FARAJI HOME · HOOD & SINK</span>
     </div>
     <div class="fz-auth__form-side"><div class="fz-auth__form-wrap fz-auth__form-wrap--register">
-        <a href="{{ route('home') }}" class="fz-auth__mobile-brand">فرزین <span>تجهیزات مدرن آشپزخانه</span></a>
-        <div class="fz-auth__eyebrow"><span></span> عضویت در فرزین</div>
+        <a href="{{ route('home') }}" class="fz-auth__mobile-brand">فرجی‌هوم <span>تجهیزات مدرن آشپزخانه</span></a>
+        <div class="fz-auth__eyebrow"><span></span> عضویت در فرجی‌هوم</div>
         <h1 id="fz-register-heading">حساب خود را بسازید.</h1>
         <p class="fz-auth__intro">برای ثبت سفارش و دسترسی به سوابق خرید، اطلاعات زیر را وارد کنید.</p>
         @if($errors->any())<div class="fz-auth__notice fz-auth__notice--error" role="alert" aria-live="polite"><strong>لطفاً اطلاعات را بررسی کنید.</strong><ul>@foreach($errors->all() as $error)<li>{{ $error }}</li>@endforeach</ul></div>@endif

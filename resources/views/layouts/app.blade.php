@@ -279,7 +279,7 @@
         @yield('content')
     </main>
 
-    <x-layout.footer :contact="$storefrontContact" :settings="$storefrontPublicSettings" :brand-logo-url="$storefrontBrandLogoUrl" />
+    <x-layout.footer :contact="$storefrontContact" :settings="$storefrontPublicSettings" :brand-logo-url="$storefrontBrandLogoUrl" :brand-name="$storefrontBrandName" />
 
     <x-layout.mobile-bottom-bar :cart-count="$storefrontCartCount" />
 

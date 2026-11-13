@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Cache;
  */
 class StorefrontPageContent
 {
-    private const CACHE_KEY = 'storefront.page-content.v1';
+    private const CACHE_KEY = 'storefront.page-content.v2';
 
     /**
      * @return array<string, string>
@@ -42,10 +42,10 @@ class StorefrontPageContent
                     'ABOUT FARZIN' => 'درباره فرزین',
                 ],
                 'page_about_statement_eyebrow' => [
-                    'THE MAKER AND THE WORK' => 'تولید و مسیر کار',
+                    'THE MAKER AND THE WORK' => 'نگاه ما به انتخاب محصول',
                 ],
                 'page_about_factory_eyebrow' => [
-                    'FACTORY & PROCESS' => 'کارخانه و فرایند تولید',
+                    'FACTORY & PROCESS' => 'از جستجو تا انتخاب',
                 ],
                 'page_about_values_eyebrow' => [
                     'OUR FOCUS' => 'آنچه برای ما مهم است',
@@ -61,6 +61,41 @@ class StorefrontPageContent
             foreach ($legacyLabels as $key => $translations) {
                 $values[$key] = $translations[$values[$key]] ?? $values[$key];
             }
+
+            $legacyCopy = [
+                'page_about_factory_title' => [
+                    'پشت محصول را هم بشناسید.' => 'چطور انتخاب را ساده‌تر می‌کنیم؟',
+                ],
+                'page_about_factory_body_1' => [
+                    'برای شناخت یک هود یا سینک، ظاهر محصول تنها بخشی از ماجراست. ابعاد، نوع نصب، جنس، امکانات و شیوه نگهداری هم اهمیت دارند. معرفی فرزین قرار است مسیر آشنایی با مجموعه و محصولات را روشن‌تر کند.'
+                        => 'برای هود، نوع نصب، عرض، قدرت مکش و میزان صدا را بررسی کنید؛ برای اجاق گاز، ابعاد برش، تعداد شعله و امکانات ایمنی؛ و برای سینک، روش نصب، تعداد لگن، ابعاد و جنس. این معیارها کمک می‌کنند محصولات را با فضای آشپزخانه خود تطبیق دهید.',
+                ],
+                'page_about_factory_body_2' => [
+                    'اطلاعات اختصاصی هر مدل باید با مشخصات فنی تأییدشده همان محصول همراه باشد؛ به همین دلیل ویژگی‌ها و جزئیات قابل‌بررسی در صفحه محصول ارائه می‌شوند.'
+                        => 'مشخصات فنی، قیمت و وضعیت موجودی هر مدل را در صفحه همان محصول بررسی کنید. در صورت وجود ابهام، پیش از ثبت سفارش از راه‌های ارتباطی فروشگاه سؤال کنید؛ ویژگی‌های هر کالا باید بر اساس اطلاعات ثبت‌شده همان مدل سنجیده شود.',
+                ],
+                'page_about_value_4_title' => [
+                    'مسیر تولید' => 'پشتیبانی پیش از خرید',
+                ],
+                'page_about_value_4_description' => [
+                    'خرید باید ساده و آرام باشد؛ از اولین مشاهده محصول تا سفارش نهایی.' => 'برای پرسش درباره مدل، مشخصات و مراحل سفارش از راه‌های ارتباطی فروشگاه استفاده کنید.',
+                ],
+            ];
+
+            foreach ($legacyCopy as $key => $translations) {
+                $values[$key] = $translations[$values[$key] ?? ''] ?? ($values[$key] ?? '');
+            }
+
+            // The former development brand was "Farzin". Keep old CMS values
+            // readable while migrating the public identity to Faraji Home.
+            foreach ($values as &$value) {
+                $value = str_ireplace(
+                    ['فرزین فرجی', 'فرزین', 'FARZIN', 'Farzin'],
+                    ['فرجی‌هوم', 'فرجی‌هوم', 'FARAJI HOME', 'Faraji Home'],
+                    $value
+                );
+            }
+            unset($value);
 
             return $values;
         });
@@ -78,10 +113,10 @@ class StorefrontPageContent
     {
         return [
             // Homepage hero and catalogue.
-            'page_home_hero_eyebrow' => 'تجهیزات آشپزخانه فرزین',
-            'page_home_hero_title' => 'هود و سینک، آماده‌ی نصب در آشپزخانه‌ی شما',
+            'page_home_hero_eyebrow' => 'فرجی‌هوم | تجهیزات آشپزخانه',
+            'page_home_hero_title' => 'انتخابی دقیق برای قلب خانه',
             'page_home_hero_highlight' => '',
-            'page_home_hero_description' => 'مدل‌های موجود فرزین را با تصویر، قیمت و مشخصات واقعی بررسی کنید.',
+            'page_home_hero_description' => 'هود، اجاق گاز و سینک موردنیازتان را با تصویر، مشخصات فنی، قیمت و وضعیت موجودی بررسی و مقایسه کنید.',
             'page_home_hero_image_url' => '',
             'page_home_enamad_url' => '',
             'page_home_warranty_text' => '',
@@ -89,21 +124,21 @@ class StorefrontPageContent
             'page_home_hero_primary_label' => 'مشاهده محصولات',
             'page_home_hero_secondary_label' => '',
             'page_home_technology_eyebrow' => 'مهندسی • جزئیات • عملکرد',
-            'page_home_technology_title' => 'فناوری در جزئیات؛ از طراحی تا عملکرد',
-            'page_home_technology_body' => 'در هود و سینک، تجربه بهتر از توجه به جزئیات شکل می‌گیرد؛ از فرم و ابعاد تا جنس، نوع نصب و کاربری روزمره. فرزین تلاش می‌کند مشخصات هر مدل را روشن و قابل‌بررسی ارائه کند تا انتخاب شما بر پایه نیاز واقعی آشپزخانه باشد.',
-            'page_home_technology_cta' => 'آشنایی با محصولات فرزین',
+            'page_home_technology_title' => 'جزئیات مهم‌اند؛ از انتخاب تا استفاده روزمره',
+            'page_home_technology_body' => 'در انتخاب تجهیزات آشپزخانه، ظاهر تنها بخشی از تصمیم است. ابعاد نصب، نوع کاربری، جنس، امکانات و شیوه نگهداری هر محصول را بررسی کنید و مشخصات ثبت‌شده همان مدل را مبنای مقایسه قرار دهید.',
+            'page_home_technology_cta' => 'آشنایی با فرجی‌هوم',
             'page_home_technology_image_url' => '',
             'page_home_show_technology' => '1',
-            'page_home_categories_eyebrow' => 'دسته‌بندی محصولات فرزین',
-            'page_home_categories_title' => 'از دسته‌ی مناسب شروع کنید.',
-            'page_home_categories_description' => 'هود و سینک موردنیازتان را از میان دسته‌بندی‌های محصولات فرزین پیدا کنید.',
-            'page_home_products_eyebrow' => 'کاتالوگ محصولات فرزین',
-            'page_home_products_title' => 'مدل‌های منتخب فرزین',
-            'page_home_products_description' => 'محصولات قابل خرید در ابتدای فهرست نمایش داده می‌شوند؛ مدل‌های ناموجود پس از آن‌ها قرار می‌گیرند.',
+            'page_home_categories_eyebrow' => 'دسته‌بندی تجهیزات آشپزخانه',
+            'page_home_categories_title' => 'اول دسته مناسب را پیدا کنید.',
+            'page_home_categories_description' => 'از میان دسته‌بندی‌های فعال، گروه محصول موردنیازتان را انتخاب کنید و مدل‌ها را بر اساس مشخصات و فضای نصب مقایسه کنید.',
+            'page_home_products_eyebrow' => 'کاتالوگ محصولات',
+            'page_home_products_title' => 'محصولات منتخب برای آشپزخانه شما',
+            'page_home_products_description' => 'مدل‌ها را با توجه به قیمت، موجودی، تصویر و مشخصات اختصاصی هر محصول بررسی کنید.',
             'page_home_best_sellers_title' => 'پرفروش‌ترین محصولات',
             'page_home_best_sellers_description' => 'انتخاب‌ها بر اساس تعداد محصولات ثبت‌شده در سفارش‌های پرداخت‌شده مرتب شده‌اند؛ مشخصات هر مدل را بررسی کنید.',
-            'page_home_trust_eyebrow' => 'تجربه خرید از فرزین',
-            'page_home_trust_title' => 'برای انتخاب، اطلاعات روشن در اختیار شماست.',
+            'page_home_trust_eyebrow' => 'خرید آگاهانه از فرجی‌هوم',
+            'page_home_trust_title' => 'اطلاعات مهم، پیش از تصمیم‌گیری',
             'page_home_trust_1_title' => 'مشخصات پیش از خرید',
             'page_home_trust_1_description' => 'تصویر، قیمت و جزئیات هر مدل را در صفحه محصول بررسی کنید.',
             'page_home_trust_2_title' => 'سبد خرید یکپارچه',
@@ -118,8 +153,11 @@ class StorefrontPageContent
             'page_home_sink_guide_title' => 'راهنمای انتخاب سینک',
             'page_home_sink_guide_description' => 'جنس، تعداد لگن و ابعاد مناسب را مقایسه کنید.',
             'page_home_sink_guide_cta' => 'مشاهده سینک‌ها',
+            'page_home_gas_guide_title' => 'راهنمای انتخاب اجاق گاز صفحه‌ای',
+            'page_home_gas_guide_description' => 'ابعاد برش، تعداد شعله، جنس صفحه، نوع شبکه و امکانات ایمنی مدل‌ها را با فضای آشپزخانه تطبیق دهید.',
+            'page_home_gas_guide_cta' => 'مشاهده اجاق گازها',
             'page_home_journal_title' => 'قبل از انتخاب، آگاهانه‌تر ببینید.',
-            'page_home_journal_description' => 'نکته‌ها و مقاله‌های مرتبط با هود و سینک؛ کوتاه، کاربردی و از دل تجربه‌ی تجهیزات آشپزخانه.',
+            'page_home_journal_description' => 'راهنمای انتخاب، نصب و نگهداری تجهیزات آشپزخانه؛ برای اینکه پیش از خرید، معیارهای مهم را بشناسید.',
             'page_home_final_title' => 'مدل مناسب آشپزخانه‌تان را پیدا کنید.',
             'page_home_final_description' => 'محصول‌ها را مقایسه کنید و برای بررسی مشخصات یا پرسش پیش از خرید، از مسیرهای ارتباطی فرزین کمک بگیرید.',
             'page_home_final_cta' => 'ورود به فروشگاه',
@@ -150,48 +188,48 @@ class StorefrontPageContent
             'page_home_banner_4_image_url' => '',
 
             // About page copy.
-            'page_about_hero_eyebrow' => 'درباره فرزین',
-            'page_about_hero_title' => 'فرزین فرجی؛',
-            'page_about_hero_highlight' => 'از تولید تا جزئیات آشپزخانه.',
-            'page_about_hero_description' => 'فرزین فرجی در حوزه تولید هود و سینک آشپزخانه فعالیت می‌کند. این وب‌سایت برای معرفی مجموعه، نمایش محصولات و کمک به شناخت دقیق‌تر مدل‌ها و مشخصات آن‌ها طراحی شده است. جزئیات هر محصول را می‌توانید در کاتالوگ فرزین بررسی کنید.',
-            'page_about_hero_cta' => 'مشاهده محصولات فرزین',
-            'page_about_statement_eyebrow' => 'تولید و مسیر کار',
-            'page_about_statement_title' => 'تولید، محصول و تجربه‌ی استفاده.',
-            'page_about_statement_body_1' => 'محصول برای ما فقط یک تصویر یا نام در کاتالوگ نیست؛ ابعاد، کاربرد و مشخصات آن باید برای خریدار قابل بررسی باشد. معرفی روشن محصول کمک می‌کند انتخاب بر پایه‌ی نیاز واقعی آشپزخانه انجام شود.',
-            'page_about_statement_body_2' => 'در کنار معرفی مجموعه و مسیر کاری آن، کاتالوگ محصولات نیز بخشی از همین تجربه است: اطلاعات هر مدل باید کمک کند خریدار پیش از سفارش، تفاوت‌ها و تناسب آن را با فضای خود بررسی کند.',
-            'page_about_factory_eyebrow' => 'کارخانه و فرایند تولید',
-            'page_about_factory_title' => 'پشت محصول را هم بشناسید.',
-            'page_about_factory_body_1' => 'برای شناخت یک هود یا سینک، ظاهر محصول تنها بخشی از ماجراست. ابعاد، نوع نصب، جنس، امکانات و شیوه نگهداری هم اهمیت دارند. معرفی فرزین قرار است مسیر آشنایی با مجموعه و محصولات را روشن‌تر کند.',
-            'page_about_factory_body_2' => 'اطلاعات اختصاصی هر مدل باید با مشخصات فنی تأییدشده همان محصول همراه باشد؛ به همین دلیل ویژگی‌ها و جزئیات قابل‌بررسی در صفحه محصول ارائه می‌شوند.',
-            'page_about_factory_cta' => 'دیدن کاتالوگ محصولات',
+            'page_about_hero_eyebrow' => 'درباره فرجی‌هوم',
+            'page_about_hero_title' => 'فرجی‌هوم؛',
+            'page_about_hero_highlight' => 'همراه انتخاب بهتر تجهیزات آشپزخانه.',
+            'page_about_hero_description' => 'فرجی‌هوم فروشگاه تخصصی تجهیزات آشپزخانه است؛ جایی برای مشاهده و مقایسه مدل‌های هود، اجاق گاز صفحه‌ای، سینک و سایر محصولات موجود از برندهای متنوع. تلاش می‌کنیم تصویر، قیمت و مشخصات هر کالا را کنار هم قرار دهیم تا پیش از خرید، انتخاب دقیق‌تری داشته باشید.',
+            'page_about_hero_cta' => 'مشاهده محصولات',
+            'page_about_statement_eyebrow' => 'نگاه ما به انتخاب محصول',
+            'page_about_statement_title' => 'انتخاب خوب، از اطلاعات روشن شروع می‌شود.',
+            'page_about_statement_body_1' => 'در خرید تجهیزات آشپزخانه، ظاهر محصول تنها معیار نیست. ابعاد نصب، نوع کاربری، جنس، امکانات و خدمات برند اهمیت دارند. مقایسه روشن این ویژگی‌ها کمک می‌کند محصولی متناسب با فضای واقعی و شیوه استفاده خود انتخاب کنید.',
+            'page_about_statement_body_2' => 'فرجی‌هوم محصولات برندهای گوناگون را در یک مسیر خرید آنلاین گرد هم می‌آورد؛ با دسته‌بندی روشن، صفحه اختصاصی هر محصول و راه‌های ارتباطی برای پرسش پیش از خرید.',
+            'page_about_factory_eyebrow' => 'از جستجو تا انتخاب',
+            'page_about_factory_title' => 'چطور انتخاب را ساده‌تر می‌کنیم؟',
+            'page_about_factory_body_1' => 'برای هود، نوع نصب، عرض، قدرت مکش و میزان صدا را بررسی کنید؛ برای اجاق گاز، ابعاد برش، تعداد شعله و امکانات ایمنی؛ و برای سینک، روش نصب، تعداد لگن، ابعاد و جنس. این معیارها کمک می‌کنند محصولات را با فضای آشپزخانه خود تطبیق دهید.',
+            'page_about_factory_body_2' => 'مشخصات فنی، قیمت و وضعیت موجودی هر مدل را در صفحه همان محصول بررسی کنید. در صورت وجود ابهام، پیش از ثبت سفارش از راه‌های ارتباطی فروشگاه سؤال کنید؛ ویژگی‌های هر کالا باید بر اساس اطلاعات ثبت‌شده همان مدل سنجیده شود.',
+            'page_about_factory_cta' => 'رفتن به کاتالوگ محصولات',
             'page_about_values_eyebrow' => 'آنچه برای ما مهم است',
-            'page_about_values_title' => 'تمرکز مجموعه فرزین.',
-            'page_about_value_1_title' => 'کاربرد',
-            'page_about_value_1_description' => 'فرم و ظاهر باید در خدمت فضای شما باشد، نه اینکه فضا را تحت‌الشعاع قرار دهد.',
+            'page_about_values_title' => 'خریدی که با نیاز شما شروع می‌شود.',
+            'page_about_value_1_title' => 'تناسب با فضا',
+            'page_about_value_1_description' => 'ابعاد، نوع نصب و اندازه فضای کابینت را پیش از انتخاب در نظر بگیرید.',
             'page_about_value_2_title' => 'مشخصات روشن',
-            'page_about_value_2_description' => 'انتخاب متریال و ساخت خوب، چیزی است که ارزش یک محصول را در طول زمان حفظ می‌کند.',
-            'page_about_value_3_title' => 'انتخاب مناسب',
-            'page_about_value_3_description' => 'قیمت، مشخصات، موجودی و شرایط پرداخت باید قبل از تصمیم‌گیری روشن باشند.',
-            'page_about_value_4_title' => 'مسیر تولید',
-            'page_about_value_4_description' => 'خرید باید ساده و آرام باشد؛ از اولین مشاهده محصول تا سفارش نهایی.',
+            'page_about_value_2_description' => 'تفاوت مدل‌ها را با مشخصات فنی ثبت‌شده همان محصول بررسی کنید.',
+            'page_about_value_3_title' => 'تنوع برند و مدل',
+            'page_about_value_3_description' => 'محصولات موجود را بر اساس دسته، برند، قیمت و ویژگی‌های قابل مقایسه بررسی کنید.',
+            'page_about_value_4_title' => 'پشتیبانی پیش از خرید',
+            'page_about_value_4_description' => 'برای پرسش درباره مدل، مشخصات و مراحل سفارش از راه‌های ارتباطی فروشگاه استفاده کنید.',
             'page_about_experience_eyebrow' => 'تجربه خرید',
-            'page_about_experience_title' => 'از کشف تا انتخاب.',
-            'page_about_experience_description' => 'تجربه فرزین فقط به صفحه محصول محدود نمی‌شود. تمام مسیر برای انتخاب راحت‌تر طراحی شده است.',
-            'page_about_step_1_title' => 'کشف',
-            'page_about_step_1_description' => 'دسته‌بندی‌ها و مجموعه‌های مختلف را بررسی می‌کنید و محصول مناسب فضای خود را پیدا می‌کنید.',
-            'page_about_step_2_title' => 'بررسی',
-            'page_about_step_2_description' => 'قیمت، مشخصات، موجودی و در صورت وجود، شرایط خرید اقساطی محصول را می‌بینید.',
-            'page_about_step_3_title' => 'انتخاب',
-            'page_about_step_3_description' => 'محصول و ویژگی‌های موردنظر را انتخاب و وارد سبد خرید می‌کنید.',
-            'page_about_step_4_title' => 'پرداخت',
-            'page_about_step_4_description' => 'روش پرداخت قابل استفاده برای سفارش، پیش از نهایی‌کردن خرید به‌صورت روشن اعلام می‌شود.',
+            'page_about_experience_title' => 'مسیر خرید روشن و ساده',
+            'page_about_experience_description' => 'از انتخاب دسته مناسب تا بررسی مشخصات، ثبت سفارش و پیگیری آن، هر مرحله باید برای شما روشن و قابل فهم باشد.',
+            'page_about_step_1_title' => 'جستجو',
+            'page_about_step_1_description' => 'دسته و برند موردنظر را انتخاب کنید و مدل‌های مرتبط را ببینید.',
+            'page_about_step_2_title' => 'مقایسه',
+            'page_about_step_2_description' => 'تصویر، قیمت، موجودی و ویژگی‌های فنی مدل‌ها را در صفحه محصول بررسی کنید.',
+            'page_about_step_3_title' => 'ثبت انتخاب',
+            'page_about_step_3_description' => 'مدل و گزینه‌های در دسترس را انتخاب و به سبد خرید اضافه کنید.',
+            'page_about_step_4_title' => 'پیگیری',
+            'page_about_step_4_description' => 'جزئیات و وضعیت سفارش را از حساب کاربری یا راه‌های ارتباطی فروشگاه دنبال کنید.',
             'page_about_installment_eyebrow' => 'شرایط پرداخت',
             'page_about_installment_title' => 'انتخاب خوب نباید فقط به بودجه امروز محدود شود.',
-            'page_about_installment_description' => 'برخی محصولات فرزین می‌توانند با شرایط اقساطی تعریف‌شده توسط فروشگاه خریداری شوند. درصد پیش‌پرداخت، تعداد چک و فاصله سررسید برای هر محصول مشخص است.',
+            'page_about_installment_description' => 'چنانچه خرید اقساطی برای محصولی فعال باشد، شرایط همان مدل در صفحه محصول یا هنگام ثبت سفارش نمایش داده می‌شود. پیش از پرداخت، مبلغ پیش‌پرداخت، تعداد اقساط و شرایط را با دقت بررسی کنید.',
             'page_about_installment_cta' => 'مشاهده محصولات',
-            'page_about_final_eyebrow' => 'فرزین',
-            'page_about_final_title' => 'برای فضاهایی که قرار است ماندگار باشند.',
-            'page_about_final_description' => 'مجموعه فرزین را ببین و محصولی را پیدا کن که فقط خانه را پر نکند؛ بلکه بخشی از شخصیت آن شود.',
+            'page_about_final_eyebrow' => 'فرجی‌هوم',
+            'page_about_final_title' => 'برای انتخاب بهتر تجهیزات آشپزخانه، از همین‌جا شروع کنید.',
+            'page_about_final_description' => 'دسته‌ها و محصولات موجود فرجی‌هوم را بررسی کنید یا برای پرسش پیش از خرید با ما در ارتباط باشید.',
             'page_about_final_shop_cta' => 'ورود به فروشگاه',
             'page_about_final_contact_cta' => 'تماس با ما',
 

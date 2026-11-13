@@ -1,247 +1,122 @@
 @extends('layouts.app')
 
-@section('title', 'دسته‌بندی هود و سینک | فرزین')
-
-@section(
-    'description',
-    'دسته‌بندی‌های هود آشپزخانه و سینک ظرفشویی فرزین را ببینید و مدل مناسب فضای نصب خود را پیدا کنید.'
-)
-
+@section('title', 'دسته‌بندی تجهیزات آشپزخانه | فرجی‌هوم')
+@section('description', 'دسته‌های فعال فرجی‌هوم را ببینید؛ هود، سینک و تجهیزات آشپزخانه را بر اساس نیاز، فضای نصب و مشخصات هر مدل انتخاب و مقایسه کنید.')
 @section('canonical', route('categories.index'))
-
-
+@section('body_class', 'faraji-categories-page min-h-screen antialiased')
 
 @section('content')
+<div class="overflow-hidden bg-[var(--livora-cream)]">
+    <section class="relative overflow-hidden border-b border-[var(--livora-border)] bg-[var(--livora-ink)] text-white">
+        <div aria-hidden="true" class="pointer-events-none absolute -left-24 -top-28 h-80 w-80 rounded-full bg-[var(--livora-accent)]/20 blur-3xl"></div>
+        <div aria-hidden="true" class="pointer-events-none absolute bottom-0 right-0 h-px w-full bg-gradient-to-l from-transparent via-white/25 to-transparent"></div>
 
-    <div class="overflow-hidden bg-[var(--livora-cream)]">
+        <x-layout.container>
+            <div class="relative py-10 sm:py-14 lg:py-20">
+                <nav aria-label="مسیر صفحه" class="flex flex-wrap items-center gap-2 text-xs text-white/60">
+                    <a href="{{ route('home') }}" class="transition hover:text-white">خانه</a>
+                    <span aria-hidden="true">/</span>
+                    <span aria-current="page" class="text-white">دسته‌بندی محصولات</span>
+                </nav>
 
-        {{-- HERO --}}
-        <section class="fz-category-hero farzin-category-index-banner border-b border-[var(--livora-border)] bg-[var(--livora-white)]">
-
-            <x-layout.container>
-
-                <div class="fz-category-hero__inner py-6 sm:py-8 lg:py-10">
-
-                    <nav
-                        aria-label="breadcrumb"
-                        class="flex items-center gap-2 text-[11px] text-[var(--livora-stone)]"
-                    >
-                        <a
-                            href="{{ route('home') }}"
-                            class="transition hover:text-[var(--livora-text)]"
-                        >
-                            خانه
-                        </a>
-
-                        <span>/</span>
-
-                        <span class="text-[var(--livora-text)]">
-                        دسته‌بندی‌ها
-                    </span>
-                    </nav>
-
-                    <div class="fz-category-hero__layout">
-                        <div class="fz-category-hero__content">
-                            <p class="fz-category-hero__eyebrow">دسته‌بندی محصولات / انتخاب متناسب با آشپزخانه شما</p>
-
-                            <h1 class="fz-category-hero__title">
-                                فضای مناسب خودت را پیدا کن.
-                            </h1>
-
-                            <p class="fz-category-hero__description">
-                                از هود آشپزخانه تا سینک ظرفشویی؛ مجموعه‌های فرزین را بر اساس فرم، ابعاد و فضای نصب بررسی کن.
-                                طراحی دقیق، متریال بادوام و انتخابی هماهنگ با آشپزخانه‌ات.
-                            </p>
-
-                            <div class="fz-category-hero__actions">
-                                <a href="#category-list" class="fz-category-hero__action">
-                                    <span>انتخاب دسته‌بندی</span><span aria-hidden="true">↙</span>
-                                </a>
-                                <span class="fz-category-hero__hint">FARZIN / DESIGN SYSTEMS</span>
-                            </div>
+                <div class="mt-10 grid items-end gap-10 lg:grid-cols-[minmax(0,1.15fr)_minmax(280px,.85fr)] lg:gap-16">
+                    <div class="max-w-3xl">
+                        <p class="text-xs font-bold tracking-wide text-white/65">فرجی‌هوم / راهنمای انتخاب</p>
+                        <h1 class="mt-5 text-4xl font-black leading-[1.45] tracking-tight text-white sm:text-5xl lg:text-6xl">
+                            دسته مناسب را پیدا کنید؛
+                            <span class="block text-[#e6b8a6]">بعد با خیال راحت مقایسه کنید.</span>
+                        </h1>
+                        <p class="mt-6 max-w-2xl text-sm leading-9 text-white/75 sm:text-base">
+                            برای انتخاب تجهیزات آشپزخانه، از گروه محصول شروع کنید. مدل‌ها را بر اساس نوع نصب، ابعاد، جنس و ویژگی‌های فنی بررسی کنید و مشخصات هر کالا را پیش از سفارش بخوانید.
+                        </p>
+                        <div class="mt-8 flex flex-wrap gap-3">
+                            <a href="#category-list" class="inline-flex min-h-12 items-center justify-center gap-3 bg-white px-6 py-3 text-sm font-bold text-[var(--livora-ink)] transition hover:bg-[#f3e9e5]">
+                                انتخاب دسته‌بندی <span aria-hidden="true">↓</span>
+                            </a>
+                            <a href="{{ route('contact') }}" class="inline-flex min-h-12 items-center justify-center border border-white/35 px-6 py-3 text-sm font-semibold text-white transition hover:border-white hover:bg-white/10">
+                                مشاوره پیش از خرید
+                            </a>
                         </div>
+                    </div>
 
-                        <div class="fz-category-hero__visual" data-category-hero aria-label="نمایش گرافیکی هود و سینک فرزین">
-                            <span class="fz-category-hero__orbit fz-category-hero__orbit--outer" aria-hidden="true"></span>
-                            <span class="fz-category-hero__orbit fz-category-hero__orbit--inner" aria-hidden="true"></span>
-                            <div class="fz-category-hero__stamp">FARZIN <span>DESIGN STUDIO / 2026</span></div>
-                            <span class="fz-category-hero__spec" aria-hidden="true">METAL · FORM · FUNCTION</span>
-
-                            <article class="fz-category-hero__product fz-category-hero__product--hood" data-category-float>
-                                <div class="fz-category-hero__product-art" aria-hidden="true">
-                                    <svg viewBox="0 0 280 130" fill="none">
-                                        <defs>
-                                            <linearGradient id="fzHoodMetal" x1="26" y1="18" x2="244" y2="124" gradientUnits="userSpaceOnUse">
-                                                <stop stop-color="#F5F3EF"/>
-                                                <stop offset=".42" stop-color="#B8BDC4"/>
-                                                <stop offset=".75" stop-color="#555A61"/>
-                                                <stop offset="1" stop-color="#7B0D1A"/>
-                                            </linearGradient>
-                                        </defs>
-                                        <path d="M94 12h92v35l25 18v18H69V65l25-18V12Z" fill="url(#fzHoodMetal)" fill-opacity=".96" stroke="#F5F3EF" stroke-opacity=".8" stroke-width="1.2"/>
-                                        <path d="M80 84h120v12H80z" fill="#111316" stroke="#C7CBD0" stroke-opacity=".8"/>
-                                        <path d="M91 88h98M95 92h90M99 96h82" stroke="#77777D" stroke-width="1.7" stroke-linecap="round"/>
-                                        <path d="M108 19h64M108 25h64" stroke="#fff" stroke-opacity=".45" stroke-width="1.4" stroke-linecap="round"/>
-                                        <path d="M112 102v7m14-7v7m14-7v7m14-7v7m14-7v7" stroke="#7B0D1A" stroke-opacity=".85" stroke-width="1.5" stroke-linecap="round"/>
-                                        <path d="M42 116h196" stroke="#C7CBD0" stroke-opacity=".25" stroke-width="1"/>
-                                    </svg>
-                                </div>
-                                <div class="fz-category-hero__product-label">
-                                    <small>هود / ۰۱</small>
-                                    <strong>هود آشپزخانه</strong>
-                                    <em>قدرت مکش • دقت عملکرد</em>
-                                </div>
-                                <span class="fz-category-hero__index">01</span>
-                            </article>
-
-                            <article class="fz-category-hero__product fz-category-hero__product--sink" data-category-float>
-                                <div class="fz-category-hero__product-art" aria-hidden="true">
-                                    <svg viewBox="0 0 280 130" fill="none">
-                                        <defs>
-                                            <linearGradient id="fzSinkMetal" x1="35" y1="12" x2="243" y2="118" gradientUnits="userSpaceOnUse">
-                                                <stop stop-color="#FAF9F6"/>
-                                                <stop offset=".5" stop-color="#AEB4BB"/>
-                                                <stop offset=".82" stop-color="#555A61"/>
-                                                <stop offset="1" stop-color="#7B0D1A"/>
-                                            </linearGradient>
-                                        </defs>
-                                        <rect x="42" y="20" width="196" height="86" rx="13" fill="url(#fzSinkMetal)" stroke="#FCFBF8" stroke-opacity=".8" stroke-width="1.2"/>
-                                        <rect x="55" y="31" width="170" height="64" rx="8" fill="#292D32" stroke="#D8DCE0" stroke-opacity=".75" stroke-width="1.2"/>
-                                        <rect x="68" y="41" width="144" height="44" rx="5" fill="#202328" stroke="#77777D" stroke-width="1"/>
-                                        <path d="M140 41v44" stroke="#90959B" stroke-opacity=".6"/>
-                                        <circle cx="201" cy="50" r="3" fill="#7B0D1A"/>
-                                        <path d="M182 20V10c0-5-4-8-9-8h-9" stroke="#F5F3EF" stroke-width="5" stroke-linecap="round"/>
-                                        <path d="M164 2h-7" stroke="#C7CBD0" stroke-width="5" stroke-linecap="round"/>
-                                        <path d="M73 113h134" stroke="#C7CBD0" stroke-opacity=".3"/>
-                                    </svg>
-                                </div>
-                                <div class="fz-category-hero__product-label">
-                                    <small>سینک / ۰۲</small>
-                                    <strong>سینک ظرفشویی</strong>
-                                    <em>فرم دقیق • دوام بالا</em>
-                                </div>
-                                <span class="fz-category-hero__index">02</span>
-                            </article>
-                            <span class="fz-category-hero__lightline" aria-hidden="true"></span>
+                    <div class="grid grid-cols-2 gap-px border border-white/15 bg-white/15">
+                        <div class="min-h-36 bg-white/[0.06] p-5 sm:p-6">
+                            <span class="text-xs text-white/55">گام اول</span>
+                            <strong class="mt-4 block text-lg font-bold text-white sm:text-xl">نیازسنجی</strong>
+                            <p class="mt-2 text-xs leading-7 text-white/65">نوع محصول و فضای نصب را مشخص کنید.</p>
+                        </div>
+                        <div class="min-h-36 bg-white/[0.06] p-5 sm:p-6">
+                            <span class="text-xs text-white/55">گام دوم</span>
+                            <strong class="mt-4 block text-lg font-bold text-white sm:text-xl">مقایسه</strong>
+                            <p class="mt-2 text-xs leading-7 text-white/65">مشخصات، قیمت و موجودی مدل‌ها را ببینید.</p>
+                        </div>
+                        <div class="col-span-2 flex items-center justify-between gap-4 bg-white/[0.06] p-5 sm:p-6">
+                            <div>
+                                <span class="text-xs text-white/55">همراه انتخاب شما</span>
+                                <strong class="mt-2 block text-base font-bold text-white">فرجی‌هوم</strong>
+                            </div>
+                            <span class="text-3xl font-light text-[#e6b8a6]" aria-hidden="true">01—02</span>
                         </div>
                     </div>
                 </div>
+            </div>
+        </x-layout.container>
+    </section>
 
-            </x-layout.container>
-
-        </section>
-
-
-        {{-- CATEGORIES --}}
-        <section id="category-list" class="fz-category-list">
-
-            <x-layout.container>
+    <section id="category-list" class="scroll-mt-28">
+        <x-layout.container>
+            <div class="py-12 sm:py-16">
+                <header class="mb-8 flex flex-col gap-4 border-b border-[var(--livora-border)] pb-6 sm:flex-row sm:items-end sm:justify-between">
+                    <div>
+                        <p class="text-xs font-bold text-[var(--livora-accent)]">کاتالوگ فرجی‌هوم</p>
+                        <h2 class="mt-2 text-2xl font-black tracking-tight text-[var(--livora-ink)] sm:text-3xl">محصولات را بر اساس دسته ببینید</h2>
+                        <p class="mt-3 max-w-2xl text-sm leading-8 text-[var(--livora-stone)]">وارد دسته موردنظرتان شوید تا توضیحات کاربردی، محصولات و مشخصات مدل‌ها را یک‌جا بررسی کنید.</p>
+                    </div>
+                    <a href="{{ route('shop.index') }}" class="inline-flex min-h-11 w-fit items-center gap-2 border border-[var(--livora-border)] px-5 py-3 text-sm font-semibold text-[var(--livora-ink)] transition hover:border-[var(--livora-accent)] hover:text-[var(--livora-accent)]">
+                        مشاهده همه محصولات <span aria-hidden="true">←</span>
+                    </a>
+                </header>
 
                 @if($categories->isNotEmpty())
-
-                    <div class="py-8 sm:py-10 lg:py-12">
-
-                        <div class="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-
-                            @foreach($categories as $category)
-
-                                <x-shop.category-card
-                                    :name="$category->name"
-                                    :image="$category->image_url"
-                                    :image-srcset="$category->image_srcset"
-                                    :motion-media="$category->hoverMedia"
-                                    :href="route('categories.show', $category->slug)"
-                                    :count="$category->products_count"
-                                />
-
-                            @endforeach
-
-                        </div>
-
-                        @if(method_exists($categories, 'hasPages') && $categories->hasPages())
-
-                            <div class="mt-10">
-                                {{ $categories->withQueryString()->links() }}
-                            </div>
-
-                        @endif
-
+                    <div class="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                        @foreach($categories as $category)
+                            <x-shop.category-card
+                                :name="$category->name"
+                                :image="$category->image_url"
+                                :image-srcset="$category->image_srcset"
+                                :motion-media="$category->hoverMedia"
+                                :href="route('categories.show', $category->slug)"
+                                :count="$category->products_count"
+                            />
+                        @endforeach
                     </div>
 
+                    @if(method_exists($categories, 'hasPages') && $categories->hasPages())
+                        <div class="mt-10">{{ $categories->withQueryString()->links() }}</div>
+                    @endif
                 @else
-
-                    <div class="py-24 text-center">
-
-                        <div class="mx-auto flex h-20 w-20 items-center justify-center rounded-[1.75rem] bg-[var(--livora-white)]">
-                        <span class="text-xs tracking-[0.2em] text-[var(--livora-stone)]">
-                            FZ
-                        </span>
-                        </div>
-
-                        <p class="mt-7 text-[10px] uppercase tracking-[0.22em] text-[var(--livora-accent)]">
-                            هنوز محتوایی ثبت نشده است
-                        </p>
-
-                        <h2 class="mt-3 text-3xl font-semibold">
-                            هنوز دسته‌بندی‌ای ثبت نشده است.
-                        </h2>
-
-                        <p class="mx-auto mt-4 max-w-md text-sm leading-8 text-[var(--livora-stone)]">
-                            دسته‌بندی‌ها پس از ثبت در پنل مدیریت در این بخش نمایش داده می‌شوند.
-                        </p>
-
-                        <a
-                            href="{{ route('shop.index') }}"
-                            class="mt-8 inline-flex rounded-2xl bg-[var(--livora-ink)] px-7 py-4 text-sm font-medium text-white transition hover:bg-[var(--livora-accent)]"
-                        >
-                            مشاهده فروشگاه
-                        </a>
-
+                    <div class="border border-[var(--livora-border)] bg-white px-6 py-20 text-center">
+                        <p class="text-xs font-bold text-[var(--livora-accent)]">کاتالوگ در حال تکمیل است</p>
+                        <h2 class="mt-3 text-2xl font-black text-[var(--livora-ink)]">هنوز دسته فعالی برای نمایش وجود ندارد.</h2>
+                        <p class="mx-auto mt-3 max-w-lg text-sm leading-8 text-[var(--livora-stone)]">برای دریافت اطلاعات محصولات موجود یا راهنمایی درباره انتخاب، با تیم فرجی‌هوم در ارتباط باشید.</p>
+                        <a href="{{ route('contact') }}" class="mt-7 inline-flex min-h-12 items-center justify-center bg-[var(--livora-ink)] px-6 py-3 text-sm font-bold text-white transition hover:bg-[var(--livora-accent)]">ارتباط با ما</a>
                     </div>
-
                 @endif
+            </div>
+        </x-layout.container>
+    </section>
 
-            </x-layout.container>
-
-        </section>
-
-
-        {{-- CTA --}}
-        <section class="border-t border-[var(--livora-border)] bg-[var(--livora-surface)]">
-
-            <x-layout.container>
-
-                <div class="flex flex-col gap-6 py-12 sm:flex-row sm:items-center sm:justify-between sm:py-16">
-
-                    <div>
-
-                        <p class="text-[10px] uppercase tracking-[0.2em] text-[var(--livora-accent)]">
-                            فرزین
-                        </p>
-
-                        <h2 class="mt-2 text-2xl font-semibold">
-                            چیزی که دنبالش هستی، شاید همین‌جا باشد.
-                        </h2>
-
-                        <p class="mt-2 text-sm leading-7 text-[var(--livora-stone)]">
-                            همه محصولات را هم می‌توانی یکجا بررسی کنی.
-                        </p>
-
-                    </div>
-
-                    <a
-                        href="{{ route('shop.index') }}"
-                        class="inline-flex w-fit rounded-2xl bg-[var(--livora-ink)] px-6 py-4 text-sm font-medium text-white transition hover:bg-[var(--livora-accent)]"
-                    >
-                        ورود به فروشگاه
-                    </a>
-
+    <section class="border-t border-[var(--livora-border)] bg-[var(--livora-surface)]">
+        <x-layout.container>
+            <div class="flex flex-col gap-6 py-10 sm:flex-row sm:items-center sm:justify-between sm:py-14">
+                <div class="max-w-2xl">
+                    <p class="text-xs font-bold text-[var(--livora-accent)]">هنوز مطمئن نیستید؟</p>
+                    <h2 class="mt-2 text-2xl font-black text-[var(--livora-ink)]">قبل از خرید، سؤال‌هایتان را بپرسید.</h2>
+                    <p class="mt-2 text-sm leading-8 text-[var(--livora-stone)]">برای بررسی تناسب مدل با ابعاد و نیاز آشپزخانه‌تان، با فرجی‌هوم تماس بگیرید.</p>
                 </div>
-
-            </x-layout.container>
-
-        </section>
-
-    </div>
-
+                <a href="{{ route('contact') }}" class="inline-flex min-h-12 w-fit items-center justify-center bg-[var(--livora-ink)] px-7 py-3 text-sm font-bold text-white transition hover:bg-[var(--livora-accent)]">تماس با فرجی‌هوم</a>
+            </div>
+        </x-layout.container>
+    </section>
+</div>
 @endsection

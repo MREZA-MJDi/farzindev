@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
-@section('title', 'ویرایش پروفایل | فرزین')
-@section('description', 'مدیریت اطلاعات حساب کاربری در فرزین.')
+@section('title', 'ویرایش پروفایل | فرجی‌هوم')
+@section('description', 'مدیریت اطلاعات حساب کاربری در فرجی‌هوم.')
 
 @push('seo')
     <meta name="robots" content="noindex,nofollow,noarchive">

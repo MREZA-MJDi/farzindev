@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
-@section('title', 'وضعیت اتصال درگاه | فرزین')
-@section('description', 'وضعیت آماده‌سازی مسیر امن پرداخت سفارش شما در فرزین.')
+@section('title', 'وضعیت اتصال درگاه | فرجی‌هوم')
+@section('description', 'وضعیت آماده‌سازی مسیر امن پرداخت سفارش شما در فرجی‌هوم.')
 @section('canonical', route('checkout.payment', $order))
 
 @push('seo')

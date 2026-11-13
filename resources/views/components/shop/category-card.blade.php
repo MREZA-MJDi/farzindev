@@ -19,7 +19,7 @@
                     <img src="{{ $image }}" @if($imageSrcset) srcset="{{ $imageSrcset }}" sizes="(max-width: 639px) 90vw, (max-width: 1023px) 45vw, 320px" @endif alt="{{ $name }}" loading="lazy" decoding="async" class="farzin-category-card__image h-full w-full object-cover">
                 @else
                     <div class="farzin-category-fallback flex h-full w-full items-center justify-center">
-                        <div class="farzin-category-fallback__mark" aria-hidden="true"><span>FZ</span><i></i></div>
+                        <div class="farzin-category-fallback__mark" aria-hidden="true"><span>FH</span><i></i></div>
                     </div>
                 @endif
                 @if($motionMedia?->is_video)
@@ -29,7 +29,7 @@
                 @endif
             </div>
             <div class="farzin-category-card__shade absolute inset-0"></div>
-            <div class="absolute left-4 top-4 z-10"><span class="farzin-category-card__signature">FARZIN <i aria-hidden="true"></i></span></div>
+            <div class="absolute left-4 top-4 z-10"><span class="farzin-category-card__signature">FARAJI HOME <i aria-hidden="true"></i></span></div>
             <div class="farzin-category-card__content absolute inset-x-0 bottom-0 z-10 p-5 sm:p-6">
                 <div class="flex items-end justify-between gap-4">
                     <div class="min-w-0">

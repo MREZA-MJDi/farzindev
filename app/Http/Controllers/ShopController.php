@@ -229,8 +229,8 @@ class ShopController extends Controller
             'shopBanner' => [
                 'image_url' => $bannerAvailable ? $publicDisk->url($bannerPath) : null,
                 'image_srcset' => $bannerAvailable ? $images->srcset($bannerPath) : null,
-                'title' => $settings->get('shop_banner_title') ?: 'فروشگاه فرزین',
-                'subtitle' => $settings->get('shop_banner_subtitle') ?: 'هود و سینک آشپزخانه؛ انتخابی دقیق برای فضای شما.',
+                'title' => $settings->get('shop_banner_title') ?: 'فروشگاه فرجی‌هوم',
+                'subtitle' => $settings->get('shop_banner_subtitle') ?: 'هود، اجاق گاز صفحه‌ای و سینک؛ مشخصات مدل‌ها را بررسی و مقایسه کنید.',
             ],
         ]);
     }

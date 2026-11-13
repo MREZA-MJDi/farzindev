@@ -28,7 +28,7 @@
             @else
                 <span class="fz-home-article-card__media-fallback" aria-hidden="true">
                     <strong>F.</strong>
-                    <small>مجله فرزین</small>
+                    <small>مجله فرجی‌هوم</small>
                 </span>
             @endif
         </a>

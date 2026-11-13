@@ -1,8 +1,26 @@
 @extends('layouts.app')
 
 @php
-    $articleTitle = $post->meta_title ?: ($post->title . ' | بلاگ فرزین');
-    $articleDescription = $post->meta_description ?: ($post->excerpt ?: 'راهنمای تخصصی فرزین برای انتخاب تجهیزات آشپزخانه.');
+    $normalizeBlogCopy = static fn (?string $value): string => str_ireplace(
+        ['فرزین فرجی', 'فرزین', 'FARZIN', 'Farzin'],
+        ['فرجی‌هوم', 'فرجی‌هوم', 'FARAJI HOME', 'Faraji Home'],
+        trim((string) $value)
+    );
+
+    $post->setAttribute('title', $normalizeBlogCopy($post->title));
+    $post->setAttribute('excerpt', $normalizeBlogCopy($post->excerpt));
+    $post->setAttribute('meta_title', $normalizeBlogCopy($post->meta_title));
+    $post->setAttribute('meta_description', $normalizeBlogCopy($post->meta_description));
+    $post->setAttribute('og_title', $normalizeBlogCopy($post->og_title));
+    $post->setAttribute('og_description', $normalizeBlogCopy($post->og_description));
+    $post->setAttribute('body', $normalizeBlogCopy($post->body));
+    $post->setAttribute('body_html', $normalizeBlogCopy($post->body_html));
+    $post->terms->each(static function ($term) use ($normalizeBlogCopy): void {
+        $term->setAttribute('name', $normalizeBlogCopy($term->name));
+    });
+
+    $articleTitle = $post->meta_title ?: ($post->title . ' | بلاگ فرجی‌هوم');
+    $articleDescription = $post->meta_description ?: ($post->excerpt ?: 'راهنمای تخصصی فرجی‌هوم برای انتخاب تجهیزات آشپزخانه.');
     $articleCanonical = $post->canonical_url ?: route('blog.show', $post->slug);
     $articleOgTitle = $post->og_title ?: $articleTitle;
     $articleOgDescription = $post->og_description ?: $articleDescription;
@@ -15,11 +33,11 @@
         ->unique()
         ->values()
         ->all();
-    $articleText = $post->plain_text;
+    $articleText = $normalizeBlogCopy($post->plain_text);
     $articleWordCount = count(preg_split('/\s+/u', trim($articleText), -1, PREG_SPLIT_NO_EMPTY) ?: []);
     $articleAuthor = $post->author
         ? ['@type' => 'Person', 'name' => $post->author->name]
-        : ['@type' => 'Organization', 'name' => 'فرزین'];
+        : ['@type' => 'Organization', 'name' => 'فرجی‌هوم'];
 @endphp
 
 @section('title', $articleTitle)
@@ -55,7 +73,7 @@
     'author' => $articleAuthor,
     'publisher' => [
         '@type' => 'Organization',
-        'name' => 'فرزین',
+        'name' => 'فرجی‌هوم',
     ],
     'keywords' => $articleKeywords,
     'articleSection' => $post->terms->where('type', 'category')->pluck('name')->values()->all(),
@@ -71,14 +89,14 @@
                 <nav aria-label="مسیر صفحه" class="blog-article-breadcrumb">
                     <a href="{{ route('home') }}">خانه</a>
                     <span aria-hidden="true">/</span>
-                    <a href="{{ route('blog.index') }}">مجله فرزین</a>
+                    <a href="{{ route('blog.index') }}">مجله فرجی‌هوم</a>
                     @foreach($post->terms->where('type', 'category') as $categoryTerm)
                         <span aria-hidden="true">/</span>
                         <a href="{{ route('blog.category', $categoryTerm->slug) }}">{{ $categoryTerm->name }}</a>
                     @endforeach
                 </nav>
 
-                <p class="blog-article-kicker">مجله فرزین <span>/</span> مقاله</p>
+                <p class="blog-article-kicker">مجله فرجی‌هوم <span>/</span> مقاله</p>
                 <h1 class="blog-article-title">{{ $post->title }}</h1>
 
                 @if($post->excerpt)
@@ -143,7 +161,7 @@
 
             <aside class="blog-article-sidebar">
                 <section class="blog-article-sidebar-card">
-                    <p class="blog-section-kicker">FARZIN / CATALOG</p>
+                    <p class="blog-section-kicker">FARAJI HOME / CATALOG</p>
                     <h2>حالا مدل‌ها را ببینید.</h2>
                     <p>برای بررسی قیمت، تصاویر و مشخصات هود و سینک، وارد کاتالوگ محصولات شوید.</p>
                     <a href="{{ route('shop.index') }}">

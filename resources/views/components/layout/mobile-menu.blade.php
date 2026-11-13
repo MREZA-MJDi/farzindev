@@ -1,4 +1,4 @@
-@props(['brandName' => 'فرزین', 'brandLogo' => null, 'storefrontContact' => []])
+@props(['brandName' => 'فرجی‌هوم', 'brandLogo' => null, 'storefrontContact' => []])
 
 <div
     id="farzin-mobile-menu"

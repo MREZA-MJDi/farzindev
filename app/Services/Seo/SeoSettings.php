@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Storage;
 
 class SeoSettings
 {
-    private const CACHE_KEY = 'storefront.seo-settings.v1';
+    private const CACHE_KEY = 'storefront.seo-settings.v2';
     private const SITEMAP_CACHE_KEY = 'storefront.sitemap.xml.v1';
 
     /** @return array<string, string|null> */
@@ -24,7 +24,21 @@ class SeoSettings
                 ->all()
         );
 
-        return array_replace($defaults, $stored);
+        $values = array_replace($defaults, $stored);
+
+        // Normalize SEO values that were saved under the former development brand.
+        foreach ($values as &$value) {
+            if (is_string($value)) {
+                $value = str_ireplace(
+                    ['فرزین فرجی', 'فرزین', 'FARZIN', 'Farzin'],
+                    ['فرجی‌هوم', 'فرجی‌هوم', 'FARAJI HOME', 'Faraji Home'],
+                    $value
+                );
+            }
+        }
+        unset($value);
+
+        return $values;
     }
 
     public function canonicalUrl(string $path = '/', bool $preservePagination = true): string
@@ -327,22 +341,22 @@ class SeoSettings
     {
         return [
             'seo_canonical_base_url' => rtrim((string) config('app.url', 'https://farajihome.com'), '/'),
-            'seo_site_name' => 'فرزین',
-            'seo_default_title' => 'خرید هود و سینک آشپزخانه | فرزین',
-            'seo_default_description' => 'خرید هود و سینک آشپزخانه از فرزین؛ مشخصات محصولات، مدل‌ها و گزینه‌های موجود را بررسی و مقایسه کنید.',
-            'seo_default_keywords' => 'خرید هود آشپزخانه، خرید سینک ظرفشویی، هود فرزین، سینک فرزین، تجهیزات آشپزخانه',
-            'seo_home_title' => 'خرید هود و سینک آشپزخانه | فرزین',
-            'seo_home_description' => 'مدل‌های هود و سینک آشپزخانه فرزین را بررسی کنید؛ مشخصات فنی، قیمت و راهنمای انتخاب محصولات.',
-            'seo_shop_title' => 'فروشگاه هود و سینک آشپزخانه | فرزین',
-            'seo_shop_description' => 'همه محصولات هود و سینک فرزین را مقایسه کنید؛ قیمت، مشخصات، موجودی و شرایط خرید هر مدل را ببینید.',
-            'seo_categories_title' => 'دسته‌بندی محصولات هود و سینک | فرزین',
-            'seo_categories_description' => 'دسته‌بندی‌های محصولات فرزین را ببینید و هود، سینک و تجهیزات متناسب با آشپزخانه خود را پیدا کنید.',
-            'seo_blog_title' => 'مجله و راهنمای خرید هود و سینک | فرزین',
-            'seo_blog_description' => 'راهنمای انتخاب، نصب و نگهداری هود و سینک آشپزخانه؛ نکته‌های کاربردی را در مجله فرزین بخوانید.',
-            'seo_about_title' => 'درباره فرزین | تجهیزات آشپزخانه',
-            'seo_about_description' => 'با مجموعه فرزین، مسیر فعالیت، خدمات و رویکرد ما در ارائه تجهیزات آشپزخانه آشنا شوید.',
-            'seo_contact_title' => 'تماس با فرزین | مشاوره و پشتیبانی',
-            'seo_contact_description' => 'برای مشاوره خرید، پیگیری و ارتباط با فرزین از راه‌های تماس و نشانی مجموعه استفاده کنید.',
+            'seo_site_name' => 'فرجی‌هوم',
+            'seo_default_title' => 'خرید هود و سینک آشپزخانه | فرجی‌هوم',
+            'seo_default_description' => 'خرید هود و سینک آشپزخانه از فرجی‌هوم؛ مشخصات محصولات، مدل‌ها و گزینه‌های موجود را بررسی و مقایسه کنید.',
+            'seo_default_keywords' => 'خرید هود آشپزخانه، خرید سینک ظرفشویی، هود فرجی‌هوم، سینک فرجی‌هوم، تجهیزات آشپزخانه',
+            'seo_home_title' => 'خرید هود و سینک آشپزخانه | فرجی‌هوم',
+            'seo_home_description' => 'مدل‌های هود و سینک آشپزخانه فرجی‌هوم را بررسی کنید؛ مشخصات فنی، قیمت و راهنمای انتخاب محصولات.',
+            'seo_shop_title' => 'فروشگاه هود و سینک آشپزخانه | فرجی‌هوم',
+            'seo_shop_description' => 'همه محصولات هود و سینک فرجی‌هوم را مقایسه کنید؛ قیمت، مشخصات، موجودی و شرایط خرید هر مدل را ببینید.',
+            'seo_categories_title' => 'دسته‌بندی محصولات هود و سینک | فرجی‌هوم',
+            'seo_categories_description' => 'دسته‌بندی‌های محصولات فرجی‌هوم را ببینید و هود، سینک و تجهیزات متناسب با آشپزخانه خود را پیدا کنید.',
+            'seo_blog_title' => 'مجله و راهنمای خرید هود و سینک | فرجی‌هوم',
+            'seo_blog_description' => 'راهنمای انتخاب، نصب و نگهداری هود و سینک آشپزخانه؛ نکته‌های کاربردی را در مجله فرجی‌هوم بخوانید.',
+            'seo_about_title' => 'درباره فرجی‌هوم | تجهیزات آشپزخانه',
+            'seo_about_description' => 'با مجموعه فرجی‌هوم، مسیر فعالیت، خدمات و رویکرد ما در ارائه تجهیزات آشپزخانه آشنا شوید.',
+            'seo_contact_title' => 'تماس با فرجی‌هوم | مشاوره و پشتیبانی',
+            'seo_contact_description' => 'برای مشاوره خرید، پیگیری و ارتباط با فرجی‌هوم از راه‌های تماس و نشانی مجموعه استفاده کنید.',
             'seo_custom_meta_tags' => '[]',
             'seo_custom_link_tags' => '[]',
             'seo_default_og_image' => null,
@@ -359,7 +373,7 @@ class SeoSettings
             'seo_google_site_verification' => null,
             'seo_bing_site_verification' => null,
             'seo_twitter_site' => null,
-            'seo_organization_name' => 'فرزین',
+            'seo_organization_name' => 'فرجی‌هوم',
             'seo_organization_logo_url' => null,
             'seo_organization_phone' => null,
             'seo_organization_email' => null,

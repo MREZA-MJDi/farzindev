@@ -53,7 +53,14 @@ class AppServiceProvider extends ServiceProvider
                 report: false
             );
             $view->with('storefrontPageContent', $pageContent);
-            $view->with('storefrontBrandName', filled($settings['brand_name'] ?? null) ? $settings['brand_name'] : 'فرزین');
+            $configuredBrandName = trim((string) ($settings['brand_name'] ?? ''));
+            if (
+                $configuredBrandName === ''
+                || in_array(mb_strtolower($configuredBrandName), ['فرزین', 'فرزین فرجی', 'فرزین‌فرجی', 'farzin', 'farzin home', 'farzindev'], true)
+            ) {
+                $configuredBrandName = 'فرجی‌هوم';
+            }
+            $view->with('storefrontBrandName', $configuredBrandName);
             $brandLogoPath = $settings['brand_logo'] ?? null;
             $view->with('storefrontBrandLogoUrl', rescue(
                 fn () => filled($brandLogoPath) && Storage::disk('public')->exists($brandLogoPath)

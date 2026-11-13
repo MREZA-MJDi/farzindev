@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
-@section('title', 'فرزین | خرید آنلاین هود و سینک آشپزخانه')
-@section('description', 'محصولات واقعی هود و سینک فرزین را با تصویر، قیمت و مشخصات بررسی و آنلاین سفارش دهید.')
+@section('title', 'فرجی‌هوم | خرید هود، اجاق گاز و سینک آشپزخانه')
+@section('description', 'هود، اجاق گاز صفحه‌ای و سینک را در فرجی‌هوم با تصویر، قیمت و مشخصات فنی بررسی و مقایسه کنید.')
 @section('canonical', route('home'))
 @section('body_class', 'home-body min-h-screen antialiased')
 
@@ -15,12 +15,46 @@
     $showCategories = ($homeCopy['page_home_show_categories'] ?? '1') === '1';
     $showProducts = ($homeCopy['page_home_show_products'] ?? '1') === '1';
     $showBenefits = ($homeCopy['page_home_show_trust'] ?? '1') === '1';
+    $showGuides = ($homeCopy['page_home_show_guides'] ?? '1') === '1';
     $showJournal = ($homeCopy['page_home_show_journal'] ?? '1') === '1';
     $categoriesEyebrow = trim((string) ($homeCopy['page_home_categories_eyebrow'] ?? ''));
     $categoriesTitle = trim((string) ($homeCopy['page_home_categories_title'] ?? 'دسته‌بندی محصولات'));
     $featuredProducts = $featuredProducts ?? collect();
-    $productShelfTitle = trim((string) ($homeCopy['page_home_products_title'] ?? 'منتخب فرزین')) ?: 'منتخب فرزین';
-    $productShelfEyebrow = trim((string) ($homeCopy['page_home_products_eyebrow'] ?? 'کاتالوگ هود و سینک'));
+    $productShelfTitle = trim((string) ($homeCopy['page_home_products_title'] ?? 'محصولات منتخب')) ?: 'منتخب فرجی‌هوم';
+    $productShelfEyebrow = trim((string) ($homeCopy['page_home_products_eyebrow'] ?? 'کاتالوگ تجهیزات آشپزخانه'));
+    $hoodCategory = $categories->first(fn ($category) => $category->slug === 'hoods' || \Illuminate\Support\Str::contains(mb_strtolower($category->name), 'هود'));
+    $sinkCategory = $categories->first(fn ($category) => $category->slug === 'sinks' || \Illuminate\Support\Str::contains(mb_strtolower($category->name), 'سینک'));
+    $gasCategory = $categories->first(fn ($category) => in_array($category->slug, ['built-in-stove', 'gas-hobs', 'built-in-gas', 'built-in-hobs', 'gas-stove', 'gas-stoves', 'stoves'], true)
+        || \Illuminate\Support\Str::contains(mb_strtolower($category->name), ['اجاق', 'گاز']));
+    $selectionGuides = collect([
+        [
+            'number' => '۰۱',
+            'eyebrow' => 'تهویه و گردش هوا',
+            'title' => $homeCopy['page_home_hood_guide_title'] ?? 'راهنمای انتخاب هود',
+            'description' => $homeCopy['page_home_hood_guide_description'] ?? 'ابعاد، نوع نصب، مکش و صدای هود را مقایسه کنید.',
+            'cta' => $homeCopy['page_home_hood_guide_cta'] ?? 'مشاهده هودها',
+            'href' => $hoodCategory ? route('categories.show', $hoodCategory->slug) : route('shop.index', ['search' => 'هود']),
+            'icon' => 'hood',
+        ],
+        [
+            'number' => '۰۲',
+            'eyebrow' => 'پخت‌وپز روزمره',
+            'title' => $homeCopy['page_home_gas_guide_title'] ?? 'راهنمای انتخاب اجاق گاز صفحه‌ای',
+            'description' => $homeCopy['page_home_gas_guide_description'] ?? 'ابعاد برش، تعداد شعله و امکانات ایمنی را بررسی کنید.',
+            'cta' => $homeCopy['page_home_gas_guide_cta'] ?? 'مشاهده اجاق گازها',
+            'href' => $gasCategory ? route('categories.show', $gasCategory->slug) : route('shop.index', ['search' => 'اجاق گاز']),
+            'icon' => 'gas',
+        ],
+        [
+            'number' => '۰۳',
+            'eyebrow' => 'آماده‌سازی و شست‌وشو',
+            'title' => $homeCopy['page_home_sink_guide_title'] ?? 'راهنمای انتخاب سینک',
+            'description' => $homeCopy['page_home_sink_guide_description'] ?? 'روش نصب، ابعاد، عمق و تعداد لگن را تطبیق دهید.',
+            'cta' => $homeCopy['page_home_sink_guide_cta'] ?? 'مشاهده سینک‌ها',
+            'href' => $sinkCategory ? route('categories.show', $sinkCategory->slug) : route('shop.index', ['search' => 'سینک']),
+            'icon' => 'sink',
+        ],
+    ]);
     $enamadUrl = trim((string) ($enamadUrl ?? ''));
     if (!\Illuminate\Support\Str::startsWith($enamadUrl, 'https://')) {
         $enamadUrl = '';
@@ -29,7 +63,7 @@
 
 <div class="fz-home-market" data-fz-home>
     @if($bannerSlides->isNotEmpty())
-        <section class="fz-market-hero" aria-label="بنرهای اصلی فرزین" data-fz-hero-slider>
+        <section class="fz-market-hero" aria-label="بنرهای اصلی فرجی‌هوم" data-fz-hero-slider>
             <div class="fz-market-hero__container">
                 <div class="fz-market-hero__slides">
                     @foreach($bannerSlides as $index => $slide)
@@ -121,8 +155,53 @@
         </section>
     @endif
 
+    @if($showGuides)
+        <section class="border-y border-[var(--livora-border)] bg-[var(--livora-surface)]" aria-labelledby="fz-home-guides-title">
+            <div class="fz-home-container py-12 sm:py-16">
+                <header class="mb-8 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+                    <div class="max-w-2xl">
+                        <span class="text-xs font-bold text-[var(--livora-accent)]">فرجی‌هوم / راهنمای خرید</span>
+                        <h2 id="fz-home-guides-title" class="mt-3 text-2xl font-black tracking-tight text-[var(--livora-ink)] sm:text-3xl">
+                            {{ $homeCopy['page_home_guides_title'] ?? 'از نیاز آشپزخانه‌تان شروع کنید.' }}
+                        </h2>
+                        <p class="mt-3 text-sm leading-8 text-[var(--livora-stone)]">
+                            {{ $homeCopy['page_home_guides_description'] ?? 'دسته مناسب را انتخاب کنید و معیارهای مهم هر محصول را پیش از خرید بشناسید.' }}
+                        </p>
+                    </div>
+                    <a href="{{ route('categories.index') }}" class="inline-flex min-h-11 w-fit items-center gap-2 text-sm font-bold text-[var(--livora-accent)] transition hover:gap-3">
+                        همه دسته‌بندی‌ها <span aria-hidden="true">←</span>
+                    </a>
+                </header>
+                <div class="grid gap-3 md:grid-cols-3">
+                    @foreach($selectionGuides as $guide)
+                        <a href="{{ $guide['href'] }}" class="group flex min-h-56 flex-col border border-[var(--livora-border)] bg-white p-6 transition duration-300 hover:-translate-y-1 hover:border-[var(--livora-accent)] hover:shadow-lg sm:p-7">
+                            <div class="flex items-center justify-between gap-4">
+                                <span class="text-xs font-bold tracking-widest text-[var(--livora-accent)]">{{ $guide['number'] }}</span>
+                                <span class="flex h-11 w-11 items-center justify-center rounded-full bg-[var(--livora-cream)] text-[var(--livora-ink)] transition group-hover:bg-[var(--livora-accent)] group-hover:text-white" aria-hidden="true">
+                                    @if($guide['icon'] === 'hood')
+                                        <svg viewBox="0 0 24 24" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M8 3h8v5l3 3v4H5v-4l3-3V3Z"/><path d="M7 16v4h10v-4M10 5h4M10 8h4"/></svg>
+                                    @elseif($guide['icon'] === 'gas')
+                                        <svg viewBox="0 0 24 24" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="8" cy="10" r="2"/><circle cx="16" cy="10" r="2"/><circle cx="8" cy="15" r="1"/><circle cx="16" cy="15" r="1"/></svg>
+                                    @else
+                                        <svg viewBox="0 0 24 24" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="M6 8h12v8H6zM12 5v3"/></svg>
+                                    @endif
+                                </span>
+                            </div>
+                            <span class="mt-6 text-[11px] font-semibold text-[var(--livora-stone)]">{{ $guide['eyebrow'] }}</span>
+                            <h3 class="mt-2 text-xl font-black leading-8 text-[var(--livora-ink)]">{{ $guide['title'] }}</h3>
+                            <p class="mt-2 flex-1 text-sm leading-7 text-[var(--livora-stone)]">{{ $guide['description'] }}</p>
+                            <span class="mt-5 inline-flex items-center gap-2 text-sm font-bold text-[var(--livora-accent)]">
+                                {{ $guide['cta'] }} <span aria-hidden="true" class="transition group-hover:-translate-x-1">←</span>
+                            </span>
+                        </a>
+                    @endforeach
+                </div>
+            </div>
+        </section>
+    @endif
+
     @if($showBenefits && $benefits->isNotEmpty())
-        <section class="fz-home-benefits" aria-label="خدمات و مزیت‌های ثبت‌شده فرزین">
+        <section class="fz-home-benefits" aria-label="خدمات و مزیت‌های ثبت‌شده فرجی‌هوم">
             <div class="fz-home-container">
                 <div class="fz-home-benefits__grid">
                     @foreach($benefits as $benefit)
@@ -167,7 +246,7 @@
         <x-home.product-carousel-section
             id="fz-home-discounts"
             title="پیشنهادهای ویژه"
-            eyebrow="فرصت‌های خرید فرزین"
+            eyebrow="فرصت‌های خرید"
             :products="$discountProducts"
         />
     @endif
@@ -175,7 +254,7 @@
     @if($showProducts && $bestSellingProducts->isNotEmpty())
         <x-home.product-carousel-section
             id="fz-home-best-sellers"
-            title="پرفروش‌های فرزین"
+            title="پرفروش‌های فروشگاه"
             eyebrow="محبوب میان خریداران"
             :products="$bestSellingProducts"
         />
@@ -201,13 +280,13 @@
                     @if(filled($homeTechnology['body'] ?? null))
                         <p>{{ $homeTechnology['body'] }}</p>
                     @endif
-                    <div class="fz-home-technology__signals" aria-label="محورهای توجه فرزین">
+                    <div class="fz-home-technology__signals" aria-label="معیارهای انتخاب محصول">
                         <span>طراحی و تناسب</span>
                         <span>جنس و پرداخت</span>
                         <span>کاربری و نصب</span>
                     </div>
                     <a href="{{ route('about') }}" class="fz-home-technology__link">
-                        {{ $homeTechnology['button_label'] ?: 'آشنایی با فرزین' }}
+                        {{ $homeTechnology['button_label'] ?: 'آشنایی با فرجی‌هوم' }}
                         <span aria-hidden="true">←</span>
                     </a>
                 </div>
@@ -223,10 +302,10 @@
                             decoding="async"
                         >
                     @else
-                        <div class="fz-home-technology__placeholder" aria-label="فضای تصویر فناوری فرزین">
-                            <span>فرزین / مهندسی آشپزخانه</span>
+                        <div class="fz-home-technology__placeholder" aria-label="راهنمای انتخاب تجهیزات آشپزخانه">
+                            <span>فرجی‌هوم / راهنمای انتخاب</span>
                             <strong>فرم، عملکرد، جزئیات</strong>
-                            <small>نگاهی نزدیک به جزئیات ساخت، انتخاب متریال و تجربه استفاده روزمره.</small>
+                            <small>معیارهای مهم برای مقایسه مدل‌ها؛ از ابعاد نصب تا امکانات و نگهداری.</small>
                         </div>
                     @endif
                     <span class="fz-home-technology__index" aria-hidden="true">01 / 03</span>
@@ -240,7 +319,7 @@
             <div class="fz-home-container">
                 <header class="fz-home-section-head">
                     <div>
-                        <span class="fz-home-section-head__eyebrow">دانش‌نامه فرزین</span>
+                        <span class="fz-home-section-head__eyebrow">مجله و راهنمای خرید</span>
                         <h2 id="fz-home-journal-title">{{ $homeCopy['page_home_journal_title'] ?? 'مجله و راهنمای انتخاب' }}</h2>
                         @if(filled($homeCopy['page_home_journal_description'] ?? null))
                             <p>{{ $homeCopy['page_home_journal_description'] }}</p>
@@ -261,7 +340,7 @@
     @if($enamadUrl !== '')
         <div class="fz-home-enamad" aria-label="نماد اعتماد الکترونیکی">
             <div class="fz-home-container">
-                <a href="{{ $enamadUrl }}" target="_blank" rel="noopener noreferrer">مشاهده نماد اعتماد الکترونیکی فرزین <span aria-hidden="true">↗</span></a>
+                <a href="{{ $enamadUrl }}" target="_blank" rel="noopener noreferrer">مشاهده نماد اعتماد الکترونیکی فرجی‌هوم <span aria-hidden="true">↗</span></a>
             </div>
         </div>
     @endif

@@ -3,7 +3,7 @@
     x-cloak
     role="dialog"
     aria-modal="true"
-    aria-label="جستجوی محصولات فرزین"
+    aria-label="جستجوی محصولات فرجی‌هوم"
     tabindex="-1"
     @keydown.escape.window="if (searchOpen) closeSearch()"
     @keydown.tab="
@@ -56,7 +56,7 @@
                     <div>
 
                         <p class="text-[10px] font-medium uppercase tracking-[0.22em] text-[var(--livora-accent)]">
-                            FARZIN SEARCH
+                            FARAJI HOME SEARCH
                         </p>
 
                         <p class="mt-1 text-xs text-[var(--livora-stone)]">
@@ -105,7 +105,7 @@
                     action="{{ route('shop.index') }}"
                     method="GET"
                     role="search"
-                    aria-label="جستجوی کاتالوگ فرزین"
+                    aria-label="جستجوی کاتالوگ فرجی‌هوم"
                     class="relative"
                     x-data="{ searchValue: @js((string) request('search', '')) }"
                 >
@@ -291,7 +291,7 @@
                         <div>
 
                             <p class="text-[10px] uppercase tracking-[0.2em] text-white/40">
-                                FARZIN / PRODUCT SEARCH
+                                FARAJI HOME / PRODUCT SEARCH
                             </p>
 
                             <h2 class="mt-3 text-lg font-semibold">

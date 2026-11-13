@@ -121,7 +121,7 @@
     <div class="farzin-product-card__content flex min-w-0 flex-1 flex-col px-4 pb-4 pt-3">
         <div class="farzin-product-card__meta flex min-h-5 min-w-0 items-center justify-between gap-2">
             <span class="farzin-product-card__category min-w-0 truncate">
-                {{ $product->category?->name ?? 'فرزین' }}
+                {{ $product->category?->name ?? 'تجهیزات آشپزخانه' }}
             </span>
 
         </div>

@@ -1,17 +1,49 @@
 @extends('layouts.app')
 
 @php
+    $normalizeBlogCopy = static fn (?string $value): string => str_ireplace(
+        ['فرزین فرجی', 'فرزین', 'FARZIN', 'Farzin'],
+        ['فرجی‌هوم', 'فرجی‌هوم', 'FARAJI HOME', 'Faraji Home'],
+        trim((string) $value)
+    );
+
+    if ($term) {
+        $term->setAttribute('name', $normalizeBlogCopy($term->name));
+    }
+
     $archiveTitle = $term
-        ? ($term->meta_title ?: ($term->name . ' | بلاگ فرزین'))
-        : 'مجله فرزین | مقاله‌ها و راهنماهای تجهیزات آشپزخانه';
+        ? ($term->meta_title ?: ($term->name . ' | بلاگ فرجی‌هوم'))
+        : 'مجله فرجی‌هوم | مقاله‌ها و راهنماهای تجهیزات آشپزخانه';
     $archiveDescription = $term
-        ? ($term->meta_description ?: ($term->description ?: ('مقاله‌های مرتبط با ' . $term->name . ' در مجله فرزین.')))
-        : 'مقاله‌های کاربردی فرزین درباره هود و سینک آشپزخانه؛ معرفی محصولات، شناخت مشخصات، انتخاب و نگهداری تجهیزات آشپزخانه.';
+        ? ($term->meta_description ?: ($term->description ?: ('مقاله‌های مرتبط با ' . $term->name . ' در مجله فرجی‌هوم.')))
+        : 'راهنماهای کاربردی فرجی‌هوم برای انتخاب، مقایسه، نصب و نگهداری هود، اجاق گاز و سینک آشپزخانه.';
+    $archiveTitle = $normalizeBlogCopy($archiveTitle);
+    $archiveDescription = $normalizeBlogCopy($archiveDescription);
     $archiveCanonical = $term
         ? ($term->type === 'category' ? route('blog.category', $term->slug) : route('blog.tag', $term->slug))
         : route('blog.index');
 
     $visiblePosts = $posts->getCollection();
+    $visiblePosts->each(static function ($post) use ($normalizeBlogCopy): void {
+        foreach (['title', 'excerpt', 'meta_title', 'meta_description', 'og_title', 'og_description'] as $attribute) {
+            if (filled($post->{$attribute})) {
+                $post->setAttribute($attribute, $normalizeBlogCopy($post->{$attribute}));
+            }
+        }
+
+        $post->terms->each(static function ($term) use ($normalizeBlogCopy): void {
+            $term->setAttribute('name', $normalizeBlogCopy($term->name));
+        });
+    });
+
+    if (isset($appearance) && is_array($appearance)) {
+        array_walk_recursive($appearance, static function (&$value) use ($normalizeBlogCopy): void {
+            if (is_string($value)) {
+                $value = $normalizeBlogCopy($value);
+            }
+        });
+    }
+
     $featuredPost = $posts->currentPage() === 1 ? $visiblePosts->first() : null;
     $gridPosts = $featuredPost ? $visiblePosts->skip(1) : $visiblePosts;
 @endphp
@@ -40,7 +72,7 @@
     'inLanguage' => 'fa-IR',
     'isPartOf' => [
         '@type' => 'WebSite',
-        'name' => 'فرزین',
+        'name' => 'فرجی‌هوم',
         'url' => route('home'),
     ],
 ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT) !!}</script>
@@ -68,9 +100,9 @@
                 <div class="blog-masthead__copy">
                     <p class="blog-eyebrow">
                         <span class="blog-eyebrow__dot" aria-hidden="true"></span>
-                        مجله فرزین
+                        مجله فرجی‌هوم
                         <span class="blog-eyebrow__slash">/</span>
-                        مجله تخصصی فرزین
+                        مجله تخصصی فرجی‌هوم
                     </p>
 
                     <h1 id="blog-page-title" class="blog-masthead__title">
@@ -78,7 +110,7 @@
                             {{ $term->name }}
                             <span>مقاله‌ها و نوشته‌های مرتبط</span>
                         @else
-                            مجله فرزین
+                            مجله فرجی‌هوم
                             <span>دانستنی‌های هود و سینک آشپزخانه</span>
                         @endif
                     </h1>
@@ -92,7 +124,7 @@
                         </div>
                         <span class="blog-stat-divider" aria-hidden="true"></span>
                         <div class="blog-stat">
-                            <strong>فرزین</strong>
+                            <strong>فرجی‌هوم</strong>
                             <span>مجله تجهیزات آشپزخانه</span>
                         </div>
                     </div>
@@ -104,7 +136,7 @@
                             <img
                                 src="{{ $appearance['hero']['image_url'] }}"
                                 @if($appearance['hero']['image_srcset']) srcset="{{ $appearance['hero']['image_srcset'] }}" sizes="(max-width: 767px) 100vw, 42vw" @endif
-                                alt="{{ $appearance['hero']['alt'] ?: 'تصویر مجله فرزین' }}"
+                                alt="{{ $appearance['hero']['alt'] ?: 'تصویر مجله فرجی‌هوم' }}"
                                 width="960"
                                 height="640"
                                 loading="lazy"
@@ -114,7 +146,7 @@
                     @else
                         <div class="blog-masthead__visual-fallback" aria-hidden="true">
                             <span>F.</span>
-                            <small>مجله فرزین</small>
+                            <small>مجله فرجی‌هوم</small>
                         </div>
                     @endif
                 </div>
@@ -195,10 +227,10 @@
                         @else
                             <span class="blog-art-fallback" aria-hidden="true">
                                 <span class="blog-art-fallback__circle"></span>
-                                <span class="blog-art-fallback__word">FARZIN<br>JOURNAL</span>
+                                <span class="blog-art-fallback__word">FARAJI HOME<br>JOURNAL</span>
                             </span>
                         @endif
-                        <span class="blog-featured-card__media-label">مقاله منتخب فرزین</span>
+                        <span class="blog-featured-card__media-label">مقاله منتخب فرجی‌هوم</span>
                     </a>
                 </article>
             </x-layout.container>
@@ -242,9 +274,9 @@
             @elseif(! $featuredPost)
                 <div class="blog-empty-state">
                     <span class="blog-empty-state__mark" aria-hidden="true">F.</span>
-                    <p class="blog-section-kicker">مجله فرزین</p>
+                    <p class="blog-section-kicker">مجله فرجی‌هوم</p>
                     <h3>{{ $term ? 'هنوز مقاله‌ای در این دسته منتشر نشده است.' : 'هنوز مقاله‌ای منتشر نشده است.' }}</h3>
-                    <p>به‌زودی نوشته‌های تازه‌ی فرزین در این بخش قرار می‌گیرند.</p>
+                    <p>به‌زودی راهنماهای تازه انتخاب و نگهداری تجهیزات آشپزخانه در این بخش منتشر می‌شوند.</p>
                 </div>
             @endif
 

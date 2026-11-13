@@ -1,10 +1,10 @@
 @extends('layouts.app')
 
-@section('title', 'تماس با فرزین | ارتباط با ما')
+@section('title', 'تماس با فرجی‌هوم | ارتباط با ما')
 
 @section(
     'description',
-    'برای مشاوره انتخاب هود و سینک آشپزخانه، بررسی مشخصات و پیگیری سفارش با فرزین در ارتباط باشید.'
+    'برای مشاوره انتخاب هود و سینک آشپزخانه، بررسی مشخصات و پیگیری سفارش با فرجی‌هوم در ارتباط باشید.'
 )
 
 @section('canonical', route('contact'))
@@ -52,13 +52,13 @@
 
                 <div class="fz-contact-hero__layout">
                     <div class="fz-contact-copy" data-fz-reveal>
-                        <p class="fz-contact-eyebrow"><span aria-hidden="true"></span> ارتباط با فرزین</p>
+                        <p class="fz-contact-eyebrow"><span aria-hidden="true"></span> ارتباط با فرجی‌هوم</p>
                         <h1 id="contact-hero-title" class="fz-contact-title">
                             ارتباط خوب،<br>
                             <span>از یک گفت‌وگو شروع می‌شود.</span>
                         </h1>
                         <p class="fz-contact-lead">
-                            برای مشاوره انتخاب هود و سینک، بررسی مشخصات، شرایط خرید یا پیگیری سفارش با تیم فرزین در ارتباط باشید.
+                            برای مشاوره انتخاب هود و سینک، بررسی مشخصات، شرایط خرید یا پیگیری سفارش با تیم فرجی‌هوم در ارتباط باشید.
                             پیام شما مستقیم به دست ما می‌رسد.
                         </p>
 
@@ -84,13 +84,13 @@
                         </div>
                     </div>
 
-                    <div class="fz-contact-art" data-fz-reveal aria-label="تصویرسازی ارتباط با فرزین">
+                    <div class="fz-contact-art" data-fz-reveal aria-label="تصویرسازی ارتباط با فرجی‌هوم">
                         <div class="fz-contact-art__orbit fz-contact-art__orbit--outer" aria-hidden="true"></div>
                         <div class="fz-contact-art__orbit fz-contact-art__orbit--inner" aria-hidden="true"></div>
                         <div class="fz-contact-art__topline"><span>FZ</span><i aria-hidden="true"></i><span>پشتیبانی / ۰۱</span></div>
                         <div class="fz-contact-art__device">
                             <div class="fz-contact-art__device-top"><span></span><span></span><span></span></div>
-                            <svg viewBox="0 0 360 260" role="img" aria-label="نماد ارتباط با تیم فرزین">
+                            <svg viewBox="0 0 360 260" role="img" aria-label="نماد ارتباط با تیم فرجی‌هوم">
                                 <defs>
                                     <linearGradient id="fzContactMetal" x1="30" y1="10" x2="320" y2="250" gradientUnits="userSpaceOnUse">
                                         <stop stop-color="#f6fffc"/>
@@ -116,7 +116,7 @@
                                 <circle cx="286" cy="163" r="5" fill="#9bd8c8"/>
                                 <path d="M64 81h-18m250 82h18" stroke="#9bd8c8" stroke-opacity=".65" stroke-linecap="round"/>
                             </svg>
-                            <div class="fz-contact-art__device-status"><span></span> ارتباط مستقیم با فرزین</div>
+                            <div class="fz-contact-art__device-status"><span></span> ارتباط مستقیم با فرجی‌هوم</div>
                         </div>
                         <div class="fz-contact-art__floating fz-contact-art__floating--message">
                             <span class="fz-contact-art__floating-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4" aria-hidden="true"><path d="M20 11.5a7.5 7.5 0 0 1-7.5 7.5H6l-3 2v-9.5A7.5 7.5 0 0 1 10.5 4h2A7.5 7.5 0 0 1 20 11.5Z" /><path d="M8 11h8m-8 3h5" /></svg></span>
@@ -151,7 +151,7 @@
                             @if($mapAddress !== '' || $hasMapCoordinates)
                                 <div class="fz-contact-map-frame">
                                     <iframe
-                                        title="نقشه موقعیت مجموعه فرزین"
+                                        title="نقشه موقعیت مجموعه فرجی‌هوم"
                                         src="https://www.google.com/maps?q={{ urlencode($mapQuery) }}&amp;z=15&amp;output=embed"
                                         loading="lazy"
                                         referrerpolicy="no-referrer-when-downgrade"
@@ -204,7 +204,7 @@
 
                         <div class="fz-contact-map-note">
                             <span class="fz-contact-map-note__pulse" aria-hidden="true"></span>
-                            <p>پیش از مراجعه حضوری، برای هماهنگی با تیم فرزین تماس بگیرید.</p>
+                            <p>پیش از مراجعه حضوری، برای هماهنگی با تیم فرجی‌هوم تماس بگیرید.</p>
                         </div>
                     </aside>
 
@@ -274,7 +274,7 @@
                                 <div class="fz-contact-social fz-contact-social--empty">
                                     <div class="fz-contact-social__heading">
                                         <span class="fz-contact-kicker">شبکه‌های اجتماعی</span>
-                                        <h3>شبکه‌های اجتماعی فرزین</h3>
+                                        <h3>شبکه‌های اجتماعی فرجی‌هوم</h3>
                                         <p>لینک‌های شبکه‌های اجتماعی پس از ثبت در تنظیمات تماس همین‌جا قرار می‌گیرند.</p>
                                     </div>
                                 </div>
@@ -348,7 +348,7 @@
 
                                 <x-security.turnstile action="contact" />
                                 <button type="submit" class="fz-contact-submit">
-                                    <span>ارسال پیام به تیم فرزین</span><span aria-hidden="true">↙</span>
+                                    <span>ارسال پیام به تیم فرجی‌هوم</span><span aria-hidden="true">↙</span>
                                 </button>
                             </form>
                         </section>
