@@ -19,6 +19,7 @@ use App\Http\Controllers\Admin\SeoRedirectController as AdminSeoRedirectControll
 use App\Http\Controllers\Admin\BlogPostController as AdminBlogPostController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\PolicyPageController;
 use App\Http\Controllers\RobotsController;
 use App\Http\Controllers\ShopController;
 use App\Http\Controllers\SitemapController;
@@ -105,6 +106,11 @@ Route::view('/terms', 'legal.terms')
 
 Route::view('/privacy', 'legal.privacy')
     ->name('privacy');
+
+Route::get('/shipping-returns', [PolicyPageController::class, 'shipping'])->name('shipping-returns');
+Route::get('/warranty', [PolicyPageController::class, 'warranty'])->name('warranty');
+Route::get('/payment-installments', [PolicyPageController::class, 'installments'])->name('payment-installments');
+Route::get('/faq', [PolicyPageController::class, 'faq'])->name('faq');
 
 
 /*
