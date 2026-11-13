@@ -5,6 +5,7 @@ use App\Models\ProductAttribute;
 use App\Services\Catalog\ProductAttributeManager;
 use Illuminate\Console\Command;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\DB;
 class MigrateLegacyProductSpecifications extends Command
 {
  protected $signature='catalog:migrate-legacy-specifications {--dry-run : Report changes without writing values}';
@@ -49,7 +50,7 @@ class MigrateLegacyProductSpecifications extends Command
     }
     if($rows===[]){$stats['skipped']++;continue;}
     $stats['eligible']++;
-    if(!$dry){$manager->sync($product,$rows);$stats['migrated']++;}
+    if(!$dry){DB::transaction(fn() => $manager->sync($product,$rows));$stats['migrated']++;}
    }
   });
   $this->table(['Metric','Count'],array_map(fn($key,$value)=>[$key,$value],array_keys($stats),array_values($stats)));
