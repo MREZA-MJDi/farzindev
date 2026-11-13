@@ -20,10 +20,10 @@
 @section('content')
 
     <div
-        class="overflow-hidden bg-[var(--livora-cream)]"
-        x-data="{
-            filterOpen: false
-        }"
+        class="min-w-0 bg-[var(--livora-cream)]"
+        x-data="{ filterOpen: false }"
+        x-effect="document.body.style.overflow = filterOpen ? 'hidden' : ''"
+        @keydown.escape.window="filterOpen = false"
     >
 
         {{-- Shop banner is configured in Admin > Storefront Settings. No looping product animation. --}}
@@ -98,23 +98,23 @@
 
             <x-layout.container>
 
-                <div class="grid gap-8 py-8 lg:grid-cols-[250px_minmax(0,1fr)] lg:py-12">
+                <div class="grid items-start gap-6 py-8 lg:grid-cols-[250px_minmax(0,1fr)] lg:gap-8 lg:py-12">
 
 
                     {{-- =================================================
                          DESKTOP SIDEBAR
                     ================================================== --}}
 
-                    <aside class="hidden min-w-0 lg:block">
+                    <aside class="hidden min-w-0 self-start lg:block">
 
-                        <div class="sticky top-28 space-y-5">
+                        <div class="space-y-4">
 
 
                             {{-- =================================================
                                  FILTER CARD
                             ================================================== --}}
 
-                            <div class="max-h-[calc(100vh-9rem)] overflow-y-auto overscroll-contain rounded-3xl border border-[var(--livora-border)] bg-[var(--livora-white)] p-4 [scrollbar-width:thin] sm:p-5">
+                            <div class="max-h-[calc(100vh-120px)] max-h-[calc(100dvh-120px)] overflow-y-auto overscroll-contain rounded-2xl border border-[var(--livora-border)] bg-[var(--livora-white)] p-3 [scrollbar-width:thin] sm:p-4">
 
                                 <div class="flex items-center justify-between gap-3">
 
@@ -124,7 +124,7 @@
                                             راهنمای انتخاب
                                         </p>
 
-                                        <h2 class="mt-2 text-sm font-semibold">
+                                        <h2 class="mt-1 text-sm font-semibold">
                                             فیلترها
                                         </h2>
 
@@ -146,13 +146,13 @@
                                 <form
                                     method="GET"
                                     action="{{ route('shop.index') }}"
-                                    class="mt-6"
+                                    class="mt-4"
                                 >
 
                                     <x-shop.filters
                                         :categories="$categories"
                                         :selected-category="request('category')"
-                                        :filterable-attributes="$filterableAttributes"
+            :filterable-attributes="$filterableAttributes"
                                     />
 
                                 </form>
@@ -164,7 +164,7 @@
                                  DISCOVERY BOX
                             ================================================== --}}
 
-                            <div class="rounded-3xl border border-[var(--livora-border)] bg-[var(--livora-surface)] p-5">
+                            <div class="rounded-2xl border border-[var(--livora-border)] bg-[var(--livora-surface)] p-4">
 
                                 <p class="text-[10px] uppercase tracking-[0.18em] text-[var(--livora-accent)]">
                                     فرجی‌هوم
@@ -343,13 +343,14 @@
 
                         @if($products->isNotEmpty())
 
-                            <div class="farzin-shop-product-grid mt-8 grid grid-cols-2 gap-x-3 gap-y-6 sm:gap-x-4 sm:gap-y-8 md:grid-cols-3 2xl:grid-cols-4">
+                            <div class="farzin-shop-product-grid mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
 
                                 @foreach($products as $product)
 
                                     <x-product.card
                                         :product="$product"
                                         :reveal="false"
+                                        variant="catalog"
                                     />
 
                                 @endforeach
