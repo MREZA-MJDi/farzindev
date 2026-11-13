@@ -153,7 +153,7 @@
                         <div class="max-w-3xl">
 
                             <p class="farzin-category-detail__eyebrow text-xs font-bold tracking-wide text-[#e8b8a8]">
-                                {{ $categoryGuide['eyebrow'] ?? 'کاتالوگ محصولات فرجی‌هوم' }}
+                                {{ $categoryGuide['eyebrow'] ?? 'محصولات فرجی‌هوم' }}
                             </p>
                             <h1 class="farzin-category-detail__title mt-4 max-w-3xl text-3xl font-black leading-[1.55] tracking-tight text-white sm:text-4xl lg:text-5xl">
                                 {{ $categoryGuide['title'] ?? $category->name }}
@@ -243,6 +243,8 @@
             </section>
         @endif
 
+        @include('categories.partials.attribute-filters')
+
         {{-- =========================================================
              محصولات
         ========================================================== --}}
@@ -329,6 +331,8 @@
         </section>
 
 
+        @include('categories.partials.comparison')
+
         @if(filled($category->content_title) || filled($category->content_body) || filled($category->content_image_url))
             <section class="border-t border-[var(--livora-border)] bg-[var(--livora-white)]">
                 <x-layout.container>
@@ -359,6 +363,8 @@
         @endif
 
 
+        @include('categories.partials.faqs')
+
         {{-- =========================================================
              FINAL CTA
         ========================================================== --}}
@@ -371,7 +377,7 @@
                     <div>
 
                         <p class="text-[10px] uppercase tracking-[0.2em] text-[var(--livora-accent)]">
-                            فرزین
+                            فرجی‌هوم
                         </p>
 
                         <h2 class="mt-2 text-2xl font-semibold">
