@@ -12,7 +12,7 @@ class ProductAttributeManager {
   foreach($values as $id=>$input){
    if(!$attributes->has((int)$id)){ $errors["attribute_values.$id"]='این ویژگی به دسته‌بندی انتخاب‌شده تعلق ندارد.'; continue; }
    $a=$attributes->get((int)$id); $input=is_array($input)?$input:['value'=>$input]; $value=$input['value']??null;
-   if($a->type==='number' && filled($value) && !is_numeric($this->digits((string)$value))) $errors["attribute_values.$id.value"]="مقدار «{$a->label}» باید عددی باشد.";
+   if($a->type==='number' && filled($value)) { $number=$this->digits((string)$value); if(!is_numeric($number)) $errors["attribute_values.$id.value"]="مقدار «{$a->label}» باید عددی باشد."; elseif((float)$number<0 || (float)$number>999999999.999) $errors["attribute_values.$id.value"]="مقدار «{$a->label}» باید بین صفر و سقف مجاز باشد."; }
    if($a->type==='select' && filled($input['option_id']??null) && !$a->options->contains('id',(int)$input['option_id'])) $errors["attribute_values.$id.option_id"]="گزینه «{$a->label}» معتبر نیست.";
    if($a->type==='multiselect'){ $ids=array_filter((array)($input['option_ids']??[]),fn($v)=>$v!==''&&$v!==null); if($a->options->whereIn('id',$ids)->count()!==count($ids)) $errors["attribute_values.$id.option_ids"]="یکی از گزینه‌های «{$a->label}» معتبر نیست."; }
    if($a->type==='boolean' && filled($value) && !in_array((string)$value,['0','1','true','false'],true)) $errors["attribute_values.$id.value"]="مقدار «{$a->label}» معتبر نیست.";
