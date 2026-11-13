@@ -262,4 +262,37 @@ class ProductAttributeSystemTest extends TestCase
         ]);
     }
 
+    public function test_shop_defaults_to_in_stock_products_and_can_sort_unavailable_items_last(): void
+    {
+        $this->seed(ProductAttributeSeeder::class);
+        $category = Category::query()->where('slug', 'sinks')->firstOrFail();
+        foreach ([['سینک موجود', 4], ['سینک ناموجود', 0]] as $index => [$name, $stock]) {
+            $product = Product::query()->create([
+                'category_id' => $category->id,
+                'name' => $name,
+                'slug' => 'stock-sort-' . $index,
+                'sku' => 'FAR-STOCK-SORT-' . $index,
+                'price' => 11000000 + $index,
+                'stock' => $stock,
+                'status' => 'active',
+            ]);
+            ProductImage::query()->create([
+                'product_id' => $product->id,
+                'path' => 'https://cdn.example.test/stock-sort-' . $index . '.webp',
+                'alt' => $name,
+                'sort_order' => 0,
+                'is_primary' => true,
+            ]);
+        }
+
+        $this->get(route('shop.index', ['category' => $category->slug]))
+            ->assertOk()
+            ->assertSee('سینک موجود')
+            ->assertDontSee('سینک ناموجود');
+
+        $this->get(route('shop.index', ['category' => $category->slug, 'in_stock' => 0, 'sort' => 'available_first']))
+            ->assertOk()
+            ->assertSeeInOrder(['سینک موجود', 'سینک ناموجود']);
+    }
+
 }
