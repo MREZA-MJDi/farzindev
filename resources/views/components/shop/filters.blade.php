@@ -87,42 +87,21 @@
 
 
     {{-- =========================================================
-         SEARCH
+         STOCK AVAILABILITY
     ========================================================== --}}
-
     <section>
-
         <div>
-
-            <p class="text-[10px] uppercase tracking-[0.18em] text-[var(--livora-accent)]">
-                SEARCH
-            </p>
-
-            <h3 class="mt-2 text-sm font-semibold">
-                جستجو
-            </h3>
-
+            <p class="text-[10px] uppercase tracking-[0.18em] text-[var(--livora-accent)]">AVAILABILITY</p>
+            <h3 class="mt-2 text-sm font-semibold">وضعیت موجودی</h3>
         </div>
-
-
-        <div class="mt-5">
-
-            <input
-                type="search"
-                name="search"
-                inputmode="search"
-                enterkeyhint="search"
-                autocomplete="off"
-                value="{{ request('search') }}"
-                placeholder="نام یا مدل محصول..."
-                @keydown.enter.prevent="$el.form.submit()"
-                class="w-full rounded-2xl border border-[var(--livora-border)] bg-[var(--livora-surface)] px-4 py-3.5 text-sm outline-none transition placeholder:text-[var(--livora-stone)] focus:border-[var(--livora-ink)]"
-            >
-
+        <div class="mt-4">
+            <input type="hidden" name="in_stock" value="0">
+            <label class="flex cursor-pointer items-center gap-3 rounded-2xl bg-[var(--livora-surface)] px-4 py-3">
+                <input type="checkbox" name="in_stock" value="1" @checked(request()->has('in_stock') ? request()->boolean('in_stock') : true) @if(!$mobile) @change="$el.form.submit()" @endif class="h-4 w-4 rounded border-[var(--livora-border)] text-[var(--livora-text)] focus:ring-[var(--livora-ink)]">
+                <span class="text-xs">فقط محصولات موجود</span>
+            </label>
         </div>
-
     </section>
-
 
     {{-- =========================================================
          INSTALLMENT
