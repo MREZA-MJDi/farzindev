@@ -201,8 +201,10 @@
     <style id="storefront-page-typography">
         html { font-size: {{ number_format($fontScale, 2, '.', '') }}%; }
         body { line-height: {{ number_format($lineHeight, 2, '.', '') }}; }
-        .livora-container, .fz-container, .fz-home-container {
-            max-width: {{ $contentWidth }}px;
+        body .storefront-content .livora-container,
+        body .storefront-content .fz-container,
+        body.home-body .fz-home-container {
+            max-width: {{ $contentWidth }}px !important;
         }
     </style>
 </head>
