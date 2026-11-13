@@ -28,23 +28,45 @@
         ? ($hasActiveVariants ? 'موجود در گزینه‌ها' : 'موجود')
         : 'ناموجود';
 
-    $specificationLabels = [
-        'width' => 'عرض',
-        'installation' => 'نصب',
-        'material' => 'جنس',
-        'material_type' => 'جنس',
-        'color' => 'رنگ',
-        'capacity' => 'ظرفیت',
-        'type' => 'نوع',
-    ];
-    $specifications = collect($product->specifications ?? [])
-        ->filter(static fn ($value): bool => is_scalar($value) && filled($value))
-        ->map(fn ($value, $key): array => [
-            'label' => $specificationLabels[$key] ?? (string) $key,
-            'value' => trim((string) $value),
-        ])
-        ->take(3);
+    $specifications = collect();
+    $categoryAttributes = $product->category?->relationLoaded('attributes')
+        ? $product->category->getRelation('attributes')
+        : collect();
+    $attributeValues = $product->relationLoaded('attributeValues')
+        ? $product->getRelation('attributeValues')
+        : collect();
 
+    if ($categoryAttributes->isNotEmpty() && $attributeValues->isNotEmpty()) {
+        $specifications = $categoryAttributes
+            ->filter(fn ($attribute) => (bool) $attribute->pivot->is_key_spec)
+            ->take(3)
+            ->map(function ($attribute) use ($attributeValues): ?array {
+                $value = $attributeValues->where('attribute_id', $attribute->id)
+                    ->map(function ($row) use ($attribute) {
+                        if ($row->option) return $row->option->label;
+                        if ($row->value_boolean !== null) return $row->value_boolean ? 'بله' : 'خیر';
+                        if ($row->value_number !== null) {
+                            $number = rtrim(rtrim(number_format((float) $row->value_number, 3, '.', ''), '0'), '.');
+                            return \\App\\Helpers\\PersianNumberHelper::format($number) . ($attribute->unit ? ' ' . $attribute->unit : '');
+                        }
+                        return trim((string) $row->value_text);
+                    })
+                    ->filter(fn ($item) => $item !== '')
+                    ->unique()
+                    ->join('، ');
+                return $value !== '' ? ['label' => $attribute->label, 'value' => $value] : null;
+            })
+            ->filter()
+            ->values();
+    }
+
+    if ($specifications->isEmpty()) {
+        $specificationLabels = ['width'=>'عرض','installation'=>'نصب','material'=>'جنس','material_type'=>'جنس','color'=>'رنگ','capacity'=>'ظرفیت','type'=>'نوع'];
+        $specifications = collect($product->specifications ?? [])
+            ->filter(static fn ($value): bool => is_scalar($value) && filled($value))
+            ->map(fn ($value, $key): array => ['label'=>$specificationLabels[$key] ?? (string)$key,'value'=>trim((string)$value)])
+            ->take(3);
+    }
 @endphp
 
 <article
