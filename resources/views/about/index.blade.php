@@ -131,7 +131,7 @@
                     <div class="max-w-3xl">
 
                         <p class="text-lg leading-9 text-[var(--livora-text)] sm:text-xl">
-                            {{ $aboutText('page_about_statement_body_1', 'در فرجی‌هوم، تصویر و نام محصول فقط نقطه شروع‌اند؛ ابعاد، کاربرد و مشخصات فنی باید برای خریدار قابل بررسی باشند. اطلاعات روشن، انتخابی متناسب با فضای واقعی آشپزخانه را ساده‌تر می‌کند.') }}
+                            {{ $aboutText('page_about_statement_body_1', 'در فرجی‌هوم، تصویر و نام محصول نقطه شروع‌اند؛ ابعاد، کاربرد و مشخصات فنی هر مدل نیز در دسترس خریدار قرار می‌گیرد. اطلاعات روشن، انتخابی متناسب با فضای واقعی آشپزخانه را ساده‌تر می‌کند.') }}
                         </p>
 
                         <p class="mt-6 text-sm leading-8 text-[var(--livora-stone)]">
@@ -170,7 +170,7 @@
                             {{ $aboutText('page_about_factory_body_2', 'مشخصات فنی، قیمت و وضعیت موجودی هر مدل را در صفحه همان محصول بررسی کنید. در صورت وجود ابهام، پیش از ثبت سفارش از راه‌های ارتباطی فروشگاه سؤال کنید؛ ویژگی‌های هر کالا باید بر اساس اطلاعات ثبت‌شده همان مدل سنجیده شود.') }}
                         </p>
                         <a href="{{ route('shop.index') }}" class="mt-7 inline-flex items-center gap-3 rounded-xl bg-[var(--livora-accent)] px-5 py-3.5 text-sm font-semibold text-white transition hover:bg-[var(--livora-white)] hover:text-[var(--livora-text)]">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4 shrink-0" aria-hidden="true"><path d="M3.5 9h17l-1 11h-15l-1-11Z" /><path d="M8 9V6.5a4 4 0 0 1 8 0V9" /></svg> {{ $aboutText('page_about_factory_cta', 'رفتن به کاتالوگ محصولات') }}
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4 shrink-0" aria-hidden="true"><path d="M3.5 9h17l-1 11h-15l-1-11Z" /><path d="M8 9V6.5a4 4 0 0 1 8 0V9" /></svg> {{ $aboutText('page_about_factory_cta', 'مشاهده محصولات') }}
                         </a>
                     </div>
                 </div>
@@ -213,7 +213,7 @@
                             </h3>
 
                             <p class="mt-3 text-sm leading-8 text-[var(--livora-stone)]">
-                                {{ $aboutText('page_about_value_1_description', 'فرم و ظاهر باید در خدمت فضای شما باشد، نه اینکه فضا را تحت‌الشعاع قرار دهد.') }}
+                                {{ $aboutText('page_about_value_1_description', 'فرم و ظاهر محصول را با فضای آشپزخانه و نیاز روزمره خود هماهنگ کنید.') }}
                             </p>
 
                         </article>
@@ -245,7 +245,7 @@
                             </h3>
 
                             <p class="mt-3 text-sm leading-8 text-[var(--livora-stone)]">
-                                {{ $aboutText('page_about_value_3_description', 'قیمت، مشخصات، موجودی و شرایط پرداخت باید قبل از تصمیم‌گیری روشن باشند.') }}
+                                {{ $aboutText('page_about_value_3_description', 'قیمت، مشخصات، موجودی و روش‌های پرداخت در صفحه محصول نمایش داده می‌شوند.') }}
                             </p>
 
                         </article>
@@ -261,7 +261,7 @@
                             </h3>
 
                             <p class="mt-3 text-sm leading-8 text-[var(--livora-stone)]">
-                                {{ $aboutText('page_about_value_4_description', 'خرید باید ساده و آرام باشد؛ از اولین مشاهده محصول تا سفارش نهایی.') }}
+                                {{ $aboutText('page_about_value_4_description', 'مسیر مشاهده محصول تا ثبت و پیگیری سفارش را ساده و روشن نگه می‌داریم.') }}
                             </p>
 
                         </article>
@@ -297,7 +297,7 @@
                         </h2>
 
                         <p class="mt-4 text-sm leading-8 text-[var(--livora-stone)]">
-                            {{ $aboutText('page_about_experience_description', 'تجربه خرید از فرجی‌هوم فقط به صفحه محصول محدود نمی‌شود؛ مسیر پیدا کردن دسته، مقایسه مدل‌ها و پیگیری سفارش نیز باید روشن و ساده باشد.') }}
+                            {{ $aboutText('page_about_experience_description', 'خرید از فرجی‌هوم از انتخاب دسته و مقایسه مدل‌ها تا ثبت و پیگیری سفارش را در یک مسیر روشن فراهم می‌کند.') }}
                         </p>
 
                     </div>
@@ -427,7 +427,7 @@
                         </p>
 
                         <h2 class="mt-4 max-w-2xl text-3xl font-semibold tracking-tight sm:text-4xl">
-                            {{ $aboutText('page_about_installment_title', 'انتخاب خوب نباید فقط به بودجه امروز محدود شود.') }}
+                            {{ $aboutText('page_about_installment_title', 'روش پرداخت متناسب با شرایط هر محصول را بررسی کنید.') }}
                         </h2>
 
                         <p class="mt-5 max-w-2xl text-sm leading-8 text-white/55">
