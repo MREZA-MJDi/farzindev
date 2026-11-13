@@ -25,13 +25,13 @@
                 </a>
                 
                 <p>فروشگاه تخصصی تجهیزات آشپزخانه؛ هود، اجاق گاز و سینک را با مشخصات، قیمت و اطلاعات هر مدل مقایسه کنید.</p>
-                <div class="fz-store-footer__socials" aria-label="شبکه‌های اجتماعی">
-                    @if(filled(data_get($contact, 'instagram_url')))<a href="{{ data_get($contact, 'instagram_url') }}" target="_blank" rel="noopener noreferrer" aria-label="اینستاگرام {{ $brandName }}">اینستاگرام</a>@endif
-                    @if(filled(data_get($contact, 'telegram_url')))<a href="{{ data_get($contact, 'telegram_url') }}" target="_blank" rel="noopener noreferrer" aria-label="تلگرام {{ $brandName }}">تلگرام</a>@endif
-                    @if($footerWhatsapp)<a href="https://wa.me/{{ $footerWhatsapp }}" target="_blank" rel="noopener noreferrer" aria-label="واتساپ {{ $brandName }}">واتساپ</a>@endif
-                    @if($footerEitaa !== '')<a href="{{ $footerEitaa }}" target="_blank" rel="noopener noreferrer" aria-label="ایتا {{ $brandName }}">ایتا</a>@endif
-                    @if($footerBale !== '')<a href="{{ $footerBale }}" target="_blank" rel="noopener noreferrer" aria-label="بله {{ $brandName }}">بله</a>@endif
-                </div>
+                <x-layout.social-links :contact="$contact" :brand-name="$brandName" />
+                @if($footerEitaa !== '' || $footerBale !== '')
+                    <div class="fz-store-footer__extra-messengers" aria-label="پیام‌رسان‌های دیگر">
+                        @if($footerEitaa !== '')<a href="{{ $footerEitaa }}" target="_blank" rel="noopener noreferrer">ایتا</a>@endif
+                        @if($footerBale !== '')<a href="{{ $footerBale }}" target="_blank" rel="noopener noreferrer">بله</a>@endif
+                    </div>
+                @endif
                 @if($footerEnamad !== '')
                     <a class="fz-store-footer__trust-link mt-3 inline-flex items-center gap-1 text-xs font-bold text-[var(--livora-accent)]" href="{{ $footerEnamad }}" target="_blank" rel="noopener noreferrer">نماد اعتماد الکترونیکی <span aria-hidden="true">↗</span></a>
                 @endif
