@@ -90,9 +90,14 @@
                                 @if($slide['eyebrow'] !== '')
                                     <p class="fz-market-hero__eyebrow">{{ $slide['eyebrow'] }}</p>
                                 @endif
-                                <h1>{{ $slide['title'] }}</h1>
-                                @if($slide['description'] !== '')
-                                    <p class="fz-market-hero__description">{{ $slide['description'] }}</p>
+                                @if($index === 0)
+                                    <h1>{{ $homeCopy['page_home_hero_title'] ?? $slide['title'] }}</h1>
+                                @else
+                                    <h2>{{ $slide['title'] }}</h2>
+                                @endif
+                                @php($heroDescription = $index === 0 ? ($homeCopy['page_home_hero_description'] ?? $slide['description']) : $slide['description'])
+                                @if(trim((string) $heroDescription) !== '')
+                                    <p class="fz-market-hero__description">{{ $heroDescription }}</p>
                                 @endif
                                 @if($slide['button_label'] !== '')
                                     <a class="fz-market-hero__button" href="{{ $slide['button_url'] }}">
