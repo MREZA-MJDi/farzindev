@@ -245,6 +245,17 @@ class ShopController extends Controller
             ->paginate(12)
             ->withQueryString();
 
+        if (app()->environment('testing')) {
+            fwrite(STDERR, 'SHOP_ATTRIBUTE_FILTER_TRACE ' . json_encode([
+                'category_input' => $request->input('category'),
+                'selected_category' => $selectedCategory?->slug,
+                'filterable_attribute_ids' => $filterableAttributes->pluck('id')->all(),
+                'attribute_filters' => $attributeFilters,
+                'result_count' => $products->total(),
+                'result_names' => $products->getCollection()->pluck('name')->all(),
+            ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) . PHP_EOL);
+        }
+
         /*
         |--------------------------------------------------------------------------
         | Categories
