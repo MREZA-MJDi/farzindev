@@ -11,6 +11,7 @@ use App\Models\ProductImage;
 use App\Models\SeoRedirect;
 use App\Models\Media;
 use App\Services\Catalog\ProductMediaLibrary;
+use App\Services\Catalog\ProductAttributeManager;
 use App\Services\Media\ResponsiveImageService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -124,6 +125,7 @@ class ProductController extends Controller
     {
         $categories = Category::query()
             ->active()
+            ->with(['attributes.options'])
             ->orderBy('name')
             ->limit(100)
             ->get();
@@ -146,9 +148,12 @@ class ProductController extends Controller
     public function store(
         StoreProductRequest $request,
         ProductMediaLibrary $mediaLibrary,
-        ResponsiveImageService $images
+        ResponsiveImageService $images,
+        ProductAttributeManager $attributeManager
     ): RedirectResponse {
         $data = $request->validated();
+        $attributeValues = $data['attribute_values'] ?? [];
+        unset($data['attribute_values']);
         $uploadedImage = $request->file('image');
         $primaryMediaId = $data['primary_media_id'] ?? null;
         unset($data['image'], $data['primary_media_id']);
@@ -181,8 +186,9 @@ class ProductController extends Controller
         }
 
         try {
-            $product = DB::transaction(function () use ($data, $newPath, $primaryMediaId, $mediaLibrary): Product {
+            $product = DB::transaction(function () use ($data, $newPath, $primaryMediaId, $mediaLibrary, $attributeValues, $attributeManager): Product {
                 $product = Product::create($data);
+                $attributeManager->sync($product, $attributeValues);
 
                 if ($newPath !== null) {
                     ProductImage::create([
@@ -249,7 +255,7 @@ class ProductController extends Controller
      */
     public function edit(Product $product): View
     {
-        $product->load(['images.media', 'allVariants.images.media']);
+        $product->load(['images.media', 'allVariants.images.media', 'attributeValues.attribute', 'attributeValues.option']);
 
         $storefrontCategoryIds = Category::query()
             ->active()
@@ -262,6 +268,7 @@ class ProductController extends Controller
                     ->orWhere('id', $product->category_id);
             })
             ->orderByRaw('CASE WHEN id = ? THEN 0 ELSE 1 END', [$product->category_id])
+            ->with(['attributes.options'])
             ->orderBy('name')
             ->limit(101)
             ->get();
@@ -290,9 +297,12 @@ class ProductController extends Controller
         UpdateProductRequest $request,
         Product $product,
         ProductMediaLibrary $mediaLibrary,
-        ResponsiveImageService $images
+        ResponsiveImageService $images,
+        ProductAttributeManager $attributeManager
     ): RedirectResponse {
         $data = $request->validated();
+        $attributeValues = $data['attribute_values'] ?? [];
+        unset($data['attribute_values']);
         $uploadedImage = $request->file('image');
         $primaryMediaId = $data['primary_media_id'] ?? null;
         unset($data['image'], $data['primary_media_id']);
@@ -333,7 +343,9 @@ class ProductController extends Controller
                 $newPath,
                 $primaryMediaId,
                 $mediaLibrary,
-                &$oldPathToDelete
+                &$oldPathToDelete,
+                $attributeValues,
+                $attributeManager
             ): void {
                 $lockedProduct = Product::query()
                     ->whereKey($product->id)
@@ -342,6 +354,8 @@ class ProductController extends Controller
 
                 $oldSlug = (string) $lockedProduct->slug;
                 $lockedProduct->update($data);
+                $lockedProduct->unsetRelation('category')->load('category');
+                $attributeManager->sync($lockedProduct, $attributeValues);
 
                 if ($oldSlug !== $lockedProduct->slug) {
                     $oldPath = route('product.show', $oldSlug, false);
