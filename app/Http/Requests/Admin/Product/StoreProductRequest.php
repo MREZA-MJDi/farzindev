@@ -63,7 +63,7 @@ class StoreProductRequest extends FormRequest
                 );
             }
             $attributeValues = $this->input('attribute_values', []);
-            if (is_array($attributeValues) && $this->filled('category_id') && \\App\\Models\\Category::query()->whereKey((int) $this->input('category_id'))->exists()) {
+            if (is_array($attributeValues) && $this->filled('category_id') && \App\Models\Category::query()->whereKey((int) $this->input('category_id'))->exists()) {
                 $attributeErrors = app(ProductAttributeManager::class)->validateValues(
                     (int) $this->input('category_id'),
                     $attributeValues,
