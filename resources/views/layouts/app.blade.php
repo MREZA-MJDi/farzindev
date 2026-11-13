@@ -17,7 +17,7 @@
             default => null,
         };
 
-        $storefrontBrandName = $storefrontBrandName ?? config('app.name', 'فرزین');
+        $storefrontBrandName = $storefrontBrandName ?? config('app.name', 'فرجی‌هوم');
         $seoTitle = trim((string) $__env->yieldContent('title'));
         $seoTitle = str_replace('فرزین', $storefrontBrandName, $seoTitle);
         $seoPageTitle = $seoStaticPage ? trim((string) ($seoValues[$seoStaticPage['title']] ?? '')) : '';
@@ -33,8 +33,6 @@
             ? $seoPageDescription
             : ($seoDescription !== '' ? $seoDescription : (string) $seoValues['seo_default_description']);
 
-        $seoKeywords = trim((string) $__env->yieldContent('keywords'));
-        $seoKeywords = $seoKeywords !== '' ? $seoKeywords : trim((string) ($seoValues['seo_default_keywords'] ?? ''));
 
         $seoCanonicalSource = trim((string) $__env->yieldContent('canonical'));
         $seoCanonical = $seoService->canonicalOverride($seoCanonicalSource)
@@ -139,9 +137,6 @@
 
     <title>{{ $seoTitle }}</title>
     <meta name="description" content="{{ $seoDescription }}">
-    @if($seoKeywords !== '')
-        <meta name="keywords" content="{{ $seoKeywords }}">
-    @endif
 
     <meta name="robots" content="{{ $seoService->robotsMeta($seoRobotsOverride) }}">
     <link rel="canonical" href="{{ $seoCanonical }}">
