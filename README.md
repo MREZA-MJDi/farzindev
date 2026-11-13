@@ -1,6 +1,6 @@
 # فرجی‌هوم | فروشگاه تجهیزات آشپزخانه
 
-Farzin is a Persian RTL e-commerce storefront focused on kitchen range hoods and kitchen sinks. The project is built with Laravel and includes a product catalogue, category browsing, product variants and images, search/filtering, cart, customer accounts, order management, payment flows, and a dedicated admin dashboard. Payment and order workflows should be verified against the current implementation and configured gateway before production use.
+فرجی‌هوم یک فروشگاه فارسی و راست‌چین برای بررسی و خرید هود، سینک و اجاق گاز صفحه‌ای است. پروژه با Laravel و Blade ساخته شده و شامل دسته‌بندی، مشخصات فنی ساختاریافته، تصاویر و گزینه‌های محصول، جستجو و فیلتر، سبد خرید، حساب مشتری، مدیریت سفارش و پنل مدیریت است. درگاه‌ها و جریان پرداخت باید بر اساس تنظیمات جاری و اتصال تأییدشده ارائه‌دهنده بررسی شوند. Payment and order workflows should be verified against the current implementation and configured gateway before production use.
 
 ## Technology
 - PHP `^8.2`, Laravel `^12.0`
@@ -54,8 +54,8 @@ The check command prints only three boolean results: admin exists, email matches
 Back up the database before running `admin:sync` on an existing installation. The normal `db:seed` flow creates the initial administrator only; use `admin:sync` for intentional credential changes.
 
 ## Catalogue and imagery
-- Create real Farzin products, specifications, stock, images, and variants from the admin dashboard.
-- `php artisan db:seed` creates the Farzin categories, the configured admin account, and 50 editable catalogue preview records (25 hoods and 25 sinks) without generated images.
+- Create real Faraji Home products, specifications, stock, images, and variants from the admin dashboard.
+- `php artisan db:seed` creates the configured categories, the configured admin account, and 50 editable sample product records (25 hoods and 25 sinks) without generated images.
 - New catalogue records use preview names and prices; verify each specification, SKU, price, stock count and product photo in the admin dashboard before publishing. In production, new preview records are drafts with zero stock.
 - The category seeder hides inherited demo furniture categories. The product seeder archives inherited products with the `LIV-*` SKU prefix, preserves existing order history, and does not overwrite already-existing seeded records that staff have edited.
 - To upload product covers and gallery images, the dashboard allows JPG/JPEG/PNG/WEBP up to 20 MB. The PHP runtime must accept requests of at least 26 MB for these limits to work.
@@ -71,7 +71,7 @@ The GitHub Actions workflow builds a `farzin-vps-release` artifact after the tes
 
 ## SEO publishing gate
 
-Farzin includes a native Laravel SEO manager; it does not require WordPress or a separate CMS. It manages global and page-level title/description defaults, canonical URLs, robots directives and rules, sitemap generation, Open Graph defaults, verification tokens, organization structured data, safe custom meta/link tags, and SEO fields for products, categories, and blog articles.
+فرجی‌هوم از مدیر SEO داخلی Laravel استفاده می‌کند; it does not require WordPress or a separate CMS. It manages global and page-level title/description defaults, canonical URLs, robots directives and rules, sitemap generation, Open Graph defaults, verification tokens, organization structured data, safe custom meta/link tags, and SEO fields for products, categories, and blog articles.
 
 The pre-launch safety gate is enabled by default. While `seo_development_mode=1`, public storefront pages emit `noindex, nofollow` (plus restrictive preview directives), `robots.txt` remains crawlable so search engines can read those meta directives, and `sitemap.xml` is not published. A designated SEO administrator must explicitly turn off **قفل انتشار** in **Admin → SEO Settings** after reviewing real catalogue/content data; only then can the sitemap be enabled and normal indexing/following take effect. Do not set `Disallow: /` in `robots.txt` as a substitute for the meta robots gate.
 
