@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Storage;
 class ProductSeeder extends Seeder
 {
     /**
-     * Insert 50 manageable catalogue records (25 hoods and 25 sinks).
+     * Insert 50 editable sample product records (25 hoods and 25 sinks).
      * These are clearly identified sample records for local demonstration.
      * Staff replace sample prices, specifications, images and FAQs with approved product data.
      *
