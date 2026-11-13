@@ -61,6 +61,57 @@ class ShopController extends Controller
             });
         }
 
+        $selectedCategory = ! empty($filters['category'])
+            ? Category::query()->where('slug', $filters['category'])->where('is_active', true)->first()
+            : null;
+        $filterableAttributes = $selectedCategory
+            ? $selectedCategory->attributes()->wherePivot('is_filterable', true)->with('options')->get()
+            : collect();
+
+        foreach (($filters['attributes'] ?? []) as $attributeId => $selectedValue) {
+            $attribute = $filterableAttributes->firstWhere('id', (int) $attributeId);
+            if (! $attribute || $selectedValue === '' || $selectedValue === null) {
+                continue;
+            }
+
+            if ($attribute->type === 'number' && is_array($selectedValue)) {
+                $minimum = $selectedValue['min'] ?? null;
+                $maximum = $selectedValue['max'] ?? null;
+                if (is_numeric($minimum) || is_numeric($maximum)) {
+                    $query->whereHas('attributeValues', function ($values) use ($attribute, $minimum, $maximum): void {
+                        $values->where('attribute_id', $attribute->id);
+                        if (is_numeric($minimum)) $values->where('value_number', '>=', $minimum);
+                        if (is_numeric($maximum)) $values->where('value_number', '<=', $maximum);
+                    });
+                }
+                continue;
+            }
+
+            if (in_array($attribute->type, ['select', 'multiselect'], true)) {
+                $optionIds = array_map('intval', (array) $selectedValue);
+                $validIds = $attribute->options->whereIn('id', $optionIds)->pluck('id')->all();
+                if ($validIds !== []) {
+                    $query->whereHas('attributeValues', fn ($values) => $values
+                        ->where('attribute_id', $attribute->id)
+                        ->whereIn('option_id', $validIds));
+                }
+                continue;
+            }
+
+            if ($attribute->type === 'boolean' && in_array((string) $selectedValue, ['0', '1'], true)) {
+                $query->whereHas('attributeValues', fn ($values) => $values
+                    ->where('attribute_id', $attribute->id)
+                    ->where('value_boolean', (int) $selectedValue));
+                continue;
+            }
+
+            if (in_array($attribute->type, ['text', 'textarea'], true) && is_scalar($selectedValue)) {
+                $query->whereHas('attributeValues', fn ($values) => $values
+                    ->where('attribute_id', $attribute->id)
+                    ->where('value_text', 'like', '%' . addcslashes((string) $selectedValue, '%_') . '%'));
+            }
+        }
+
         /*
         |--------------------------------------------------------------------------
         | Search
@@ -226,6 +277,8 @@ class ShopController extends Controller
         return view('shop.index', [
             'products' => $products,
             'categories' => $categories,
+            'selectedCategory' => $selectedCategory,
+            'filterableAttributes' => $filterableAttributes,
             'shopBanner' => [
                 'image_url' => $bannerAvailable ? $publicDisk->url($bannerPath) : null,
                 'image_srcset' => $bannerAvailable ? $images->srcset($bannerPath) : null,
