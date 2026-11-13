@@ -4,7 +4,7 @@
         <form method="GET" action="{{ route('categories.show',$category->slug) }}" class="py-7">
             <div class="flex flex-wrap items-end justify-between gap-3">
                 <div><p class="text-[10px] font-semibold tracking-[0.16em] text-[var(--livora-accent)]">مشخصات فنی</p><h2 class="mt-2 text-lg font-bold text-[var(--livora-ink)]">فیلتر {{ $category->name }}</h2></div>
-                <div class="flex gap-2"><a href="{{ route('categories.show',$category->slug) }}" class="admin-btn admin-btn-secondary">پاک کردن</a><button type="submit" class="admin-btn admin-btn-primary">اعمال فیلتر</button></div>
+                <div class="flex gap-2"><a href="{{ route('categories.show',$category->slug) }}" class="rounded-xl border border-[var(--livora-border)] px-4 py-2.5 text-xs font-semibold text-[var(--livora-text)]">پاک کردن</a><button type="submit" class="rounded-xl bg-[var(--livora-ink)] px-4 py-2.5 text-xs font-semibold text-white transition hover:bg-[var(--livora-accent)]">اعمال فیلتر</button></div>
             </div>
             <div class="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                 @foreach($filterableAttributes as $attribute)
