@@ -98,7 +98,7 @@
 
             <x-layout.container>
 
-                <div class="grid items-start gap-6 py-8 lg:grid-cols-[250px_minmax(0,1fr)] lg:gap-8 lg:py-12">
+                <div class="farzin-shop-layout grid items-start gap-5 py-6 lg:grid-cols-[270px_minmax(0,1fr)] lg:gap-7 lg:py-8">
 
 
                     {{-- =================================================
@@ -242,27 +242,14 @@
                              SORTING TOOLBAR
                         ================================================== --}}
 
-                        <div class="rounded-3xl border border-[var(--livora-border)] bg-[var(--livora-white)] p-4 sm:p-5">
-
-                            <div class="farzin-shop-toolbar">
-                                <form action="{{ route('shop.index') }}" method="GET" role="search" aria-label="جستجوی محصولات فروشگاه" class="farzin-shop-search">
-                                    @foreach(request()->except(['search', 'page']) as $filterName => $filterValue)
-                                        @if(is_scalar($filterValue) && (string) $filterValue !== '')
-                                            <input type="hidden" name="{{ $filterName }}" value="{{ $filterValue }}">
-                                        @endif
-                                    @endforeach
-                                    <label for="shop-catalog-search" class="sr-only">نام محصول، مدل، کد یا مشخصات را جستجو کنید</label>
-                                    <input id="shop-catalog-search" name="search" type="search" inputmode="search" enterkeyhint="search" autocomplete="off" value="{{ request('search', '') }}" placeholder="جستجوی هود، سینک، مدل یا کد محصول..." class="farzin-shop-search__input">
-                                    <button type="submit" class="farzin-shop-search__submit">جستجو</button>
-                                    @if(request()->filled('search'))
-                                        <a href="{{ route('shop.index', request()->except(['search', 'page'])) }}" class="farzin-shop-search__clear">پاک کردن</a>
-                                    @endif
-                                </form>
-                                <div class="farzin-shop-toolbar__sort">
-                                    <x-shop.sorting :products="$products" />
-                                </div>
+                        <div class="farzin-shop-sortbar flex items-center justify-between gap-4 border-b border-[var(--livora-border)] pb-4">
+                            <div>
+                                <p class="text-[10px] font-semibold tracking-wide text-[var(--livora-accent)]">کاتالوگ فرجی‌هوم</p>
+                                <p class="mt-1 text-xs text-[var(--livora-stone)]">مرتب‌سازی محصولات</p>
                             </div>
-
+                            <div class="farzin-shop-toolbar__sort min-w-0">
+                                <x-shop.sorting :products="$products" />
+                            </div>
                         </div>
 
 
@@ -343,7 +330,7 @@
 
                         @if($products->isNotEmpty())
 
-                            <div class="farzin-shop-product-grid mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                            <div class="farzin-shop-product-grid mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
 
                                 @foreach($products as $product)
 
