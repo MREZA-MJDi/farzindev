@@ -278,26 +278,12 @@
 
     <x-layout.mobile-bottom-bar :cart-count="$storefrontCartCount" />
 
-    @php
-        $floatingPhone = preg_replace('/[^0-9+]/', '', (string) data_get($storefrontContact, 'phone', ''));
-        $floatingWhatsapp = preg_replace('/\D+/', '', (string) data_get($storefrontContact, 'whatsapp', ''));
-        if (str_starts_with($floatingWhatsapp, '0098')) {
-            $floatingWhatsapp = substr($floatingWhatsapp, 2);
-        } elseif ($floatingWhatsapp !== '' && str_starts_with($floatingWhatsapp, '0')) {
-            $floatingWhatsapp = '98' . substr($floatingWhatsapp, 1);
-        } elseif ($floatingWhatsapp !== '' && ! str_starts_with($floatingWhatsapp, '98')) {
-            $floatingWhatsapp = '98' . $floatingWhatsapp;
-        }
-    @endphp
     @if(($storefrontPublicSettings['floating_contact_enabled'] ?? '0') === '1')
-        <div class="fixed bottom-24 left-4 z-[75] flex flex-col gap-2 lg:bottom-6" aria-label="راه‌های ارتباط سریع">
-            @if($floatingWhatsapp !== '')
-                <a href="https://wa.me/{{ $floatingWhatsapp }}" target="_blank" rel="noopener noreferrer" class="rounded-full bg-emerald-700 px-4 py-3 text-sm font-bold text-white shadow-xl">واتساپ</a>
-            @endif
-            @if($floatingPhone !== '')
-                <a href="tel:{{ $floatingPhone }}" class="rounded-full bg-slate-900 px-4 py-3 text-sm font-bold text-white shadow-xl">تماس با ما</a>
-            @endif
-            <a href="{{ route('contact') }}#contact-form" class="rounded-full border border-slate-300 bg-white px-4 py-3 text-sm font-bold text-slate-900 shadow-xl">پرسش</a>
+        <div class="fz-floating-contact" aria-label="راه‌های ارتباط سریع">
+            <x-layout.social-links :contact="$storefrontContact" :brand-name="$storefrontBrandName" />
+            <a class="fz-social-links__item fz-social-links__item--message" href="{{ route('contact') }}#contact-form" aria-label="ارسال پیام به {{ $storefrontBrandName }}" title="ارسال پیام">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M20 11.5a7.5 7.5 0 0 1-7.5 7.5H6l-3 2v-9.5A7.5 7.5 0 0 1 10.5 4h2a7.5 7.5 0 0 1 7.5 7.5ZM8 11h8v1.6H8zm0 3h5v1.6H8z"/></svg>
+            </a>
         </div>
     @endif
 
