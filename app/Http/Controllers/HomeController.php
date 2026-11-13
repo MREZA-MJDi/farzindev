@@ -219,6 +219,7 @@ class HomeController extends Controller
                 'shipping_text',
                 'installation_text',
                 'warranty_text',
+                'returns_text',
                 'shipping_flat_rate',
                 'shipping_free_threshold',
             ])
@@ -256,6 +257,11 @@ class HomeController extends Controller
         }
         if ($warrantyText !== '') {
             $benefits[] = ['key' => 'warranty', 'title' => 'گارانتی', 'description' => $warrantyText];
+        }
+
+        $returnsText = trim((string) ($storeSettings['returns_text'] ?? ''));
+        if ($returnsText !== '') {
+            $benefits[] = ['key' => 'returns', 'title' => 'بازگشت کالا', 'description' => $returnsText];
         }
 
         if ($installmentProduct) {
