@@ -123,6 +123,12 @@ if (document.querySelector('[data-blog-appearance]')) {
     });
 }
 
+if (document.querySelector('[data-home-technology-media-select]')) {
+    import('./home-technology-media-picker.js').catch((error) => {
+        console.error('Unable to initialize homepage technology media picker.', error);
+    });
+}
+
 if (document.querySelector('[data-blog-rich-editor]')) {
     import('./admin-blog-editor.js').catch((error) => {
         console.error('Unable to load the blog editor.', error);

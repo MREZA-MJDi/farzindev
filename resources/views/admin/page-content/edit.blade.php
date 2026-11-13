@@ -357,7 +357,20 @@
                             <img src="{{ $technologyImagePreview }}" alt="پیش‌نمایش تصویر سکشن فناوری" width="1200" height="750" loading="lazy" decoding="async" data-image-editor-existing-preview-for="page_home_technology_image" class="{{ $technologyImagePreview !== '' ? '' : 'hidden' }}">
                             <div data-image-editor-placeholder-for="page_home_technology_image" class="{{ $technologyImagePreview !== '' ? 'hidden' : 'flex' }} h-full flex-col items-center justify-center gap-2 bg-[var(--admin-card)] p-5 text-center text-xs text-[var(--admin-muted)]">هنوز تصویری برای سکشن فناوری ثبت نشده است.</div>
                         </div>
-                        <label for="page_home_technology_image" class="admin-label">بارگذاری تصویر ۱۶:۱۰</label>
+                        <label for="page_home_technology_media_id" class="admin-label">انتخاب تصویر از کتابخانه رسانه</label>
+                        <select id="page_home_technology_media_id" name="page_home_technology_media_id" data-home-technology-media-select data-current-image-url="{{ $technologyImagePreview }}" class="admin-select mt-2 w-full max-w-2xl">
+                            <option value="">بدون تغییر تصویر فعلی</option>
+                            @foreach($technologyMediaImages as $mediaImage)
+                                <option value="{{ $mediaImage->id }}" data-image-url="{{ $mediaImage->url }}" @selected((string) $selectedTechnologyMediaId === (string) $mediaImage->id)>
+                                    {{ $mediaImage->original_name ?: $mediaImage->filename }}
+                                </option>
+                            @endforeach
+                        </select>
+                        <p class="mt-1 text-[10px] leading-5 text-[var(--admin-muted)]">تصویرهای قبلاً بارگذاری‌شده در بخش رسانه‌ها را بدون آپلود مجدد انتخاب کن.</p>
+                        @error('page_home_technology_media_id')
+                            <p role="alert" class="mt-2 text-xs text-[var(--admin-danger)]">{{ $message }}</p>
+                        @enderror
+                        <label for="page_home_technology_image" class="admin-label mt-4 block">یا بارگذاری تصویر جدید ۱۶:۱۰</label>
                         <input id="page_home_technology_image" name="page_home_technology_image" type="file" data-image-editor-input data-image-editor-default-ratio="16:10" data-image-editor-min-width="1200" data-image-editor-min-height="750" accept="image/jpeg,image/png,image/webp" class="admin-input mt-2 w-full max-w-2xl p-2"> 
                         <div data-image-editor-panel-for="page_home_technology_image" hidden class="mt-5 max-w-2xl space-y-4 rounded-xl border border-[var(--admin-border)] bg-[var(--admin-card)] p-4">
                             <strong class="block text-xs font-bold text-[var(--admin-text)]">برش و پیش‌نمایش تصویر صفحه اصلی</strong>

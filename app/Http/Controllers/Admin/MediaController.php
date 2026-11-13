@@ -103,15 +103,21 @@ class MediaController extends Controller
             ->where('key', 'seo_default_og_image_media_id')
             ->where('value', (string) $media->id)
             ->exists();
+        $usedForHomepageTechnology = StorefrontSetting::query()
+            ->where('key', 'page_home_technology_image_url')
+            ->where('value', $media->path)
+            ->exists();
 
-        if ($usedByProduct || $usedByCategory || $usedForOpenGraph) {
+        if ($usedByProduct || $usedByCategory || $usedForOpenGraph || $usedForHomepageTechnology) {
             return redirect()
                 ->route('admin.media.index')
-                ->with('error', $usedForOpenGraph
-                    ? 'این رسانه به‌عنوان تصویر Open Graph سایت انتخاب شده است؛ ابتدا تصویر سئو را تغییر دهید یا حذف کنید.'
-                    : ($usedByCategory
-                        ? 'این رسانه برای پیش‌نمایش یک دسته‌بندی استفاده می‌شود؛ ابتدا آن اتصال را بردارید.'
-                        : 'این رسانه به گالری یک یا چند محصول یا تنوع متصل است؛ ابتدا اتصال آن را از ویرایش محصولات بردارید.'));
+                ->with('error', $usedForHomepageTechnology
+                    ? 'این تصویر در سکشن فناوری صفحه اصلی استفاده می‌شود؛ ابتدا تصویر آن بخش را تغییر دهید.'
+                    : ($usedForOpenGraph
+                        ? 'این رسانه به‌عنوان تصویر Open Graph سایت انتخاب شده است؛ ابتدا تصویر سئو را تغییر دهید یا حذف کنید.'
+                        : ($usedByCategory
+                            ? 'این رسانه برای پیش‌نمایش یک دسته‌بندی استفاده می‌شود؛ ابتدا آن اتصال را بردارید.'
+                            : 'این رسانه به گالری یک یا چند محصول یا تنوع متصل است؛ ابتدا اتصال آن را از ویرایش محصولات بردارید.')));
         }
 
         $disk = $media->disk;
