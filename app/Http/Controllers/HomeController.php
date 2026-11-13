@@ -246,6 +246,20 @@ class HomeController extends Controller
             }
         }
 
+        if ($installmentProduct) {
+            $cashPercent = (int) $installmentProduct->installment_cash_percent;
+            $cashAmount = round((float) $installmentProduct->price * ($cashPercent / 100));
+            $benefits[] = [
+                'key' => 'installment',
+                'title' => 'پرداخت اقساطی',
+                'description' => $installmentProduct->name . ' · پیش‌پرداخت '
+                    . \App\Helpers\PersianNumberHelper::format($cashPercent) . '٪ ('
+                    . \App\Helpers\PersianNumberHelper::format($cashAmount) . ' تومان) · '
+                    . \App\Helpers\PersianNumberHelper::format((int) $installmentProduct->installment_cheque_count)
+                    . ' چک',
+            ];
+        }
+
         $installationText = trim((string) ($storeSettings['installation_text'] ?? ''));
         if ($installationText !== '') {
             $benefits[] = ['key' => 'installation', 'title' => 'نصب', 'description' => $installationText];
@@ -262,20 +276,6 @@ class HomeController extends Controller
         $returnsText = trim((string) ($storeSettings['returns_text'] ?? ''));
         if ($returnsText !== '') {
             $benefits[] = ['key' => 'returns', 'title' => 'بازگشت کالا', 'description' => $returnsText];
-        }
-
-        if ($installmentProduct) {
-            $cashPercent = (int) $installmentProduct->installment_cash_percent;
-            $cashAmount = round((float) $installmentProduct->price * ($cashPercent / 100));
-            $benefits[] = [
-                'key' => 'installment',
-                'title' => 'پرداخت اقساطی',
-                'description' => $installmentProduct->name . ' · پیش‌پرداخت '
-                    . \App\Helpers\PersianNumberHelper::format($cashPercent) . '٪ ('
-                    . \App\Helpers\PersianNumberHelper::format($cashAmount) . ' تومان) · '
-                    . \App\Helpers\PersianNumberHelper::format((int) $installmentProduct->installment_cheque_count)
-                    . ' چک',
-            ];
         }
 
         $resolveImageUrl = static function (?string $path): ?string {
@@ -402,7 +402,7 @@ class HomeController extends Controller
             'selectedProducts' => $selectedProducts,
             'featuredProducts' => $featuredProducts,
             'homeTechnology' => $homeTechnology,
-            'benefits' => collect($benefits),
+            'benefits' => collect($benefits)->take(4),
             'blogPosts' => $blogPosts,
             'contactSetting' => $contactSetting,
             'enamadUrl' => trim((string) ($copy['page_home_enamad_url'] ?? '')),
