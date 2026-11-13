@@ -131,6 +131,20 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+    @php
+        $pageTypography = $storefrontPageContent ?? [];
+        $fontScale = min(110, max(90, (float) ($pageTypography['page_typography_font_scale'] ?? 100)));
+        $lineHeight = min(2.2, max(1.4, (float) ($pageTypography['page_typography_line_height'] ?? 1.8)));
+        $contentWidth = min(1440, max(1120, (int) ($pageTypography['page_typography_content_width'] ?? 1280)));
+    @endphp
+    <style id="storefront-page-typography">
+        html { font-size: {{ number_format($fontScale, 2, '.', '') }}%; }
+        body { line-height: {{ number_format($lineHeight, 2, '.', '') }}; }
+        .livora-container, .fz-container, .fz-home-container {
+            max-width: {{ $contentWidth }}px;
+        }
+    </style>
+
     {{-- Warm the two storefront font weights used by body copy and bold headings to reduce first-paint reflow. --}}
     <link rel="preload" as="font" href="{{ Vite::asset('resources/fonts/iranyekanx-fanum/IRANYekanXFaNum-Regular.woff2') }}" type="font/woff2" crossorigin>
     <link rel="preload" as="font" href="{{ Vite::asset('resources/fonts/iranyekanx-fanum/IRANYekanXFaNum-ExtraBold.woff2') }}" type="font/woff2" crossorigin>
