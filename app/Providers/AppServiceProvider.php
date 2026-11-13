@@ -29,9 +29,9 @@ class AppServiceProvider extends ServiceProvider
         Paginator::defaultView('vendor.pagination.farzin');
         Paginator::defaultSimpleView('vendor.pagination.farzin-simple');
 
-        // These values are consumed by the public storefront shell/footer only.
-        // A wildcard composer also runs for every nested Blade component (including
-        // each product card), repeating cache lookups and filesystem checks per view.
+        // Share the cached public brand and page CMS payload only with top-level
+        // public views and the layout. A wildcard composer would repeat cache
+        // lookups and filesystem checks for every nested Blade component.
         View::composer(['layouts.app', 'home.index', 'about.index', 'legal.terms', 'legal.privacy', 'pages.policy', 'errors.*', 'auth.*', 'admin.auth.*'], function ($view): void {
             $settings = rescue(fn (): array => Cache::remember(
                 'storefront.public-brand-settings.v1',
