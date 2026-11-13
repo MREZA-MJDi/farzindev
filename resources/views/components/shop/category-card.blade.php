@@ -4,12 +4,7 @@
     'imageSrcset' => null,
     'motionMedia' => null,
     'href' => '#',
-    'count' => null,
 ])
-
-@php
-    $hasCount = $count !== null;
-@endphp
 
 <article class="farzin-category-card group relative min-w-0" data-farzin-reveal>
     <a href="{{ $href }}" class="block" aria-label="مشاهده دسته‌بندی {{ $name }}" @if($motionMedia) data-farzin-gif-card @endif>
@@ -35,9 +30,6 @@
                     <div class="min-w-0">
                         <p class="text-[10px] font-semibold uppercase tracking-[0.22em] text-white/60">تجهیزات آشپزخانه</p>
                         <h3 class="mt-2 truncate text-xl font-semibold text-white sm:text-2xl">{{ $name }}</h3>
-                        @if($hasCount)
-                            <p class="mt-2 text-xs text-white/65">{{ \App\Helpers\PersianNumberHelper::format($count) }} محصول</p>
-                        @endif
                     </div>
                     <span class="farzin-category-card__arrow flex h-11 w-11 shrink-0 items-center justify-center rounded-full" aria-hidden="true">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.6" stroke="currentColor" class="h-4 w-4"><path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14m-6-6 6 6-6 6"/></svg>
