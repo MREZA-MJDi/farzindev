@@ -730,6 +730,12 @@ class FarzinStorefrontTest extends TestCase
             ->assertRedirect(route('admin.page-content.edit', ['tab' => 'home']))
             ->assertSessionHas('success');
 
+        $this->assertDatabaseHas('storefront_settings', [
+            'key' => 'page_home_final_cta',
+            'value' => 'رفتن به کاتالوگ',
+        ]);
+        $this->assertSame('رفتن به کاتالوگ', app(StorefrontPageContent::class)->all()['page_home_final_cta']);
+
         $this->get(route('home'))
             ->assertOk()
             ->assertSee('id="fz-home-final-cta-title"', false)
@@ -5649,7 +5655,7 @@ class FarzinStorefrontTest extends TestCase
             ->assertSee('سینک گرانیتی فرجی‌هوم 1')
             ->assertViewHas('products', fn ($products): bool =>
                 $products->total() === 13
-                && $products->perPage() === 12
+                && $products->perPage() === 8
                 && $products->currentPage() === 1
                 && $products->hasPages()
             );
