@@ -174,11 +174,15 @@
                                         <span class="text-[10px] text-[var(--admin-muted)]">بدون تصویر</span>
                                     @endif
                                 </div>
-                                @if($bannerImageUrl1 !== '')
-                                    <img src="{{ $bannerImageUrl1 }}" alt="پیش‌نمایش بنر 1" width="1200" height="450" loading="lazy" decoding="async" class="mt-3 aspect-[16/6] w-full rounded-xl object-cover">
-                                @endif
+                                <div class="mt-3">
+                                    <img id="page_home_banner_1_preview" src="{{ $bannerImageUrl1 }}" alt="پیش‌نمایش تصویر بنر 1" width="1200" height="450" loading="lazy" decoding="async" class="aspect-[16/6] w-full rounded-xl object-cover {{ $bannerImageUrl1 !== '' ? '' : 'hidden' }}">
+                                    <div id="page_home_banner_1_placeholder" class="flex aspect-[16/6] w-full items-center justify-center rounded-xl border border-dashed border-[var(--admin-border)] bg-[var(--admin-card)] text-xs text-[var(--admin-muted)] {{ $bannerImageUrl1 !== '' ? 'hidden' : '' }}">تصویر بنر 1 انتخاب نشده است</div>
+                                </div>
                                 <label for="page_home_banner_1_image" class="admin-label mt-4 block">تصویر بنر 1</label>
-                                <input id="page_home_banner_1_image" name="page_home_banner_1_image" type="file" accept="image/jpeg,image/png,image/webp" class="admin-input mt-2 w-full p-2">
+                                <input id="page_home_banner_1_image" name="page_home_banner_1_image" type="file" accept="image/jpeg,image/png,image/webp"
+                                       data-image-preview-input data-image-preview-target="#page_home_banner_1_preview"
+                                       data-image-preview-placeholder="#page_home_banner_1_placeholder"
+                                       class="admin-input mt-2 w-full p-2">
                                 <p class="mt-1 text-[10px] leading-5 text-[var(--admin-muted)]">JPG، PNG یا WEBP؛ نسبت ۱۶:۶؛ حداقل ۱۲۰۰×۳۷۵؛ حداکثر ۲۰ مگابایت.</p>
                                 @error('page_home_banner_1_image')
                                     <p role="alert" class="mt-2 text-xs text-[var(--admin-danger)]">{{ $message }}</p>
@@ -205,11 +209,15 @@
                                         <span class="text-[10px] text-[var(--admin-muted)]">بدون تصویر</span>
                                     @endif
                                 </div>
-                                @if($bannerImageUrl2 !== '')
-                                    <img src="{{ $bannerImageUrl2 }}" alt="پیش‌نمایش بنر 2" width="1200" height="450" loading="lazy" decoding="async" class="mt-3 aspect-[16/6] w-full rounded-xl object-cover">
-                                @endif
+                                <div class="mt-3">
+                                    <img id="page_home_banner_2_preview" src="{{ $bannerImageUrl2 }}" alt="پیش‌نمایش تصویر بنر 2" width="1200" height="450" loading="lazy" decoding="async" class="aspect-[16/6] w-full rounded-xl object-cover {{ $bannerImageUrl2 !== '' ? '' : 'hidden' }}">
+                                    <div id="page_home_banner_2_placeholder" class="flex aspect-[16/6] w-full items-center justify-center rounded-xl border border-dashed border-[var(--admin-border)] bg-[var(--admin-card)] text-xs text-[var(--admin-muted)] {{ $bannerImageUrl2 !== '' ? 'hidden' : '' }}">تصویر بنر 2 انتخاب نشده است</div>
+                                </div>
                                 <label for="page_home_banner_2_image" class="admin-label mt-4 block">تصویر بنر 2</label>
-                                <input id="page_home_banner_2_image" name="page_home_banner_2_image" type="file" accept="image/jpeg,image/png,image/webp" class="admin-input mt-2 w-full p-2">
+                                <input id="page_home_banner_2_image" name="page_home_banner_2_image" type="file" accept="image/jpeg,image/png,image/webp"
+                                       data-image-preview-input data-image-preview-target="#page_home_banner_2_preview"
+                                       data-image-preview-placeholder="#page_home_banner_2_placeholder"
+                                       class="admin-input mt-2 w-full p-2">
                                 <p class="mt-1 text-[10px] leading-5 text-[var(--admin-muted)]">JPG، PNG یا WEBP؛ نسبت ۱۶:۶؛ حداقل ۱۲۰۰×۳۷۵؛ حداکثر ۲۰ مگابایت.</p>
                                 @error('page_home_banner_2_image')
                                     <p role="alert" class="mt-2 text-xs text-[var(--admin-danger)]">{{ $message }}</p>
@@ -236,11 +244,15 @@
                                         <span class="text-[10px] text-[var(--admin-muted)]">بدون تصویر</span>
                                     @endif
                                 </div>
-                                @if($bannerImageUrl3 !== '')
-                                    <img src="{{ $bannerImageUrl3 }}" alt="پیش‌نمایش بنر 3" width="1200" height="450" loading="lazy" decoding="async" class="mt-3 aspect-[16/6] w-full rounded-xl object-cover">
-                                @endif
+                                <div class="mt-3">
+                                    <img id="page_home_banner_3_preview" src="{{ $bannerImageUrl3 }}" alt="پیش‌نمایش تصویر بنر 3" width="1200" height="450" loading="lazy" decoding="async" class="aspect-[16/6] w-full rounded-xl object-cover {{ $bannerImageUrl3 !== '' ? '' : 'hidden' }}">
+                                    <div id="page_home_banner_3_placeholder" class="flex aspect-[16/6] w-full items-center justify-center rounded-xl border border-dashed border-[var(--admin-border)] bg-[var(--admin-card)] text-xs text-[var(--admin-muted)] {{ $bannerImageUrl3 !== '' ? 'hidden' : '' }}">تصویر بنر 3 انتخاب نشده است</div>
+                                </div>
                                 <label for="page_home_banner_3_image" class="admin-label mt-4 block">تصویر بنر 3</label>
-                                <input id="page_home_banner_3_image" name="page_home_banner_3_image" type="file" accept="image/jpeg,image/png,image/webp" class="admin-input mt-2 w-full p-2">
+                                <input id="page_home_banner_3_image" name="page_home_banner_3_image" type="file" accept="image/jpeg,image/png,image/webp"
+                                       data-image-preview-input data-image-preview-target="#page_home_banner_3_preview"
+                                       data-image-preview-placeholder="#page_home_banner_3_placeholder"
+                                       class="admin-input mt-2 w-full p-2">
                                 <p class="mt-1 text-[10px] leading-5 text-[var(--admin-muted)]">JPG، PNG یا WEBP؛ نسبت ۱۶:۶؛ حداقل ۱۲۰۰×۳۷۵؛ حداکثر ۲۰ مگابایت.</p>
                                 @error('page_home_banner_3_image')
                                     <p role="alert" class="mt-2 text-xs text-[var(--admin-danger)]">{{ $message }}</p>
@@ -267,11 +279,15 @@
                                         <span class="text-[10px] text-[var(--admin-muted)]">بدون تصویر</span>
                                     @endif
                                 </div>
-                                @if($bannerImageUrl4 !== '')
-                                    <img src="{{ $bannerImageUrl4 }}" alt="پیش‌نمایش بنر 4" width="1200" height="450" loading="lazy" decoding="async" class="mt-3 aspect-[16/6] w-full rounded-xl object-cover">
-                                @endif
+                                <div class="mt-3">
+                                    <img id="page_home_banner_4_preview" src="{{ $bannerImageUrl4 }}" alt="پیش‌نمایش تصویر بنر 4" width="1200" height="450" loading="lazy" decoding="async" class="aspect-[16/6] w-full rounded-xl object-cover {{ $bannerImageUrl4 !== '' ? '' : 'hidden' }}">
+                                    <div id="page_home_banner_4_placeholder" class="flex aspect-[16/6] w-full items-center justify-center rounded-xl border border-dashed border-[var(--admin-border)] bg-[var(--admin-card)] text-xs text-[var(--admin-muted)] {{ $bannerImageUrl4 !== '' ? 'hidden' : '' }}">تصویر بنر 4 انتخاب نشده است</div>
+                                </div>
                                 <label for="page_home_banner_4_image" class="admin-label mt-4 block">تصویر بنر 4</label>
-                                <input id="page_home_banner_4_image" name="page_home_banner_4_image" type="file" accept="image/jpeg,image/png,image/webp" class="admin-input mt-2 w-full p-2">
+                                <input id="page_home_banner_4_image" name="page_home_banner_4_image" type="file" accept="image/jpeg,image/png,image/webp"
+                                       data-image-preview-input data-image-preview-target="#page_home_banner_4_preview"
+                                       data-image-preview-placeholder="#page_home_banner_4_placeholder"
+                                       class="admin-input mt-2 w-full p-2">
                                 <p class="mt-1 text-[10px] leading-5 text-[var(--admin-muted)]">JPG، PNG یا WEBP؛ نسبت ۱۶:۶؛ حداقل ۱۲۰۰×۳۷۵؛ حداکثر ۲۰ مگابایت.</p>
                                 @error('page_home_banner_4_image')
                                     <p role="alert" class="mt-2 text-xs text-[var(--admin-danger)]">{{ $message }}</p>
