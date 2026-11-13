@@ -120,6 +120,26 @@
                 <textarea name="content_body" rows="7" maxlength="12000" class="admin-textarea mt-2 w-full" placeholder="نکات مهم انتخاب، اندازه‌گیری، جنس، نصب و نگهداری محصولات این دسته را بنویسید...">{{ old('content_body', $category->content_body ?? '') }}</textarea>
                 @error('content_body')<span class="mt-1 block text-xs text-[var(--admin-danger)]">{{ $message }}</span>@enderror
             </label>
+            @php($categoryFaqs = old('faqs', $category->faqs ?? []))
+            <div class="border-t border-[var(--admin-border)] pt-5">
+                <h4 class="text-sm font-bold text-[var(--admin-text)]">پرسش‌های متداول این دسته</h4>
+                <p class="mt-1 text-xs leading-6 text-[var(--admin-muted)]">حداکثر ۷ پرسش و پاسخ؛ فقط مواردی را ثبت کنید که برای همه محصولات این دسته درست است.</p>
+                <div class="mt-4 space-y-4">
+                    @for($faqIndex = 0; $faqIndex < 7; $faqIndex++)
+                        @php($faq = $categoryFaqs[$faqIndex] ?? [])
+                        <div class="grid gap-3 rounded-xl border border-[var(--admin-border)] p-3 sm:grid-cols-2">
+                            <label class="block text-xs font-semibold">پرسش {{ $faqIndex + 1 }}<input name="faqs[{{ $faqIndex }}][question]" maxlength="180" value="{{ old("faqs.{$faqIndex}.question", $faq['question'] ?? '') }}" class="admin-input mt-2 w-full"></label>
+                            <label class="block text-xs font-semibold">پاسخ<textarea name="faqs[{{ $faqIndex }}][answer]" maxlength="1200" rows="2" class="admin-textarea mt-2 w-full">{{ old("faqs.{$faqIndex}.answer", $faq['answer'] ?? '') }}</textarea></label>
+                        </div>
+                    @endfor
+                </div>
+                @error('faqs')<p class="mt-2 text-xs text-[var(--admin-danger)]">{{ $message }}</p>@enderror
+                @foreach($errors->getMessages() as $errorKey => $messages)
+                    @if(str_starts_with($errorKey, 'faqs.'))
+                        @foreach($messages as $message)<p class="mt-1 text-xs text-[var(--admin-danger)]">{{ $message }}</p>@endforeach
+                    @endif
+                @endforeach
+            </div>
         </div>
 
         <div class="admin-card p-6">
