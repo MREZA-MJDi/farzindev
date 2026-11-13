@@ -379,7 +379,7 @@
                                 $hasMoreDescription = mb_strlen($descriptionText) > 420;
                             @endphp
                             <div class="border-t border-[var(--livora-border)] py-4 text-sm leading-8 text-[var(--livora-stone)]" x-data="{ expanded: false }">
-                                <div x-show="!expanded">{{ nl2br(e($descriptionPreview)) }}</div>
+                                <div x-show="!expanded">{{ nl2br(e(\\Illuminate\\Support\\Str::limit((string) $safeDescription, 420))) }}</div>
                                 @if($hasMoreDescription)
                                     <div x-show="expanded" x-cloak>{{ nl2br(e($descriptionText)) }}</div>
                                     <button type="button" class="mt-3 inline-flex min-h-11 items-center rounded-lg font-semibold text-[var(--livora-accent)] underline underline-offset-4" @click="expanded = !expanded" :aria-expanded="expanded.toString()">
