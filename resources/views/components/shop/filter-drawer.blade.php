@@ -1,6 +1,7 @@
 @props([
 'categories' => collect(),
 'selectedCategory' => null,
+'filterableAttributes' => collect(),
 ])
 
 <div
@@ -114,7 +115,7 @@
                     mobile
                     :categories="$categories"
                     :selected-category="$selectedCategory"
-                    :filterable-attributes="$filterableAttributes ?? collect()"
+                    :filterable-attributes="$filterableAttributes"
                 />
 
             </div>
