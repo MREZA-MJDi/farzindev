@@ -1234,9 +1234,19 @@ class FarzinStorefrontTest extends TestCase
             ->assertDontSee(route('categories.show', $inactive->slug), false);
     }
 
-    public function test_public_categories_only_show_active_categories(): void
+    public function test_public_categories_only_show_active_categories_with_active_products(): void
     {
-        $this->category(['name' => 'هود آشپزخانه', 'slug' => 'hoods']);
+        $active = $this->category(['name' => 'هود آشپزخانه', 'slug' => 'hoods']);
+        $this->product($active, [
+            'name' => 'هود فعال برای نمایش دسته',
+            'slug' => 'active-hood-for-category-index',
+            'sku' => 'FAR-ACTIVE-CATEGORY-INDEX',
+        ]);
+
+        $this->category([
+            'name' => 'دسته‌بندی فعال بدون محصول',
+            'slug' => 'active-empty-category',
+        ]);
         $this->category([
             'name' => 'دسته‌بندی غیرفعال دمو',
             'slug' => 'inactive-demo',
@@ -1246,6 +1256,7 @@ class FarzinStorefrontTest extends TestCase
         $this->get(route('categories.index'))
             ->assertOk()
             ->assertSee('هود آشپزخانه')
+            ->assertDontSee('دسته‌بندی فعال بدون محصول')
             ->assertDontSee('دسته‌بندی غیرفعال دمو');
     }
 
