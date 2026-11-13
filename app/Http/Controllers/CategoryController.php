@@ -69,7 +69,7 @@ class CategoryController extends Controller
                         ->orWhereHas('media');
                 }));
 
-        $attributeFilters = $request->query('attributes', []);
+        $attributeFilters = $request->input('attributes', []);
         if (is_array($attributeFilters)) {
             foreach ($attributeFilters as $attributeId => $selectedValue) {
                 $attribute = $filterableAttributes->firstWhere('id', (int) $attributeId);
@@ -133,6 +133,9 @@ class CategoryController extends Controller
             ->latest()
             ->limit(4)
             ->get();
+        if (! empty($attributeFilters)) {
+            $comparisonProducts = collect();
+        }
 
 
         return view('categories.show', [
