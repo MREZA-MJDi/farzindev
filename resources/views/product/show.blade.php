@@ -437,6 +437,8 @@
             </section>
         @endif
 
+        @include('product.partials.faqs')
+
         @if($relatedProducts->isNotEmpty())
             <section class="border-t border-[var(--livora-border)] py-8 sm:py-12" aria-labelledby="related-products-title">
                 <div class="mb-5 flex items-end justify-between gap-3">
