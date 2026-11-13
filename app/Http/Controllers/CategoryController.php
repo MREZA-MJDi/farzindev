@@ -126,7 +126,7 @@ class CategoryController extends Controller
             ->withQueryString();
 
         $keyAttributes = $category->attributes()->wherePivot('is_key_spec', true)->with('options')->get();
-        $comparisonProducts = $category->products()->active()
+        $comparisonProducts = (clone $productQuery)
             ->whereHas('attributeValues')
             ->with(['category.attributes.options', 'attributeValues.attribute', 'attributeValues.option', 'images.media'])
             ->latest()
