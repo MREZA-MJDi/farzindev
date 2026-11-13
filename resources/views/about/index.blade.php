@@ -475,7 +475,7 @@
                     <div class="mx-auto max-w-3xl text-center">
 
                         <p class="text-[10px] font-medium uppercase tracking-[0.24em] text-[var(--livora-accent)]">
-                            فرجی‌هوم
+                            {{ $aboutText('page_about_final_eyebrow', 'فرجی‌هوم') }}
                         </p>
 
                         <h2 class="mt-5 text-4xl font-semibold tracking-tight sm:text-5xl">
