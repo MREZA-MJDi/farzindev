@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Cache;
  */
 class StorefrontPageContent
 {
-    private const CACHE_KEY = 'storefront.page-content.v3';
+    private const CACHE_KEY = 'storefront.page-content.v4';
 
     /**
      * @return array<string, string>
