@@ -129,18 +129,8 @@ class StorefrontPageContent
                 $values[$key] = $translations[$values[$key] ?? ''] ?? ($values[$key] ?? '');
             }
 
-            // Normalize public copy saved by the former store identity without
-            // discarding editor-managed text or rewriting unrelated wording.
-            foreach ($values as &$value) {
-                $value = str_ireplace(
-                    ['فرزین فرجی', 'فرزین', 'FARZIN', 'Farzin', 'کاتالوگ آنلاین', 'کاتالوگ محصولات', 'کاتالوگ هود و سینک', 'کاتالوگ فرزین', 'کاتالوگ فرجی‌هوم', 'کاتالوگ'],
-                    ['فرجی‌هوم', 'فرجی‌هوم', 'FARAJI HOME', 'Faraji Home', 'فروشگاه محصولات', 'محصولات', 'محصولات', 'محصولات', 'محصولات', 'محصولات'],
-                    $value
-                );
-                $value = str_ireplace(['خرید آگاهانه', 'انتخاب آگاهانه', 'آگاهانه‌تر ببینید', 'آگاهانه انتخاب کنید'], ['خرید با اطلاعات روشن', 'انتخاب با بررسی مشخصات', 'راهنمای انتخاب', 'با بررسی مشخصات انتخاب کنید'], $value);
-            }
-            unset($value);
-
+            // Only exact, known legacy defaults above are translated. All other
+            // editor-managed text must be returned verbatim after saving.
             return $values;
         });
     }
