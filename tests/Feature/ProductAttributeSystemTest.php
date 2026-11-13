@@ -29,6 +29,9 @@ class ProductAttributeSystemTest extends TestCase
         $this->assertSame($optionCount, AttributeOption::query()->count());
         $this->assertDatabaseHas('categories', ['slug' => 'built-in-stove', 'name' => 'اجاق گاز صفحه‌ای']);
         $this->assertFalse(Category::query()->visibleInStorefront()->where('slug', 'built-in-stove')->exists());
+        $hood = Category::query()->where('slug', 'hoods')->firstOrFail();
+        $this->assertSame(3, $hood->attributes()->wherePivot('is_key_spec', true)->count());
+        $this->assertTrue((bool) $hood->attributes()->where('key', 'hood_body_material')->firstOrFail()->pivot->is_filterable);
     }
 
     public function test_required_attributes_are_validated_by_type_and_category(): void
@@ -38,6 +41,7 @@ class ProductAttributeSystemTest extends TestCase
         $manager = app(ProductAttributeManager::class);
 
         $this->assertNotEmpty($manager->validateValues($sink->id, [], true));
+        $this->assertSame([], $manager->validateValues($sink->id, [], false), 'An incomplete draft must remain saveable.');
 
         $value = function (string $key, string $type, string $text) {
             $attribute = ProductAttribute::query()->where('key', $key)->firstOrFail();
