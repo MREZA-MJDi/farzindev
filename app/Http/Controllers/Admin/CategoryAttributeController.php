@@ -5,6 +5,7 @@ use App\Models\Category;
 use App\Models\ProductAttribute;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 class CategoryAttributeController extends Controller
 {
@@ -30,6 +31,13 @@ class CategoryAttributeController extends Controller
   $ids=$selected->keys()->map(fn($id)=>(int)$id)->all();
   $existing=ProductAttribute::whereIn('id',$ids)->count();
   if($existing!==count($ids)) return back()->withInput()->withErrors(['attributes'=>'یکی از ویژگی‌های انتخاب‌شده معتبر نیست.']);
+  $currentIds=$category->attributes()->pluck('attributes.id')->map(fn($id)=>(int)$id);
+  $removedIds=$currentIds->diff($ids);
+  if($removedIds->isNotEmpty() && ProductAttribute::query()->whereIn('id',$removedIds)
+      ->whereHas('values.product',fn($products)=>$products->where('category_id',$category->id))->exists()) {
+   return back()->withInput()->withErrors(['attributes'=>'یکی از ویژگی‌های حذف‌شده در محصولات این دسته مقدار ثبت‌شده دارد؛ ابتدا مقادیر محصولات را منتقل یا پاک کنید.']);
+  }
+
   $sync=[];
   foreach($selected as $id=>$row) $sync[$id]=[
    'sort_order'=>(int)($row['sort_order']??0),
@@ -38,7 +46,7 @@ class CategoryAttributeController extends Controller
    'is_filterable'=>filter_var($row['is_filterable']??false,FILTER_VALIDATE_BOOLEAN),
    'is_key_spec'=>filter_var($row['is_key_spec']??false,FILTER_VALIDATE_BOOLEAN),
   ];
-  $category->attributes()->sync($sync);
+  DB::transaction(fn () => $category->attributes()->sync($sync));
   return redirect()->route('admin.categories.attributes.edit',$category)->with('success','ویژگی‌های دسته‌بندی ذخیره شدند.');
  }
 }
