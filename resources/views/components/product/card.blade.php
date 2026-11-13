@@ -72,7 +72,7 @@
 <article
     data-product-card
     data-product-slug="{{ $product->slug }}"
-    class="farzin-product-card group relative flex h-full min-w-0 flex-col {{ $variant === 'round' ? 'farzin-product-card--round-media' : '' }} {{ $variant === 'home-shelf' ? 'farzin-product-card--home-shelf' : '' }} {{ ! $isAvailable ? 'is-unavailable' : '' }}"
+    class="farzin-product-card group relative flex h-full min-w-0 flex-col {{ $variant === 'round' ? 'farzin-product-card--round-media' : '' }} {{ $variant === 'home-shelf' ? 'farzin-product-card--home-shelf' : '' }} {{ $variant === 'catalog' ? 'farzin-product-card--catalog' : '' }} {{ ! $isAvailable ? 'is-unavailable' : '' }}"
     @if($reveal) data-farzin-reveal @endif
 >
     <div class="farzin-product-card__media relative overflow-hidden">
@@ -100,7 +100,7 @@
             @endif
         </a>
 
-        <div class="absolute left-3 top-3 z-10 flex flex-col items-start gap-2">
+        <div class="absolute right-3 top-3 z-10 flex max-w-[calc(100%-5rem)] flex-col items-start gap-1.5">
             @if($product->is_new)
                 <span class="farzin-product-badge farzin-product-badge--light">تازه‌وارد</span>
             @endif
@@ -154,7 +154,18 @@
             </h3>
         </a>
 
-        @if($specifications->isNotEmpty())
+        @if($variant === 'catalog')
+            {{-- Reserve equal specification space so missing specs never shift prices or actions. --}}
+            <div class="farzin-product-card__catalog-specs">
+                @if($specifications->isNotEmpty())
+                    <ul class="farzin-product-card__specifications" aria-label="مشخصات کلیدی محصول">
+                        @foreach($specifications as $specification)
+                            <li><span>{{ $specification['label'] }}</span><strong>{{ \Illuminate\Support\Str::limit($specification['value'], 22) }}</strong></li>
+                        @endforeach
+                    </ul>
+                @endif
+            </div>
+        @elseif($specifications->isNotEmpty())
             <ul class="farzin-product-card__specifications" aria-label="مشخصات کلیدی محصول">
                 @foreach($specifications as $specification)
                     <li><span>{{ $specification['label'] }}</span><strong>{{ \Illuminate\Support\Str::limit($specification['value'], 18) }}</strong></li>
@@ -168,13 +179,14 @@
                 <span>تومان</span>
             </p>
             @if($hasDiscount)
+                <span class="farzin-product-card__discount-percent">{{ \App\Helpers\PersianNumberHelper::format($discountPercent) }}٪ تخفیف</span>
                 <span class="farzin-product-card__price-old">
                     {{ \App\Helpers\PersianNumberHelper::format((float) $product->compare_at_price) }} تومان
                 </span>
             @endif
         </div>
 
-        @if($showAvailability)
+        @if($showAvailability && $isAvailable)
             <div class="farzin-product-card__availability {{ $isAvailable ? 'is-available' : 'is-unavailable' }}" aria-label="وضعیت موجودی: {{ $availabilityLabel }}"><span aria-hidden="true"></span>{{ $availabilityLabel }}</div>
         @endif
         <div class="mt-auto grid gap-1.5 pt-2">
