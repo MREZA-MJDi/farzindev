@@ -55,13 +55,13 @@
                                 @if (filled($shopBanner['subtitle']))
                                     <p class="farzin-shop-banner__description mt-4 max-w-xl text-sm leading-8 text-white/80 sm:text-base">{{ $shopBannerSubtitle }}</p>
                                 @endif
-                                <a href="#shop-catalog" class="farzin-shop-banner__action mt-6 inline-flex min-h-11 w-fit items-center gap-2 rounded-xl border border-white/40 bg-white/10 px-5 py-3 text-sm font-medium text-white backdrop-blur-sm transition hover:bg-white/20"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4 shrink-0" aria-hidden="true"><rect x="3.5" y="3.5" width="7" height="7" rx="1.3" /><rect x="13.5" y="3.5" width="7" height="7" rx="1.3" /><rect x="3.5" y="13.5" width="7" height="7" rx="1.3" /><rect x="13.5" y="13.5" width="7" height="7" rx="1.3" /></svg> مشاهده کاتالوگ</a>
+                                <a href="#shop-catalog" class="farzin-shop-banner__action mt-6 inline-flex min-h-11 w-fit items-center gap-2 rounded-xl border border-white/40 bg-white/10 px-5 py-3 text-sm font-medium text-white backdrop-blur-sm transition hover:bg-white/20"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4 shrink-0" aria-hidden="true"><rect x="3.5" y="3.5" width="7" height="7" rx="1.3" /><rect x="13.5" y="3.5" width="7" height="7" rx="1.3" /><rect x="3.5" y="13.5" width="7" height="7" rx="1.3" /><rect x="13.5" y="13.5" width="7" height="7" rx="1.3" /></svg> مشاهده محصولات</a>
                             </div>
                         </div>
                     @else
                         <div class="mt-6 flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
                             <div>
-                                <p class="farzin-shop-banner__eyebrow text-[10px] font-medium uppercase tracking-[0.22em] text-[var(--livora-accent)]">FARAJI HOME / CATALOG</p>
+                                <p class="farzin-shop-banner__eyebrow text-[10px] font-medium uppercase tracking-[0.22em] text-[var(--livora-accent)]">فرجی‌هوم / فروشگاه</p>
                                 <h1 class="farzin-shop-banner__title mt-3 text-3xl font-semibold tracking-tight sm:text-4xl">{{ $shopBannerTitle }}</h1>
                                 <p class="farzin-shop-banner__description mt-3 max-w-2xl text-sm leading-8 text-[var(--livora-stone)]">{{ $shopBannerSubtitle }}</p>
                             </div>
@@ -172,7 +172,7 @@
                                 </p>
 
                                 <h3 class="mt-3 text-sm font-semibold">
-                                    انتخاب آگاهانه
+                                    راهنمای انتخاب
                                 </h3>
 
                                 <p class="mt-2 text-xs leading-7 text-[var(--livora-stone)]">
@@ -246,7 +246,7 @@
                         <div class="rounded-3xl border border-[var(--livora-border)] bg-[var(--livora-white)] p-4 sm:p-5">
 
                             <div class="farzin-shop-toolbar">
-                                <form action="{{ route('shop.index') }}" method="GET" role="search" aria-label="جستجوی کاتالوگ هود و سینک" class="farzin-shop-search">
+                                <form action="{{ route('shop.index') }}" method="GET" role="search" aria-label="جستجوی محصولات فروشگاه" class="farzin-shop-search">
                                     @foreach(request()->except(['search', 'page']) as $filterName => $filterValue)
                                         @if(is_scalar($filterValue) && (string) $filterValue !== '')
                                             <input type="hidden" name="{{ $filterName }}" value="{{ $filterValue }}">
