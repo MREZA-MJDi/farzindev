@@ -483,6 +483,8 @@
 
                 </div>
 
+                @include('admin.products.partials.faq-fields')
+
             </div>
 
         </div>
