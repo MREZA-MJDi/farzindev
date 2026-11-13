@@ -50,10 +50,9 @@ class CategoryController extends Controller
             abort(404);
         }
 
-        // Keep a manually opened category guide reachable; empty categories are
-        // excluded from public category indexes, homepage cards and shop filters.
+        // Empty categories are hidden from every public entry point, including direct URLs.
         abort_unless(
-            Category::query()->active()->whereKey($category->getKey())->exists(),
+            Category::query()->visibleInStorefront()->whereKey($category->getKey())->exists(),
             404
         );
 
