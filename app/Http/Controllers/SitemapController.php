@@ -82,7 +82,7 @@ class SitemapController extends Controller
     private function publicUrlCounts(): array
     {
         return [
-            'pages' => 6,
+            'pages' => 10,
             'categories' => $this->indexableCategories()->count(),
             'products' => $this->indexableProducts()->count(),
             'blog' => $this->indexableBlogPosts()->count(),
