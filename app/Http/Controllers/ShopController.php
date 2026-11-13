@@ -62,8 +62,9 @@ class ShopController extends Controller
             });
         }
 
-        $selectedCategory = ! empty($filters['category'])
-            ? Category::query()->visibleInStorefront()->where('slug', $filters['category'])->first()
+        $selectedCategorySlug = trim((string) $request->input('category', $filters['category'] ?? ''));
+        $selectedCategory = $selectedCategorySlug !== ''
+            ? Category::query()->where('is_active', true)->where('slug', $selectedCategorySlug)->first()
             : null;
         $filterableAttributes = $selectedCategory
             ? $selectedCategory->attributes()->wherePivot('is_filterable', true)->with('options')->get()
