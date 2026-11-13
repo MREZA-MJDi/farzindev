@@ -126,6 +126,10 @@
                         $displayStock = $product->variants_count > 0
                             ? (int) ($product->active_variants_stock ?? 0)
                             : (int) $product->stock;
+                        $requiredAttributes = $product->category?->attributes?->filter(fn ($attribute) => (bool) $attribute->pivot->is_required) ?? collect();
+                        $savedAttributeValues = $product->attributeValues->groupBy('attribute_id');
+                        $completedAttributes = $requiredAttributes->filter(fn ($attribute) => $savedAttributeValues->has($attribute->id)
+                            && $savedAttributeValues->get($attribute->id)->contains(fn ($value) => $value->option_id !== null || $value->value_text !== null || $value->value_number !== null || $value->value_boolean !== null))->count();
                     @endphp
 
                     <tr>
@@ -171,6 +175,9 @@
 
                                     <p class="mt-1 truncate text-xs text-[var(--admin-muted)]">
                                         {{ $product->short_description ?: 'بدون توضیح کوتاه' }}
+                                    </p>
+                                    <p class="mt-1 text-[10px] {{ $completedAttributes === $requiredAttributes->count() ? 'text-emerald-700' : 'text-amber-700' }}">
+                                        {{ $requiredAttributes->count() ? 'تکمیل مشخصات الزامی: ' . \\App\\Helpers\\PersianNumberHelper::format($completedAttributes) . ' از ' . \\App\\Helpers\\PersianNumberHelper::format($requiredAttributes->count()) : 'ویژگی اجباری تعریف نشده' }}
                                     </p>
                                 </div>
 
