@@ -204,6 +204,16 @@
                 </a>
 
 
+                <a href="{{ route('admin.product-attributes.index') }}"
+                   @class([
+                       'group flex items-center gap-3 rounded-2xl px-3 py-3 text-xs font-medium transition',
+                       'bg-[var(--admin-accent-soft)] text-[var(--admin-accent-dark)]' => request()->routeIs('admin.product-attributes.*'),
+                       'text-[var(--admin-text-soft)] hover:bg-[var(--admin-surface)] hover:text-[var(--admin-text)]' => !request()->routeIs('admin.product-attributes.*'),
+                   ])>
+                    <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[var(--admin-surface)] text-[var(--admin-muted)]">⚙</span>
+                    <span class="flex-1">ویژگی‌های فنی</span>
+                </a>
+
                 {{-- Media --}}
                 <a
                     href="{{ route('admin.media.index') }}"
