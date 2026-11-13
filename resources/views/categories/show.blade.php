@@ -79,11 +79,9 @@
     $categoryPageCanonical = $category->canonical_url ?: route('categories.show', $category->slug);
     $categoryOgTitle = $normalizeCategoryCopy($category->og_title ?: $categoryPageTitle);
     $categoryOgDescription = $normalizeCategoryCopy($category->og_description ?: $categoryPageDescription);
-    $categoryHeroDescription = $categoryGuide['intro'] ?? (
-        filled($category->description)
-            ? $normalizeCategoryCopy($category->description)
-            : 'مدل‌های این دسته را بررسی کنید و مشخصات، قیمت و گزینه‌های موجود را با نیاز آشپزخانه خود تطبیق دهید.'
-    );
+    $categoryHeroDescription = filled($category->description)
+        ? $normalizeCategoryCopy($category->description)
+        : ($categoryGuide['intro'] ?? 'مدل‌های این دسته را بررسی کنید و مشخصات، قیمت و گزینه‌های موجود را با نیاز آشپزخانه خود تطبیق دهید.');
     $categoryHeroImage = $category->homepage_image_url ?: $category->image_url;
     $categoryHeroImageSrcset = $category->homepage_image_url
         ? $category->homepage_image_srcset
