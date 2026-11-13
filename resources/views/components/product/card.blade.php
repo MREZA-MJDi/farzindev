@@ -64,7 +64,14 @@
         $specificationLabels = ['width'=>'عرض','installation'=>'نصب','material'=>'جنس','material_type'=>'جنس','color'=>'رنگ','capacity'=>'ظرفیت','type'=>'نوع'];
         $specifications = collect($product->specifications ?? [])
             ->filter(static fn ($value): bool => is_scalar($value) && filled($value))
-            ->map(fn ($value, $key): array => ['label'=>$specificationLabels[$key] ?? (string)$key,'value'=>trim((string)$value)])
+            ->map(function ($value, $key) use ($specificationLabels): array {
+                $displayValue = trim((string) $value);
+                // Width values entered without a unit are shown explicitly in centimetres.
+                if ($key === 'width' && is_numeric($displayValue)) {
+                    $displayValue = \\App\\Helpers\\PersianNumberHelper::format($displayValue) . ' سانتی‌متر';
+                }
+                return ['label' => $specificationLabels[$key] ?? (string) $key, 'value' => $displayValue];
+            })
             ->take(3);
     }
 @endphp
