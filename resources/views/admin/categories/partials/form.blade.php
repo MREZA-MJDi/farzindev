@@ -288,9 +288,7 @@
 
 
             @php
-                $categoryImageUrl = $editing
-                    ? $category->image_url
-                    : null;
+                $categoryImageUrl = (isset($editing) && $editing) ? ($category->image_url ?? null) : null;
             @endphp
 
             <div class="admin-image-preview mb-5 aspect-[4/3]">
