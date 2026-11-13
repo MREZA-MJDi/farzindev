@@ -36,7 +36,7 @@
 
             @if($categories->isNotEmpty())
 
-                <div class="space-y-2">
+                <div class="max-h-56 space-y-2 overflow-y-auto overscroll-contain pe-1 [scrollbar-width:thin]">
 
                     @foreach($categories as $category)
 
