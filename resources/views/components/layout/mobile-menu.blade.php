@@ -205,25 +205,7 @@
                 </div>
             </div>
 
-            {{-- Buying guide --}}
-            <div class="mt-7 rounded-3xl bg-[var(--livora-ink)] p-5 text-white">
-                <p class="text-[10px] font-semibold uppercase tracking-[0.18em] text-white/60">
-                    راهنمای خرید {{ $brandName }}
-                </p>
-                <h2 class="mt-3 text-base font-bold leading-8 text-white">
-                    هود و سینک مناسب آشپزخانه‌ات را آگاهانه انتخاب کن.
-                </h2>
-                <p class="mt-2 text-xs leading-7 text-white/75">
-                    ابعاد، نوع نصب، جنس و مشخصات هر محصول را با نیاز آشپزخانه تطبیق بده.
-                </p>
-                <a
-                    href="{{ route('shop.index') }}"
-                    @click="mobileOpen = false"
-                    class="mt-4 inline-flex min-h-11 items-center justify-center rounded-xl bg-white px-5 py-2.5 text-xs font-bold text-[var(--livora-ink)] transition hover:bg-[var(--livora-accent-soft)] hover:text-[var(--livora-accent)]"
-                >
-                    مشاهده محصولات
-                </a>
-            </div>
+
         </div>
 
         {{-- Drawer footer --}}
