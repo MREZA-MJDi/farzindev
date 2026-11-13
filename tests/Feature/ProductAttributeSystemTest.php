@@ -157,6 +157,22 @@ class ProductAttributeSystemTest extends TestCase
     {
         $this->seed(ProductAttributeSeeder::class);
         $category = Category::query()->where('slug', 'sinks')->firstOrFail();
+        $product = Product::query()->create([
+            'category_id' => $category->id,
+            'name' => 'سینک فعال برای نمایش پرسش‌ها',
+            'slug' => 'sink-faq-visible',
+            'sku' => 'FAR-SINK-FAQ-VISIBLE',
+            'price' => 10000000,
+            'stock' => 2,
+            'status' => 'active',
+        ]);
+        ProductImage::query()->create([
+            'product_id' => $product->id,
+            'path' => 'https://cdn.example.test/sink-faq-visible.webp',
+            'alt' => $product->name,
+            'sort_order' => 0,
+            'is_primary' => true,
+        ]);
 
         $this->get(route('categories.show', $category->slug))
             ->assertOk()
