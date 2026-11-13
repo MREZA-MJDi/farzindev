@@ -402,6 +402,10 @@ class SitemapController extends Controller
             '/blog',
             '/about',
             '/contact',
+            '/shipping-returns',
+            '/warranty',
+            '/payment-installments',
+            '/faq',
         ])->map(fn (string $path): array => [
             'url' => $seoSettings->canonicalUrl($path, false),
             'lastmod' => null,
