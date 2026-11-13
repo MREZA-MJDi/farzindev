@@ -92,6 +92,7 @@ class ShopFilterRequest extends FormRequest
             'sort' => [
                 'nullable',
                 Rule::in([
+                    'available_first',
                     'newest',
                     'popular',
                     'price_asc',
@@ -175,7 +176,7 @@ class ShopFilterRequest extends FormRequest
             | Boolean
             |--------------------------------------------------------------------------
             */
-            'in_stock' => $this->boolean('in_stock'),
+            'in_stock' => $this->has('in_stock') ? $this->boolean('in_stock') : true,
             'featured' => $this->boolean('featured'),
             'new' => $this->boolean('new'),
             'installment' => $this->boolean('installment'),
