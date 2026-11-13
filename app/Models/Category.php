@@ -22,6 +22,7 @@ class Category extends Model
         'description',
         'content_title',
         'content_body',
+        'faqs',
         'content_image',
         'meta_title',
         'meta_description',
@@ -40,6 +41,7 @@ class Category extends Model
         return [
             'is_active' => 'boolean',
             'sort_order' => 'integer',
+            'faqs' => 'array',
         ];
     }
 
