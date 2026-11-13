@@ -69,6 +69,35 @@
             @endforeach
         </nav>
 
+        <details class="rounded-2xl border border-[var(--admin-border)] bg-[var(--admin-card)] p-4 sm:p-5">
+            <summary class="cursor-pointer text-sm font-bold text-[var(--admin-text)]">راهنمای اینکه هر تب دقیقاً کدام صفحه را کنترل می‌کند</summary>
+            <div class="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                <div class="rounded-xl bg-[var(--admin-surface-soft)] p-3">
+                    <strong class="block text-xs">صفحه اصلی</strong>
+                    <span class="mt-1 block text-[11px] text-[var(--admin-muted)]">/ — اسلایدرها، دسته‌ها، محصولات منتخب، راهنماها، مجله و بخش پایانی</span>
+                </div>
+                <div class="rounded-xl bg-[var(--admin-surface-soft)] p-3">
+                    <strong class="block text-xs">درباره ما</strong>
+                    <span class="mt-1 block text-[11px] text-[var(--admin-muted)]">/about — معرفی، ارزش‌ها، مسیر مشتری و دعوت پایانی</span>
+                </div>
+                <div class="rounded-xl bg-[var(--admin-surface-soft)] p-3">
+                    <strong class="block text-xs">اطلاعات خرید</strong>
+                    <span class="mt-1 block text-[11px] text-[var(--admin-muted)]">/shipping-returns، /warranty، /payment-installments و /faq</span>
+                </div>
+                <div class="rounded-xl bg-[var(--admin-surface-soft)] p-3">
+                    <strong class="block text-xs">قوانین و حریم خصوصی</strong>
+                    <span class="mt-1 block text-[11px] text-[var(--admin-muted)]">/terms و /privacy — عنوان، مقدمه، بندها و راه ارتباطی</span>
+                </div>
+                <div class="rounded-xl bg-[var(--admin-surface-soft)] p-3">
+                    <strong class="block text-xs">تایپوگرافی</strong>
+                    <span class="mt-1 block text-[11px] text-[var(--admin-muted)]">مقیاس فونت، ارتفاع خط و عرض محتوا در صفحات عمومی</span>
+                </div>
+            </div>
+            <p class="mt-3 text-[11px] leading-6 text-[var(--admin-muted)]">
+                محصولات و دسته‌بندی‌ها از مدیریت محصولات، مقاله‌ها از مدیریت مجله، اطلاعات تلفن و نشانی از تنظیمات فروشگاه و عنوان‌های سئو از بخش SEO کنترل می‌شوند؛ این تب‌ها آن داده‌ها را تغییر نمی‌دهند.
+            </p>
+        </details>
+
         <section class="admin-card overflow-hidden">
             <div class="border-b border-[var(--admin-border)] bg-[var(--admin-surface-soft)] px-5 py-5 sm:px-7">
                 <h2 class="text-base font-bold text-[var(--admin-text)]">{{ $group['title'] }}</h2>
