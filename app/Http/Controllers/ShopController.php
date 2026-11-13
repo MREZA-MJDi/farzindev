@@ -190,7 +190,7 @@ class ShopController extends Controller
         */
 
         $categories = Category::query()
-            ->active()
+            ->visibleInStorefront()
             ->withCount([
                 'products' => fn ($query) => $query->active(),
             ])
