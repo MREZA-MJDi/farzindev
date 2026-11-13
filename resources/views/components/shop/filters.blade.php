@@ -11,7 +11,7 @@
     @endif
 
     {{-- =========================================================
-         CATEGORY
+         دسته‌بندی
     ========================================================== --}}
 
     <section>
@@ -19,7 +19,7 @@
         <div>
 
             <p class="text-[10px] uppercase tracking-[0.18em] text-[var(--livora-accent)]">
-                CATEGORY
+                دسته‌بندی
             </p>
 
             <h3 class="mt-2 text-sm font-semibold">
@@ -87,11 +87,11 @@
 
 
     {{-- =========================================================
-         STOCK AVAILABILITY
+         STOCK موجودی
     ========================================================== --}}
     <section>
         <div>
-            <p class="text-[10px] uppercase tracking-[0.18em] text-[var(--livora-accent)]">AVAILABILITY</p>
+            <p class="text-[10px] uppercase tracking-[0.18em] text-[var(--livora-accent)]">موجودی</p>
             <h3 class="mt-2 text-sm font-semibold">وضعیت موجودی</h3>
         </div>
         <div class="mt-4">
@@ -112,7 +112,7 @@
         <div>
 
             <p class="text-[10px] uppercase tracking-[0.18em] text-[var(--livora-accent)]">
-                PAYMENT
+                روش پرداخت
             </p>
 
             <h3 class="mt-2 text-sm font-semibold">
@@ -149,7 +149,7 @@
 
 
     {{-- =========================================================
-         PRICE
+         قیمت
     ========================================================== --}}
 
     <section>
@@ -157,7 +157,7 @@
         <div>
 
             <p class="text-[10px] uppercase tracking-[0.18em] text-[var(--livora-accent)]">
-                PRICE
+                قیمت
             </p>
 
             <h3 class="mt-2 text-sm font-semibold">
@@ -221,7 +221,7 @@
 
     @if($filterableAttributes->isNotEmpty())
     <section class="border-t border-[var(--livora-border)] pt-5">
-        <p class="text-[10px] uppercase tracking-[0.18em] text-[var(--livora-accent)]">SPECIFICATIONS</p>
+        <p class="text-[10px] uppercase tracking-[0.18em] text-[var(--livora-accent)]">مشخصات فنی</p>
         <h3 class="mt-2 text-sm font-semibold">فیلتر بر اساس مشخصات</h3>
         <div class="mt-4 space-y-4">
             @foreach($filterableAttributes as $attribute)
@@ -326,4 +326,7 @@
 
     </section>
 
+    @unless($mobile)
+        <button type="submit" class="w-full rounded-xl bg-[var(--livora-ink)] px-4 py-3 text-xs font-bold text-white transition hover:bg-[var(--livora-accent)]">اعمال فیلترها</button>
+    @endunless
 </div>
