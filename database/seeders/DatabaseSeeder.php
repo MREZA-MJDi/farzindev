@@ -57,8 +57,9 @@ class DatabaseSeeder extends Seeder
             $this->call(ProductSeeder::class);
         }
 
-        // The schema-driven product specification dictionary is safe and idempotent in every environment.
-        if (app()->environment('local')) {
+        // The attribute dictionary is used in local and test bootstraps. Production
+        // runs it explicitly after the existing category mapping is confirmed.
+        if (app()->environment(['local', 'testing'])) {
             $this->call(ProductAttributeSeeder::class);
         }
 
