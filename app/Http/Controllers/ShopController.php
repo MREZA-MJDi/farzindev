@@ -26,7 +26,8 @@ class ShopController extends Controller
 
         $query = Product::query()
             ->with([
-                'category',
+                'category.attributes.options',
+                'attributeValues.option',
                 // Load ordered image candidates so cards can skip missing files and use the next available image.
                 'images' => fn ($query) => $query
                     ->select(['id', 'product_id', 'media_id', 'path', 'alt', 'sort_order', 'is_primary'])
