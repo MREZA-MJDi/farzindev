@@ -2495,3 +2495,31 @@ body.home-body{
     width: 100%;
     height: 100%;
 }
+
+
+/* Typed key specifications shared by home product shelves. */
+.fz-home-product-card__specs{
+    display:flex;
+    flex-wrap:wrap;
+    gap:.35rem;
+    margin:.65rem 0 0;
+    padding:0;
+    list-style:none;
+}
+.fz-home-product-card__specs li{
+    display:flex;
+    align-items:center;
+    gap:.3rem;
+    min-width:0;
+    padding:.25rem .45rem;
+    border:1px solid var(--fz-line);
+    border-radius:7px;
+    background:var(--fz-page);
+    color:var(--fz-text);
+    font-size:.62rem;
+    line-height:1.6;
+}
+.fz-home-product-card__specs li span{
+    color:var(--fz-muted);
+    font-weight:500;
+}
