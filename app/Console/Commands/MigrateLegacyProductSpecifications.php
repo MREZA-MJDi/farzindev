@@ -38,6 +38,7 @@ class MigrateLegacyProductSpecifications extends Command
      $attributeKey=$this->maps[$type][$legacyKey];
      $attribute=ProductAttribute::where('key',$attributeKey)->with('options')->first();
      if(!$attribute){$stats['unmatched']++;$this->warn("Product #{$product->id}: attribute {$attributeKey} is not seeded.");continue;}
+     if ($product->attributeValues->contains('attribute_id', $attribute->id)) { $stats['skipped']++; continue; }
      $text=trim((string)$value);
      if($attributeKey==='width' && (int)$this->digits($text)===50 && $this->legacyBasinCount($legacy)>=2){
       $stats['suspicious']++; $this->warn("Product #{$product->id} ({$product->sku}): width=50 with multiple basins; skipped for manual review."); continue;
