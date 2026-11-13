@@ -114,7 +114,7 @@
                                  FILTER CARD
                             ================================================== --}}
 
-                            <div class="rounded-3xl border border-[var(--livora-border)] bg-[var(--livora-white)] p-5">
+                            <div class="max-h-[calc(100vh-9rem)] overflow-y-auto overscroll-contain rounded-3xl border border-[var(--livora-border)] bg-[var(--livora-white)] p-4 [scrollbar-width:thin] sm:p-5">
 
                                 <div class="flex items-center justify-between gap-3">
 
