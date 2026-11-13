@@ -180,7 +180,8 @@
 
                 <input
                     id="{{ $mobile ? 'min_price_mobile' : 'min_price_desktop' }}"
-                    type="number"
+                    type="text"
+                    inputmode="numeric"
                     name="min_price"
                     min="0"
                     value="{{ request('min_price') }}"
@@ -203,7 +204,8 @@
 
                 <input
                     id="{{ $mobile ? 'max_price_mobile' : 'max_price_desktop' }}"
-                    type="number"
+                    type="text"
+                    inputmode="numeric"
                     name="max_price"
                     min="0"
                     value="{{ request('max_price') }}"
