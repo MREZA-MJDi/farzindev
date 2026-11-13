@@ -58,7 +58,9 @@ class DatabaseSeeder extends Seeder
         }
 
         // The schema-driven product specification dictionary is safe and idempotent in every environment.
-        $this->call(ProductAttributeSeeder::class);
+        if (app()->environment(['local', 'testing'])) {
+            $this->call(ProductAttributeSeeder::class);
+        }
 
         $this->call([
             UserSeeder::class,
