@@ -362,7 +362,7 @@
                 <div class="fz-contact-bottom__inner" data-fz-reveal>
                     <div>
                         <p class="fz-contact-kicker">نیاز به راهنمایی درباره محصول دارید؟</p>
-                        <h2>برای انتخاب دقیق‌تر، از کاتالوگ شروع کنید.</h2>
+                        <h2>برای بررسی مدل‌ها و مشخصات، وارد فروشگاه شوید.</h2>
                         <p>مدل‌ها و مشخصات هود و سینک را ببینید؛ هر سؤال دیگری داشتید، همین‌جا به ما پیام بدهید.</p>
                     </div>
                     <a href="{{ route('shop.index') }}" class="fz-contact-button fz-contact-button--light"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4" aria-hidden="true"><path d="M3.5 9h17l-1 11h-15l-1-11Z" /><path d="M8 9V6.5a4 4 0 0 1 8 0V9" /></svg> رفتن به فروشگاه</a>
