@@ -242,6 +242,37 @@
                              SORTING TOOLBAR
                         ================================================== --}}
 
+                        {{-- Catalogue search, independent from the global header search. --}}
+                        <form method="GET" action="{{ route('shop.index') }}" role="search" class="farzin-shop-searchbar mb-5">
+                            @foreach(request()->except(['search', 'page']) as $key => $value)
+                                @if(is_array($value))
+                                    @foreach($value as $nestedKey => $nestedValue)
+                                        @if(is_array($nestedValue))
+                                            @foreach($nestedValue as $deepKey => $deepValue)
+                                                <input type="hidden" name="{{ $key }}[{{ $nestedKey }}][{{ $deepKey }}]" value="{{ $deepValue }}">
+                                            @endforeach
+                                        @else
+                                            <input type="hidden" name="{{ $key }}[{{ $nestedKey }}]" value="{{ $nestedValue }}">
+                                        @endif
+                                    @endforeach
+                                @else
+                                    <input type="hidden" name="{{ $key }}" value="{{ $value }}">
+                                @endif
+                            @endforeach
+                            <label class="sr-only" for="shop-catalog-search">جست‌وجوی محصولات فروشگاه</label>
+                            <div class="farzin-shop-searchbar__field">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true">
+                                    <circle cx="10.8" cy="10.8" r="6.8"></circle>
+                                    <path stroke-linecap="round" d="m16 16 4.5 4.5"></path>
+                                </svg>
+                                <input id="shop-catalog-search" type="search" name="search" value="{{ request('search') }}" maxlength="150" placeholder="جست‌وجوی نام محصول، برند یا کد کالا..." autocomplete="off">
+                                @if(request()->filled('search'))
+                                    <a href="{{ route('shop.index', request()->except(['search', 'page'])) }}" class="farzin-shop-searchbar__clear" aria-label="پاک کردن جست‌وجو">پاک کردن</a>
+                                @endif
+                            </div>
+                            <button type="submit" class="farzin-shop-searchbar__submit">جست‌وجو</button>
+                        </form>
+
                         <div class="farzin-shop-sortbar flex items-center justify-between gap-4 border-b border-[var(--livora-border)] pb-4">
                             <div>
                                 <p class="text-[10px] font-semibold tracking-wide text-[var(--livora-accent)]">کاتالوگ فرجی‌هوم</p>
