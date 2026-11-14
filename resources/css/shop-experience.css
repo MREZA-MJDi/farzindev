@@ -405,6 +405,7 @@
         grid-column: 1;
     }
     #app .storefront-content .farzin-shop-layout > .farzin-shop-filter-rail {
+        display: block !important;
         position: fixed;
         z-index: 161;
         top: 0;
