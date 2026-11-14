@@ -30,7 +30,7 @@
 
 @csrf
 
-<div class="grid grid-cols-1 gap-6 xl:grid-cols-3">
+<div class="grid grid-cols-1 gap-6 pb-28 xl:grid-cols-3">
 
     {{-- ============================================================
          Main Information
@@ -1338,36 +1338,18 @@
         </div>
 
 
-        {{-- ========================================================
-             Save
-        ========================================================= --}}
-        <div class="admin-card p-6">
-
-            <div class="flex flex-col gap-3">
-
-                <button
-                    type="submit"
-                    class="admin-btn admin-btn-primary w-full"
-                >
-                    {{ $editing ? 'ذخیره تغییرات' : 'ایجاد محصول' }}
-                </button>
-
-
-                <a
-                    href="{{ route('admin.products.index') }}"
-                    class="admin-btn admin-btn-secondary w-full"
-                >
-                    انصراف
-                </a>
-
-            </div>
-
-        </div>
-
     </div>
 
 </div>
 
+<div class="fixed inset-x-0 bottom-0 z-40 border-t border-[var(--admin-border)] bg-[var(--admin-white)]/95 px-4 py-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))] shadow-[0_-8px_24px_rgba(15,23,42,0.08)] backdrop-blur">
+    <div class="mx-auto flex max-w-7xl flex-col-reverse gap-2 sm:flex-row sm:items-center sm:justify-end">
+        <a href="{{ route('admin.products.index') }}" class="admin-btn admin-btn-secondary w-full sm:w-auto">انصراف</a>
+        <button type="submit" class="admin-btn admin-btn-primary w-full sm:min-w-52 sm:w-auto">
+            {{ $editing ? 'ذخیره تغییرات' : 'ایجاد محصول' }}
+        </button>
+    </div>
+</div>
 
 {{-- ================================================================
      Scripts
@@ -2256,7 +2238,6 @@
                     const labelInput = document.createElement('input');
                     labelInput.type = 'text';
                     labelInput.maxLength = 100;
-                    labelInput.required = true;
                     labelInput.className = 'admin-input mt-2 w-full';
                     labelInput.placeholder = 'مثلاً تعداد شعله';
                     labelInput.value = item.label || '';
