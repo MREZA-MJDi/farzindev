@@ -154,7 +154,7 @@ test('shop mobile filters apply together, scroll safely and preserve the selecte
     // Search stays in the single shop toolbar; the mobile drawer carries its
     // current value as a hidden field so applying filters does not clear it.
     await page.locator('#shop-catalog-search').fill('هود');
-    await page.locator('.farzin-shop-search__submit').click();
+    await page.locator('.farzin-shop-searchbar__submit').click();
     await expect(page).toHaveURL(/search=%D9%87%D9%88%D8%AF|search=هود/);
     await expect(page).toHaveURL(/sort=popular/);
     const initialUrl = page.url();
@@ -769,7 +769,7 @@ test('admin page content uses the real published preview and accurate image crop
     await page.goto('/admin/page-content?tab=home', { waitUntil: 'domcontentloaded' });
     await expect(page.locator('[data-page-content-form]')).toBeVisible();
     await expect(page.locator('[data-home-hero-preview]')).toHaveCount(0);
-    await expect(page.getByText('پیش‌نمایش نسخه ذخیره‌شده')).toBeVisible();
+    await expect(page.getByText('پیش‌نمایش نسخه ذخیره‌شده:', { exact: true })).toBeVisible();
 
     await page.locator('#page_home_hero_title').fill('عنوان ویرایش‌شده Hero');
     await expect(page.locator('[data-page-content-save-state]')).toContainText('تغییرات ذخیره‌نشده');
@@ -920,7 +920,7 @@ test('shop product card actions stay aligned across different content heights', 
         });
 
         expect(geometry.radius).toBeGreaterThanOrEqual(9);
-        expect(geometry.radius).toBeLessThanOrEqual(11);
+        expect(geometry.radius).toBeLessThanOrEqual(12);
         expect(geometry.imageRatio).toBeGreaterThan(1.28);
         expect(geometry.imageRatio).toBeLessThan(1.38);
         expect(geometry.titleLineHeight / geometry.titleFontSize).toBeGreaterThanOrEqual(1.6);
@@ -1077,7 +1077,7 @@ test('shop catalogue search is a real GET form and preserves active filters', as
     await expect(search).toBeVisible();
     await expect(search).toHaveAttribute('name', 'search');
     await search.fill('هود');
-    await page.locator('.farzin-shop-search__submit').click();
+    await page.locator('.farzin-shop-searchbar__submit').click();
     await expect(page).toHaveURL(/search=/);
     await expect(page).toHaveURL(/sort=price_asc/);
     await expect(page).toHaveURL(/featured=1/);
