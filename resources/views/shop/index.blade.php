@@ -234,10 +234,6 @@
                         </form>
 
                         <div class="farzin-shop-sortbar flex items-center justify-between gap-4 border-b border-[var(--livora-border)] pb-4">
-                            <div>
-                                <p class="text-[10px] font-semibold tracking-wide text-[var(--livora-accent)]">کاتالوگ فرجی‌هوم</p>
-                                <p class="mt-1 text-xs text-[var(--livora-stone)]">مرتب‌سازی محصولات</p>
-                            </div>
                             <div class="farzin-shop-toolbar__sort min-w-0">
                                 <x-shop.sorting :products="$products" />
                             </div>
