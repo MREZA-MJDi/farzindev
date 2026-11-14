@@ -625,8 +625,8 @@ class FarzinStorefrontTest extends TestCase
             'value' => 'ساخت بر پایه نیاز واقعی',
         ]);
 
-        app(\App\Services\\App\Services\StorefrontPageContent::class)->clearCache();
-        $copy = app(\App\Services\\App\Services\StorefrontPageContent::class)->all();
+        app(\App\Services\StorefrontPageContent::class)->clearCache();
+        $copy = app(\App\Services\StorefrontPageContent::class)->all();
 
         $this->assertSame('از جستجو تا انتخاب', $copy['page_about_factory_eyebrow']);
         $this->assertSame('ساخت بر پایه نیاز واقعی', $copy['page_about_values_eyebrow']);
@@ -644,7 +644,7 @@ class FarzinStorefrontTest extends TestCase
             ['value' => '0']
         );
 
-        app(\App\Services\\App\Services\StorefrontPageContent::class)->clearCache();
+        app(\App\Services\StorefrontPageContent::class)->clearCache();
 
         $this->get(route('about'))
             ->assertOk()
@@ -943,10 +943,10 @@ class FarzinStorefrontTest extends TestCase
             ['value' => 'فرزین | هود و سینک آشپزخانه']
         );
 
-        app(\App\Services\\App\Services\StorefrontPageContent::class)->clearCache();
+        app(\App\Services\StorefrontPageContent::class)->clearCache();
         app(SeoSettings::class)->clearCache();
 
-        $copy = app(\App\Services\\App\Services\StorefrontPageContent::class)->all();
+        $copy = app(\App\Services\StorefrontPageContent::class)->all();
         $seo = app(SeoSettings::class)->all();
 
         $this->assertSame('فرجی‌هوم؛ تجربه‌ای تازه', $copy['page_about_hero_title']);
@@ -1139,7 +1139,7 @@ class FarzinStorefrontTest extends TestCase
             'is_featured' => true,
         ]);
 
-        $values = collect(app(\App\Services\\App\Services\StorefrontPageContent::class)->defaults())
+        $values = collect(app(\App\Services\StorefrontPageContent::class)->defaults())
             ->filter(fn ($value, $key) => str_starts_with($key, 'page_home_'))
             ->all();
 
@@ -1180,7 +1180,7 @@ class FarzinStorefrontTest extends TestCase
         Storage::fake('public');
         $admin = $this->admin();
 
-        $values = collect(app(\App\Services\\App\Services\StorefrontPageContent::class)->defaults())
+        $values = collect(app(\App\Services\StorefrontPageContent::class)->defaults())
             ->filter(fn ($value, $key) => str_starts_with($key, 'page_home_'))
             ->all();
 
@@ -1207,7 +1207,7 @@ class FarzinStorefrontTest extends TestCase
         Storage::fake('public');
         $admin = $this->admin();
 
-        $values = collect(app(\App\Services\\App\Services\StorefrontPageContent::class)->defaults())
+        $values = collect(app(\App\Services\StorefrontPageContent::class)->defaults())
             ->filter(fn ($value, $key) => str_starts_with($key, 'page_home_'))
             ->all();
 
@@ -5559,7 +5559,7 @@ class FarzinStorefrontTest extends TestCase
             StorefrontSetting::query()->create(compact('key', 'value'));
         }
 
-        app(\App\Services\\App\Services\StorefrontPageContent::class)->clearCache();
+        app(\App\Services\StorefrontPageContent::class)->clearCache();
 
         $this->get(route('home'))
             ->assertOk()
@@ -5592,7 +5592,7 @@ class FarzinStorefrontTest extends TestCase
             'value' => 'home/technology/deleted-technology.webp',
         ]);
 
-        app(\App\Services\\App\Services\StorefrontPageContent::class)->clearCache();
+        app(\App\Services\StorefrontPageContent::class)->clearCache();
 
         $this->actingAs($this->admin(), 'admin')
             ->get(route('admin.page-content.edit', ['tab' => 'home']))
@@ -5809,7 +5809,7 @@ class FarzinStorefrontTest extends TestCase
     {
         Storage::fake('public');
         $admin = $this->admin();
-        $values = collect(app(\App\Services\\App\Services\StorefrontPageContent::class)->defaults())
+        $values = collect(app(\App\Services\StorefrontPageContent::class)->defaults())
             ->filter(fn ($value, $key) => str_starts_with($key, 'page_home_'))
             ->all();
 
