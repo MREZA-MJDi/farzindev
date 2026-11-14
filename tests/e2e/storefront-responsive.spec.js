@@ -1305,6 +1305,8 @@ test('shop banner image fills its frame and catalogue has a small separation', a
             const frame = document.querySelector('.farzin-shop-banner__image');
             const image = frame?.querySelector(':scope > img');
             const catalog = document.querySelector('.farzin-shop-catalog');
+            const eyebrow = document.querySelector('.farzin-shop-banner__eyebrow');
+            const title = document.querySelector('.farzin-shop-banner__title');
             const frameRect = frame.getBoundingClientRect();
             const imageRect = image.getBoundingClientRect();
             const catalogRect = catalog.getBoundingClientRect();
@@ -1315,6 +1317,9 @@ test('shop banner image fills its frame and catalogue has a small separation', a
                 imageWidth: imageRect.width,
                 imageHeight: imageRect.height,
                 objectFit: getComputedStyle(image).objectFit,
+                borderBottomWidth: Number.parseFloat(getComputedStyle(frame).borderBottomWidth),
+                eyebrowText: eyebrow?.textContent.trim(),
+                titleText: title?.textContent.trim(),
                 separation: catalogRect.top - frameRect.bottom,
             };
         });
@@ -1322,6 +1327,8 @@ test('shop banner image fills its frame and catalogue has a small separation', a
         expect(Math.abs(geometry.imageWidth - geometry.frameWidth)).toBeLessThanOrEqual(1);
         expect(Math.abs(geometry.imageHeight - geometry.frameHeight)).toBeLessThanOrEqual(1);
         expect(geometry.objectFit).toBe('cover');
+        expect(geometry.borderBottomWidth).toBeLessThanOrEqual(1);
+        expect(geometry.eyebrowText).not.toBe(geometry.titleText);
         expect(geometry.separation).toBeGreaterThanOrEqual(10);
         expect(geometry.separation).toBeLessThanOrEqual(28);
     }
