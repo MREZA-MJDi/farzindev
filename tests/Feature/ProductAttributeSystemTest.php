@@ -229,6 +229,7 @@ class ProductAttributeSystemTest extends TestCase
         $legacy = [
             ['label' => 'نحوه نصب', 'value' => 'توکار'],
             ['label' => 'طول', 'value' => '۸۶'],
+            ['label' => 'جنس', 'value' => 'استیل'],
         ];
         $product = Product::query()->create([
             'category_id' => $sink->id,
@@ -249,6 +250,11 @@ class ProductAttributeSystemTest extends TestCase
             'product_id' => $product->id,
             'attribute_id' => ProductAttribute::query()->where('key', 'length')->value('id'),
             'value_number' => 86,
+        ]);
+        $this->assertDatabaseHas('product_attribute_values', [
+            'product_id' => $product->id,
+            'attribute_id' => ProductAttribute::query()->where('key', 'sink_material')->value('id'),
+            'option_id' => AttributeOption::query()->where('label', 'استیل')->whereHas('attribute', fn ($query) => $query->where('key', 'sink_material'))->value('id'),
         ]);
         $this->assertSame($legacy, $product->fresh()->specifications);
     }
