@@ -2,9 +2,8 @@
  * Farzin public storefront design system.
  *
  * Geometry is intentionally architectural: square edges, measured borders,
- * restrained depth and strong editorial spacing. Keep this file last in the
- * public layout so page-level utilities cannot silently reintroduce rounded
- * cards, banners or controls.
+ * restrained depth and strong editorial spacing. This is the shared public
+ * foundation; isolated page layers such as the shop catalogue load after it.
  */
 
 :root {
