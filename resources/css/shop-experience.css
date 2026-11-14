@@ -627,7 +627,7 @@
 
 /* RTL grid: the first column is the right-hand filter rail; products own the rest. */
 #app .storefront-content .farzin-shop-catalog {
-    margin: 0;
+    margin-block-start: 12px;
     padding-block: clamp(1.25rem, 2.5vw, 2.25rem);
     background: var(--fz-page, #f5f5f4);
 }
@@ -815,12 +815,12 @@
 #app .storefront-content .farzin-shop-product-grid .farzin-product-card {
     height: 100%;
     border: 1px solid var(--fz-line);
-    border-radius: 0 !important;
+    border-radius: 10px !important;
     background: #fff;
     box-shadow: 0 2px 10px rgba(6,40,79,.045);
 }
 #app .storefront-content .farzin-shop-product-grid .farzin-product-card__image-link {
-    aspect-ratio: 1 / 1;
+    aspect-ratio: 4 / 3;
     background: #f5f5f4;
 }
 #app .storefront-content .farzin-shop-product-grid .farzin-product-card__content {
