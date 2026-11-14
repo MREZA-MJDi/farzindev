@@ -50,7 +50,7 @@
                             >
                             <div class="absolute inset-0 bg-gradient-to-l from-black/75 via-black/25 to-transparent"></div>
                             <div class="farzin-shop-banner__content absolute inset-y-0 right-0 flex max-w-2xl flex-col justify-center p-6 text-white sm:p-10 lg:p-14">
-                                <p class="farzin-shop-banner__eyebrow text-[10px] font-medium uppercase tracking-[0.22em] text-white/70">فروشگاه فرجی‌هوم</p>
+                                <p class="farzin-shop-banner__eyebrow text-[10px] font-medium uppercase tracking-[0.22em] text-white/70">کاتالوگ محصولات</p>
                                 <h1 class="farzin-shop-banner__title mt-3 text-3xl font-semibold leading-tight sm:text-4xl lg:text-5xl">{{ $shopBannerTitle }}</h1>
                                 @if (filled($shopBanner['subtitle']))
                                     <p class="farzin-shop-banner__description mt-4 max-w-xl text-sm leading-8 text-white/80 sm:text-base">{{ $shopBannerSubtitle }}</p>
@@ -61,7 +61,7 @@
                     @else
                         <div class="mt-6 flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
                             <div>
-                                <p class="farzin-shop-banner__eyebrow text-[10px] font-medium uppercase tracking-[0.22em] text-[var(--livora-accent)]">فرجی‌هوم / فروشگاه</p>
+                                <p class="farzin-shop-banner__eyebrow text-[10px] font-medium uppercase tracking-[0.22em] text-[var(--livora-accent)]">کاتالوگ محصولات</p>
                                 <h1 class="farzin-shop-banner__title mt-3 text-3xl font-semibold tracking-tight sm:text-4xl">{{ $shopBannerTitle }}</h1>
                                 <p class="farzin-shop-banner__description mt-3 max-w-2xl text-sm leading-8 text-[var(--livora-stone)]">{{ $shopBannerSubtitle }}</p>
                             </div>
