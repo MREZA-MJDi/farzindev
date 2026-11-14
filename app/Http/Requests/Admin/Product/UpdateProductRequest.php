@@ -122,7 +122,7 @@ class UpdateProductRequest extends FormRequest
 
             'specifications' => ['nullable', 'array', 'max:100'],
             'specifications.*' => ['array'],
-            'specifications.*.label' => ['required', 'string', 'max:100'],
+            'specifications.*.label' => ['nullable', 'string', 'max:100'],
             'specifications.*.value' => ['nullable', 'string', 'max:1000'],
 
             'description' => [
