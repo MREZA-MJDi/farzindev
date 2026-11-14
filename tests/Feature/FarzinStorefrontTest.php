@@ -15,6 +15,7 @@ use App\Models\ProductImage;
 use App\Models\ProductVariant;
 use App\Models\Province;
 use App\Models\StorefrontSetting;
+use App\Services\StorefrontPageContent;
 use Database\Seeders\ProvinceCitySeeder;
 use App\Models\SeoRedirect;
 use App\Models\User;
