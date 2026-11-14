@@ -8,6 +8,7 @@ export default defineConfig({
             input: [
                 'resources/css/storefront.css',
                 'resources/css/public-design-system.css',
+                'resources/css/shop-experience.css',
                 'resources/css/home.css',
                 'resources/css/blog.css',
                 'resources/css/product.css',
