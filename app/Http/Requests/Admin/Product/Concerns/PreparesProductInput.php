@@ -87,6 +87,9 @@ trait PreparesProductInput
                 continue;
             }
 
+            // A specification value can stand alone; keep the public label usable.
+            $label = $label !== '' ? $label : 'مشخصه';
+
             $rows[] = ['label' => $label, 'value' => $value];
         }
 
