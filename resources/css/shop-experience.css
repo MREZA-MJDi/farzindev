@@ -289,6 +289,17 @@
     padding: .5rem .75rem;
     font-size: .74rem;
 }
+#app .storefront-content .farzin-shop-toolbar__sort [role="listbox"] {
+    border: 1px solid var(--fz-line);
+    border-radius: 0 !important;
+    background: #fff;
+    box-shadow: 0 14px 34px rgba(6,40,79,.12);
+}
+#app .storefront-content .farzin-shop-toolbar__sort [role="option"] {
+    min-height: 40px;
+    border-radius: 0 !important;
+    font-size: .74rem;
+}
 #app .storefront-content .farzin-shop-product-grid {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
