@@ -49,7 +49,7 @@
 }
 #app .storefront-content .farzin-shop-banner__eyebrow {
     margin: 0;
-    color: #d9a9ad;
+    color: rgba(255,255,255,.72);
     font-size: .68rem;
     font-weight: 750;
     letter-spacing: 0;
