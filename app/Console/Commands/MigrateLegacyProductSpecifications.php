@@ -33,7 +33,7 @@ class MigrateLegacyProductSpecifications extends Command
      $value=is_array($raw)?($raw['value']??null):$raw;
      $label=is_array($raw)?trim((string)($raw['label']??'')):(string)$key;
      $legacyKey=isset($this->maps[$type][$key])?$key:($this->labels[$label]??null);
-     if ($type==='sink' && ($key==='material' || in_array($label,['جنس بدنه','جنس'],true))) $legacyKey='sink_material';
+     if ($type==='sink' && ($key==='material' || in_array($label,['جنس بدنه','جنس'],true))) $legacyKey='material';
      if ($type==='hood' && ($key==='material' || $label==='جنس بدنه')) $legacyKey='body_material';
      if ($type==='hood' && $key==='model') $legacyKey='hood_model';
      if ($type==='gas' && $key==='model') $legacyKey='gas_model';
