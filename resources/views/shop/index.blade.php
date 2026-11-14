@@ -136,7 +136,6 @@
 
                             <form method="GET" action="{{ route('shop.index') }}" class="farzin-shop-filter-form">
                                 <x-shop.filters
-                                    mobile
                                     :categories="$categories"
                                     :selected-category="request('category')"
                                     :filterable-attributes="$filterableAttributes"
@@ -162,7 +161,7 @@
                                 type="button"
                                 @click="filterOpen = true"
                                 aria-controls="shop-filter-rail"
-                                aria-expanded="false"
+                                 :aria-expanded="filterOpen.toString()"
                                 class="inline-flex items-center gap-2 rounded-2xl border border-[var(--livora-border)] bg-[var(--livora-white)] px-4 py-3 text-sm font-medium text-[var(--livora-text)] transition hover:border-[var(--livora-ink)]"
                             >
 
