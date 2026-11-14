@@ -161,19 +161,20 @@ test('shop mobile filters apply together, scroll safely and preserve the selecte
 
     await page.getByRole('button', { name: 'فیلترها' }).click();
 
-    const drawer = page.locator('[data-farzin-filter-drawer]');
-    await expect(drawer).toBeVisible();
-    await expect(drawer).toHaveCount(1);
+    const filterRail = page.locator('#shop-filter-rail');
+    await expect(filterRail).toHaveCount(1);
+    await expect(filterRail).toHaveClass(/is-open/);
+    await expect(filterRail).toBeVisible();
 
-    const category = drawer.locator('input[name="category"]').first();
+    const category = filterRail.locator('input[name="category"]').first();
     await expect(category).toBeVisible();
     await category.check();
-    await drawer.locator('input[name="installment"]').check();
+    await filterRail.locator('input[name="installment"]').check();
 
-    // Mobile drawer filters remain local until Apply is pressed.
+    // The single responsive filter form keeps changes local until Apply.
     expect(page.url()).toBe(initialUrl);
 
-    await drawer.getByRole('button', { name: 'اعمال فیلتر' }).click();
+    await filterRail.getByRole('button', { name: 'اعمال فیلترها' }).click();
     await expect(page).toHaveURL(/\/shop\?/);
     await expect(page).toHaveURL(/sort=popular/);
     await expect(page).toHaveURL(/search=%D9%87%D9%88%D8%AF|search=هود/);
@@ -886,6 +887,41 @@ test('admin contact location preview updates the existing map frame when address
     await expect(frame).toBeHidden();
     await expect(emptyState).toBeVisible();
     await expect(page.locator('#contact-map-preview-empty-text')).toContainText('مختصات معتبر نیست');
+});
+
+test('shop uses one right-anchored filter rail and leaves the catalogue its own width', async ({ page }) => {
+    await page.setViewportSize({ width: 1440, height: 960 });
+    await page.goto('/shop', { waitUntil: 'domcontentloaded' });
+
+    const rail = page.locator('#shop-filter-rail');
+    await expect(rail).toHaveCount(1);
+    await expect(rail).toBeVisible();
+    await expect(page.locator('[data-farzin-filter-drawer]')).toHaveCount(0);
+
+    const geometry = await page.evaluate(() => {
+        const rail = document.querySelector('#shop-filter-rail');
+        const products = document.querySelector('.farzin-shop-layout > div:last-child');
+        const railRect = rail.getBoundingClientRect();
+        const productsRect = products.getBoundingClientRect();
+        return {
+            railWidth: railRect.width,
+            railLeft: railRect.left,
+            productsRight: productsRect.right,
+            productsWidth: productsRect.width,
+            filterInputs: rail.querySelectorAll('input[name="category"]').length,
+        };
+    });
+
+    expect(geometry.railWidth).toBeLessThanOrEqual(280);
+    expect(geometry.productsWidth).toBeGreaterThan(700);
+    expect(geometry.railLeft).toBeGreaterThanOrEqual(geometry.productsRight);
+    expect(geometry.filterInputs).toBeGreaterThan(0);
+
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.reload({ waitUntil: 'domcontentloaded' });
+    await page.getByRole('button', { name: 'فیلترها' }).click();
+    await expect(rail).toHaveClass(/is-open/);
+    await expect(rail.getByRole('button', { name: 'بستن فیلترها' })).toBeVisible();
 });
 
 test('shop product card actions stay aligned across different content heights', async ({ page }) => {
