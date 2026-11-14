@@ -191,6 +191,7 @@
     @stack('styles')
 
     @vite('resources/css/public-design-system.css')
+    @vite('resources/css/shop-experience.css')
 
     @php
         $pageTypography = $storefrontPageContent ?? [];

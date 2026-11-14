@@ -16,6 +16,7 @@ const budgets = [
     // Public CSS is intentionally consolidated by storefront.css in Vite.
     // Budget the emitted production bundle, not its imported source fragments.
     { key: 'resources/css/storefront.css', label: 'Public storefront CSS', maxGzipKb: 60 },
+    { key: 'resources/css/shop-experience.css', label: 'Shop catalogue CSS', maxGzipKb: 8 },
     { key: 'resources/css/home.css', label: 'Homepage-only CSS', maxGzipKb: 15 },
     { key: 'resources/css/admin.css', label: 'Admin-only CSS', maxGzipKb: 24 },
     // The editorial artwork controls add two dashboard-managed image slots.
