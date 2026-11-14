@@ -1,10 +1,10 @@
 @extends('layouts.app')
 
-@section('title', 'سبد خرید | فرزین')
+@section('title', 'سبد خرید | فرجی‌هوم')
 
 @section(
     'description',
-    'سبد خرید فرزین؛ بررسی محصولات انتخاب‌شده، مبلغ سفارش و شرایط خرید اقساطی قبل از ورود به تسویه حساب.'
+    'سبد خرید فرجی‌هوم؛ بررسی محصولات انتخاب‌شده، مبلغ سفارش و شرایط خرید اقساطی قبل از ورود به تسویه حساب.'
 )
 
 @section('canonical', route('cart.index'))
@@ -448,7 +448,7 @@
                                                     @else
 
                                                         <div class="flex h-full w-full items-center justify-center text-[10px] tracking-[0.18em] text-[var(--livora-stone)]">
-                                                            فرزین
+                                                            فرجی‌هوم
                                                         </div>
 
                                                     @endif

@@ -28,29 +28,58 @@
         ? ($hasActiveVariants ? 'موجود در گزینه‌ها' : 'موجود')
         : 'ناموجود';
 
-    $specificationLabels = [
-        'width' => 'عرض',
-        'installation' => 'نصب',
-        'material' => 'جنس',
-        'material_type' => 'جنس',
-        'color' => 'رنگ',
-        'capacity' => 'ظرفیت',
-        'type' => 'نوع',
-    ];
-    $specifications = collect($product->specifications ?? [])
-        ->filter(static fn ($value): bool => is_scalar($value) && filled($value))
-        ->map(fn ($value, $key): array => [
-            'label' => $specificationLabels[$key] ?? (string) $key,
-            'value' => trim((string) $value),
-        ])
-        ->take(3);
+    $specifications = collect();
+    $categoryAttributes = $product->category?->relationLoaded('attributes')
+        ? $product->category->getRelation('attributes')
+        : collect();
+    $attributeValues = $product->relationLoaded('attributeValues')
+        ? $product->getRelation('attributeValues')
+        : collect();
 
+    if ($categoryAttributes->isNotEmpty() && $attributeValues->isNotEmpty()) {
+        $specifications = $categoryAttributes
+            ->filter(fn ($attribute) => (bool) $attribute->pivot->is_key_spec)
+            ->take(3)
+            ->map(function ($attribute) use ($attributeValues): ?array {
+                $value = $attributeValues->where('attribute_id', $attribute->id)
+                    ->map(function ($row) use ($attribute) {
+                        if ($row->option) return $row->option->label;
+                        if ($row->value_boolean !== null) return $row->value_boolean ? 'بله' : 'خیر';
+                        if ($row->value_number !== null) {
+                            $number = rtrim(rtrim(number_format((float) $row->value_number, 3, '.', ''), '0'), '.');
+                            return \App\Helpers\PersianNumberHelper::format($number) . ($attribute->unit ? ' ' . $attribute->unit : '');
+                        }
+                        return trim((string) $row->value_text);
+                    })
+                    ->filter(fn ($item) => $item !== '')
+                    ->unique()
+                    ->join('، ');
+                return $value !== '' ? ['label' => $attribute->label, 'value' => $value] : null;
+            })
+            ->filter()
+            ->values();
+    }
+
+    if ($specifications->isEmpty()) {
+        $specificationLabels = ['width'=>'عرض','installation'=>'نصب','material'=>'جنس','material_type'=>'جنس','color'=>'رنگ','capacity'=>'ظرفیت','type'=>'نوع'];
+        $specifications = collect($product->specifications ?? [])
+            ->filter(static fn ($value): bool => is_scalar($value) && filled($value))
+            ->map(function ($value, $key) use ($specificationLabels): array {
+                $displayValue = trim((string) $value);
+                // Width values entered without a unit are shown explicitly in centimetres.
+                if ($key === 'width' && is_numeric($displayValue)) {
+                    $displayValue = \App\Helpers\PersianNumberHelper::format($displayValue) . ' سانتی‌متر';
+                }
+                return ['label' => $specificationLabels[$key] ?? (string) $key, 'value' => $displayValue];
+            })
+            ->take(3);
+    }
 @endphp
 
 <article
     data-product-card
     data-product-slug="{{ $product->slug }}"
-    class="farzin-product-card group relative flex h-full min-w-0 flex-col {{ $variant === 'round' ? 'farzin-product-card--round-media' : '' }} {{ $variant === 'home-shelf' ? 'farzin-product-card--home-shelf' : '' }} {{ ! $isAvailable ? 'is-unavailable' : '' }}"
+    class="farzin-product-card group relative flex h-full min-w-0 flex-col {{ $variant === 'round' ? 'farzin-product-card--round-media' : '' }} {{ $variant === 'home-shelf' ? 'farzin-product-card--home-shelf' : '' }} {{ $variant === 'catalog' ? 'farzin-product-card--catalog' : '' }} {{ ! $isAvailable ? 'is-unavailable' : '' }}"
     @if($reveal) data-farzin-reveal @endif
 >
     <div class="farzin-product-card__media relative overflow-hidden">
@@ -78,7 +107,7 @@
             @endif
         </a>
 
-        <div class="absolute left-3 top-3 z-10 flex flex-col items-start gap-2">
+        <div class="absolute right-3 top-3 z-10 flex max-w-[calc(100%-5rem)] flex-col items-start gap-1.5">
             @if($product->is_new)
                 <span class="farzin-product-badge farzin-product-badge--light">تازه‌وارد</span>
             @endif
@@ -121,7 +150,7 @@
     <div class="farzin-product-card__content flex min-w-0 flex-1 flex-col px-4 pb-4 pt-3">
         <div class="farzin-product-card__meta flex min-h-5 min-w-0 items-center justify-between gap-2">
             <span class="farzin-product-card__category min-w-0 truncate">
-                {{ $product->category?->name ?? 'فرزین' }}
+                {{ $product->category?->name ?? 'تجهیزات آشپزخانه' }}
             </span>
 
         </div>
@@ -132,7 +161,18 @@
             </h3>
         </a>
 
-        @if($specifications->isNotEmpty())
+        @if($variant === 'catalog')
+            {{-- Reserve equal specification space so missing specs never shift prices or actions. --}}
+            <div class="farzin-product-card__catalog-specs">
+                @if($specifications->isNotEmpty())
+                    <ul class="farzin-product-card__specifications" aria-label="مشخصات کلیدی محصول">
+                        @foreach($specifications as $specification)
+                            <li><span>{{ $specification['label'] }}</span><strong>{{ \Illuminate\Support\Str::limit($specification['value'], 22) }}</strong></li>
+                        @endforeach
+                    </ul>
+                @endif
+            </div>
+        @elseif($specifications->isNotEmpty())
             <ul class="farzin-product-card__specifications" aria-label="مشخصات کلیدی محصول">
                 @foreach($specifications as $specification)
                     <li><span>{{ $specification['label'] }}</span><strong>{{ \Illuminate\Support\Str::limit($specification['value'], 18) }}</strong></li>
@@ -146,13 +186,14 @@
                 <span>تومان</span>
             </p>
             @if($hasDiscount)
+                <span class="farzin-product-card__discount-percent">{{ \App\Helpers\PersianNumberHelper::format($discountPercent) }}٪ تخفیف</span>
                 <span class="farzin-product-card__price-old">
                     {{ \App\Helpers\PersianNumberHelper::format((float) $product->compare_at_price) }} تومان
                 </span>
             @endif
         </div>
 
-        @if($showAvailability)
+        @if($showAvailability && $isAvailable)
             <div class="farzin-product-card__availability {{ $isAvailable ? 'is-available' : 'is-unavailable' }}" aria-label="وضعیت موجودی: {{ $availabilityLabel }}"><span aria-hidden="true"></span>{{ $availabilityLabel }}</div>
         @endif
         <div class="mt-auto grid gap-1.5 pt-2">

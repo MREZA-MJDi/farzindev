@@ -14,6 +14,39 @@
     $cashPercent = $installmentEnabled ? (int) ($product->installment_cash_percent ?? 0) : 0;
     $cashAmount = $installmentEnabled && $cashPercent > 0 ? round($price * ($cashPercent / 100)) : 0;
     $chequeCount = $installmentEnabled ? (int) ($product->installment_cheque_count ?? 0) : 0;
+    $specifications = collect();
+    $categoryAttributes = $product->category?->relationLoaded('attributes')
+        ? $product->category->getRelation('attributes')
+        : collect();
+    $attributeValues = $product->relationLoaded('attributeValues')
+        ? $product->getRelation('attributeValues')
+        : collect();
+
+    if ($categoryAttributes->isNotEmpty() && $attributeValues->isNotEmpty()) {
+        $specifications = $categoryAttributes
+            ->filter(fn ($attribute) => (bool) $attribute->pivot->is_key_spec)
+            ->take(3)
+            ->map(function ($attribute) use ($attributeValues): ?array {
+                $value = $attributeValues->where('attribute_id', $attribute->id)
+                    ->map(function ($row) use ($attribute) {
+                        if ($row->option) return $row->option->label;
+                        if ($row->value_boolean !== null) return $row->value_boolean ? 'بله' : 'خیر';
+                        if ($row->value_number !== null) {
+                            $number = rtrim(rtrim(number_format((float) $row->value_number, 3, '.', ''), '0'), '.');
+                            return \App\Helpers\PersianNumberHelper::format($number) . ($attribute->unit ? ' ' . $attribute->unit : '');
+                        }
+                        return trim((string) $row->value_text);
+                    })
+                    ->filter(fn ($item) => $item !== '')
+                    ->unique()
+                    ->join('، ');
+                return $value !== '' ? ['label' => $attribute->label, 'value' => $value] : null;
+            })
+            ->filter()
+            ->values();
+    }
+
+
 @endphp
 
 <a class="fz-product-card fz-product-card--clickable fz-reveal" href="{{ route('product.show', $product->slug) }}" aria-label="مشاهده جزئیات {{ $product->name }}">
@@ -50,13 +83,20 @@
 
     <span class="fz-product-card__body">
         <span class="fz-product-card__meta">
-            <span>{{ $product->category?->name ?? 'محصول فرزین' }}</span>
+            <span>{{ $product->category?->name ?? 'تجهیزات آشپزخانه' }}</span>
             @if(filled($product->sku))
                 <span class="fz-product-card__sku">{{ $product->sku }}</span>
             @endif
         </span>
 
         <strong class="fz-product-card__title">{{ $product->name }}</strong>
+        @if($specifications->isNotEmpty())
+            <ul class="fz-home-product-card__specs" aria-label="مشخصات کلیدی محصول">
+                @foreach($specifications as $specification)
+                    <li><span>{{ $specification['label'] }}</span>{{ $specification['value'] }}</li>
+                @endforeach
+            </ul>
+        @endif
 
         <span class="fz-product-card__availability {{ $isAvailable ? 'is-available' : 'is-unavailable' }}">
             <i aria-hidden="true"></i>

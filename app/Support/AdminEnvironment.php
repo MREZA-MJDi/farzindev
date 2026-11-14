@@ -21,7 +21,7 @@ final class AdminEnvironment
     {
         if (app()->environment('testing')) {
             return [
-                'name' => trim((string) config('farzin.admin.name', 'Farzin Admin')),
+                'name' => trim((string) config('farzin.admin.name', 'مدیر فرجی‌هوم')),
                 'email' => mb_strtolower(trim((string) config('farzin.admin.email', ''))),
                 'password' => (string) config('farzin.admin.password', ''),
             ];
@@ -49,7 +49,7 @@ final class AdminEnvironment
         }
 
         return [
-            'name' => trim((string) self::value('ADMIN_NAME', $parsed, config('farzin.admin.name', 'Farzin Admin'))),
+            'name' => trim((string) self::value('ADMIN_NAME', $parsed, config('farzin.admin.name', 'مدیر فرجی‌هوم'))),
             'email' => mb_strtolower(trim((string) self::value('ADMIN_EMAIL', $parsed, config('farzin.admin.email', '')))),
             'password' => (string) self::value('ADMIN_PASSWORD', $parsed, config('farzin.admin.password', '')),
         ];

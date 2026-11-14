@@ -1,3 +1,5 @@
+@import "./shop-experience.css";
+
 /*
  * Farzin public storefront design system.
  *
@@ -646,4 +648,51 @@ body.home-body #app .fz-home-purchase-cta__inner,
 
 #app .storefront-content .farzin-shop-catalog {
     margin-block-start: 12px;
+}
+
+
+/* Brand-colored social/contact marks: shared by footer, contact page and quick actions. */
+#app .fz-social-links {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+}
+#app .fz-social-links__item {
+    display: inline-flex;
+    width: 42px;
+    height: 42px;
+    flex: 0 0 42px;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    border: 0;
+    transition: transform .18s ease, box-shadow .18s ease, filter .18s ease;
+}
+#app .fz-social-links__item svg { width: 21px; height: 21px; display: block; }
+#app .fz-social-links__item:hover { transform: translateY(-3px); filter: brightness(1.06); box-shadow: 0 7px 18px rgba(15, 23, 42, .18); }
+#app .fz-social-links__item--instagram { background: linear-gradient(135deg, #7c2bba 0%, #d62976 48%, #f58529 100%); }
+#app .fz-social-links__item--telegram { background: #229ED9; }
+#app .fz-social-links__item--whatsapp { background: #25D366; }
+#app .fz-social-links__item--phone { background: #082B52; }
+#app .fz-social-links__item--message { background: #7b0d1a; }
+#app .fz-floating-contact {
+    position: fixed;
+    z-index: 75;
+    left: 16px;
+    bottom: 104px;
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+}
+#app .fz-floating-contact .fz-social-links { flex-direction: column; gap: 9px; }
+#app .fz-floating-contact .fz-social-links__item { width: 46px; height: 46px; flex-basis: 46px; box-shadow: 0 5px 18px rgba(0,0,0,.18); }
+#app .fz-contact-socials { display: flex; flex-wrap: wrap; align-items: center; gap: 14px; margin-top: 22px; }
+#app .fz-contact-socials > span { color: inherit; font-size: .82rem; font-weight: 700; }
+#app .fz-store-footer__extra-messengers { display: flex; gap: 12px; margin-top: 10px; font-size: .75rem; }
+@media (min-width: 1024px) {
+    #app .fz-floating-contact { bottom: 24px; }
+}
+@media (prefers-reduced-motion: reduce) {
+    #app .fz-social-links__item { transition: none; }
 }

@@ -29,10 +29,10 @@ class AppServiceProvider extends ServiceProvider
         Paginator::defaultView('vendor.pagination.farzin');
         Paginator::defaultSimpleView('vendor.pagination.farzin-simple');
 
-        // These values are consumed by the public storefront shell/footer only.
-        // A wildcard composer also runs for every nested Blade component (including
-        // each product card), repeating cache lookups and filesystem checks per view.
-        View::composer(['layouts.app', 'home.index', 'about.index', 'errors.*', 'auth.*', 'admin.auth.*'], function ($view): void {
+        // Share the cached public brand and page CMS payload only with top-level
+        // public views and the layout. A wildcard composer would repeat cache
+        // lookups and filesystem checks for every nested Blade component.
+        View::composer(['layouts.app', 'home.index', 'about.index', 'legal.terms', 'legal.privacy', 'pages.policy', 'errors.*', 'auth.*', 'admin.auth.*'], function ($view): void {
             $settings = rescue(fn (): array => Cache::remember(
                 'storefront.public-brand-settings.v1',
                 now()->addMinutes(10),
@@ -53,7 +53,14 @@ class AppServiceProvider extends ServiceProvider
                 report: false
             );
             $view->with('storefrontPageContent', $pageContent);
-            $view->with('storefrontBrandName', filled($settings['brand_name'] ?? null) ? $settings['brand_name'] : 'فرزین');
+            $configuredBrandName = trim((string) ($settings['brand_name'] ?? ''));
+            if (
+                $configuredBrandName === ''
+                || in_array(mb_strtolower($configuredBrandName), ['فرزین', 'فرزین فرجی', 'فرزین‌فرجی', 'farzin', 'farzin home', 'farzindev'], true)
+            ) {
+                $configuredBrandName = 'فرجی‌هوم';
+            }
+            $view->with('storefrontBrandName', $configuredBrandName);
             $brandLogoPath = $settings['brand_logo'] ?? null;
             $view->with('storefrontBrandLogoUrl', rescue(
                 fn () => filled($brandLogoPath) && Storage::disk('public')->exists($brandLogoPath)

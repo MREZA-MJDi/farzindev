@@ -92,6 +92,7 @@ class ShopFilterRequest extends FormRequest
             'sort' => [
                 'nullable',
                 Rule::in([
+                    'available_first',
                     'newest',
                     'popular',
                     'price_asc',
@@ -105,6 +106,8 @@ class ShopFilterRequest extends FormRequest
             | Pagination
             |--------------------------------------------------------------------------
             */
+            'attributes' => ['nullable', 'array', 'max:30'],
+
             'page' => [
                 'nullable',
                 'integer',
@@ -113,8 +116,36 @@ class ShopFilterRequest extends FormRequest
         ];
     }
 
+    private function digits(string $value): string
+    {
+        return strtr($value, ['۰'=>'0','۱'=>'1','۲'=>'2','۳'=>'3','۴'=>'4','۵'=>'5','۶'=>'6','۷'=>'7','۸'=>'8','۹'=>'9','٠'=>'0','١'=>'1','٢'=>'2','٣'=>'3','٤'=>'4','٥'=>'5','٦'=>'6','٧'=>'7','٨'=>'8','٩'=>'9']);
+    }
+
     protected function prepareForValidation(): void
     {
+        $attributes = $this->input('attributes', []);
+        if (is_array($attributes)) {
+            $normalizedAttributes = [];
+            foreach ($attributes as $key => $value) {
+                if (is_array($value) && array_is_list($value)) {
+                    $normalizedAttributes[$key] = array_values(array_filter($value, fn ($item) => is_scalar($item) && is_numeric($this->digits((string) $item))));
+                } elseif (is_array($value)) {
+                    $bounds = [];
+                    foreach (['min', 'max'] as $bound) {
+                        if (isset($value[$bound]) && is_scalar($value[$bound])) {
+                            $bounds[$bound] = $this->digits((string) $value[$bound]);
+                        }
+                    }
+                    $normalizedAttributes[$key] = $bounds;
+                } elseif (is_scalar($value)) {
+                    $normalizedAttributes[$key] = $this->digits((string) $value);
+                }
+            }
+            $attributes = $normalizedAttributes;
+        } else {
+            $attributes = [];
+        }
+
         $this->merge([
             /*
             |--------------------------------------------------------------------------
@@ -142,12 +173,11 @@ class ShopFilterRequest extends FormRequest
             | Price
             |--------------------------------------------------------------------------
             */
-            'min_price' => $this->filled('min_price')
-                ? $this->input('min_price')
-                : null,
-
             'max_price' => $this->filled('max_price')
-                ? $this->input('max_price')
+                ? $this->digits((string) $this->input('max_price'))
+                : null,
+            'min_price' => $this->filled('min_price')
+                ? $this->digits((string) $this->input('min_price'))
                 : null,
 
             /*
@@ -155,10 +185,11 @@ class ShopFilterRequest extends FormRequest
             | Boolean
             |--------------------------------------------------------------------------
             */
-            'in_stock' => $this->boolean('in_stock'),
+            'in_stock' => $this->has('in_stock') ? $this->boolean('in_stock') : true,
             'featured' => $this->boolean('featured'),
             'new' => $this->boolean('new'),
             'installment' => $this->boolean('installment'),
+            'attributes' => $attributes,
         ]);
     }
 }

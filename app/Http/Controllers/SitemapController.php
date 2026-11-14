@@ -82,7 +82,7 @@ class SitemapController extends Controller
     private function publicUrlCounts(): array
     {
         return [
-            'pages' => 6,
+            'pages' => 10,
             'categories' => $this->indexableCategories()->count(),
             'products' => $this->indexableProducts()->count(),
             'blog' => $this->indexableBlogPosts()->count(),
@@ -114,7 +114,7 @@ class SitemapController extends Controller
     private function indexableCategories(): Builder
     {
         return Category::query()
-            ->active()
+            ->visibleInStorefront()
             ->whereIn('seo_robots', ['inherit', 'index,follow'])
             ->where(function (Builder $query): void {
                 $query->whereNull('canonical_url')
@@ -402,6 +402,10 @@ class SitemapController extends Controller
             '/blog',
             '/about',
             '/contact',
+            '/shipping-returns',
+            '/warranty',
+            '/payment-installments',
+            '/faq',
         ])->map(fn (string $path): array => [
             'url' => $seoSettings->canonicalUrl($path, false),
             'lastmod' => null,

@@ -21,6 +21,8 @@
             </p>
         </div>
 
+        <a href="{{ route('admin.product-attributes.index') }}" class="admin-btn admin-btn-secondary">مدیریت ویژگی‌های فنی</a>
+
         <a
             href="{{ route('admin.categories.create') }}"
             class="admin-btn admin-btn-primary"
@@ -149,6 +151,8 @@
                                               d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
                                     </svg>
                                 </a>
+
+                                <a href="{{ route('admin.categories.attributes.edit', $category) }}" class="admin-btn admin-btn-ghost px-3" title="ویژگی‌های فنی">ویژگی‌ها</a>
 
                                 <a
                                     href="{{ route('admin.categories.edit', $category) }}"

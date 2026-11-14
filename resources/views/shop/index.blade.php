@@ -1,13 +1,18 @@
 @extends('layouts.app')
 
-@section('title', 'فروشگاه هود و سینک | فرزین')
+@section('title', 'فروشگاه تجهیزات آشپزخانه | فرجی‌هوم')
 
 @section(
     'description',
-    'خرید هود و سینک آشپزخانه از فرزین؛ مشخصات محصولات، مدل‌ها و گزینه‌های موجود را بررسی و مقایسه کنید.'
+    'خرید هود، اجاق گاز صفحه‌ای و سینک آشپزخانه؛ مشخصات فنی، قیمت و موجودی مدل‌ها را در فروشگاه فرجی‌هوم بررسی و مقایسه کنید.'
 )
 
 @section('canonical', route('shop.index'))
+
+@php
+    $shopBannerTitle = str_ireplace(['فرزین فرجی', 'فرزین', 'Farzin', 'FARZIN'], ['فرجی‌هوم', 'فرجی‌هوم', 'فرجی‌هوم', 'فرجی‌هوم'], (string) ($shopBanner['title'] ?? 'فروشگاه فرجی‌هوم'));
+    $shopBannerSubtitle = str_ireplace(['فرزین فرجی', 'فرزین', 'Farzin', 'FARZIN'], ['فرجی‌هوم', 'فرجی‌هوم', 'فرجی‌هوم', 'فرجی‌هوم'], (string) ($shopBanner['subtitle'] ?? 'محصولات تجهیزات آشپزخانه را مقایسه کنید.'));
+@endphp
 
 
 
@@ -15,10 +20,10 @@
 @section('content')
 
     <div
-        class="overflow-hidden bg-[var(--livora-cream)]"
-        x-data="{
-            filterOpen: false
-        }"
+        class="min-w-0 bg-[var(--livora-cream)]"
+        x-data="{ filterOpen: false }"
+        x-effect="document.body.style.overflow = filterOpen ? 'hidden' : ''"
+        @keydown.escape.window="filterOpen = false"
     >
 
         {{-- Shop banner is configured in Admin > Storefront Settings. No looping product animation. --}}
@@ -36,7 +41,7 @@
                             <img
                                 src="{{ $shopBanner['image_url'] }}"
                                 @if(!empty($shopBanner['image_srcset'])) srcset="{{ $shopBanner['image_srcset'] }}" sizes="100vw" @endif
-                                alt="{{ $shopBanner['title'] }}"
+                                alt="{{ $shopBannerTitle }}"
                                 class="absolute inset-0 h-full w-full object-cover"
                                 width="1600"
                                 height="500"
@@ -45,20 +50,20 @@
                             >
                             <div class="absolute inset-0 bg-gradient-to-l from-black/75 via-black/25 to-transparent"></div>
                             <div class="farzin-shop-banner__content absolute inset-y-0 right-0 flex max-w-2xl flex-col justify-center p-6 text-white sm:p-10 lg:p-14">
-                                <p class="farzin-shop-banner__eyebrow text-[10px] font-medium uppercase tracking-[0.22em] text-white/70">فرزین / فروشگاه</p>
-                                <h1 class="farzin-shop-banner__title mt-3 text-3xl font-semibold leading-tight sm:text-4xl lg:text-5xl">{{ $shopBanner['title'] }}</h1>
+                                <p class="farzin-shop-banner__eyebrow text-[10px] font-medium uppercase tracking-[0.22em] text-white/70">فرجی‌هوم / فروشگاه</p>
+                                <h1 class="farzin-shop-banner__title mt-3 text-3xl font-semibold leading-tight sm:text-4xl lg:text-5xl">{{ $shopBannerTitle }}</h1>
                                 @if (filled($shopBanner['subtitle']))
-                                    <p class="farzin-shop-banner__description mt-4 max-w-xl text-sm leading-8 text-white/80 sm:text-base">{{ $shopBanner['subtitle'] }}</p>
+                                    <p class="farzin-shop-banner__description mt-4 max-w-xl text-sm leading-8 text-white/80 sm:text-base">{{ $shopBannerSubtitle }}</p>
                                 @endif
-                                <a href="#shop-catalog" class="farzin-shop-banner__action mt-6 inline-flex min-h-11 w-fit items-center gap-2 rounded-xl border border-white/40 bg-white/10 px-5 py-3 text-sm font-medium text-white backdrop-blur-sm transition hover:bg-white/20"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4 shrink-0" aria-hidden="true"><rect x="3.5" y="3.5" width="7" height="7" rx="1.3" /><rect x="13.5" y="3.5" width="7" height="7" rx="1.3" /><rect x="3.5" y="13.5" width="7" height="7" rx="1.3" /><rect x="13.5" y="13.5" width="7" height="7" rx="1.3" /></svg> مشاهده کاتالوگ</a>
+                                <a href="#shop-catalog" class="farzin-shop-banner__action mt-6 inline-flex min-h-11 w-fit items-center gap-2 rounded-xl border border-white/40 bg-white/10 px-5 py-3 text-sm font-medium text-white backdrop-blur-sm transition hover:bg-white/20"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4 shrink-0" aria-hidden="true"><rect x="3.5" y="3.5" width="7" height="7" rx="1.3" /><rect x="13.5" y="3.5" width="7" height="7" rx="1.3" /><rect x="3.5" y="13.5" width="7" height="7" rx="1.3" /><rect x="13.5" y="13.5" width="7" height="7" rx="1.3" /></svg> مشاهده محصولات</a>
                             </div>
                         </div>
                     @else
                         <div class="mt-6 flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
                             <div>
-                                <p class="farzin-shop-banner__eyebrow text-[10px] font-medium uppercase tracking-[0.22em] text-[var(--livora-accent)]">FARZIN / CATALOG</p>
-                                <h1 class="farzin-shop-banner__title mt-3 text-3xl font-semibold tracking-tight sm:text-4xl">{{ $shopBanner['title'] }}</h1>
-                                <p class="farzin-shop-banner__description mt-3 max-w-2xl text-sm leading-8 text-[var(--livora-stone)]">{{ $shopBanner['subtitle'] }}</p>
+                                <p class="farzin-shop-banner__eyebrow text-[10px] font-medium uppercase tracking-[0.22em] text-[var(--livora-accent)]">فرجی‌هوم / فروشگاه</p>
+                                <h1 class="farzin-shop-banner__title mt-3 text-3xl font-semibold tracking-tight sm:text-4xl">{{ $shopBannerTitle }}</h1>
+                                <p class="farzin-shop-banner__description mt-3 max-w-2xl text-sm leading-8 text-[var(--livora-stone)]">{{ $shopBannerSubtitle }}</p>
                             </div>
                             <a href="#shop-catalog" class="farzin-shop-banner__action inline-flex min-h-11 w-fit shrink-0 items-center gap-2 rounded-xl bg-[var(--livora-ink)] px-5 py-3 text-sm font-medium text-white transition hover:bg-[var(--livora-accent)]"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4 shrink-0" aria-hidden="true"><path d="M3.5 9h17l-1 11h-15l-1-11Z" /><path d="M8 9V6.5a4 4 0 0 1 8 0V9" /></svg> مشاهده محصولات</a>
                         </div>
@@ -68,6 +73,23 @@
         </section>
 
 
+        @if($categories->isNotEmpty())
+            <nav aria-label="دسترسی سریع به دسته‌بندی‌ها" class="border-b border-[var(--livora-border)] bg-white">
+                <x-layout.container>
+                    <div class="flex flex-col gap-3 py-5 sm:flex-row sm:items-center sm:gap-6">
+                        <span class="shrink-0 text-xs font-bold text-[var(--livora-ink)]">انتخاب سریع دسته:</span>
+                        <div class="flex min-w-0 flex-wrap gap-2">
+                            @foreach($categories as $category)
+                                <a href="{{ route('shop.index', ['category' => $category->slug]) }}" @class(['inline-flex min-h-10 items-center border px-4 py-2 text-xs font-semibold transition', 'border-[var(--livora-accent)] bg-[var(--livora-accent)] text-white' => request('category') === $category->slug, 'border-[var(--livora-border)] bg-[var(--livora-cream)] text-[var(--livora-text)] hover:border-[var(--livora-accent)] hover:text-[var(--livora-accent)]' => request('category') !== $category->slug])>
+                                    {{ $category->name }}
+                                </a>
+                            @endforeach
+                        </div>
+                    </div>
+                </x-layout.container>
+            </nav>
+        @endif
+
         {{-- =========================================================
              SHOP CONTENT
         ========================================================== --}}
@@ -76,23 +98,23 @@
 
             <x-layout.container>
 
-                <div class="grid gap-8 py-8 lg:grid-cols-[250px_minmax(0,1fr)] lg:py-12">
+                <div class="farzin-shop-layout grid items-start gap-5 py-6 lg:grid-cols-[270px_minmax(0,1fr)] lg:gap-7 lg:py-8">
 
 
                     {{-- =================================================
                          DESKTOP SIDEBAR
                     ================================================== --}}
 
-                    <aside class="hidden min-w-0 lg:block">
+                    <aside class="hidden min-w-0 self-start lg:block">
 
-                        <div class="sticky top-28 space-y-5">
+                        <div class="space-y-4">
 
 
                             {{-- =================================================
                                  FILTER CARD
                             ================================================== --}}
 
-                            <div class="rounded-3xl border border-[var(--livora-border)] bg-[var(--livora-white)] p-5">
+                            <div class="max-h-[calc(100vh-120px)] max-h-[calc(100dvh-120px)] overflow-y-auto overscroll-contain rounded-2xl border border-[var(--livora-border)] bg-[var(--livora-white)] p-3 [scrollbar-width:thin] sm:p-4">
 
                                 <div class="flex items-center justify-between gap-3">
 
@@ -102,7 +124,7 @@
                                             راهنمای انتخاب
                                         </p>
 
-                                        <h2 class="mt-2 text-sm font-semibold">
+                                        <h2 class="mt-1 text-sm font-semibold">
                                             فیلترها
                                         </h2>
 
@@ -124,12 +146,13 @@
                                 <form
                                     method="GET"
                                     action="{{ route('shop.index') }}"
-                                    class="mt-6"
+                                    class="mt-4"
                                 >
 
                                     <x-shop.filters
                                         :categories="$categories"
                                         :selected-category="request('category')"
+            :filterable-attributes="$filterableAttributes"
                                     />
 
                                 </form>
@@ -141,14 +164,14 @@
                                  DISCOVERY BOX
                             ================================================== --}}
 
-                            <div class="rounded-3xl border border-[var(--livora-border)] bg-[var(--livora-surface)] p-5">
+                            <div class="rounded-2xl border border-[var(--livora-border)] bg-[var(--livora-surface)] p-4">
 
                                 <p class="text-[10px] uppercase tracking-[0.18em] text-[var(--livora-accent)]">
-                                    فرزین
+                                    فرجی‌هوم
                                 </p>
 
                                 <h3 class="mt-3 text-sm font-semibold">
-                                    انتخاب آگاهانه
+                                    راهنمای انتخاب
                                 </h3>
 
                                 <p class="mt-2 text-xs leading-7 text-[var(--livora-stone)]">
@@ -219,27 +242,45 @@
                              SORTING TOOLBAR
                         ================================================== --}}
 
-                        <div class="rounded-3xl border border-[var(--livora-border)] bg-[var(--livora-white)] p-4 sm:p-5">
-
-                            <div class="farzin-shop-toolbar">
-                                <form action="{{ route('shop.index') }}" method="GET" role="search" aria-label="جستجوی کاتالوگ هود و سینک" class="farzin-shop-search">
-                                    @foreach(request()->except(['search', 'page']) as $filterName => $filterValue)
-                                        @if(is_scalar($filterValue) && (string) $filterValue !== '')
-                                            <input type="hidden" name="{{ $filterName }}" value="{{ $filterValue }}">
+                        {{-- Catalogue search, independent from the global header search. --}}
+                        <form method="GET" action="{{ route('shop.index') }}" role="search" class="farzin-shop-searchbar mb-5">
+                            @foreach(request()->except(['search', 'page']) as $key => $value)
+                                @if(is_array($value))
+                                    @foreach($value as $nestedKey => $nestedValue)
+                                        @if(is_array($nestedValue))
+                                            @foreach($nestedValue as $deepKey => $deepValue)
+                                                <input type="hidden" name="{{ $key }}[{{ $nestedKey }}][{{ $deepKey }}]" value="{{ $deepValue }}">
+                                            @endforeach
+                                        @else
+                                            <input type="hidden" name="{{ $key }}[{{ $nestedKey }}]" value="{{ $nestedValue }}">
                                         @endif
                                     @endforeach
-                                    <label for="shop-catalog-search" class="sr-only">نام محصول، مدل، کد یا مشخصات را جستجو کنید</label>
-                                    <input id="shop-catalog-search" name="search" type="search" inputmode="search" enterkeyhint="search" autocomplete="off" value="{{ request('search', '') }}" placeholder="جستجوی هود، سینک، مدل یا کد محصول..." class="farzin-shop-search__input">
-                                    <button type="submit" class="farzin-shop-search__submit">جستجو</button>
-                                    @if(request()->filled('search'))
-                                        <a href="{{ route('shop.index', request()->except(['search', 'page'])) }}" class="farzin-shop-search__clear">پاک کردن</a>
-                                    @endif
-                                </form>
-                                <div class="farzin-shop-toolbar__sort">
-                                    <x-shop.sorting :products="$products" />
-                                </div>
+                                @else
+                                    <input type="hidden" name="{{ $key }}" value="{{ $value }}">
+                                @endif
+                            @endforeach
+                            <label class="sr-only" for="shop-catalog-search">جست‌وجوی محصولات فروشگاه</label>
+                            <div class="farzin-shop-searchbar__field">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true">
+                                    <circle cx="10.8" cy="10.8" r="6.8"></circle>
+                                    <path stroke-linecap="round" d="m16 16 4.5 4.5"></path>
+                                </svg>
+                                <input id="shop-catalog-search" type="search" name="search" value="{{ request('search') }}" maxlength="150" placeholder="جست‌وجوی نام محصول، برند یا کد کالا..." autocomplete="off">
+                                @if(request()->filled('search'))
+                                    <a href="{{ route('shop.index', request()->except(['search', 'page'])) }}" class="farzin-shop-searchbar__clear" aria-label="پاک کردن جست‌وجو">پاک کردن</a>
+                                @endif
                             </div>
+                            <button type="submit" class="farzin-shop-searchbar__submit">جست‌وجو</button>
+                        </form>
 
+                        <div class="farzin-shop-sortbar flex items-center justify-between gap-4 border-b border-[var(--livora-border)] pb-4">
+                            <div>
+                                <p class="text-[10px] font-semibold tracking-wide text-[var(--livora-accent)]">کاتالوگ فرجی‌هوم</p>
+                                <p class="mt-1 text-xs text-[var(--livora-stone)]">مرتب‌سازی محصولات</p>
+                            </div>
+                            <div class="farzin-shop-toolbar__sort min-w-0">
+                                <x-shop.sorting :products="$products" />
+                            </div>
                         </div>
 
 
@@ -320,13 +361,14 @@
 
                         @if($products->isNotEmpty())
 
-                            <div class="farzin-shop-product-grid mt-8 grid grid-cols-2 gap-x-3 gap-y-6 sm:gap-x-4 sm:gap-y-8 md:grid-cols-3 2xl:grid-cols-4">
+                            <div class="farzin-shop-product-grid mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
 
                                 @foreach($products as $product)
 
                                     <x-product.card
                                         :product="$product"
                                         :reveal="false"
+                                        variant="catalog"
                                     />
 
                                 @endforeach
@@ -372,7 +414,7 @@
                                     href="{{ route('shop.index') }}"
                                     class="mt-7 inline-flex rounded-2xl bg-[var(--livora-ink)] px-6 py-3.5 text-sm font-medium text-white transition hover:bg-[var(--livora-accent)]"
                                 >
-                                    مشاهده همه محصولات
+                                    پاک کردن فیلترها
                                 </a>
 
                             </div>
@@ -395,6 +437,7 @@
         <x-shop.filter-drawer
             :categories="$categories"
             :selected-category="request('category')"
+                                        :filterable-attributes="$filterableAttributes"
         />
 
     </div>

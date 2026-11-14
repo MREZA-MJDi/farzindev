@@ -17,7 +17,7 @@
             default => null,
         };
 
-        $storefrontBrandName = $storefrontBrandName ?? config('app.name', 'فرزین');
+        $storefrontBrandName = $storefrontBrandName ?? config('app.name', 'فرجی‌هوم');
         $seoTitle = trim((string) $__env->yieldContent('title'));
         $seoTitle = str_replace('فرزین', $storefrontBrandName, $seoTitle);
         $seoPageTitle = $seoStaticPage ? trim((string) ($seoValues[$seoStaticPage['title']] ?? '')) : '';
@@ -33,8 +33,6 @@
             ? $seoPageDescription
             : ($seoDescription !== '' ? $seoDescription : (string) $seoValues['seo_default_description']);
 
-        $seoKeywords = trim((string) $__env->yieldContent('keywords'));
-        $seoKeywords = $seoKeywords !== '' ? $seoKeywords : trim((string) ($seoValues['seo_default_keywords'] ?? ''));
 
         $seoCanonicalSource = trim((string) $__env->yieldContent('canonical'));
         $seoCanonical = $seoService->canonicalOverride($seoCanonicalSource)
@@ -133,15 +131,13 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+
     {{-- Warm the two storefront font weights used by body copy and bold headings to reduce first-paint reflow. --}}
     <link rel="preload" as="font" href="{{ Vite::asset('resources/fonts/iranyekanx-fanum/IRANYekanXFaNum-Regular.woff2') }}" type="font/woff2" crossorigin>
     <link rel="preload" as="font" href="{{ Vite::asset('resources/fonts/iranyekanx-fanum/IRANYekanXFaNum-ExtraBold.woff2') }}" type="font/woff2" crossorigin>
 
     <title>{{ $seoTitle }}</title>
     <meta name="description" content="{{ $seoDescription }}">
-    @if($seoKeywords !== '')
-        <meta name="keywords" content="{{ $seoKeywords }}">
-    @endif
 
     <meta name="robots" content="{{ $seoService->robotsMeta($seoRobotsOverride) }}">
     <link rel="canonical" href="{{ $seoCanonical }}">
@@ -195,6 +191,22 @@
     @stack('styles')
 
     @vite('resources/css/public-design-system.css')
+
+    @php
+        $pageTypography = $storefrontPageContent ?? [];
+        $fontScale = min(110, max(90, (float) ($pageTypography['page_typography_font_scale'] ?? 100)));
+        $lineHeight = min(2.2, max(1.4, (float) ($pageTypography['page_typography_line_height'] ?? 1.8)));
+        $contentWidth = min(1440, max(1120, (int) ($pageTypography['page_typography_content_width'] ?? 1280)));
+    @endphp
+    <style id="storefront-page-typography">
+        html { font-size: {{ number_format($fontScale, 2, '.', '') }}%; }
+        body { line-height: {{ number_format($lineHeight, 2, '.', '') }}; }
+        body .storefront-content .livora-container,
+        body .storefront-content .fz-container,
+        body.home-body .fz-home-container {
+            max-width: {{ $contentWidth }}px !important;
+        }
+    </style>
 </head>
 
 <body class="@yield('body_class', 'min-h-screen antialiased')">
@@ -271,7 +283,7 @@
         <x-layout.navbar :cart-count="$storefrontCartCount" :brand-name="$storefrontBrandName" :brand-logo="$storefrontBrandLogoUrl" />
     @endif
 
-    <x-layout.mobile-menu :brand-name="$storefrontBrandName" :brand-logo="$storefrontBrandLogoUrl" />
+    <x-layout.mobile-menu :brand-name="$storefrontBrandName" :brand-logo="$storefrontBrandLogoUrl" :storefront-contact="$storefrontContact" />
 
     <x-layout.search-overlay />
 
@@ -279,30 +291,16 @@
         @yield('content')
     </main>
 
-    <x-layout.footer :contact="$storefrontContact" :settings="$storefrontPublicSettings" :brand-logo-url="$storefrontBrandLogoUrl" />
+    <x-layout.footer :contact="$storefrontContact" :settings="$storefrontPublicSettings" :brand-logo-url="$storefrontBrandLogoUrl" :brand-name="$storefrontBrandName" />
 
     <x-layout.mobile-bottom-bar :cart-count="$storefrontCartCount" />
 
-    @php
-        $floatingPhone = preg_replace('/[^0-9+]/', '', (string) data_get($storefrontContact, 'phone', ''));
-        $floatingWhatsapp = preg_replace('/\D+/', '', (string) data_get($storefrontContact, 'whatsapp', ''));
-        if (str_starts_with($floatingWhatsapp, '0098')) {
-            $floatingWhatsapp = substr($floatingWhatsapp, 2);
-        } elseif ($floatingWhatsapp !== '' && str_starts_with($floatingWhatsapp, '0')) {
-            $floatingWhatsapp = '98' . substr($floatingWhatsapp, 1);
-        } elseif ($floatingWhatsapp !== '' && ! str_starts_with($floatingWhatsapp, '98')) {
-            $floatingWhatsapp = '98' . $floatingWhatsapp;
-        }
-    @endphp
     @if(($storefrontPublicSettings['floating_contact_enabled'] ?? '0') === '1')
-        <div class="fixed bottom-24 left-4 z-[75] flex flex-col gap-2 lg:bottom-6" aria-label="راه‌های ارتباط سریع">
-            @if($floatingWhatsapp !== '')
-                <a href="https://wa.me/{{ $floatingWhatsapp }}" target="_blank" rel="noopener noreferrer" class="rounded-full bg-emerald-700 px-4 py-3 text-sm font-bold text-white shadow-xl">واتساپ</a>
-            @endif
-            @if($floatingPhone !== '')
-                <a href="tel:{{ $floatingPhone }}" class="rounded-full bg-slate-900 px-4 py-3 text-sm font-bold text-white shadow-xl">تماس با ما</a>
-            @endif
-            <a href="{{ route('contact') }}#contact-form" class="rounded-full border border-slate-300 bg-white px-4 py-3 text-sm font-bold text-slate-900 shadow-xl">پرسش</a>
+        <div class="fz-floating-contact" aria-label="راه‌های ارتباط سریع">
+            <x-layout.social-links :contact="$storefrontContact" :brand-name="$storefrontBrandName" />
+            <a class="fz-social-links__item fz-social-links__item--message" href="{{ route('contact') }}#contact-form" aria-label="ارسال پیام به {{ $storefrontBrandName }}" title="ارسال پیام">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M20 11.5a7.5 7.5 0 0 1-7.5 7.5H6l-3 2v-9.5A7.5 7.5 0 0 1 10.5 4h2a7.5 7.5 0 0 1 7.5 7.5ZM8 11h8v1.6H8zm0 3h5v1.6H8z"/></svg>
+            </a>
         </div>
     @endif
 

@@ -55,7 +55,6 @@
     <span class="fz-category-card__content">
         <span class="fz-category-card__eyebrow">دسته محصولات</span>
         <strong>{{ $category->name }}</strong>
-        <small>{{ \App\Helpers\PersianNumberHelper::format($category->products_count) }} محصول فعال</small>
         <span class="fz-category-card__link">
             مشاهده محصولات
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">

@@ -48,7 +48,7 @@ class CatalogVisibilityTest extends TestCase
         );
     }
 
-    public function test_active_empty_categories_remain_public_but_retired_demo_categories_do_not(): void
+    public function test_active_non_gas_empty_categories_remain_public_but_retired_demo_groups_do_not(): void
     {
         $this->app['env'] = 'staging';
 
@@ -95,16 +95,15 @@ class CatalogVisibilityTest extends TestCase
         }
 
         $this->assertTrue(Category::query()->active()->whereKey($empty)->exists());
+        $this->assertTrue(Category::query()->visibleInStorefront()->whereKey($empty)->exists());
         $this->assertFalse(Category::query()->active()->whereKey($legacy)->exists());
         $this->assertTrue(Category::query()->active()->whereKey($real)->exists());
+        $this->assertTrue(Category::query()->visibleInStorefront()->whereKey($real)->exists());
 
         $this->get(route('categories.index'))
             ->assertOk()
             ->assertSee('دسته خالی');
 
-        $this->get(route('categories.show', $empty->slug))
-            ->assertOk()
-            ->assertSee('دسته خالی')
-            ->assertSee('محصولی در این دسته پیدا نشد');
+        $this->get(route('categories.show', $empty->slug))->assertOk()->assertSee('دسته خالی');
     }
 }

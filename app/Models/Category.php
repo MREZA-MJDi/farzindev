@@ -8,6 +8,7 @@ use Illuminate\Support\Str;
 use App\Services\Media\ResponsiveImageService;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
@@ -21,6 +22,7 @@ class Category extends Model
         'description',
         'content_title',
         'content_body',
+        'faqs',
         'content_image',
         'meta_title',
         'meta_description',
@@ -39,6 +41,7 @@ class Category extends Model
         return [
             'is_active' => 'boolean',
             'sort_order' => 'integer',
+            'faqs' => 'array',
         ];
     }
 
@@ -120,6 +123,14 @@ class Category extends Model
         return $this->belongsTo(Media::class, 'hover_media_id');
     }
 
+    public function attributes(): BelongsToMany
+    {
+        return $this->belongsToMany(ProductAttribute::class, 'category_attribute', 'category_id', 'attribute_id')
+            ->withPivot(['sort_order', 'is_required', 'is_recommended', 'is_filterable', 'is_key_spec'])
+            ->withTimestamps()
+            ->orderByPivot('sort_order');
+    }
+
     public function products(): HasMany
     {
         return $this->hasMany(Product::class);
@@ -167,6 +178,28 @@ class Category extends Model
         $productImage = $this->latestActiveProduct?->images?->first()?->url;
 
         return $productImage ?: $this->image_url;
+    }
+
+    public function scopeVisibleInStorefront($query)
+    {
+        $gasCategorySlugs = [
+            'built-in-stove',
+            'gas-stoves',
+            'gas-hobs',
+            'built-in-gas',
+            'built-in-hobs',
+            'gas-stove',
+        ];
+
+        return $query->active()->where(function ($visibility) use ($gasCategorySlugs): void {
+            $visibility
+                ->where(function ($nonGas) use ($gasCategorySlugs): void {
+                    $nonGas
+                        ->whereNotIn('slug', $gasCategorySlugs)
+                        ->where('name', 'not like', '%اجاق گاز%');
+                })
+                ->orWhereHas('products', fn ($products) => $products->active());
+        });
     }
 
     public function scopeActive($query)

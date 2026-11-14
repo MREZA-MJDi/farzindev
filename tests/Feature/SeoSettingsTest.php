@@ -120,7 +120,7 @@ class SeoSettingsTest extends TestCase
         $this->actingAs($admin, 'admin')
             ->put(route('admin.seo-settings.update'), [
                 'seo_canonical_base_url' => 'https://farajihome.com',
-                'seo_site_name' => 'فرزین',
+                'seo_site_name' => 'فرجی‌هوم',
                 'seo_default_title' => 'عنوان SEO آزمایشی',
                 'seo_default_description' => 'توضیحات SEO از پنل مدیریت',
                 'seo_default_keywords' => 'هود, سینک',
@@ -163,7 +163,7 @@ class SeoSettingsTest extends TestCase
         $this->actingAs($admin, 'admin')
             ->put(route('admin.seo-settings.update'), [
                 'seo_canonical_base_url' => 'https://farajihome.com',
-                'seo_site_name' => 'فرزین',
+                'seo_site_name' => 'فرجی‌هوم',
                 'seo_default_title' => 'عنوان SEO',
                 'seo_default_description' => 'توضیحات سایت',
                 'seo_default_keywords' => 'هود، سینک',
@@ -247,7 +247,7 @@ class SeoSettingsTest extends TestCase
             ->from(route('admin.seo-settings.edit'))
             ->put(route('admin.seo-settings.update'), [
                 'seo_canonical_base_url' => 'https://farajihome.com',
-                'seo_site_name' => 'فرزین',
+                'seo_site_name' => 'فرجی‌هوم',
                 'seo_default_title' => 'عنوان SEO',
                 'seo_default_description' => 'توضیحات سایت',
                 'seo_default_keywords' => '',
@@ -323,9 +323,9 @@ class SeoSettingsTest extends TestCase
         $this->actingAs($admin, 'admin')
             ->put(route('admin.seo-settings.update'), [
                 'seo_canonical_base_url' => 'https://farajihome.com',
-                'seo_site_name' => 'فرزین',
-                'seo_default_title' => 'فرزین | تجهیزات آشپزخانه',
-                'seo_default_description' => 'توضیحات اصلی سایت فرزین.',
+                'seo_site_name' => 'فرجی‌هوم',
+                'seo_default_title' => 'فرجی‌هوم | تجهیزات آشپزخانه',
+                'seo_default_description' => 'توضیحات اصلی سایت فرجی‌هوم.',
                 'seo_robots_txt_rules' => "User-agent: *\\nAllow: /",
                 'seo_development_mode' => '0',
                 'seo_robots_noindex' => '0',
@@ -356,7 +356,7 @@ class SeoSettingsTest extends TestCase
             ->from(route('admin.seo-settings.edit'))
             ->put(route('admin.seo-settings.update'), [
                 'seo_canonical_base_url' => 'https://farajihome.com',
-                'seo_site_name' => 'فرزین',
+                'seo_site_name' => 'فرجی‌هوم',
                 'seo_default_title' => 'عنوان SEO',
                 'seo_default_description' => 'توضیحات سایت',
                 'seo_robots_txt_rules' => "User-agent: *\\nAllow: /",
@@ -394,9 +394,9 @@ class SeoSettingsTest extends TestCase
         $this->actingAs($admin, 'admin')
             ->put(route('admin.seo-settings.update'), [
                 'seo_canonical_base_url' => 'https://farajihome.com',
-                'seo_site_name' => 'فرزین',
-                'seo_default_title' => 'خرید هود و سینک آشپزخانه | فرزین',
-                'seo_default_description' => 'تصویر و توضیحات رسمی اشتراک‌گذاری فرزین.',
+                'seo_site_name' => 'فرجی‌هوم',
+                'seo_default_title' => 'خرید هود و سینک آشپزخانه | فرجی‌هوم',
+                'seo_default_description' => 'تصویر و توضیحات رسمی اشتراک‌گذاری فرجی‌هوم.',
                 'seo_default_og_image_upload' => UploadedFile::fake()->image('farzin-og.jpg', 1200, 630),
                 'seo_development_mode' => '1',
                 'seo_robots_txt_rules' => "User-agent: *\\nAllow: /",
@@ -439,7 +439,7 @@ class SeoSettingsTest extends TestCase
             'mime_type' => 'image/png',
             'extension' => 'png',
             'size' => Storage::disk('public')->size($path),
-            'alt' => 'تصویر شبکه اجتماعی فرزین',
+            'alt' => 'تصویر شبکه اجتماعی فرجی‌هوم',
         ]);
 
         $this->actingAs($admin, 'admin')
@@ -451,9 +451,9 @@ class SeoSettingsTest extends TestCase
         $this->actingAs($admin, 'admin')
             ->put(route('admin.seo-settings.update'), [
                 'seo_canonical_base_url' => 'https://farajihome.com',
-                'seo_site_name' => 'فرزین',
-                'seo_default_title' => 'عنوان پیش‌فرض فرزین',
-                'seo_default_description' => 'توضیحات پیش‌فرض فرزین.',
+                'seo_site_name' => 'فرجی‌هوم',
+                'seo_default_title' => 'عنوان پیش‌فرض فرجی‌هوم',
+                'seo_default_description' => 'توضیحات پیش‌فرض فرجی‌هوم.',
                 'seo_default_og_image_media_id' => (string) $media->id,
                 'seo_development_mode' => '1',
                 'seo_robots_txt_rules' => "User-agent: *\\nAllow: /",
@@ -507,7 +507,7 @@ class SeoSettingsTest extends TestCase
             ->from(route('admin.seo-settings.edit'))
             ->put(route('admin.seo-settings.update'), [
                 'seo_canonical_base_url' => 'https://farajihome.com',
-                'seo_site_name' => 'فرزین',
+                'seo_site_name' => 'فرجی‌هوم',
                 'seo_default_title' => 'عنوان',
                 'seo_default_description' => 'توضیحات',
                 'seo_default_og_image_media_id' => (string) $media->id,

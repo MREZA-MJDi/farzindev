@@ -259,6 +259,8 @@
                 </div>
 
 
+                @include('admin.products.partials.attribute-fields')
+
                 {{-- Name --}}
                 <div class="sm:col-span-2">
 
@@ -480,6 +482,8 @@
                     @enderror
 
                 </div>
+
+                @include('admin.products.partials.faq-fields')
 
             </div>
 

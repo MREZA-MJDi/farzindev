@@ -57,6 +57,12 @@ class DatabaseSeeder extends Seeder
             $this->call(ProductSeeder::class);
         }
 
+        // The attribute dictionary is used in local and test bootstraps. Production
+        // runs it explicitly after the existing category mapping is confirmed.
+        if (app()->environment(['local', 'testing'])) {
+            $this->call(ProductAttributeSeeder::class);
+        }
+
         $this->call([
             UserSeeder::class,
         ]);

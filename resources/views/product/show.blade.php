@@ -1,9 +1,18 @@
 @extends('layouts.app')
 
 @php
-    $pageTitle = $product->meta_title ?: ($product->name . ' | فرزین');
+    $pageTitle = $product->meta_title ?: ($product->name . ' | فرجی‌هوم');
     $pageDescription = $product->meta_description
         ?: ($safeShortDescription ?: $safeDescription ?: $product->name);
+    $normalizeProductCopy = static fn (?string $value): string => str_ireplace(
+        ['فرزین فرجی', 'فرزین', 'FARZIN', 'Farzin'],
+        ['فرجی‌هوم', 'فرجی‌هوم', 'FARAJI HOME', 'Faraji Home'],
+        trim((string) $value)
+    );
+    $pageTitle = $normalizeProductCopy($pageTitle);
+    $pageDescription = $normalizeProductCopy($pageDescription);
+    $pageOgTitle = $normalizeProductCopy($product->og_title ?: $pageTitle);
+    $pageOgDescription = $normalizeProductCopy($product->og_description ?: $pageDescription);
     $pageCanonical = $product->canonical_url ?: route('product.show', $product->slug);
     $mainImage = $product->primaryImage();
 
@@ -110,6 +119,33 @@
             ])->values();
     }
 
+    $structuredSpecifications = ($product->attributeValues ?? collect())
+        ->groupBy('attribute_id')
+        ->map(function ($rows) {
+            $attribute = $rows->first()->attribute;
+            if (!$attribute) return null;
+            $values = $rows->map(function ($row) use ($attribute) {
+                if ($row->option) return $row->option->label;
+                if ($row->value_boolean !== null) return $row->value_boolean ? 'بله' : 'خیر';
+                if ($row->value_number !== null) {
+                    $number = rtrim(rtrim(number_format((float) $row->value_number, 3, '.', ''), '0'), '.');
+                    return \App\Helpers\PersianNumberHelper::format($number) . ($attribute->unit ? ' ' . $attribute->unit : '');
+                }
+                return trim((string) $row->value_text);
+            })->filter(fn ($value) => $value !== '')->unique()->values();
+            if ($values->isEmpty()) return null;
+            return ['label' => $attribute->label, 'value' => $values->join('، '), 'group' => $attribute->group];
+        })
+        ->filter()
+        ->sortBy('group')
+        ->values();
+
+    if ($structuredSpecifications->isNotEmpty()) {
+        $structuredLabels = $structuredSpecifications->pluck('label')->map(fn ($label) => mb_strtolower(trim((string) $label)));
+        $legacyUnmapped = $visibleSpecifications->reject(fn ($specification) => $structuredLabels->contains(mb_strtolower(trim((string) ($specification['label'] ?? '')))));
+        $visibleSpecifications = $structuredSpecifications->concat($legacyUnmapped)->values();
+    }
+
     $productTabs = [];
     if ($visibleSpecifications->isNotEmpty()) {
         $productTabs[] = 'specifications';
@@ -151,8 +187,8 @@
     @section('robots', $product->seo_robots)
 @endif
 @section('og_type', 'product')
-@section('og_title', $product->og_title ?: $pageTitle)
-@section('og_description', $product->og_description ?: $pageDescription)
+@section('og_title', $pageOgTitle)
+@section('og_description', $pageOgDescription)
 @section('twitter_card', $mainImage ? 'summary_large_image' : 'summary')
 @section('og_image', $mainImage?->url ?? '')
 
@@ -169,7 +205,7 @@
             'name' => $product->name,
             'description' => $pageDescription,
             'url' => $pageCanonical,
-            'brand' => ['@type' => 'Brand', 'name' => 'فرزین'],
+            // Do not invent a manufacturer brand: product records may represent multiple suppliers.
             'offers' => $hasProductPriceRange
                 ? [
                     '@type' => 'AggregateOffer',
@@ -324,7 +360,12 @@
 
                         @if($tab === 'specifications')
                             <dl class="grid grid-cols-1 gap-0 border-t border-[var(--livora-border)] py-2 sm:grid-cols-2">
+                                @php($currentSpecificationGroup = null)
                                 @foreach($visibleSpecifications as $specification)
+                                    @if(!empty($specification['group']) && $currentSpecificationGroup !== $specification['group'])
+                                        <div class="col-span-full border-b border-[var(--livora-border)] bg-[var(--livora-surface)] px-3 py-2 text-xs font-bold text-[var(--livora-text)]">{{ $specification['group'] }}</div>
+                                        @php($currentSpecificationGroup = $specification['group'])
+                                    @endif
                                     <div class="flex min-w-0 items-start justify-between gap-4 border-b border-[var(--livora-border)] px-1 py-3 text-sm">
                                         <dt class="shrink-0 text-[var(--livora-stone)]">{{ $specification['label'] }}</dt>
                                         <dd class="min-w-0 text-left font-semibold text-[var(--livora-text)]" dir="auto">{{ $specification['value'] }}</dd>
@@ -332,15 +373,10 @@
                                 @endforeach
                             </dl>
                         @elseif($tab === 'description')
-                            @php
-                                $descriptionText = $safeDescription;
-                                $descriptionPreview = \Illuminate\Support\Str::limit($descriptionText, 420);
-                                $hasMoreDescription = mb_strlen($descriptionText) > 420;
-                            @endphp
                             <div class="border-t border-[var(--livora-border)] py-4 text-sm leading-8 text-[var(--livora-stone)]" x-data="{ expanded: false }">
-                                <div x-show="!expanded">{{ nl2br(e($descriptionPreview)) }}</div>
-                                @if($hasMoreDescription)
-                                    <div x-show="expanded" x-cloak>{{ nl2br(e($descriptionText)) }}</div>
+                                <div x-show="!expanded">{{ nl2br(e(\Illuminate\Support\Str::limit((string) $safeDescription, 420))) }}</div>
+                                @if(mb_strlen((string) $safeDescription) > 420)
+                                    <div x-show="expanded" x-cloak>{{ nl2br(e($safeDescription)) }}</div>
                                     <button type="button" class="mt-3 inline-flex min-h-11 items-center rounded-lg font-semibold text-[var(--livora-accent)] underline underline-offset-4" @click="expanded = !expanded" :aria-expanded="expanded.toString()">
                                         <span x-show="!expanded">ادامه مطلب</span>
                                         <span x-show="expanded" x-cloak>نمایش کمتر</span>
@@ -400,6 +436,8 @@
                 @endforeach
             </section>
         @endif
+
+        @include('product.partials.faqs')
 
         @if($relatedProducts->isNotEmpty())
             <section class="border-t border-[var(--livora-border)] py-8 sm:py-12" aria-labelledby="related-products-title">

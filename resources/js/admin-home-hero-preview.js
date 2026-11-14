@@ -22,12 +22,12 @@ if (root) {
     bindTextPreview(
         'page_home_hero_title',
         '[data-home-hero-preview-title]',
-        'هود و سینک، آماده‌ی نصب در آشپزخانه‌ی شما',
+        'هود، اجاق گاز و سینک، آماده‌ی نصب در آشپزخانه‌ی شما',
     );
     bindTextPreview(
         'page_home_hero_description',
         '[data-home-hero-preview-description]',
-        'مدل‌های موجود فرزین را با تصویر، قیمت و مشخصات واقعی بررسی کنید.',
+        'مدل‌های موجود فرجی‌هوم را با تصویر، قیمت و مشخصات واقعی بررسی کنید.',
     );
     bindTextPreview(
         'page_home_hero_primary_label',

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\Shop\ShopFilterRequest;
 use App\Models\Category;
+use App\Models\AttributeOption;
 use App\Models\Product;
 use App\Models\StorefrontSetting;
 use App\Services\Media\ResponsiveImageService;
@@ -26,7 +27,8 @@ class ShopController extends Controller
 
         $query = Product::query()
             ->with([
-                'category',
+                'category.attributes.options',
+                'attributeValues.option',
                 // Load ordered image candidates so cards can skip missing files and use the next available image.
                 'images' => fn ($query) => $query
                     ->select(['id', 'product_id', 'media_id', 'path', 'alt', 'sort_order', 'is_primary'])
@@ -59,6 +61,62 @@ class ShopController extends Controller
                     ->where('slug', $filters['category'])
                     ->where('is_active', true);
             });
+        }
+
+        $selectedCategorySlug = trim((string) $request->input('category', $filters['category'] ?? ''));
+        $selectedCategory = $selectedCategorySlug !== ''
+            ? Category::query()->visibleInStorefront()->where('slug', $selectedCategorySlug)->first()
+            : null;
+        $filterableAttributes = $selectedCategory
+            ? $selectedCategory->attributes()->wherePivot('is_filterable', true)->with('options')->get()
+            : collect();
+
+        $attributeFilters = $request->input('attributes', $filters['attributes'] ?? []);
+        if (! is_array($attributeFilters)) $attributeFilters = [];
+
+        foreach ($attributeFilters as $attributeId => $selectedValue) {
+            if (! is_numeric($attributeId)) continue;
+            $attribute = $filterableAttributes->firstWhere('id', (int) $attributeId);
+            if (! $attribute || $selectedValue === '' || $selectedValue === null) {
+                continue;
+            }
+
+            if ($attribute->type === 'number' && is_array($selectedValue)) {
+                $minimum = $selectedValue['min'] ?? null;
+                $maximum = $selectedValue['max'] ?? null;
+                if ((is_numeric($minimum) || is_numeric($maximum)) && (! is_numeric($minimum) || ! is_numeric($maximum) || (float) $minimum <= (float) $maximum)) {
+                    $query->whereHas('attributeValues', function ($values) use ($attribute, $minimum, $maximum): void {
+                        $values->where('attribute_id', $attribute->id);
+                        if (is_numeric($minimum)) $values->where('value_number', '>=', $minimum);
+                        if (is_numeric($maximum)) $values->where('value_number', '<=', $maximum);
+                    });
+                }
+                continue;
+            }
+
+            if (in_array($attribute->type, ['select', 'multiselect'], true)) {
+                $optionIds = collect((array) $selectedValue)->filter(fn ($id) => is_scalar($id) && is_numeric($id))->map(fn ($id) => (int) $id)->all();
+                $validIds = AttributeOption::query()->where('attribute_id', $attribute->id)->whereIn('id', $optionIds)->pluck('id')->all();
+                if ($validIds !== []) {
+                    $query->whereHas('attributeValues', fn ($values) => $values
+                        ->where('attribute_id', $attribute->id)
+                        ->whereIn('option_id', $validIds));
+                }
+                continue;
+            }
+
+            if ($attribute->type === 'boolean' && is_scalar($selectedValue) && in_array((string) $selectedValue, ['0', '1'], true)) {
+                $query->whereHas('attributeValues', fn ($values) => $values
+                    ->where('attribute_id', $attribute->id)
+                    ->where('value_boolean', (int) $selectedValue));
+                continue;
+            }
+
+            if (in_array($attribute->type, ['text', 'textarea'], true) && is_scalar($selectedValue)) {
+                $query->whereHas('attributeValues', fn ($values) => $values
+                    ->where('attribute_id', $attribute->id)
+                    ->where('value_text', 'like', '%' . addcslashes((string) $selectedValue, '%_') . '%'));
+            }
         }
 
         /*
@@ -148,7 +206,12 @@ class ShopController extends Controller
         |--------------------------------------------------------------------------
         */
 
-        match ($filters['sort'] ?? 'newest') {
+        match ($filters['sort'] ?? 'available_first') {
+
+            'available_first' => $query
+                ->orderByRaw("CASE WHEN (NOT EXISTS (SELECT 1 FROM product_variants AS any_active_variants WHERE any_active_variants.product_id = products.id AND any_active_variants.is_active = 1) AND products.stock > 0) OR (EXISTS (SELECT 1 FROM product_variants AS active_variants WHERE active_variants.product_id = products.id AND active_variants.is_active = 1) AND NOT EXISTS (SELECT 1 FROM product_variants AS required_variants WHERE required_variants.product_id = products.id AND required_variants.is_active = 1 GROUP BY required_variants.type HAVING SUM(CASE WHEN required_variants.stock > 0 THEN 1 ELSE 0 END) = 0)) THEN 0 ELSE 1 END")
+                ->orderByDesc('products.updated_at')
+                ->orderByDesc('products.id'),
 
             'price_asc' => $query->orderBy('price')->orderBy('id'),
 
@@ -180,8 +243,9 @@ class ShopController extends Controller
         */
 
         $products = $query
-            ->paginate(12)
+            ->paginate(8)
             ->withQueryString();
+
 
         /*
         |--------------------------------------------------------------------------
@@ -190,10 +254,7 @@ class ShopController extends Controller
         */
 
         $categories = Category::query()
-            ->active()
-            ->withCount([
-                'products' => fn ($query) => $query->active(),
-            ])
+            ->visibleInStorefront()
             // Category::active() adds its own sort order. Reset it so a
             // selected category outside the first 100 is promoted before cap.
             ->reorder()
@@ -226,11 +287,13 @@ class ShopController extends Controller
         return view('shop.index', [
             'products' => $products,
             'categories' => $categories,
+            'selectedCategory' => $selectedCategory,
+            'filterableAttributes' => $filterableAttributes,
             'shopBanner' => [
                 'image_url' => $bannerAvailable ? $publicDisk->url($bannerPath) : null,
                 'image_srcset' => $bannerAvailable ? $images->srcset($bannerPath) : null,
-                'title' => $settings->get('shop_banner_title') ?: 'فروشگاه فرزین',
-                'subtitle' => $settings->get('shop_banner_subtitle') ?: 'هود و سینک آشپزخانه؛ انتخابی دقیق برای فضای شما.',
+                'title' => $settings->get('shop_banner_title') ?: 'فروشگاه فرجی‌هوم',
+                'subtitle' => $settings->get('shop_banner_subtitle') ?: 'هود، اجاق گاز صفحه‌ای و سینک؛ مشخصات مدل‌ها را بررسی و مقایسه کنید.',
             ],
         ]);
     }

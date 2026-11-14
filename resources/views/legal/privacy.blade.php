@@ -1,15 +1,43 @@
 @extends('layouts.app')
-@section('title', 'حریم خصوصی | فرزین')
-@section('description', 'توضیح اطلاعاتی که هنگام استفاده از فروشگاه فرزین ثبت و برای مدیریت خرید استفاده می‌شوند.')
+
+@php
+    $legalCopy = $storefrontPageContent ?? [];
+    $privacyTitle = trim((string) ($legalCopy['page_privacy_title'] ?? '')) ?: 'حریم خصوصی';
+    $privacyLead = trim((string) ($legalCopy['page_privacy_lead'] ?? ''));
+    $privacySections = collect(range(1, 4))->map(function (int $index) use ($legalCopy): array {
+        return [
+            'title' => trim((string) ($legalCopy["page_privacy_section_{$index}_title"] ?? '')),
+            'body' => trim((string) ($legalCopy["page_privacy_section_{$index}_body"] ?? '')),
+        ];
+    })->filter(fn (array $section): bool => $section['title'] !== '' || $section['body'] !== '');
+@endphp
+
+@section('title', $privacyTitle . ' | فرجی‌هوم')
+@section('description', $privacyLead)
+@section('canonical', route('privacy'))
+
 @section('content')
 <section class="fz-legal-page">
-    <div class="fz-legal-page__hero"><div class="fz-container"><p class="fz-eyebrow"><span></span> FARZIN / CUSTOMER INFORMATION</p><h1>حریم خصوصی</h1><p>اطلاعات حساب و سفارش شما برای ارائه خدمات فروشگاه استفاده می‌شود.</p></div></div>
+    <div class="fz-legal-page__hero">
+        <div class="fz-container">
+            <p class="fz-eyebrow"><span></span> FARAJI HOME / CUSTOMER INFORMATION</p>
+            <h1>{{ $privacyTitle }}</h1>
+            @if($privacyLead !== '')<p>{{ $privacyLead }}</p>@endif
+        </div>
+    </div>
     <div class="fz-container fz-legal-page__body">
-        <article><h2>چه اطلاعاتی ثبت می‌شود؟</h2><p>بسته به بخشی که استفاده می‌کنید، اطلاعاتی مانند نام، شماره موبایل، ایمیل اختیاری، نشانی تحویل، جزئیات سفارش و پیام‌هایی که از طریق فرم تماس ارسال می‌کنید در سامانه ثبت می‌شوند.</p></article>
-        <article><h2>اطلاعات برای چه کاری استفاده می‌شود؟</h2><p>این اطلاعات برای ایجاد و مدیریت حساب، ثبت و پیگیری سفارش، ارتباط درباره خرید و پاسخ به درخواست‌های پشتیبانی استفاده می‌شوند. اطلاعات حساب و سفارش برای نمایش سوابق مرتبط به همان کاربر به کار می‌روند.</p></article>
-        <article><h2>پرداخت</h2><p>اطلاعات محرمانه کارت بانکی را در پیام یا فرم تماس ارسال نکنید. در صورت فعال بودن پرداخت آنلاین، اطلاعات پرداخت را فقط در صفحه رسمی درگاه معرفی‌شده وارد کنید.</p></article>
-        <article><h2>درخواست اصلاح اطلاعات</h2><p>برای پیگیری خطا یا درخواست اصلاح اطلاعات تماس و حساب کاربری، از صفحه تماس با فرزین پیام بفرستید.</p></article>
-        <div class="fz-legal-page__contact"><strong>درخواست یا پرسشی درباره اطلاعات حساب دارید؟</strong><a href="{{ route('contact') }}">ارتباط با فرزین <span aria-hidden="true">←</span></a></div>
+        @forelse($privacySections as $section)
+            <article>
+                @if($section['title'] !== '')<h2>{{ $section['title'] }}</h2>@endif
+                @if($section['body'] !== '')<p>{{ $section['body'] }}</p>@endif
+            </article>
+        @empty
+            <article><p>محتوای این صفحه هنوز ثبت نشده است.</p></article>
+        @endforelse
+        <div class="fz-legal-page__contact">
+            <strong>{{ $legalCopy['page_privacy_contact_title'] ?? 'درخواست یا پرسشی درباره اطلاعات حساب دارید؟' }}</strong>
+            <a href="{{ route('contact') }}">{{ $legalCopy['page_privacy_contact_cta'] ?? 'ارتباط با فروشگاه' }} <span aria-hidden="true">←</span></a>
+        </div>
     </div>
 </section>
 @endsection

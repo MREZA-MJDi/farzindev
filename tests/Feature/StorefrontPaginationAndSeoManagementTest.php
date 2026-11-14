@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Models\Address;
 use App\Models\Category;
+use App\Models\Product;
 use App\Models\Order;
 use App\Models\StorefrontSetting;
 use App\Models\User;
@@ -26,12 +27,21 @@ class StorefrontPaginationAndSeoManagementTest extends TestCase
     public function test_public_category_directory_is_paginated_and_keeps_only_twelve_categories_per_page(): void
     {
         for ($index = 1; $index <= 13; $index++) {
-            Category::create([
+            $category = Category::create([
                 'name' => 'Pagination Category ' . str_pad((string) $index, 2, '0', STR_PAD_LEFT),
                 'slug' => 'pagination-category-' . $index,
                 'description' => 'Category used for public pagination checks.',
                 'is_active' => true,
                 'sort_order' => $index,
+            ]);
+            Product::create([
+                'category_id' => $category->id,
+                'name' => 'Pagination Product ' . $index,
+                'slug' => 'pagination-product-' . $index,
+                'sku' => 'FAR-PAGINATION-' . $index,
+                'price' => 1000000,
+                'stock' => 2,
+                'status' => 'active',
             ]);
         }
 
@@ -162,18 +172,18 @@ class StorefrontPaginationAndSeoManagementTest extends TestCase
     public function test_seo_dashboard_values_override_real_titles_and_descriptions_for_main_pages(): void
     {
         $settings = [
-            'seo_home_title' => 'عنوان مدیریت‌شده خانه فرزین',
-            'seo_home_description' => 'توضیحات مدیریت‌شده صفحه اصلی فرزین برای موتورهای جستجو.',
-            'seo_shop_title' => 'عنوان مدیریت‌شده فروشگاه فرزین',
-            'seo_shop_description' => 'توضیحات مدیریت‌شده برای صفحه فروشگاه فرزین.',
+            'seo_home_title' => 'عنوان مدیریت‌شده خانه فرجی‌هوم',
+            'seo_home_description' => 'توضیحات مدیریت‌شده صفحه اصلی فرجی‌هوم برای موتورهای جستجو.',
+            'seo_shop_title' => 'عنوان مدیریت‌شده فروشگاه فرجی‌هوم',
+            'seo_shop_description' => 'توضیحات مدیریت‌شده برای صفحه فروشگاه فرجی‌هوم.',
             'seo_categories_title' => 'عنوان مدیریت‌شده دسته‌بندی‌ها',
             'seo_categories_description' => 'توضیحات مدیریت‌شده برای فهرست دسته‌بندی‌ها.',
-            'seo_blog_title' => 'عنوان مدیریت‌شده مجله فرزین',
-            'seo_blog_description' => 'توضیحات مدیریت‌شده برای فهرست مقالات فرزین.',
-            'seo_about_title' => 'عنوان مدیریت‌شده درباره فرزین',
-            'seo_about_description' => 'توضیحات مدیریت‌شده درباره مجموعه فرزین.',
-            'seo_contact_title' => 'عنوان مدیریت‌شده تماس با فرزین',
-            'seo_contact_description' => 'توضیحات مدیریت‌شده برای تماس با فرزین.',
+            'seo_blog_title' => 'عنوان مدیریت‌شده مجله فرجی‌هوم',
+            'seo_blog_description' => 'توضیحات مدیریت‌شده برای فهرست مقالات فرجی‌هوم.',
+            'seo_about_title' => 'عنوان مدیریت‌شده درباره فرجی‌هوم',
+            'seo_about_description' => 'توضیحات مدیریت‌شده درباره مجموعه فرجی‌هوم.',
+            'seo_contact_title' => 'عنوان مدیریت‌شده تماس با فرجی‌هوم',
+            'seo_contact_description' => 'توضیحات مدیریت‌شده برای تماس با فرجی‌هوم.',
         ];
 
         foreach ($settings as $key => $value) {
@@ -184,13 +194,13 @@ class StorefrontPaginationAndSeoManagementTest extends TestCase
 
         $this->get(route('home'))
             ->assertOk()
-            ->assertSee('<title>عنوان مدیریت‌شده خانه فرزین</title>', false)
-            ->assertSee('name="description" content="توضیحات مدیریت‌شده صفحه اصلی فرزین برای موتورهای جستجو."', false);
+            ->assertSee('<title>عنوان مدیریت‌شده خانه فرجی‌هوم</title>', false)
+            ->assertSee('name="description" content="توضیحات مدیریت‌شده صفحه اصلی فرجی‌هوم برای موتورهای جستجو."', false);
 
         $this->get(route('shop.index'))
             ->assertOk()
-            ->assertSee('<title>عنوان مدیریت‌شده فروشگاه فرزین</title>', false)
-            ->assertSee('name="description" content="توضیحات مدیریت‌شده برای صفحه فروشگاه فرزین."', false);
+            ->assertSee('<title>عنوان مدیریت‌شده فروشگاه فرجی‌هوم</title>', false)
+            ->assertSee('name="description" content="توضیحات مدیریت‌شده برای صفحه فروشگاه فرجی‌هوم."', false);
 
         $this->get(route('categories.index'))
             ->assertOk()
@@ -199,29 +209,38 @@ class StorefrontPaginationAndSeoManagementTest extends TestCase
 
         $this->get(route('blog.index'))
             ->assertOk()
-            ->assertSee('<title>عنوان مدیریت‌شده مجله فرزین</title>', false)
-            ->assertSee('name="description" content="توضیحات مدیریت‌شده برای فهرست مقالات فرزین."', false);
+            ->assertSee('<title>عنوان مدیریت‌شده مجله فرجی‌هوم</title>', false)
+            ->assertSee('name="description" content="توضیحات مدیریت‌شده برای فهرست مقالات فرجی‌هوم."', false);
 
         $this->get(route('about'))
             ->assertOk()
-            ->assertSee('<title>عنوان مدیریت‌شده درباره فرزین</title>', false)
-            ->assertSee('name="description" content="توضیحات مدیریت‌شده درباره مجموعه فرزین."', false);
+            ->assertSee('<title>عنوان مدیریت‌شده درباره فرجی‌هوم</title>', false)
+            ->assertSee('name="description" content="توضیحات مدیریت‌شده درباره مجموعه فرجی‌هوم."', false);
 
         $this->get(route('contact'))
             ->assertOk()
-            ->assertSee('<title>عنوان مدیریت‌شده تماس با فرزین</title>', false)
-            ->assertSee('name="description" content="توضیحات مدیریت‌شده برای تماس با فرزین."', false);
+            ->assertSee('<title>عنوان مدیریت‌شده تماس با فرجی‌هوم</title>', false)
+            ->assertSee('name="description" content="توضیحات مدیریت‌شده برای تماس با فرجی‌هوم."', false);
     }
 
     public function test_shop_filter_category_dataset_remains_bounded_and_selected_category_stays_available(): void
     {
         for ($index = 1; $index <= 105; $index++) {
-            Category::create([
+            $category = Category::create([
                 'name' => 'Shop Filter Category ' . str_pad((string) $index, 3, '0', STR_PAD_LEFT),
                 'slug' => 'shop-filter-category-' . $index,
                 'description' => 'Category used for bounded shop filters.',
                 'is_active' => true,
                 'sort_order' => $index,
+            ]);
+            Product::create([
+                'category_id' => $category->id,
+                'name' => 'Shop Filter Product ' . $index,
+                'slug' => 'shop-filter-product-' . $index,
+                'sku' => 'FAR-SHOP-FILTER-' . $index,
+                'price' => 1000000,
+                'stock' => 2,
+                'status' => 'active',
             ]);
         }
 

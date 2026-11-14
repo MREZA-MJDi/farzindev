@@ -8,11 +8,11 @@
         (string) ($aboutCopy[$key] ?? '1') === '1';
 @endphp
 
-@section('title', 'درباره فرزین فرجی | تولید هود و سینک آشپزخانه')
+@section('title', 'درباره فرجی‌هوم | فروشگاه تخصصی تجهیزات آشپزخانه')
 
 @section(
     'description',
-    $aboutText('page_about_hero_description', 'با فرزین فرجی و مجموعه فعال در حوزه تولید هود و سینک آشپزخانه آشنا شوید؛ معرفی مجموعه، رویکرد تولید و کاتالوگ محصولات.')
+    $aboutText('page_about_hero_description', 'با فرجی‌هوم آشنا شوید؛ فروشگاه تخصصی تجهیزات آشپزخانه برای مشاهده و مقایسه هود، اجاق گاز، سینک و محصولات برندهای متنوع.')
 )
 
 @section('canonical', route('about'))
@@ -22,7 +22,7 @@
 {
     "@@context": "https://schema.org",
     "@@type": "AboutPage",
-    "name": "فرزین",
+    "name": "فرجی‌هوم",
     "url": @json(url('/')),
     "potentialAction": {
         "@@type": "SearchAction",
@@ -71,13 +71,13 @@
                         <div class="max-w-4xl">
 
                             <p class="text-[10px] font-medium uppercase tracking-[0.24em] text-[var(--livora-accent)]">
-                                {{ $aboutText('page_about_hero_eyebrow', 'ABOUT FARZIN') }}
+                                {{ $aboutText('page_about_hero_eyebrow', 'درباره فرجی‌هوم') }}
                             </p>
 
                             <h1 class="mt-5 text-5xl font-semibold leading-[1.02] tracking-tight sm:text-6xl lg:text-7xl">
-                                {{ $aboutText('page_about_hero_title', 'فرزین فرجی؛') }}
+                                {{ $aboutText('page_about_hero_title', 'فرجی‌هوم؛') }}
                                 <span class="block text-[var(--livora-accent)]">
-                                    {{ $aboutText('page_about_hero_highlight', 'از تولید تا جزئیات آشپزخانه.') }}
+                                    {{ $aboutText('page_about_hero_highlight', 'همراه انتخاب بهتر تجهیزات آشپزخانه.') }}
                                 </span>
                             </h1>
 
@@ -86,14 +86,14 @@
                         <div>
 
                             <p class="text-sm leading-8 text-[var(--livora-stone)] sm:text-base">
-                                {{ $aboutText('page_about_hero_description', 'فرزین فرجی در حوزه تولید هود و سینک آشپزخانه فعالیت می‌کند. این وب‌سایت برای معرفی مجموعه، نمایش محصولات و کمک به شناخت دقیق‌تر مدل‌ها و مشخصات آن‌ها طراحی شده است. جزئیات هر محصول را می‌توانید در کاتالوگ فرزین بررسی کنید.') }}
+                                {{ $aboutText('page_about_hero_description', 'فرجی‌هوم فروشگاه تخصصی تجهیزات آشپزخانه است؛ جایی برای مشاهده و مقایسه مدل‌های هود، اجاق گاز صفحه‌ای، سینک و سایر محصولات موجود از برندهای متنوع. تلاش می‌کنیم تصویر، قیمت و مشخصات هر کالا را کنار هم قرار دهیم تا پیش از خرید، انتخاب دقیق‌تری داشته باشید.') }}
                             </p>
 
                             <a
                                 href="{{ route('shop.index') }}"
                                 class="mt-7 inline-flex items-center rounded-2xl bg-[var(--livora-ink)] px-6 py-4 text-sm font-medium !text-white transition-colors duration-300 hover:bg-[var(--livora-accent)] hover:!text-white"
                             >
-                                {{ $aboutText('page_about_hero_cta', 'مشاهده محصولات فرزین') }}
+                                {{ $aboutText('page_about_hero_cta', 'مشاهده محصولات') }}
                             </a>
                         </div>
 
@@ -119,11 +119,11 @@
                     <div>
 
                         <p class="text-[10px] font-medium uppercase tracking-[0.22em] text-[var(--livora-accent)]">
-                            {{ $aboutText('page_about_statement_eyebrow', 'THE MAKER AND THE WORK') }}
+                            {{ $aboutText('page_about_statement_eyebrow', 'نگاه ما به انتخاب محصول') }}
                         </p>
 
                         <h2 class="mt-4 text-3xl font-semibold tracking-tight sm:text-4xl">
-                            {{ $aboutText('page_about_statement_title', 'تولید، محصول و تجربه‌ی استفاده.') }}
+                            {{ $aboutText('page_about_statement_title', 'انتخاب خوب، از اطلاعات روشن شروع می‌شود.') }}
                         </h2>
 
                     </div>
@@ -131,11 +131,11 @@
                     <div class="max-w-3xl">
 
                         <p class="text-lg leading-9 text-[var(--livora-text)] sm:text-xl">
-                            {{ $aboutText('page_about_statement_body_1', 'محصول برای ما فقط یک تصویر یا نام در کاتالوگ نیست؛ ابعاد، کاربرد و مشخصات آن باید برای خریدار قابل بررسی باشد. معرفی روشن محصول کمک می‌کند انتخاب بر پایه‌ی نیاز واقعی آشپزخانه انجام شود.') }}
+                            {{ $aboutText('page_about_statement_body_1', 'در فرجی‌هوم، تصویر و نام محصول نقطه شروع‌اند؛ ابعاد، کاربرد و مشخصات فنی هر مدل نیز در دسترس خریدار قرار می‌گیرد. اطلاعات روشن، انتخابی متناسب با فضای واقعی آشپزخانه را ساده‌تر می‌کند.') }}
                         </p>
 
                         <p class="mt-6 text-sm leading-8 text-[var(--livora-stone)]">
-                            {{ $aboutText('page_about_statement_body_2', 'در کنار معرفی مجموعه و مسیر کاری آن، کاتالوگ محصولات نیز بخشی از همین تجربه است: اطلاعات هر مدل باید کمک کند خریدار پیش از سفارش، تفاوت‌ها و تناسب آن را با فضای خود بررسی کند.') }}
+                            {{ $aboutText('page_about_statement_body_2', 'فرجی‌هوم محصولات برندهای گوناگون را در یک مسیر خرید آنلاین گرد هم می‌آورد؛ با دسته‌بندی روشن، صفحه اختصاصی هر محصول و راه‌های ارتباطی برای پرسش پیش از خرید.') }}
                         </p>
 
                     </div>
@@ -157,20 +157,20 @@
             <x-layout.container>
                 <div class="relative grid gap-10 py-16 sm:py-20 lg:grid-cols-[0.85fr_1.15fr] lg:items-end lg:py-24">
                     <div>
-                        <p class="text-[10px] font-semibold uppercase tracking-[0.24em] text-[#b7c9cb]">{{ $aboutText('page_about_factory_eyebrow', 'FACTORY & PROCESS') }}</p>
+                        <p class="text-[10px] font-semibold uppercase tracking-[0.24em] text-[#b7c9cb]">{{ $aboutText('page_about_factory_eyebrow', 'از جستجو تا انتخاب') }}</p>
                         <h2 class="mt-5 text-3xl font-semibold leading-tight sm:text-4xl lg:text-5xl">
-                            {{ $aboutText('page_about_factory_title', 'پشت محصول را هم بشناسید.') }}
+                            {{ $aboutText('page_about_factory_title', 'چطور انتخاب را ساده‌تر می‌کنیم؟') }}
                         </h2>
                     </div>
                     <div class="max-w-3xl">
                         <p class="text-base leading-9 text-white/80 sm:text-lg">
-                            {{ $aboutText('page_about_factory_body_1', 'برای شناخت یک هود یا سینک، ظاهر محصول تنها بخشی از ماجراست. ابعاد، نوع نصب، جنس، امکانات و شیوه نگهداری هم اهمیت دارند. معرفی فرزین قرار است مسیر آشنایی با مجموعه و محصولات را روشن‌تر کند.') }}
+                            {{ $aboutText('page_about_factory_body_1', 'برای هود، نوع نصب، عرض، قدرت مکش و میزان صدا را بررسی کنید؛ برای اجاق گاز، ابعاد برش، تعداد شعله و امکانات ایمنی؛ و برای سینک، روش نصب، تعداد لگن، ابعاد و جنس. این معیارها کمک می‌کنند محصولات را با فضای آشپزخانه خود تطبیق دهید.') }}
                         </p>
                         <p class="mt-5 text-sm leading-8 text-white/60">
-                            {{ $aboutText('page_about_factory_body_2', 'اطلاعات اختصاصی هر مدل باید با مشخصات فنی تأییدشده همان محصول همراه باشد؛ به همین دلیل ویژگی‌ها و جزئیات قابل‌بررسی در صفحه محصول ارائه می‌شوند.') }}
+                            {{ $aboutText('page_about_factory_body_2', 'مشخصات فنی، قیمت و وضعیت موجودی هر مدل را در صفحه همان محصول بررسی کنید. در صورت وجود ابهام، پیش از ثبت سفارش از راه‌های ارتباطی فروشگاه سؤال کنید؛ ویژگی‌های هر کالا باید بر اساس اطلاعات ثبت‌شده همان مدل سنجیده شود.') }}
                         </p>
                         <a href="{{ route('shop.index') }}" class="mt-7 inline-flex items-center gap-3 rounded-xl bg-[var(--livora-accent)] px-5 py-3.5 text-sm font-semibold text-white transition hover:bg-[var(--livora-white)] hover:text-[var(--livora-text)]">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4 shrink-0" aria-hidden="true"><path d="M3.5 9h17l-1 11h-15l-1-11Z" /><path d="M8 9V6.5a4 4 0 0 1 8 0V9" /></svg> {{ $aboutText('page_about_factory_cta', 'دیدن کاتالوگ محصولات') }}
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4 shrink-0" aria-hidden="true"><path d="M3.5 9h17l-1 11h-15l-1-11Z" /><path d="M8 9V6.5a4 4 0 0 1 8 0V9" /></svg> {{ $aboutText('page_about_factory_cta', 'مشاهده محصولات') }}
                         </a>
                     </div>
                 </div>
@@ -195,7 +195,7 @@
                         </p>
 
                         <h2 class="mt-4 text-3xl font-semibold tracking-tight sm:text-4xl">
-                            {{ $aboutText('page_about_values_title', 'تمرکز مجموعه فرزین.') }}
+                            {{ $aboutText('page_about_values_title', 'خریدی که با نیاز شما شروع می‌شود.') }}
                         </h2>
 
                     </div>
@@ -213,7 +213,7 @@
                             </h3>
 
                             <p class="mt-3 text-sm leading-8 text-[var(--livora-stone)]">
-                                {{ $aboutText('page_about_value_1_description', 'فرم و ظاهر باید در خدمت فضای شما باشد، نه اینکه فضا را تحت‌الشعاع قرار دهد.') }}
+                                {{ $aboutText('page_about_value_1_description', 'فرم و ظاهر محصول را با فضای آشپزخانه و نیاز روزمره خود هماهنگ کنید.') }}
                             </p>
 
                         </article>
@@ -245,7 +245,7 @@
                             </h3>
 
                             <p class="mt-3 text-sm leading-8 text-[var(--livora-stone)]">
-                                {{ $aboutText('page_about_value_3_description', 'قیمت، مشخصات، موجودی و شرایط پرداخت باید قبل از تصمیم‌گیری روشن باشند.') }}
+                                {{ $aboutText('page_about_value_3_description', 'قیمت، مشخصات، موجودی و روش‌های پرداخت در صفحه محصول نمایش داده می‌شوند.') }}
                             </p>
 
                         </article>
@@ -257,11 +257,11 @@
                         </span>
 
                             <h3 class="mt-8 text-lg font-semibold">
-                                {{ $aboutText('page_about_value_4_title', 'مسیر تولید') }}
+                                {{ $aboutText('page_about_value_4_title', 'پشتیبانی پیش از خرید') }}
                             </h3>
 
                             <p class="mt-3 text-sm leading-8 text-[var(--livora-stone)]">
-                                {{ $aboutText('page_about_value_4_description', 'خرید باید ساده و آرام باشد؛ از اولین مشاهده محصول تا سفارش نهایی.') }}
+                                {{ $aboutText('page_about_value_4_description', 'مسیر مشاهده محصول تا ثبت و پیگیری سفارش را ساده و روشن نگه می‌داریم.') }}
                             </p>
 
                         </article>
@@ -297,7 +297,7 @@
                         </h2>
 
                         <p class="mt-4 text-sm leading-8 text-[var(--livora-stone)]">
-                            {{ $aboutText('page_about_experience_description', 'تجربه فرزین فقط به صفحه محصول محدود نمی‌شود. تمام مسیر برای انتخاب راحت‌تر طراحی شده است.') }}
+                            {{ $aboutText('page_about_experience_description', 'خرید از فرجی‌هوم از انتخاب دسته و مقایسه مدل‌ها تا ثبت و پیگیری سفارش را در یک مسیر روشن فراهم می‌کند.') }}
                         </p>
 
                     </div>
@@ -427,7 +427,7 @@
                         </p>
 
                         <h2 class="mt-4 max-w-2xl text-3xl font-semibold tracking-tight sm:text-4xl">
-                            {{ $aboutText('page_about_installment_title', 'انتخاب خوب نباید فقط به بودجه امروز محدود شود.') }}
+                            {{ $aboutText('page_about_installment_title', 'روش پرداخت متناسب با شرایط هر محصول را بررسی کنید.') }}
                         </h2>
 
                         <p class="mt-5 max-w-2xl text-sm leading-8 text-white/55">
@@ -475,15 +475,15 @@
                     <div class="mx-auto max-w-3xl text-center">
 
                         <p class="text-[10px] font-medium uppercase tracking-[0.24em] text-[var(--livora-accent)]">
-                            فرزین
+                            {{ $aboutText('page_about_final_eyebrow', 'فرجی‌هوم') }}
                         </p>
 
                         <h2 class="mt-5 text-4xl font-semibold tracking-tight sm:text-5xl">
-                            {{ $aboutText('page_about_final_title', 'برای فضاهایی که قرار است ماندگار باشند.') }}
+                            {{ $aboutText('page_about_final_title', 'برای انتخاب بهتر تجهیزات آشپزخانه، از همین‌جا شروع کنید.') }}
                         </h2>
 
                         <p class="mx-auto mt-5 max-w-2xl text-sm leading-8 text-[var(--livora-stone)]">
-                            {{ $aboutText('page_about_final_description', 'مجموعه فرزین را ببین و محصولی را پیدا کن که فقط خانه را پر نکند؛ بلکه بخشی از شخصیت آن شود.') }}
+                            {{ $aboutText('page_about_final_description', 'دسته‌ها و محصولات موجود فرجی‌هوم را بررسی کنید یا برای پرسش پیش از خرید با ما در ارتباط باشید.') }}
                         </p>
 
                         <div class="mt-8 flex flex-col justify-center gap-3 sm:flex-row">

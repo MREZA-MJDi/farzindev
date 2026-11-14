@@ -1,4 +1,4 @@
-@props(['cartCount' => 0, 'brandName' => 'فرزین', 'brandLogo' => null])
+@props(['cartCount' => 0, 'brandName' => 'فرجی‌هوم', 'brandLogo' => null])
 
 <nav
     aria-label="ناوبری اصلی {{ $brandName }}"
@@ -57,7 +57,7 @@
                     action="{{ route('shop.index') }}"
                     method="GET"
                     role="search"
-                    aria-label="جستجوی محصولات فرزین"
+                    aria-label="جستجوی محصولات فرجی‌هوم"
                     class="hidden xl:block xl:w-[clamp(12rem,17vw,16rem)]"
                 >
                     <label for="navbar-product-search" class="sr-only">جستجوی هود، سینک یا دسته‌بندی</label>

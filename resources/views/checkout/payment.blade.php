@@ -2,12 +2,12 @@
 
 @section(
     'title',
-    'انتخاب روش پرداخت | ' . $order->order_number . ' | فرزین'
+    'انتخاب روش پرداخت | ' . $order->order_number . ' | فرجی‌هوم'
 )
 
 @section(
     'description',
-    'ادامه سفارش و مشاهده روش‌های پرداخت فعال و شرایط خرید اقساطی در فرزین.'
+    'ادامه سفارش و مشاهده روش‌های پرداخت فعال و شرایط خرید اقساطی در فرجی‌هوم.'
 )
 
 @section(
@@ -508,7 +508,7 @@
 
 
                     {{-- =================================================
-                         فرزین INSTALLMENT
+                         فرجی‌هوم INSTALLMENT
                     ================================================== --}}
 
                     <section
@@ -522,7 +522,7 @@
                                 <div>
 
                                     <p class="text-[10px] font-medium uppercase tracking-[0.2em] text-white/40">
-                                        فرزین INSTALLMENT
+                                        فرجی‌هوم INSTALLMENT
                                     </p>
 
                                     <h2 class="mt-3 text-2xl font-semibold">

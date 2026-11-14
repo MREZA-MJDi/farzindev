@@ -3,27 +3,27 @@
      * Farzin public design tokens.
      * This is the single source of truth for storefront colors, borders and surfaces.
      */
-    --fz-page: #F5F6F8;
+    --fz-page: #F6F5F3;
     --fz-paper: #FFFFFF;
-    --fz-paper-soft: #EEF1F4;
-    --fz-ink: #06284F;
-    --fz-ink-deep: #041E3E;
-    --fz-charcoal: #27292C;
-    --fz-charcoal-soft: #35383D;
-    --fz-accent-on-dark: #D7DCE2;
-    --fz-ink-soft: #17436F;
-    --fz-text: #26313B;
-    --fz-muted: #647080;
-    --fz-line: #E1E5EB;
-    --fz-line-strong: #CBD3DD;
-    --fz-accent: #7B0D1A;
-    --fz-accent-dark: #5F0712;
-    --fz-accent-soft: #EEF1F4;
-    --fz-success: #268253;
+    --fz-paper-soft: #F6F5F3;
+    --fz-ink: #1F2A33;
+    --fz-ink-deep: #17212A;
+    --fz-charcoal: #1F2A33;
+    --fz-charcoal-soft: #34414B;
+    --fz-accent-on-dark: #FFFFFF;
+    --fz-ink-soft: #5E6670;
+    --fz-text: #1F2A33;
+    --fz-muted: #5E6670;
+    --fz-line: #E7E4DF;
+    --fz-line-strong: #D6D1CA;
+    --fz-accent: #B84A12;
+    --fz-accent-dark: #8F360C;
+    --fz-accent-soft: #F8EDE7;
+    --fz-success: #1E7B4F;
     --fz-success-soft: #E8F4EE;
-    --fz-warning: #A66A17;
+    --fz-warning: #8A5A00;
     --fz-warning-soft: #F8F0E3;
-    --fz-danger: #B42332;
+    --fz-danger: #B3261E;
     --fz-danger-soft: #F0ECEE;
     --fz-info: #1E6598;
     --fz-info-soft: #E8F1F7;
@@ -37,8 +37,8 @@
     --fz-shadow-md: 0 12px 30px rgba(6, 40, 79, .095);
     --fz-shadow-lg: 0 24px 56px rgba(6, 40, 79, .14);
 
-    --fz-radius-card: 8px;
-    --fz-radius-panel: 10px;
+    --fz-radius-card: 12px;
+    --fz-radius-panel: 12px;
     --fz-radius-control: 8px;
     --fz-radius-sm: .625rem;
     --fz-radius-md: .875rem;
@@ -49,7 +49,7 @@
     --fz-duration: 240ms;
     --fz-duration-slow: 420ms;
     --fz-motion: cubic-bezier(.22, 1, .36, 1);
-    --fz-container: 1320px;
+    --fz-container: 1200px;
     --fz-header-height: 76px;
 
     /* Compatibility aliases: legacy components read the same canonical values. */

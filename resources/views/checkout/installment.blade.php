@@ -2,12 +2,12 @@
 
 @section(
     'title',
-    'خرید اقساطی | ' . $order->order_number . ' | فرزین'
+    'خرید اقساطی | ' . $order->order_number . ' | فرجی‌هوم'
 )
 
 @section(
     'description',
-    'تکمیل فرآیند خرید اقساطی سفارش در فرزین.'
+    'تکمیل فرآیند خرید اقساطی سفارش در فرجی‌هوم.'
 )
 
 @push('seo')
@@ -99,7 +99,7 @@
                     <div class="mt-8">
 
                         <p class="text-[10px] font-medium uppercase tracking-[0.22em] text-[var(--livora-accent)]">
-                            فرزین INSTALLMENT
+                            فرجی‌هوم INSTALLMENT
                         </p>
 
                         <h1 class="mt-4 text-4xl font-semibold tracking-tight sm:text-5xl">

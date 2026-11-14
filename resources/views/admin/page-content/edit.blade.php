@@ -7,20 +7,39 @@
     <div class="space-y-6" data-page-content-cms>
         <header class="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
             <div>
-                <p class="text-[10px] font-bold uppercase tracking-[0.2em] text-[var(--admin-accent)]">FARZIN / CONTENT MANAGEMENT</p>
+                <p class="text-[10px] font-bold uppercase tracking-[0.2em] text-[var(--admin-accent)]">FARAJI HOME / CONTENT MANAGEMENT</p>
                 <h1 class="admin-title mt-2">محتوا و ظاهر صفحات عمومی</h1>
                 <p class="admin-subtitle mt-2 max-w-3xl">متن‌های عمومی، نمایش بخش‌ها و تایپوگرافی را از اینجا کنترل کنید. تغییرات پس از ذخیره از همان داده‌های ذخیره‌شده در صفحات عمومی خوانده می‌شوند.</p>
             </div>
             <div class="flex flex-wrap gap-2">
                 <a href="{{ route('home') }}" target="_blank" rel="noopener noreferrer" class="admin-btn admin-btn-secondary">مشاهده سایت</a>
                 @php
-                    $previewUrl = match ($tab) {
-                        'about' => route('about'),
-                        'legal' => route('terms'),
-                        default => route('home'),
+                    $previewLinks = match ($tab) {
+                        'about' => [['label' => 'درباره ما', 'url' => route('about')]],
+                        'legal' => [
+                            ['label' => 'قوانین', 'url' => route('terms')],
+                            ['label' => 'حریم خصوصی', 'url' => route('privacy')],
+                        ],
+                        'policies' => [
+                            ['label' => 'ارسال و مرجوعی', 'url' => route('shipping-returns')],
+                            ['label' => 'ضمانت', 'url' => route('warranty')],
+                            ['label' => 'پرداخت اقساطی', 'url' => route('payment-installments')],
+                            ['label' => 'پرسش‌های متداول', 'url' => route('faq')],
+                        ],
+                        'typography' => [
+                            ['label' => 'صفحه اصلی', 'url' => route('home')],
+                            ['label' => 'فروشگاه', 'url' => route('shop.index')],
+                            ['label' => 'درباره ما', 'url' => route('about')],
+                        ],
+                        default => [['label' => 'صفحه اصلی', 'url' => route('home')]],
                     };
                 @endphp
-                <a href="{{ $previewUrl }}" target="_blank" rel="noopener noreferrer" class="admin-btn admin-btn-primary">پیش‌نمایش تب جاری</a>
+                <div class="flex flex-wrap items-center gap-2">
+                    <span class="text-[10px] text-[var(--admin-muted)]">پیش‌نمایش نسخه ذخیره‌شده:</span>
+                    @foreach($previewLinks as $previewLink)
+                        <a href="{{ $previewLink['url'] }}" target="_blank" rel="noopener noreferrer" class="admin-btn admin-btn-primary">{{ $previewLink['label'] }}</a>
+                    @endforeach
+                </div>
             </div>
         </header>
 
@@ -50,13 +69,42 @@
             @endforeach
         </nav>
 
+        <details class="rounded-2xl border border-[var(--admin-border)] bg-[var(--admin-card)] p-4 sm:p-5">
+            <summary class="cursor-pointer text-sm font-bold text-[var(--admin-text)]">راهنمای اینکه هر تب دقیقاً کدام صفحه را کنترل می‌کند</summary>
+            <div class="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                <div class="rounded-xl bg-[var(--admin-surface-soft)] p-3">
+                    <strong class="block text-xs">صفحه اصلی</strong>
+                    <span class="mt-1 block text-[11px] text-[var(--admin-muted)]">/ — اسلایدرها، دسته‌ها، محصولات منتخب، راهنماها، مجله و بخش پایانی</span>
+                </div>
+                <div class="rounded-xl bg-[var(--admin-surface-soft)] p-3">
+                    <strong class="block text-xs">درباره ما</strong>
+                    <span class="mt-1 block text-[11px] text-[var(--admin-muted)]">/about — معرفی، ارزش‌ها، مسیر مشتری و دعوت پایانی</span>
+                </div>
+                <div class="rounded-xl bg-[var(--admin-surface-soft)] p-3">
+                    <strong class="block text-xs">اطلاعات خرید</strong>
+                    <span class="mt-1 block text-[11px] text-[var(--admin-muted)]">/shipping-returns، /warranty، /payment-installments و /faq</span>
+                </div>
+                <div class="rounded-xl bg-[var(--admin-surface-soft)] p-3">
+                    <strong class="block text-xs">قوانین و حریم خصوصی</strong>
+                    <span class="mt-1 block text-[11px] text-[var(--admin-muted)]">/terms و /privacy — عنوان، مقدمه، بندها و راه ارتباطی</span>
+                </div>
+                <div class="rounded-xl bg-[var(--admin-surface-soft)] p-3">
+                    <strong class="block text-xs">تایپوگرافی</strong>
+                    <span class="mt-1 block text-[11px] text-[var(--admin-muted)]">مقیاس فونت، ارتفاع خط و عرض محتوا در صفحات عمومی</span>
+                </div>
+            </div>
+            <p class="mt-3 text-[11px] leading-6 text-[var(--admin-muted)]">
+                محصولات و دسته‌بندی‌ها از مدیریت محصولات، مقاله‌ها از مدیریت مجله، اطلاعات تلفن و نشانی از تنظیمات فروشگاه و عنوان‌های سئو از بخش SEO کنترل می‌شوند؛ این تب‌ها آن داده‌ها را تغییر نمی‌دهند.
+            </p>
+        </details>
+
         <section class="admin-card overflow-hidden">
             <div class="border-b border-[var(--admin-border)] bg-[var(--admin-surface-soft)] px-5 py-5 sm:px-7">
                 <h2 class="text-base font-bold text-[var(--admin-text)]">{{ $group['title'] }}</h2>
                 <p class="mt-2 text-xs leading-6 text-[var(--admin-muted)]">{{ $group['description'] }}</p>
             </div>
 
-            <form method="POST" action="{{ route('admin.page-content.update') }}" enctype="multipart/form-data" class="space-y-6 p-5 sm:p-7">
+            <form method="POST" action="{{ route('admin.page-content.update') }}" enctype="multipart/form-data" class="space-y-6 p-5 sm:p-7" data-page-content-form>
                 @csrf
                 @method('PUT')
                 <input type="hidden" name="tab" value="{{ $tab }}">
@@ -76,129 +124,61 @@
                                     : '';
                             }
                         }
-
-                        $heroTitlePreview = trim((string) old(
-                            'page_home_hero_title',
-                            $values['page_home_hero_title'] ?? ''
-                        )) ?: 'هود و سینک، آماده‌ی نصب در آشپزخانه‌ی شما';
-
-                        $heroDescriptionPreview = trim((string) old(
-                            'page_home_hero_description',
-                            $values['page_home_hero_description'] ?? ''
-                        )) ?: 'مدل‌های موجود فرزین را با تصویر، قیمت و مشخصات واقعی بررسی کنید.';
-
-                        $heroButtonPreview = trim((string) old(
-                            'page_home_hero_primary_label',
-                            $values['page_home_hero_primary_label'] ?? ''
-                        )) ?: 'مشاهده محصولات';
                     @endphp
 
-                    <div class="rounded-xl border border-[var(--admin-border)] bg-[var(--admin-surface-soft)] p-4 text-xs leading-6 text-[var(--admin-muted)]">
-                        این پیش‌نمایش همان نسبت تصویر و همان کارت پیشنهاد صفحه اصلی را نشان می‌دهد. فایل انتخابی با نسبت ثابت ۱۶:۱۰ برش می‌خورد؛ تصویر نهایی دقیقاً با همان قاب در Home استفاده می‌شود.
-                    </div>
-
-                    <section class="fz-admin-home-hero-preview" data-home-hero-preview aria-labelledby="fz-admin-home-preview-title">
-                        <div class="fz-admin-home-hero-preview__toolbar">
+                    <section class="rounded-xl border border-[var(--admin-border)] bg-[var(--admin-surface-soft)] p-4 sm:p-5" aria-labelledby="home-fallback-hero-title">
+                        <div class="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                             <div>
-                                <h3 id="fz-admin-home-preview-title">پیش‌نمایش واقعی Hero صفحه اصلی</h3>
-                                <p>نمایش دسکتاپ؛ در موبایل، کارت پیشنهاد زیر تصویر قرار می‌گیرد.</p>
+                                <h3 id="home-fallback-hero-title" class="text-sm font-bold text-[var(--admin-text)]">تصویر جایگزین Hero</h3>
+                                <p class="mt-1 max-w-3xl text-xs leading-6 text-[var(--admin-muted)]">
+                                    این تصویر فقط وقتی در صفحه اصلی استفاده می‌شود که هیچ‌یک از چهار بنر اصلی، هم تصویر و هم عنوان معتبر نداشته باشند. برای دیدن چیدمان واقعی و متن‌های منتشرشده، «صفحه اصلی» را در پیش‌نمایش نسخه ذخیره‌شده باز کن.
+                                </p>
                             </div>
-                            <span>نسبت تصویر ۱۶:۱۰</span>
+                            <span class="shrink-0 text-[10px] text-[var(--admin-muted)]">نسبت فایل: ۱۶:۱۰</span>
                         </div>
 
-                        <div class="fz-admin-home-hero-preview__layout">
-                            <div class="fz-admin-home-hero-preview__copy">
-                                <p class="fz-admin-home-hero-preview__eyebrow">تجهیزات آشپزخانه فرزین</p>
-                                <h2 data-home-hero-preview-title>{{ $heroTitlePreview }}</h2>
-                                <p data-home-hero-preview-description>{{ $heroDescriptionPreview }}</p>
-                                <span class="fz-admin-home-hero-preview__button" data-home-hero-preview-cta>{{ $heroButtonPreview }} <span aria-hidden="true">←</span></span>
+                        <div class="mt-4 grid gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(280px,.85fr)] lg:items-start">
+                            <div class="min-w-0">
+                                <div class="admin-image-preview aspect-[16/10] w-full max-w-2xl overflow-hidden {{ $heroImagePreview === '' ? 'hidden' : '' }}">
+                                    <img data-image-editor-existing-preview @if($heroImagePreview !== '') src="{{ $heroImagePreview }}" @endif alt="تصویر ذخیره‌شده جایگزین Hero" width="1600" height="1000" loading="lazy" decoding="async" class="h-full w-full object-cover">
+                                </div>
+                                <div data-image-editor-placeholder class="flex aspect-[16/10] w-full max-w-2xl flex-col items-center justify-center gap-2 border border-dashed border-[var(--admin-border)] bg-[var(--admin-card)] p-5 text-center text-xs text-[var(--admin-muted)] {{ $heroImagePreview !== '' ? 'hidden' : '' }}">
+                                    <strong>هنوز تصویر جایگزین ثبت نشده است</strong>
+                                    <span>پس از انتخاب فایل، برش واقعی تصویر در پنل سمت چپ نمایش داده می‌شود.</span>
+                                </div>
+                                <label for="page_home_hero_image" class="admin-label mt-4 block">بارگذاری تصویر جایگزین Hero</label>
+                                <input id="page_home_hero_image" name="page_home_hero_image" type="file" accept="image/jpeg,image/png,image/webp"
+                                       data-image-editor-input data-image-editor-default-ratio="16:10"
+                                       data-image-editor-min-width="1200" data-image-editor-min-height="750"
+                                       class="admin-input mt-2 w-full max-w-2xl p-2">
+                                <p class="mt-1 text-[10px] leading-5 text-[var(--admin-muted)]">JPG، PNG یا WEBP؛ حداقل ۱۲۰۰×۷۵۰؛ حداکثر ۲۰ مگابایت. این فایل، اسلایدهای اصلی را جایگزین نمی‌کند.</p>
+                                @error('page_home_hero_image')
+                                    <p role="alert" class="mt-2 text-xs text-[var(--admin-danger)]">{{ $message }}</p>
+                                @enderror
                             </div>
 
-                            <div class="fz-admin-home-hero-preview__visual">
-                                <div class="admin-image-preview fz-admin-home-hero-preview__saved {{ $heroImagePreview === '' ? 'hidden' : '' }}">
-                                    <img
-                                        data-image-editor-existing-preview
-                                        @if($heroImagePreview !== '') src="{{ $heroImagePreview }}" @endif
-                                        alt="تصویر فعلی Hero"
-                                        width="1600"
-                                        height="1000"
-                                        loading="lazy"
-                                        decoding="async"
-                                    >
-                                    @if($heroProductPreview)
-                                        <x-home.hero-offer :product="$heroProductPreview" />
-                                    @else
-                                        <div class="fz-admin-home-hero-preview__no-offer">فعلاً محصول موجود و منتخب برای کارت پیشنهاد ثبت نشده است.</div>
-                                    @endif
+                            <div data-image-editor-panel-for="page_home_hero_image" hidden class="min-w-0 space-y-4 rounded-xl border border-[var(--admin-border)] bg-[var(--admin-card)] p-4">
+                                <div>
+                                    <strong class="block text-xs font-bold text-[var(--admin-text)]">برش تصویر پیش از ذخیره</strong>
+                                    <p class="mt-1 text-[10px] leading-5 text-[var(--admin-muted)]">این فقط پیش‌نمایش کادر تصویر است، نه شبیه‌سازی صفحه عمومی.</p>
                                 </div>
-
-                                <div data-image-editor-placeholder class="fz-admin-home-hero-preview__placeholder {{ $heroImagePreview !== '' ? 'hidden' : '' }}">
-                                    <span aria-hidden="true">۱۶:۱۰</span>
-                                    <strong>تصویر واقعی آشپزخانه اینجا نمایش داده می‌شود</strong>
-                                    <small>بعد از انتخاب فایل، کادر قابل برش و جابه‌جایی می‌شود.</small>
+                                <canvas data-image-editor-canvas role="img" aria-label="پیش‌نمایش برش تصویر جایگزین Hero"
+                                        class="mx-auto block w-full rounded-lg bg-[var(--admin-bg)]" style="height:auto;aspect-ratio:16/10;touch-action:none;cursor:grab;"></canvas>
+                                <div class="grid gap-4 sm:grid-cols-2">
+                                    <label class="text-xs text-[var(--admin-text)]">نسبت کادر
+                                        <select data-image-editor-ratio class="admin-select mt-2 w-full"><option value="16:10" selected>۱۶:۱۰</option></select>
+                                    </label>
+                                    <label class="text-xs text-[var(--admin-text)]">بزرگ‌نمایی <span data-image-editor-zoom-label>۱×</span>
+                                        <input data-image-editor-zoom type="range" min="1" max="3" step="0.05" value="1" class="mt-3 w-full">
+                                    </label>
                                 </div>
-
-                                <div data-image-editor-panel data-image-editor-panel-for="page_home_hero_image" hidden class="fz-admin-home-hero-crop-panel">
-                                    <div class="fz-admin-home-hero-crop-frame">
-                                        <canvas
-                                            data-image-editor-canvas
-                                            role="img"
-                                            aria-label="پیش‌نمایش زنده برش تصویر Hero با کارت پیشنهاد فرزین"
-                                        ></canvas>
-                                        @if($heroProductPreview)
-                                            <x-home.hero-offer :product="$heroProductPreview" />
-                                        @else
-                                            <div class="fz-admin-home-hero-preview__no-offer">کارت پیشنهاد فقط وقتی نمایش داده می‌شود که محصول منتخب و موجود باشد.</div>
-                                        @endif
-                                    </div>
-
-                                    <div class="fz-admin-home-hero-crop-controls">
-                                        <div class="fz-admin-home-hero-crop-controls__heading">
-                                            <strong>تنظیم کادر نهایی تصویر</strong>
-                                            <span>همان کادری که در صفحه اصلی منتشر می‌شود</span>
-                                        </div>
-                                        <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                                            <label class="block text-xs text-[var(--admin-text)]">
-                                                نسبت تصویر
-                                                <select data-image-editor-ratio class="admin-select mt-2 w-full">
-                                                    <option value="16:10" selected>۱۶:۱۰ — قاب ثابت Hero</option>
-                                                </select>
-                                            </label>
-                                            <label class="block text-xs text-[var(--admin-text)]">
-                                                بزرگ‌نمایی <span data-image-editor-zoom-label>۱×</span>
-                                                <input data-image-editor-zoom type="range" min="1" max="3" step="0.05" value="1" class="mt-3 w-full">
-                                            </label>
-                                        </div>
-                                        <div class="flex flex-wrap gap-2">
-                                            <button type="button" data-image-editor-rotate="-90" class="admin-btn admin-btn-secondary">چرخش به چپ</button>
-                                            <button type="button" data-image-editor-rotate="90" class="admin-btn admin-btn-secondary">چرخش به راست</button>
-                                            <button type="button" data-image-editor-reset class="admin-btn admin-btn-ghost">بازنشانی کادر</button>
-                                        </div>
-                                        <p data-image-editor-status class="text-xs leading-6 text-[var(--admin-muted)]" aria-live="polite">تصویر را با ماوس یا لمس بکشید تا سوژه در جای درست قرار بگیرد.</p>
-                                    </div>
+                                <div class="flex flex-wrap gap-2">
+                                    <button type="button" data-image-editor-rotate="-90" class="admin-btn admin-btn-secondary">چرخش به چپ</button>
+                                    <button type="button" data-image-editor-rotate="90" class="admin-btn admin-btn-secondary">چرخش به راست</button>
+                                    <button type="button" data-image-editor-reset class="admin-btn admin-btn-ghost">بازنشانی</button>
                                 </div>
+                                <p data-image-editor-status class="text-xs leading-6 text-[var(--admin-muted)]" aria-live="polite">تصویر را بکشید تا کادر موردنظر تنظیم شود.</p>
                             </div>
-                        </div>
-
-                        <div class="fz-admin-home-hero-preview__upload">
-                            <div>
-                                <label for="page_home_hero_image" class="admin-label">انتخاب عکس اصلی آشپزخانه</label>
-                                <p>JPG، PNG یا WEBP؛ حداقل ۱۲۰۰×۷۵۰ پیکسل و حداکثر ۲۰ مگابایت.</p>
-                            </div>
-                            <input
-                                id="page_home_hero_image"
-                                name="page_home_hero_image"
-                                type="file"
-                                accept="image/jpeg,image/png,image/webp"
-                                data-image-editor-input
-                                data-image-editor-default-ratio="16:10"
-                                data-image-editor-min-width="1200"
-                                data-image-editor-min-height="750"
-                                class="admin-input w-full p-2"
-                            >
-                            @error('page_home_hero_image')
-                                <p role="alert" class="text-xs text-[var(--admin-danger)]">{{ $message }}</p>
-                            @enderror
                         </div>
                     </section>
 
@@ -223,11 +203,15 @@
                                         <span class="text-[10px] text-[var(--admin-muted)]">بدون تصویر</span>
                                     @endif
                                 </div>
-                                @if($bannerImageUrl1 !== '')
-                                    <img src="{{ $bannerImageUrl1 }}" alt="پیش‌نمایش بنر 1" width="1200" height="450" loading="lazy" decoding="async" class="mt-3 aspect-[16/6] w-full rounded-xl object-cover">
-                                @endif
+                                <div class="mt-3">
+                                    <img id="page_home_banner_1_preview" src="{{ $bannerImageUrl1 }}" alt="پیش‌نمایش تصویر بنر 1" width="1200" height="450" loading="lazy" decoding="async" class="aspect-[16/6] w-full rounded-xl object-cover {{ $bannerImageUrl1 !== '' ? '' : 'hidden' }}">
+                                    <div id="page_home_banner_1_placeholder" class="flex aspect-[16/6] w-full items-center justify-center rounded-xl border border-dashed border-[var(--admin-border)] bg-[var(--admin-card)] text-xs text-[var(--admin-muted)] {{ $bannerImageUrl1 !== '' ? 'hidden' : '' }}">تصویر بنر 1 انتخاب نشده است</div>
+                                </div>
                                 <label for="page_home_banner_1_image" class="admin-label mt-4 block">تصویر بنر 1</label>
-                                <input id="page_home_banner_1_image" name="page_home_banner_1_image" type="file" accept="image/jpeg,image/png,image/webp" class="admin-input mt-2 w-full p-2">
+                                <input id="page_home_banner_1_image" name="page_home_banner_1_image" type="file" accept="image/jpeg,image/png,image/webp"
+                                       data-image-preview-input data-image-preview-target="#page_home_banner_1_preview"
+                                       data-image-preview-placeholder="#page_home_banner_1_placeholder"
+                                       class="admin-input mt-2 w-full p-2">
                                 <p class="mt-1 text-[10px] leading-5 text-[var(--admin-muted)]">JPG، PNG یا WEBP؛ نسبت ۱۶:۶؛ حداقل ۱۲۰۰×۳۷۵؛ حداکثر ۲۰ مگابایت.</p>
                                 @error('page_home_banner_1_image')
                                     <p role="alert" class="mt-2 text-xs text-[var(--admin-danger)]">{{ $message }}</p>
@@ -254,11 +238,15 @@
                                         <span class="text-[10px] text-[var(--admin-muted)]">بدون تصویر</span>
                                     @endif
                                 </div>
-                                @if($bannerImageUrl2 !== '')
-                                    <img src="{{ $bannerImageUrl2 }}" alt="پیش‌نمایش بنر 2" width="1200" height="450" loading="lazy" decoding="async" class="mt-3 aspect-[16/6] w-full rounded-xl object-cover">
-                                @endif
+                                <div class="mt-3">
+                                    <img id="page_home_banner_2_preview" src="{{ $bannerImageUrl2 }}" alt="پیش‌نمایش تصویر بنر 2" width="1200" height="450" loading="lazy" decoding="async" class="aspect-[16/6] w-full rounded-xl object-cover {{ $bannerImageUrl2 !== '' ? '' : 'hidden' }}">
+                                    <div id="page_home_banner_2_placeholder" class="flex aspect-[16/6] w-full items-center justify-center rounded-xl border border-dashed border-[var(--admin-border)] bg-[var(--admin-card)] text-xs text-[var(--admin-muted)] {{ $bannerImageUrl2 !== '' ? 'hidden' : '' }}">تصویر بنر 2 انتخاب نشده است</div>
+                                </div>
                                 <label for="page_home_banner_2_image" class="admin-label mt-4 block">تصویر بنر 2</label>
-                                <input id="page_home_banner_2_image" name="page_home_banner_2_image" type="file" accept="image/jpeg,image/png,image/webp" class="admin-input mt-2 w-full p-2">
+                                <input id="page_home_banner_2_image" name="page_home_banner_2_image" type="file" accept="image/jpeg,image/png,image/webp"
+                                       data-image-preview-input data-image-preview-target="#page_home_banner_2_preview"
+                                       data-image-preview-placeholder="#page_home_banner_2_placeholder"
+                                       class="admin-input mt-2 w-full p-2">
                                 <p class="mt-1 text-[10px] leading-5 text-[var(--admin-muted)]">JPG، PNG یا WEBP؛ نسبت ۱۶:۶؛ حداقل ۱۲۰۰×۳۷۵؛ حداکثر ۲۰ مگابایت.</p>
                                 @error('page_home_banner_2_image')
                                     <p role="alert" class="mt-2 text-xs text-[var(--admin-danger)]">{{ $message }}</p>
@@ -285,11 +273,15 @@
                                         <span class="text-[10px] text-[var(--admin-muted)]">بدون تصویر</span>
                                     @endif
                                 </div>
-                                @if($bannerImageUrl3 !== '')
-                                    <img src="{{ $bannerImageUrl3 }}" alt="پیش‌نمایش بنر 3" width="1200" height="450" loading="lazy" decoding="async" class="mt-3 aspect-[16/6] w-full rounded-xl object-cover">
-                                @endif
+                                <div class="mt-3">
+                                    <img id="page_home_banner_3_preview" src="{{ $bannerImageUrl3 }}" alt="پیش‌نمایش تصویر بنر 3" width="1200" height="450" loading="lazy" decoding="async" class="aspect-[16/6] w-full rounded-xl object-cover {{ $bannerImageUrl3 !== '' ? '' : 'hidden' }}">
+                                    <div id="page_home_banner_3_placeholder" class="flex aspect-[16/6] w-full items-center justify-center rounded-xl border border-dashed border-[var(--admin-border)] bg-[var(--admin-card)] text-xs text-[var(--admin-muted)] {{ $bannerImageUrl3 !== '' ? 'hidden' : '' }}">تصویر بنر 3 انتخاب نشده است</div>
+                                </div>
                                 <label for="page_home_banner_3_image" class="admin-label mt-4 block">تصویر بنر 3</label>
-                                <input id="page_home_banner_3_image" name="page_home_banner_3_image" type="file" accept="image/jpeg,image/png,image/webp" class="admin-input mt-2 w-full p-2">
+                                <input id="page_home_banner_3_image" name="page_home_banner_3_image" type="file" accept="image/jpeg,image/png,image/webp"
+                                       data-image-preview-input data-image-preview-target="#page_home_banner_3_preview"
+                                       data-image-preview-placeholder="#page_home_banner_3_placeholder"
+                                       class="admin-input mt-2 w-full p-2">
                                 <p class="mt-1 text-[10px] leading-5 text-[var(--admin-muted)]">JPG، PNG یا WEBP؛ نسبت ۱۶:۶؛ حداقل ۱۲۰۰×۳۷۵؛ حداکثر ۲۰ مگابایت.</p>
                                 @error('page_home_banner_3_image')
                                     <p role="alert" class="mt-2 text-xs text-[var(--admin-danger)]">{{ $message }}</p>
@@ -316,11 +308,15 @@
                                         <span class="text-[10px] text-[var(--admin-muted)]">بدون تصویر</span>
                                     @endif
                                 </div>
-                                @if($bannerImageUrl4 !== '')
-                                    <img src="{{ $bannerImageUrl4 }}" alt="پیش‌نمایش بنر 4" width="1200" height="450" loading="lazy" decoding="async" class="mt-3 aspect-[16/6] w-full rounded-xl object-cover">
-                                @endif
+                                <div class="mt-3">
+                                    <img id="page_home_banner_4_preview" src="{{ $bannerImageUrl4 }}" alt="پیش‌نمایش تصویر بنر 4" width="1200" height="450" loading="lazy" decoding="async" class="aspect-[16/6] w-full rounded-xl object-cover {{ $bannerImageUrl4 !== '' ? '' : 'hidden' }}">
+                                    <div id="page_home_banner_4_placeholder" class="flex aspect-[16/6] w-full items-center justify-center rounded-xl border border-dashed border-[var(--admin-border)] bg-[var(--admin-card)] text-xs text-[var(--admin-muted)] {{ $bannerImageUrl4 !== '' ? 'hidden' : '' }}">تصویر بنر 4 انتخاب نشده است</div>
+                                </div>
                                 <label for="page_home_banner_4_image" class="admin-label mt-4 block">تصویر بنر 4</label>
-                                <input id="page_home_banner_4_image" name="page_home_banner_4_image" type="file" accept="image/jpeg,image/png,image/webp" class="admin-input mt-2 w-full p-2">
+                                <input id="page_home_banner_4_image" name="page_home_banner_4_image" type="file" accept="image/jpeg,image/png,image/webp"
+                                       data-image-preview-input data-image-preview-target="#page_home_banner_4_preview"
+                                       data-image-preview-placeholder="#page_home_banner_4_placeholder"
+                                       class="admin-input mt-2 w-full p-2">
                                 <p class="mt-1 text-[10px] leading-5 text-[var(--admin-muted)]">JPG، PNG یا WEBP؛ نسبت ۱۶:۶؛ حداقل ۱۲۰۰×۳۷۵؛ حداکثر ۲۰ مگابایت.</p>
                                 @error('page_home_banner_4_image')
                                     <p role="alert" class="mt-2 text-xs text-[var(--admin-danger)]">{{ $message }}</p>
@@ -405,49 +401,60 @@
                     </div>
                 @endif
 
-                <div class="grid gap-5 xl:grid-cols-2">
-                    @foreach($group['fields'] as $key => $field)
-                        @php
-                            $value = old($key, $values[$key] ?? '');
-                            $isWide = ($field['type'] ?? '') === 'textarea';
-                        @endphp
-                        <div @class(['min-w-0', 'xl:col-span-2' => $isWide])>
-                            @if($field['type'] === 'toggle')
-                                <label class="flex min-h-14 cursor-pointer items-center justify-between gap-4 rounded-xl border border-[var(--admin-border)] bg-[var(--admin-surface-soft)] px-4 py-3">
-                                    <span class="text-sm font-semibold text-[var(--admin-text)]">{{ $field['label'] }}</span>
-                                    <span class="flex items-center gap-2">
-                                        <span class="text-[10px] text-[var(--admin-muted)]">نمایش</span>
-                                        <input type="hidden" name="{{ $key }}" value="0">
-                                        <input type="checkbox" name="{{ $key }}" value="1" @checked((string) $value === '1') class="admin-checkbox h-4 w-4">
-                                    </span>
-                                </label>
-                            @else
-                                <label for="{{ $key }}" class="admin-label">{{ $field['label'] }}</label>
-                                @if($field['type'] === 'textarea')
-                                    <textarea id="{{ $key }}" name="{{ $key }}" rows="3" maxlength="{{ $field['max'] }}" class="admin-textarea mt-2 w-full">{{ $value }}</textarea>
-                                @elseif($field['type'] === 'select')
-                                    <select id="{{ $key }}" name="{{ $key }}" class="admin-select mt-2 w-full">
-                                        @foreach($field['options'] as $optionValue => $optionLabel)
-                                            <option value="{{ $optionValue }}" @selected((string) $value === (string) $optionValue)>{{ $optionLabel }}</option>
-                                        @endforeach
-                                    </select>
-                                @else
-                                    <input id="{{ $key }}" name="{{ $key }}" type="{{ $field['type'] === 'number' ? 'number' : 'text' }}"
-                                           value="{{ $value }}" @if(isset($field['min'])) min="{{ $field['min'] }}" @endif
-                                           @if(isset($field['max']) && $field['type'] === 'number') max="{{ $field['max'] }}" @elseif(isset($field['max'])) maxlength="{{ $field['max'] }}" @endif
-                                           @if(isset($field['step'])) step="{{ $field['step'] }}" @endif
-                                           class="admin-input mt-2 w-full @if($field['type'] === 'number') text-left @endif"
-                                           @if($field['type'] === 'number') dir="ltr" inputmode="decimal" @endif>
-                                @endif
-                            @endif
-                            @error($key)<p role="alert" class="mt-2 text-xs text-[var(--admin-danger)]">{{ $message }}</p>@enderror
+                @foreach($fieldSections as $section)
+                    <section class="rounded-xl border border-[var(--admin-border)] bg-[var(--admin-card)] p-4 sm:p-5">
+                        <header class="mb-4 border-b border-[var(--admin-border)] pb-3">
+                            <h3 class="text-sm font-bold text-[var(--admin-text)]">{{ $section['title'] }}</h3>
+                            <p class="mt-1 text-[11px] leading-6 text-[var(--admin-muted)]">{{ $section['description'] }}</p>
+                        </header>
+                        <div class="grid gap-5 xl:grid-cols-2">
+                            @foreach($section['fields'] as $key => $field)
+                                @php
+                                    $value = old($key, $values[$key] ?? '');
+                                    $isWide = ($field['type'] ?? '') === 'textarea';
+                                @endphp
+                                <div @class(['min-w-0', 'xl:col-span-2' => $isWide])>
+                                    @if($field['type'] === 'toggle')
+                                        <label class="flex min-h-14 cursor-pointer items-center justify-between gap-4 rounded-xl border border-[var(--admin-border)] bg-[var(--admin-surface-soft)] px-4 py-3">
+                                            <span class="text-sm font-semibold text-[var(--admin-text)]">{{ $field['label'] }}</span>
+                                            <span class="flex items-center gap-2">
+                                                <span class="text-[10px] text-[var(--admin-muted)]">نمایش</span>
+                                                <input type="hidden" name="{{ $key }}" value="0">
+                                                <input type="checkbox" name="{{ $key }}" value="1" @checked((string) $value === '1') class="admin-checkbox h-4 w-4">
+                                            </span>
+                                        </label>
+                                    @else
+                                        <label for="{{ $key }}" class="admin-label">{{ $field['label'] }}</label>
+                                        @if($field['type'] === 'textarea')
+                                            <textarea id="{{ $key }}" name="{{ $key }}" rows="3" maxlength="{{ $field['max'] }}" class="admin-textarea mt-2 w-full">{{ $value }}</textarea>
+                                        @elseif($field['type'] === 'select')
+                                            <select id="{{ $key }}" name="{{ $key }}" class="admin-select mt-2 w-full">
+                                                @foreach($field['options'] as $optionValue => $optionLabel)
+                                                    <option value="{{ $optionValue }}" @selected((string) $value === (string) $optionValue)>{{ $optionLabel }}</option>
+                                                @endforeach
+                                            </select>
+                                        @else
+                                            <input id="{{ $key }}" name="{{ $key }}" type="{{ $field['type'] === 'number' ? 'number' : 'text' }}"
+                                                   value="{{ $value }}" @if(isset($field['min'])) min="{{ $field['min'] }}" @endif
+                                                   @if(isset($field['max']) && $field['type'] === 'number') max="{{ $field['max'] }}" @elseif(isset($field['max'])) maxlength="{{ $field['max'] }}" @endif
+                                                   @if(isset($field['step'])) step="{{ $field['step'] }}" @endif
+                                                   class="admin-input mt-2 w-full @if($field['type'] === 'number') text-left @endif"
+                                                   @if($field['type'] === 'number') dir="ltr" inputmode="decimal" @endif>
+                                        @endif
+                                    @endif
+                                    @error($key)<p role="alert" class="mt-2 text-xs text-[var(--admin-danger)]">{{ $message }}</p>@enderror
+                                </div>
+                            @endforeach
                         </div>
-                    @endforeach
-                </div>
+                    </section>
+                @endforeach
 
                 <div class="flex flex-col gap-3 border-t border-[var(--admin-border)] pt-5 sm:flex-row sm:items-center sm:justify-between">
-                    <p class="text-xs leading-6 text-[var(--admin-muted)]">ذخیره هر تب فقط تنظیمات همان تب را به‌روزرسانی می‌کند؛ سایر محتواها دست‌نخورده می‌مانند.</p>
-                    <button type="submit" class="admin-btn admin-btn-primary min-w-36">ذخیره تغییرات</button>
+                    <div class="min-w-0">
+                        <p class="text-xs leading-6 text-[var(--admin-muted)]">ذخیره هر تب فقط تنظیمات همان تب را به‌روزرسانی می‌کند؛ سایر محتواها دست‌نخورده می‌مانند.</p>
+                        <p data-page-content-save-state role="status" class="mt-1 text-[10px] text-[var(--admin-muted)]">وضعیت: بدون تغییر ذخیره‌نشده</p>
+                    </div>
+                    <button type="submit" data-page-content-save-button class="admin-btn admin-btn-primary min-w-36">ذخیره تغییرات</button>
                 </div>
             </form>
         </section>

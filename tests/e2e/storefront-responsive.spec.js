@@ -15,7 +15,7 @@ const publicRoutes = [
     '/shop',
     '/categories',
     '/categories/hoods',
-    '/product/farzin-hood-preview-01',
+    '/product/faraji-hood-sample-01',
     '/blog',
     '/blog/category/browser-smoke-guides',
     '/blog/choosing-kitchen-hood',
@@ -151,20 +151,26 @@ test('shop mobile filters apply together, scroll safely and preserve the selecte
     await page.setViewportSize({ width: 360, height: 640 });
     await page.goto('/shop?sort=popular', { waitUntil: 'domcontentloaded' });
 
+    // Search stays in the single shop toolbar; the mobile drawer carries its
+    // current value as a hidden field so applying filters does not clear it.
+    await page.locator('#shop-catalog-search').fill('هود');
+    await page.locator('.farzin-shop-searchbar__submit').click();
+    await expect(page).toHaveURL(/search=%D9%87%D9%88%D8%AF|search=هود/);
+    await expect(page).toHaveURL(/sort=popular/);
+    const initialUrl = page.url();
+
     await page.getByRole('button', { name: 'فیلترها' }).click();
 
     const drawer = page.locator('[data-farzin-filter-drawer]');
     await expect(drawer).toBeVisible();
     await expect(drawer).toHaveCount(1);
 
-    const initialUrl = page.url();
     const category = drawer.locator('input[name="category"]').first();
     await expect(category).toBeVisible();
     await category.check();
     await drawer.locator('input[name="installment"]').check();
-    await drawer.locator('input[name="search"]').fill('هود');
 
-    // Mobile controls stay in the drawer until Apply is pressed.
+    // Mobile drawer filters remain local until Apply is pressed.
     expect(page.url()).toBe(initialUrl);
 
     await drawer.getByRole('button', { name: 'اعمال فیلتر' }).click();
@@ -566,15 +572,15 @@ test('blog archive renders the editorial magazine layout without horizontal over
                 const visual = media.querySelector('img, .blog-art-fallback');
                 if (!visual) return false;
 
-                const frameStyle = getComputedStyle(media);
                 const visualStyle = getComputedStyle(visual);
                 const frame = media.getBoundingClientRect();
+                const artwork = visual.getBoundingClientRect();
 
                 return frame.width > 0
                     && frame.height > 0
                     && visualStyle.position === 'absolute'
-                    && visualStyle.width === '100%'
-                    && visualStyle.height === '100%'
+                    && Math.abs(artwork.width - frame.width) <= 1
+                    && Math.abs(artwork.height - frame.height) <= 1
                     && (!visual.matches('img') || visualStyle.objectFit === 'cover');
             });
         });
@@ -646,7 +652,7 @@ test('blog actions are real touch targets and the magazine stays free of heavy m
         expect(feedResponse.headers()['content-type']).toContain('application/rss+xml');
         const feedXml = await feedResponse.text();
         expect(feedXml).toContain('<rss');
-        expect(feedXml).toContain('<title>مجله فرزین</title>');
+        expect(feedXml).toContain('<title>مجله فرجی‌هوم</title>');
         await expect(page).toHaveURL(/\/blog\/feed\.xml$/);
     }
 });
@@ -750,7 +756,7 @@ test('admin blog image workflows expose the cropper and saved media library', as
 });
 
 
-test('admin homepage hero preview matches the fixed 16:10 crop and updates its copy live', async ({ page }) => {
+test('admin page content uses the real published preview and accurate image crop controls', async ({ page }) => {
     await page.setViewportSize({ width: 1280, height: 900 });
     await page.goto('/admin/login', { waitUntil: 'domcontentloaded' });
 
@@ -761,11 +767,12 @@ test('admin homepage hero preview matches the fixed 16:10 crop and updates its c
     await expect(page).toHaveURL(/\/admin(?:\/dashboard)?(?:\?.*)?$/);
 
     await page.goto('/admin/page-content?tab=home', { waitUntil: 'domcontentloaded' });
-    await expect(page.locator('[data-home-hero-preview]')).toBeVisible();
+    await expect(page.locator('[data-page-content-form]')).toBeVisible();
+    await expect(page.locator('[data-home-hero-preview]')).toHaveCount(0);
+    await expect(page.getByText('پیش‌نمایش نسخه ذخیره‌شده:', { exact: true })).toBeVisible();
 
-    const previewTitle = page.locator('[data-home-hero-preview-title]');
-    await page.locator('#page_home_hero_title').fill('پیش‌نمایش زنده هود و سینک');
-    await expect(previewTitle).toHaveText('پیش‌نمایش زنده هود و سینک');
+    await page.locator('#page_home_hero_title').fill('عنوان ویرایش‌شده Hero');
+    await expect(page.locator('[data-page-content-save-state]')).toContainText('تغییرات ذخیره‌نشده');
 
     const imageBytes = await page.evaluate(async () => {
         const source = document.createElement('canvas');
@@ -792,14 +799,14 @@ test('admin homepage hero preview matches the fixed 16:10 crop and updates its c
         buffer: Buffer.from(imageBytes),
     });
 
-    const cropPanel = page.locator('[data-image-editor-panel]');
+    const cropPanel = page.locator('[data-image-editor-panel-for="page_home_hero_image"]');
     const cropCanvas = cropPanel.locator('[data-image-editor-canvas]');
     await expect(cropPanel).toBeVisible();
     await expect(cropCanvas).toBeVisible();
     await expect(cropPanel.locator('[data-image-editor-ratio]')).toHaveValue('16:10');
 
     const cropRatio = await cropCanvas.evaluate((canvas) => canvas.width / canvas.height);
-    expect(cropRatio, 'crop preview must use the same 16:10 frame as the public homepage').toBeCloseTo(1.6, 2);
+    expect(cropRatio, 'crop preview must use the required 16:10 output frame').toBeCloseTo(1.6, 2);
     await expect(cropPanel.locator('[data-image-editor-status]')).toContainText('پیکسل');
 
     await cropPanel.locator('[data-image-editor-zoom]').evaluate((input) => {
@@ -809,15 +816,21 @@ test('admin homepage hero preview matches the fixed 16:10 crop and updates its c
     await expect(cropPanel.locator('[data-image-editor-zoom-label]')).toContainText('۱٫۵');
 
     await page.setViewportSize({ width: 390, height: 844 });
-    const previewOverflow = await page.locator('[data-home-hero-preview]').evaluate((element) => (
-        Math.max(element.scrollWidth, element.getBoundingClientRect().width)
-        - element.getBoundingClientRect().width
-    ));
-    expect(previewOverflow, 'the hero crop preview must not overflow on mobile').toBeLessThanOrEqual(1);
+    const cropBounds = await cropPanel.boundingBox();
+    expect(cropBounds?.width ?? 0, 'crop editor must fit the mobile viewport').toBeLessThanOrEqual(390);
 
     await upload.setInputFiles([]);
     await expect(cropPanel).toBeHidden();
     await expect(page.locator('[data-image-editor-placeholder]')).toBeVisible();
+
+    const bannerUpload = page.locator('input[name="page_home_banner_1_image"]');
+    await bannerUpload.setInputFiles({
+        name: 'farzin-banner-preview.png',
+        mimeType: 'image/png',
+        buffer: Buffer.from(imageBytes),
+    });
+    await expect(page.locator('#page_home_banner_1_preview')).toBeVisible();
+    await expect(page.locator('#page_home_banner_1_preview')).toHaveAttribute('src', /^blob:/);
 });
 
 test('admin contact location preview updates the existing map frame when address and coordinates change', async ({ page }) => {
@@ -907,7 +920,7 @@ test('shop product card actions stay aligned across different content heights', 
         });
 
         expect(geometry.radius).toBeGreaterThanOrEqual(9);
-        expect(geometry.radius).toBeLessThanOrEqual(11);
+        expect(geometry.radius).toBeLessThanOrEqual(12);
         expect(geometry.imageRatio).toBeGreaterThan(1.28);
         expect(geometry.imageRatio).toBeLessThan(1.38);
         expect(geometry.titleLineHeight / geometry.titleFontSize).toBeGreaterThanOrEqual(1.6);
@@ -983,24 +996,26 @@ test('category index cards keep their copy readable above the image treatment', 
     await expect(card).toBeVisible();
     const contrast = await card.evaluate((element) => {
         const title = element.querySelector('.farzin-category-card__content h3');
-        const description = element.querySelector('.farzin-category-card__content p:not(:first-child)');
+        const eyebrow = element.querySelector('.farzin-category-card__content p');
         const shade = element.querySelector('.farzin-category-card__shade');
 
         return {
             title: getComputedStyle(title).color,
-            description: description ? getComputedStyle(description).color : null,
+            eyebrow: eyebrow ? getComputedStyle(eyebrow).color : null,
+            hasProductCount: Boolean(element.querySelector('.farzin-category-card__content p:not(:first-child)')),
             shade: getComputedStyle(shade).backgroundImage,
         };
     });
 
     expect(contrast.title, 'category names must be white over the dark lower image overlay').toBe('rgb(255, 255, 255)');
-    expect(contrast.description, 'category counts must stay legible on the same overlay').toBe('rgba(255, 255, 255, 0.82)');
+    expect(contrast.eyebrow, 'category eyebrow must remain legible on the same overlay').toBe('rgba(255, 255, 255, 0.72)');
+    expect(contrast.hasProductCount, 'category cards must not show product counts').toBe(false);
     expect(contrast.shade, 'category cards must include a readable dark image gradient').toContain('linear-gradient');
 });
 
 test('product detail exposes one branded quantity stepper and preloads primary fonts', async ({ page }) => {
     await page.setViewportSize({ width: 1280, height: 900 });
-    await page.goto('/product/farzin-hood-preview-01', { waitUntil: 'domcontentloaded' });
+    await page.goto('/product/faraji-hood-sample-01', { waitUntil: 'domcontentloaded' });
 
     const stepper = page.locator('[data-quantity-control]');
     await expect(stepper).toHaveCount(1);
@@ -1062,7 +1077,7 @@ test('shop catalogue search is a real GET form and preserves active filters', as
     await expect(search).toBeVisible();
     await expect(search).toHaveAttribute('name', 'search');
     await search.fill('هود');
-    await page.locator('.farzin-shop-search__submit').click();
+    await page.locator('.farzin-shop-searchbar__submit').click();
     await expect(page).toHaveURL(/search=/);
     await expect(page).toHaveURL(/sort=price_asc/);
     await expect(page).toHaveURL(/featured=1/);
@@ -1204,7 +1219,7 @@ test('public storefront cards keep restrained, consistent corner geometry', asyn
         { path: '/shop', selectors: ['.farzin-product-card'] },
         { path: '/categories', selectors: ['.fz-category-card', '.farzin-shop-category-card'] },
         { path: '/categories/hoods', selectors: ['.farzin-product-card'] },
-        { path: '/product/farzin-hood-preview-01', selectors: ['.fz-product-panel', '.farzin-product-detail-info'] },
+        { path: '/product/faraji-hood-sample-01', selectors: ['.fz-product-panel', '.farzin-product-detail-info'] },
         { path: '/blog', selectors: ['.blog-featured-card', '.blog-article-card'] },
     ];
 

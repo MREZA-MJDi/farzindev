@@ -1,4 +1,4 @@
-@props(['brandName' => 'فرزین', 'brandLogo' => null, 'storefrontContact' => []])
+@props(['brandName' => 'فرجی‌هوم', 'brandLogo' => null, 'storefrontContact' => []])
 
 <div
     id="farzin-mobile-menu"
@@ -205,25 +205,7 @@
                 </div>
             </div>
 
-            {{-- Buying guide --}}
-            <div class="mt-7 rounded-3xl bg-[var(--livora-ink)] p-5 text-white">
-                <p class="text-[10px] font-semibold uppercase tracking-[0.18em] text-white/60">
-                    راهنمای خرید {{ $brandName }}
-                </p>
-                <h2 class="mt-3 text-base font-bold leading-8 text-white">
-                    هود و سینک مناسب آشپزخانه‌ات را آگاهانه انتخاب کن.
-                </h2>
-                <p class="mt-2 text-xs leading-7 text-white/75">
-                    ابعاد، نوع نصب، جنس و مشخصات هر محصول را با نیاز آشپزخانه تطبیق بده.
-                </p>
-                <a
-                    href="{{ route('shop.index') }}"
-                    @click="mobileOpen = false"
-                    class="mt-4 inline-flex min-h-11 items-center justify-center rounded-xl bg-white px-5 py-2.5 text-xs font-bold text-[var(--livora-ink)] transition hover:bg-[var(--livora-accent-soft)] hover:text-[var(--livora-accent)]"
-                >
-                    مشاهده محصولات
-                </a>
-            </div>
+
         </div>
 
         {{-- Drawer footer --}}
@@ -239,22 +221,9 @@
                     class="text-xs font-semibold text-[var(--livora-accent)] transition hover:text-[var(--livora-accent-dark)]"
                 >تماس با ما</a>
             </div>
-            @if(filled(data_get($storefrontContact, 'phone')) || filled(data_get($storefrontContact, 'whatsapp')) || filled(data_get($storefrontContact, 'instagram_url')) || filled(data_get($storefrontContact, 'telegram_url')))
-                <div class="mt-3 flex flex-wrap items-center justify-center gap-x-4 gap-y-2 border-t border-[var(--livora-border)] pt-3 text-[11px]">
-                    @if(filled(data_get($storefrontContact, 'phone')))
-                        <a href="tel:{{ preg_replace('/[^0-9+]/', '', (string) data_get($storefrontContact, 'phone')) }}" dir="ltr" class="font-semibold text-[var(--livora-text)]">{{ data_get($storefrontContact, 'phone') }}</a>
-                    @endif
-                    @if(filled(data_get($storefrontContact, 'whatsapp')))
-                        <a href="https://wa.me/{{ preg_replace('/\D+/', '', (string) data_get($storefrontContact, 'whatsapp')) }}" target="_blank" rel="noopener noreferrer" class="text-[var(--livora-text)]">واتساپ</a>
-                    @endif
-                    @if(filled(data_get($storefrontContact, 'instagram_url')))
-                        <a href="{{ data_get($storefrontContact, 'instagram_url') }}" target="_blank" rel="noopener noreferrer" class="text-[var(--livora-text)]">اینستاگرام</a>
-                    @endif
-                    @if(filled(data_get($storefrontContact, 'telegram_url')))
-                        <a href="{{ data_get($storefrontContact, 'telegram_url') }}" target="_blank" rel="noopener noreferrer" class="text-[var(--livora-text)]">تلگرام</a>
-                    @endif
-                </div>
-            @endif
+            <div class="mt-3 border-t border-[var(--livora-border)] pt-3">
+                <x-layout.social-links :contact="$storefrontContact" :brand-name="$brandName" />
+            </div>
         </div>
     </section>
 </div>

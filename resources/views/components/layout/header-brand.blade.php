@@ -1,5 +1,5 @@
 @props([
-    'brandName' => 'فرزین',
+    'brandName' => 'فرجی‌هوم',
     'brandLogo' => null,
     'variant' => 'default',
 ])
@@ -31,7 +31,7 @@
             @else
                 <span class="farzin-wordmark__main">{{ $brandName }}</span>
             @endif
-            <span class="farzin-wordmark__caption">تجهیزات مدرن آشپزخانه</span>
+            <span class="farzin-wordmark__caption">تجهیزات آشپزخانه</span>
         </span>
     </a>
 @endif

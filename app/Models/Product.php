@@ -21,6 +21,7 @@ class Product extends Model
         'short_description',
         'specifications',
         'description',
+        'faqs',
         'price',
         'compare_at_price',
         'stock',
@@ -60,6 +61,7 @@ class Product extends Model
             'price' => 'decimal:2',
             'compare_at_price' => 'decimal:2',
             'specifications' => 'array',
+            'faqs' => 'array',
             'stock' => 'integer',
 
             'is_featured' => 'boolean',
@@ -115,6 +117,11 @@ class Product extends Model
     public function orderItems(): HasMany
     {
         return $this->hasMany(OrderItem::class);
+    }
+
+    public function attributeValues(): HasMany
+    {
+        return $this->hasMany(ProductAttributeValue::class);
     }
 
     public function primaryImage(): ?ProductImage

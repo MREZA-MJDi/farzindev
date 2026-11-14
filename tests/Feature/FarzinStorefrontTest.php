@@ -317,7 +317,7 @@ class FarzinStorefrontTest extends TestCase
         ]);
 
         $complete = $this->product($category, [
-            'name' => 'هود کامل فرزین',
+            'name' => 'هود کامل فرجی‌هوم',
             'slug' => 'filter-complete-hood',
             'sku' => 'FAR-FILTER-COMPLETE',
             'status' => 'active',
@@ -326,7 +326,7 @@ class FarzinStorefrontTest extends TestCase
         ProductImage::create([
             'product_id' => $complete->id,
             'path' => 'https://cdn.example.test/filter-complete.webp',
-            'alt' => 'هود کامل فرزین',
+            'alt' => 'هود کامل فرجی‌هوم',
             'sort_order' => 0,
             'is_primary' => true,
         ]);
@@ -339,16 +339,16 @@ class FarzinStorefrontTest extends TestCase
             ]))
             ->assertOk()
             ->assertSee('هود نیازمند تکمیل')
-            ->assertDontSee('هود کامل فرزین');
+            ->assertDontSee('هود کامل فرجی‌هوم');
 
         $this->get(route('admin.products.index', ['completeness' => 'incomplete']))
             ->assertOk()
             ->assertSee('هود نیازمند تکمیل')
-            ->assertDontSee('هود کامل فرزین');
+            ->assertDontSee('هود کامل فرجی‌هوم');
 
         $this->get(route('admin.products.index', ['completeness' => 'complete']))
             ->assertOk()
-            ->assertSee('هود کامل فرزین')
+            ->assertSee('هود کامل فرجی‌هوم')
             ->assertDontSee('هود نیازمند تکمیل');
     }
 
@@ -497,20 +497,20 @@ class FarzinStorefrontTest extends TestCase
             'disk' => 'public',
             'path' => $path,
             'filename' => 'home-technology-test.webp',
-            'original_name' => 'تصویر فناوری فرزین.webp',
+            'original_name' => 'تصویر فناوری فرجی‌هوم.webp',
             'mime_type' => 'image/webp',
             'extension' => 'webp',
             'size' => 17,
-            'alt' => 'تصویر فناوری فرزین',
+            'alt' => 'تصویر فناوری فرجی‌هوم',
         ]);
 
         $this->actingAs($admin, 'admin')
             ->get(route('admin.page-content.edit', ['tab' => 'home']))
             ->assertOk()
             ->assertSee('data-home-technology-media-select', false)
-            ->assertSee('تصویر فناوری فرزین.webp');
+            ->assertSee('تصویر فناوری فرجی‌هوم.webp');
 
-        $payload = app(StorefrontPageContent::class)->all();
+        $payload = app(\App\Services\StorefrontPageContent::class)->all();
         $payload['tab'] = 'home';
         $payload['page_home_technology_media_id'] = $media->id;
 
@@ -523,7 +523,7 @@ class FarzinStorefrontTest extends TestCase
             'value' => $path,
         ]);
 
-        app(StorefrontPageContent::class)->clearCache();
+        app(\App\Services\StorefrontPageContent::class)->clearCache();
         $this->get(route('home'))
             ->assertOk()
             ->assertSee(Storage::disk('public')->url($path), false)
@@ -550,7 +550,7 @@ class FarzinStorefrontTest extends TestCase
             }
 
             $response
-                ->assertSee('aria-label="ناوبری اصلی فرزین"', false)
+                ->assertSee('aria-label="ناوبری اصلی فرجی‌هوم"', false)
                 ->assertSee('data-farzin-header-brand', false)
                 ->assertSee('data-farzin-header-account', false)
                 ->assertSee('data-farzin-header-cart', false)
@@ -560,16 +560,16 @@ class FarzinStorefrontTest extends TestCase
         }
     }
 
-    public function test_categories_page_uses_a_compact_animated_showcase_before_the_category_grid(): void
+    public function test_categories_page_presents_a_clear_branded_category_discovery_path(): void
     {
         $this->get(route('categories.index'))
             ->assertOk()
-            ->assertSee('fz-category-hero__visual', false)
-            ->assertSee('farzin-category-index-banner', false)
-            ->assertSee('data-category-hero', false)
+            ->assertSee('faraji-categories-page', false)
+            ->assertSee('فرجی‌هوم / راهنمای انتخاب')
             ->assertSee('دسته‌بندی محصولات')
             ->assertSee('id="category-list"', false)
-            ->assertSee('انتخاب دسته‌بندی');
+            ->assertSee('انتخاب دسته‌بندی')
+            ->assertSee('محصولات را بر اساس دسته ببینید');
     }
 
     public function test_homepage_and_blog_use_farzin_kitchen_product_content(): void
@@ -597,18 +597,19 @@ class FarzinStorefrontTest extends TestCase
 
         $this->get(route('home'))
             ->assertOk()
-            ->assertSee('فرزین')
+            ->assertSee('فرجی‌هوم')
             ->assertSee('هود آشپزخانه')
             ->assertSee('fz-home-journal', false);
 
         $this->get(route('about'))
             ->assertOk()
-            ->assertSee('فرزین فرجی')
-            ->assertSee('کارخانه و فرایند تولید');
+            ->assertSee('فرجی‌هوم')
+            ->assertSee('فروشگاه تخصصی تجهیزات آشپزخانه')
+            ->assertDontSee('کارخانه و فرایند تولید');
 
         $this->get(route('blog.index'))
             ->assertOk()
-            ->assertSee('مجله فرزین')
+            ->assertSee('مجله فرجی‌هوم')
             ->assertSee('تازه‌های مجله')
             ->assertSee('قبل از خرید هود آشپزخانه چه چیزهایی را بررسی کنیم؟')
             ->assertSee('چک‌لیست ساده پیش از ثبت سفارش');
@@ -628,7 +629,7 @@ class FarzinStorefrontTest extends TestCase
         app(\App\Services\StorefrontPageContent::class)->clearCache();
         $copy = app(\App\Services\StorefrontPageContent::class)->all();
 
-        $this->assertSame('کارخانه و فرایند تولید', $copy['page_about_factory_eyebrow']);
+        $this->assertSame('از جستجو تا انتخاب', $copy['page_about_factory_eyebrow']);
         $this->assertSame('ساخت بر پایه نیاز واقعی', $copy['page_about_values_eyebrow']);
         $this->assertSame('مهندسی • جزئیات • عملکرد', $copy['page_home_technology_eyebrow']);
     }
@@ -637,7 +638,7 @@ class FarzinStorefrontTest extends TestCase
     {
         StorefrontSetting::query()->updateOrCreate(
             ['key' => 'page_about_hero_title'],
-            ['value' => 'درباره فرزین، روایت تازه']
+            ['value' => 'درباره فرجی‌هوم، روایت تازه']
         );
         StorefrontSetting::query()->updateOrCreate(
             ['key' => 'page_about_show_values'],
@@ -648,8 +649,8 @@ class FarzinStorefrontTest extends TestCase
 
         $this->get(route('about'))
             ->assertOk()
-            ->assertSee('درباره فرزین، روایت تازه')
-            ->assertDontSee('تمرکز مجموعه فرزین.');
+            ->assertSee('درباره فرجی‌هوم، روایت تازه')
+            ->assertDontSee('تمرکز مجموعه فرجی‌هوم.');
     }
 
     public function test_auth_and_legal_pages_use_the_farzin_customer_experience(): void
@@ -672,6 +673,93 @@ class FarzinStorefrontTest extends TestCase
         $this->get(route('privacy'))
             ->assertOk()
             ->assertSee('حریم خصوصی');
+    }
+
+    public function test_page_content_cms_publishes_terms_and_privacy_copy_and_shows_real_page_links(): void
+    {
+        $admin = $this->admin();
+        $defaults = app(\App\Services\StorefrontPageContent::class)->defaults();
+        $legalValues = collect($defaults)
+            ->filter(fn ($value, $key) => str_starts_with($key, 'page_terms_') || str_starts_with($key, 'page_privacy_'))
+            ->all();
+
+        $legalValues['page_terms_title'] = 'قوانین اختصاصی فرجی‌هوم';
+        $legalValues['page_terms_section_1_title'] = 'شرایط ثبت سفارش';
+        $legalValues['page_terms_section_1_body'] = 'این متن از پنل محتوای صفحات عمومی ذخیره شده است.';
+        $legalValues['page_privacy_title'] = 'حریم خصوصی اختصاصی';
+        $legalValues['page_privacy_section_1_title'] = 'اطلاعات حساب';
+        $legalValues['page_privacy_section_1_body'] = 'این متن باید در صفحه عمومی حریم خصوصی نمایش داده شود.';
+
+        $this->actingAs($admin, 'admin')
+            ->get(route('admin.page-content.edit', ['tab' => 'legal']))
+            ->assertOk()
+            ->assertSee('قوانین و شرایط — /terms')
+            ->assertSee('حریم خصوصی — /privacy')
+            ->assertSee('پیش‌نمایش نسخه ذخیره‌شده');
+
+        $this->put(route('admin.page-content.update'), array_merge($legalValues, ['tab' => 'legal']))
+            ->assertRedirect(route('admin.page-content.edit', ['tab' => 'legal']))
+            ->assertSessionHas('success');
+
+        $this->get(route('terms'))
+            ->assertOk()
+            ->assertSee('قوانین اختصاصی فرجی‌هوم')
+            ->assertSee('این متن از پنل محتوای صفحات عمومی ذخیره شده است.');
+
+        $this->get(route('privacy'))
+            ->assertOk()
+            ->assertSee('حریم خصوصی اختصاصی')
+            ->assertSee('این متن باید در صفحه عمومی حریم خصوصی نمایش داده شود.');
+    }
+
+    public function test_homepage_final_cta_and_typography_controls_are_connected_to_public_output(): void
+    {
+        $admin = $this->admin();
+        $defaults = app(\App\Services\StorefrontPageContent::class)->defaults();
+        $homeValues = collect($defaults)
+            ->filter(fn ($value, $key) => str_starts_with($key, 'page_home_'))
+            ->all();
+
+        $homeValues['page_home_show_final_cta'] = '1';
+        $homeValues['page_home_final_title'] = 'دعوت پایانی قابل ویرایش';
+        $homeValues['page_home_final_description'] = 'این توضیح از داشبورد عمومی ذخیره می‌شود.';
+        $homeValues['page_home_final_cta'] = 'رفتن به کاتالوگ';
+
+        $this->actingAs($admin, 'admin')
+            ->put(route('admin.page-content.update'), array_merge($homeValues, ['tab' => 'home']))
+            ->assertRedirect(route('admin.page-content.edit', ['tab' => 'home']))
+            ->assertSessionHas('success');
+
+        $this->assertDatabaseHas('storefront_settings', [
+            'key' => 'page_home_final_cta',
+            'value' => 'رفتن به کاتالوگ',
+        ]);
+        $this->assertSame('رفتن به کاتالوگ', app(\App\Services\StorefrontPageContent::class)->all()['page_home_final_cta']);
+
+        $this->get(route('home'))
+            ->assertOk()
+            ->assertSee('id="fz-home-final-cta-title"', false)
+            ->assertSee('دعوت پایانی قابل ویرایش')
+            ->assertSee('این توضیح از داشبورد عمومی ذخیره می‌شود.')
+            ->assertSee('رفتن به کاتالوگ');
+
+        $typographyValues = collect($defaults)
+            ->filter(fn ($value, $key) => str_starts_with($key, 'page_typography_'))
+            ->all();
+        $typographyValues['page_typography_font_scale'] = '105';
+        $typographyValues['page_typography_line_height'] = '1.9';
+        $typographyValues['page_typography_content_width'] = '1360';
+
+        $this->put(route('admin.page-content.update'), array_merge($typographyValues, ['tab' => 'typography']))
+            ->assertRedirect(route('admin.page-content.edit', ['tab' => 'typography']))
+            ->assertSessionHas('success');
+
+        $this->get(route('home'))
+            ->assertOk()
+            ->assertSee('id="storefront-page-typography"', false)
+            ->assertSee('font-size: 105.00%', false)
+            ->assertSee('line-height: 1.90', false)
+            ->assertSee('max-width: 1360px', false);
     }
 
     public function test_footer_receives_and_displays_the_active_contact_settings(): void
@@ -704,7 +792,7 @@ class FarzinStorefrontTest extends TestCase
         $products = [];
         foreach (range(1, 8) as $index) {
             $product = $this->product($category, [
-                'name' => 'مدل هود فرزین '.$index,
+                'name' => 'مدل هود فرجی‌هوم '.$index,
                 'slug' => 'farzin-home-hood-'.$index,
                 'sku' => 'FAR-HOME-UX-'.$index,
                 'price' => 10000000 + ($index * 100000),
@@ -739,6 +827,9 @@ class FarzinStorefrontTest extends TestCase
             ->assertSee('fz-market-hero', false)
             ->assertSee('fz-home-categories', false)
             ->assertSee('fz-home-shelf', false)
+            ->assertSee('راهنمای انتخاب هود')
+            ->assertSee('راهنمای انتخاب اجاق گاز صفحه‌ای')
+            ->assertSee('راهنمای انتخاب سینک')
             ->assertSee('data-fz-carousel-track', false)
             ->assertDontSee('data-farzin-home-slider', false)
             ->assertDontSee('data-home-slide', false)
@@ -762,7 +853,7 @@ class FarzinStorefrontTest extends TestCase
 
         foreach (range(1, 6) as $index) {
             $category = $this->category([
-                'name' => 'دسته واقعی فرزین '.$index,
+                'name' => 'دسته واقعی فرجی‌هوم '.$index,
                 'slug' => 'farzin-real-category-'.$index,
                 'sort_order' => $index,
             ]);
@@ -798,6 +889,74 @@ class FarzinStorefrontTest extends TestCase
             substr_count($response->getContent(), 'class="fz-home-round-category"'),
             'All active categories that contain active products should appear on the homepage.'
         );
+    }
+
+    public function test_category_details_show_product_specific_buying_guides_for_hoods_sinks_and_gas_hobs(): void
+    {
+        $cases = [
+            ['name' => 'هود آشپزخانه', 'slug' => 'hoods', 'criterion' => 'قدرت مکش'],
+            ['name' => 'سینک ظرفشویی', 'slug' => 'sinks', 'criterion' => 'تعداد و عمق لگن'],
+            ['name' => 'اجاق گاز صفحه‌ای', 'slug' => 'built-in-stove', 'criterion' => 'تعداد و چیدمان شعله'],
+        ];
+
+        foreach ($cases as $case) {
+            $category = $this->category([
+                'name' => $case['name'],
+                'slug' => $case['slug'],
+            ]);
+            $guideProduct = $this->product($category, [
+                'name' => $case['name'] . ' مدل فعال',
+                'slug' => $case['slug'] . '-guide-product',
+                'sku' => 'FAR-GUIDE-' . strtoupper(str_replace('-', '', $case['slug'])),
+            ]);
+            ProductImage::create([
+                'product_id' => $guideProduct->id,
+                'path' => 'https://cdn.example.test/' . $case['slug'] . '-guide.webp',
+                'alt' => $guideProduct->name,
+                'sort_order' => 0,
+                'is_primary' => true,
+            ]);
+
+            $this->get(route('categories.show', $category->slug))
+                ->assertOk()
+                ->assertSee('قبل از انتخاب بررسی کنید')
+                ->assertSee($case['criterion'])
+                ->assertSee('فرجی‌هوم');
+        }
+    }
+
+    public function test_legacy_storefront_and_seo_copy_is_normalized_for_faraji_home(): void
+    {
+        StorefrontSetting::query()->updateOrCreate(
+            ['key' => 'page_about_hero_title'],
+            ['value' => 'فرزین فرجی؛ تجربه‌ای تازه']
+        );
+        StorefrontSetting::query()->updateOrCreate(
+            ['key' => 'page_about_factory_eyebrow'],
+            ['value' => 'FACTORY & PROCESS']
+        );
+        StorefrontSetting::query()->updateOrCreate(
+            ['key' => 'page_about_factory_body_1'],
+            ['value' => 'برای شناخت یک هود یا سینک، ظاهر محصول تنها بخشی از ماجراست. ابعاد، نوع نصب، جنس، امکانات و شیوه نگهداری هم اهمیت دارند. معرفی فرزین قرار است مسیر آشنایی با مجموعه و محصولات را روشن‌تر کند.']
+        );
+        StorefrontSetting::query()->updateOrCreate(
+            ['key' => 'seo_default_title'],
+            ['value' => 'فرزین | هود و سینک آشپزخانه']
+        );
+
+        app(\App\Services\StorefrontPageContent::class)->clearCache();
+        app(SeoSettings::class)->clearCache();
+
+        $copy = app(\App\Services\StorefrontPageContent::class)->all();
+        $seo = app(SeoSettings::class)->all();
+
+        $this->assertSame('فرجی‌هوم؛ تجربه‌ای تازه', $copy['page_about_hero_title']);
+        $this->assertSame('از جستجو تا انتخاب', $copy['page_about_factory_eyebrow']);
+        $this->assertSame(
+            'برای هود، نوع نصب، عرض، قدرت مکش و میزان صدا را بررسی کنید؛ برای اجاق گاز، ابعاد برش، تعداد شعله و امکانات ایمنی؛ و برای سینک، روش نصب، تعداد لگن، ابعاد و جنس. این معیارها کمک می‌کنند محصولات را با فضای آشپزخانه خود تطبیق دهید.',
+            $copy['page_about_factory_body_1']
+        );
+        $this->assertSame('فرجی‌هوم | هود و سینک آشپزخانه', $seo['seo_default_title']);
     }
 
     public function test_category_product_listing_paginates_without_losing_products(): void
@@ -903,7 +1062,7 @@ class FarzinStorefrontTest extends TestCase
     {
         $category = $this->category();
         $product = $this->product($category, [
-            'name' => 'محصول واقعی پیشنهاد فرزین',
+            'name' => 'محصول واقعی پیشنهاد فرجی‌هوم',
             'slug' => 'real-farzin-hero-offer',
             'stock' => 3,
         ]);
@@ -911,7 +1070,7 @@ class FarzinStorefrontTest extends TestCase
         ProductImage::create([
             'product_id' => $product->id,
             'path' => 'https://cdn.example.test/real-farzin-hero-offer.webp',
-            'alt' => 'تصویر محصول پیشنهاد فرزین',
+            'alt' => 'تصویر محصول پیشنهاد فرجی‌هوم',
             'sort_order' => 0,
             'is_primary' => true,
         ]);
@@ -922,10 +1081,13 @@ class FarzinStorefrontTest extends TestCase
             ->get(route('admin.page-content.edit', ['tab' => 'home']))
             ->assertOk()
             ->assertSee('enctype="multipart/form-data"', false)
-            ->assertSee('data-home-hero-preview', false)
-            ->assertSee('data-home-hero-preview-title', false)
-            ->assertSee('data-home-hero-preview-description', false)
+            ->assertSee('data-page-content-form', false)
+            ->assertSee('data-page-content-save-state', false)
+            ->assertSee('پیش‌نمایش نسخه ذخیره‌شده')
+            ->assertDontSee('data-home-hero-preview', false)
             ->assertSee('name="page_home_hero_image"', false)
+            ->assertSee('name="page_home_hero_eyebrow"', false)
+            ->assertSee('name="page_home_final_description"', false)
             ->assertSee('data-image-editor-input', false)
             ->assertSee('data-image-editor-default-ratio="16:10"', false)
             ->assertSee('data-image-editor-min-width="1200"', false)
@@ -942,7 +1104,7 @@ class FarzinStorefrontTest extends TestCase
             ->assertOk()
             ->assertSee('class="fz-home-technology"', false)
             ->assertSee('id="fz-home-featured"', false)
-            ->assertSee('محصول واقعی پیشنهاد فرزین');
+            ->assertSee('محصول واقعی پیشنهاد فرجی‌هوم');
     }
 
     public function test_homepage_content_switches_control_published_products_and_articles(): void
@@ -1148,7 +1310,7 @@ class FarzinStorefrontTest extends TestCase
         ]);
 
         $product = $this->product($category, [
-            'name' => 'هود فرزین نقشه سایت',
+            'name' => 'هود فرجی‌هوم نقشه سایت',
             'slug' => 'farzin-hood-sitemap',
         ]);
 
@@ -1175,9 +1337,23 @@ class FarzinStorefrontTest extends TestCase
             ->assertDontSee(route('categories.show', $inactive->slug), false);
     }
 
-    public function test_public_categories_only_show_active_categories(): void
+    public function test_public_categories_hide_inactive_and_empty_gas_categories(): void
     {
-        $this->category(['name' => 'هود آشپزخانه', 'slug' => 'hoods']);
+        $active = $this->category(['name' => 'هود آشپزخانه', 'slug' => 'hoods']);
+        $this->product($active, [
+            'name' => 'هود فعال برای نمایش دسته',
+            'slug' => 'active-hood-for-category-index',
+            'sku' => 'FAR-ACTIVE-CATEGORY-INDEX',
+        ]);
+
+        $this->category([
+            'name' => 'دسته‌بندی فعال بدون محصول',
+            'slug' => 'active-empty-category',
+        ]);
+        $this->category([
+            'name' => 'اجاق گاز صفحه‌ای',
+            'slug' => 'built-in-stove',
+        ]);
         $this->category([
             'name' => 'دسته‌بندی غیرفعال دمو',
             'slug' => 'inactive-demo',
@@ -1187,6 +1363,7 @@ class FarzinStorefrontTest extends TestCase
         $this->get(route('categories.index'))
             ->assertOk()
             ->assertSee('هود آشپزخانه')
+            ->assertSee('دسته‌بندی فعال بدون محصول')
             ->assertDontSee('دسته‌بندی غیرفعال دمو');
     }
 
@@ -1240,13 +1417,25 @@ class FarzinStorefrontTest extends TestCase
             'name' => 'دسته تست SEO',
             'slug' => 'seo-test-category',
         ]);
+        $product = $this->product($category, [
+            'name' => 'محصول فعال دسته SEO',
+            'slug' => 'seo-test-category-product',
+            'sku' => 'FAR-SEO-CATEGORY-PRODUCT',
+        ]);
+        ProductImage::create([
+            'product_id' => $product->id,
+            'path' => 'https://cdn.example.test/seo-test-category.webp',
+            'alt' => $product->name,
+            'sort_order' => 0,
+            'is_primary' => true,
+        ]);
 
         $this->get(route('categories.show', $category->slug))
             ->assertOk()
             ->assertSee('farzin-category-detail-banner', false)
             ->assertSee('<meta property="og:title"', false)
             ->assertSee(route('categories.show', $category->slug), false)
-            ->assertDontSee('name }} | فرزین')
+            ->assertDontSee('name }} | فرجی‌هوم')
             ->assertDontSee("meta_description ?? ('محصولات")
             ->assertDontSee('image_url }}');
     }
@@ -1605,7 +1794,7 @@ class FarzinStorefrontTest extends TestCase
     {
         $category = $this->category(['slug' => 'hoods']);
         $product = $this->product($category, [
-            'name' => 'هود اقساطی فرزین',
+            'name' => 'هود اقساطی فرجی‌هوم',
             'slug' => 'farzin-installment-hood',
             'sku' => 'FAR-INSTALLMENT-UX',
             'price' => 10000000,
@@ -1944,7 +2133,7 @@ class FarzinStorefrontTest extends TestCase
         $this->post(route('register.store'), [
             'first_name' => 'Farzin',
             'last_name' => 'Customer',
-            'email' => 'NEW.CUSTOMER@FARZIN.TEST',
+            'email' => 'NEW.CUSTOMER@FARAJIHOME.TEST',
             'phone' => '09123456789',
             'password' => 'FarzinPass123',
             'password_confirmation' => 'FarzinPass123',
@@ -1952,12 +2141,12 @@ class FarzinStorefrontTest extends TestCase
         ])->assertRedirect(route('account.index'));
 
         $this->assertDatabaseHas('users', [
-            'email' => 'new.customer@farzin.test',
+            'email' => 'new.customer@farajihome.test',
             'role' => 'customer',
             'name' => 'Farzin Customer',
         ]);
 
-        $user = User::query()->where('email', 'new.customer@farzin.test')->firstOrFail();
+        $user = User::query()->where('email', 'new.customer@farajihome.test')->firstOrFail();
         $this->assertTrue(Hash::check('FarzinPass123', $user->password));
         $this->assertAuthenticatedAs($user);
     }
@@ -2086,7 +2275,7 @@ class FarzinStorefrontTest extends TestCase
     public function test_public_contact_form_persists_a_new_unread_message(): void
     {
         $this->post(route('contact.store'), [
-            'name' => 'مشتری فرزین',
+            'name' => 'مشتری فرجی‌هوم',
             'phone' => '09123456789',
             'email' => 'buyer@farzin.test',
             'subject' => 'product',
@@ -2095,7 +2284,7 @@ class FarzinStorefrontTest extends TestCase
             ->assertSessionHas('success');
 
         $this->assertDatabaseHas('contact_messages', [
-            'name' => 'مشتری فرزین',
+            'name' => 'مشتری فرجی‌هوم',
             'email' => 'buyer@farzin.test',
             'subject' => 'product',
             'status' => 'unread',
@@ -3491,7 +3680,7 @@ class FarzinStorefrontTest extends TestCase
         $this->actingAs($admin, 'admin')
             ->post(route('admin.media.store'), [
                 'file' => UploadedFile::fake()->create('farzin-catalog.pdf', 100, 'application/pdf'),
-                'alt' => 'کاتالوگ فرزین',
+                'alt' => 'کاتالوگ فرجی‌هوم',
                 'description' => 'فایل کاتالوگ برای تست',
             ])
             ->assertRedirect(route('admin.media.index'))
@@ -3865,7 +4054,7 @@ class FarzinStorefrontTest extends TestCase
             ->put(route('admin.categories.update', $category), [
                 'name' => 'هود توکار',
                 'slug' => 'built-in-hoods',
-                'description' => 'هودهای توکار فرزین',
+                'description' => 'هودهای توکار فرجی‌هوم',
                 'is_active' => '1',
                 'sort_order' => 2,
             ])
@@ -4820,7 +5009,7 @@ class FarzinStorefrontTest extends TestCase
 
         $this->put(route('admin.storefront-settings.update'), [
             'shop_banner_image' => UploadedFile::fake()->image('shop-banner.jpg', 1600, 900),
-            'shop_banner_title' => 'کالکشن ویژه فرزین',
+            'shop_banner_title' => 'کالکشن ویژه فرجی‌هوم',
             'shop_banner_subtitle' => 'راهنمای انتخاب هود و سینک',
             'phone' => '09123456789',
             'email' => 'info@farzin.test',
@@ -4840,7 +5029,7 @@ class FarzinStorefrontTest extends TestCase
 
         $this->assertDatabaseHas('storefront_settings', [
             'key' => 'shop_banner_title',
-            'value' => 'کالکشن ویژه فرزین',
+            'value' => 'کالکشن ویژه فرجی‌هوم',
         ]);
 
         $this->assertDatabaseHas('contact_settings', [
@@ -4853,7 +5042,7 @@ class FarzinStorefrontTest extends TestCase
 
         $this->get(route('shop.index'))
             ->assertOk()
-            ->assertSee('کالکشن ویژه فرزین');
+            ->assertSee('کالکشن ویژه فرجی‌هوم');
 
         $this->get(route('contact'))
             ->assertOk()
@@ -4876,7 +5065,7 @@ class FarzinStorefrontTest extends TestCase
 
         $this->actingAs($admin, 'admin')
             ->put(route('admin.storefront-settings.update'), [
-                'shop_banner_title' => 'فروشگاه فرزین',
+                'shop_banner_title' => 'فروشگاه فرجی‌هوم',
                 'shop_banner_subtitle' => 'راهنمای انتخاب هود و سینک',
                 'address' => 'آدرس تستی که نباید جای مختصات استفاده شود',
                 'latitude' => '35.6892',
@@ -4915,7 +5104,7 @@ class FarzinStorefrontTest extends TestCase
         $this->actingAs($admin, 'admin')
             ->from(route('admin.storefront-settings.edit'))
             ->put(route('admin.storefront-settings.update'), [
-                'shop_banner_title' => 'فروشگاه فرزین',
+                'shop_banner_title' => 'فروشگاه فرجی‌هوم',
                 'latitude' => '91',
                 'longitude' => '181',
             ])
@@ -4924,7 +5113,7 @@ class FarzinStorefrontTest extends TestCase
 
         $this->from(route('admin.storefront-settings.edit'))
             ->put(route('admin.storefront-settings.update'), [
-                'shop_banner_title' => 'فروشگاه فرزین',
+                'shop_banner_title' => 'فروشگاه فرجی‌هوم',
                 'latitude' => '35.6892',
                 'longitude' => '',
             ])
@@ -5283,7 +5472,7 @@ class FarzinStorefrontTest extends TestCase
         ]);
 
         $discounted = $this->product($category, [
-            'name' => 'هود واقعی فرزین با تخفیف',
+            'name' => 'هود واقعی فرجی‌هوم با تخفیف',
             'slug' => 'homepage-real-discounted-hood',
             'sku' => 'FAR-HOME-DISCOUNT-01',
             'price' => 10000000,
@@ -5353,7 +5542,7 @@ class FarzinStorefrontTest extends TestCase
             ->assertOk()
             ->assertSee($regular->name)
             ->assertSee('id="fz-home-new-arrivals"', false)
-            ->assertDontSee('منتخب فرزین')
+            ->assertDontSee('منتخب فرجی‌هوم')
             ->assertDontSee('id="fz-home-discounts-title"', false)
             ->assertDontSee('id="fz-home-newest-title"', false);
     }
@@ -5444,7 +5633,7 @@ class FarzinStorefrontTest extends TestCase
 
         foreach (range(1, 13) as $index) {
             $product = $this->product($category, [
-                'name' => 'سینک گرانیتی فرزین '.$index,
+                'name' => 'سینک گرانیتی فرجی‌هوم '.$index,
                 'slug' => 'farzin-granite-sink-'.$index,
                 'sku' => 'FAR-GRANITE-'.$index,
                 'price' => 10000000 + $index,
@@ -5463,10 +5652,10 @@ class FarzinStorefrontTest extends TestCase
         $pageOne = $this->get(route('shop.index', ['search' => 'سینک گرانيتی', 'sort' => 'price_asc']))
             ->assertOk()
             ->assertSee('shop-catalog-search', false)
-            ->assertSee('سینک گرانیتی فرزین 1')
+            ->assertSee('سینک گرانیتی فرجی‌هوم 1')
             ->assertViewHas('products', fn ($products): bool =>
                 $products->total() === 13
-                && $products->perPage() === 12
+                && $products->perPage() === 8
                 && $products->currentPage() === 1
                 && $products->hasPages()
             );
@@ -5475,7 +5664,7 @@ class FarzinStorefrontTest extends TestCase
 
         $this->get(route('shop.index', ['search' => 'سینک گرانيتی', 'sort' => 'price_asc', 'page' => 2]))
             ->assertOk()
-            ->assertSee('سینک گرانیتی فرزین 13')
+            ->assertSee('سینک گرانیتی فرجی‌هوم 13')
             ->assertViewHas('products', fn ($products): bool =>
                 $products->total() === 13 && $products->currentPage() === 2
             );
@@ -5513,7 +5702,7 @@ class FarzinStorefrontTest extends TestCase
     {
         $category = $this->category(['slug' => 'hoods']);
         $product = $this->product($category, [
-            'name' => 'هود اقساطی فرزین',
+            'name' => 'هود اقساطی فرجی‌هوم',
             'slug' => 'farzin-installment-hood',
             'sku' => 'FAR-INSTALLMENT-HOOD',
             'stock' => 4,
@@ -5659,12 +5848,12 @@ class FarzinStorefrontTest extends TestCase
 
         $this->actingAs($admin, 'admin')
             ->post(route('admin.blog-posts.store'), [
-                'title' => 'راهنمای انتخاب سینک فرزین',
+                'title' => 'راهنمای انتخاب سینک فرجی‌هوم',
                 'slug' => 'farzin-sink-editorial-test',
                 'excerpt' => 'راهنمای بررسی جنس و ابعاد سینک',
                 'body' => '<h2>انتخاب دقیق</h2><p>این متن باید پس از انتشار در مقاله نمایش داده شود.</p>',
                 'cover_image' => UploadedFile::fake()->image('farzin-sink-cover.jpg', 1200, 675),
-                'cover_image_alt' => 'تصویر سینک فرزین در آشپزخانه',
+                'cover_image_alt' => 'تصویر سینک فرجی‌هوم در آشپزخانه',
                 'status' => 'published',
                 'is_featured' => '0',
             ])
@@ -5682,17 +5871,17 @@ class FarzinStorefrontTest extends TestCase
         $this->get(route('blog.show', $post->slug))
             ->assertOk()
             ->assertSee($coverUrl, false)
-            ->assertSee('تصویر سینک فرزین در آشپزخانه')
+            ->assertSee('تصویر سینک فرجی‌هوم در آشپزخانه')
             ->assertSee('انتخاب دقیق')
             ->assertSee('این متن باید پس از انتشار در مقاله نمایش داده شود.');
 
         $this->get(route('blog.index'))
             ->assertOk()
-            ->assertSee('راهنمای انتخاب سینک فرزین');
+            ->assertSee('راهنمای انتخاب سینک فرجی‌هوم');
 
         $this->get(route('home'))
             ->assertOk()
-            ->assertSee('راهنمای انتخاب سینک فرزین');
+            ->assertSee('راهنمای انتخاب سینک فرجی‌هوم');
     }
 
 
@@ -5722,7 +5911,7 @@ class FarzinStorefrontTest extends TestCase
         return Category::create(array_merge([
             'name' => 'هود آشپزخانه',
             'slug' => 'hoods',
-            'description' => 'دسته‌بندی هودهای آشپزخانه فرزین',
+            'description' => 'دسته‌بندی هودهای آشپزخانه فرجی‌هوم',
             'is_active' => true,
             'sort_order' => 1,
         ], $attributes));
@@ -5738,8 +5927,8 @@ class FarzinStorefrontTest extends TestCase
             'name' => 'Farzin Product '.$sequence,
             'slug' => 'farzin-product-'.$sequence,
             'sku' => 'FAR-TEST-'.$sequence,
-            'short_description' => 'محصول آزمایشی فرزین',
-            'description' => 'توضیحات آزمایشی محصول فرزین',
+            'short_description' => 'محصول آزمایشی فرجی‌هوم',
+            'description' => 'توضیحات آزمایشی محصول فرجی‌هوم',
             'price' => 10000000,
             'compare_at_price' => null,
             'stock' => 10,

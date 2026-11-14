@@ -1,0 +1,534 @@
+/*
+ * Faraji Home — shop experience layer
+ * Editorial catalogue layout, clear hierarchy and responsive shopping controls.
+ * Loaded after the shared storefront tokens; no legacy template behavior is replaced.
+ */
+
+#app .storefront-content .farzin-shop-banner {
+    position: relative;
+    overflow: hidden;
+    background: var(--fz-ink-deep, #17212a);
+    color: #fff;
+    border-bottom: 0;
+}
+#app .storefront-content .farzin-shop-banner > .livora-container,
+#app .storefront-content .farzin-shop-banner > .container {
+    position: relative;
+    z-index: 1;
+}
+#app .storefront-content .farzin-shop-banner__breadcrumb {
+    color: rgba(255,255,255,.62);
+    font-size: .72rem;
+}
+#app .storefront-content .farzin-shop-banner__breadcrumb a:hover,
+#app .storefront-content .farzin-shop-banner__breadcrumb [aria-current="page"] {
+    color: #fff;
+}
+#app .storefront-content .farzin-shop-banner__image {
+    min-height: clamp(230px, 27vw, 370px);
+    margin-top: 1rem;
+    border: 1px solid rgba(255,255,255,.14);
+    border-bottom: 3px solid var(--fz-accent, #b84a12);
+    background: #202b34;
+}
+#app .storefront-content .farzin-shop-banner__image::after {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    background: linear-gradient(90deg, rgba(14,22,29,.08), rgba(14,22,29,.78));
+    content: "";
+    pointer-events: none;
+}
+#app .storefront-content .farzin-shop-banner__image > img {
+    filter: saturate(.78);
+}
+#app .storefront-content .farzin-shop-banner__content {
+    z-index: 1;
+    max-width: min(760px, 76%);
+    padding: clamp(1.25rem, 4vw, 3.5rem);
+}
+#app .storefront-content .farzin-shop-banner__eyebrow {
+    color: #e6a17c;
+    font-size: .68rem;
+    font-weight: 800;
+    letter-spacing: .12em;
+}
+#app .storefront-content .farzin-shop-banner__title {
+    max-width: 13ch;
+    color: #fff;
+    font-size: clamp(1.8rem, 4vw, 3.35rem);
+    font-weight: 850;
+    line-height: 1.45;
+    text-wrap: balance;
+}
+#app .storefront-content .farzin-shop-banner__description {
+    max-width: 48ch;
+    color: rgba(255,255,255,.78);
+    font-size: .94rem;
+    line-height: 2;
+}
+#app .storefront-content .farzin-shop-banner__action {
+    min-height: 48px;
+    border: 1px solid var(--fz-accent, #b84a12);
+    background: var(--fz-accent, #b84a12);
+    color: #fff;
+    font-weight: 800;
+    transition: transform .2s ease, background .2s ease, border-color .2s ease;
+}
+#app .storefront-content .farzin-shop-banner__action:hover {
+    transform: translateY(-2px);
+    border-color: #d66a32;
+    background: #d66a32;
+}
+
+/* Category navigation becomes a compact discovery rail, not a second hero. */
+#app .storefront-content nav[aria-label="دسترسی سریع به دسته‌بندی‌ها"] {
+    position: relative;
+    z-index: 2;
+    border-bottom: 1px solid var(--fz-line);
+    background: #fff;
+}
+#app .storefront-content nav[aria-label="دسترسی سریع به دسته‌بندی‌ها"] > div > div {
+    min-height: 68px;
+    align-items: center;
+}
+#app .storefront-content nav[aria-label="دسترسی سریع به دسته‌بندی‌ها"] a {
+    min-height: 38px;
+    border-radius: 999px !important;
+    padding-inline: 1rem;
+    font-size: .76rem;
+    font-weight: 750;
+}
+#app .storefront-content nav[aria-label="دسترسی سریع به دسته‌بندی‌ها"] a:not(.bg-\[var\(--livora-accent\)\]) {
+    background: #f7f6f3;
+}
+#app .storefront-content nav[aria-label="دسترسی سریع به دسته‌بندی‌ها"] a:hover {
+    border-color: var(--fz-accent);
+    background: var(--fz-accent-soft);
+    color: var(--fz-accent-dark);
+}
+
+/* The catalogue owns a calm canvas; white surfaces define the actual content. */
+#app .storefront-content .farzin-shop-catalog {
+    margin: 0;
+    padding-block: clamp(1.25rem, 3vw, 2.75rem);
+    background:
+        radial-gradient(ellipse at 88% 0%, rgba(184,74,18,.045), transparent 34rem),
+        var(--fz-page, #f6f5f3);
+}
+#app .storefront-content .farzin-shop-layout {
+    grid-template-columns: minmax(238px, 286px) minmax(0, 1fr);
+    align-items: start;
+    gap: clamp(1.25rem, 2.4vw, 2.25rem);
+    padding-block: 0;
+}
+#app .storefront-content .farzin-shop-layout > aside {
+    position: sticky;
+    top: calc(var(--fz-header-height, 76px) + 1rem);
+    min-width: 0;
+}
+#app .storefront-content .farzin-shop-layout > aside > div {
+    gap: 1rem;
+}
+#app .storefront-content .farzin-shop-layout > aside > div > div:first-child {
+    max-height: calc(100dvh - var(--fz-header-height, 76px) - 2rem);
+    padding: 1.2rem;
+    border: 1px solid var(--fz-line);
+    border-top: 3px solid var(--fz-accent);
+    border-radius: var(--fz-radius-panel, 12px) !important;
+    background: #fff;
+    box-shadow: var(--fz-shadow-sm);
+}
+#app .storefront-content .farzin-shop-layout > aside h2 {
+    color: var(--fz-ink);
+    font-size: 1.12rem;
+    font-weight: 850;
+}
+#app .storefront-content .farzin-shop-layout > aside h3 {
+    font-size: .82rem;
+    font-weight: 800;
+}
+#app .storefront-content .farzin-shop-layout > aside section {
+    padding-block: .9rem;
+    border-bottom: 1px solid var(--fz-line);
+}
+#app .storefront-content .farzin-shop-layout > aside section:last-child {
+    border-bottom: 0;
+}
+#app .storefront-content .farzin-shop-layout > aside label {
+    min-height: 42px;
+    border: 1px solid transparent;
+    border-radius: 8px !important;
+    background: #f7f6f3;
+    padding: .55rem .7rem;
+    transition: border-color .18s ease, background .18s ease;
+}
+#app .storefront-content .farzin-shop-layout > aside label:hover {
+    border-color: var(--fz-line-strong);
+    background: var(--fz-accent-soft);
+}
+#app .storefront-content .farzin-shop-layout > aside input,
+#app .storefront-content .farzin-shop-layout > aside select {
+    accent-color: var(--fz-accent);
+}
+#app .storefront-content .farzin-shop-layout > aside input[type="text"],
+#app .storefront-content .farzin-shop-layout > aside input[type="search"],
+#app .storefront-content .farzin-shop-layout > aside select {
+    min-height: 42px;
+    border: 1px solid var(--fz-line);
+    border-radius: 8px !important;
+    background: #fff;
+    padding: .65rem .75rem;
+}
+#app .storefront-content .farzin-shop-layout > aside button[type="submit"] {
+    min-height: 46px;
+    border-radius: 8px !important;
+    background: var(--fz-ink);
+    font-weight: 800;
+}
+#app .storefront-content .farzin-shop-layout > aside button[type="submit"]:hover {
+    background: var(--fz-accent);
+}
+#app .storefront-content .farzin-shop-layout > aside > div > div:last-child {
+    padding: 1.1rem 1.2rem;
+    border: 1px solid var(--fz-line);
+    border-radius: var(--fz-radius-panel, 12px) !important;
+    background: #fff;
+}
+
+/* Search is the primary catalogue action and receives the strongest affordance. */
+#app .storefront-content .farzin-shop-searchbar {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: .65rem;
+    margin-bottom: 1rem;
+}
+#app .storefront-content .farzin-shop-searchbar__field {
+    position: relative;
+    display: flex;
+    min-height: 56px;
+    align-items: center;
+    gap: .75rem;
+    border: 1px solid var(--fz-line-strong);
+    border-radius: 10px !important;
+    background: #fff;
+    padding: 0 1rem;
+    transition: border-color .18s ease, box-shadow .18s ease;
+}
+#app .storefront-content .farzin-shop-searchbar__field:focus-within {
+    border-color: var(--fz-accent);
+    box-shadow: 0 0 0 4px rgba(184,74,18,.09);
+}
+#app .storefront-content .farzin-shop-searchbar__field svg {
+    width: 20px;
+    height: 20px;
+    flex: 0 0 20px;
+    color: var(--fz-muted);
+}
+#app .storefront-content .farzin-shop-searchbar__field input {
+    width: 100%;
+    min-width: 0;
+    min-height: 52px;
+    border: 0 !important;
+    outline: 0;
+    background: transparent;
+    color: var(--fz-ink);
+    font-size: .86rem;
+    box-shadow: none !important;
+}
+#app .storefront-content .farzin-shop-searchbar__field input::placeholder {
+    color: #92979b;
+}
+#app .storefront-content .farzin-shop-searchbar__clear {
+    flex: 0 0 auto;
+    color: var(--fz-accent);
+    font-size: .72rem;
+    font-weight: 750;
+}
+#app .storefront-content .farzin-shop-searchbar__submit {
+    min-width: 112px;
+    min-height: 56px;
+    border: 1px solid var(--fz-accent);
+    border-radius: 10px !important;
+    background: var(--fz-accent);
+    color: #fff;
+    font-size: .82rem;
+    font-weight: 850;
+    transition: background .18s ease, transform .18s ease;
+}
+#app .storefront-content .farzin-shop-searchbar__submit:hover {
+    transform: translateY(-1px);
+    background: var(--fz-accent-dark);
+}
+
+/* Results toolbar and product rhythm. */
+#app .storefront-content .farzin-shop-sortbar {
+    min-height: 74px;
+    align-items: center;
+    border-bottom: 1px solid var(--fz-line);
+    padding-block: .8rem 1rem;
+}
+#app .storefront-content .farzin-shop-sortbar > div:first-child p:first-child {
+    color: var(--fz-accent);
+    font-size: .68rem;
+    font-weight: 850;
+    letter-spacing: .02em;
+}
+#app .storefront-content .farzin-shop-sortbar > div:first-child p:last-child {
+    color: var(--fz-muted);
+    font-size: .75rem;
+}
+#app .storefront-content .farzin-shop-toolbar__sort {
+    width: min(100%, 230px);
+}
+#app .storefront-content .farzin-shop-toolbar__sort > div > button {
+    min-height: 48px;
+    border: 1px solid var(--fz-line);
+    border-radius: 9px !important;
+    background: #fff;
+    padding: .55rem .85rem;
+}
+#app .storefront-content .farzin-shop-toolbar__sort > div > button:hover {
+    border-color: var(--fz-accent);
+}
+#app .storefront-content .farzin-shop-product-grid {
+    gap: clamp(.8rem, 1.35vw, 1.25rem);
+    align-items: stretch;
+}
+#app .storefront-content .farzin-shop-product-grid > * {
+    min-width: 0;
+}
+#app .storefront-content .farzin-shop-product-grid .farzin-product-card {
+    height: 100%;
+    border: 1px solid var(--fz-line);
+    border-radius: 12px !important;
+    background: #fff;
+    box-shadow: 0 3px 12px rgba(23,33,42,.035);
+    transition: transform .22s ease, box-shadow .22s ease, border-color .22s ease;
+}
+#app .storefront-content .farzin-shop-product-grid .farzin-product-card:hover {
+    transform: translateY(-3px);
+    border-color: rgba(184,74,18,.36);
+    box-shadow: 0 14px 32px rgba(23,33,42,.09);
+}
+#app .storefront-content .farzin-shop-product-grid .farzin-product-card__image-link {
+    background: #f4f3f0;
+}
+#app .storefront-content .farzin-shop-product-grid .farzin-product-card__content {
+    display: flex;
+    min-height: 210px;
+    flex-direction: column;
+}
+#app .storefront-content .farzin-shop-product-grid .farzin-product-card__cta {
+    margin-top: auto;
+    border-radius: 8px !important;
+    background: var(--fz-ink);
+}
+#app .storefront-content .farzin-shop-product-grid .farzin-product-card__cta:hover {
+    background: var(--fz-accent);
+}
+
+/* Mobile: no sidebar squeeze, compact controls, real two-column product discovery. */
+#app .storefront-content .farzin-shop-catalog .farzin-shop-layout {
+    grid-template-columns: minmax(0, 1fr);
+}
+#app .storefront-content .farzin-shop-catalog .farzin-shop-layout > aside {
+    display: none;
+}
+#app .storefront-content .farzin-shop-catalog .farzin-shop-layout > div:last-child {
+    min-width: 0;
+}
+#app .storefront-content .farzin-shop-catalog .farzin-shop-layout > div:last-child > .mb-5.flex {
+    margin-bottom: .8rem;
+    gap: .65rem;
+}
+#app .storefront-content .farzin-shop-catalog .farzin-shop-layout > div:last-child > .mb-5.flex button {
+    min-height: 44px;
+    border: 1px solid var(--fz-line);
+    border-radius: 9px !important;
+    background: #fff;
+    padding-inline: 1rem;
+    font-size: .78rem;
+    font-weight: 800;
+}
+#app .storefront-content .farzin-shop-catalog .farzin-shop-layout > div:last-child > .mb-5.flex button:hover {
+    border-color: var(--fz-accent);
+    color: var(--fz-accent);
+}
+#app .storefront-content .farzin-shop-product-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+#app .storefront-content .farzin-shop-product-grid .farzin-product-card__content {
+    min-height: 190px;
+}
+#app .storefront-content .farzin-filter-drawer__panel {
+    width: min(92vw, 420px);
+    background: #f7f6f3;
+}
+#app .storefront-content .farzin-filter-drawer__panel > div:first-child {
+    min-height: 76px;
+    border-bottom-color: var(--fz-line);
+    background: #fff;
+}
+#app .storefront-content .farzin-filter-drawer__panel > form > div:last-child {
+    padding-bottom: max(1rem, env(safe-area-inset-bottom));
+    border-top-color: var(--fz-line);
+    background: #fff;
+}
+#app .storefront-content .farzin-filter-drawer__panel button,
+#app .storefront-content .farzin-filter-drawer__panel a {
+    min-height: 46px;
+    border-radius: 8px !important;
+    font-weight: 800;
+}
+#app .storefront-content .farzin-filter-drawer__panel button[type="submit"] {
+    background: var(--fz-accent);
+}
+#app .storefront-content .farzin-filter-drawer__panel button[type="submit"]:hover {
+    background: var(--fz-accent-dark);
+}
+
+@media (min-width: 1024px) {
+    #app .storefront-content .farzin-shop-catalog .farzin-shop-layout {
+        grid-template-columns: minmax(238px, 286px) minmax(0, 1fr);
+    }
+    #app .storefront-content .farzin-shop-catalog .farzin-shop-layout > aside {
+        display: block;
+    }
+    #app .storefront-content .farzin-shop-product-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+}
+@media (min-width: 1440px) {
+    #app .storefront-content .farzin-shop-catalog .farzin-shop-layout {
+        grid-template-columns: 300px minmax(0, 1fr);
+    }
+}
+@media (max-width: 1023px) {
+    #app .storefront-content .farzin-shop-catalog {
+        padding-block: 1rem 2rem;
+    }
+    #app .storefront-content .farzin-shop-layout {
+        gap: 0;
+        padding-block: 0;
+    }
+    #app .storefront-content .farzin-shop-banner > .livora-container,
+    #app .storefront-content .farzin-shop-banner > .container {
+        padding-inline: 1rem;
+    }
+    #app .storefront-content .farzin-shop-banner__image {
+        min-height: 250px;
+        aspect-ratio: 16 / 7;
+    }
+}
+@media (max-width: 640px) {
+    #app .storefront-content .farzin-shop-banner > div > div {
+        padding-block: 1.1rem;
+    }
+    #app .storefront-content .farzin-shop-banner__image {
+        min-height: 250px;
+        margin-top: .8rem;
+        aspect-ratio: 4 / 3;
+    }
+    #app .storefront-content .farzin-shop-banner__content {
+        inset-inline: 0;
+        max-width: 100%;
+        padding: 1.25rem;
+    }
+    #app .storefront-content .farzin-shop-banner__title {
+        max-width: 12ch;
+        font-size: clamp(1.55rem, 7vw, 2.25rem);
+    }
+    #app .storefront-content .farzin-shop-banner__description {
+        max-width: 34ch;
+        font-size: .8rem;
+        line-height: 1.85;
+    }
+    #app .storefront-content nav[aria-label="دسترسی سریع به دسته‌بندی‌ها"] > div > div {
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        padding-block: .8rem;
+        scrollbar-width: none;
+    }
+    #app .storefront-content nav[aria-label="دسترسی سریع به دسته‌بندی‌ها"] > div > div::-webkit-scrollbar {
+        display: none;
+    }
+    #app .storefront-content nav[aria-label="دسترسی سریع به دسته‌بندی‌ها"] span {
+        font-size: .68rem;
+    }
+    #app .storefront-content nav[aria-label="دسترسی سریع به دسته‌بندی‌ها"] a {
+        flex: 0 0 auto;
+        white-space: nowrap;
+    }
+    #app .storefront-content .farzin-shop-searchbar {
+        grid-template-columns: minmax(0, 1fr);
+        gap: .55rem;
+        margin-bottom: .85rem;
+    }
+    #app .storefront-content .farzin-shop-searchbar__field {
+        min-height: 50px;
+        padding-inline: .8rem;
+    }
+    #app .storefront-content .farzin-shop-searchbar__field input {
+        min-height: 48px;
+        font-size: .76rem;
+    }
+    #app .storefront-content .farzin-shop-searchbar__submit {
+        min-height: 46px;
+        width: 100%;
+    }
+    #app .storefront-content .farzin-shop-sortbar {
+        min-height: 0;
+        align-items: flex-start;
+        gap: .6rem;
+        padding-bottom: .85rem;
+    }
+    #app .storefront-content .farzin-shop-sortbar > div:first-child p:last-child {
+        font-size: .68rem;
+    }
+    #app .storefront-content .farzin-shop-toolbar__sort {
+        width: min(52%, 190px);
+    }
+    #app .storefront-content .farzin-shop-toolbar__sort > div > button {
+        min-height: 44px;
+        gap: .45rem;
+        padding: .45rem .6rem;
+    }
+    #app .storefront-content .farzin-shop-toolbar__sort > div > button span span:first-child {
+        display: none;
+    }
+    #app .storefront-content .farzin-shop-product-grid {
+        gap: .65rem;
+        margin-top: 1rem;
+    }
+    #app .storefront-content .farzin-shop-product-grid .farzin-product-card {
+        border-radius: 9px !important;
+    }
+    #app .storefront-content .farzin-shop-product-grid .farzin-product-card__content {
+        min-height: 174px;
+    }
+}
+@media (max-width: 380px) {
+    #app .storefront-content .farzin-shop-product-grid {
+        grid-template-columns: minmax(0, 1fr);
+    }
+    #app .storefront-content .farzin-shop-product-grid .farzin-product-card__content {
+        min-height: 0;
+    }
+    #app .storefront-content .farzin-shop-product-grid .farzin-product-card__image-link {
+        aspect-ratio: 16 / 10 !important;
+    }
+    #app .storefront-content .farzin-shop-sortbar {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    #app .storefront-content .farzin-shop-toolbar__sort {
+        width: 100%;
+    }
+}
+@media (prefers-reduced-motion: reduce) {
+    #app .storefront-content .farzin-shop-product-grid .farzin-product-card,
+    #app .storefront-content .farzin-shop-banner__action {
+        transition: none;
+    }
+}

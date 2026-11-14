@@ -11,9 +11,9 @@ use Illuminate\Support\Facades\Storage;
 class ProductSeeder extends Seeder
 {
     /**
-     * Insert 50 manageable catalogue records (25 hoods and 25 sinks).
-     * These are placeholders for staff to complete with verified details and
-     * real product photography in the admin dashboard.
+     * Insert 50 editable sample product records (25 hoods and 25 sinks).
+     * These are clearly identified sample records for local demonstration.
+     * Staff replace sample prices, specifications, images and FAQs with approved product data.
      *
      * Local only: activate demo records so storefront flows can be tested.
      * Existing products, staff edits, customer products and order history are
@@ -117,10 +117,15 @@ class ProductSeeder extends Seeder
             $products[] = [
                 'category_id' => $hoods->id,
                 'name' => "{$name} {$width} سانتی‌متر — مدل H" . str_pad((string) $number, 2, '0', STR_PAD_LEFT),
-                'slug' => 'farzin-hood-preview-' . str_pad((string) $number, 2, '0', STR_PAD_LEFT),
+                'slug' => 'faraji-hood-sample-' . str_pad((string) $number, 2, '0', STR_PAD_LEFT),
                 'sku' => 'FZ-SEED-HOOD-' . str_pad((string) $number, 2, '0', STR_PAD_LEFT),
-                'short_description' => 'اطلاعات نمایشی برای پیش‌نمایش فروشگاه؛ مشخصات نهایی باید با مدل رسمی تطبیق داده شود.',
-                'description' => 'این رکورد برای بررسی چیدمان، تصاویر و فرایند مدیریت کاتالوگ ساخته شده است. پیش از انتشار نهایی، مشخصات رسمی، ابعاد، امکانات و قیمت تأییدشده شرکت را در پنل مدیریت جایگزین کنید.',
+                'short_description' => 'هود آشپزخانه با طراحی ساده و امکانات کاربردی برای استفاده روزمره.',
+                'description' => 'در صفحه این مدل می‌توانید ابعاد نصب، نوع خروجی هوا، قدرت مکش و امکانات کنترلی را کنار قیمت و وضعیت موجودی بررسی کنید. مقدارهای فنی هر محصول از اطلاعات ثبت‌شده همان مدل نمایش داده می‌شوند.',
+                'faqs' => [
+                    ['question' => 'برای نصب این هود چه ابعادی را بررسی کنم؟', 'answer' => 'عرض، عمق و فضای نصب ثبت‌شده در مشخصات همین مدل را با محل نصب و دستورالعمل محصول تطبیق دهید.'],
+                    ['question' => 'قدرت مکش و میزان صدا را از کجا ببینم؟', 'answer' => 'مقادیر ثبت‌شده برای همین مدل در بخش مشخصات فنی صفحه نمایش داده می‌شود؛ اگر مقداری درج نشده، پیش از سفارش از فروشگاه استعلام کنید.'],
+                    ['question' => 'شرایط ضمانت این مدل چیست؟', 'answer' => 'شرایط ضمانت اختصاصی این مدل باید در صفحه محصول یا مدارک همراه کالا درج شود. پیش از خرید، اطلاعات مربوط به همین مدل را بررسی کنید.'],
+                ],
                 'price' => $price,
                 'compare_at_price' => null,
                 'stock' => $publishPreview ? 8 + ($number % 9) : 0,
@@ -128,8 +133,8 @@ class ProductSeeder extends Seeder
                 'is_featured' => $number <= 8,
                 'is_new' => $number >= 18 && $number <= 25,
                 'show_in_home_gallery' => true,
-                'meta_title' => "{$name} فرزین — مدل H" . str_pad((string) $number, 2, '0', STR_PAD_LEFT),
-                'meta_description' => 'پیش‌نمایش رکورد کاتالوگ هود فرزین؛ مشخصات نهایی و قیمت باید تأیید شوند.',
+                'meta_title' => "{$name} | فرجی‌هوم — مدل H" . str_pad((string) $number, 2, '0', STR_PAD_LEFT),
+                'meta_description' => 'مدل هود آشپزخانه با مشخصات فنی و اطلاعات قیمت ثبت‌شده در صفحه محصول.',
             ];
         }
 
@@ -138,10 +143,15 @@ class ProductSeeder extends Seeder
             $products[] = [
                 'category_id' => $sinks->id,
                 'name' => "{$name} — مدل S" . str_pad((string) $number, 2, '0', STR_PAD_LEFT),
-                'slug' => 'farzin-sink-preview-' . str_pad((string) $number, 2, '0', STR_PAD_LEFT),
+                'slug' => 'faraji-sink-sample-' . str_pad((string) $number, 2, '0', STR_PAD_LEFT),
                 'sku' => 'FZ-SEED-SINK-' . str_pad((string) $number, 2, '0', STR_PAD_LEFT),
-                'short_description' => "پیش‌نمایش کاتالوگ سینک فرزین، سبک {$style}؛ اطلاعات رسمی هنوز باید تأیید شود.",
-                'description' => 'این رکورد جهت پیش‌نمایش رابط فروشگاه و پنل مدیریت ساخته شده است. پیش از انتشار نهایی، جنس، ابعاد، تعداد لگن، روش نصب، اقلام همراه و قیمت رسمی را در پنل جایگزین کنید.',
+                'short_description' => "سینک ظرفشویی با طراحی {$style}؛ ابعاد و ویژگی‌های این مدل را در مشخصات محصول ببینید.",
+                'description' => 'این سینک برای بررسی ابعاد کابینت، روش نصب، تعداد لگن و جنس بدنه معرفی شده است. پیش از انتخاب، مشخصات ثبت‌شده همین مدل را با فضای نصب و نیاز آشپزخانه تطبیق دهید.',
+                'faqs' => [
+                    ['question' => 'ابعاد برش کابینت را چگونه بررسی کنم؟', 'answer' => 'ابعاد برش را با مشخصات نصب همین مدل تطبیق دهید؛ اندازه بیرونی سینک و اندازه برش می‌توانند متفاوت باشند.'],
+                    ['question' => 'تعداد لگن و جنس سینک را از کجا ببینم؟', 'answer' => 'تعداد لگن، جنس و ابعاد ثبت‌شده در مشخصات فنی همین مدل نمایش داده می‌شود.'],
+                    ['question' => 'شرایط ضمانت این مدل چیست؟', 'answer' => 'شرایط ضمانت اختصاصی این مدل باید در صفحه محصول یا مدارک همراه کالا درج شود. پیش از خرید، اطلاعات مربوط به همین مدل را بررسی کنید.'],
+                ],
                 'price' => $price,
                 'compare_at_price' => null,
                 'stock' => $publishPreview ? 7 + ($number % 11) : 0,
@@ -149,17 +159,21 @@ class ProductSeeder extends Seeder
                 'is_featured' => $number <= 8,
                 'is_new' => $number >= 18 && $number <= 25,
                 'show_in_home_gallery' => true,
-                'meta_title' => "{$name} فرزین — مدل S" . str_pad((string) $number, 2, '0', STR_PAD_LEFT),
-                'meta_description' => 'پیش‌نمایش رکورد کاتالوگ سینک فرزین؛ مشخصات نهایی و قیمت باید تأیید شوند.',
+                'meta_title' => "{$name} | فرجی‌هوم — مدل S" . str_pad((string) $number, 2, '0', STR_PAD_LEFT),
+                'meta_description' => 'مدل سینک ظرفشویی با مشخصات فنی و اطلاعات قیمت ثبت‌شده در صفحه محصول.',
             ];
         }
 
         foreach ($products as $data) {
             // Never overwrite values staff already edited in the dashboard.
-            Product::query()->firstOrCreate(
+            $product = Product::query()->firstOrCreate(
                 ['sku' => $data['sku']],
                 $data
             );
+
+            if (empty($product->faqs) && ! empty($data['faqs'])) {
+                $product->update(['faqs' => $data['faqs']]);
+            }
         }
     }
 }

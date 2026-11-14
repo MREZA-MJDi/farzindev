@@ -1,10 +1,10 @@
 @extends('layouts.app')
 
-@section('title', 'سفارش‌های من | فرزین')
+@section('title', 'سفارش‌های من | فرجی‌هوم')
 
 @section(
     'description',
-    'مشاهده و مدیریت سفارش‌های شما در فرزین.'
+    'مشاهده و مدیریت سفارش‌های شما در فرجی‌هوم.'
 )
 
 @push('seo')
@@ -129,7 +129,7 @@
                             </h2>
 
                             <p class="mx-auto mt-4 max-w-md text-sm leading-8 text-[var(--livora-stone)]">
-                                اولین انتخابت را از مجموعه فرزین پیدا کن.
+                                اولین انتخابت را از مجموعه فرجی‌هوم پیدا کن.
                             </p>
 
                             <a
@@ -255,7 +255,7 @@
                                                             @else
 
                                                                 <div class="flex h-full w-full items-center justify-center text-[9px] tracking-wider text-[var(--livora-stone)]">
-                                                                    فرزین
+                                                                    فرجی‌هوم
                                                                 </div>
 
                                                             @endif

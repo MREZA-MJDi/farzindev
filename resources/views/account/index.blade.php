@@ -1,10 +1,10 @@
 @extends('layouts.app')
 
-@section('title', 'حساب کاربری | فرزین')
+@section('title', 'حساب کاربری | فرجی‌هوم')
 
 @section(
     'description',
-    'مدیریت حساب کاربری، سفارش‌ها، آدرس‌ها و علاقه‌مندی‌های شما در فرزین.'
+    'مدیریت حساب کاربری، سفارش‌ها، آدرس‌ها و علاقه‌مندی‌های شما در فرجی‌هوم.'
 )
 
 @push('seo')
@@ -17,7 +17,7 @@
 @section('content')
 
     @php
-        $userName = $user->name ?: 'کاربر فرزین';
+        $userName = $user->name ?: 'کاربر فرجی‌هوم';
 
         $recentOrders = $orders;
 
@@ -98,7 +98,7 @@
                         <div>
 
                             <p class="text-[10px] font-medium uppercase tracking-[0.22em] text-[var(--livora-accent)]">
-                                MY فرزین
+                                MY فرجی‌هوم
                             </p>
 
                             <h1 class="mt-3 text-3xl font-semibold tracking-tight sm:text-4xl">
@@ -442,7 +442,7 @@
                                     </h3>
 
                                     <p class="mx-auto mt-2 max-w-md text-sm leading-7 text-[var(--livora-stone)]">
-                                        اولین انتخابت را از فروشگاه فرزین پیدا کن.
+                                        اولین انتخابت را از فروشگاه فرجی‌هوم پیدا کن.
                                     </p>
 
                                     <a
@@ -629,7 +629,7 @@
                                 href="{{ route('contact') }}"
                                 class="mt-4 inline-flex text-xs font-medium text-[var(--livora-text)] underline underline-offset-4"
                             >
-                                تماس با فرزین
+                                تماس با فرجی‌هوم
                             </a>
 
                         </div>

@@ -13,7 +13,7 @@ return [
     |
     */
     'admin' => [
-        'name' => env('ADMIN_NAME', 'Farzin Admin'),
+        'name' => env('ADMIN_NAME', 'مدیر فرجی‌هوم'),
         'email' => env('ADMIN_EMAIL'),
         'password' => env('ADMIN_PASSWORD'),
     ],

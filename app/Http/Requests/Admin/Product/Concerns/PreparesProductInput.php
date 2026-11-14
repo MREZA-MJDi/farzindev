@@ -18,6 +18,7 @@ trait PreparesProductInput
             'price' => $this->normalizeNumericInput($this->input('price')),
             'compare_at_price' => $this->normalizeNumericInput($this->input('compare_at_price')),
             'specifications' => $this->normalizeSpecifications($this->input('specifications')),
+            'faqs' => $this->normalizeFaqs($this->input('faqs')),
             'slug' =>
                 $this->slug
                     ?: Str::slug($this->name),
@@ -94,6 +95,28 @@ trait PreparesProductInput
         }
 
         return $rows;
+    }
+
+    /**
+     * Keep only completed FAQ entries and trim user-managed plain text.
+     *
+     * @return array<int, array{question: string, answer: string}>
+     */
+    private function normalizeFaqs(mixed $faqs): array
+    {
+        if (! is_array($faqs)) {
+            return [];
+        }
+
+        return collect($faqs)
+            ->filter(fn ($faq): bool => is_array($faq)
+                && (filled($faq['question'] ?? null) || filled($faq['answer'] ?? null)))
+            ->map(fn (array $faq): array => [
+                'question' => trim((string) ($faq['question'] ?? '')),
+                'answer' => trim((string) ($faq['answer'] ?? '')),
+            ])
+            ->values()
+            ->all();
     }
 
     /**

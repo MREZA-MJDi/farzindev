@@ -1,12 +1,91 @@
 @extends('layouts.app')
 
 @php
-    $categoryPageTitle = $category->meta_title ?: ($category->name . ' | خرید هود و سینک آشپزخانه | فرزین');
+    $categoryGuides = [
+        'hoods' => [
+            'eyebrow' => 'راهنمای انتخاب هود',
+            'title' => 'هودی متناسب با چیدمان و سبک آشپزی شما',
+            'intro' => 'برای انتخاب هود، ابتدا نوع نصب و عرض فضای بالای اجاق را مشخص کنید. سپس قدرت مکش، سطح صدا، تعداد دور موتور، نوع فیلتر و روشنایی را در مشخصات هر مدل مقایسه کنید.',
+            'meta' => 'مدل‌های هود آشپزخانه را بر اساس نوع نصب، ابعاد، قدرت مکش، سطح صدا و امکانات فنی مقایسه کنید.',
+            'factors' => [
+                ['title' => 'نوع نصب و فرم', 'body' => 'مخفی، مورب، شومینه‌ای یا زیرکابینتی؛ نوع نصب باید با طراحی کابینت و فضای موجود هماهنگ باشد.'],
+                ['title' => 'ابعاد و عرض', 'body' => 'عرض هود و فاصله نصب را با ابعاد اجاق و دستورالعمل نصب همان مدل تطبیق دهید.'],
+                ['title' => 'عملکرد و نگهداری', 'body' => 'قدرت مکش، میزان صدا، نوع فیلتر، دسترسی برای نظافت و روشنایی را پیش از انتخاب بررسی کنید.'],
+            ],
+            'note' => 'اعداد و امکانات از یک مدل به مدل دیگر متفاوت‌اند؛ مشخصات ثبت‌شده در صفحه همان محصول را ملاک قرار دهید.',
+        ],
+        'sinks' => [
+            'eyebrow' => 'راهنمای انتخاب سینک',
+            'title' => 'سینکی هماهنگ با فضای کابینت و شیوه استفاده شما',
+            'intro' => 'پیش از انتخاب سینک، ابعاد کابینت و برش صفحه را اندازه بگیرید. سپس روش نصب، تعداد و عمق لگن، جهت سینی و جنس محصول را با نیاز روزمره و فضای آشپزخانه تطبیق دهید.',
+            'meta' => 'انواع سینک ظرفشویی را با توجه به روش نصب، ابعاد، تعداد لگن، عمق لگن و جنس محصول مقایسه کنید.',
+            'factors' => [
+                ['title' => 'روش نصب', 'body' => 'توکار، روکار یا زیرکار بودن سینک روی اندازه برش، شیوه نصب و ظاهر نهایی صفحه کابینت اثر دارد.'],
+                ['title' => 'تعداد و عمق لگن', 'body' => 'با توجه به حجم شست‌وشو و فضای کار، تعداد لگن و عمق مناسب را انتخاب کنید.'],
+                ['title' => 'جنس و نگهداری', 'body' => 'جنس، پوشش سطح، مقاومت در برابر خط‌وخش و روش نظافت را از مشخصات اختصاصی همان مدل بررسی کنید.'],
+            ],
+            'note' => 'پیش از سفارش، ابعاد بیرونی و ابعاد برش موردنیاز را با نقشه نصب محصول تطبیق دهید.',
+        ],
+        'built-in-stove' => [
+            'eyebrow' => 'راهنمای انتخاب اجاق گاز صفحه‌ای',
+            'title' => 'اجاق گاز مناسب؛ با توجه به ابعاد، شعله‌ها و ایمنی',
+            'intro' => 'برای انتخاب اجاق گاز صفحه‌ای، ابتدا فضای نصب و ابعاد برش صفحه کابینت را اندازه بگیرید. سپس تعداد و چیدمان شعله‌ها، جنس صفحه، شبکه‌ها، نوع کنترل و امکانات ایمنی هر مدل را مقایسه کنید.',
+            'meta' => 'اجاق گاز صفحه‌ای را با توجه به ابعاد نصب، تعداد شعله، جنس صفحه، شبکه و امکانات ایمنی مقایسه کنید.',
+            'factors' => [
+                ['title' => 'ابعاد و برش صفحه', 'body' => 'ابعاد کلی محصول با اندازه برش کابینت یکسان نیست؛ هر دو اندازه را از نقشه فنی مدل بررسی کنید.'],
+                ['title' => 'تعداد و چیدمان شعله', 'body' => 'تعداد شعله‌ها و فاصله آن‌ها را با اندازه ظروف و شیوه آشپزی روزانه خود تطبیق دهید.'],
+                ['title' => 'ایمنی و نظافت', 'body' => 'نوع شبکه، جنس صفحه، سیستم جرقه‌زن و وجود ترموکوپل یا سایر امکانات ایمنی را در مشخصات همان مدل بخوانید.'],
+            ],
+            'note' => 'نصب تجهیزات گازسوز باید مطابق دستورالعمل سازنده و توسط فرد متخصص انجام شود.',
+        ],
+        'gas-hobs' => [
+            'eyebrow' => 'راهنمای انتخاب اجاق گاز صفحه‌ای',
+            'title' => 'اجاق گاز مناسب؛ با توجه به ابعاد، شعله‌ها و ایمنی',
+            'intro' => 'برای انتخاب اجاق گاز صفحه‌ای، ابتدا فضای نصب و ابعاد برش صفحه کابینت را اندازه بگیرید. سپس تعداد و چیدمان شعله‌ها، جنس صفحه، شبکه‌ها، نوع کنترل و امکانات ایمنی هر مدل را مقایسه کنید.',
+            'meta' => 'اجاق گاز صفحه‌ای را با توجه به ابعاد نصب، تعداد شعله، جنس صفحه، شبکه و امکانات ایمنی مقایسه کنید.',
+            'factors' => [
+                ['title' => 'ابعاد و برش صفحه', 'body' => 'ابعاد کلی محصول با اندازه برش کابینت یکسان نیست؛ هر دو اندازه را از نقشه فنی مدل بررسی کنید.'],
+                ['title' => 'تعداد و چیدمان شعله', 'body' => 'تعداد شعله‌ها و فاصله آن‌ها را با اندازه ظروف و شیوه آشپزی روزانه خود تطبیق دهید.'],
+                ['title' => 'ایمنی و نظافت', 'body' => 'نوع شبکه، جنس صفحه، سیستم جرقه‌زن و وجود ترموکوپل یا سایر امکانات ایمنی را در مشخصات همان مدل بخوانید.'],
+            ],
+            'note' => 'نصب تجهیزات گازسوز باید مطابق دستورالعمل سازنده و توسط فرد متخصص انجام شود.',
+        ],
+    ];
+
+    foreach (['built-in-gas', 'built-in-hobs', 'gas-stove', 'gas-stoves', 'stoves'] as $gasSlug) {
+        $categoryGuides[$gasSlug] = $categoryGuides['built-in-stove'];
+    }
+
+    $categoryGuide = $categoryGuides[$category->slug] ?? null;
+    $categoryNameLower = mb_strtolower($category->name);
+    if (! $categoryGuide && (str_contains($categoryNameLower, 'اجاق') || str_contains($categoryNameLower, 'گاز'))) {
+        $categoryGuide = $categoryGuides['built-in-stove'];
+    } elseif (! $categoryGuide && str_contains($categoryNameLower, 'هود')) {
+        $categoryGuide = $categoryGuides['hoods'];
+    } elseif (! $categoryGuide && str_contains($categoryNameLower, 'سینک')) {
+        $categoryGuide = $categoryGuides['sinks'];
+    }
+    $normalizeCategoryCopy = static fn (?string $value): string => str_ireplace(
+        ['فرزین فرجی', 'فرزین', 'FARZIN', 'Farzin'],
+        ['فرجی‌هوم', 'فرجی‌هوم', 'FARAJI HOME', 'Faraji Home'],
+        trim((string) $value)
+    );
+
+    $categoryPageTitle = $category->meta_title ?: (($categoryGuide['title'] ?? $category->name) . ' | فرجی‌هوم');
+    $categoryPageTitle = $normalizeCategoryCopy($categoryPageTitle);
     $categoryPageDescription = $category->meta_description
-        ?: ('مشاهده و خرید محصولات دسته‌بندی ' . $category->name . ' در فرزین؛ بررسی قیمت و مشخصات فنی محصولات.');
+        ?: ($categoryGuide['meta'] ?? ('مشاهده مدل‌های ' . $category->name . '، بررسی قیمت و مقایسه مشخصات فنی در فرجی‌هوم.'));
+    $categoryPageDescription = $normalizeCategoryCopy($categoryPageDescription);
     $categoryPageCanonical = $category->canonical_url ?: route('categories.show', $category->slug);
-    $categoryOgTitle = $category->og_title ?: $categoryPageTitle;
-    $categoryOgDescription = $category->og_description ?: $categoryPageDescription;
+    $categoryOgTitle = $normalizeCategoryCopy($category->og_title ?: $categoryPageTitle);
+    $categoryOgDescription = $normalizeCategoryCopy($category->og_description ?: $categoryPageDescription);
+    $categoryHeroDescription = filled($category->description)
+        ? $normalizeCategoryCopy($category->description)
+        : ($categoryGuide['intro'] ?? 'مدل‌های این دسته را بررسی کنید و مشخصات، قیمت و گزینه‌های موجود را با نیاز آشپزخانه خود تطبیق دهید.');
+    $categoryHeroImage = $category->homepage_image_url ?: $category->image_url;
+    $categoryHeroImageSrcset = $category->homepage_image_url
+        ? $category->homepage_image_srcset
+        : $category->image_srcset;
 @endphp
 
 @section('title', $categoryPageTitle)
@@ -18,7 +97,7 @@
 @section('og_type', 'website')
 @section('og_title', $categoryOgTitle)
 @section('og_description', $categoryOgDescription)
-@section('og_image', $category->homepage_image_url ?? '')
+@section('og_image', $categoryHeroImage ?? '')
 
 
 
@@ -29,21 +108,23 @@
         {{-- =========================================================
              CATEGORY HERO
         ========================================================== --}}
-        <section class="farzin-category-detail-banner border-b border-[var(--livora-border)] bg-[var(--livora-white)]">
+        <section class="farzin-category-detail-banner relative isolate overflow-hidden border-b border-white/10 bg-[var(--livora-ink)] text-white">
+            <div aria-hidden="true" class="pointer-events-none absolute -left-24 -top-24 h-80 w-80 rounded-full bg-[var(--livora-accent)]/25 blur-3xl"></div>
+            <div aria-hidden="true" class="pointer-events-none absolute bottom-0 right-1/3 h-px w-2/3 bg-gradient-to-l from-transparent via-white/25 to-transparent"></div>
 
             <x-layout.container>
 
-                <div class="py-8 sm:py-12">
+                <div class="relative py-9 sm:py-14 lg:py-16">
 
                     {{-- Breadcrumb --}}
                     <nav
                         aria-label="breadcrumb"
-                        class="flex flex-wrap items-center gap-2 text-[11px] text-[var(--livora-stone)]"
+                        class="flex flex-wrap items-center gap-2 text-[11px] text-white/55"
                     >
 
                         <a
                             href="{{ route('home') }}"
-                            class="transition hover:text-[var(--livora-text)]"
+                            class="transition hover:text-white"
                         >
                             خانه
                         </a>
@@ -59,40 +140,37 @@
 
                         <span>/</span>
 
-                        <span class="text-[var(--livora-text)]">
+                        <span class="text-white">
                         {{ $category->name }}
                     </span>
 
                     </nav>
 
-                    <div class="mt-8 grid items-end gap-8 lg:grid-cols-[minmax(0,1fr)_360px]">
+                    <div class="mt-9 grid items-center gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(280px,400px)] lg:gap-14">
 
                         <div class="max-w-3xl">
 
-                            <p class="farzin-category-detail__eyebrow text-[10px] font-medium uppercase tracking-[0.22em] text-[var(--livora-accent)]">
-                                دسته‌بندی محصولات
+                            <p class="farzin-category-detail__eyebrow text-xs font-bold tracking-wide text-[var(--livora-accent)]">
+                                {{ $categoryGuide['eyebrow'] ?? 'محصولات فرجی‌هوم' }}
                             </p>
-
-                            <h1 class="farzin-category-detail__title mt-3 text-4xl font-semibold tracking-tight sm:text-5xl">
-                                {{ $category->name }}
+                            <h1 class="farzin-category-detail__title mt-4 max-w-3xl text-3xl font-black leading-[1.55] tracking-tight text-white sm:text-4xl lg:text-5xl">
+                                {{ $categoryGuide['title'] ?? $category->name }}
                             </h1>
 
-                            <p class="farzin-category-detail__description mt-4 max-w-2xl text-sm leading-8 text-[var(--livora-stone)] sm:text-base">
-                                {{ filled($category->description)
-                                    ? $category->description
-                                    : 'در این مجموعه می‌توانید محصولات ' . $category->name . ' را بررسی کنید و مشخصات، قیمت و گزینه‌های موجود را با هم مقایسه کنید.' }}
+                            <p class="farzin-category-detail__description mt-5 max-w-2xl text-sm leading-9 text-white/75 sm:text-base">
+                                {{ $categoryHeroDescription }}
                             </p>
 
                             <div class="mt-7 flex flex-wrap items-center gap-3">
 
-                            <span class="rounded-full border border-[var(--livora-border)] px-4 py-2 text-[11px] text-[var(--livora-stone)]">
+                            <span class="rounded-full border border-white/20 bg-white/5 px-4 py-2 text-[11px] text-white/75">
                                 {{ \App\Helpers\PersianNumberHelper::format($products->total()) }}
                                 محصول
                             </span>
 
                                 <a
                                     href="{{ route('shop.index', ['category' => $category->slug]) }}"
-                                    class="rounded-full bg-[var(--livora-ink)] px-4 py-2 text-[11px] font-medium text-white transition hover:bg-[var(--livora-accent)]"
+                                    class="rounded-full bg-white px-5 py-3 text-xs font-bold text-[var(--livora-ink)] transition hover:bg-[var(--livora-accent-soft)]"
                                 >
                                     مشاهده همه محصولات
                                 </a>
@@ -102,22 +180,22 @@
                         </div>
 
                         {{-- Category image --}}
-                        <div class="overflow-hidden rounded-[2rem] bg-[var(--livora-surface)]" data-farzin-reveal>
+                        <div class="overflow-hidden rounded-[1.75rem] border border-white/15 bg-white/[0.07] p-2 shadow-2xl shadow-black/20" data-farzin-reveal>
 
-                            @if($category->homepage_image_url)
+                            @if($categoryHeroImage)
 
                                 <img
-                                    src="{{ $category->homepage_image_url }}"
-                                    @if($category->homepage_image_srcset) srcset="{{ $category->homepage_image_srcset }}" sizes="(max-width: 767px) 100vw, 50vw" @endif
+                                    src="{{ $categoryHeroImage }}"
+                                    @if($categoryHeroImageSrcset) srcset="{{ $categoryHeroImageSrcset }}" sizes="(max-width: 767px) 100vw, 50vw" @endif
                                     alt="{{ $category->name }}"
-                                    class="aspect-[4/3] h-full w-full object-cover transition duration-700 hover:scale-[1.03]"
+                                    class="aspect-[4/3] h-full w-full rounded-[1.25rem] object-cover transition duration-700 hover:scale-[1.03]"
                                 >
 
                             @else
 
-                                <div class="flex aspect-[4/3] items-center justify-center">
-                                <span class="text-xs tracking-[0.2em] text-[var(--livora-stone)]">
-                                    فرزین
+                                <div class="flex aspect-[4/3] flex-col items-center justify-center gap-4 rounded-[1.25rem] bg-gradient-to-br from-white/10 to-white/[0.02]">
+                                <span class="px-6 text-center text-sm font-bold tracking-wide text-white/80">
+                                    {{ $category->name }} / فرجی‌هوم
                                 </span>
                                 </div>
 
@@ -133,6 +211,37 @@
 
         </section>
 
+
+        @if($categoryGuide)
+            <section class="border-b border-[var(--livora-border)] bg-[var(--livora-surface)]">
+                <x-layout.container>
+                    <div class="py-12 sm:py-16">
+                        <div class="max-w-3xl">
+                            <p class="text-xs font-bold text-[var(--livora-accent)]">قبل از انتخاب بررسی کنید</p>
+                            <h2 class="mt-2 text-2xl font-black tracking-tight text-[var(--livora-ink)] sm:text-3xl">سه معیار مهم برای انتخاب {{ $category->name }}</h2>
+                            <p class="mt-3 text-sm leading-8 text-[var(--livora-stone)]">این موارد را در کنار قیمت و موجودی مدل‌ها بررسی کنید تا انتخاب با فضای نصب و نیاز روزمره شما هماهنگ باشد.</p>
+                        </div>
+                        <div class="mt-8 grid gap-px border border-[var(--livora-border)] bg-[var(--livora-border)] md:grid-cols-3">
+                            @foreach($categoryGuide['factors'] as $index => $factor)
+                                <article class="bg-white p-6 sm:p-7">
+                                    <span class="text-xs font-bold text-[var(--livora-accent)]">{{ \App\Helpers\PersianNumberHelper::format($index + 1) }}</span>
+                                    <h3 class="mt-4 text-lg font-black text-[var(--livora-ink)]">{{ $factor['title'] }}</h3>
+                                    <p class="mt-3 text-sm leading-8 text-[var(--livora-stone)]">{{ $factor['body'] }}</p>
+                                </article>
+                            @endforeach
+                        </div>
+                        <div class="mt-6 flex flex-col gap-4 border-r-2 border-[var(--livora-accent)] bg-white px-5 py-5 sm:flex-row sm:items-center sm:justify-between sm:px-7">
+                            <p class="text-xs leading-7 text-[var(--livora-stone)]">{{ $categoryGuide['note'] }}</p>
+                            <a href="{{ route('contact') }}" class="inline-flex min-h-11 w-fit shrink-0 items-center gap-2 text-sm font-bold text-[var(--livora-accent)] hover:underline">
+                                پرسش پیش از خرید <span aria-hidden="true">←</span>
+                            </a>
+                        </div>
+                    </div>
+                </x-layout.container>
+            </section>
+        @endif
+
+        @include('categories.partials.attribute-filters')
 
         {{-- =========================================================
              محصولات
@@ -151,8 +260,8 @@
                                 محصولات
                             </p>
 
-                            <h2 class="mt-2 text-2xl font-semibold tracking-tight sm:text-3xl">
-                                محصولات این مجموعه
+                            <h2 class="mt-2 text-2xl font-black tracking-tight text-[var(--livora-ink)] sm:text-3xl">
+                                مدل‌های موجود {{ $category->name }}
                             </h2>
 
                         </div>
@@ -199,8 +308,7 @@
                             </h2>
 
                             <p class="mx-auto mt-3 max-w-md text-sm leading-7 text-[var(--livora-stone)]">
-                                در حال حاضر محصولی در این مجموعه قرار نگرفته است.
-                                می‌توانید سایر دسته‌بندی‌ها را بررسی کنید.
+                                در حال حاضر محصولی برای نمایش در این دسته ثبت نشده است. می‌توانید دسته‌های دیگر را ببینید یا برای اطلاع از مدل‌های موجود با فرجی‌هوم تماس بگیرید.
                             </p>
 
                             <a
@@ -220,6 +328,8 @@
 
         </section>
 
+
+        @include('categories.partials.comparison')
 
         @if(filled($category->content_title) || filled($category->content_body) || filled($category->content_image_url))
             <section class="border-t border-[var(--livora-border)] bg-[var(--livora-white)]">
@@ -251,6 +361,8 @@
         @endif
 
 
+        @include('categories.partials.faqs')
+
         {{-- =========================================================
              FINAL CTA
         ========================================================== --}}
@@ -263,7 +375,7 @@
                     <div>
 
                         <p class="text-[10px] uppercase tracking-[0.2em] text-[var(--livora-accent)]">
-                            فرزین
+                            فرجی‌هوم
                         </p>
 
                         <h2 class="mt-2 text-2xl font-semibold">

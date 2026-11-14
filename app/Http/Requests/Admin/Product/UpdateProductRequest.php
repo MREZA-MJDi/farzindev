@@ -4,6 +4,7 @@ namespace App\Http\Requests\Admin\Product;
 
 use App\Models\Category;
 use App\Models\Media;
+use App\Services\Catalog\ProductAttributeManager;
 use Illuminate\Foundation\Http\FormRequest;
 use App\Http\Requests\Admin\Product\Concerns\PreparesProductInput;
 use Illuminate\Validation\Rule;
@@ -68,6 +69,17 @@ class UpdateProductRequest extends FormRequest
                     'برای انتشار محصول در سایت، تصویر اصلی را آپلود یا از کتابخانه رسانه انتخاب کنید.'
                 );
             }
+            $attributeValues = $this->input('attribute_values', []);
+            if (is_array($attributeValues) && $this->filled('category_id') && \App\Models\Category::query()->whereKey((int) $this->input('category_id'))->exists()) {
+                $attributeErrors = app(ProductAttributeManager::class)->validateValues(
+                    (int) $this->input('category_id'),
+                    $attributeValues,
+                    $this->input('status') === 'active'
+                );
+                foreach ($attributeErrors as $key => $message) {
+                    $validator->errors()->add($key, $message);
+                }
+            }
         });
     }
 
@@ -120,10 +132,21 @@ class UpdateProductRequest extends FormRequest
                 'max:255',
             ],
 
+            'attribute_values' => ['nullable', 'array'],
+            'attribute_values.*' => ['array'],
+            'attribute_values.*.value' => ['nullable', 'string', 'max:2000'],
+            'attribute_values.*.option_id' => ['nullable', 'integer'],
+            'attribute_values.*.option_ids' => ['nullable', 'array'],
+            'attribute_values.*.option_ids.*' => ['integer'],
+
             'specifications' => ['nullable', 'array', 'max:100'],
             'specifications.*' => ['array'],
             'specifications.*.label' => ['nullable', 'string', 'max:100'],
             'specifications.*.value' => ['nullable', 'string', 'max:1000'],
+
+            'faqs' => ['nullable', 'array', 'max:7'],
+            'faqs.*.question' => ['required', 'string', 'max:180'],
+            'faqs.*.answer' => ['required', 'string', 'max:1200'],
 
             'description' => [
                 'nullable',

@@ -19,6 +19,7 @@ use App\Http\Controllers\Admin\SeoRedirectController as AdminSeoRedirectControll
 use App\Http\Controllers\Admin\BlogPostController as AdminBlogPostController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\PolicyPageController;
 use App\Http\Controllers\RobotsController;
 use App\Http\Controllers\ShopController;
 use App\Http\Controllers\SitemapController;
@@ -30,6 +31,8 @@ use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\OrderController as AdminOrderController;
 use App\Http\Controllers\Admin\PageContentController as AdminPageContentController;
 use App\Http\Controllers\Admin\ProductController as AdminProductController;
+use App\Http\Controllers\Admin\ProductAttributeController as AdminProductAttributeController;
+use App\Http\Controllers\Admin\CategoryAttributeController as AdminCategoryAttributeController;
 use App\Http\Controllers\Admin\ProductImageController as AdminProductImageController;
 use App\Http\Controllers\Admin\ProductVariantController as AdminProductVariantController;
 use App\Http\Controllers\Admin\StorefrontSettingController as AdminStorefrontSettingController;
@@ -103,6 +106,11 @@ Route::view('/terms', 'legal.terms')
 
 Route::view('/privacy', 'legal.privacy')
     ->name('privacy');
+
+Route::get('/shipping-returns', [PolicyPageController::class, 'shipping'])->name('shipping-returns');
+Route::get('/warranty', [PolicyPageController::class, 'warranty'])->name('warranty');
+Route::get('/payment-installments', [PolicyPageController::class, 'installments'])->name('payment-installments');
+Route::get('/faq', [PolicyPageController::class, 'faq'])->name('faq');
 
 
 /*
@@ -488,6 +496,13 @@ Route::prefix(config('farzin.admin_path', 'admin'))
             'categories',
             AdminCategoryController::class
         );
+
+        Route::get('categories/{category}/attributes', [AdminCategoryAttributeController::class, 'edit'])
+            ->name('categories.attributes.edit');
+        Route::put('categories/{category}/attributes', [AdminCategoryAttributeController::class, 'update'])
+            ->name('categories.attributes.update');
+
+        Route::resource('product-attributes', AdminProductAttributeController::class)->except(['show']);
 
 
         /*

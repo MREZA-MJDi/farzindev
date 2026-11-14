@@ -2,6 +2,7 @@
     'id',
     'title',
     'eyebrow' => '',
+    'description' => '',
     'products',
 ])
 
@@ -11,6 +12,9 @@
             <div>
                 @if($eyebrow !== '')<span class="fz-home-section-head__eyebrow">{{ $eyebrow }}</span>@endif
                 <h2 id="{{ $id }}-title">{{ $title }}</h2>
+                @if($description !== '')
+                    <p class="mt-2 max-w-2xl text-sm leading-7 text-[var(--livora-stone)]">{{ $description }}</p>
+                @endif
             </div>
             <div class="fz-home-shelf__tools">
                 <a href="{{ route('shop.index') }}" class="fz-home-section-head__link">مشاهده فروشگاه <span aria-hidden="true">←</span></a>

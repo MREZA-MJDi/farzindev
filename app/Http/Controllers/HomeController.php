@@ -51,6 +51,8 @@ class HomeController extends Controller
 
         $productRelations = [
             'category:id,name,slug',
+            'category.attributes.options',
+            'attributeValues.option',
             'variants:id,product_id,type,name,value,stock,is_active,price_adjustment',
             'images' => fn ($query) => $query
                 ->select(['id', 'product_id', 'media_id', 'path', 'alt', 'sort_order', 'is_primary'])
@@ -96,11 +98,6 @@ class HomeController extends Controller
                         ])
                         ->orderByDesc('updated_at')
                         ->limit(5);
-                },
-            ])
-            ->withCount([
-                'products' => function (Builder $products) use ($applyPublicProductRules): void {
-                    $applyPublicProductRules($products);
                 },
             ])
             ->orderBy('sort_order')
@@ -222,6 +219,7 @@ class HomeController extends Controller
                 'shipping_text',
                 'installation_text',
                 'warranty_text',
+                'returns_text',
                 'shipping_flat_rate',
                 'shipping_free_threshold',
             ])
@@ -248,6 +246,20 @@ class HomeController extends Controller
             }
         }
 
+        if ($installmentProduct) {
+            $cashPercent = (int) $installmentProduct->installment_cash_percent;
+            $cashAmount = round((float) $installmentProduct->price * ($cashPercent / 100));
+            $benefits[] = [
+                'key' => 'installment',
+                'title' => 'پرداخت اقساطی',
+                'description' => $installmentProduct->name . ' · پیش‌پرداخت '
+                    . \App\Helpers\PersianNumberHelper::format($cashPercent) . '٪ ('
+                    . \App\Helpers\PersianNumberHelper::format($cashAmount) . ' تومان) · '
+                    . \App\Helpers\PersianNumberHelper::format((int) $installmentProduct->installment_cheque_count)
+                    . ' چک',
+            ];
+        }
+
         $installationText = trim((string) ($storeSettings['installation_text'] ?? ''));
         if ($installationText !== '') {
             $benefits[] = ['key' => 'installation', 'title' => 'نصب', 'description' => $installationText];
@@ -261,18 +273,9 @@ class HomeController extends Controller
             $benefits[] = ['key' => 'warranty', 'title' => 'گارانتی', 'description' => $warrantyText];
         }
 
-        if ($installmentProduct) {
-            $cashPercent = (int) $installmentProduct->installment_cash_percent;
-            $cashAmount = round((float) $installmentProduct->price * ($cashPercent / 100));
-            $benefits[] = [
-                'key' => 'installment',
-                'title' => 'پرداخت اقساطی',
-                'description' => $installmentProduct->name . ' · پیش‌پرداخت '
-                    . \App\Helpers\PersianNumberHelper::format($cashPercent) . '٪ ('
-                    . \App\Helpers\PersianNumberHelper::format($cashAmount) . ' تومان) · '
-                    . \App\Helpers\PersianNumberHelper::format((int) $installmentProduct->installment_cheque_count)
-                    . ' چک',
-            ];
+        $returnsText = trim((string) ($storeSettings['returns_text'] ?? ''));
+        if ($returnsText !== '') {
+            $benefits[] = ['key' => 'returns', 'title' => 'بازگشت کالا', 'description' => $returnsText];
         }
 
         $resolveImageUrl = static function (?string $path): ?string {
@@ -399,7 +402,7 @@ class HomeController extends Controller
             'selectedProducts' => $selectedProducts,
             'featuredProducts' => $featuredProducts,
             'homeTechnology' => $homeTechnology,
-            'benefits' => collect($benefits),
+            'benefits' => collect($benefits)->take(4),
             'blogPosts' => $blogPosts,
             'contactSetting' => $contactSetting,
             'enamadUrl' => trim((string) ($copy['page_home_enamad_url'] ?? '')),
