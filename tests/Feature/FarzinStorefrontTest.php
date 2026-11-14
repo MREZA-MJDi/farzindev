@@ -19,7 +19,6 @@ use Database\Seeders\ProvinceCitySeeder;
 use App\Models\SeoRedirect;
 use App\Models\User;
 use App\Services\Payments\PaymentService;
-use App\Services\StorefrontPageContent;
 use App\Services\Seo\SeoSettings;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
@@ -510,7 +509,7 @@ class FarzinStorefrontTest extends TestCase
             ->assertSee('data-home-technology-media-select', false)
             ->assertSee('تصویر فناوری فرجی‌هوم.webp');
 
-        $payload = app(StorefrontPageContent::class)->all();
+        $payload = app(\App\Services\StorefrontPageContent::class)->all();
         $payload['tab'] = 'home';
         $payload['page_home_technology_media_id'] = $media->id;
 
@@ -523,7 +522,7 @@ class FarzinStorefrontTest extends TestCase
             'value' => $path,
         ]);
 
-        app(StorefrontPageContent::class)->clearCache();
+        app(\App\Services\StorefrontPageContent::class)->clearCache();
         $this->get(route('home'))
             ->assertOk()
             ->assertSee(Storage::disk('public')->url($path), false)
@@ -626,8 +625,8 @@ class FarzinStorefrontTest extends TestCase
             'value' => 'ساخت بر پایه نیاز واقعی',
         ]);
 
-        app(\App\Services\StorefrontPageContent::class)->clearCache();
-        $copy = app(\App\Services\StorefrontPageContent::class)->all();
+        app(\App\Services\\App\Services\StorefrontPageContent::class)->clearCache();
+        $copy = app(\App\Services\\App\Services\StorefrontPageContent::class)->all();
 
         $this->assertSame('از جستجو تا انتخاب', $copy['page_about_factory_eyebrow']);
         $this->assertSame('ساخت بر پایه نیاز واقعی', $copy['page_about_values_eyebrow']);
@@ -645,7 +644,7 @@ class FarzinStorefrontTest extends TestCase
             ['value' => '0']
         );
 
-        app(\App\Services\StorefrontPageContent::class)->clearCache();
+        app(\App\Services\\App\Services\StorefrontPageContent::class)->clearCache();
 
         $this->get(route('about'))
             ->assertOk()
@@ -678,7 +677,7 @@ class FarzinStorefrontTest extends TestCase
     public function test_page_content_cms_publishes_terms_and_privacy_copy_and_shows_real_page_links(): void
     {
         $admin = $this->admin();
-        $defaults = app(StorefrontPageContent::class)->defaults();
+        $defaults = app(\App\Services\StorefrontPageContent::class)->defaults();
         $legalValues = collect($defaults)
             ->filter(fn ($value, $key) => str_starts_with($key, 'page_terms_') || str_starts_with($key, 'page_privacy_'))
             ->all();
@@ -715,7 +714,7 @@ class FarzinStorefrontTest extends TestCase
     public function test_homepage_final_cta_and_typography_controls_are_connected_to_public_output(): void
     {
         $admin = $this->admin();
-        $defaults = app(StorefrontPageContent::class)->defaults();
+        $defaults = app(\App\Services\StorefrontPageContent::class)->defaults();
         $homeValues = collect($defaults)
             ->filter(fn ($value, $key) => str_starts_with($key, 'page_home_'))
             ->all();
@@ -734,7 +733,7 @@ class FarzinStorefrontTest extends TestCase
             'key' => 'page_home_final_cta',
             'value' => 'رفتن به کاتالوگ',
         ]);
-        $this->assertSame('رفتن به کاتالوگ', app(StorefrontPageContent::class)->all()['page_home_final_cta']);
+        $this->assertSame('رفتن به کاتالوگ', app(\App\Services\StorefrontPageContent::class)->all()['page_home_final_cta']);
 
         $this->get(route('home'))
             ->assertOk()
@@ -944,10 +943,10 @@ class FarzinStorefrontTest extends TestCase
             ['value' => 'فرزین | هود و سینک آشپزخانه']
         );
 
-        app(\App\Services\StorefrontPageContent::class)->clearCache();
+        app(\App\Services\\App\Services\StorefrontPageContent::class)->clearCache();
         app(SeoSettings::class)->clearCache();
 
-        $copy = app(\App\Services\StorefrontPageContent::class)->all();
+        $copy = app(\App\Services\\App\Services\StorefrontPageContent::class)->all();
         $seo = app(SeoSettings::class)->all();
 
         $this->assertSame('فرجی‌هوم؛ تجربه‌ای تازه', $copy['page_about_hero_title']);
@@ -1140,7 +1139,7 @@ class FarzinStorefrontTest extends TestCase
             'is_featured' => true,
         ]);
 
-        $values = collect(app(\App\Services\StorefrontPageContent::class)->defaults())
+        $values = collect(app(\App\Services\\App\Services\StorefrontPageContent::class)->defaults())
             ->filter(fn ($value, $key) => str_starts_with($key, 'page_home_'))
             ->all();
 
@@ -1181,7 +1180,7 @@ class FarzinStorefrontTest extends TestCase
         Storage::fake('public');
         $admin = $this->admin();
 
-        $values = collect(app(\App\Services\StorefrontPageContent::class)->defaults())
+        $values = collect(app(\App\Services\\App\Services\StorefrontPageContent::class)->defaults())
             ->filter(fn ($value, $key) => str_starts_with($key, 'page_home_'))
             ->all();
 
@@ -1208,7 +1207,7 @@ class FarzinStorefrontTest extends TestCase
         Storage::fake('public');
         $admin = $this->admin();
 
-        $values = collect(app(\App\Services\StorefrontPageContent::class)->defaults())
+        $values = collect(app(\App\Services\\App\Services\StorefrontPageContent::class)->defaults())
             ->filter(fn ($value, $key) => str_starts_with($key, 'page_home_'))
             ->all();
 
@@ -5560,7 +5559,7 @@ class FarzinStorefrontTest extends TestCase
             StorefrontSetting::query()->create(compact('key', 'value'));
         }
 
-        app(\App\Services\StorefrontPageContent::class)->clearCache();
+        app(\App\Services\\App\Services\StorefrontPageContent::class)->clearCache();
 
         $this->get(route('home'))
             ->assertOk()
@@ -5593,7 +5592,7 @@ class FarzinStorefrontTest extends TestCase
             'value' => 'home/technology/deleted-technology.webp',
         ]);
 
-        app(\App\Services\StorefrontPageContent::class)->clearCache();
+        app(\App\Services\\App\Services\StorefrontPageContent::class)->clearCache();
 
         $this->actingAs($this->admin(), 'admin')
             ->get(route('admin.page-content.edit', ['tab' => 'home']))
@@ -5810,7 +5809,7 @@ class FarzinStorefrontTest extends TestCase
     {
         Storage::fake('public');
         $admin = $this->admin();
-        $values = collect(app(\App\Services\StorefrontPageContent::class)->defaults())
+        $values = collect(app(\App\Services\\App\Services\StorefrontPageContent::class)->defaults())
             ->filter(fn ($value, $key) => str_starts_with($key, 'page_home_'))
             ->all();
 
