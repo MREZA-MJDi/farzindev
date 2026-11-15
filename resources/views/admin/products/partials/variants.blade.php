@@ -284,8 +284,8 @@
 
                 <div class="rounded-xl border border-dashed border-[var(--admin-border)] p-4">
                     <label class="block text-xs font-semibold text-[var(--admin-text)]">افزودن عکس‌های جدید برای همین تنوع
-                        <input type="file" name="images[]" accept="image/jpeg,image/png,image/webp" multiple data-image-preview-input data-image-preview-alt-name="images_alt[]" data-image-preview-target="#variant-edit-upload-preview" data-image-preview-max-files="10" data-image-preview-max-size="20971520" data-image-preview-min-width="800" data-image-preview-min-height="600" class="admin-input mt-2 w-full p-2">
-                <div id="variant-edit-upload-preview" class="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-4" aria-live="polite"></div>
+                        <input type="file" name="images[]" accept="image/jpeg,image/png,image/webp" multiple data-image-preview-input data-image-preview-alt-name="images_alt[]" data-image-preview-target="#variant-edit-upload-preview-{{ $variant->id }}" data-image-preview-max-files="10" data-image-preview-max-size="20971520" data-image-preview-min-width="800" data-image-preview-min-height="600" class="admin-input mt-2 w-full p-2">
+                <div id="variant-edit-upload-preview-{{ $variant->id }}" class="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-4" aria-live="polite"></div>
                     </label>
                     <p class="mt-2 text-[11px] leading-6 text-[var(--admin-muted)]">تصاویر جدید به محصول اضافه و به این تنوع متصل می‌شوند. تصاویر قبلی را با حذف تیک از اتصال این تنوع خارج کنید؛ فایل اصلی حذف نمی‌شود چون شاید برای رنگ دیگری هم استفاده شود.</p>
                     @error('images')<p class="mt-2 text-xs text-red-600">{{ $message }}</p>@enderror
