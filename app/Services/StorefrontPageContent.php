@@ -6,7 +6,7 @@ use App\Models\StorefrontSetting;
 use Illuminate\Support\Facades\Cache;
 
 /**
- * Editable, escaped-by-default copy and presentation controls for public pages.
+ * Editable, escaped-by-default copy for public pages.
  *
  * Values are plain text only. Rich article content remains in the Blog CMS and
  * product/category descriptions remain in their dedicated CRUD modules.
@@ -366,7 +366,7 @@ class StorefrontPageContent
             'page_typography_line_height' => '1.8',
             'page_typography_content_width' => '1280',
 
-            // Public section switches; all enabled by default.
+            // Legacy section switches retained as fixed defaults for existing templates.
             'page_home_show_categories' => '1',
             'page_home_show_products' => '1',
             'page_home_show_trust' => '1',
