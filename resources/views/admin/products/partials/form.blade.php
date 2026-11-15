@@ -119,7 +119,7 @@
                 data-image-editor-input
                 data-image-editor-min-width="800"
                 data-image-editor-min-height="600"
-                data-image-editor-max-size="20971520"
+                data-image-editor-max-size="10485760"
                 data-image-editor-max-source-pixels="24000000"
                 accept="image/jpeg,image/png,image/webp"
                 class="admin-input p-2"
