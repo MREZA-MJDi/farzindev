@@ -32,6 +32,31 @@ class StorefrontPageContent
                 $stored
             ));
 
+            // Section visibility and global layout are fixed presentation rules,
+            // not editable CMS content. Keep legacy stored switches from hiding
+            // public sections after these controls were removed from the CMS.
+            foreach ([
+                'page_home_show_technology',
+                'page_home_show_categories',
+                'page_home_show_products',
+                'page_home_show_trust',
+                'page_home_show_guides',
+                'page_home_show_journal',
+                'page_home_show_final_cta',
+                'page_about_show_statement',
+                'page_about_show_factory',
+                'page_about_show_values',
+                'page_about_show_experience',
+                'page_about_show_installment',
+                'page_about_show_final',
+            ] as $visibilityKey) {
+                $values[$visibilityKey] = '1';
+            }
+
+            $values['page_typography_font_scale'] = '100';
+            $values['page_typography_line_height'] = '1.8';
+            $values['page_typography_content_width'] = '1280';
+
             // Translate only the legacy built-in labels. Custom editor copy is
             // preserved verbatim so the content manager remains authoritative.
             $legacyLabels = [
