@@ -257,3 +257,68 @@
         transition: none;
     }
 }
+
+/* Reference interaction: reveal the technical summary over the product photo. */
+#app .storefront-content .farzin-shop-product-grid .farzin-product-card__media {
+    position: relative;
+}
+#app .storefront-content .shop-reference-product-specs {
+    position: absolute;
+    inset: 0;
+    z-index: 3;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 1rem 1.2rem;
+    border-radius: 0 0 16px 16px;
+    background: linear-gradient(155deg, rgba(109,90,224,.97), rgba(130,110,240,.95));
+    color: #fff;
+    opacity: 0;
+    transform: translateY(-101%);
+    transition: transform .28s ease, opacity .22s ease;
+    pointer-events: none;
+}
+#app .storefront-content .farzin-shop-product-grid .farzin-product-card:hover .shop-reference-product-specs,
+#app .storefront-content .farzin-shop-product-grid .farzin-product-card:focus-within .shop-reference-product-specs {
+    opacity: 1;
+    transform: translateY(0);
+}
+#app .storefront-content .shop-reference-product-specs h4 {
+    margin-bottom: .55rem;
+    color: #fff;
+    font-size: .82rem;
+    font-weight: 800;
+    text-align: center;
+}
+#app .storefront-content .shop-reference-product-specs ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+#app .storefront-content .shop-reference-product-specs li {
+    display: flex;
+    gap: .35rem;
+    padding: .42rem 0;
+    border-top: 1px solid rgba(255,255,255,.2);
+    color: #fff;
+    font-size: .72rem;
+    line-height: 1.65;
+}
+#app .storefront-content .shop-reference-product-specs li b {
+    flex: 0 0 auto;
+    font-weight: 600;
+    opacity: .82;
+}
+#app .storefront-content .shop-reference-product-specs li span {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+#app .storefront-content .farzin-shop-product-grid .farzin-product-card__catalog-specs {
+    display: none;
+}
+@media (prefers-reduced-motion: reduce) {
+    #app .storefront-content .shop-reference-product-specs {
+        transition: none;
+    }
+}
