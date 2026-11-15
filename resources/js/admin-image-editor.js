@@ -395,8 +395,11 @@ inputs.forEach(initImageEditor);
 // Lightweight multi-image previews with client-side limits matching the server rules.
 document.querySelectorAll('[data-image-preview-input]').forEach((input) => {
     const preview = document.querySelector(input.dataset.imagePreviewTarget || '');
-    const maxFiles = Math.max(1, Number(input.dataset.imagePreviewMaxFiles) || 10);
-    const maxBytes = Math.max(1, Number(input.dataset.imagePreviewMaxSize) || 20 * 1024 * 1024);
+    const placeholder = document.querySelector(input.dataset.imagePreviewPlaceholder || '');
+    const maxFiles = input.multiple
+        ? Math.max(1, Number(input.dataset.imagePreviewMaxFiles) || 5)
+        : 1;
+    const maxBytes = Math.max(1, Number(input.dataset.imagePreviewMaxSize) || 10 * 1024 * 1024);
     const minWidth = Math.max(1, Number(input.dataset.imagePreviewMinWidth) || 800);
     const minHeight = Math.max(1, Number(input.dataset.imagePreviewMinHeight) || 600);
     let objectUrls = [];
@@ -404,7 +407,13 @@ document.querySelectorAll('[data-image-preview-input]').forEach((input) => {
     const clearPreview = () => {
         objectUrls.forEach((url) => URL.revokeObjectURL(url));
         objectUrls = [];
-        if (preview) preview.replaceChildren();
+        if (preview instanceof HTMLImageElement) {
+            preview.removeAttribute('src');
+            preview.classList.add('hidden');
+        } else if (preview) {
+            preview.replaceChildren();
+        }
+        if (placeholder) placeholder.classList.remove('hidden');
     };
 
     input.addEventListener('change', async () => {
@@ -448,7 +457,12 @@ document.querySelectorAll('[data-image-preview-input]').forEach((input) => {
                 break;
             }
 
-            if (preview) {
+            if (preview instanceof HTMLImageElement) {
+                preview.src = objectUrl;
+                preview.alt = file.name;
+                preview.classList.remove('hidden');
+                if (placeholder) placeholder.classList.add('hidden');
+            } else if (preview) {
                 const card = document.createElement('div');
                 card.className = 'overflow-hidden rounded-xl border border-[var(--admin-border)] bg-[var(--admin-surface-soft)]';
                 const image = document.createElement('img');
