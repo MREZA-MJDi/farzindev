@@ -232,15 +232,13 @@ class FarzinStorefrontTest extends TestCase
 
         $dashboard = $this->get(route('admin.dashboard'))->assertOk();
         $dashboard
-            ->assertSee('مجله و محتوای آموزشی')
-            ->assertSee('تنظیمات و سئو')
-            ->assertSee('ارتباط با کاربران')
-            ->assertSee(route('admin.blog-posts.index'), false)
-            ->assertSee(route('admin.blog-terms.index'), false)
-            ->assertSee(route('admin.blog-appearance.edit'), false)
-            ->assertSee(route('admin.seo-settings.edit'), false)
-            ->assertSee(route('admin.seo-redirects.index'), false)
+            ->assertSee('مدیریت محتوا و سئو')
+            ->assertSee(route('admin.cms.index'), false)
+            ->assertSee(route('admin.products.index'), false)
+            ->assertSee(route('admin.orders.index'), false)
             ->assertSee(route('admin.contact-messages.index'), false)
+            ->assertDontSee(route('admin.blog-posts.index'), false)
+            ->assertDontSee(route('admin.blog-terms.index'), false)
             ->assertDontSee(route('admin.product-images.index'), false)
             ->assertDontSee(route('admin.product-variants.index'), false);
 
