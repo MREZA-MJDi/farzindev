@@ -61,6 +61,8 @@ class ProductImageController extends Controller
                 'dimensions:min_width=800,min_height=600',
                 'max:20480',
             ],
+            'images_alt' => ['nullable', 'array', 'max:10'],
+            'images_alt.*' => ['nullable', 'string', 'max:255'],
             'media_ids' => ['nullable', 'array', 'max:30'],
             'media_ids.*' => [
                 'required',
@@ -76,6 +78,10 @@ class ProductImageController extends Controller
             'images.*.mimes' => 'فرمت تصویر باید JPG، PNG یا WEBP باشد.',
             'images.*.dimensions' => 'هر تصویر باید حداقل ۸۰۰ در ۶۰۰ پیکسل باشد.',
             'images.*.max' => 'حجم هر تصویر نباید بیشتر از ۲۰ مگابایت باشد.',
+            'images_alt.array' => 'توضیحات تصاویر باید به‌صورت فهرست ارسال شوند.',
+            'images_alt.max' => 'برای حداکثر ۱۰ تصویر توضیح جداگانه وارد کنید.',
+            'images_alt.*.string' => 'توضیح هر تصویر باید متنی باشد.',
+            'images_alt.*.max' => 'توضیح هر تصویر نباید بیشتر از ۲۵۵ کاراکتر باشد.',
             'media_ids.array' => 'فهرست رسانه‌های انتخاب‌شده معتبر نیست.',
             'media_ids.max' => 'در هر بار حداکثر ۳۰ تصویر از کتابخانه می‌توانید انتخاب کنید.',
             'media_ids.*.exists' => 'یکی از رسانه‌های انتخاب‌شده حذف شده یا تصویر قابل استفاده نیست.',
@@ -83,6 +89,7 @@ class ProductImageController extends Controller
 
         $uploads = $request->file('images', []);
         $mediaIds = $validated['media_ids'] ?? [];
+        $imageAlts = $validated['images_alt'] ?? [];
 
         if ($uploads === [] && $mediaIds === []) {
             return back()->withInput()->withErrors([
@@ -124,6 +131,7 @@ class ProductImageController extends Controller
                 $product,
                 $validated,
                 $storedPaths,
+                $imageAlts,
                 $mediaIds,
                 $mediaLibrary
             ): void {
@@ -152,9 +160,10 @@ class ProductImageController extends Controller
                         'product_id' => $lockedProduct->id,
                         'media_id' => null,
                         'path' => $path,
-                        'alt' => trim((string) ($validated['alt'] ?? '')) !== ''
-                            ? trim((string) $validated['alt'])
-                            : trim($lockedProduct->name . ' - تصویر ' . ($index + 1)),
+                        'alt' => trim((string) ($imageAlts[$index] ?? ''))
+                            ?: (trim((string) ($validated['alt'] ?? '')) !== ''
+                                ? trim((string) $validated['alt'])
+                                : trim($lockedProduct->name . ' - تصویر ' . ($index + 1))),
                         'sort_order' => $nextSortOrder + $index,
                         'is_primary' => ! $hasPrimary && $index === 0,
                     ]);
