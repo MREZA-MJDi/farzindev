@@ -34,6 +34,27 @@ class FarzinStorefrontTest extends TestCase
 
     private ?array $checkoutLocationCache = null;
 
+    public function test_admin_cms_uses_one_paginated_blog_and_slug_workspace(): void
+    {
+        $admin = $this->admin();
+
+        $this->actingAs($admin, 'admin')
+            ->get(route('admin.cms.index', ['tab' => 'blog']))
+            ->assertOk()
+            ->assertSee('مرکز مدیریت محتوای سایت')
+            ->assertSee('مقاله‌ها')
+            ->assertSee('دسته‌ها، برچسب‌ها و اسلاگ‌ها')
+            ->assertDontSee('عبارت کلیدی اصلی');
+
+        $this->actingAs($admin, 'admin')
+            ->get(route('admin.blog-posts.index'))
+            ->assertRedirect(route('admin.cms.index', ['tab' => 'blog']));
+
+        $this->actingAs($admin, 'admin')
+            ->get(route('admin.blog-terms.index'))
+            ->assertRedirect(route('admin.cms.index', ['tab' => 'blog']));
+    }
+
     public function test_product_primary_image_falls_back_when_the_selected_file_is_missing(): void
     {
         Storage::fake('public');
