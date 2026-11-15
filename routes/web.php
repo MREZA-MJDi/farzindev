@@ -424,6 +424,8 @@ Route::prefix(config('farzin.admin_path', 'admin'))
 
         Route::middleware(['auth:admin', 'admin'])->group(function () {
 
+        Route::get('cms', [AdminCmsController::class, 'index'])->name('cms.index');
+
         Route::get(
             'storefront-settings',
             [AdminStorefrontSettingController::class, 'edit']
