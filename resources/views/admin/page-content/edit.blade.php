@@ -149,9 +149,9 @@
                                 <label for="page_home_hero_image" class="admin-label mt-4 block">بارگذاری تصویر جایگزین Hero</label>
                                 <input id="page_home_hero_image" name="page_home_hero_image" type="file" accept="image/jpeg,image/png,image/webp"
                                        data-image-editor-input data-image-editor-default-ratio="16:10"
-                                       data-image-editor-min-width="1200" data-image-editor-min-height="750"
+                                       data-image-editor-min-width="1200" data-image-editor-min-height="750" data-image-editor-max-size="10485760"
                                        class="admin-input mt-2 w-full max-w-2xl p-2">
-                                <p class="mt-1 text-[10px] leading-5 text-[var(--admin-muted)]">JPG، PNG یا WEBP؛ حداقل ۱۲۰۰×۷۵۰؛ حداکثر ۲۰ مگابایت. این فایل، اسلایدهای اصلی را جایگزین نمی‌کند.</p>
+                                <p class="mt-1 text-[10px] leading-5 text-[var(--admin-muted)]">JPG، PNG یا WEBP؛ حداقل ۱۲۰۰×۷۵۰؛ حداکثر ۱۰ مگابایت. این فایل، اسلایدهای اصلی را جایگزین نمی‌کند.</p>
                                 @error('page_home_hero_image')
                                     <p role="alert" class="mt-2 text-xs text-[var(--admin-danger)]">{{ $message }}</p>
                                 @enderror
@@ -209,10 +209,10 @@
                                 </div>
                                 <label for="page_home_banner_1_image" class="admin-label mt-4 block">تصویر بنر 1</label>
                                 <input id="page_home_banner_1_image" name="page_home_banner_1_image" type="file" accept="image/jpeg,image/png,image/webp"
-                                       data-image-preview-input data-image-preview-target="#page_home_banner_1_preview"
+                                       data-image-preview-input data-image-preview-max-size="10485760" data-image-preview-min-width="1200" data-image-preview-min-height="375" data-image-preview-target="#page_home_banner_1_preview"
                                        data-image-preview-placeholder="#page_home_banner_1_placeholder"
                                        class="admin-input mt-2 w-full p-2">
-                                <p class="mt-1 text-[10px] leading-5 text-[var(--admin-muted)]">JPG، PNG یا WEBP؛ نسبت ۱۶:۶؛ حداقل ۱۲۰۰×۳۷۵؛ حداکثر ۲۰ مگابایت.</p>
+                                <p class="mt-1 text-[10px] leading-5 text-[var(--admin-muted)]">JPG، PNG یا WEBP؛ نسبت ۱۶:۶؛ حداقل ۱۲۰۰×۳۷۵؛ حداکثر ۱۰ مگابایت.</p>
                                 @error('page_home_banner_1_image')
                                     <p role="alert" class="mt-2 text-xs text-[var(--admin-danger)]">{{ $message }}</p>
                                 @enderror
@@ -244,10 +244,10 @@
                                 </div>
                                 <label for="page_home_banner_2_image" class="admin-label mt-4 block">تصویر بنر 2</label>
                                 <input id="page_home_banner_2_image" name="page_home_banner_2_image" type="file" accept="image/jpeg,image/png,image/webp"
-                                       data-image-preview-input data-image-preview-target="#page_home_banner_2_preview"
+                                       data-image-preview-input data-image-preview-max-size="10485760" data-image-preview-min-width="1200" data-image-preview-min-height="375" data-image-preview-target="#page_home_banner_2_preview"
                                        data-image-preview-placeholder="#page_home_banner_2_placeholder"
                                        class="admin-input mt-2 w-full p-2">
-                                <p class="mt-1 text-[10px] leading-5 text-[var(--admin-muted)]">JPG، PNG یا WEBP؛ نسبت ۱۶:۶؛ حداقل ۱۲۰۰×۳۷۵؛ حداکثر ۲۰ مگابایت.</p>
+                                <p class="mt-1 text-[10px] leading-5 text-[var(--admin-muted)]">JPG، PNG یا WEBP؛ نسبت ۱۶:۶؛ حداقل ۱۲۰۰×۳۷۵؛ حداکثر ۱۰ مگابایت.</p>
                                 @error('page_home_banner_2_image')
                                     <p role="alert" class="mt-2 text-xs text-[var(--admin-danger)]">{{ $message }}</p>
                                 @enderror
@@ -279,10 +279,10 @@
                                 </div>
                                 <label for="page_home_banner_3_image" class="admin-label mt-4 block">تصویر بنر 3</label>
                                 <input id="page_home_banner_3_image" name="page_home_banner_3_image" type="file" accept="image/jpeg,image/png,image/webp"
-                                       data-image-preview-input data-image-preview-target="#page_home_banner_3_preview"
+                                       data-image-preview-input data-image-preview-max-size="10485760" data-image-preview-min-width="1200" data-image-preview-min-height="375" data-image-preview-target="#page_home_banner_3_preview"
                                        data-image-preview-placeholder="#page_home_banner_3_placeholder"
                                        class="admin-input mt-2 w-full p-2">
-                                <p class="mt-1 text-[10px] leading-5 text-[var(--admin-muted)]">JPG، PNG یا WEBP؛ نسبت ۱۶:۶؛ حداقل ۱۲۰۰×۳۷۵؛ حداکثر ۲۰ مگابایت.</p>
+                                <p class="mt-1 text-[10px] leading-5 text-[var(--admin-muted)]">JPG، PNG یا WEBP؛ نسبت ۱۶:۶؛ حداقل ۱۲۰۰×۳۷۵؛ حداکثر ۱۰ مگابایت.</p>
                                 @error('page_home_banner_3_image')
                                     <p role="alert" class="mt-2 text-xs text-[var(--admin-danger)]">{{ $message }}</p>
                                 @enderror
@@ -314,10 +314,10 @@
                                 </div>
                                 <label for="page_home_banner_4_image" class="admin-label mt-4 block">تصویر بنر 4</label>
                                 <input id="page_home_banner_4_image" name="page_home_banner_4_image" type="file" accept="image/jpeg,image/png,image/webp"
-                                       data-image-preview-input data-image-preview-target="#page_home_banner_4_preview"
+                                       data-image-preview-input data-image-preview-max-size="10485760" data-image-preview-min-width="1200" data-image-preview-min-height="375" data-image-preview-target="#page_home_banner_4_preview"
                                        data-image-preview-placeholder="#page_home_banner_4_placeholder"
                                        class="admin-input mt-2 w-full p-2">
-                                <p class="mt-1 text-[10px] leading-5 text-[var(--admin-muted)]">JPG، PNG یا WEBP؛ نسبت ۱۶:۶؛ حداقل ۱۲۰۰×۳۷۵؛ حداکثر ۲۰ مگابایت.</p>
+                                <p class="mt-1 text-[10px] leading-5 text-[var(--admin-muted)]">JPG، PNG یا WEBP؛ نسبت ۱۶:۶؛ حداقل ۱۲۰۰×۳۷۵؛ حداکثر ۱۰ مگابایت.</p>
                                 @error('page_home_banner_4_image')
                                     <p role="alert" class="mt-2 text-xs text-[var(--admin-danger)]">{{ $message }}</p>
                                 @enderror
@@ -367,7 +367,7 @@
                             <p role="alert" class="mt-2 text-xs text-[var(--admin-danger)]">{{ $message }}</p>
                         @enderror
                         <label for="page_home_technology_image" class="admin-label mt-4 block">یا بارگذاری تصویر جدید ۱۶:۱۰</label>
-                        <input id="page_home_technology_image" name="page_home_technology_image" type="file" data-image-editor-input data-image-editor-default-ratio="16:10" data-image-editor-min-width="1200" data-image-editor-min-height="750" accept="image/jpeg,image/png,image/webp" class="admin-input mt-2 w-full max-w-2xl p-2"> 
+                        <input id="page_home_technology_image" name="page_home_technology_image" type="file" data-image-editor-input data-image-editor-default-ratio="16:10" data-image-editor-min-width="1200" data-image-editor-min-height="750" data-image-editor-max-size="10485760" accept="image/jpeg,image/png,image/webp" class="admin-input mt-2 w-full max-w-2xl p-2"> 
                         <div data-image-editor-panel-for="page_home_technology_image" hidden class="mt-5 max-w-2xl space-y-4 rounded-xl border border-[var(--admin-border)] bg-[var(--admin-card)] p-4">
                             <strong class="block text-xs font-bold text-[var(--admin-text)]">برش و پیش‌نمایش تصویر صفحه اصلی</strong>
                             <canvas data-image-editor-canvas role="img" aria-label="پیش‌نمایش زنده برش تصویر فناوری" class="mx-auto block w-full rounded-lg bg-[var(--admin-bg)]" style="height:auto;aspect-ratio:16/10;touch-action:none;cursor:grab;"></canvas>
@@ -386,7 +386,7 @@
                             </div>
                             <p data-image-editor-status class="text-xs text-[var(--admin-muted)]" aria-live="polite">کادر تصویر را تنظیم کنید.</p>
                         </div>
-                        <p class="mt-1 text-[10px] leading-5 text-[var(--admin-muted)]">JPG، PNG یا WEBP؛ حداقل ۱۲۰۰×۷۵۰ و دقیقاً نسبت ۱۶:۱۰؛ حداکثر ۲۰ مگابایت. فایل قبلی تا ذخیره موفق تصویر جدید باقی می‌ماند.</p>
+                        <p class="mt-1 text-[10px] leading-5 text-[var(--admin-muted)]">JPG، PNG یا WEBP؛ حداقل ۱۲۰۰×۷۵۰ و دقیقاً نسبت ۱۶:۱۰؛ حداکثر ۱۰ مگابایت. فایل قبلی تا ذخیره موفق تصویر جدید باقی می‌ماند.</p>
                         @error('page_home_technology_image')
                             <p role="alert" class="mt-2 text-xs text-[var(--admin-danger)]">{{ $message }}</p>
                         @enderror
