@@ -35,7 +35,7 @@
             @if($productImage->product)
 
                 <a
-                    href="{{ route('admin.products.show', $productImage->product) }}"
+                    href="{{ route('admin.products.edit', $productImage->product) }}"
                     class="admin-btn admin-btn-secondary"
                 >
                     مشاهده محصول
@@ -98,7 +98,7 @@
                             @if($productImage->product)
 
                                 <a
-                                    href="{{ route('admin.products.show', $productImage->product) }}"
+                                    href="{{ route('admin.products.edit', $productImage->product) }}"
                                     class="text-sm font-semibold text-[var(--admin-accent)] hover:text-[var(--admin-accent-hover)]"
                                 >
                                     {{ $productImage->product->name }}
