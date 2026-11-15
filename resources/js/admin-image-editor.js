@@ -457,9 +457,26 @@ document.querySelectorAll('[data-image-preview-input]').forEach((input) => {
                 image.loading = 'lazy';
                 image.className = 'aspect-[4/3] w-full object-cover';
                 const meta = document.createElement('p');
-                meta.className = 'truncate p-2 text-[10px] text-[var(--admin-muted)]';
+                meta.className = 'truncate px-2 pt-2 text-[10px] text-[var(--admin-muted)]';
                 meta.textContent = file.name + ' · ' + dimensions.width + '×' + dimensions.height + ' · ' + (file.size / 1024 / 1024).toFixed(1) + ' MB';
                 card.append(image, meta);
+
+                const altName = input.dataset.imagePreviewAltName;
+                if (altName) {
+                    const altLabel = document.createElement('label');
+                    altLabel.className = 'block p-2 text-[10px] text-[var(--admin-text-soft)]';
+                    altLabel.textContent = 'توضیح تصویر';
+                    const altInput = document.createElement('input');
+                    altInput.type = 'text';
+                    altInput.name = altName;
+                    altInput.maxLength = 255;
+                    altInput.value = file.name.replace(/\\.[^.]+$/, '').slice(0, 255);
+                    altInput.placeholder = 'توضیح کوتاه و دقیق تصویر';
+                    altInput.className = 'admin-input mt-1 w-full text-xs';
+                    altLabel.append(altInput);
+                    card.append(altLabel);
+                }
+
                 preview.append(card);
             }
         }
