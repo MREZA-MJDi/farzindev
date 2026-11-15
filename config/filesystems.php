@@ -15,6 +15,10 @@ return [
 
     'default' => env('FILESYSTEM_DISK', 'local'),
 
+    // Production preflight warns/fails before deployments when uploads are
+    // approaching a full disk. Override per VPS when a different reserve is needed.
+    'storage_min_free_bytes' => (int) env('STORAGE_MIN_FREE_BYTES', 536870912),
+
     /*
     |--------------------------------------------------------------------------
     | Filesystem Disks
