@@ -53,15 +53,15 @@ class ProductImageController extends Controller
         ResponsiveImageService $images
     ): RedirectResponse {
         $validated = $request->validate([
-            'images' => ['nullable', 'array', 'max:10'],
+            'images' => ['nullable', 'array', 'max:5'],
             'images.*' => [
                 'required',
                 'image',
                 'mimes:jpg,jpeg,png,webp',
                 'dimensions:min_width=800,min_height=600',
-                'max:20480',
+                'max:5240',
             ],
-            'images_alt' => ['nullable', 'array', 'max:10'],
+            'images_alt' => ['nullable', 'array', 'max:5'],
             'images_alt.*' => ['nullable', 'string', 'max:255'],
             'media_ids' => ['nullable', 'array', 'max:30'],
             'media_ids.*' => [
@@ -73,13 +73,13 @@ class ProductImageController extends Controller
             ],
             'alt' => ['nullable', 'string', 'max:255'],
         ], [
-            'images.max' => 'در هر بار حداکثر ۱۰ تصویر می‌توانید آپلود کنید.',
+            'images.max' => 'در هر بار حداکثر ۵ تصویر می‌توانید آپلود کنید.',
             'images.*.image' => 'همهٔ فایل‌ها باید تصویر معتبر باشند.',
             'images.*.mimes' => 'فرمت تصویر باید JPG، PNG یا WEBP باشد.',
             'images.*.dimensions' => 'هر تصویر باید حداقل ۸۰۰ در ۶۰۰ پیکسل باشد.',
-            'images.*.max' => 'حجم هر تصویر نباید بیشتر از ۲۰ مگابایت باشد.',
+            'images.*.max' => 'حجم هر تصویر نباید بیشتر از ۱۰ مگابایت باشد.',
             'images_alt.array' => 'توضیحات تصاویر باید به‌صورت فهرست ارسال شوند.',
-            'images_alt.max' => 'برای حداکثر ۱۰ تصویر توضیح جداگانه وارد کنید.',
+            'images_alt.max' => 'برای حداکثر ۵ تصویر توضیح جداگانه وارد کنید.',
             'images_alt.*.string' => 'توضیح هر تصویر باید متنی باشد.',
             'images_alt.*.max' => 'توضیح هر تصویر نباید بیشتر از ۲۵۵ کاراکتر باشد.',
             'media_ids.array' => 'فهرست رسانه‌های انتخاب‌شده معتبر نیست.',
