@@ -254,6 +254,45 @@ class ProductionPreflightCommand extends Command
             $storageLinked ? 'public/storage points to the storage disk.' : 'Create or repair the public/storage symlink with php artisan storage:link.'
         );
 
+        $storageDirectories = [
+            storage_path('app'),
+            storage_path('framework/cache'),
+            storage_path('framework/sessions'),
+            storage_path('framework/views'),
+            storage_path('logs'),
+        ];
+        $unwritableStorageDirectories = array_values(array_filter(
+            $storageDirectories,
+            static fn (string $directory): bool => ! is_dir($directory) || ! is_writable($directory)
+        ));
+        $storageWritable = $unwritableStorageDirectories === [];
+        $add(
+            $storageWritable ? 'OK' : ($isProduction ? 'FAIL' : 'WARN'),
+            'Laravel storage write access',
+            $storageWritable
+                ? 'Upload, cache, session, compiled-view and log directories are writable.'
+                : 'PHP-FPM cannot write to: ' . implode(', ', array_map(
+                    static fn (string $directory): string => str_replace(base_path() . DIRECTORY_SEPARATOR, '', $directory),
+                    $unwritableStorageDirectories
+                )) . '. Repair ownership and permissions before accepting uploads.'
+        );
+
+        $storagePath = is_dir(storage_path('app/public'))
+            ? storage_path('app/public')
+            : storage_path();
+        $freeBytes = @disk_free_space($storagePath);
+        $minimumFreeBytes = max(0, (int) config('filesystems.storage_min_free_bytes', 536870912));
+        $hasStorageReserve = $freeBytes !== false && $freeBytes >= $minimumFreeBytes;
+        $freeSpaceDetail = $freeBytes === false
+            ? 'Free disk space could not be measured for the storage mount.'
+            : number_format($freeBytes / 1024 / 1024, 0) . ' MB free; minimum reserve is '
+                . number_format($minimumFreeBytes / 1024 / 1024, 0) . ' MB.';
+        $add(
+            $hasStorageReserve ? 'OK' : ($isProduction ? 'FAIL' : 'WARN'),
+            'Storage free space',
+            $freeSpaceDetail . ($hasStorageReserve ? '' : ' Free space is below the configured reserve; investigate disk usage before uploads or deployment.')
+        );
+
         $paymentManager = app(PaymentManager::class);
         $readyProviders = array_values(array_filter(
             ['digipay', 'snappay', 'torobpay'],
