@@ -17,6 +17,7 @@ class ProductVariant extends Model
         'type',
         'name',
         'value',
+        'description',
         'color_hex',
         'sku',
         'price_adjustment',
