@@ -13,7 +13,7 @@
                     هر تنوع متعلق به همین محصول است. مشخصات، موجودی، قیمت اضافه و تصاویر همان رنگ را همین‌جا تنظیم کنید؛ تصاویر را لازم نیست از صفحه‌ای جداگانه مدیریت کنید.
                 </p>
             </div>
-            <span class="admin-badge admin-badge-neutral">{{ $allVariants->count() }} تنوع</span>
+            <span class="admin-badge admin-badge-neutral">{{ method_exists($allVariants, 'total') ? $allVariants->total() : $allVariants->count() }} تنوع</span>
         </div>
 
         @if($errors->any())
@@ -316,4 +316,11 @@
             <p class="mt-2 text-xs leading-6 text-[var(--admin-muted)]">فرم بالا را تکمیل کنید تا اولین رنگ، موجودی و تصاویر مربوط به آن اضافه شود.</p>
         </div>
     @endforelse
+
+    @if(method_exists($allVariants, 'hasPages') && $allVariants->hasPages())
+        <div class="admin-card p-4">
+            <p class="mb-3 text-xs text-[var(--admin-muted)]">برای جلوگیری از بارگذاری یک‌باره همه تنوع‌ها، هر صفحه حداکثر ۱۵ تنوع دارد.</p>
+            {{ $allVariants->links() }}
+        </div>
+    @endif
 </div>
