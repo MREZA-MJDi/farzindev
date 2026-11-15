@@ -41,16 +41,16 @@ class UpdateProductVariantRequest extends FormRequest
                 'required',
                 'string',
                 'max:255',
+                Rule::unique('product_variants', 'value')
+                    ->where('product_id', $this->input('product_id'))
+                    ->where('type', $this->input('type'))
+                    ->ignore($productVariant),
             ],
 
             'description' => [
                 'nullable',
                 'string',
                 'max:1200',
-                Rule::unique('product_variants', 'value')
-                    ->where('product_id', $this->input('product_id'))
-                    ->where('type', $this->input('type'))
-                    ->ignore($productVariant),
             ],
 
             'color_hex' => [
