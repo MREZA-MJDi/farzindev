@@ -43,10 +43,10 @@ class AdminDashboardMetricsTest extends TestCase
             ->assertSee(route('admin.orders.index'), false)
             ->assertSee(route('admin.cms.index'), false);
 
-        $viewData = $response->viewData('page');
-        $this->assertArrayNotHasKey('totalProducts', $viewData);
-        $this->assertArrayNotHasKey('recentOrders', $viewData);
-        $this->assertArrayNotHasKey('recentCustomers', $viewData);
+        $response
+            ->assertViewMissing('totalProducts')
+            ->assertViewMissing('recentOrders')
+            ->assertViewMissing('recentCustomers');
     }
 
     private function order(
