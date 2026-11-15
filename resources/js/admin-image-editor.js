@@ -374,30 +374,92 @@ function initImageEditor(input) {
 inputs.forEach(initImageEditor);
 
 
-// Lightweight previews for secondary image fields that do not need crop processing.
+// Lightweight multi-image previews with client-side limits matching the server rules.
 document.querySelectorAll('[data-image-preview-input]').forEach((input) => {
     const preview = document.querySelector(input.dataset.imagePreviewTarget || '');
-    const placeholder = document.querySelector(input.dataset.imagePreviewPlaceholder || '');
-    let objectUrl = null;
+    const maxFiles = Math.max(1, Number(input.dataset.imagePreviewMaxFiles) || 10);
+    const maxBytes = Math.max(1, Number(input.dataset.imagePreviewMaxSize) || 20 * 1024 * 1024);
+    const minWidth = Math.max(1, Number(input.dataset.imagePreviewMinWidth) || 800);
+    const minHeight = Math.max(1, Number(input.dataset.imagePreviewMinHeight) || 600);
+    let objectUrls = [];
 
-    input.addEventListener('change', () => {
-        if (objectUrl) {
-            URL.revokeObjectURL(objectUrl);
-            objectUrl = null;
+    const clearPreview = () => {
+        objectUrls.forEach((url) => URL.revokeObjectURL(url));
+        objectUrls = [];
+        if (preview) preview.replaceChildren();
+    };
+
+    input.addEventListener('change', async () => {
+        clearPreview();
+        input.setCustomValidity('');
+
+        const files = Array.from(input.files || []);
+        if (!files.length) return;
+
+        let error = '';
+        if (files.length > maxFiles) {
+            error = 'حداکثر ' + maxFiles.toLocaleString('fa-IR') + ' تصویر را در هر بار انتخاب کنید.';
         }
 
-        const file = input.files && input.files[0];
-        if (!file || !file.type || !file.type.startsWith('image/')) {
-            if (preview) preview.classList.add('hidden');
-            if (placeholder) placeholder.classList.remove('hidden');
+        for (const file of files) {
+            if (error) break;
+            if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type)) {
+                error = 'فقط فایل‌های JPG، PNG و WEBP مجاز هستند.';
+                break;
+            }
+            if (file.size > maxBytes) {
+                error = 'حجم هر تصویر نباید بیشتر از ' + Math.round(maxBytes / 1024 / 1024) + ' مگابایت باشد.';
+                break;
+            }
+
+            const objectUrl = URL.createObjectURL(file);
+            objectUrls.push(objectUrl);
+            const dimensions = await new Promise((resolve) => {
+                const image = new Image();
+                image.onload = () => resolve({ width: image.naturalWidth, height: image.naturalHeight });
+                image.onerror = () => resolve(null);
+                image.src = objectUrl;
+            });
+
+            if (!dimensions) {
+                error = 'یکی از تصاویر قابل خواندن نیست؛ فایل دیگری انتخاب کنید.';
+                break;
+            }
+            if (dimensions.width < minWidth || dimensions.height < minHeight) {
+                error = 'ابعاد هر تصویر باید حداقل ' + minWidth + '×' + minHeight + ' پیکسل باشد.';
+                break;
+            }
+
+            if (preview) {
+                const card = document.createElement('div');
+                card.className = 'overflow-hidden rounded-xl border border-[var(--admin-border)] bg-[var(--admin-surface-soft)]';
+                const image = document.createElement('img');
+                image.src = objectUrl;
+                image.alt = file.name;
+                image.loading = 'lazy';
+                image.className = 'aspect-[4/3] w-full object-cover';
+                const meta = document.createElement('p');
+                meta.className = 'truncate p-2 text-[10px] text-[var(--admin-muted)]';
+                meta.textContent = file.name + ' · ' + dimensions.width + '×' + dimensions.height + ' · ' + (file.size / 1024 / 1024).toFixed(1) + ' MB';
+                card.append(image, meta);
+                preview.append(card);
+            }
+        }
+
+        if (error) {
+            clearPreview();
+            input.setCustomValidity(error);
+            input.reportValidity();
             return;
         }
 
-        objectUrl = URL.createObjectURL(file);
-        if (preview) {
-            preview.src = objectUrl;
-            preview.classList.remove('hidden');
+        input.setCustomValidity('');
+    });
+
+    input.form?.addEventListener('submit', (event) => {
+        if (!input.checkValidity()) {
+            event.preventDefault();
+            input.reportValidity();
         }
-        if (placeholder) placeholder.classList.add('hidden');
     });
 });
