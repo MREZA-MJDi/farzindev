@@ -49,7 +49,7 @@
                         @foreach($categories as $category)
                             <a href="{{ route('shop.index', ['category' => $category->slug]) }}"
                                @class(['shop-reference-category', 'is-active' => request('category') === $category->slug])
-                               @aria-current(request('category') === $category->slug ? 'true' : 'false')>
+                               aria-current="{{ request('category') === $category->slug ? 'true' : 'false' }}">
                                 <span class="shop-reference-category__media">
                                     @if($category->image_url)
                                         <img src="{{ $category->image_url }}" @if($category->image_srcset) srcset="{{ $category->image_srcset }}" sizes="(max-width: 600px) 42vw, 150px" @endif alt="" loading="lazy" decoding="async">
