@@ -114,6 +114,7 @@ class ProductionPreflightCommand extends Command
                 ['orders', 'inventory_reserved_at', 'Checkout safety requires the inventory reservation lifecycle migration.'],
                 ['orders', 'inventory_committed_at', 'Checkout safety requires the inventory commit marker.'],
                 ['product_variants', 'color_hex', 'Variant color picker requires color_hex.'],
+                ['product_variants', 'description', 'Variant-specific storefront descriptions require the product variant description migration.'],
                 ['product_variant_images', 'product_variant_id', 'Variant gallery pivot table must be migrated.'],
                 ['product_variant_images', 'product_image_id', 'Variant gallery pivot table must link product images.'],
             ] as [$table, $column, $detail]) {
