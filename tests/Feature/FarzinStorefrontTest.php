@@ -671,7 +671,7 @@ class FarzinStorefrontTest extends TestCase
         $this->get(route('about'))
             ->assertOk()
             ->assertSee('درباره فرجی‌هوم، روایت تازه')
-            ->assertSee('تمرکز مجموعه فرجی‌هوم.');
+            ->assertSee('خریدی که با نیاز شما شروع می‌شود.');
     }
 
     public function test_auth_and_legal_pages_use_the_farzin_customer_experience(): void
