@@ -13,16 +13,9 @@ use Illuminate\View\View;
 
 class BlogTermController extends Controller
 {
-    public function index(): View
+    public function index(): RedirectResponse
     {
-        $terms = BlogTerm::query()
-            ->withCount('posts')
-            ->orderBy('type')
-            ->orderBy('sort_order')
-            ->orderBy('name')
-            ->paginate(30);
-
-        return view('admin.blog-terms.index', compact('terms'));
+        return redirect()->route('admin.cms.index', ['tab' => 'blog']);
     }
 
     public function create(Request $request): View
