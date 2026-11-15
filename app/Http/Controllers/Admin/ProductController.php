@@ -240,15 +240,10 @@ class ProductController extends Controller
     /**
      * Display the specified product.
      */
-    public function show(Product $product): View
+    public function show(Product $product): RedirectResponse
     {
-        $product->load([
-            'category',
-            'images.media',
-            'allVariants.images.media',
-        ]);
-
-        return view('admin.products.show', compact('product'));
+        // Product details and editing now live in one canonical workspace.
+        return redirect()->route('admin.products.edit', $product);
     }
 
     /**
