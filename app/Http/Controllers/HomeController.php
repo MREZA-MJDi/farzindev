@@ -203,16 +203,13 @@ class HomeController extends Controller
             ->take(8)
             ->values();
 
-        $installmentProduct = $baseProducts()
-            ->where('installment_enabled', true)
-            ->whereBetween('installment_cash_percent', [1, 99])
-            ->where('installment_remainder_method', 'cheque')
-            ->whereBetween('installment_cheque_count', [1, 36])
-            ->whereBetween('installment_interval_months', [1, 24])
-            ->get()
-            ->first(static fn (Product $product): bool =>
-                ProductPurchaseRules::hasValidInstallmentPlan($product, $product->variants)
-            );
+        // Apply the complete installment eligibility rule in SQL and fetch only
+        // the single product needed by the homepage. Never hydrate every
+        // installment-enabled product just to find the first valid plan.
+        $installmentProduct = ProductPurchaseRules::applyInstallmentQuery($baseProducts())
+            ->orderByDesc('updated_at')
+            ->orderByDesc('id')
+            ->first();
 
         $storeSettings = StorefrontSetting::query()
             ->whereIn('key', [
