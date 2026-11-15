@@ -5,11 +5,6 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Helpers\JalaliHelper;
 use App\Models\Order;
-use App\Models\BlogPost;
-use App\Models\OrderItem;
-use App\Models\ContactMessage;
-use App\Models\Product;
-use App\Models\User;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
 
