@@ -56,7 +56,7 @@ class StorefrontSettingController extends Controller
                 'image',
                 'mimes:jpg,jpeg,png,webp',
                 'dimensions:min_width=1200,min_height=600',
-                'max:20480',
+                'max:10240',
             ],
             'shop_banner_title' => ['required', 'string', 'max:255'],
             'shop_banner_subtitle' => ['nullable', 'string', 'max:500'],
@@ -92,7 +92,7 @@ class StorefrontSettingController extends Controller
         ], [
             'shop_banner_image.image' => 'فایل بنر باید یک تصویر معتبر باشد.',
             'shop_banner_image.mimes' => 'فرمت بنر باید JPG، PNG یا WEBP باشد.',
-            'shop_banner_image.max' => 'حجم تصویر بنر نباید بیشتر از ۲۰ مگابایت باشد.',
+            'shop_banner_image.max' => 'حجم تصویر بنر نباید بیشتر از ۱۰ مگابایت باشد.',
             'shop_banner_image.dimensions' => 'ابعاد بنر باید حداقل ۱۲۰۰ در ۶۰۰ پیکسل باشد.',
             'shop_banner_title.required' => 'عنوان بنر الزامی است.',
             'email.email' => 'فرمت ایمیل معتبر نیست.',
