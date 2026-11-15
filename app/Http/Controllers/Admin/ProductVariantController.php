@@ -198,8 +198,9 @@ class ProductVariantController extends Controller
 
         $imageIds = $data['image_ids'] ?? [];
         $mediaIds = $data['media_ids'] ?? [];
+        $imageAlts = $data['images_alt'] ?? [];
         $uploads = $request->file('images', []);
-        unset($data['image_ids'], $data['media_ids'], $data['images']);
+        unset($data['image_ids'], $data['media_ids'], $data['images'], $data['images_alt']);
 
         $oldProductId = (int) $productVariant->product_id;
         $newProductId = (int) $data['product_id'];
@@ -281,7 +282,7 @@ class ProductVariantController extends Controller
                     $image = ProductImage::create([
                         'product_id' => $newProductId,
                         'path' => $path,
-                        'alt' => trim($data['name'] . ' ' . $data['value']),
+                        'alt' => trim((string) ($imageAlts[$offset] ?? '')) ?: trim($data['name'] . ' ' . $data['value']),
                         'sort_order' => $nextSort + $offset,
                         'is_primary' => false,
                     ]);
