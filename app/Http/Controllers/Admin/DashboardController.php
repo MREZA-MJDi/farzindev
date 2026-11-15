@@ -209,50 +209,6 @@ class DashboardController extends Controller
 
         /*
         |--------------------------------------------------------------------------
-        | Top Products
-        |--------------------------------------------------------------------------
-        */
-
-        $topProducts = $this->getTopProducts();
-
-        /*
-        |--------------------------------------------------------------------------
-        | Recent Orders
-        |--------------------------------------------------------------------------
-        */
-
-        $recentOrders = Order::query()
-            ->with([
-                'user',
-            ])
-            ->latest()
-            ->limit(6)
-            ->get();
-
-        /*
-        |--------------------------------------------------------------------------
-        | Recent Customers
-        |--------------------------------------------------------------------------
-        */
-
-        $recentCustomers = User::query()
-            ->where('role', 'customer')
-            ->latest()
-            ->limit(5)
-            ->get();
-
-        /*
-        |--------------------------------------------------------------------------
-        | Product Inventory
-        |--------------------------------------------------------------------------
-        */
-
-        $featuredProductsCount = (int) $productMetrics->featured_products;
-        $newProductsCount = (int) $productMetrics->new_products;
-        $installmentProductsCount = (int) $productMetrics->installment_products;
-
-        /*
-        |--------------------------------------------------------------------------
         | Return View
         |--------------------------------------------------------------------------
         */
@@ -283,17 +239,11 @@ class DashboardController extends Controller
 
             'orderStatus' => $orderStatus,
 
-            'topProducts' => $topProducts,
 
             'installmentOrders' => $installmentOrders,
             'installmentPaidOrders' => $installmentPaidOrders,
 
-            'recentOrders' => $recentOrders,
-            'recentCustomers' => $recentCustomers,
 
-            'featuredProductsCount' => $featuredProductsCount,
-            'newProductsCount' => $newProductsCount,
-            'installmentProductsCount' => $installmentProductsCount,
             'publishedBlogPosts' => $publishedBlogPosts,
             'draftBlogPosts' => $draftBlogPosts,
             'scheduledBlogPosts' => $scheduledBlogPosts,
@@ -359,53 +309,4 @@ class DashboardController extends Controller
         );
     }
 
-    /**
-     * Get best selling products from paid orders.
-     */
-    protected function getTopProducts(): Collection
-    {
-        return Cache::remember(
-            'admin.dashboard.top-products.v1',
-            now()->addMinute(),
-            fn (): Collection => OrderItem::query()
-                ->with([
-                    'product.images' => fn ($query) => $query
-                        ->select(['id', 'product_id', 'media_id', 'path', 'alt', 'sort_order', 'is_primary'])
-                        ->orderByDesc('is_primary')
-                        ->orderBy('sort_order')
-                        ->orderBy('id')
-                        ->limit(1),
-                    'product.images.media:id,path,disk',
-                ])
-                ->whereHas(
-                    'order',
-                    fn ($query) => $query->where(
-                        'payment_status',
-                        'paid'
-                    )
-                )
-                ->selectRaw(
-                    'product_id,
-                     product_name,
-                     SUM(quantity) as sold_quantity,
-                     SUM(total) as revenue'
-                )
-                ->groupBy(
-                    'product_id',
-                    'product_name'
-                )
-                ->orderByDesc('sold_quantity')
-                ->limit(5)
-                ->get()
-                ->map(function ($item) {
-                    return [
-                        'product_id' => $item->product_id,
-                        'name' => $item->product_name,
-                        'quantity' => (int) $item->sold_quantity,
-                        'revenue' => (float) $item->revenue,
-                        'image' => $item->product?->images?->first()?->url,
-                    ];
-                })
-        );
-    }
 }
