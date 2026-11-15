@@ -46,7 +46,7 @@
                         <p class="mt-1 text-xs text-[var(--admin-muted)]">مبالغ بر اساس سفارش‌های پرداخت‌شده محاسبه شده‌اند.</p>
                     </div>
                     <div class="text-left">
-                        <p class="text-xs text-[var(--admin-muted)]">درآمد کل ثبت‌شده</p>
+                        <p class="text-xs text-[var(--admin-muted)]">درآمد شش ماه اخیر</p>
                         <p class="mt-1 text-lg font-bold tabular-nums text-[var(--admin-text)]">{{ \App\Helpers\PersianNumberHelper::format($totalRevenue) }} تومان</p>
                     </div>
                 </div>
