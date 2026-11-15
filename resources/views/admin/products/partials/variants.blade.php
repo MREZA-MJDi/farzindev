@@ -107,6 +107,9 @@
                 <label class="block text-xs text-[var(--admin-text)]">مقدار نمایش‌داده‌شده
                     <input name="value" value="{{ old('value') }}" required maxlength="255" class="admin-input mt-2 w-full" placeholder="مشکی">
                 </label>
+                <label class="block text-xs text-[var(--admin-text)] sm:col-span-2">توضیحات این تنوع (اختیاری)
+                    <textarea name="description" rows="2" maxlength="1200" class="admin-input mt-2 w-full" placeholder="ویژگی ظاهری، جنس یا تفاوت این رنگ/مدل را بنویسید.">{{ old('description') }}</textarea>
+                </label>
                 <label class="block text-xs text-[var(--admin-text)]">کد رنگ (اختیاری)
                     <div class="mt-2 flex gap-2">
                         <input id="new-variant-color-hex" name="color_hex" value="{{ old('color_hex') }}" maxlength="20" class="admin-input w-full" dir="ltr" placeholder="#202020">
@@ -220,6 +223,9 @@
                     </label>
                     <label class="block text-xs text-[var(--admin-text)]">مقدار نمایش‌داده‌شده
                         <input name="value" value="{{ $variant->value }}" required maxlength="255" class="admin-input mt-2 w-full">
+                    </label>
+                    <label class="block text-xs text-[var(--admin-text)] sm:col-span-2">توضیحات این تنوع (اختیاری)
+                        <textarea name="description" rows="2" maxlength="1200" class="admin-input mt-2 w-full" placeholder="ویژگی ظاهری، جنس یا تفاوت این رنگ/مدل را بنویسید.">{{ old('description', $variant->description) }}</textarea>
                     </label>
                     <label class="block text-xs text-[var(--admin-text)]">کد رنگ
                         <input name="color_hex" value="{{ $variant->color_hex }}" maxlength="20" class="admin-input mt-2 w-full" dir="ltr" placeholder="#202020">
