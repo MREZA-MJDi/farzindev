@@ -98,7 +98,7 @@ function initImageEditor(input) {
     const ratio = () => RATIOS[ratioInput.value] || RATIOS['4:3'];
     const minimumWidth = () => Math.max(1, Number(input.dataset.imageEditorMinWidth) || 800);
     const minimumHeight = () => Math.max(1, Number(input.dataset.imageEditorMinHeight) || 600);
-    const maximumBytes = () => Math.max(1, Number(input.dataset.imageEditorMaxSize) || 20 * 1024 * 1024);
+    const maximumBytes = () => Math.max(1, Number(input.dataset.imageEditorMaxSize) || 10 * 1024 * 1024);
     const maximumSourcePixels = () => Math.max(1, Number(input.dataset.imageEditorMaxSourcePixels) || 24000000);
 
     function rebuildStage() {
@@ -231,7 +231,7 @@ function initImageEditor(input) {
         }
         if (file.size > maximumBytes()) {
             clearEditor();
-            say('حجم تصویر نباید بیشتر از ۲۰ مگابایت باشد.');
+            say('حجم تصویر نباید بیشتر از ۱۰ مگابایت باشد.');
             input.setCustomValidity('حجم تصویر نباید بیشتر از ۲۰ مگابایت باشد.');
             input.reportValidity();
             return;
