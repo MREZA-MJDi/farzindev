@@ -3595,6 +3595,7 @@ class FarzinStorefrontTest extends TestCase
                 'type' => 'color',
                 'name' => 'رنگ',
                 'value' => 'black',
+                'description' => 'پوشش مشکی مات با قابلیت تمیزکاری آسان',
                 'sku' => 'FAR-VARIANT-SELECTOR-BLACK',
                 'price_adjustment' => 1000000,
                 'stock' => 4,
@@ -3606,6 +3607,11 @@ class FarzinStorefrontTest extends TestCase
             ->assertSessionHas('success');
 
         $variant = $product->allVariants()->firstOrFail();
+        $this->assertSame('پوشش مشکی مات با قابلیت تمیزکاری آسان', $variant->description);
+
+        $this->get(route('product.show', $product->slug))
+            ->assertOk()
+            ->assertSee('پوشش مشکی مات با قابلیت تمیزکاری آسان');
 
         $this->from(route('product.show', $product->slug))
             ->post(route('cart.add', $product), ['quantity' => 1])
