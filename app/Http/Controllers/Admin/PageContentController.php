@@ -308,14 +308,14 @@ class PageContentController extends Controller
                 'image',
                 'mimes:jpg,jpeg,png,webp',
                 'dimensions:min_width=1200,min_height=750,ratio=16/10',
-                'max:20480',
+                'max:10240',
             ];
             $rules['page_home_technology_image'] = [
                 'nullable',
                 'image',
                 'mimes:jpg,jpeg,png,webp',
                 'dimensions:min_width=1200,min_height=750,ratio=16/10',
-                'max:20480',
+                'max:10240',
             ];
             $rules['page_home_technology_media_id'] = [
                 'nullable',
@@ -330,7 +330,7 @@ class PageContentController extends Controller
                     'image',
                     'mimes:jpg,jpeg,png,webp',
                     'dimensions:min_width=1200,min_height=375,ratio=16/6',
-                    'max:20480',
+                    'max:10240',
                 ];
                 $rules["remove_page_home_banner_{$index}_image"] = ['sometimes', 'boolean'];
                 $rules["page_home_banner_{$index}_button_url"] = [
@@ -364,22 +364,22 @@ class PageContentController extends Controller
             'page_home_hero_image.image' => 'فایل Hero باید یک تصویر معتبر باشد.',
             'page_home_hero_image.mimes' => 'فرمت تصویر Hero باید JPG، PNG یا WEBP باشد.',
             'page_home_hero_image.dimensions' => 'خروجی Hero باید نسبت ۱۶:۱۰ و حداقل ابعاد ۱۲۰۰ در ۷۵۰ پیکسل داشته باشد.',
-            'page_home_hero_image.max' => 'حجم تصویر Hero نباید بیشتر از ۲۰ مگابایت باشد.',
+            'page_home_hero_image.max' => 'حجم تصویر Hero نباید بیشتر از ۱۰ مگابایت باشد.',
             'page_home_technology_image.image' => 'فایل سکشن فناوری باید یک تصویر معتبر باشد.',
             'page_home_technology_image.dimensions' => 'تصویر فناوری باید نسبت ۱۶:۱۰ و حداقل ابعاد ۱۲۰۰ در ۷۵۰ پیکسل داشته باشد.',
-            'page_home_technology_image.max' => 'حجم تصویر فناوری نباید بیشتر از ۲۰ مگابایت باشد.',
+            'page_home_technology_image.max' => 'حجم تصویر فناوری نباید بیشتر از ۱۰ مگابایت باشد.',
             'page_home_banner_1_image.image' => 'فایل بنر 1 باید یک تصویر معتبر باشد.',
             'page_home_banner_1_image.dimensions' => 'تصویر بنر 1 باید حداقل ۱۲۰۰×۳۷۵ و با نسبت ۱۶:۶ باشد.',
-            'page_home_banner_1_image.max' => 'حجم تصویر بنر 1 نباید بیشتر از ۲۰ مگابایت باشد.',
+            'page_home_banner_1_image.max' => 'حجم تصویر بنر 1 نباید بیشتر از ۱۰ مگابایت باشد.',
             'page_home_banner_2_image.image' => 'فایل بنر 2 باید یک تصویر معتبر باشد.',
             'page_home_banner_2_image.dimensions' => 'تصویر بنر 2 باید حداقل ۱۲۰۰×۳۷۵ و با نسبت ۱۶:۶ باشد.',
-            'page_home_banner_2_image.max' => 'حجم تصویر بنر 2 نباید بیشتر از ۲۰ مگابایت باشد.',
+            'page_home_banner_2_image.max' => 'حجم تصویر بنر 2 نباید بیشتر از ۱۰ مگابایت باشد.',
             'page_home_banner_3_image.image' => 'فایل بنر 3 باید یک تصویر معتبر باشد.',
             'page_home_banner_3_image.dimensions' => 'تصویر بنر 3 باید حداقل ۱۲۰۰×۳۷۵ و با نسبت ۱۶:۶ باشد.',
-            'page_home_banner_3_image.max' => 'حجم تصویر بنر 3 نباید بیشتر از ۲۰ مگابایت باشد.',
+            'page_home_banner_3_image.max' => 'حجم تصویر بنر 3 نباید بیشتر از ۱۰ مگابایت باشد.',
             'page_home_banner_4_image.image' => 'فایل بنر 4 باید یک تصویر معتبر باشد.',
             'page_home_banner_4_image.dimensions' => 'تصویر بنر 4 باید حداقل ۱۲۰۰×۳۷۵ و با نسبت ۱۶:۶ باشد.',
-            'page_home_banner_4_image.max' => 'حجم تصویر بنر 4 نباید بیشتر از ۲۰ مگابایت باشد.',
+            'page_home_banner_4_image.max' => 'حجم تصویر بنر 4 نباید بیشتر از ۱۰ مگابایت باشد.',
         ]);
 
         $heroImageUpload = $validated['page_home_hero_image'] ?? null;
