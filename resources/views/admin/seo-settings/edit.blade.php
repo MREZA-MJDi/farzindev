@@ -117,11 +117,6 @@
                     <textarea name="seo_default_description" rows="3" required maxlength="320" class="admin-input mt-2 w-full">{{ old('seo_default_description', $settings['seo_default_description']) }}</textarea>
                 </label>
 
-                <label class="block text-sm text-[var(--admin-text)]">
-                    کلمات کلیدی پیش‌فرض
-                    <textarea name="seo_default_keywords" rows="2" maxlength="1000" class="admin-input mt-2 w-full">{{ old('seo_default_keywords', $settings['seo_default_keywords']) }}</textarea>
-                    <span class="mt-1 block text-xs leading-6 text-[var(--admin-muted)]">برای سازگاری قابل تنظیم است؛ گوگل meta keywords را عامل رتبه‌بندی نمی‌داند.</span>
-                </label>
             </section>
 
             @php
