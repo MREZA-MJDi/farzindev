@@ -199,7 +199,7 @@
                             @if($variant->product)
 
                                 <a
-                                    href="{{ route('admin.products.show', $variant->product) }}"
+                                    href="{{ route('admin.products.edit', $variant->product) }}"
                                     class="font-semibold text-[var(--admin-text)] transition hover:text-[var(--admin-accent)]"
                                 >
                                     {{ $variant->product->name }}
