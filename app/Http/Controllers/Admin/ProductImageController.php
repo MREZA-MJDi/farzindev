@@ -59,7 +59,7 @@ class ProductImageController extends Controller
                 'image',
                 'mimes:jpg,jpeg,png,webp',
                 'dimensions:min_width=800,min_height=600',
-                'max:5240',
+                'max:10240',
             ],
             'images_alt' => ['nullable', 'array', 'max:5'],
             'images_alt.*' => ['nullable', 'string', 'max:255'],
