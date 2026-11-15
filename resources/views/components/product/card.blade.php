@@ -107,6 +107,20 @@
             @endif
         </a>
 
+        @if($variant === 'catalog' && $specifications->isNotEmpty())
+            <div class="shop-reference-product-specs" aria-label="مشخصات پایه محصول">
+                <h4>مشخصات پایه محصول</h4>
+                <ul>
+                    @foreach($specifications as $specification)
+                        <li><b>{{ $specification['label'] }}:</b> <span>{{ $specification['value'] }}</span></li>
+                    @endforeach
+                    @if($product->category?->name)
+                        <li><b>دسته:</b> <span>{{ $product->category->name }}</span></li>
+                    @endif
+                </ul>
+            </div>
+        @endif
+
         <div class="absolute right-3 top-3 z-10 flex max-w-[calc(100%-5rem)] flex-col items-start gap-1.5">
             @if($product->is_new)
                 <span class="farzin-product-badge farzin-product-badge--light">تازه‌وارد</span>
