@@ -105,6 +105,9 @@ class UpdateProductVariantRequest extends FormRequest
                 'max:20480',
             ],
 
+            'images_alt' => ['nullable', 'array', 'max:10'],
+            'images_alt.*' => ['nullable', 'string', 'max:255'],
+
             'sku' => [
                 'nullable',
                 'string',
@@ -190,6 +193,10 @@ class UpdateProductVariantRequest extends FormRequest
             'images.*.mimes' => 'تصاویر باید JPG، PNG یا WEBP باشند.',
             'images.*.dimensions' => 'هر تصویر باید حداقل ۸۰۰ در ۶۰۰ پیکسل باشد.',
             'images.*.max' => 'حجم هر تصویر نباید بیشتر از ۲۰ مگابایت باشد.',
+            'images_alt.array' => 'توضیحات تصاویر باید به‌صورت فهرست ارسال شوند.',
+            'images_alt.max' => 'برای حداکثر ۱۰ تصویر توضیح جداگانه وارد کنید.',
+            'images_alt.*.string' => 'توضیح هر تصویر باید متنی باشد.',
+            'images_alt.*.max' => 'توضیح هر تصویر نباید بیشتر از ۲۵۵ کاراکتر باشد.',
 
             'sku.unique' => 'این SKU قبلاً استفاده شده است.',
 
