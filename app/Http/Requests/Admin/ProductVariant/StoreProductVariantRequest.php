@@ -37,6 +37,12 @@ class StoreProductVariantRequest extends FormRequest
                 'required',
                 'string',
                 'max:255',
+            ],
+
+            'description' => [
+                'nullable',
+                'string',
+                'max:1200',
                 Rule::unique('product_variants', 'value')
                     ->where('product_id', $this->input('product_id'))
                     ->where('type', $this->input('type')),
@@ -149,6 +155,7 @@ class StoreProductVariantRequest extends FormRequest
             'value.required' => 'مقدار ویژگی الزامی است.',
             'value.max' => 'مقدار ویژگی نباید بیشتر از ۲۵۵ کاراکتر باشد.',
             'value.unique' => 'این مقدار ویژگی قبلاً برای همین نوع و محصول ثبت شده است.',
+            'description.max' => 'توضیحات تنوع نباید بیشتر از ۱۲۰۰ کاراکتر باشد.',
 
             'color_hex.regex' => 'کد رنگ باید مانند #C8A27A باشد.',
 
