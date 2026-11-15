@@ -216,8 +216,6 @@ function setupSeoAnalysis() {
     const update = () => {
         const title = read('[data-seo-meta-title]') || read('[data-seo-title]');
         const description = read('[data-seo-meta-description]') || read('[data-seo-excerpt]');
-        const keyword = normalizeText(read('[data-seo-keyword]'));
-        const slug = normalizeText(read('input[name="slug"]').replace(/-/g, ' '));
         const body = surface?.innerText || read('[data-editor-source]');
         const normalizedBody = normalizeText(body);
         const words = normalizedBody.split(' ').filter(Boolean);
@@ -228,16 +226,7 @@ function setupSeoAnalysis() {
         const checks = {
             title_length: title.length >= 25 && title.length <= 65,
             description_length: description.length >= 70 && description.length <= 165,
-            focus_keyword: keyword.length > 0,
-            keyword_title: keyword.length > 0 && normalizeText(title).includes(keyword),
-            keyword_description: keyword.length > 0 && normalizeText(description).includes(keyword),
-            keyword_slug: keyword.length > 0 && slug.includes(keyword),
-            keyword_intro: keyword.length > 0 && firstWords.includes(keyword),
-            content_depth: words.length >= 300,
-            subheadings: hasHeadings,
-            cover_image: hasImage,
-            image_alt: read('input[name="cover_image_alt"]').length > 0,
-            excerpt: read('[data-seo-excerpt]').length >= 40,
+
         };
 
         const checksList = [...panel.querySelectorAll('[data-seo-check]')];
