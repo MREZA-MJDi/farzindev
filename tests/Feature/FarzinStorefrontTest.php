@@ -655,7 +655,7 @@ class FarzinStorefrontTest extends TestCase
         $this->assertSame('مهندسی • جزئیات • عملکرد', $copy['page_home_technology_eyebrow']);
     }
 
-    public function test_about_page_uses_dashboard_copy_and_section_visibility(): void
+    public function test_about_page_uses_dashboard_copy_and_keeps_sections_visible(): void
     {
         StorefrontSetting::query()->updateOrCreate(
             ['key' => 'page_about_hero_title'],
@@ -671,7 +671,7 @@ class FarzinStorefrontTest extends TestCase
         $this->get(route('about'))
             ->assertOk()
             ->assertSee('درباره فرجی‌هوم، روایت تازه')
-            ->assertDontSee('تمرکز مجموعه فرجی‌هوم.');
+            ->assertSee('تمرکز مجموعه فرجی‌هوم.');
     }
 
     public function test_auth_and_legal_pages_use_the_farzin_customer_experience(): void
@@ -733,7 +733,7 @@ class FarzinStorefrontTest extends TestCase
             ->assertSee('این متن باید در صفحه عمومی حریم خصوصی نمایش داده شود.');
     }
 
-    public function test_homepage_final_cta_and_typography_controls_are_connected_to_public_output(): void
+    public function test_homepage_copy_is_editable_while_global_layout_remains_fixed(): void
     {
         $admin = $this->admin();
         $defaults = app(\App\Services\StorefrontPageContent::class)->defaults();
@@ -764,23 +764,12 @@ class FarzinStorefrontTest extends TestCase
             ->assertSee('این توضیح از داشبورد عمومی ذخیره می‌شود.')
             ->assertSee('رفتن به کاتالوگ');
 
-        $typographyValues = collect($defaults)
-            ->filter(fn ($value, $key) => str_starts_with($key, 'page_typography_'))
-            ->all();
-        $typographyValues['page_typography_font_scale'] = '105';
-        $typographyValues['page_typography_line_height'] = '1.9';
-        $typographyValues['page_typography_content_width'] = '1360';
-
-        $this->put(route('admin.page-content.update'), array_merge($typographyValues, ['tab' => 'typography']))
-            ->assertRedirect(route('admin.page-content.edit', ['tab' => 'typography']))
-            ->assertSessionHas('success');
-
         $this->get(route('home'))
             ->assertOk()
             ->assertSee('id="storefront-page-typography"', false)
-            ->assertSee('font-size: 105.00%', false)
-            ->assertSee('line-height: 1.90', false)
-            ->assertSee('max-width: 1360px', false);
+            ->assertSee('font-size: 100.00%', false)
+            ->assertSee('line-height: 1.80', false)
+            ->assertSee('max-width: 1280px', false);
     }
 
     public function test_footer_receives_and_displays_the_active_contact_settings(): void
@@ -1117,7 +1106,7 @@ class FarzinStorefrontTest extends TestCase
             ->assertSee('name="page_home_technology_title"', false)
             ->assertSee('name="page_home_technology_body"', false)
             ->assertSee('name="page_home_technology_image"', false)
-            ->assertSee('name="page_home_show_technology"', false)
+            ->assertDontSee('name="page_home_show_technology"', false)
             ->assertDontSee('page_home_hero_image_position')
             ->assertDontSee('نقطه تمرکز تصویر Hero');
 
