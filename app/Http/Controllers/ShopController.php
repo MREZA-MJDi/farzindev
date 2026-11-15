@@ -254,6 +254,7 @@ class ShopController extends Controller
         */
 
         $categories = Category::query()
+            ->withCount(['products' => fn ($productQuery) => $productQuery->active()])
             ->visibleInStorefront()
             // Category::active() adds its own sort order. Reset it so a
             // selected category outside the first 100 is promoted before cap.
