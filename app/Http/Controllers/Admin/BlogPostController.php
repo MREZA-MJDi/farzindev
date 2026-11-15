@@ -298,7 +298,6 @@ class BlogPostController extends Controller
             'cover_image_alt' => ['nullable', 'string', 'max:255'],
             'meta_title' => ['nullable', 'string', 'max:255'],
             'meta_description' => ['nullable', 'string', 'max:320'],
-            'focus_keyword' => ['nullable', 'string', 'max:160'],
             'canonical_url' => ['nullable', 'url:https', 'max:2048'],
             'og_title' => ['nullable', 'string', 'max:255'],
             'og_description' => ['nullable', 'string', 'max:320'],
