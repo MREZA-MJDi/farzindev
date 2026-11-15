@@ -98,6 +98,8 @@ function initImageEditor(input) {
     const ratio = () => RATIOS[ratioInput.value] || RATIOS['4:3'];
     const minimumWidth = () => Math.max(1, Number(input.dataset.imageEditorMinWidth) || 800);
     const minimumHeight = () => Math.max(1, Number(input.dataset.imageEditorMinHeight) || 600);
+    const maximumBytes = () => Math.max(1, Number(input.dataset.imageEditorMaxSize) || 20 * 1024 * 1024);
+    const maximumSourcePixels = () => Math.max(1, Number(input.dataset.imageEditorMaxSourcePixels) || 24000000);
 
     function rebuildStage() {
         if (!state.image) return;
@@ -220,11 +222,21 @@ function initImageEditor(input) {
             clearEditor();
             return;
         }
-        if (!file.type || file.type.indexOf('image/') !== 0) {
+        if (!file.type || !['image/jpeg', 'image/png', 'image/webp'].includes(file.type)) {
             clearEditor();
-            say('این فایل تصویر نیست؛ بدون برش آپلود می‌شود.');
+            say('فقط تصویر JPG، PNG یا WEBP قابل انتخاب است.');
+            input.setCustomValidity('فرمت تصویر باید JPG، PNG یا WEBP باشد.');
+            input.reportValidity();
             return;
         }
+        if (file.size > maximumBytes()) {
+            clearEditor();
+            say('حجم تصویر نباید بیشتر از ۲۰ مگابایت باشد.');
+            input.setCustomValidity('حجم تصویر نباید بیشتر از ۲۰ مگابایت باشد.');
+            input.reportValidity();
+            return;
+        }
+        input.setCustomValidity('');
 
         state.file = file;
         state.image = null;
@@ -248,6 +260,12 @@ function initImageEditor(input) {
             image.onload = () => {
                 URL.revokeObjectURL(objectUrl);
                 try {
+                    if (image.naturalWidth < minimumWidth() || image.naturalHeight < minimumHeight()) {
+                        throw new Error('ابعاد تصویر اصلی باید حداقل ' + minimumWidth() + '×' + minimumHeight() + ' پیکسل باشد.');
+                    }
+                    if ((image.naturalWidth * image.naturalHeight) > maximumSourcePixels()) {
+                        throw new Error('ابعاد فایل بیش از حد مجاز است؛ تصویر کوچک‌تری انتخاب کنید.');
+                    }
                     rebuildStage();
                     say('ابعاد اصلی: ' + image.naturalWidth.toLocaleString('fa-IR') + ' × ' + image.naturalHeight.toLocaleString('fa-IR') + ' پیکسل؛ کادر را تنظیم کنید.');
                     renderPreview();
