@@ -44,7 +44,7 @@
                             @if($item->product)
 
                                 <a
-                                    href="{{ route('admin.products.show', $item->product) }}"
+                                    href="{{ route('admin.products.edit', $item->product) }}"
                                     class="font-semibold text-[var(--admin-text)] hover:text-[var(--admin-accent)]"
                                 >
                                     {{ $item->product->name }}
