@@ -53,10 +53,17 @@ class UpdateProductRequest extends FormRequest
             }
 
             $product = $this->route('product');
+            // Product galleries are expected to be small. Keep validation bounded
+            // even if legacy data contains an unexpectedly large image collection.
             $hasUsableExistingImage = $product
-                && $product->images()->with('media')->get()->contains(
-                    static fn ($image): bool => filled($image->url)
-                );
+                && $product->images()
+                    ->select(['id', 'product_id', 'media_id', 'path', 'sort_order', 'is_primary'])
+                    ->with('media:id,path,disk')
+                    ->orderByDesc('is_primary')
+                    ->orderBy('sort_order')
+                    ->limit(20)
+                    ->get()
+                    ->contains(static fn ($image): bool => filled($image->url));
 
             if (
                 $this->input('status') === 'active'
