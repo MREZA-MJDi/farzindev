@@ -207,10 +207,6 @@ function setupSeoAnalysis() {
     const metaTitleInput = document.querySelector('[data-seo-meta-title]');
     const metaDescriptionInput = document.querySelector('[data-seo-meta-description]');
     const excerptInput = document.querySelector('[data-seo-excerpt]');
-    const keywordInput = document.querySelector('[data-seo-keyword]');
-    const slugInput = document.querySelector('input[name="slug"]');
-    const altInput = document.querySelector('input[name="cover_image_alt"]');
-    const coverInput = document.querySelector('input[name="cover_image"]');
     const surface = document.querySelector('[data-editor-surface]');
 
     const update = () => {
@@ -269,7 +265,6 @@ function setupSeoAnalysis() {
 
     [
         titleInput, metaTitleInput, metaDescriptionInput, excerptInput,
-        keywordInput, slugInput, altInput, coverInput,
     ].filter(Boolean).forEach((input) => {
         input.addEventListener('input', update);
         input.addEventListener('change', update);
