@@ -3328,6 +3328,10 @@ class FarzinStorefrontTest extends TestCase
                     UploadedFile::fake()->image('gallery-front.jpg', 800, 600),
                     UploadedFile::fake()->image('gallery-side.webp', 900, 700),
                 ],
+                'images_alt' => [
+                    'نمای روبه‌روی محصول',
+                    'نمای جانبی محصول',
+                ],
             ])
             ->assertRedirect(route('admin.products.edit', $product))
             ->assertSessionHas('success');
@@ -3336,7 +3340,8 @@ class FarzinStorefrontTest extends TestCase
         $this->assertCount(2, $images);
         $this->assertTrue((bool) $images->first()->is_primary);
         $this->assertFalse((bool) $images->last()->is_primary);
-        $this->assertSame('نمای عمومی محصول', $images->first()->alt);
+        $this->assertSame('نمای روبه‌روی محصول', $images->first()->alt);
+        $this->assertSame('نمای جانبی محصول', $images->last()->alt);
         Storage::disk('public')->assertExists($images->first()->path);
         Storage::disk('public')->assertExists($images->last()->path);
     }
