@@ -157,7 +157,7 @@
                             @if($image->product)
 
                                 <a
-                                    href="{{ route('admin.products.show', $image->product) }}"
+                                    href="{{ route('admin.products.edit', $image->product) }}"
                                     class="font-semibold text-[var(--admin-text)] transition hover:text-[var(--admin-accent)]"
                                 >
                                     {{ $image->product->name }}
