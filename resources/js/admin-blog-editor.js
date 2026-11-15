@@ -219,10 +219,6 @@ function setupSeoAnalysis() {
         const body = surface?.innerText || read('[data-editor-source]');
         const normalizedBody = normalizeText(body);
         const words = normalizedBody.split(' ').filter(Boolean);
-        const firstWords = words.slice(0, 100).join(' ');
-        const hasImage = Boolean(coverInput?.files?.length)
-            || Boolean(document.querySelector('.admin-card img[alt]'));
-        const hasHeadings = Boolean(surface?.querySelector('h2,h3,h4'));
         const checks = {
             title_length: title.length >= 25 && title.length <= 65,
             description_length: description.length >= 70 && description.length <= 165,
@@ -233,15 +229,20 @@ function setupSeoAnalysis() {
         let passed = 0;
         checksList.forEach((item) => {
             const key = item.dataset.seoCheck;
-            const success = Boolean(checks[key]);
-            if (success) passed += 1;
-            item.dataset.passed = success ? '1' : '0';
-            const icon = item.querySelector('[data-check-icon]');
-            if (icon) {
-                icon.textContent = success ? '✓' : '!';
-                icon.classList.toggle('text-emerald-600', success);
-                icon.classList.toggle('text-amber-600', !success);
+            // The server owns content/image checks; the browser updates only
+            // title and description checks while the editor is being typed.
+            if (Object.prototype.hasOwnProperty.call(checks, key)) {
+                const success = Boolean(checks[key]);
+                item.dataset.passed = success ? '1' : '0';
+                const icon = item.querySelector('[data-check-icon]');
+                if (icon) {
+                    icon.textContent = success ? '✓' : '!';
+                    icon.classList.toggle('text-emerald-600', success);
+                    icon.classList.toggle('text-amber-600', !success);
+                }
             }
+
+            if (item.dataset.passed === '1') passed += 1;
         });
 
         const score = Math.round((passed / Math.max(1, checksList.length)) * 100);
