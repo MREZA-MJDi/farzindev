@@ -19,12 +19,22 @@ class ProductController extends Controller
         $product = Product::query()
             ->with([
                 'category',
-                'images.media',
-                'variants.images.media',
+                'images' => fn ($query) => $query
+                    ->with('media')
+                    ->orderByDesc('is_primary')
+                    ->orderBy('sort_order')
+                    ->limit(30),
+                'variants' => fn ($query) => $query
+                    ->with(['images' => fn ($images) => $images
+                        ->with('media')
+                        ->orderByPivot('sort_order')
+                        ->limit(5)])
+                    ->orderBy('type')
+                    ->orderBy('id')
+                    ->limit(40),
                 'category.attributes.options',
                 'attributeValues.option',
                 'attributeValues.attribute',
-                'attributeValues.option',
             ])
             ->active()
             ->whereHas('category', fn (Builder $query) => $query->where('is_active', true))
