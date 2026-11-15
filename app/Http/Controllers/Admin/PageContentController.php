@@ -242,13 +242,6 @@ class PageContentController extends Controller
                 $tab === 'home' && str_starts_with($key, 'page_home_guides_') => 'معرفی بخش راهنماها',
                 $tab === 'home' && str_starts_with($key, 'page_home_journal_') => 'مجله و مقاله‌ها',
                 $tab === 'home' && str_starts_with($key, 'page_home_technology_') => 'بخش فناوری و جزئیات ساخت',
-                $tab === 'home' && $key === 'page_home_show_categories' => 'بخش دسته‌بندی‌ها',
-                $tab === 'home' && $key === 'page_home_show_products' => 'بخش محصولات منتخب',
-                $tab === 'home' && $key === 'page_home_show_guides' => 'معرفی بخش راهنماها',
-                $tab === 'home' && $key === 'page_home_show_journal' => 'مجله و مقاله‌ها',
-                $tab === 'home' && $key === 'page_home_show_technology' => 'بخش فناوری و جزئیات ساخت',
-                $tab === 'home' && $key === 'page_home_show_final_cta' => 'دعوت پایانی',
-                $tab === 'home' && ($key === 'page_home_show_trust' || in_array($key, ['page_home_enamad_url', 'page_home_warranty_text'], true)) => 'اعتمادسازی',
                 $tab === 'about' && str_starts_with($key, 'page_about_hero_') => 'معرفی و Hero',
                 $tab === 'about' && str_starts_with($key, 'page_about_statement_') => 'بیانیه مجموعه',
                 $tab === 'about' && str_starts_with($key, 'page_about_factory_') => 'راهنمای انتخاب محصولات',
@@ -358,9 +351,6 @@ class PageContentController extends Controller
         }
 
         $validated = $request->validate($rules, [
-            'page_typography_font_scale.between' => 'مقیاس فونت باید بین ۹۰ تا ۱۱۰ درصد باشد.',
-            'page_typography_line_height.between' => 'ارتفاع خط باید بین ۱٫۴ تا ۲٫۲ باشد.',
-            'page_typography_content_width.between' => 'عرض محتوا باید بین ۱۱۲۰ تا ۱۴۴۰ پیکسل باشد.',
             'page_home_hero_image.image' => 'فایل Hero باید یک تصویر معتبر باشد.',
             'page_home_hero_image.mimes' => 'فرمت تصویر Hero باید JPG، PNG یا WEBP باشد.',
             'page_home_hero_image.dimensions' => 'خروجی Hero باید نسبت ۱۶:۱۰ و حداقل ابعاد ۱۲۰۰ در ۷۵۰ پیکسل داشته باشد.',
