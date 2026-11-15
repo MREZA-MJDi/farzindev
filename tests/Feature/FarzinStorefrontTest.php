@@ -1117,7 +1117,7 @@ class FarzinStorefrontTest extends TestCase
             ->assertSee('محصول واقعی پیشنهاد فرجی‌هوم');
     }
 
-    public function test_homepage_content_switches_control_published_products_and_articles(): void
+    public function test_homepage_sections_remain_visible_without_behavior_switches_in_the_cms(): void
     {
         $admin = $this->admin();
         $category = $this->category([
@@ -1144,7 +1144,7 @@ class FarzinStorefrontTest extends TestCase
         $article = \App\Models\BlogPost::create([
             'title' => 'مقاله قابل نمایش در صفحه اصلی',
             'slug' => 'homepage-content-switch-article',
-            'body' => 'محتوای منتشرشده برای بررسی کلید نمایش مجله.',
+            'body' => 'محتوای منتشرشده برای بررسی نمایش ثابت مجله.',
             'status' => 'published',
             'published_at' => now(),
             'is_featured' => true,
@@ -1155,25 +1155,17 @@ class FarzinStorefrontTest extends TestCase
             ->all();
 
         $this->actingAs($admin, 'admin')
-            ->put(route('admin.page-content.update'), array_merge($values, [
-                'tab' => 'home',
-                'page_home_show_products' => '0',
-                'page_home_show_journal' => '0',
-            ]))
-            ->assertRedirect(route('admin.page-content.edit', ['tab' => 'home']))
-            ->assertSessionHas('success');
-
-        $this->get(route('home'))
+            ->get(route('admin.page-content.edit', ['tab' => 'home']))
             ->assertOk()
-            ->assertDontSee('id="fz-home-featured"', false)
-            ->assertDontSee($product->name)
-            ->assertDontSee('class="fz-home-journal"', false)
-            ->assertDontSee($article->title);
+            ->assertDontSee('name="page_home_show_products"', false)
+            ->assertDontSee('name="page_home_show_journal"', false);
 
+        // Legacy clients may still submit old switches. The CMS ignores them
+        // and the storefront keeps its standard sections visible.
         $this->put(route('admin.page-content.update'), array_merge($values, [
             'tab' => 'home',
-            'page_home_show_products' => '1',
-            'page_home_show_journal' => '1',
+            'page_home_show_products' => '0',
+            'page_home_show_journal' => '0',
         ]))
             ->assertRedirect(route('admin.page-content.edit', ['tab' => 'home']))
             ->assertSessionHas('success');
