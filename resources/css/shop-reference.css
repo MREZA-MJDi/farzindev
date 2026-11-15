@@ -1,0 +1,259 @@
+/* Shop catalogue visual identity supplied in Pasted text(20261115-092231).txt.
+ * Scoped to the public shop page; product, cart, account and admin UI are untouched.
+ */
+#app .storefront-content .shop-reference-heading {
+    padding: 1.5rem 0 1.25rem;
+    background: #f6f7fc;
+}
+#app .storefront-content .shop-reference-heading__breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: .55rem;
+    margin-bottom: 1.2rem;
+    color: #8a8fa8;
+    font-size: .72rem;
+}
+#app .storefront-content .shop-reference-heading__breadcrumb a:hover,
+#app .storefront-content .shop-reference-heading__breadcrumb [aria-current="page"] {
+    color: #1f2340;
+}
+#app .storefront-content .shop-reference-heading__title {
+    display: flex;
+    align-items: center;
+    gap: .8rem;
+}
+#app .storefront-content .shop-reference-heading__icon {
+    display: grid;
+    width: 42px;
+    height: 42px;
+    flex: 0 0 42px;
+    place-items: center;
+    border-radius: 14px;
+    background: #6d5ae0;
+    color: #fff;
+}
+#app .storefront-content .shop-reference-heading__icon svg {
+    width: 22px;
+    height: 22px;
+}
+#app .storefront-content .shop-reference-heading h1 {
+    color: #1f2340;
+    font-size: 1.25rem;
+    font-weight: 800;
+}
+#app .storefront-content .shop-reference-categories {
+    padding: .25rem 0 2rem;
+    background: #f6f7fc;
+}
+#app .storefront-content .shop-reference-categories__grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 14px;
+}
+#app .storefront-content .shop-reference-category {
+    display: flex;
+    min-width: 0;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 1.1rem .65rem .9rem;
+    border: 1.5px solid transparent;
+    border-radius: 16px;
+    background: #fff;
+    text-align: center;
+    box-shadow: 0 2px 10px rgba(80,80,140,.05);
+    transition: transform .2s ease, border-color .2s ease, box-shadow .2s ease;
+}
+#app .storefront-content .shop-reference-category:hover {
+    transform: translateY(-3px);
+    border-color: rgba(109,90,224,.4);
+    box-shadow: 0 8px 22px rgba(80,80,140,.09);
+}
+#app .storefront-content .shop-reference-category.is-active {
+    border-color: #6d5ae0;
+    box-shadow: 0 0 0 2px rgba(109,90,224,.08);
+}
+#app .storefront-content .shop-reference-category__media {
+    display: grid;
+    width: 64px;
+    height: 64px;
+    margin-bottom: .55rem;
+    place-items: center;
+    overflow: hidden;
+}
+#app .storefront-content .shop-reference-category__media img,
+#app .storefront-content .shop-reference-category__media svg {
+    width: 56px;
+    height: 56px;
+    object-fit: contain;
+}
+#app .storefront-content .shop-reference-category strong {
+    color: #1f2340;
+    font-size: .82rem;
+    font-weight: 800;
+}
+#app .storefront-content .shop-reference-category small {
+    margin-top: .15rem;
+    color: #8a8fa8;
+    font-size: .69rem;
+}
+#app .storefront-content .farzin-shop-catalog {
+    padding: 1.5rem 0 3.75rem;
+    background: #f6f7fc;
+}
+#app .storefront-content .farzin-shop-layout {
+    grid-template-columns: minmax(250px, 290px) minmax(0, 1fr);
+    gap: 28px;
+    padding-top: 0;
+}
+#app .storefront-content .farzin-shop-layout > aside > div > div:first-child {
+    border: 0;
+    border-radius: 18px !important;
+    background: #fff;
+    padding: 1.35rem;
+    box-shadow: 0 2px 10px rgba(80,80,140,.05);
+}
+#app .storefront-content .farzin-shop-layout > aside > div > div:last-child {
+    border: 0;
+    border-radius: 18px !important;
+    background: #fff;
+    box-shadow: 0 2px 10px rgba(80,80,140,.05);
+}
+#app .storefront-content .farzin-shop-layout > aside h2,
+#app .storefront-content .farzin-shop-layout > aside h3 {
+    color: #1f2340;
+}
+#app .storefront-content .farzin-shop-layout > aside section {
+    border-color: #eceef6;
+}
+#app .storefront-content .farzin-shop-layout > aside label {
+    border-radius: 9px !important;
+    background: #f6f7fc;
+}
+#app .storefront-content .farzin-shop-layout > aside input[type="checkbox"],
+#app .storefront-content .farzin-shop-layout > aside input[type="radio"] {
+    accent-color: #6d5ae0;
+}
+#app .storefront-content .farzin-shop-searchbar__field {
+    min-height: 52px;
+    border-color: #eceef6;
+    border-radius: 10px !important;
+    background: #fff;
+}
+#app .storefront-content .farzin-shop-searchbar__field:focus-within {
+    border-color: #6d5ae0;
+    box-shadow: 0 0 0 2px rgba(109,90,224,.12);
+}
+#app .storefront-content .farzin-shop-searchbar__submit {
+    min-height: 52px;
+    border-color: #6d5ae0;
+    border-radius: 10px !important;
+    background: #6d5ae0;
+}
+#app .storefront-content .farzin-shop-searchbar__submit:hover {
+    background: #5847c9;
+}
+#app .storefront-content .farzin-shop-sortbar {
+    border-color: #eceef6;
+}
+#app .storefront-content .farzin-shop-toolbar__sort > div > button {
+    border-color: #eceef6;
+    border-radius: 10px !important;
+}
+#app .storefront-content .farzin-shop-product-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 22px;
+}
+#app .storefront-content .farzin-shop-product-grid .farzin-product-card {
+    overflow: hidden;
+    border: 0;
+    border-radius: 16px !important;
+    background: #fff;
+    box-shadow: 0 2px 10px rgba(80,80,140,.05);
+}
+#app .storefront-content .farzin-shop-product-grid .farzin-product-card:hover {
+    border-color: transparent;
+    box-shadow: 0 10px 26px rgba(80,80,140,.11);
+}
+#app .storefront-content .farzin-shop-product-grid .farzin-product-card__media {
+    min-height: 230px;
+    background: #fff;
+}
+#app .storefront-content .farzin-shop-product-grid .farzin-product-card__image-link {
+    min-height: 230px;
+    background: #fff;
+}
+#app .storefront-content .farzin-shop-product-grid .farzin-product-card__image {
+    width: 70%;
+    height: 230px;
+    margin-inline: auto;
+    object-fit: contain;
+}
+#app .storefront-content .farzin-shop-product-grid .farzin-product-card__content {
+    min-height: 0;
+    padding: .25rem 1.1rem 1rem;
+}
+#app .storefront-content .farzin-shop-product-grid .farzin-product-card__cta {
+    border-radius: 10px !important;
+    background: #6d5ae0;
+}
+#app .storefront-content .farzin-shop-product-grid .farzin-product-card__cta:hover {
+    background: #5847c9;
+}
+#app .storefront-content .farzin-shop-product-grid .farzin-product-badge--accent {
+    background: #ffe8ee;
+    color: #e11d48;
+}
+#app .storefront-content .farzin-filter-drawer__panel {
+    background: #f6f7fc;
+}
+@media (max-width: 1023px) {
+    #app .storefront-content .farzin-shop-layout {
+        grid-template-columns: minmax(0, 1fr);
+    }
+    #app .storefront-content .farzin-shop-layout > aside {
+        display: none;
+    }
+    #app .storefront-content .farzin-shop-product-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+@media (max-width: 600px) {
+    #app .storefront-content .shop-reference-heading {
+        padding-top: 1rem;
+    }
+    #app .storefront-content .shop-reference-categories__grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+    }
+    #app .storefront-content .shop-reference-category {
+        min-height: 132px;
+        padding: .8rem .5rem;
+    }
+    #app .storefront-content .farzin-shop-catalog {
+        padding-top: 1rem;
+    }
+    #app .storefront-content .farzin-shop-product-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+    }
+    #app .storefront-content .farzin-shop-product-grid .farzin-product-card__media,
+    #app .storefront-content .farzin-shop-product-grid .farzin-product-card__image-link {
+        min-height: 150px;
+    }
+    #app .storefront-content .farzin-shop-product-grid .farzin-product-card__image {
+        height: 150px;
+    }
+    #app .storefront-content .farzin-shop-searchbar {
+        grid-template-columns: minmax(0, 1fr);
+    }
+    #app .storefront-content .farzin-shop-searchbar__submit {
+        width: 100%;
+    }
+}
+@media (prefers-reduced-motion: reduce) {
+    #app .storefront-content .shop-reference-category,
+    #app .storefront-content .farzin-shop-product-grid .farzin-product-card {
+        transition: none;
+    }
+}
