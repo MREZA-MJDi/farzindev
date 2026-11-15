@@ -26,68 +26,47 @@
         @keydown.escape.window="filterOpen = false"
     >
 
-        {{-- Shop banner is configured in Admin > Storefront Settings. No looping product animation. --}}
-        <section class="farzin-shop-banner border-b border-[var(--livora-border)] bg-[var(--livora-white)]">
+        <section class="shop-reference-heading">
             <x-layout.container>
-                <div class="py-7 sm:py-9">
-                    <nav aria-label="مسیر صفحه" class="farzin-shop-banner__breadcrumb flex flex-wrap items-center gap-2 text-[11px] text-[var(--livora-stone)]">
-                        <a href="{{ route('home') }}" class="transition hover:text-[var(--livora-text)]">خانه</a>
-                        <span aria-hidden="true">/</span>
-                        <span aria-current="page" class="text-[var(--livora-text)]">فروشگاه</span>
-                    </nav>
-
-                    @if (!empty($shopBanner['image_url']))
-                        <div class="farzin-shop-banner__image relative mt-6 aspect-[16/5] min-h-[220px] overflow-hidden rounded-[2rem] bg-[var(--livora-ink)]">
-                            <img
-                                src="{{ $shopBanner['image_url'] }}"
-                                @if(!empty($shopBanner['image_srcset'])) srcset="{{ $shopBanner['image_srcset'] }}" sizes="100vw" @endif
-                                alt="{{ $shopBannerTitle }}"
-                                class="absolute inset-0 h-full w-full object-cover"
-                                width="1600"
-                                height="500"
-                                fetchpriority="high"
-                                decoding="async"
-                            >
-                            <div class="absolute inset-0 bg-gradient-to-l from-black/75 via-black/25 to-transparent"></div>
-                            <div class="farzin-shop-banner__content absolute inset-y-0 right-0 flex max-w-2xl flex-col justify-center p-6 text-white sm:p-10 lg:p-14">
-                                <p class="farzin-shop-banner__eyebrow text-[10px] font-medium uppercase tracking-[0.22em] text-white/70">فرجی‌هوم / فروشگاه</p>
-                                <h1 class="farzin-shop-banner__title mt-3 text-3xl font-semibold leading-tight sm:text-4xl lg:text-5xl">{{ $shopBannerTitle }}</h1>
-                                @if (filled($shopBanner['subtitle']))
-                                    <p class="farzin-shop-banner__description mt-4 max-w-xl text-sm leading-8 text-white/80 sm:text-base">{{ $shopBannerSubtitle }}</p>
-                                @endif
-                                <a href="#shop-catalog" class="farzin-shop-banner__action mt-6 inline-flex min-h-11 w-fit items-center gap-2 rounded-xl border border-white/40 bg-white/10 px-5 py-3 text-sm font-medium text-white backdrop-blur-sm transition hover:bg-white/20"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4 shrink-0" aria-hidden="true"><rect x="3.5" y="3.5" width="7" height="7" rx="1.3" /><rect x="13.5" y="3.5" width="7" height="7" rx="1.3" /><rect x="3.5" y="13.5" width="7" height="7" rx="1.3" /><rect x="13.5" y="13.5" width="7" height="7" rx="1.3" /></svg> مشاهده محصولات</a>
-                            </div>
-                        </div>
-                    @else
-                        <div class="mt-6 flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
-                            <div>
-                                <p class="farzin-shop-banner__eyebrow text-[10px] font-medium uppercase tracking-[0.22em] text-[var(--livora-accent)]">فرجی‌هوم / فروشگاه</p>
-                                <h1 class="farzin-shop-banner__title mt-3 text-3xl font-semibold tracking-tight sm:text-4xl">{{ $shopBannerTitle }}</h1>
-                                <p class="farzin-shop-banner__description mt-3 max-w-2xl text-sm leading-8 text-[var(--livora-stone)]">{{ $shopBannerSubtitle }}</p>
-                            </div>
-                            <a href="#shop-catalog" class="farzin-shop-banner__action inline-flex min-h-11 w-fit shrink-0 items-center gap-2 rounded-xl bg-[var(--livora-ink)] px-5 py-3 text-sm font-medium text-white transition hover:bg-[var(--livora-accent)]"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4 shrink-0" aria-hidden="true"><path d="M3.5 9h17l-1 11h-15l-1-11Z" /><path d="M8 9V6.5a4 4 0 0 1 8 0V9" /></svg> مشاهده محصولات</a>
-                        </div>
-                    @endif
+                <nav aria-label="مسیر صفحه" class="shop-reference-heading__breadcrumb">
+                    <a href="{{ route('home') }}">خانه</a><span aria-hidden="true">/</span><span aria-current="page">فروشگاه</span>
+                </nav>
+                <div class="shop-reference-heading__title">
+                    <span class="shop-reference-heading__icon" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7 6 4h12l2 3M4 7h16v13H4zM9 12h6"/></svg>
+                    </span>
+                    <h1>فروشگاه</h1>
                 </div>
             </x-layout.container>
         </section>
 
 
+
         @if($categories->isNotEmpty())
-            <nav aria-label="دسترسی سریع به دسته‌بندی‌ها" class="border-b border-[var(--livora-border)] bg-white">
+            <section class="shop-reference-categories" aria-label="دسته‌بندی محصولات">
                 <x-layout.container>
-                    <div class="flex flex-col gap-3 py-5 sm:flex-row sm:items-center sm:gap-6">
-                        <span class="shrink-0 text-xs font-bold text-[var(--livora-ink)]">انتخاب سریع دسته:</span>
-                        <div class="flex min-w-0 flex-wrap gap-2">
-                            @foreach($categories as $category)
-                                <a href="{{ route('shop.index', ['category' => $category->slug]) }}" @class(['inline-flex min-h-10 items-center border px-4 py-2 text-xs font-semibold transition', 'border-[var(--livora-accent)] bg-[var(--livora-accent)] text-white' => request('category') === $category->slug, 'border-[var(--livora-border)] bg-[var(--livora-cream)] text-[var(--livora-text)] hover:border-[var(--livora-accent)] hover:text-[var(--livora-accent)]' => request('category') !== $category->slug])>
-                                    {{ $category->name }}
-                                </a>
-                            @endforeach
-                        </div>
+                    <div class="shop-reference-categories__grid">
+                        @foreach($categories as $category)
+                            <a href="{{ route('shop.index', ['category' => $category->slug]) }}"
+                               @class(['shop-reference-category', 'is-active' => request('category') === $category->slug])
+                               @aria-current(request('category') === $category->slug ? 'true' : 'false')>
+                                <span class="shop-reference-category__media">
+                                    @if($category->image_url)
+                                        <img src="{{ $category->image_url }}" @if($category->image_srcset) srcset="{{ $category->image_srcset }}" sizes="(max-width: 600px) 42vw, 150px" @endif alt="" loading="lazy" decoding="async">
+                                    @else
+                                        <svg viewBox="0 0 64 64" fill="none" aria-hidden="true">
+                                            <rect x="7" y="18" width="50" height="34" rx="6" fill="#dfe2f2" stroke="#6d5ae0" stroke-width="2"/>
+                                            <path d="M16 18V12h32v6M15 34h34M23 34v10m18-10v10" stroke="#6d5ae0" stroke-width="2" stroke-linecap="round"/>
+                                        </svg>
+                                    @endif
+                                </span>
+                                <strong>{{ $category->name }}</strong>
+                                <small>{{ \App\Helpers\PersianNumberHelper::format($category->products_count ?? 0) }} محصول</small>
+                            </a>
+                        @endforeach
                     </div>
                 </x-layout.container>
-            </nav>
+            </section>
         @endif
 
         {{-- =========================================================
