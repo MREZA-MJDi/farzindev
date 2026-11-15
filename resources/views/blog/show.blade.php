@@ -27,12 +27,6 @@
     $articleSchemaType = in_array($post->schema_type, ['BlogPosting', 'Article', 'NewsArticle'], true)
         ? $post->schema_type
         : 'BlogPosting';
-    $articleKeywords = collect([$post->focus_keyword])
-        ->merge($post->terms->where('type', 'tag')->pluck('name'))
-        ->filter()
-        ->unique()
-        ->values()
-        ->all();
     $articleText = $normalizeBlogCopy($post->plain_text);
     $articleWordCount = count(preg_split('/\s+/u', trim($articleText), -1, PREG_SPLIT_NO_EMPTY) ?: []);
     $articleAuthor = $post->author
@@ -75,7 +69,6 @@
         '@type' => 'Organization',
         'name' => 'فرجی‌هوم',
     ],
-    'keywords' => $articleKeywords,
     'articleSection' => $post->terms->where('type', 'category')->pluck('name')->values()->all(),
     'inLanguage' => 'fa-IR',
 ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT) !!}</script>
