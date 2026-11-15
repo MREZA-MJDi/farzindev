@@ -141,7 +141,7 @@
                         >
                             <img
                                 src="{{ $optionImage }}"
-                                alt="{{ $optionLabel }}"
+                                alt="{{ $option->description ?: $optionLabel }}"
                                 loading="lazy"
                                 class="h-full w-full object-cover transition duration-300 group-hover:scale-105"
                             >
@@ -217,6 +217,11 @@
 
                 @endif
 
+                @if(filled($option->description))
+                    <span class="mt-1 block max-w-[120px] text-center text-[10px] leading-5 text-[var(--livora-stone)]">
+                        {{ \Illuminate\Support\Str::limit($option->description, 90) }}
+                    </span>
+                @endif
 
                 {{-- Unavailable Overlay --}}
                 @if($isUnavailable)
