@@ -50,7 +50,6 @@ class PageContentController extends Controller
                 'page_home_technology_title' => ['label' => 'فناوری — عنوان', 'type' => 'text', 'max' => 160],
                 'page_home_technology_body' => ['label' => 'فناوری — توضیح', 'type' => 'textarea', 'max' => 1000],
                 'page_home_technology_cta' => ['label' => 'فناوری — متن دکمه', 'type' => 'text', 'max' => 80],
-                'page_home_show_technology' => ['label' => 'نمایش سکشن فناوری در صفحه اصلی', 'type' => 'toggle'],
                 'page_home_categories_eyebrow' => ['label' => 'برچسب دسته‌بندی‌ها', 'type' => 'text', 'max' => 120],
                 'page_home_categories_title' => ['label' => 'عنوان بخش دسته‌بندی‌ها', 'type' => 'text', 'max' => 160],
                 'page_home_categories_description' => ['label' => 'توضیح بخش دسته‌بندی‌ها', 'type' => 'textarea', 'max' => 500],
@@ -73,12 +72,6 @@ class PageContentController extends Controller
                 'page_home_final_title' => ['label' => 'عنوان دعوت پایانی', 'type' => 'text', 'max' => 160],
                 'page_home_final_description' => ['label' => 'توضیح دعوت پایانی', 'type' => 'textarea', 'max' => 500],
                 'page_home_final_cta' => ['label' => 'متن دکمه پایانی', 'type' => 'text', 'max' => 80],
-                'page_home_show_categories' => ['label' => 'نمایش بخش دسته‌بندی‌ها', 'type' => 'toggle'],
-                'page_home_show_products' => ['label' => 'نمایش بخش محصولات منتخب', 'type' => 'toggle'],
-                'page_home_show_trust' => ['label' => 'نمایش بخش اعتمادسازی', 'type' => 'toggle'],
-                'page_home_show_guides' => ['label' => 'نمایش راهنماهای هود و سینک', 'type' => 'toggle'],
-                'page_home_show_journal' => ['label' => 'نمایش بخش مجله', 'type' => 'toggle'],
-                'page_home_show_final_cta' => ['label' => 'نمایش دعوت پایانی', 'type' => 'toggle'],
             ],
         ],
         'about' => [
@@ -129,12 +122,6 @@ class PageContentController extends Controller
                 'page_about_final_description' => ['label' => 'توضیح بخش پایانی', 'type' => 'textarea', 'max' => 500],
                 'page_about_final_shop_cta' => ['label' => 'دکمه فروشگاه', 'type' => 'text', 'max' => 80],
                 'page_about_final_contact_cta' => ['label' => 'دکمه تماس', 'type' => 'text', 'max' => 80],
-                'page_about_show_statement' => ['label' => 'نمایش بیانیه مجموعه', 'type' => 'toggle'],
-                'page_about_show_factory' => ['label' => 'نمایش راهنمای انتخاب محصولات', 'type' => 'toggle'],
-                'page_about_show_values' => ['label' => 'نمایش ارزش‌های مجموعه', 'type' => 'toggle'],
-                'page_about_show_experience' => ['label' => 'نمایش مسیر تجربه مشتری', 'type' => 'toggle'],
-                'page_about_show_installment' => ['label' => 'نمایش بخش پرداخت منعطف', 'type' => 'toggle'],
-                'page_about_show_final' => ['label' => 'نمایش دعوت پایانی', 'type' => 'toggle'],
             ],
         ],
         'policies' => [
@@ -211,15 +198,6 @@ class PageContentController extends Controller
                 'page_privacy_contact_cta' => ['label' => 'حریم خصوصی — دکمه تماس', 'type' => 'text', 'max' => 80],
             ],
         ],
-        'typography' => [
-            'title' => 'تایپوگرافی و رفتار عمومی',
-            'description' => 'مقیاس پایه نوشته‌ها، ارتفاع خط و عرض محتوای عمومی را تنظیم کنید. مقدارها محدود و کنترل‌شده‌اند تا چیدمان در موبایل و دسکتاپ آسیب نبیند.',
-            'fields' => [
-                'page_typography_font_scale' => ['label' => 'مقیاس کلی فونت (درصد)', 'type' => 'number', 'min' => 90, 'max' => 110, 'step' => 1],
-                'page_typography_line_height' => ['label' => 'ارتفاع خط متن', 'type' => 'number', 'min' => 1.4, 'max' => 2.2, 'step' => 0.05],
-                'page_typography_content_width' => ['label' => 'حداکثر عرض محتوای عمومی (px)', 'type' => 'number', 'min' => 1120, 'max' => 1440, 'step' => 10],
-            ],
-        ],
     ];
 
     public function edit(Request $request, StorefrontPageContent $content): View
@@ -287,7 +265,6 @@ class PageContentController extends Controller
                 $tab === 'policies' && str_starts_with($key, 'page_faq_') => 'پرسش‌های متداول — /faq',
                 $tab === 'legal' && str_starts_with($key, 'page_terms_') => 'قوانین و شرایط — /terms',
                 $tab === 'legal' && str_starts_with($key, 'page_privacy_') => 'حریم خصوصی — /privacy',
-                $tab === 'typography' => 'تنظیمات عمومی صفحات',
                 default => 'سایر تنظیمات',
             };
 
