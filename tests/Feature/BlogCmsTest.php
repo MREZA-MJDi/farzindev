@@ -209,8 +209,13 @@ class BlogCmsTest extends TestCase
 
         $this->actingAs($admin, 'admin')
             ->get(route('admin.blog-posts.index'))
+            ->assertRedirect(route('admin.cms.index', ['tab' => 'blog']));
+
+        $this->actingAs($admin, 'admin')
+            ->get(route('admin.cms.index', ['tab' => 'blog']))
             ->assertOk()
-            ->assertSee('مقالات بلاگ');
+            ->assertSee('مقاله‌ها')
+            ->assertSee('دسته‌ها، برچسب‌ها و اسلاگ‌ها');
 
         $this->actingAs($admin, 'admin')
             ->get(route('admin.blog-posts.create'))
