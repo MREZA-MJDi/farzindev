@@ -36,7 +36,7 @@
             @if($productVariant->product)
 
                 <a
-                    href="{{ route('admin.products.show', $productVariant->product) }}"
+                    href="{{ route('admin.products.edit', $productVariant->product) }}"
                     class="admin-btn admin-btn-secondary"
                 >
                     مشاهده محصول
@@ -107,7 +107,7 @@
                             @if($productVariant->product)
 
                                 <a
-                                    href="{{ route('admin.products.show', $productVariant->product) }}"
+                                    href="{{ route('admin.products.edit', $productVariant->product) }}"
                                     class="text-sm font-semibold text-[var(--admin-accent)] hover:text-[var(--admin-accent-hover)]"
                                 >
                                     {{ $productVariant->product->name }}
