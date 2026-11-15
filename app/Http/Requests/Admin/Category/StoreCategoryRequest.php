@@ -57,7 +57,7 @@ class StoreCategoryRequest extends FormRequest
             'faqs' => ['nullable', 'array', 'max:7'],
             'faqs.*.question' => ['required', 'string', 'max:180'],
             'faqs.*.answer' => ['required', 'string', 'max:1200'],
-            'content_image' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'dimensions:min_width=800,min_height=450', 'max:20480'],
+            'content_image' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'dimensions:min_width=800,min_height=450', 'max:10240'],
 
             'meta_title' => ['nullable', 'string', 'max:255'],
             'meta_description' => ['nullable', 'string', 'max:320'],
@@ -70,7 +70,7 @@ class StoreCategoryRequest extends FormRequest
                 'nullable',
                 'image',
                 'mimes:jpg,jpeg,png,webp',
-                'max:20480',
+                'max:10240',
             ],
 
             'hover_media_id' => [
@@ -122,13 +122,13 @@ class StoreCategoryRequest extends FormRequest
             'content_body.max' => 'متن راهنمای دسته‌بندی بیش از حد طولانی است.',
             'content_image.image' => 'تصویر راهنمای دسته‌بندی معتبر نیست.',
             'content_image.dimensions' => 'تصویر راهنما باید حداقل ۸۰۰ در ۴۵۰ پیکسل باشد.',
-            'content_image.max' => 'حجم تصویر راهنما نباید بیشتر از ۲۰ مگابایت باشد.',
+            'content_image.max' => 'حجم تصویر راهنما نباید بیشتر از ۱۰ مگابایت باشد.',
             'meta_title.max' => 'عنوان SEO حداکثر ۲۵۵ کاراکتر است.',
             'meta_description.max' => 'توضیحات SEO حداکثر ۳۲۰ کاراکتر است.',
 
             'image.image' => 'فایل انتخاب‌شده باید تصویر باشد.',
             'image.mimes' => 'فرمت تصویر باید jpg، jpeg، png یا webp باشد.',
-            'image.max' => 'حجم تصویر نباید بیشتر از ۲۰ مگابایت باشد.',
+            'image.max' => 'حجم تصویر نباید بیشتر از ۱۰ مگابایت باشد.',
             'hover_media_id.integer' => 'رسانه انتخاب‌شده معتبر نیست.',
             'hover_media_id.exists' => 'رسانه انتخاب‌شده در کتابخانه رسانه پیدا نشد.',
 
