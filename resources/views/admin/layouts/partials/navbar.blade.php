@@ -12,7 +12,7 @@
         'admin.products.index' => 'محصولات',
         'admin.products.create' => 'افزودن محصول',
         'admin.products.edit' => 'ویرایش محصول',
-        'admin.products.show' => 'جزئیات محصول',
+        'admin.products.show' => 'ویرایش محصول',
 
         'admin.categories.index' => 'دسته‌بندی‌ها',
         'admin.categories.create' => 'افزودن دسته‌بندی',
