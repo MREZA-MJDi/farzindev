@@ -1382,13 +1382,6 @@
             const stockInput =
                 document.getElementById('stock');
 
-            const imageInput =
-                document.getElementById('image');
-
-            const imagePreview =
-                document.getElementById('product-image-preview');
-
-
             const enabledInput =
                 document.getElementById('installment_enabled');
 
