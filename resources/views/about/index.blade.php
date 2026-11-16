@@ -444,13 +444,13 @@
                     </div>
 
                     <div class="rounded-3xl border border-white/10 bg-white/[0.06] p-6 sm:p-8">
-                        <span class="text-[10px] font-semibold uppercase tracking-[0.2em] text-white/45">PRODUCT-SPECIFIC TERMS</span>
-                        <h3 class="mt-4 text-xl font-semibold">شرایط اقساطی هر محصول، جداگانه و شفاف</h3>
-                        <p class="mt-3 max-w-2xl text-sm leading-8 text-white/65">
-                            اگر برای محصولی خرید اقساطی فعال باشد، درصد پیش‌پرداخت، تعداد چک و فاصله سررسید در صفحه همان محصول نمایش داده می‌شود. شرایط را پیش از افزودن به سبد بررسی کنید.
+                        <span class="text-[10px] font-semibold tracking-[0.08em] text-white/55">{{ $aboutText('page_about_installment_card_eyebrow', 'شرایط خرید هر محصول') }}</span>
+                        <h3 class="mt-4 text-xl font-semibold">{{ $aboutText('page_about_installment_card_title', 'شرایط پرداخت، متناسب با همان مدل') }}</h3>
+                        <p class="mt-3 max-w-2xl text-sm leading-8 text-white/70">
+                            {{ $aboutText('page_about_installment_card_description', 'اگر خرید اقساطی برای محصولی فعال باشد، جزئیات همان مدل در صفحه محصول و هنگام ثبت سفارش نمایش داده می‌شود. پیش از نهایی‌کردن خرید، شرایط اعلام‌شده را بررسی کنید.') }}
                         </p>
-                        <a href="{{ route('shop.index') }}" class="mt-6 inline-flex items-center rounded-xl bg-white px-5 py-3 text-sm font-semibold text-[var(--livora-ink)] transition hover:bg-[var(--livora-cream)]">
-                            مشاهده محصولات
+                        <a href="{{ route('shop.index') }}" class="mt-6 inline-flex items-center rounded-none border border-white/25 bg-white px-5 py-3 text-sm font-semibold text-[var(--livora-ink)] transition hover:bg-[var(--livora-cream)]">
+                            {{ $aboutText('page_about_installment_card_cta', 'بررسی محصولات') }}
                         </a>
                     </div>
 

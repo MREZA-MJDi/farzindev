@@ -663,6 +663,22 @@ class FarzinStorefrontTest extends TestCase
             ['key' => 'page_about_show_values'],
             ['value' => '0']
         );
+        StorefrontSetting::query()->updateOrCreate(
+            ['key' => 'page_about_installment_card_eyebrow'],
+            ['value' => 'برچسب آزمایشی پرداخت']
+        );
+        StorefrontSetting::query()->updateOrCreate(
+            ['key' => 'page_about_installment_card_title'],
+            ['value' => 'عنوان آزمایشی شرایط پرداخت']
+        );
+        StorefrontSetting::query()->updateOrCreate(
+            ['key' => 'page_about_installment_card_description'],
+            ['value' => 'توضیح آزمایشی قابل ویرایش از مدیریت']
+        );
+        StorefrontSetting::query()->updateOrCreate(
+            ['key' => 'page_about_installment_card_cta'],
+            ['value' => 'دکمه آزمایشی']
+        );
 
         app(\App\Services\StorefrontPageContent::class)->clearCache();
 
