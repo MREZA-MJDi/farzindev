@@ -1,299 +1,310 @@
-/*
- * Faraji Home — shop experience layer
- * Editorial catalogue layout, clear hierarchy and responsive shopping controls.
- * Loaded after the shared storefront tokens; no legacy template behavior is replaced.
- */
+/* Faraji Home — single responsive shop layout and visual contract. */
+
+/* --------------------------------------------------------------------------
+   Final shop layout contract.
+   This file is loaded after the shared public design system so the catalogue
+   has one authoritative layout instead of competing legacy utility rules.
+   -------------------------------------------------------------------------- */
 
 #app .storefront-content .farzin-shop-banner {
-    position: relative;
-    overflow: hidden;
-    background: var(--fz-ink-deep, #17212a);
+    padding: 0;
+    border: 0;
     color: #fff;
-    border-bottom: 0;
+    background: var(--fz-charcoal, #27292c);
 }
 #app .storefront-content .farzin-shop-banner > .livora-container,
 #app .storefront-content .farzin-shop-banner > .container {
-    position: relative;
-    z-index: 1;
+    width: min(100%, var(--fz-container, 1320px));
 }
 #app .storefront-content .farzin-shop-banner__breadcrumb {
-    color: rgba(255,255,255,.62);
-    font-size: .72rem;
-}
-#app .storefront-content .farzin-shop-banner__breadcrumb a:hover,
-#app .storefront-content .farzin-shop-banner__breadcrumb [aria-current="page"] {
-    color: #fff;
+    display: flex;
+    align-items: center;
+    gap: .55rem;
+    margin: 0;
+    color: rgba(255,255,255,.68);
+    font-size: .7rem;
 }
 #app .storefront-content .farzin-shop-banner__image {
-    min-height: clamp(230px, 27vw, 370px);
+    min-height: clamp(220px, 25vw, 340px);
+    aspect-ratio: 16 / 5;
     margin-top: 1rem;
+    overflow: hidden;
     border: 1px solid rgba(255,255,255,.14);
-    border-bottom: 3px solid var(--fz-accent, #b84a12);
-    background: #202b34;
+    border-bottom: 1px solid rgba(255,255,255,.14);
+    border-radius: 0 !important;
+    background: #27292c;
+    box-shadow: none;
 }
 #app .storefront-content .farzin-shop-banner__image::after {
-    position: absolute;
-    inset: 0;
-    z-index: 0;
-    background: linear-gradient(90deg, rgba(14,22,29,.08), rgba(14,22,29,.78));
-    content: "";
-    pointer-events: none;
-}
-#app .storefront-content .farzin-shop-banner__image > img {
-    filter: saturate(.78);
+    background: linear-gradient(270deg, rgba(28,30,33,.94) 0%, rgba(28,30,33,.78) 43%, rgba(28,30,33,.12) 100%);
 }
 #app .storefront-content .farzin-shop-banner__content {
-    z-index: 1;
-    max-width: min(760px, 76%);
-    padding: clamp(1.25rem, 4vw, 3.5rem);
+    inset-inline-start: auto;
+    inset-inline-end: 0;
+    right: 0;
+    width: min(62%, 760px);
+    max-width: 760px;
+    padding: clamp(1.25rem, 3.4vw, 3rem);
+    text-align: right;
 }
 #app .storefront-content .farzin-shop-banner__eyebrow {
-    color: #e6a17c;
+    margin: 0;
+    color: rgba(255,255,255,.72);
     font-size: .68rem;
-    font-weight: 800;
-    letter-spacing: .12em;
+    font-weight: 750;
+    letter-spacing: 0;
 }
 #app .storefront-content .farzin-shop-banner__title {
-    max-width: 13ch;
+    max-width: 14ch;
+    margin-top: .65rem;
     color: #fff;
-    font-size: clamp(1.8rem, 4vw, 3.35rem);
-    font-weight: 850;
+    font-size: clamp(1.65rem, 3.2vw, 2.9rem);
     line-height: 1.45;
-    text-wrap: balance;
 }
 #app .storefront-content .farzin-shop-banner__description {
-    max-width: 48ch;
+    max-width: 46ch;
+    margin-top: .7rem;
     color: rgba(255,255,255,.78);
-    font-size: .94rem;
-    line-height: 2;
+    font-size: .86rem;
+    line-height: 1.9;
 }
 #app .storefront-content .farzin-shop-banner__action {
-    min-height: 48px;
-    border: 1px solid var(--fz-accent, #b84a12);
-    background: var(--fz-accent, #b84a12);
-    color: #fff;
-    font-weight: 800;
-    transition: transform .2s ease, background .2s ease, border-color .2s ease;
+    min-height: 42px;
+    margin-top: 1rem;
+    border: 1px solid var(--fz-accent, #7b0d1a);
+    border-radius: 0 !important;
+    background: var(--fz-accent, #7b0d1a);
+    font-size: .76rem;
 }
-#app .storefront-content .farzin-shop-banner__action:hover {
-    transform: translateY(-2px);
-    border-color: #d66a32;
-    background: #d66a32;
-}
-
-/* Category navigation becomes a compact discovery rail, not a second hero. */
 #app .storefront-content nav[aria-label="دسترسی سریع به دسته‌بندی‌ها"] {
-    position: relative;
-    z-index: 2;
     border-bottom: 1px solid var(--fz-line);
     background: #fff;
 }
 #app .storefront-content nav[aria-label="دسترسی سریع به دسته‌بندی‌ها"] > div > div {
-    min-height: 68px;
-    align-items: center;
+    min-height: 56px;
+    padding-block: .55rem;
 }
 #app .storefront-content nav[aria-label="دسترسی سریع به دسته‌بندی‌ها"] a {
-    min-height: 38px;
-    border-radius: 999px !important;
-    padding-inline: 1rem;
-    font-size: .76rem;
-    font-weight: 750;
-}
-#app .storefront-content nav[aria-label="دسترسی سریع به دسته‌بندی‌ها"] a:not(.bg-\[var\(--livora-accent\)\]) {
-    background: #f7f6f3;
-}
-#app .storefront-content nav[aria-label="دسترسی سریع به دسته‌بندی‌ها"] a:hover {
-    border-color: var(--fz-accent);
-    background: var(--fz-accent-soft);
-    color: var(--fz-accent-dark);
+    min-height: 34px;
+    border-radius: 0 !important;
+    padding: .45rem .8rem;
+    font-size: .7rem;
 }
 
-/* The catalogue owns a calm canvas; white surfaces define the actual content. */
+/* RTL grid: the first column is the right-hand filter rail; products own the rest. */
 #app .storefront-content .farzin-shop-catalog {
-    margin: 0;
-    padding-block: clamp(1.25rem, 3vw, 2.75rem);
-    background:
-        radial-gradient(ellipse at 88% 0%, rgba(184,74,18,.045), transparent 34rem),
-        var(--fz-page, #f6f5f3);
+    margin-block-start: 12px;
+    padding-block: clamp(1.25rem, 2.5vw, 2.25rem);
+    background: var(--fz-page, #f5f5f4);
 }
 #app .storefront-content .farzin-shop-layout {
-    grid-template-columns: minmax(238px, 286px) minmax(0, 1fr);
+    display: grid;
+    direction: rtl;
+    grid-template-columns: minmax(232px, 258px) minmax(0, 1fr);
     align-items: start;
-    gap: clamp(1.25rem, 2.4vw, 2.25rem);
+    gap: clamp(1rem, 2vw, 1.75rem);
     padding-block: 0;
 }
-#app .storefront-content .farzin-shop-layout > aside {
+#app .storefront-content .farzin-shop-layout > .farzin-shop-filter-rail {
+    grid-column: 1;
     position: sticky;
     top: calc(var(--fz-header-height, 76px) + 1rem);
+    width: 100%;
+    min-width: 0;
+    max-width: 258px;
+    justify-self: stretch;
+}
+#app .storefront-content .farzin-shop-layout > div:last-child {
+    grid-column: 2;
     min-width: 0;
 }
-#app .storefront-content .farzin-shop-layout > aside > div {
-    gap: 1rem;
-}
-#app .storefront-content .farzin-shop-layout > aside > div > div:first-child {
-    max-height: calc(100dvh - var(--fz-header-height, 76px) - 2rem);
-    padding: 1.2rem;
+#app .storefront-content .farzin-shop-filter-rail__panel {
+    overflow: hidden;
     border: 1px solid var(--fz-line);
-    border-top: 3px solid var(--fz-accent);
-    border-radius: var(--fz-radius-panel, 12px) !important;
+    border-top: 2px solid var(--fz-accent);
     background: #fff;
     box-shadow: var(--fz-shadow-sm);
 }
-#app .storefront-content .farzin-shop-layout > aside h2 {
-    color: var(--fz-ink);
-    font-size: 1.12rem;
-    font-weight: 850;
-}
-#app .storefront-content .farzin-shop-layout > aside h3 {
-    font-size: .82rem;
-    font-weight: 800;
-}
-#app .storefront-content .farzin-shop-layout > aside section {
-    padding-block: .9rem;
+#app .storefront-content .farzin-shop-filter-rail__header {
+    display: flex;
+    min-height: 62px;
+    align-items: center;
+    justify-content: space-between;
+    gap: .75rem;
+    padding: .8rem 1rem;
     border-bottom: 1px solid var(--fz-line);
 }
-#app .storefront-content .farzin-shop-layout > aside section:last-child {
-    border-bottom: 0;
-}
-#app .storefront-content .farzin-shop-layout > aside label {
-    min-height: 42px;
-    border: 1px solid transparent;
-    border-radius: 8px !important;
-    background: #f7f6f3;
-    padding: .55rem .7rem;
-    transition: border-color .18s ease, background .18s ease;
-}
-#app .storefront-content .farzin-shop-layout > aside label:hover {
-    border-color: var(--fz-line-strong);
-    background: var(--fz-accent-soft);
-}
-#app .storefront-content .farzin-shop-layout > aside input,
-#app .storefront-content .farzin-shop-layout > aside select {
-    accent-color: var(--fz-accent);
-}
-#app .storefront-content .farzin-shop-layout > aside input[type="text"],
-#app .storefront-content .farzin-shop-layout > aside input[type="search"],
-#app .storefront-content .farzin-shop-layout > aside select {
-    min-height: 42px;
-    border: 1px solid var(--fz-line);
-    border-radius: 8px !important;
-    background: #fff;
-    padding: .65rem .75rem;
-}
-#app .storefront-content .farzin-shop-layout > aside button[type="submit"] {
-    min-height: 46px;
-    border-radius: 8px !important;
-    background: var(--fz-ink);
+#app .storefront-content .farzin-shop-filter-rail__eyebrow {
+    margin: 0;
+    color: var(--fz-accent);
+    font-size: .64rem;
     font-weight: 800;
 }
-#app .storefront-content .farzin-shop-layout > aside button[type="submit"]:hover {
-    background: var(--fz-accent);
+#app .storefront-content .farzin-shop-filter-rail__header h2 {
+    margin: .2rem 0 0;
+    color: var(--fz-ink);
+    font-size: .95rem;
+    font-weight: 850;
 }
-#app .storefront-content .farzin-shop-layout > aside > div > div:last-child {
-    padding: 1.1rem 1.2rem;
+#app .storefront-content .farzin-shop-filter-rail__close {
+    display: none;
+    width: 38px;
+    height: 38px;
+    align-items: center;
+    justify-content: center;
     border: 1px solid var(--fz-line);
-    border-radius: var(--fz-radius-panel, 12px) !important;
+    color: var(--fz-ink);
     background: #fff;
+}
+#app .storefront-content .farzin-shop-filter-rail__close svg {
+    width: 18px;
+    height: 18px;
+}
+#app .storefront-content .farzin-shop-filter-form {
+    max-height: calc(100dvh - var(--fz-header-height, 76px) - 2rem - 64px);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    padding: .35rem .9rem .9rem;
+    scrollbar-width: thin;
+}
+#app .storefront-content .farzin-shop-filter-form > div {
+    gap: .35rem;
+}
+#app .storefront-content .farzin-shop-filter-form section {
+    padding-block: .65rem;
+    border-bottom: 1px solid var(--fz-line);
+}
+#app .storefront-content .farzin-shop-filter-form section:last-of-type {
+    border-bottom: 0;
+}
+#app .storefront-content .farzin-shop-filter-form label {
+    min-height: 36px;
+    border-radius: 0 !important;
+    background: #f6f6f5;
+    padding: .4rem .55rem;
+    font-size: .72rem;
+}
+#app .storefront-content .farzin-shop-filter-form input,
+#app .storefront-content .farzin-shop-filter-form select {
+    accent-color: var(--fz-accent);
+}
+#app .storefront-content .farzin-shop-filter-form input[type="text"],
+#app .storefront-content .farzin-shop-filter-form input[type="search"],
+#app .storefront-content .farzin-shop-filter-form select {
+    min-height: 38px;
+    border: 1px solid var(--fz-line);
+    border-radius: 0 !important;
+    background: #fff;
+    padding: .5rem .6rem;
+    font-size: .72rem;
+}
+#app .storefront-content .farzin-shop-filter-actions {
+    position: sticky;
+    bottom: 0;
+    display: grid;
+    grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr);
+    gap: .5rem;
+    margin: .65rem -.9rem -.9rem;
+    padding: .75rem .9rem;
+    border-top: 1px solid var(--fz-line);
+    background: #fff;
+}
+#app .storefront-content .farzin-shop-filter-actions__clear,
+#app .storefront-content .farzin-shop-filter-actions__submit {
+    display: inline-flex;
+    min-height: 40px;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--fz-line);
+    border-radius: 0 !important;
+    padding: .55rem .7rem;
+    font-size: .72rem;
+    font-weight: 800;
+}
+#app .storefront-content .farzin-shop-filter-actions__clear {
+    color: var(--fz-muted);
+    background: #fff;
+}
+#app .storefront-content .farzin-shop-filter-actions__submit {
+    border-color: var(--fz-ink);
+    color: #fff;
+    background: var(--fz-ink);
 }
 
-/* Search is the primary catalogue action and receives the strongest affordance. */
+/* The mobile drawer is the same filter form, moved into a fixed right-side rail. */
+#app .storefront-content .farzin-shop-filter-backdrop {
+    display: none;
+}
 #app .storefront-content .farzin-shop-searchbar {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) auto;
-    gap: .65rem;
-    margin-bottom: 1rem;
+    grid-template-columns: minmax(0, 1fr) 112px;
+    gap: .55rem;
+    width: 100%;
+    margin-bottom: .9rem;
 }
 #app .storefront-content .farzin-shop-searchbar__field {
-    position: relative;
-    display: flex;
-    min-height: 56px;
-    align-items: center;
-    gap: .75rem;
+    min-width: 0;
+    min-height: 50px;
     border: 1px solid var(--fz-line-strong);
-    border-radius: 10px !important;
+    border-radius: 0 !important;
     background: #fff;
-    padding: 0 1rem;
-    transition: border-color .18s ease, box-shadow .18s ease;
-}
-#app .storefront-content .farzin-shop-searchbar__field:focus-within {
-    border-color: var(--fz-accent);
-    box-shadow: 0 0 0 4px rgba(184,74,18,.09);
 }
 #app .storefront-content .farzin-shop-searchbar__field svg {
-    width: 20px;
-    height: 20px;
-    flex: 0 0 20px;
+    width: 19px;
+    height: 19px;
+    flex: 0 0 19px;
     color: var(--fz-muted);
 }
 #app .storefront-content .farzin-shop-searchbar__field input {
-    width: 100%;
     min-width: 0;
-    min-height: 52px;
-    border: 0 !important;
-    outline: 0;
-    background: transparent;
-    color: var(--fz-ink);
-    font-size: .86rem;
-    box-shadow: none !important;
-}
-#app .storefront-content .farzin-shop-searchbar__field input::placeholder {
-    color: #92979b;
+    min-height: 48px;
+    font-size: .8rem;
 }
 #app .storefront-content .farzin-shop-searchbar__clear {
     flex: 0 0 auto;
     color: var(--fz-accent);
-    font-size: .72rem;
+    font-size: .7rem;
     font-weight: 750;
 }
 #app .storefront-content .farzin-shop-searchbar__submit {
-    min-width: 112px;
-    min-height: 56px;
-    border: 1px solid var(--fz-accent);
-    border-radius: 10px !important;
-    background: var(--fz-accent);
-    color: #fff;
-    font-size: .82rem;
-    font-weight: 850;
-    transition: background .18s ease, transform .18s ease;
+    min-width: 0;
+    min-height: 50px;
+    border-radius: 0 !important;
+    background: var(--fz-ink);
 }
-#app .storefront-content .farzin-shop-searchbar__submit:hover {
-    transform: translateY(-1px);
-    background: var(--fz-accent-dark);
-}
-
-/* Results toolbar and product rhythm. */
 #app .storefront-content .farzin-shop-sortbar {
-    min-height: 74px;
+    min-height: 58px;
     align-items: center;
-    border-bottom: 1px solid var(--fz-line);
-    padding-block: .8rem 1rem;
-}
-#app .storefront-content .farzin-shop-sortbar > div:first-child p:first-child {
-    color: var(--fz-accent);
-    font-size: .68rem;
-    font-weight: 850;
-    letter-spacing: .02em;
-}
-#app .storefront-content .farzin-shop-sortbar > div:first-child p:last-child {
-    color: var(--fz-muted);
-    font-size: .75rem;
+    gap: 1rem;
+    padding-block: .65rem .85rem;
 }
 #app .storefront-content .farzin-shop-toolbar__sort {
-    width: min(100%, 230px);
+    width: min(100%, 220px);
 }
 #app .storefront-content .farzin-shop-toolbar__sort > div > button {
-    min-height: 48px;
+    min-height: 44px;
     border: 1px solid var(--fz-line);
-    border-radius: 9px !important;
+    border-radius: 0 !important;
     background: #fff;
-    padding: .55rem .85rem;
+    padding: .5rem .75rem;
+    font-size: .74rem;
 }
-#app .storefront-content .farzin-shop-toolbar__sort > div > button:hover {
-    border-color: var(--fz-accent);
+#app .storefront-content .farzin-shop-toolbar__sort [role="listbox"] {
+    border: 1px solid var(--fz-line);
+    border-radius: 0 !important;
+    background: #fff;
+    box-shadow: 0 14px 34px rgba(6,40,79,.12);
+}
+#app .storefront-content .farzin-shop-toolbar__sort [role="option"] {
+    min-height: 40px;
+    border-radius: 0 !important;
+    font-size: .74rem;
 }
 #app .storefront-content .farzin-shop-product-grid {
-    gap: clamp(.8rem, 1.35vw, 1.25rem);
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     align-items: stretch;
+    gap: clamp(.75rem, 1.25vw, 1.1rem);
 }
 #app .storefront-content .farzin-shop-product-grid > * {
     min-width: 0;
@@ -301,211 +312,244 @@
 #app .storefront-content .farzin-shop-product-grid .farzin-product-card {
     height: 100%;
     border: 1px solid var(--fz-line);
-    border-radius: 12px !important;
+    border-radius: 10px !important;
     background: #fff;
-    box-shadow: 0 3px 12px rgba(23,33,42,.035);
-    transition: transform .22s ease, box-shadow .22s ease, border-color .22s ease;
-}
-#app .storefront-content .farzin-shop-product-grid .farzin-product-card:hover {
-    transform: translateY(-3px);
-    border-color: rgba(184,74,18,.36);
-    box-shadow: 0 14px 32px rgba(23,33,42,.09);
+    box-shadow: 0 2px 10px rgba(6,40,79,.045);
 }
 #app .storefront-content .farzin-shop-product-grid .farzin-product-card__image-link {
-    background: #f4f3f0;
+    aspect-ratio: 4 / 3;
+    background: #f5f5f4;
 }
 #app .storefront-content .farzin-shop-product-grid .farzin-product-card__content {
     display: flex;
-    min-height: 210px;
+    min-height: 205px;
     flex-direction: column;
+    padding: .9rem;
 }
 #app .storefront-content .farzin-shop-product-grid .farzin-product-card__cta {
+    min-height: 42px;
     margin-top: auto;
-    border-radius: 8px !important;
+    border-radius: 0 !important;
     background: var(--fz-ink);
 }
 #app .storefront-content .farzin-shop-product-grid .farzin-product-card__cta:hover {
     background: var(--fz-accent);
 }
-
-/* Mobile: no sidebar squeeze, compact controls, real two-column product discovery. */
-#app .storefront-content .farzin-shop-catalog .farzin-shop-layout {
-    grid-template-columns: minmax(0, 1fr);
+#app .storefront-content .farzin-paginator {
+    margin-top: 2rem;
+    padding-block: 1rem;
+    border-top: 1px solid var(--fz-line);
 }
-#app .storefront-content .farzin-shop-catalog .farzin-shop-layout > aside {
-    display: none;
+#app .storefront-content .farzin-paginator__layout {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
 }
-#app .storefront-content .farzin-shop-catalog .farzin-shop-layout > div:last-child {
-    min-width: 0;
+#app .storefront-content .farzin-paginator__summary {
+    margin: 0;
+    color: var(--fz-muted);
+    font-size: .72rem;
 }
-#app .storefront-content .farzin-shop-catalog .farzin-shop-layout > div:last-child > .mb-5.flex {
-    margin-bottom: .8rem;
-    gap: .65rem;
+#app .storefront-content .farzin-paginator__controls,
+#app .storefront-content .farzin-paginator__pages {
+    display: flex;
+    align-items: center;
+    gap: .35rem;
 }
-#app .storefront-content .farzin-shop-catalog .farzin-shop-layout > div:last-child > .mb-5.flex button {
-    min-height: 44px;
+#app .storefront-content .farzin-paginator__item {
+    display: inline-flex;
+    min-width: 38px;
+    min-height: 38px;
+    align-items: center;
+    justify-content: center;
     border: 1px solid var(--fz-line);
-    border-radius: 9px !important;
+    color: var(--fz-ink);
     background: #fff;
-    padding-inline: 1rem;
-    font-size: .78rem;
-    font-weight: 800;
+    font-size: .75rem;
+    text-decoration: none;
 }
-#app .storefront-content .farzin-shop-catalog .farzin-shop-layout > div:last-child > .mb-5.flex button:hover {
-    border-color: var(--fz-accent);
-    color: var(--fz-accent);
+#app .storefront-content .farzin-paginator__page--current {
+    border-color: var(--fz-ink);
+    color: #fff;
+    background: var(--fz-ink);
 }
-#app .storefront-content .farzin-shop-product-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+#app .storefront-content .farzin-paginator__step svg {
+    width: 16px;
+    height: 16px;
 }
-#app .storefront-content .farzin-shop-product-grid .farzin-product-card__content {
-    min-height: 190px;
-}
-#app .storefront-content .farzin-filter-drawer__panel {
-    width: min(92vw, 420px);
-    background: #f7f6f3;
-}
-#app .storefront-content .farzin-filter-drawer__panel > div:first-child {
-    min-height: 76px;
-    border-bottom-color: var(--fz-line);
-    background: #fff;
-}
-#app .storefront-content .farzin-filter-drawer__panel > form > div:last-child {
-    padding-bottom: max(1rem, env(safe-area-inset-bottom));
-    border-top-color: var(--fz-line);
-    background: #fff;
-}
-#app .storefront-content .farzin-filter-drawer__panel button,
-#app .storefront-content .farzin-filter-drawer__panel a {
-    min-height: 46px;
-    border-radius: 8px !important;
-    font-weight: 800;
-}
-#app .storefront-content .farzin-filter-drawer__panel button[type="submit"] {
-    background: var(--fz-accent);
-}
-#app .storefront-content .farzin-filter-drawer__panel button[type="submit"]:hover {
-    background: var(--fz-accent-dark);
-}
-
-@media (min-width: 1024px) {
-    #app .storefront-content .farzin-shop-catalog .farzin-shop-layout {
-        grid-template-columns: minmax(238px, 286px) minmax(0, 1fr);
-    }
-    #app .storefront-content .farzin-shop-catalog .farzin-shop-layout > aside {
-        display: block;
-    }
-    #app .storefront-content .farzin-shop-product-grid {
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-    }
+#app .storefront-content .farzin-paginator__step--disabled {
+    color: #aeb6bf;
+    background: #f3f4f5;
 }
 @media (min-width: 1440px) {
-    #app .storefront-content .farzin-shop-catalog .farzin-shop-layout {
-        grid-template-columns: 300px minmax(0, 1fr);
+    #app .storefront-content .farzin-shop-layout {
+        grid-template-columns: 270px minmax(0, 1fr);
+    }
+    #app .storefront-content .farzin-shop-layout > .farzin-shop-filter-rail {
+        max-width: 270px;
+    }
+}
+@media (min-width: 1024px) and (max-width: 1199px) {
+    #app .storefront-content .farzin-shop-product-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 }
 @media (max-width: 1023px) {
-    #app .storefront-content .farzin-shop-catalog {
-        padding-block: 1rem 2rem;
-    }
     #app .storefront-content .farzin-shop-layout {
+        grid-template-columns: minmax(0, 1fr);
         gap: 0;
-        padding-block: 0;
     }
+    #app .storefront-content .farzin-shop-layout > div:last-child {
+        grid-column: 1;
+    }
+    #app .storefront-content .farzin-shop-layout > .farzin-shop-filter-rail {
+        display: block !important;
+        position: fixed;
+        z-index: 161;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        width: min(90vw, 420px);
+        max-width: 420px;
+        height: 100dvh;
+        transform: translateX(105%);
+        visibility: hidden;
+        transition: transform .24s ease, visibility .24s ease;
+        background: #fff;
+        box-shadow: -18px 0 48px rgba(0,0,0,.16);
+    }
+    #app .storefront-content .farzin-shop-layout > .farzin-shop-filter-rail.is-open {
+        transform: translateX(0);
+        visibility: visible;
+    }
+    #app .storefront-content .farzin-shop-filter-rail__panel {
+        display: flex;
+        height: 100%;
+        flex-direction: column;
+        border: 0;
+        box-shadow: none;
+    }
+    #app .storefront-content .farzin-shop-filter-rail__header {
+        min-height: 68px;
+        flex: 0 0 auto;
+        padding-inline: 1rem;
+    }
+    #app .storefront-content .farzin-shop-filter-rail__close {
+        display: inline-flex;
+        flex: 0 0 38px;
+    }
+    #app .storefront-content .farzin-shop-filter-form {
+        display: flex;
+        min-height: 0;
+        max-height: none;
+        flex: 1 1 auto;
+        flex-direction: column;
+        overflow-y: auto;
+        padding: .4rem 1rem 1rem;
+    }
+    #app .storefront-content .farzin-shop-filter-form > div {
+        flex: 0 0 auto;
+    }
+    #app .storefront-content .farzin-shop-filter-actions {
+        position: sticky;
+        bottom: -1rem;
+        margin-inline: -1rem;
+        margin-bottom: -1rem;
+        padding: .85rem 1rem max(.85rem, env(safe-area-inset-bottom));
+    }
+    #app .storefront-content .farzin-shop-filter-backdrop {
+        display: block;
+        position: fixed;
+        z-index: 160;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        border: 0;
+        background: rgba(13,18,24,.48);
+        opacity: 0;
+        visibility: hidden;
+        pointer-events: none;
+        transition: opacity .24s ease, visibility .24s ease;
+    }
+    #app .storefront-content .farzin-shop-filter-backdrop.is-open {
+        opacity: 1;
+        visibility: visible;
+        pointer-events: auto;
+    }
+    #app .storefront-content .farzin-shop-product-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+@media (max-width: 640px) {
     #app .storefront-content .farzin-shop-banner > .livora-container,
     #app .storefront-content .farzin-shop-banner > .container {
         padding-inline: 1rem;
     }
     #app .storefront-content .farzin-shop-banner__image {
-        min-height: 250px;
-        aspect-ratio: 16 / 7;
-    }
-}
-@media (max-width: 640px) {
-    #app .storefront-content .farzin-shop-banner > div > div {
-        padding-block: 1.1rem;
-    }
-    #app .storefront-content .farzin-shop-banner__image {
-        min-height: 250px;
+        min-height: 190px;
+        aspect-ratio: 16 / 8;
         margin-top: .8rem;
-        aspect-ratio: 4 / 3;
     }
     #app .storefront-content .farzin-shop-banner__content {
-        inset-inline: 0;
+        width: 100%;
         max-width: 100%;
-        padding: 1.25rem;
+        padding: 1rem;
     }
     #app .storefront-content .farzin-shop-banner__title {
-        max-width: 12ch;
-        font-size: clamp(1.55rem, 7vw, 2.25rem);
+        max-width: 13ch;
+        font-size: clamp(1.25rem, 5.4vw, 1.8rem);
     }
     #app .storefront-content .farzin-shop-banner__description {
-        max-width: 34ch;
-        font-size: .8rem;
-        line-height: 1.85;
+        max-width: 32ch;
+        margin-top: .4rem;
+        font-size: .72rem;
     }
-    #app .storefront-content nav[aria-label="دسترسی سریع به دسته‌بندی‌ها"] > div > div {
-        flex-wrap: nowrap;
-        overflow-x: auto;
-        padding-block: .8rem;
-        scrollbar-width: none;
-    }
-    #app .storefront-content nav[aria-label="دسترسی سریع به دسته‌بندی‌ها"] > div > div::-webkit-scrollbar {
-        display: none;
-    }
-    #app .storefront-content nav[aria-label="دسترسی سریع به دسته‌بندی‌ها"] span {
+    #app .storefront-content .farzin-shop-banner__action {
+        min-height: 38px;
+        margin-top: .7rem;
+        padding: .5rem .8rem;
         font-size: .68rem;
     }
-    #app .storefront-content nav[aria-label="دسترسی سریع به دسته‌بندی‌ها"] a {
-        flex: 0 0 auto;
-        white-space: nowrap;
-    }
     #app .storefront-content .farzin-shop-searchbar {
-        grid-template-columns: minmax(0, 1fr);
-        gap: .55rem;
-        margin-bottom: .85rem;
+        grid-template-columns: minmax(0, 1fr) 84px;
+        gap: .4rem;
     }
     #app .storefront-content .farzin-shop-searchbar__field {
-        min-height: 50px;
-        padding-inline: .8rem;
+        min-height: 46px;
+        padding-inline: .65rem;
+        gap: .45rem;
     }
     #app .storefront-content .farzin-shop-searchbar__field input {
-        min-height: 48px;
-        font-size: .76rem;
+        min-height: 44px;
+        font-size: .7rem;
     }
     #app .storefront-content .farzin-shop-searchbar__submit {
         min-height: 46px;
-        width: 100%;
-    }
-    #app .storefront-content .farzin-shop-sortbar {
-        min-height: 0;
-        align-items: flex-start;
-        gap: .6rem;
-        padding-bottom: .85rem;
-    }
-    #app .storefront-content .farzin-shop-sortbar > div:first-child p:last-child {
+        padding-inline: .45rem;
         font-size: .68rem;
     }
+    #app .storefront-content .farzin-shop-sortbar {
+        align-items: center;
+        gap: .55rem;
+    }
     #app .storefront-content .farzin-shop-toolbar__sort {
-        width: min(52%, 190px);
-    }
-    #app .storefront-content .farzin-shop-toolbar__sort > div > button {
-        min-height: 44px;
-        gap: .45rem;
-        padding: .45rem .6rem;
-    }
-    #app .storefront-content .farzin-shop-toolbar__sort > div > button span span:first-child {
-        display: none;
+        width: min(54%, 180px);
     }
     #app .storefront-content .farzin-shop-product-grid {
-        gap: .65rem;
-        margin-top: 1rem;
-    }
-    #app .storefront-content .farzin-shop-product-grid .farzin-product-card {
-        border-radius: 9px !important;
+        gap: .6rem;
     }
     #app .storefront-content .farzin-shop-product-grid .farzin-product-card__content {
-        min-height: 174px;
+        min-height: 180px;
+        padding: .65rem;
+    }
+    #app .storefront-content .farzin-paginator__layout {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    #app .storefront-content .farzin-paginator__controls {
+        justify-content: center;
     }
 }
 @media (max-width: 380px) {
@@ -515,20 +559,18 @@
     #app .storefront-content .farzin-shop-product-grid .farzin-product-card__content {
         min-height: 0;
     }
-    #app .storefront-content .farzin-shop-product-grid .farzin-product-card__image-link {
-        aspect-ratio: 16 / 10 !important;
-    }
     #app .storefront-content .farzin-shop-sortbar {
-        flex-direction: column;
         align-items: stretch;
+        flex-direction: column;
     }
     #app .storefront-content .farzin-shop-toolbar__sort {
         width: 100%;
     }
 }
 @media (prefers-reduced-motion: reduce) {
-    #app .storefront-content .farzin-shop-product-grid .farzin-product-card,
-    #app .storefront-content .farzin-shop-banner__action {
+    #app .storefront-content .farzin-shop-filter-rail,
+    #app .storefront-content .farzin-shop-filter-backdrop,
+    #app .storefront-content .farzin-shop-product-grid .farzin-product-card {
         transition: none;
     }
 }

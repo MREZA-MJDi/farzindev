@@ -1,7 +1,6 @@
 @props([
 'categories' => collect(),
 'selectedCategory' => null,
-'mobile' => false,
 'filterableAttributes' => collect(),
 ])
 
@@ -51,7 +50,6 @@
                                     name="category"
                                     value="{{ $category->slug }}"
                                     @checked((string) $selectedCategory === (string) $category->slug)
-                                    @if(!$mobile) @change="$el.form.submit()" @endif
                                     class="h-4 w-4 border-[var(--livora-border)] text-[var(--livora-text)] focus:ring-[var(--livora-ink)]"
                                 >
 
@@ -100,7 +98,7 @@
         <div class="mt-2">
             <input type="hidden" name="in_stock" value="0">
             <label class="flex cursor-pointer items-center gap-3 rounded-xl bg-[var(--livora-surface)] px-3 py-2">
-                <input type="checkbox" name="in_stock" value="1" @checked(request()->has('in_stock') ? request()->boolean('in_stock') : true) @if(!$mobile) @change="$el.form.submit()" @endif class="h-4 w-4 rounded border-[var(--livora-border)] text-[var(--livora-text)] focus:ring-[var(--livora-ink)]">
+                <input type="checkbox" name="in_stock" value="1" @checked(request()->has('in_stock') ? request()->boolean('in_stock') : true) class="h-4 w-4 rounded border-[var(--livora-border)] text-[var(--livora-text)] focus:ring-[var(--livora-ink)]">
                 <span class="text-xs">فقط محصولات موجود</span>
             </label>
         </div>
@@ -136,7 +134,6 @@
                     name="installment"
                     value="1"
                     @checked(request()->boolean('installment'))
-                @if(!$mobile) @change="$el.form.submit()" @endif
                 class="h-4 w-4 rounded border-[var(--livora-border)] text-[var(--livora-text)] focus:ring-[var(--livora-ink)]"
                 >
 
@@ -175,14 +172,14 @@
             <div>
 
                 <label
-                    for="{{ $mobile ? 'min_price_mobile' : 'min_price_desktop' }}"
+                    for="min_price"
                     class="mb-2 block text-[10px] text-[var(--livora-stone)]"
                 >
                     حداقل
                 </label>
 
                 <input
-                    id="{{ $mobile ? 'min_price_mobile' : 'min_price_desktop' }}"
+                    id="min_price"
                     type="text"
                     inputmode="numeric"
                     name="min_price"
@@ -199,14 +196,14 @@
             <div>
 
                 <label
-                    for="{{ $mobile ? 'max_price_mobile' : 'max_price_desktop' }}"
+                    for="max_price"
                     class="mb-2 block text-[10px] text-[var(--livora-stone)]"
                 >
                     حداکثر
                 </label>
 
                 <input
-                    id="{{ $mobile ? 'max_price_mobile' : 'max_price_desktop' }}"
+                    id="max_price"
                     type="text"
                     inputmode="numeric"
                     name="max_price"
@@ -295,7 +292,6 @@
                     name="featured"
                     value="1"
                     @checked(request()->boolean('featured'))
-                @if(!$mobile) @change="$el.form.submit()" @endif
                 class="h-4 w-4 rounded border-[var(--livora-border)] text-[var(--livora-text)] focus:ring-[var(--livora-ink)]"
                 >
 
@@ -317,7 +313,6 @@
                     name="new"
                     value="1"
                     @checked(request()->boolean('new'))
-                @if(!$mobile) @change="$el.form.submit()" @endif
                 class="h-4 w-4 rounded border-[var(--livora-border)] text-[var(--livora-text)] focus:ring-[var(--livora-ink)]"
                 >
 
@@ -330,8 +325,8 @@
         </div>
 
     </section>
-
-    @unless($mobile)
-        <button type="submit" class="w-full rounded-xl bg-[var(--livora-ink)] px-4 py-3 text-xs font-bold text-white transition hover:bg-[var(--livora-accent)]">اعمال فیلترها</button>
-    @endunless
+    <div class="farzin-shop-filter-actions">
+        <a href="{{ route('shop.index') }}" class="farzin-shop-filter-actions__clear">پاک کردن</a>
+        <button type="submit" class="farzin-shop-filter-actions__submit">اعمال فیلترها</button>
+    </div>
 </div>

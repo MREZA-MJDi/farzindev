@@ -29,7 +29,7 @@
         {{-- Shop banner is configured in Admin > Storefront Settings. No looping product animation. --}}
         <section class="farzin-shop-banner border-b border-[var(--livora-border)] bg-[var(--livora-white)]">
             <x-layout.container>
-                <div class="py-7 sm:py-9">
+                <div class="py-5 sm:py-6">
                     <nav aria-label="مسیر صفحه" class="farzin-shop-banner__breadcrumb flex flex-wrap items-center gap-2 text-[11px] text-[var(--livora-stone)]">
                         <a href="{{ route('home') }}" class="transition hover:text-[var(--livora-text)]">خانه</a>
                         <span aria-hidden="true">/</span>
@@ -37,7 +37,7 @@
                     </nav>
 
                     @if (!empty($shopBanner['image_url']))
-                        <div class="farzin-shop-banner__image relative mt-6 aspect-[16/5] min-h-[220px] overflow-hidden rounded-[2rem] bg-[var(--livora-ink)]">
+                        <div class="farzin-shop-banner__image relative mt-4 aspect-[16/5] min-h-[220px] overflow-hidden bg-[var(--livora-ink)]">
                             <img
                                 src="{{ $shopBanner['image_url'] }}"
                                 @if(!empty($shopBanner['image_srcset'])) srcset="{{ $shopBanner['image_srcset'] }}" sizes="100vw" @endif
@@ -50,7 +50,7 @@
                             >
                             <div class="absolute inset-0 bg-gradient-to-l from-black/75 via-black/25 to-transparent"></div>
                             <div class="farzin-shop-banner__content absolute inset-y-0 right-0 flex max-w-2xl flex-col justify-center p-6 text-white sm:p-10 lg:p-14">
-                                <p class="farzin-shop-banner__eyebrow text-[10px] font-medium uppercase tracking-[0.22em] text-white/70">فرجی‌هوم / فروشگاه</p>
+                                <p class="farzin-shop-banner__eyebrow text-[10px] font-medium uppercase tracking-[0.22em] text-white/70">کاتالوگ محصولات</p>
                                 <h1 class="farzin-shop-banner__title mt-3 text-3xl font-semibold leading-tight sm:text-4xl lg:text-5xl">{{ $shopBannerTitle }}</h1>
                                 @if (filled($shopBanner['subtitle']))
                                     <p class="farzin-shop-banner__description mt-4 max-w-xl text-sm leading-8 text-white/80 sm:text-base">{{ $shopBannerSubtitle }}</p>
@@ -61,7 +61,7 @@
                     @else
                         <div class="mt-6 flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
                             <div>
-                                <p class="farzin-shop-banner__eyebrow text-[10px] font-medium uppercase tracking-[0.22em] text-[var(--livora-accent)]">فرجی‌هوم / فروشگاه</p>
+                                <p class="farzin-shop-banner__eyebrow text-[10px] font-medium uppercase tracking-[0.22em] text-[var(--livora-accent)]">کاتالوگ محصولات</p>
                                 <h1 class="farzin-shop-banner__title mt-3 text-3xl font-semibold tracking-tight sm:text-4xl">{{ $shopBannerTitle }}</h1>
                                 <p class="farzin-shop-banner__description mt-3 max-w-2xl text-sm leading-8 text-[var(--livora-stone)]">{{ $shopBannerSubtitle }}</p>
                             </div>
@@ -101,90 +101,48 @@
                 <div class="farzin-shop-layout grid items-start gap-5 py-6 lg:grid-cols-[270px_minmax(0,1fr)] lg:gap-7 lg:py-8">
 
 
-                    {{-- =================================================
-                         DESKTOP SIDEBAR
-                    ================================================== --}}
+                    {{-- One responsive filter rail: desktop sidebar and mobile drawer share the same form. --}}
+                    <button
+                        type="button"
+                        class="farzin-shop-filter-backdrop"
+                        aria-label="بستن فیلترها"
+                        @click="filterOpen = false"
+                        :class="{ 'is-open': filterOpen }"
+                    ></button>
 
-                    <aside class="hidden min-w-0 self-start lg:block">
-
-                        <div class="space-y-4">
-
-
-                            {{-- =================================================
-                                 FILTER CARD
-                            ================================================== --}}
-
-                            <div class="max-h-[calc(100vh-120px)] max-h-[calc(100dvh-120px)] overflow-y-auto overscroll-contain rounded-2xl border border-[var(--livora-border)] bg-[var(--livora-white)] p-3 [scrollbar-width:thin] sm:p-4">
-
-                                <div class="flex items-center justify-between gap-3">
-
-                                    <div>
-
-                                        <p class="text-[10px] uppercase tracking-[0.18em] text-[var(--livora-accent)]">
-                                            راهنمای انتخاب
-                                        </p>
-
-                                        <h2 class="mt-1 text-sm font-semibold">
-                                            فیلترها
-                                        </h2>
-
-                                    </div>
-
-
-                                    <a
-                                        href="{{ route('shop.index') }}"
-                                        class="shrink-0 text-[11px] text-[var(--livora-stone)] transition hover:text-[var(--livora-accent)]"
-                                    >
-                                        پاک کردن
-                                    </a>
-
+                    <aside
+                        id="shop-filter-rail"
+                        class="farzin-shop-filter-rail min-w-0 self-start"
+                        :class="{ 'is-open': filterOpen }"
+                        aria-label="فیلتر محصولات"
+                    >
+                        <div class="farzin-shop-filter-rail__panel">
+                            <div class="farzin-shop-filter-rail__header">
+                                <div>
+                                    <p class="farzin-shop-filter-rail__eyebrow">راهنمای انتخاب</p>
+                                    <h2>فیلتر محصولات</h2>
                                 </div>
-
-
-                                {{-- Desktop Filter has its own GET form --}}
-
-                                <form
-                                    method="GET"
-                                    action="{{ route('shop.index') }}"
-                                    class="mt-4"
+                                <button
+                                    type="button"
+                                    class="farzin-shop-filter-rail__close"
+                                    aria-label="بستن فیلترها"
+                                    @click="filterOpen = false"
                                 >
-
-                                    <x-shop.filters
-                                        :categories="$categories"
-                                        :selected-category="request('category')"
-            :filterable-attributes="$filterableAttributes"
-                                    />
-
-                                </form>
-
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="m6 6 12 12M18 6 6 18"/>
+                                    </svg>
+                                </button>
                             </div>
 
-
-                            {{-- =================================================
-                                 DISCOVERY BOX
-                            ================================================== --}}
-
-                            <div class="rounded-2xl border border-[var(--livora-border)] bg-[var(--livora-surface)] p-4">
-
-                                <p class="text-[10px] uppercase tracking-[0.18em] text-[var(--livora-accent)]">
-                                    فرجی‌هوم
-                                </p>
-
-                                <h3 class="mt-3 text-sm font-semibold">
-                                    راهنمای انتخاب
-                                </h3>
-
-                                <p class="mt-2 text-xs leading-7 text-[var(--livora-stone)]">
-                                    قیمت، مشخصات فنی، موجودی و ویژگی‌های هر مدل را
-                                    قبل از انتخاب محصول بررسی کنید.
-                                </p>
-
-                            </div>
-
+                            <form method="GET" action="{{ route('shop.index') }}" class="farzin-shop-filter-form">
+                                <x-shop.filters
+                                    :categories="$categories"
+                                    :selected-category="request('category')"
+                                    :filterable-attributes="$filterableAttributes"
+                                />
+                            </form>
                         </div>
-
                     </aside>
-
 
                     {{-- =================================================
                          PRODUCTS AREA
@@ -202,6 +160,8 @@
                             <button
                                 type="button"
                                 @click="filterOpen = true"
+                                aria-controls="shop-filter-rail"
+                                 :aria-expanded="filterOpen.toString()"
                                 class="inline-flex items-center gap-2 rounded-2xl border border-[var(--livora-border)] bg-[var(--livora-white)] px-4 py-3 text-sm font-medium text-[var(--livora-text)] transition hover:border-[var(--livora-ink)]"
                             >
 
@@ -274,10 +234,6 @@
                         </form>
 
                         <div class="farzin-shop-sortbar flex items-center justify-between gap-4 border-b border-[var(--livora-border)] pb-4">
-                            <div>
-                                <p class="text-[10px] font-semibold tracking-wide text-[var(--livora-accent)]">کاتالوگ فرجی‌هوم</p>
-                                <p class="mt-1 text-xs text-[var(--livora-stone)]">مرتب‌سازی محصولات</p>
-                            </div>
                             <div class="farzin-shop-toolbar__sort min-w-0">
                                 <x-shop.sorting :products="$products" />
                             </div>
@@ -430,15 +386,6 @@
         </section>
 
 
-        {{-- =========================================================
-             MOBILE FILTER DRAWER
-        ========================================================== --}}
-
-        <x-shop.filter-drawer
-            :categories="$categories"
-            :selected-category="request('category')"
-                                        :filterable-attributes="$filterableAttributes"
-        />
 
     </div>
 
