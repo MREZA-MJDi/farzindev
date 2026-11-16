@@ -21,31 +21,12 @@ use Throwable;
 
 class BlogPostController extends Controller
 {
-    public function index(Request $request): View
+    public function index(Request $request): RedirectResponse
     {
-        $query = BlogPost::query()->with(['author:id,name', 'terms:id,type,name,slug']);
-
-        if ($request->filled('q')) {
-            $term = trim((string) $request->query('q'));
-            $query->where(function ($builder) use ($term): void {
-                $builder->where('title', 'like', '%' . $term . '%')
-                    ->orWhere('slug', 'like', '%' . $term . '%');
-            });
-        }
-
-        if (in_array($request->query('status'), ['draft', 'published', 'trash'], true)) {
-            $query->where('status', $request->query('status'));
-        } else {
-            $query->where('status', '!=', 'trash');
-        }
-
-        $posts = $query
-            ->orderByRaw("CASE WHEN status = 'draft' THEN 0 WHEN status = 'published' THEN 1 ELSE 2 END")
-            ->orderByDesc('updated_at')
-            ->paginate(20)
-            ->withQueryString();
-
-        return view('admin.blog-posts.index', compact('posts'));
+        return redirect()->route('admin.cms.index', [
+            'tab' => 'blog',
+            'q' => $request->query('q'),
+        ]);
     }
 
     public function create(BlogSeoAnalyzer $analyzer, RichTextSanitizer $sanitizer): View
@@ -317,7 +298,6 @@ class BlogPostController extends Controller
             'cover_image_alt' => ['nullable', 'string', 'max:255'],
             'meta_title' => ['nullable', 'string', 'max:255'],
             'meta_description' => ['nullable', 'string', 'max:320'],
-            'focus_keyword' => ['nullable', 'string', 'max:160'],
             'canonical_url' => ['nullable', 'url:https', 'max:2048'],
             'og_title' => ['nullable', 'string', 'max:255'],
             'og_description' => ['nullable', 'string', 'max:320'],

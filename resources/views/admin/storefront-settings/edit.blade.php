@@ -61,6 +61,7 @@
                     data-image-editor-default-ratio="16:9"
                     data-image-editor-min-width="1200"
                     data-image-editor-min-height="600"
+                    data-image-editor-max-size="10485760"
                     accept="image/jpeg,image/png,image/webp"
                     class="admin-input p-2"
                 >
@@ -90,7 +91,7 @@
                     <p data-image-editor-status class="text-xs text-[var(--admin-muted)]" aria-live="polite">کادر را تنظیم کنید.</p>
                 </div>
 
-                <p class="mt-2 text-xs leading-6 text-[var(--admin-muted)]">فرمت‌های مجاز JPG، PNG و WEBP؛ حداکثر حجم فایل ۲۰ مگابایت. ویرایشگر قبل از ارسال، تصویر را برش می‌دهد.</p>
+                <p class="mt-2 text-xs leading-6 text-[var(--admin-muted)]">فرمت‌های مجاز JPG، PNG و WEBP؛ حداکثر حجم فایل ۱۰ مگابایت. ویرایشگر قبل از ارسال، تصویر را برش می‌دهد.</p>
                 @error('shop_banner_image')
                     <p class="mt-2 text-xs text-[var(--admin-danger)]">{{ $message }}</p>
                 @enderror

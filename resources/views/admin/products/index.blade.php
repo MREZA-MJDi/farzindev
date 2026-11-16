@@ -167,7 +167,7 @@
 
                                 <div class="min-w-0">
                                     <a
-                                        href="{{ route('admin.products.show', $product) }}"
+                                        href="{{ route('admin.products.edit', $product) }}"
                                         class="block truncate text-sm font-semibold text-[var(--admin-text)] transition hover:text-[var(--admin-accent)]"
                                     >
                                         {{ $product->name }}
@@ -282,7 +282,7 @@
                             <div class="admin-action-group admin-products-actions">
 
                                 <a
-                                    href="{{ route('admin.products.show', $product) }}"
+                                    href="{{ route('admin.products.edit', $product) }}"
                                     class="admin-btn admin-btn-ghost px-3"
                                     title="مشاهده"
                                 >

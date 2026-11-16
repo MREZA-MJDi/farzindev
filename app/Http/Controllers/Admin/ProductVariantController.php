@@ -57,8 +57,9 @@ class ProductVariantController extends Controller
 
         $imageIds = $data['image_ids'] ?? [];
         $mediaIds = $data['media_ids'] ?? [];
+        $imageAlts = $data['images_alt'] ?? [];
         $uploads = $request->file('images', []);
-        unset($data['image_ids'], $data['media_ids'], $data['images']);
+        unset($data['image_ids'], $data['media_ids'], $data['images'], $data['images_alt']);
 
         $productId = (int) $data['product_id'];
         $storedPaths = [];
@@ -97,7 +98,7 @@ class ProductVariantController extends Controller
         }
 
         try {
-            DB::transaction(function () use ($data, $imageIds, $mediaIds, $productId, $storedPaths, &$newImageIds, $mediaLibrary): void {
+            DB::transaction(function () use ($data, $imageIds, $mediaIds, $imageAlts, $productId, $storedPaths, &$newImageIds, $mediaLibrary): void {
                 // Serialize variant changes with checkout's product/stock locks.
                 $product = Product::query()
                     ->whereKey($productId)
@@ -113,7 +114,7 @@ class ProductVariantController extends Controller
                     $image = ProductImage::create([
                         'product_id' => $productId,
                         'path' => $path,
-                        'alt' => trim($data['name'] . ' ' . $data['value']),
+                        'alt' => trim((string) ($imageAlts[$offset] ?? '')) ?: trim($data['name'] . ' ' . $data['value']),
                         'sort_order' => $nextSort + $offset,
                         'is_primary' => false,
                     ]);
@@ -197,8 +198,9 @@ class ProductVariantController extends Controller
 
         $imageIds = $data['image_ids'] ?? [];
         $mediaIds = $data['media_ids'] ?? [];
+        $imageAlts = $data['images_alt'] ?? [];
         $uploads = $request->file('images', []);
-        unset($data['image_ids'], $data['media_ids'], $data['images']);
+        unset($data['image_ids'], $data['media_ids'], $data['images'], $data['images_alt']);
 
         $oldProductId = (int) $productVariant->product_id;
         $newProductId = (int) $data['product_id'];
@@ -247,6 +249,7 @@ class ProductVariantController extends Controller
                 $newProductId,
                 $storedPaths,
                 $mediaIds,
+                $imageAlts,
                 &$newImageIds,
                 $mediaLibrary
             ): void {
@@ -279,7 +282,7 @@ class ProductVariantController extends Controller
                     $image = ProductImage::create([
                         'product_id' => $newProductId,
                         'path' => $path,
-                        'alt' => trim($data['name'] . ' ' . $data['value']),
+                        'alt' => trim((string) ($imageAlts[$offset] ?? '')) ?: trim($data['name'] . ' ' . $data['value']),
                         'sort_order' => $nextSort + $offset,
                         'is_primary' => false,
                     ]);

@@ -327,6 +327,7 @@
                 data-image-editor-default-ratio="4:3"
                 data-image-editor-min-width="800"
                 data-image-editor-min-height="600"
+                data-image-editor-max-size="10485760"
                 accept="image/jpeg,image/png,image/webp"
                 class="admin-input p-2"
             >
@@ -357,7 +358,7 @@
             </div>
 
             <p class="mt-2 text-xs leading-6 text-[var(--admin-muted)]">
-                فرمت‌های مجاز: JPG، PNG و WEBP؛ حداکثر حجم ۲۰ مگابایت. برای خروجی باکیفیت، تصویر حداقل ۸۰۰×۶۰۰ پیکسل باشد.
+                فرمت‌های مجاز: JPG، PNG و WEBP؛ حداکثر حجم ۱۰ مگابایت. برای خروجی باکیفیت، تصویر حداقل ۸۰۰×۶۰۰ پیکسل باشد.
             </p>
 
             @error('image')
@@ -379,7 +380,7 @@
                 </div>
             </div>
             <label for="content_image" class="admin-label">بارگذاری یا جایگزینی تصویر</label>
-            <input id="content_image" name="content_image" type="file" accept="image/jpeg,image/png,image/webp" data-image-preview-input data-image-preview-target="#category-content-image-preview" data-image-preview-placeholder="#category-content-image-placeholder" class="admin-input p-2">
+            <input id="content_image" name="content_image" type="file" accept="image/jpeg,image/png,image/webp" data-image-preview-input data-image-preview-max-size="10485760" data-image-preview-min-width="800" data-image-preview-min-height="450" data-image-preview-target="#category-content-image-preview" data-image-preview-placeholder="#category-content-image-placeholder" class="admin-input p-2">
             @if($editing && $contentImageUrl)
                 <label class="mt-3 flex items-center gap-2 text-xs text-[var(--admin-muted)]">
                     <input type="checkbox" name="remove_content_image" value="1" @checked(old('remove_content_image')) class="rounded border-[var(--admin-border)]">
@@ -387,7 +388,7 @@
                 </label>
             @endif
             @error('content_image')<p role="alert" class="mt-2 text-xs text-[var(--admin-danger)]">{{ $message }}</p>@enderror
-            <p class="mt-2 text-xs leading-6 text-[var(--admin-muted)]">فرمت JPG، PNG یا WEBP؛ حداقل ۸۰۰×۴۵۰ و حداکثر ۲۰ مگابایت.</p>
+            <p class="mt-2 text-xs leading-6 text-[var(--admin-muted)]">فرمت JPG، PNG یا WEBP؛ حداقل ۸۰۰×۴۵۰ و حداکثر ۱۰ مگابایت.</p>
         </div>
 
         <div class="admin-card p-6">

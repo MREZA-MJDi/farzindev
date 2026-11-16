@@ -15,14 +15,11 @@ class BlogSeoAnalyzer
     {
         $title = trim((string) ($post->meta_title ?: $post->title));
         $description = trim((string) ($post->meta_description ?: $post->excerpt));
-        $keyword = $this->normalize((string) $post->focus_keyword);
-        $slug = $this->normalize(str_replace('-', ' ', (string) $post->slug));
         $content = (string) ($post->body_html ?: $post->body);
         $plainText = html_entity_decode(strip_tags($content), ENT_QUOTES | ENT_HTML5, 'UTF-8');
         $normalizedContent = $this->normalize($plainText);
         $words = preg_split('/\s+/u', trim($normalizedContent), -1, PREG_SPLIT_NO_EMPTY) ?: [];
         $wordCount = count($words);
-        $firstWords = implode(' ', array_slice($words, 0, 100));
         $html = (string) $post->body_html;
 
         $checks = [];
@@ -38,40 +35,6 @@ class BlogSeoAnalyzer
             mb_strlen($description) >= 70 && mb_strlen($description) <= 165,
             'توضیح یکتا و مفید با طول تقریبی ۷۰ تا ۱۶۵ نویسه بنویسید.'
         );
-        $checks[] = $this->check(
-            'focus_keyword',
-            'عبارت کلیدی اصلی',
-            $keyword !== '',
-            'یک عبارت جست‌وجوی اصلی برای مقاله تعیین کنید.'
-        );
-
-        if ($keyword !== '') {
-            $checks[] = $this->check(
-                'keyword_title',
-                'عبارت کلیدی در عنوان',
-                str_contains($this->normalize($title), $keyword),
-                'عبارت کلیدی را طبیعی در عنوان SEO بیاورید.'
-            );
-            $checks[] = $this->check(
-                'keyword_description',
-                'عبارت کلیدی در توضیحات',
-                str_contains($this->normalize($description), $keyword),
-                'عبارت کلیدی را طبیعی در توضیحات متا استفاده کنید.'
-            );
-            $checks[] = $this->check(
-                'keyword_slug',
-                'عبارت کلیدی در نشانی',
-                str_contains($slug, $keyword),
-                'در صورت طبیعی‌بودن، عبارت کلیدی را در slug کوتاه وارد کنید.'
-            );
-            $checks[] = $this->check(
-                'keyword_intro',
-                'عبارت کلیدی در ابتدای متن',
-                $firstWords !== '' && str_contains($firstWords, $keyword),
-                'موضوع اصلی را در مقدمه مقاله روشن کنید.'
-            );
-        }
-
         $checks[] = $this->check(
             'content_depth',
             'عمق محتوای مقاله',

@@ -209,8 +209,13 @@ class BlogCmsTest extends TestCase
 
         $this->actingAs($admin, 'admin')
             ->get(route('admin.blog-posts.index'))
+            ->assertRedirect(route('admin.cms.index', ['tab' => 'blog']));
+
+        $this->actingAs($admin, 'admin')
+            ->get(route('admin.cms.index', ['tab' => 'blog']))
             ->assertOk()
-            ->assertSee('مقالات بلاگ');
+            ->assertSee('مقاله‌ها')
+            ->assertSee('دسته‌ها، برچسب‌ها و اسلاگ‌ها');
 
         $this->actingAs($admin, 'admin')
             ->get(route('admin.blog-posts.create'))
@@ -402,7 +407,6 @@ class BlogCmsTest extends TestCase
             'body' => '<h2>راهنمای انتخاب هود</h2><p>نکته <strong>مهم</strong>.</p><script>alert(1)</script>',
             'meta_title' => 'راهنمای انتخاب هود آشپزخانه | فرجی‌هوم',
             'meta_description' => 'نکات مهم برای انتخاب هود آشپزخانه متناسب با ابعاد و فضای نصب.',
-            'focus_keyword' => 'انتخاب هود آشپزخانه',
             'canonical_url' => 'https://farajihome.com/blog/kitchen-hood-buying-guide',
             'og_title' => 'راهنمای انتخاب هود',
             'og_description' => 'راهنمای فرجی‌هوم برای انتخاب هود مناسب.',
@@ -414,7 +418,6 @@ class BlogCmsTest extends TestCase
         ])->assertRedirect()->assertSessionHas('success');
 
         $post = BlogPost::query()->where('slug', 'kitchen-hood-buying-guide')->firstOrFail();
-        $this->assertSame('انتخاب هود آشپزخانه', $post->focus_keyword);
         $this->assertSame('Article', $post->schema_type);
         $this->assertSame('noindex,follow', $post->seo_robots);
         $this->assertStringContainsString('<h2>', $post->body_html);

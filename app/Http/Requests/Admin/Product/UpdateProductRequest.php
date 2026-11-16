@@ -53,10 +53,17 @@ class UpdateProductRequest extends FormRequest
             }
 
             $product = $this->route('product');
+            // Product galleries are expected to be small. Keep validation bounded
+            // even if legacy data contains an unexpectedly large image collection.
             $hasUsableExistingImage = $product
-                && $product->images()->with('media')->get()->contains(
-                    static fn ($image): bool => filled($image->url)
-                );
+                && $product->images()
+                    ->select(['id', 'product_id', 'media_id', 'path', 'sort_order', 'is_primary'])
+                    ->with('media:id,path,disk')
+                    ->orderByDesc('is_primary')
+                    ->orderBy('sort_order')
+                    ->limit(20)
+                    ->get()
+                    ->contains(static fn ($image): bool => filled($image->url));
 
             if (
                 $this->input('status') === 'active'
@@ -158,7 +165,7 @@ class UpdateProductRequest extends FormRequest
                 'image',
                 'mimes:jpg,jpeg,png,webp',
                 'dimensions:min_width=800,min_height=600',
-                'max:20480',
+                'max:10240',
             ],
 
             'primary_media_id' => [
@@ -304,7 +311,7 @@ class UpdateProductRequest extends FormRequest
             'primary_media_id.exists' => 'تصویر کتابخانه حذف شده یا فرمت آن پشتیبانی نمی‌شود.',
             'image.image' => 'فایل انتخاب‌شده باید تصویر باشد.',
             'image.mimes' => 'فرمت تصویر باید jpg، jpeg، png یا webp باشد.',
-            'image.max' => 'حجم تصویر نباید بیشتر از ۲۰ مگابایت باشد.',
+            'image.max' => 'حجم تصویر نباید بیشتر از ۱۰ مگابایت باشد.',
             'image.dimensions' => 'ابعاد تصویر باید حداقل ۸۰۰ در ۶۰۰ پیکسل باشد.',
 
             'price.required' => 'وارد کردن قیمت محصول الزامی است.',

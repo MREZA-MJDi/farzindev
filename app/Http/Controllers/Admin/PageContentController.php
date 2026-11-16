@@ -18,7 +18,7 @@ class PageContentController extends Controller
     private const GROUPS = [
         'home' => [
             'title' => 'صفحه اصلی',
-            'description' => 'عنوان و تصویر Hero را ویرایش کنید. کلیدهای نمایش بخش محصولات و مجله را هم بررسی کنید؛ اگر خاموش باشند، حتی محصولات و مقاله‌های منتشرشده در صفحه اصلی دیده نمی‌شوند. دسته‌ها و محصولات از اطلاعات واقعی فروشگاه خوانده می‌شوند.',
+            'description' => 'متن‌ها و تصاویر محتوایی صفحه اصلی را ویرایش کنید. بخش‌های استاندارد سایت به‌صورت ثابت نمایش داده می‌شوند و اطلاعات دسته‌ها، محصولات و مقاله‌ها از داده‌های واقعی فروشگاه خوانده می‌شوند.',
             'fields' => [
                 'page_home_hero_eyebrow' => ['label' => 'برچسب بالای Hero جایگزین', 'type' => 'text', 'max' => 120],
                 'page_home_hero_title' => ['label' => 'عنوان Hero جایگزین', 'type' => 'text', 'max' => 120],
@@ -50,7 +50,6 @@ class PageContentController extends Controller
                 'page_home_technology_title' => ['label' => 'فناوری — عنوان', 'type' => 'text', 'max' => 160],
                 'page_home_technology_body' => ['label' => 'فناوری — توضیح', 'type' => 'textarea', 'max' => 1000],
                 'page_home_technology_cta' => ['label' => 'فناوری — متن دکمه', 'type' => 'text', 'max' => 80],
-                'page_home_show_technology' => ['label' => 'نمایش سکشن فناوری در صفحه اصلی', 'type' => 'toggle'],
                 'page_home_categories_eyebrow' => ['label' => 'برچسب دسته‌بندی‌ها', 'type' => 'text', 'max' => 120],
                 'page_home_categories_title' => ['label' => 'عنوان بخش دسته‌بندی‌ها', 'type' => 'text', 'max' => 160],
                 'page_home_categories_description' => ['label' => 'توضیح بخش دسته‌بندی‌ها', 'type' => 'textarea', 'max' => 500],
@@ -73,12 +72,6 @@ class PageContentController extends Controller
                 'page_home_final_title' => ['label' => 'عنوان دعوت پایانی', 'type' => 'text', 'max' => 160],
                 'page_home_final_description' => ['label' => 'توضیح دعوت پایانی', 'type' => 'textarea', 'max' => 500],
                 'page_home_final_cta' => ['label' => 'متن دکمه پایانی', 'type' => 'text', 'max' => 80],
-                'page_home_show_categories' => ['label' => 'نمایش بخش دسته‌بندی‌ها', 'type' => 'toggle'],
-                'page_home_show_products' => ['label' => 'نمایش بخش محصولات منتخب', 'type' => 'toggle'],
-                'page_home_show_trust' => ['label' => 'نمایش بخش اعتمادسازی', 'type' => 'toggle'],
-                'page_home_show_guides' => ['label' => 'نمایش راهنماهای هود و سینک', 'type' => 'toggle'],
-                'page_home_show_journal' => ['label' => 'نمایش بخش مجله', 'type' => 'toggle'],
-                'page_home_show_final_cta' => ['label' => 'نمایش دعوت پایانی', 'type' => 'toggle'],
             ],
         ],
         'about' => [
@@ -133,12 +126,6 @@ class PageContentController extends Controller
                 'page_about_final_description' => ['label' => 'توضیح بخش پایانی', 'type' => 'textarea', 'max' => 500],
                 'page_about_final_shop_cta' => ['label' => 'دکمه فروشگاه', 'type' => 'text', 'max' => 80],
                 'page_about_final_contact_cta' => ['label' => 'دکمه تماس', 'type' => 'text', 'max' => 80],
-                'page_about_show_statement' => ['label' => 'نمایش بیانیه مجموعه', 'type' => 'toggle'],
-                'page_about_show_factory' => ['label' => 'نمایش راهنمای انتخاب محصولات', 'type' => 'toggle'],
-                'page_about_show_values' => ['label' => 'نمایش ارزش‌های مجموعه', 'type' => 'toggle'],
-                'page_about_show_experience' => ['label' => 'نمایش مسیر تجربه مشتری', 'type' => 'toggle'],
-                'page_about_show_installment' => ['label' => 'نمایش بخش پرداخت منعطف', 'type' => 'toggle'],
-                'page_about_show_final' => ['label' => 'نمایش دعوت پایانی', 'type' => 'toggle'],
             ],
         ],
         'policies' => [
@@ -215,15 +202,6 @@ class PageContentController extends Controller
                 'page_privacy_contact_cta' => ['label' => 'حریم خصوصی — دکمه تماس', 'type' => 'text', 'max' => 80],
             ],
         ],
-        'typography' => [
-            'title' => 'تایپوگرافی و رفتار عمومی',
-            'description' => 'مقیاس پایه نوشته‌ها، ارتفاع خط و عرض محتوای عمومی را تنظیم کنید. مقدارها محدود و کنترل‌شده‌اند تا چیدمان در موبایل و دسکتاپ آسیب نبیند.',
-            'fields' => [
-                'page_typography_font_scale' => ['label' => 'مقیاس کلی فونت (درصد)', 'type' => 'number', 'min' => 90, 'max' => 110, 'step' => 1],
-                'page_typography_line_height' => ['label' => 'ارتفاع خط متن', 'type' => 'number', 'min' => 1.4, 'max' => 2.2, 'step' => 0.05],
-                'page_typography_content_width' => ['label' => 'حداکثر عرض محتوای عمومی (px)', 'type' => 'number', 'min' => 1120, 'max' => 1440, 'step' => 10],
-            ],
-        ],
     ];
 
     public function edit(Request $request, StorefrontPageContent $content): View
@@ -268,13 +246,6 @@ class PageContentController extends Controller
                 $tab === 'home' && str_starts_with($key, 'page_home_guides_') => 'معرفی بخش راهنماها',
                 $tab === 'home' && str_starts_with($key, 'page_home_journal_') => 'مجله و مقاله‌ها',
                 $tab === 'home' && str_starts_with($key, 'page_home_technology_') => 'بخش فناوری و جزئیات ساخت',
-                $tab === 'home' && $key === 'page_home_show_categories' => 'بخش دسته‌بندی‌ها',
-                $tab === 'home' && $key === 'page_home_show_products' => 'بخش محصولات منتخب',
-                $tab === 'home' && $key === 'page_home_show_guides' => 'معرفی بخش راهنماها',
-                $tab === 'home' && $key === 'page_home_show_journal' => 'مجله و مقاله‌ها',
-                $tab === 'home' && $key === 'page_home_show_technology' => 'بخش فناوری و جزئیات ساخت',
-                $tab === 'home' && $key === 'page_home_show_final_cta' => 'دعوت پایانی',
-                $tab === 'home' && ($key === 'page_home_show_trust' || in_array($key, ['page_home_enamad_url', 'page_home_warranty_text'], true)) => 'اعتمادسازی',
                 $tab === 'about' && str_starts_with($key, 'page_about_hero_') => 'معرفی و Hero',
                 $tab === 'about' && str_starts_with($key, 'page_about_statement_') => 'بیانیه مجموعه',
                 $tab === 'about' && str_starts_with($key, 'page_about_factory_') => 'راهنمای انتخاب محصولات',
@@ -291,7 +262,6 @@ class PageContentController extends Controller
                 $tab === 'policies' && str_starts_with($key, 'page_faq_') => 'پرسش‌های متداول — /faq',
                 $tab === 'legal' && str_starts_with($key, 'page_terms_') => 'قوانین و شرایط — /terms',
                 $tab === 'legal' && str_starts_with($key, 'page_privacy_') => 'حریم خصوصی — /privacy',
-                $tab === 'typography' => 'تنظیمات عمومی صفحات',
                 default => 'سایر تنظیمات',
             };
 
@@ -335,14 +305,14 @@ class PageContentController extends Controller
                 'image',
                 'mimes:jpg,jpeg,png,webp',
                 'dimensions:min_width=1200,min_height=750,ratio=16/10',
-                'max:20480',
+                'max:10240',
             ];
             $rules['page_home_technology_image'] = [
                 'nullable',
                 'image',
                 'mimes:jpg,jpeg,png,webp',
                 'dimensions:min_width=1200,min_height=750,ratio=16/10',
-                'max:20480',
+                'max:10240',
             ];
             $rules['page_home_technology_media_id'] = [
                 'nullable',
@@ -357,7 +327,7 @@ class PageContentController extends Controller
                     'image',
                     'mimes:jpg,jpeg,png,webp',
                     'dimensions:min_width=1200,min_height=375,ratio=16/6',
-                    'max:20480',
+                    'max:10240',
                 ];
                 $rules["remove_page_home_banner_{$index}_image"] = ['sometimes', 'boolean'];
                 $rules["page_home_banner_{$index}_button_url"] = [
@@ -385,28 +355,25 @@ class PageContentController extends Controller
         }
 
         $validated = $request->validate($rules, [
-            'page_typography_font_scale.between' => 'مقیاس فونت باید بین ۹۰ تا ۱۱۰ درصد باشد.',
-            'page_typography_line_height.between' => 'ارتفاع خط باید بین ۱٫۴ تا ۲٫۲ باشد.',
-            'page_typography_content_width.between' => 'عرض محتوا باید بین ۱۱۲۰ تا ۱۴۴۰ پیکسل باشد.',
             'page_home_hero_image.image' => 'فایل Hero باید یک تصویر معتبر باشد.',
             'page_home_hero_image.mimes' => 'فرمت تصویر Hero باید JPG، PNG یا WEBP باشد.',
             'page_home_hero_image.dimensions' => 'خروجی Hero باید نسبت ۱۶:۱۰ و حداقل ابعاد ۱۲۰۰ در ۷۵۰ پیکسل داشته باشد.',
-            'page_home_hero_image.max' => 'حجم تصویر Hero نباید بیشتر از ۲۰ مگابایت باشد.',
+            'page_home_hero_image.max' => 'حجم تصویر Hero نباید بیشتر از ۱۰ مگابایت باشد.',
             'page_home_technology_image.image' => 'فایل سکشن فناوری باید یک تصویر معتبر باشد.',
             'page_home_technology_image.dimensions' => 'تصویر فناوری باید نسبت ۱۶:۱۰ و حداقل ابعاد ۱۲۰۰ در ۷۵۰ پیکسل داشته باشد.',
-            'page_home_technology_image.max' => 'حجم تصویر فناوری نباید بیشتر از ۲۰ مگابایت باشد.',
+            'page_home_technology_image.max' => 'حجم تصویر فناوری نباید بیشتر از ۱۰ مگابایت باشد.',
             'page_home_banner_1_image.image' => 'فایل بنر 1 باید یک تصویر معتبر باشد.',
             'page_home_banner_1_image.dimensions' => 'تصویر بنر 1 باید حداقل ۱۲۰۰×۳۷۵ و با نسبت ۱۶:۶ باشد.',
-            'page_home_banner_1_image.max' => 'حجم تصویر بنر 1 نباید بیشتر از ۲۰ مگابایت باشد.',
+            'page_home_banner_1_image.max' => 'حجم تصویر بنر 1 نباید بیشتر از ۱۰ مگابایت باشد.',
             'page_home_banner_2_image.image' => 'فایل بنر 2 باید یک تصویر معتبر باشد.',
             'page_home_banner_2_image.dimensions' => 'تصویر بنر 2 باید حداقل ۱۲۰۰×۳۷۵ و با نسبت ۱۶:۶ باشد.',
-            'page_home_banner_2_image.max' => 'حجم تصویر بنر 2 نباید بیشتر از ۲۰ مگابایت باشد.',
+            'page_home_banner_2_image.max' => 'حجم تصویر بنر 2 نباید بیشتر از ۱۰ مگابایت باشد.',
             'page_home_banner_3_image.image' => 'فایل بنر 3 باید یک تصویر معتبر باشد.',
             'page_home_banner_3_image.dimensions' => 'تصویر بنر 3 باید حداقل ۱۲۰۰×۳۷۵ و با نسبت ۱۶:۶ باشد.',
-            'page_home_banner_3_image.max' => 'حجم تصویر بنر 3 نباید بیشتر از ۲۰ مگابایت باشد.',
+            'page_home_banner_3_image.max' => 'حجم تصویر بنر 3 نباید بیشتر از ۱۰ مگابایت باشد.',
             'page_home_banner_4_image.image' => 'فایل بنر 4 باید یک تصویر معتبر باشد.',
             'page_home_banner_4_image.dimensions' => 'تصویر بنر 4 باید حداقل ۱۲۰۰×۳۷۵ و با نسبت ۱۶:۶ باشد.',
-            'page_home_banner_4_image.max' => 'حجم تصویر بنر 4 نباید بیشتر از ۲۰ مگابایت باشد.',
+            'page_home_banner_4_image.max' => 'حجم تصویر بنر 4 نباید بیشتر از ۱۰ مگابایت باشد.',
         ]);
 
         $heroImageUpload = $validated['page_home_hero_image'] ?? null;

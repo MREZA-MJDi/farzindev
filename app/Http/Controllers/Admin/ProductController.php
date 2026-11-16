@@ -240,15 +240,10 @@ class ProductController extends Controller
     /**
      * Display the specified product.
      */
-    public function show(Product $product): View
+    public function show(Product $product): RedirectResponse
     {
-        $product->load([
-            'category',
-            'images.media',
-            'allVariants.images.media',
-        ]);
-
-        return view('admin.products.show', compact('product'));
+        // Product details and editing now live in one canonical workspace.
+        return redirect()->route('admin.products.edit', $product);
     }
 
     /**
@@ -256,7 +251,29 @@ class ProductController extends Controller
      */
     public function edit(Product $product): View
     {
-        $product->load(['images.media', 'allVariants.images.media', 'attributeValues.attribute', 'attributeValues.option']);
+        $product->load([
+            'images' => fn ($query) => $query
+                ->with('media')
+                ->orderByDesc('is_primary')
+                ->orderBy('sort_order')
+                ->limit(30),
+            'attributeValues.attribute',
+            'attributeValues.option',
+        ]);
+
+        // The product editor remains one workspace, but never hydrates every
+        // variant and image in one request. The variant sheet has its own
+        // bounded paginator so large catalogues remain responsive.
+        $allVariants = $product->allVariants()
+            ->with(['images' => fn ($query) => $query
+                ->with('media')
+                ->orderByPivot('sort_order')
+                ->limit(5)])
+            ->orderBy('id')
+            ->paginate(15, ['*'], 'variants_page')
+            ->withQueryString();
+
+        $product->setRelation('allVariants', $allVariants);
 
         $storefrontCategoryIds = Category::query()
             ->active()

@@ -106,11 +106,6 @@
                 <p class="mt-2 text-xs leading-6 text-[var(--admin-muted)]">امتیاز فقط یک چک‌لیست تحریریه است و تضمین رتبه یا جایگزین داده‌های Search Console نیست.</p>
             </div>
 
-            <label class="block text-sm text-[var(--admin-text)]">عبارت کلیدی اصلی
-                <input name="focus_keyword" value="{{ old('focus_keyword', $post->focus_keyword) }}" maxlength="160" data-seo-keyword class="admin-input mt-2 w-full" placeholder="مثلاً انتخاب هود آشپزخانه">
-                @error('focus_keyword')<span class="mt-1 block text-xs text-red-600">{{ $message }}</span>@enderror
-            </label>
-
             <label class="block text-sm text-[var(--admin-text)]">عنوان SEO
                 <input name="meta_title" value="{{ old('meta_title', $post->meta_title) }}" maxlength="255" data-seo-meta-title class="admin-input mt-2 w-full">
                 <span class="mt-1 flex justify-between gap-2 text-[11px] text-[var(--admin-muted)]"><span>عنوان اختصاصی نتیجه جست‌وجو</span><span data-seo-title-count>۰ / ۶۰</span></span>

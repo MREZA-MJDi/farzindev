@@ -123,7 +123,6 @@ class SeoSettingsTest extends TestCase
                 'seo_site_name' => 'فرجی‌هوم',
                 'seo_default_title' => 'عنوان SEO آزمایشی',
                 'seo_default_description' => 'توضیحات SEO از پنل مدیریت',
-                'seo_default_keywords' => 'هود, سینک',
                 'seo_home_title' => 'عنوان صفحه اصلی از پنل',
                 'seo_home_description' => 'توضیحات صفحه اصلی که از پنل SEO ذخیره شده است.',
                 'seo_development_mode' => '0',
@@ -166,7 +165,6 @@ class SeoSettingsTest extends TestCase
                 'seo_site_name' => 'فرجی‌هوم',
                 'seo_default_title' => 'عنوان SEO',
                 'seo_default_description' => 'توضیحات سایت',
-                'seo_default_keywords' => 'هود، سینک',
                 'seo_robots_txt_rules' => "User-agent: *\nAllow: /",
                 'seo_sitemap_enabled' => '1',
                 'seo_custom_meta_tags' => [
@@ -250,7 +248,6 @@ class SeoSettingsTest extends TestCase
                 'seo_site_name' => 'فرجی‌هوم',
                 'seo_default_title' => 'عنوان SEO',
                 'seo_default_description' => 'توضیحات سایت',
-                'seo_default_keywords' => '',
                 'seo_robots_txt_rules' => "User-agent: *\nAllow: /",
                 'seo_custom_link_tags' => [
                     ['rel' => 'alternate', 'href' => 'javascript:alert(1)'],

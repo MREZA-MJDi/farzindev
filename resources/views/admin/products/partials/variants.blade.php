@@ -13,7 +13,7 @@
                     هر تنوع متعلق به همین محصول است. مشخصات، موجودی، قیمت اضافه و تصاویر همان رنگ را همین‌جا تنظیم کنید؛ تصاویر را لازم نیست از صفحه‌ای جداگانه مدیریت کنید.
                 </p>
             </div>
-            <span class="admin-badge admin-badge-neutral">{{ $allVariants->count() }} تنوع</span>
+            <span class="admin-badge admin-badge-neutral">{{ method_exists($allVariants, 'total') ? $allVariants->total() : $allVariants->count() }} تنوع</span>
         </div>
 
         @if($errors->any())
@@ -50,7 +50,8 @@
         <form method="POST" action="{{ route('admin.products.images.store', $product) }}" enctype="multipart/form-data" class="space-y-4">
             @csrf
             <label class="block text-xs text-[var(--admin-text)]">آپلود تصویر جدید (اختیاری)
-                <input type="file" name="images[]" accept="image/jpeg,image/png,image/webp" multiple class="admin-input mt-2 w-full p-2">
+                <input type="file" name="images[]" accept="image/jpeg,image/png,image/webp" multiple data-image-preview-input data-image-preview-alt-name="images_alt[]" data-image-preview-target="#variant-gallery-upload-preview" data-image-preview-max-files="5" data-image-preview-max-size="10485760" data-image-preview-min-width="800" data-image-preview-min-height="600" class="admin-input mt-2 w-full p-2">
+                <div id="variant-gallery-upload-preview" class="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-4" aria-live="polite"></div>
             </label>
             @if(isset($mediaImages) && $mediaImages->isNotEmpty())
                 <div>
@@ -77,7 +78,7 @@
             <label class="block text-xs text-[var(--admin-text)]">متن جایگزین مشترک (اختیاری)
                 <input name="alt" maxlength="255" value="{{ old('alt') }}" class="admin-input mt-2 w-full" placeholder="{{ $product->name }} - نمای محصول">
             </label>
-            <p class="text-[11px] leading-6 text-[var(--admin-muted)]">JPG، PNG یا WEBP؛ حداقل ۸۰۰×۶۰۰ پیکسل؛ حداکثر ۲۰ مگابایت برای هر فایل و ۱۰ تصویر در هر بار.</p>
+            <p class="text-[11px] leading-6 text-[var(--admin-muted)]">JPG، PNG یا WEBP؛ حداقل ۸۰۰×۶۰۰ پیکسل؛ حداکثر ۱۰ مگابایت برای هر فایل و ۵ تصویر در هر بار.</p>
             @error('images')<p class="text-xs text-red-600">{{ $message }}</p>@enderror
             @error('images.*')<p class="text-xs text-red-600">{{ $message }}</p>@enderror
             @error('media_ids')<p role="alert" class="text-xs text-red-600">{{ $message }}</p>@enderror
@@ -105,6 +106,9 @@
                 </label>
                 <label class="block text-xs text-[var(--admin-text)]">مقدار نمایش‌داده‌شده
                     <input name="value" value="{{ old('value') }}" required maxlength="255" class="admin-input mt-2 w-full" placeholder="مشکی">
+                </label>
+                <label class="block text-xs text-[var(--admin-text)] sm:col-span-2">توضیحات این تنوع (اختیاری)
+                    <textarea name="description" rows="2" maxlength="1200" class="admin-input mt-2 w-full" placeholder="ویژگی ظاهری، جنس یا تفاوت این رنگ/مدل را بنویسید.">{{ old('description') }}</textarea>
                 </label>
                 <label class="block text-xs text-[var(--admin-text)]">کد رنگ (اختیاری)
                     <div class="mt-2 flex gap-2">
@@ -168,9 +172,10 @@
 
             <div class="rounded-xl border border-dashed border-[var(--admin-border)] p-4">
                 <label class="block text-xs font-semibold text-[var(--admin-text)]">آپلود عکس‌های اختصاصی این رنگ (چند فایل)
-                    <input type="file" name="images[]" accept="image/jpeg,image/png,image/webp" multiple class="admin-input mt-2 w-full p-2">
+                    <input type="file" name="images[]" accept="image/jpeg,image/png,image/webp" multiple data-image-preview-input data-image-preview-alt-name="images_alt[]" data-image-preview-target="#variant-create-upload-preview" data-image-preview-max-files="5" data-image-preview-max-size="10485760" data-image-preview-min-width="800" data-image-preview-min-height="600" class="admin-input mt-2 w-full p-2">
+                <div id="variant-create-upload-preview" class="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-4" aria-live="polite"></div>
                 </label>
-                <p class="mt-2 text-[11px] leading-6 text-[var(--admin-muted)]">JPG، PNG یا WEBP؛ هر تصویر حداقل ۸۰۰×۶۰۰ و حداکثر ۲۰ مگابایت. فایل‌ها به همین محصول تعلق دارند و به تنوع متصل می‌شوند.</p>
+                <p class="mt-2 text-[11px] leading-6 text-[var(--admin-muted)]">JPG، PNG یا WEBP؛ هر تصویر حداقل ۸۰۰×۶۰۰ و حداکثر ۱۰ مگابایت. فایل‌ها به همین محصول تعلق دارند و به تنوع متصل می‌شوند.</p>
                 @error('images')<p class="mt-2 text-xs text-red-600">{{ $message }}</p>@enderror
                 @error('images.*')<p class="mt-2 text-xs text-red-600">{{ $message }}</p>@enderror
             </div>
@@ -218,6 +223,9 @@
                     </label>
                     <label class="block text-xs text-[var(--admin-text)]">مقدار نمایش‌داده‌شده
                         <input name="value" value="{{ $variant->value }}" required maxlength="255" class="admin-input mt-2 w-full">
+                    </label>
+                    <label class="block text-xs text-[var(--admin-text)] sm:col-span-2">توضیحات این تنوع (اختیاری)
+                        <textarea name="description" rows="2" maxlength="1200" class="admin-input mt-2 w-full" placeholder="ویژگی ظاهری، جنس یا تفاوت این رنگ/مدل را بنویسید.">{{ old('description', $variant->description) }}</textarea>
                     </label>
                     <label class="block text-xs text-[var(--admin-text)]">کد رنگ
                         <input name="color_hex" value="{{ $variant->color_hex }}" maxlength="20" class="admin-input mt-2 w-full" dir="ltr" placeholder="#202020">
@@ -276,7 +284,8 @@
 
                 <div class="rounded-xl border border-dashed border-[var(--admin-border)] p-4">
                     <label class="block text-xs font-semibold text-[var(--admin-text)]">افزودن عکس‌های جدید برای همین تنوع
-                        <input type="file" name="images[]" accept="image/jpeg,image/png,image/webp" multiple class="admin-input mt-2 w-full p-2">
+                        <input type="file" name="images[]" accept="image/jpeg,image/png,image/webp" multiple data-image-preview-input data-image-preview-alt-name="images_alt[]" data-image-preview-target="#variant-edit-upload-preview-{{ $variant->id }}" data-image-preview-max-files="5" data-image-preview-max-size="10485760" data-image-preview-min-width="800" data-image-preview-min-height="600" class="admin-input mt-2 w-full p-2">
+                <div id="variant-edit-upload-preview-{{ $variant->id }}" class="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-4" aria-live="polite"></div>
                     </label>
                     <p class="mt-2 text-[11px] leading-6 text-[var(--admin-muted)]">تصاویر جدید به محصول اضافه و به این تنوع متصل می‌شوند. تصاویر قبلی را با حذف تیک از اتصال این تنوع خارج کنید؛ فایل اصلی حذف نمی‌شود چون شاید برای رنگ دیگری هم استفاده شود.</p>
                     @error('images')<p class="mt-2 text-xs text-red-600">{{ $message }}</p>@enderror
@@ -307,4 +316,11 @@
             <p class="mt-2 text-xs leading-6 text-[var(--admin-muted)]">فرم بالا را تکمیل کنید تا اولین رنگ، موجودی و تصاویر مربوط به آن اضافه شود.</p>
         </div>
     @endforelse
+
+    @if(method_exists($allVariants, 'hasPages') && $allVariants->hasPages())
+        <div class="admin-card p-4">
+            <p class="mb-3 text-xs text-[var(--admin-muted)]">برای جلوگیری از بارگذاری یک‌باره همه تنوع‌ها، هر صفحه حداکثر ۱۵ تنوع دارد.</p>
+            {{ $allVariants->links() }}
+        </div>
+    @endif
 </div>

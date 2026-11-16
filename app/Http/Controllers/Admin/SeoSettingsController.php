@@ -56,7 +56,6 @@ class SeoSettingsController extends Controller
             'seo_site_name' => ['required', 'string', 'max:100'],
             'seo_default_title' => ['required', 'string', 'max:255'],
             'seo_default_description' => ['required', 'string', 'max:320'],
-            'seo_default_keywords' => ['nullable', 'string', 'max:1000'],
             'seo_home_title' => ['nullable', 'string', 'max:255'],
             'seo_home_description' => ['nullable', 'string', 'max:320'],
             'seo_shop_title' => ['nullable', 'string', 'max:255'],

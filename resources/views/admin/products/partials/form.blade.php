@@ -119,6 +119,8 @@
                 data-image-editor-input
                 data-image-editor-min-width="800"
                 data-image-editor-min-height="600"
+                data-image-editor-max-size="10485760"
+                data-image-editor-max-source-pixels="24000000"
                 accept="image/jpeg,image/png,image/webp"
                 class="admin-input p-2"
             >
@@ -192,8 +194,8 @@
 
             <p class="mt-2 text-xs leading-6 text-[var(--admin-muted)]">
                 {{ $editing
-                    ? 'با انتخاب فایل جدید، همین تصویر اصلی جایگزین می‌شود؛ تصاویر دیگر و اتصال Variantها باقی می‌مانند. حداکثر حجم تصویر ۲۰ مگابایت است.'
-                    : 'تصویر اصلی محصول را انتخاب کنید. فرمت‌های مجاز JPG، PNG و WEBP؛ حداکثر حجم ۲۰ مگابایت.' }}
+                    ? 'با انتخاب فایل جدید، همین تصویر اصلی جایگزین می‌شود؛ تصاویر دیگر و اتصال Variantها باقی می‌مانند. حداکثر حجم تصویر ۱۰ مگابایت است.'
+                    : 'تصویر اصلی محصول را انتخاب کنید. فرمت‌های مجاز JPG، PNG و WEBP؛ حداکثر حجم ۱۰ مگابایت.' }}
             </p>
 
             @error('image')
@@ -1380,13 +1382,6 @@
             const stockInput =
                 document.getElementById('stock');
 
-            const imageInput =
-                document.getElementById('image');
-
-            const imagePreview =
-                document.getElementById('product-image-preview');
-
-
             const enabledInput =
                 document.getElementById('installment_enabled');
 
@@ -1669,95 +1664,6 @@
                 stockInput,
                 false
             );
-
-
-            /*
-            |--------------------------------------------------------------------------
-            | Instant Image Preview
-            |--------------------------------------------------------------------------
-            */
-
-            const imagePlaceholder =
-                document.getElementById('product-image-placeholder');
-
-            if (imageInput && imagePreview) {
-
-                imageInput.addEventListener('change', function () {
-
-                    const file =
-                        imageInput.files?.[0];
-
-                    if (!file || !file.type.startsWith('image/')) {
-                        return;
-                    }
-
-                    const objectUrl =
-                        URL.createObjectURL(file);
-
-                    imagePreview.src =
-                        objectUrl;
-
-                    imagePreview.classList.remove('hidden');
-
-                    if (imagePlaceholder) {
-                        imagePlaceholder.classList.add('hidden');
-                        imagePlaceholder.classList.remove('flex');
-                    }
-
-                    imagePreview.onload =
-                        function () {
-                            URL.revokeObjectURL(objectUrl);
-                        };
-
-                });
-
-            }
-
-
-            /*
-            |--------------------------------------------------------------------------
-            | Installment Status
-            |--------------------------------------------------------------------------
-            */
-
-            function updateInstallmentStatus() {
-
-                if (!enabledInput) {
-                    return;
-                }
-
-
-                const enabled =
-                    enabledInput.checked;
-
-
-                if (settings) {
-
-                    settings.classList.toggle(
-                        'hidden',
-                        !enabled
-                    );
-
-                }
-
-
-                if (statusBadge) {
-
-                    statusBadge.textContent =
-                        enabled
-                            ? 'فعال'
-                            : 'غیرفعال';
-
-                }
-
-
-                if (enabled) {
-
-                    updateInstallmentPreview();
-
-                }
-
-            }
 
 
             /*

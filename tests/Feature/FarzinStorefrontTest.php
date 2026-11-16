@@ -34,6 +34,27 @@ class FarzinStorefrontTest extends TestCase
 
     private ?array $checkoutLocationCache = null;
 
+    public function test_admin_cms_uses_one_paginated_blog_and_slug_workspace(): void
+    {
+        $admin = $this->admin();
+
+        $this->actingAs($admin, 'admin')
+            ->get(route('admin.cms.index', ['tab' => 'blog']))
+            ->assertOk()
+            ->assertSee('مرکز مدیریت محتوای سایت')
+            ->assertSee('مقاله‌ها')
+            ->assertSee('دسته‌ها، برچسب‌ها و اسلاگ‌ها')
+            ->assertDontSee('عبارت کلیدی اصلی');
+
+        $this->actingAs($admin, 'admin')
+            ->get(route('admin.blog-posts.index'))
+            ->assertRedirect(route('admin.cms.index', ['tab' => 'blog']));
+
+        $this->actingAs($admin, 'admin')
+            ->get(route('admin.blog-terms.index'))
+            ->assertRedirect(route('admin.cms.index', ['tab' => 'blog']));
+    }
+
     public function test_product_primary_image_falls_back_when_the_selected_file_is_missing(): void
     {
         Storage::fake('public');
@@ -211,15 +232,13 @@ class FarzinStorefrontTest extends TestCase
 
         $dashboard = $this->get(route('admin.dashboard'))->assertOk();
         $dashboard
-            ->assertSee('مجله و محتوای آموزشی')
-            ->assertSee('تنظیمات و سئو')
-            ->assertSee('ارتباط با کاربران')
-            ->assertSee(route('admin.blog-posts.index'), false)
-            ->assertSee(route('admin.blog-terms.index'), false)
-            ->assertSee(route('admin.blog-appearance.edit'), false)
-            ->assertSee(route('admin.seo-settings.edit'), false)
-            ->assertSee(route('admin.seo-redirects.index'), false)
+            ->assertSee('مدیریت محتوا و سئو')
+            ->assertSee(route('admin.cms.index'), false)
+            ->assertSee(route('admin.products.index'), false)
+            ->assertSee(route('admin.orders.index'), false)
             ->assertSee(route('admin.contact-messages.index'), false)
+            ->assertDontSee(route('admin.blog-posts.index'), false)
+            ->assertDontSee(route('admin.blog-terms.index'), false)
             ->assertDontSee(route('admin.product-images.index'), false)
             ->assertDontSee(route('admin.product-variants.index'), false);
 
@@ -634,7 +653,7 @@ class FarzinStorefrontTest extends TestCase
         $this->assertSame('مهندسی • جزئیات • عملکرد', $copy['page_home_technology_eyebrow']);
     }
 
-    public function test_about_page_uses_dashboard_copy_and_section_visibility(): void
+    public function test_about_page_uses_dashboard_copy_and_keeps_sections_visible(): void
     {
         StorefrontSetting::query()->updateOrCreate(
             ['key' => 'page_about_hero_title'],
@@ -666,12 +685,7 @@ class FarzinStorefrontTest extends TestCase
         $this->get(route('about'))
             ->assertOk()
             ->assertSee('درباره فرجی‌هوم، روایت تازه')
-            ->assertSee('برچسب آزمایشی پرداخت')
-            ->assertSee('عنوان آزمایشی شرایط پرداخت')
-            ->assertSee('توضیح آزمایشی قابل ویرایش از مدیریت')
-            ->assertSee('دکمه آزمایشی')
-            ->assertDontSee('PRODUCT-SPECIFIC TERMS')
-            ->assertDontSee('تمرکز مجموعه فرجی‌هوم.');
+            ->assertSee('خریدی که با نیاز شما شروع می‌شود.');
     }
 
     public function test_auth_and_legal_pages_use_the_farzin_customer_experience(): void
@@ -733,7 +747,7 @@ class FarzinStorefrontTest extends TestCase
             ->assertSee('این متن باید در صفحه عمومی حریم خصوصی نمایش داده شود.');
     }
 
-    public function test_homepage_final_cta_and_typography_controls_are_connected_to_public_output(): void
+    public function test_homepage_copy_is_editable_while_global_layout_remains_fixed(): void
     {
         $admin = $this->admin();
         $defaults = app(\App\Services\StorefrontPageContent::class)->defaults();
@@ -764,23 +778,12 @@ class FarzinStorefrontTest extends TestCase
             ->assertSee('این توضیح از داشبورد عمومی ذخیره می‌شود.')
             ->assertSee('رفتن به کاتالوگ');
 
-        $typographyValues = collect($defaults)
-            ->filter(fn ($value, $key) => str_starts_with($key, 'page_typography_'))
-            ->all();
-        $typographyValues['page_typography_font_scale'] = '105';
-        $typographyValues['page_typography_line_height'] = '1.9';
-        $typographyValues['page_typography_content_width'] = '1360';
-
-        $this->put(route('admin.page-content.update'), array_merge($typographyValues, ['tab' => 'typography']))
-            ->assertRedirect(route('admin.page-content.edit', ['tab' => 'typography']))
-            ->assertSessionHas('success');
-
         $this->get(route('home'))
             ->assertOk()
             ->assertSee('id="storefront-page-typography"', false)
-            ->assertSee('font-size: 105.00%', false)
-            ->assertSee('line-height: 1.90', false)
-            ->assertSee('max-width: 1360px', false);
+            ->assertSee('font-size: 100.00%', false)
+            ->assertSee('line-height: 1.80', false)
+            ->assertSee('max-width: 1280px', false);
     }
 
     public function test_footer_receives_and_displays_the_active_contact_settings(): void
@@ -1117,7 +1120,7 @@ class FarzinStorefrontTest extends TestCase
             ->assertSee('name="page_home_technology_title"', false)
             ->assertSee('name="page_home_technology_body"', false)
             ->assertSee('name="page_home_technology_image"', false)
-            ->assertSee('name="page_home_show_technology"', false)
+            ->assertDontSee('name="page_home_show_technology"', false)
             ->assertDontSee('page_home_hero_image_position')
             ->assertDontSee('نقطه تمرکز تصویر Hero');
 
@@ -1128,7 +1131,7 @@ class FarzinStorefrontTest extends TestCase
             ->assertSee('محصول واقعی پیشنهاد فرجی‌هوم');
     }
 
-    public function test_homepage_content_switches_control_published_products_and_articles(): void
+    public function test_homepage_sections_remain_visible_without_behavior_switches_in_the_cms(): void
     {
         $admin = $this->admin();
         $category = $this->category([
@@ -1155,7 +1158,7 @@ class FarzinStorefrontTest extends TestCase
         $article = \App\Models\BlogPost::create([
             'title' => 'مقاله قابل نمایش در صفحه اصلی',
             'slug' => 'homepage-content-switch-article',
-            'body' => 'محتوای منتشرشده برای بررسی کلید نمایش مجله.',
+            'body' => 'محتوای منتشرشده برای بررسی نمایش ثابت مجله.',
             'status' => 'published',
             'published_at' => now(),
             'is_featured' => true,
@@ -1166,25 +1169,17 @@ class FarzinStorefrontTest extends TestCase
             ->all();
 
         $this->actingAs($admin, 'admin')
-            ->put(route('admin.page-content.update'), array_merge($values, [
-                'tab' => 'home',
-                'page_home_show_products' => '0',
-                'page_home_show_journal' => '0',
-            ]))
-            ->assertRedirect(route('admin.page-content.edit', ['tab' => 'home']))
-            ->assertSessionHas('success');
-
-        $this->get(route('home'))
+            ->get(route('admin.page-content.edit', ['tab' => 'home']))
             ->assertOk()
-            ->assertDontSee('id="fz-home-featured"', false)
-            ->assertDontSee($product->name)
-            ->assertDontSee('class="fz-home-journal"', false)
-            ->assertDontSee($article->title);
+            ->assertDontSee('name="page_home_show_products"', false)
+            ->assertDontSee('name="page_home_show_journal"', false);
 
+        // Legacy clients may still submit old switches. The CMS ignores them
+        // and the storefront keeps its standard sections visible.
         $this->put(route('admin.page-content.update'), array_merge($values, [
             'tab' => 'home',
-            'page_home_show_products' => '1',
-            'page_home_show_journal' => '1',
+            'page_home_show_products' => '0',
+            'page_home_show_journal' => '0',
         ]))
             ->assertRedirect(route('admin.page-content.edit', ['tab' => 'home']))
             ->assertSessionHas('success');
@@ -2784,54 +2779,16 @@ class FarzinStorefrontTest extends TestCase
         $this->assertSame(6, (int) $color->fresh()->stock);
     }
 
-    public function test_admin_dashboard_inventory_metrics_use_variant_stock_when_configured(): void
+    public function test_admin_dashboard_does_not_load_inventory_detail_metrics(): void
     {
         $admin = $this->admin();
-        $category = $this->category(['slug' => 'dashboard-inventory']);
 
-        $availableVariantProduct = $this->product($category, [
-            'name' => 'Dashboard Available Variant',
-            'slug' => 'dashboard-available-variant',
-            'sku' => 'FAR-DASH-VARIANT-AVAILABLE',
-            'stock' => 0,
-        ]);
-        ProductVariant::create([
-            'product_id' => $availableVariantProduct->id,
-            'type' => 'size',
-            'name' => 'سایز',
-            'value' => 'M',
-            'sku' => 'FAR-DASH-VARIANT-AVAILABLE-M',
-            'stock' => 4,
-            'is_active' => true,
-        ]);
-
-        $emptyVariantProduct = $this->product($category, [
-            'name' => 'Dashboard Empty Variant',
-            'slug' => 'dashboard-empty-variant',
-            'sku' => 'FAR-DASH-VARIANT-EMPTY',
-            'stock' => 9,
-        ]);
-        ProductVariant::create([
-            'product_id' => $emptyVariantProduct->id,
-            'type' => 'size',
-            'name' => 'سایز',
-            'value' => 'S',
-            'sku' => 'FAR-DASH-VARIANT-EMPTY-S',
-            'stock' => 0,
-            'is_active' => true,
-        ]);
-
-        $baseStockProduct = $this->product($category, [
-            'name' => 'Dashboard Low Base Stock',
-            'slug' => 'dashboard-low-base-stock',
-            'sku' => 'FAR-DASH-BASE-LOW',
-            'stock' => 2,
-        ]);
-
-        $response = $this->actingAs($admin, 'admin')->get(route('admin.dashboard'))->assertOk();
-
-        $response->assertViewHas('lowStockProducts', 2);
-        $response->assertViewHas('outOfStockProducts', 1);
+        $this->actingAs($admin, 'admin')
+            ->get(route('admin.dashboard'))
+            ->assertOk()
+            ->assertViewMissing('lowStockProducts')
+            ->assertViewMissing('outOfStockProducts')
+            ->assertSee(route('admin.products.index'), false);
     }
 
     public function test_inventory_reservations_are_idempotent_and_released_once(): void
@@ -3349,6 +3306,10 @@ class FarzinStorefrontTest extends TestCase
                     UploadedFile::fake()->image('gallery-front.jpg', 800, 600),
                     UploadedFile::fake()->image('gallery-side.webp', 900, 700),
                 ],
+                'images_alt' => [
+                    'نمای روبه‌روی محصول',
+                    'نمای جانبی محصول',
+                ],
             ])
             ->assertRedirect(route('admin.products.edit', $product))
             ->assertSessionHas('success');
@@ -3357,7 +3318,8 @@ class FarzinStorefrontTest extends TestCase
         $this->assertCount(2, $images);
         $this->assertTrue((bool) $images->first()->is_primary);
         $this->assertFalse((bool) $images->last()->is_primary);
-        $this->assertSame('نمای عمومی محصول', $images->first()->alt);
+        $this->assertSame('نمای روبه‌روی محصول', $images->first()->alt);
+        $this->assertSame('نمای جانبی محصول', $images->last()->alt);
         Storage::disk('public')->assertExists($images->first()->path);
         Storage::disk('public')->assertExists($images->last()->path);
     }
@@ -3616,6 +3578,7 @@ class FarzinStorefrontTest extends TestCase
                 'type' => 'color',
                 'name' => 'رنگ',
                 'value' => 'black',
+                'description' => 'پوشش مشکی مات با قابلیت تمیزکاری آسان',
                 'sku' => 'FAR-VARIANT-SELECTOR-BLACK',
                 'price_adjustment' => 1000000,
                 'stock' => 4,
@@ -3627,6 +3590,11 @@ class FarzinStorefrontTest extends TestCase
             ->assertSessionHas('success');
 
         $variant = $product->allVariants()->firstOrFail();
+        $this->assertSame('پوشش مشکی مات با قابلیت تمیزکاری آسان', $variant->description);
+
+        $this->get(route('product.show', $product->slug))
+            ->assertOk()
+            ->assertSee('پوشش مشکی مات با قابلیت تمیزکاری آسان');
 
         $this->from(route('product.show', $product->slug))
             ->post(route('cart.add', $product), ['quantity' => 1])

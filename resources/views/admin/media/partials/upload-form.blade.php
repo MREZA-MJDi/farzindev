@@ -51,7 +51,7 @@
             </p>
 
             <p class="mt-1 text-[10px] text-[var(--admin-muted)]">
-                تصاویر و اسناد: ۲۰MB · GIF: ۱۰MB · ویدیو: ۳۰MB
+                تصاویر: ۱۰MB · GIF: ۱۰MB · اسناد: ۲۰MB · ویدیو: ۳۰MB
             </p>
 
 

@@ -3,6 +3,7 @@
 use App\Http\Controllers\AccountController;
 use App\Http\Controllers\Admin\AuthController as AdminAuthController;
 use App\Http\Controllers\Admin\ContactMessageController;
+use App\Http\Controllers\Admin\CmsController as AdminCmsController;
 use App\Http\Controllers\Admin\MediaController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CartController;
@@ -423,6 +424,8 @@ Route::prefix(config('farzin.admin_path', 'admin'))
             ->name('logout');
 
         Route::middleware(['auth:admin', 'admin'])->group(function () {
+
+        Route::get('cms', [AdminCmsController::class, 'index'])->name('cms.index');
 
         Route::get(
             'storefront-settings',

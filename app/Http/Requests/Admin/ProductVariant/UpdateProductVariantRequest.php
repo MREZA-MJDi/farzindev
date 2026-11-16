@@ -47,6 +47,12 @@ class UpdateProductVariantRequest extends FormRequest
                     ->ignore($productVariant),
             ],
 
+            'description' => [
+                'nullable',
+                'string',
+                'max:1200',
+            ],
+
             'color_hex' => [
                 'nullable',
                 'string',
@@ -89,15 +95,18 @@ class UpdateProductVariantRequest extends FormRequest
             'images' => [
                 'nullable',
                 'array',
-                'max:10',
+                'max:5',
             ],
 
             'images.*' => [
                 'image',
                 'mimes:jpg,jpeg,png,webp',
                 'dimensions:min_width=800,min_height=600',
-                'max:20480',
+                'max:10240',
             ],
+
+            'images_alt' => ['nullable', 'array', 'max:5'],
+            'images_alt.*' => ['nullable', 'string', 'max:255'],
 
             'sku' => [
                 'nullable',
@@ -167,6 +176,7 @@ class UpdateProductVariantRequest extends FormRequest
             'name.required' => 'نام ویژگی الزامی است.',
             'value.required' => 'مقدار ویژگی الزامی است.',
             'value.unique' => 'این مقدار ویژگی قبلاً برای همین نوع و محصول ثبت شده است.',
+            'description.max' => 'توضیحات تنوع نباید بیشتر از ۱۲۰۰ کاراکتر باشد.',
 
             'color_hex.regex' => 'کد رنگ باید مانند #C8A27A باشد.',
 
@@ -178,11 +188,15 @@ class UpdateProductVariantRequest extends FormRequest
             'media_ids.*.exists' => 'یکی از تصاویر کتابخانه حذف شده یا فرمت آن پشتیبانی نمی‌شود.',
 
             'images.array' => 'تصاویر تنوع باید به‌صورت فهرست ارسال شوند.',
-            'images.max' => 'برای هر رنگ حداکثر ۱۰ تصویر جدید می‌توانید آپلود کنید.',
+            'images.max' => 'برای هر رنگ حداکثر ۵ تصویر جدید می‌توانید آپلود کنید.',
             'images.*.image' => 'فایل‌های انتخاب‌شده باید تصویر باشند.',
             'images.*.mimes' => 'تصاویر باید JPG، PNG یا WEBP باشند.',
             'images.*.dimensions' => 'هر تصویر باید حداقل ۸۰۰ در ۶۰۰ پیکسل باشد.',
-            'images.*.max' => 'حجم هر تصویر نباید بیشتر از ۲۰ مگابایت باشد.',
+            'images.*.max' => 'حجم هر تصویر نباید بیشتر از ۱۰ مگابایت باشد.',
+            'images_alt.array' => 'توضیحات تصاویر باید به‌صورت فهرست ارسال شوند.',
+            'images_alt.max' => 'برای حداکثر ۵ تصویر توضیح جداگانه وارد کنید.',
+            'images_alt.*.string' => 'توضیح هر تصویر باید متنی باشد.',
+            'images_alt.*.max' => 'توضیح هر تصویر نباید بیشتر از ۲۵۵ کاراکتر باشد.',
 
             'sku.unique' => 'این SKU قبلاً استفاده شده است.',
 

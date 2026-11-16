@@ -17,7 +17,10 @@ class ProductionPreflightCommandTest extends TestCase
         chmod($cacheDirectory, 02770);
 
         try {
-            $this->artisan('farzin:preflight')->assertExitCode(0);
+            $this->artisan('farzin:preflight')
+                ->expectsOutputToContain('Laravel storage write access')
+                ->expectsOutputToContain('Storage free space')
+                ->assertExitCode(0);
         } finally {
             chmod($cacheDirectory, $originalPermissions);
         }

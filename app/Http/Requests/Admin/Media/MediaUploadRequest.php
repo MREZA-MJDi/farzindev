@@ -25,19 +25,21 @@ class MediaUploadRequest extends FormRequest
                         return;
                     }
 
-                    $extension = strtolower($value->getClientOriginalExtension());
-                    $limit = match ($extension) {
-                        'gif' => 10 * 1024 * 1024,
-                        'mp4', 'webm' => 30 * 1024 * 1024,
-                        default => 20 * 1024 * 1024,
-                    };
+                    // Determine upload limits from the detected MIME type, not
+                    // the user-controlled original filename extension.
+                    $mime = strtolower((string) $value->getMimeType());
+                    $isImage = str_starts_with($mime, 'image/');
+                    $isVideo = str_starts_with($mime, 'video/');
+                    $limit = $isImage
+                        ? 10 * 1024 * 1024
+                        : ($isVideo ? 30 * 1024 * 1024 : 20 * 1024 * 1024);
 
                     if ($value->getSize() > $limit) {
-                        $fail(match ($extension) {
-                            'gif' => 'حجم GIF نباید بیشتر از ۱۰ مگابایت باشد.',
-                            'mp4', 'webm' => 'حجم ویدیو نباید بیشتر از ۳۰ مگابایت باشد.',
-                            default => 'حجم فایل نباید بیشتر از ۲۰ مگابایت باشد.',
-                        });
+                        $fail($isImage
+                            ? 'حجم تصویر نباید بیشتر از ۱۰ مگابایت باشد.'
+                            : ($isVideo
+                                ? 'حجم ویدیو نباید بیشتر از ۳۰ مگابایت باشد.'
+                                : 'حجم فایل نباید بیشتر از ۲۰ مگابایت باشد.'));
                     }
                 },
             ],
