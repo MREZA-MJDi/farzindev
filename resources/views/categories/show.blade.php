@@ -279,12 +279,14 @@
 
                     @if($products->isNotEmpty())
 
-                        <div class="farzin-category-product-grid mt-8 grid grid-cols-2 gap-x-4 gap-y-10 sm:grid-cols-2 xl:grid-cols-4">
+                        <div class="farzin-shop-product-grid mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
 
                             @foreach($products as $product)
 
                                 <x-product.card
                                     :product="$product"
+                                    :reveal="false"
+                                    variant="catalog"
                                 />
 
                             @endforeach
