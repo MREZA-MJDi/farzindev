@@ -187,6 +187,36 @@
                                     target="_blank"
                                     rel="noopener noreferrer"
                                 >مسیریابی در Google Maps <span aria-hidden="true">↗</span></a>
+
+                                <div class="fz-contact-map-actions mt-3 flex flex-wrap items-center gap-2 text-xs">
+                                    <a
+                                        href="https://maps.google.com/maps?q=35.653810,51.185191&amp;ll=35.653810,51.185191&amp;z=16"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        class="inline-flex items-center gap-1.5 rounded-lg border border-[var(--livora-border)] bg-[var(--livora-white)] px-3 py-1.5 font-medium text-[var(--livora-text)] transition hover:border-[var(--livora-ink)]"
+                                    >
+                                        <span>موقعیت دقیق در گوگل مپ</span>
+                                        <span aria-hidden="true">↗</span>
+                                    </a>
+                                    <a
+                                        href="https://neshan.org/maps/@35.653810,51.185191,16z"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        class="inline-flex items-center gap-1.5 rounded-lg border border-[var(--livora-border)] bg-[var(--livora-white)] px-2.5 py-1.5 font-medium text-[var(--livora-text)] transition hover:border-[var(--livora-ink)]"
+                                    >
+                                        <span>نشان</span>
+                                        <span aria-hidden="true">↗</span>
+                                    </a>
+                                    <a
+                                        href="https://balad.ir/location?latitude=35.653810&amp;longitude=51.185191"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        class="inline-flex items-center gap-1.5 rounded-lg border border-[var(--livora-border)] bg-[var(--livora-white)] px-2.5 py-1.5 font-medium text-[var(--livora-text)] transition hover:border-[var(--livora-ink)]"
+                                    >
+                                        <span>بلد</span>
+                                        <span aria-hidden="true">↗</span>
+                                    </a>
+                                </div>
                             @else
                                 <div class="fz-contact-map-empty" role="status">
                                     <div class="fz-contact-map-empty__rings" aria-hidden="true"><span></span><i></i></div>
@@ -226,64 +256,82 @@
                             </div>
 
                             <div class="fz-contact-channel-grid">
-                                @if($publicPhone)
-                                    <a class="fz-contact-channel" href="{{ $publicPhone['href'] }}">
-                                        <span class="fz-contact-channel__icon" aria-hidden="true">
-                                            <svg viewBox="0 0 24 24" fill="none"><path d="M7 3.8 4.9 5.1c-.8.5-1.1 1.6-.7 2.5 2.4 5.3 6.8 9.7 12.1 12.1.9.4 2 0 2.5-.7l1.3-2.1-4.1-2.5-1.4 1.7a16 16 0 0 1-6.7-6.7l1.7-1.4L7 3.8Z" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                                        </span>
-                                        <span class="fz-contact-channel__copy"><small>تماس تلفنی</small><strong>{{ $contactSetting->phone_label ?: 'تماس مستقیم' }}</strong><em dir="ltr">{{ $publicPhone['display'] }}</em></span>
+                                {{-- مدیریت مجموعه: فرجی --}}
+                                <a class="fz-contact-channel" href="tel:+989126594776">
+                                    <span class="fz-contact-channel__icon" aria-hidden="true">
+                                        <svg viewBox="0 0 24 24" fill="none"><path d="M7 3.8 4.9 5.1c-.8.5-1.1 1.6-.7 2.5 2.4 5.3 6.8 9.7 12.1 12.1.9.4 2 0 2.5-.7l1.3-2.1-4.1-2.5-1.4 1.7a16 16 0 0 1-6.7-6.7l1.7-1.4L7 3.8Z" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                                    </span>
+                                    <span class="fz-contact-channel__copy"><small>مدیریت مجموعه (فرجی)</small><strong>تماس مستقیم</strong><em dir="ltr">۰۹۱۲۶۵۹۴۷۷۶</em></span>
+                                </a>
 
-                                    </a>
-                                @endif
+                                <a class="fz-contact-channel" href="tel:+989128919597">
+                                    <span class="fz-contact-channel__icon" aria-hidden="true">
+                                        <svg viewBox="0 0 24 24" fill="none"><path d="M7 3.8 4.9 5.1c-.8.5-1.1 1.6-.7 2.5 2.4 5.3 6.8 9.7 12.1 12.1.9.4 2 0 2.5-.7l1.3-2.1-4.1-2.5-1.4 1.7a16 16 0 0 1-6.7-6.7l1.7-1.4L7 3.8Z" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                                    </span>
+                                    <span class="fz-contact-channel__copy"><small>مدیریت مجموعه (فرجی)</small><strong>خط دوم مستقیم</strong><em dir="ltr">۰۹۱۲۸۹۱۹۵۹۷</em></span>
+                                </a>
 
-                                @if(filled($contactSetting?->email))
-                                    <a class="fz-contact-channel" href="mailto:{{ $contactSetting->email }}">
-                                        <span class="fz-contact-channel__icon" aria-hidden="true">
-                                            <svg viewBox="0 0 24 24" fill="none"><rect x="3" y="5" width="18" height="14" rx="2.5" stroke="currentColor" stroke-width="1.6"/><path d="m4 7 8 6 8-6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                                        </span>
-                                        <span class="fz-contact-channel__copy"><small>ایمیل</small><strong>{{ $contactSetting->email_label ?: 'ارتباط ایمیلی' }}</strong><em dir="ltr">{{ $contactSetting->email }}</em></span>
+                                {{-- مدیر فروش --}}
+                                <a class="fz-contact-channel" href="tel:+989353411774">
+                                    <span class="fz-contact-channel__icon" aria-hidden="true">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                                    </span>
+                                    <span class="fz-contact-channel__copy"><small>سفارش عمده، تکی و استعلام</small><strong>مدیر فروش</strong><em dir="ltr">۰۹۳۵۳۴۱۱۷۷۴</em></span>
+                                </a>
 
-                                    </a>
-                                @endif
-
-                                @if(! $publicPhone && !filled($contactSetting?->email) && ! $whatsappDigits && !filled($contactSetting?->instagram_url) && !filled($contactSetting?->telegram_url))
-                                    <div class="fz-contact-empty-channel">شماره تماس و ایمیل پس از ثبت در تنظیمات تماس نمایش داده می‌شوند.</div>
-                                @endif
+                                {{-- درگاه پرداخت زرین‌پال --}}
+                                <div class="fz-contact-channel cursor-default">
+                                    <span class="fz-contact-channel__icon !text-amber-600" aria-hidden="true">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/></svg>
+                                    </span>
+                                    <span class="fz-contact-channel__copy"><small>تسویه حساب امن</small><strong>درگاه پرداخت زرین‌پال</strong><em class="!text-emerald-700">پرداخت اینترنتی امن و سریع</em></span>
+                                </div>
                             </div>
 
-                            @if($whatsappDigits || filled($contactSetting?->instagram_url) || filled($contactSetting?->telegram_url))
-                                <div class="fz-contact-social">
-                                    <div class="fz-contact-social__heading">
-                                        <span class="fz-contact-kicker">شبکه‌های اجتماعی</span>
-                                        <h3>در فضای مجازی هم کنار شماییم</h3>
+                            <div class="fz-contact-social">
+                                <div class="fz-contact-social__heading">
+                                    <span class="fz-contact-kicker">شبکه‌های اجتماعی و پیام‌رسان‌ها</span>
+                                    <h3>در فضای مجازی هم کنار شماییم</h3>
+                                </div>
+                                <div class="fz-contact-social__links">
+                                    <a href="https://instagram.com/Faraji_home110" target="_blank" rel="noopener noreferrer" class="fz-contact-social__link fz-contact-social__link--instagram">
+                                        <span aria-hidden="true">◎</span> اینستاگرام (Faraji_home110)
+                                    </a>
+                                    <a href="https://wa.me/989126594776" target="_blank" rel="noopener noreferrer" class="fz-contact-social__link fz-contact-social__link--whatsapp">
+                                        <span aria-hidden="true">W</span> واتساپ (۰۹۱۲۶۵۹۴۷۷۶)
+                                    </a>
+                                    <a href="https://wa.me/989353411774" target="_blank" rel="noopener noreferrer" class="fz-contact-social__link fz-contact-social__link--whatsapp">
+                                        <span aria-hidden="true">W</span> واتساپ فروش (۰۹۳۵۳۴۱۱۷۷۴)
+                                    </a>
+                                </div>
+                            </div>
+
+                            {{-- کارت دسته‌بندی و برندهای تخصصی --}}
+                            <div class="mt-6 rounded-2xl border border-[var(--livora-border)] bg-[var(--livora-surface)] p-5">
+                                <div class="flex items-center justify-between border-b border-[var(--livora-border)]/70 pb-3">
+                                    <div class="flex items-center gap-2">
+                                        <span class="flex h-7 w-7 items-center justify-center rounded-lg bg-[var(--livora-ink)] text-xs text-white">🍳</span>
+                                        <strong class="text-xs font-bold text-[var(--livora-text)]">دسته‌بندی و برندهای تخصصی فرجی‌هوم</strong>
                                     </div>
-                                    <div class="fz-contact-social__links">
-                                        @if($whatsappDigits)
-                                            <a href="https://wa.me/{{ $whatsappDigits }}" target="_blank" rel="noopener noreferrer" class="fz-contact-social__link fz-contact-social__link--whatsapp">
-                                                <span aria-hidden="true">W</span> واتساپ
-                                            </a>
-                                        @endif
-                                        @if(filled($contactSetting?->instagram_url))
-                                            <a href="{{ $contactSetting->instagram_url }}" target="_blank" rel="noopener noreferrer" class="fz-contact-social__link fz-contact-social__link--instagram">
-                                                <span aria-hidden="true">◎</span> اینستاگرام
-                                            </a>
-                                        @endif
-                                        @if(filled($contactSetting?->telegram_url))
-                                            <a href="{{ $contactSetting->telegram_url }}" target="_blank" rel="noopener noreferrer" class="fz-contact-social__link fz-contact-social__link--telegram">
-                                                <span aria-hidden="true">✈</span> تلگرام
-                                            </a>
-                                        @endif
+                                    <span class="inline-flex items-center gap-1 rounded-md bg-emerald-500/10 px-2 py-0.5 text-[10px] font-semibold text-emerald-700">
+                                        درگاه امن زرین‌پال
+                                    </span>
+                                </div>
+                                <div class="mt-3.5 grid gap-2.5 sm:grid-cols-3">
+                                    <div class="rounded-xl border border-[var(--livora-border)] bg-[var(--livora-white)] p-3">
+                                        <span class="block text-[11px] font-bold text-[var(--livora-text)]">۱. هود آشپزخانه</span>
+                                        <span class="mt-1 block text-[10px] text-[var(--livora-stone)]">برند <strong>GIANNO</strong> · برند <strong>SABAS</strong></span>
+                                    </div>
+                                    <div class="rounded-xl border border-[var(--livora-border)] bg-[var(--livora-white)] p-3">
+                                        <span class="block text-[11px] font-bold text-[var(--livora-text)]">۲. اجاق گاز صفحه‌ای</span>
+                                        <span class="mt-1 block text-[10px] text-[var(--livora-stone)]">برند <strong>SABAS</strong></span>
+                                    </div>
+                                    <div class="rounded-xl border border-[var(--livora-border)] bg-[var(--livora-white)] p-3">
+                                        <span class="block text-[11px] font-bold text-[var(--livora-text)]">۳. سینک باکسی</span>
+                                        <span class="mt-1 block text-[10px] text-[var(--livora-stone)]">برند <strong>GIANNO</strong></span>
                                     </div>
                                 </div>
-                            @else
-                                <div class="fz-contact-social fz-contact-social--empty">
-                                    <div class="fz-contact-social__heading">
-                                        <span class="fz-contact-kicker">شبکه‌های اجتماعی</span>
-                                        <h3>شبکه‌های اجتماعی فرجی‌هوم</h3>
-                                        <p>لینک‌های شبکه‌های اجتماعی پس از ثبت در تنظیمات تماس همین‌جا قرار می‌گیرند.</p>
-                                    </div>
-                                </div>
-                            @endif
+                            </div>
                         </section>
 
                         <section class="fz-contact-panel fz-contact-form-panel" id="contact-form" data-fz-reveal aria-labelledby="contact-form-title">

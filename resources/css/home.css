@@ -1974,7 +1974,8 @@ body.home-body{
 
 .farzin-product-card--home-shelf .farzin-product-card__availability::before{ content:none; }
 
-.farzin-product-card--home-shelf .farzin-product-card__availability > span{
+.farzin-product-card--home-shelf .farzin-product-card__availability > span:first-child,
+.farzin-product-card--home-shelf .farzin-product-card__availability-dot{
     display:inline-block;
     flex:0 0 6px;
     width:6px;
@@ -1983,7 +1984,8 @@ body.home-body{
     background:#20a36b;
 }
 
-.farzin-product-card--home-shelf .farzin-product-card__availability.is-unavailable > span{ background:#99a2ae; }
+.farzin-product-card--home-shelf .farzin-product-card__availability.is-unavailable > span:first-child,
+.farzin-product-card--home-shelf .farzin-product-card__availability.is-unavailable .farzin-product-card__availability-dot{ background:#99a2ae; }
 
 /* Editorial industrial Home: rectangular category tiles, one technology feature, one compact product shelf. */
 .fz-home-market{--fz-home-radius:12px}
