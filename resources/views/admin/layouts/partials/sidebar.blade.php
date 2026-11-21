@@ -217,6 +217,18 @@
         </div>
 
 
+        <div class="mb-5">
+            <a href="{{ route('admin.smtp-settings.edit') }}"
+               @class([
+                   'group flex items-center gap-3 rounded-2xl px-3 py-3 text-xs font-semibold transition',
+                   'bg-[var(--admin-accent-soft)] text-[var(--admin-accent-dark)]' => request()->routeIs('admin.smtp-settings.*'),
+                   'text-[var(--admin-text-soft)] hover:bg-[var(--admin-surface)] hover:text-[var(--admin-text)]' => !request()->routeIs('admin.smtp-settings.*'),
+               ])>
+                <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-[var(--admin-surface)]">SMTP</span>
+                <span class="flex-1">تنظیمات ایمیل سازمانی</span>
+            </a>
+        </div>
+
         {{-- Centralized CMS --}}
         <div class="mb-5">
             <a href="{{ route('admin.cms.index') }}"

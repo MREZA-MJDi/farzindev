@@ -2,11 +2,15 @@
 
 namespace App\Providers;
 
+use App\Models\SmtpSetting;
+
 use App\Models\StorefrontSetting;
 use App\Services\StorefrontPageContent;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\View;
+use Illuminate\Support\Facades\Schema;
+use Throwable;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\ServiceProvider;
 
@@ -25,6 +29,35 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        // Apply dashboard-managed SMTP settings to Laravel's mailer at runtime.
+        // Keep .env as the fallback until SMTP is explicitly enabled in admin.
+        try {
+            if (Schema::hasTable('smtp_settings')) {
+                $smtp = SmtpSetting::query()->first();
+
+                if ($smtp?->enabled && filled($smtp->host) && filled($smtp->from_address)) {
+                    config([
+                        'mail.default' => 'smtp',
+                        'mail.mailers.smtp' => [
+                            'transport' => 'smtp',
+                            'host' => $smtp->host,
+                            'port' => $smtp->port,
+                            'scheme' => $smtp->encryption === 'ssl' ? 'smtps' : 'smtp',
+                            'auto_tls' => $smtp->encryption !== 'none',
+                            'username' => $smtp->username,
+                            'password' => $smtp->password,
+                            'timeout' => 15,
+                            'local_domain' => parse_url((string) config('app.url'), PHP_URL_HOST),
+                        ],
+                        'mail.from.address' => $smtp->from_address,
+                        'mail.from.name' => $smtp->from_name ?: config('app.name'),
+                    ]);
+                }
+            }
+        } catch (Throwable $exception) {
+            report($exception);
+        }
+
         // Keep default Laravel pagination calls consistent across admin and storefront.
         Paginator::defaultView('vendor.pagination.farzin');
         Paginator::defaultSimpleView('vendor.pagination.farzin-simple');

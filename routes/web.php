@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\SmtpSettingsController;
 use App\Http\Controllers\AccountController;
 use App\Http\Controllers\Admin\AuthController as AdminAuthController;
 use App\Http\Controllers\Admin\ContactMessageController;
@@ -424,6 +425,10 @@ Route::prefix(config('farzin.admin_path', 'admin'))
             ->name('logout');
 
         Route::middleware(['auth:admin', 'admin'])->group(function () {
+
+        Route::get('smtp-settings', [SmtpSettingsController::class, 'edit'])->name('smtp-settings.edit');
+        Route::put('smtp-settings', [SmtpSettingsController::class, 'update'])->name('smtp-settings.update');
+        Route::post('smtp-settings/test', [SmtpSettingsController::class, 'test'])->middleware('throttle:5,1')->name('smtp-settings.test');
 
         Route::get('cms', [AdminCmsController::class, 'index'])->name('cms.index');
 
