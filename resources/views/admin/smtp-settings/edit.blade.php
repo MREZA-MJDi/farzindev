@@ -17,6 +17,39 @@
         </div>
     @endif
 
+
+    <section class="rounded-2xl border border-[var(--admin-border)] bg-[var(--admin-white)] p-5 shadow-sm sm:p-7">
+        <div class="flex flex-wrap items-start justify-between gap-3">
+            <div>
+                <h2 class="text-base font-bold text-[var(--admin-text)]">ایجاد صندوق ایمیل این پروژه</h2>
+                <p class="mt-1 text-xs leading-6 text-[var(--admin-muted)]">صندوق مستقیماً در زیرساخت مرکزی VPS ساخته می‌شود؛ دامنه این پروژه از سمت سرور محدود شده است.</p>
+            </div>
+            @if($settings->mailbox_address)
+                <span class="rounded-full bg-emerald-50 px-3 py-2 text-xs font-bold text-emerald-800">صندوق ساخته شده</span>
+            @endif
+        </div>
+        @if($settings->mailbox_address)
+            <div class="mt-4 rounded-xl bg-[var(--admin-surface)] p-4 text-sm" dir="ltr">
+                <strong>{{ $settings->mailbox_address }}</strong>
+                <p class="mt-2 text-xs text-[var(--admin-muted)]" dir="rtl">اطلاعات ورود و رمز قابل نمایش/کپی در بخش تنظیمات SMTP و IMAP همین صفحه است.</p>
+            </div>
+        @else
+            <form method="POST" action="{{ route('admin.smtp-settings.mailbox.create') }}" class="mt-4 grid gap-3 sm:grid-cols-[1fr_150px_auto] sm:items-end">
+                @csrf
+                <label class="block text-sm font-medium">نام صندوق
+                    <div class="mt-2 flex items-center rounded-xl border border-[var(--admin-border)] bg-white px-3" dir="ltr">
+                        <input name="local_part" value="{{ old('local_part', 'info') }}" required maxlength="64" pattern="[a-z0-9][a-z0-9._+-]{0,63}" class="min-w-0 flex-1 border-0 bg-transparent py-3 text-sm outline-none" autocomplete="off">
+                        <span class="shrink-0 text-xs text-[var(--admin-muted)]">@{{ config('mail-provider.domain') }}</span>
+                    </div>
+                </label>
+                <label class="block text-sm font-medium">ظرفیت صندوق (MB)
+                    <input type="number" name="quota_mb" min="64" max="4096" value="{{ config('mail-provider.quota_mb', 512) }}" class="mt-2 w-full rounded-xl border border-[var(--admin-border)] bg-white px-3 py-3 text-sm" dir="ltr">
+                </label>
+                <button type="submit" class="rounded-xl bg-[var(--admin-accent)] px-5 py-3 text-sm font-bold text-white">ایجاد ایمیل</button>
+            </form>
+        @endif
+    </section>
+
     <form method="POST" enctype="multipart/form-data" action="{{ route('admin.smtp-settings.update') }}" class="space-y-6 rounded-2xl border border-[var(--admin-border)] bg-[var(--admin-white)] p-5 shadow-sm sm:p-7">
         @csrf
         @method('PUT')
@@ -129,6 +162,26 @@
             <button type="submit" class="rounded-xl bg-[var(--admin-text)] px-6 py-3 text-sm font-bold text-white hover:opacity-90">ذخیره همه تنظیمات</button>
         </div>
     </form>
+
+
+    <section class="rounded-2xl border border-[var(--admin-border)] bg-[var(--admin-white)] p-5 shadow-sm sm:p-7">
+        <h2 class="text-base font-bold text-[var(--admin-text)]">فایل تأیید مالکیت اینماد</h2>
+        <p class="mt-1 text-xs leading-6 text-[var(--admin-muted)]">فایل متنی infor را بارگذاری کن تا مستقیماً در ریشه عمومی سایت و در نشانی /infor قرار بگیرد؛ نه داخل storage یا پوشه رسانه‌ها.</p>
+        @if($inforFileExists)
+            <p class="mt-3 text-xs font-semibold text-emerald-700">فایل فعلی موجود است:
+                <a href="{{ url('/infor') }}" target="_blank" rel="noopener noreferrer" class="underline" dir="ltr">{{ url('/infor') }}</a>
+            </p>
+        @else
+            <p class="mt-3 text-xs text-[var(--admin-muted)]">هنوز فایل تأیید در ریشه سایت قرار نگرفته است.</p>
+        @endif
+        <form method="POST" enctype="multipart/form-data" action="{{ route('admin.smtp-settings.infor.upload') }}" class="mt-4 flex flex-col gap-3 sm:flex-row sm:items-end">
+            @csrf
+            <label class="min-w-0 flex-1 text-sm font-medium">انتخاب فایل infor (حداکثر ۲۵۶ کیلوبایت)
+                <input type="file" name="verification_file" required accept=".txt,text/plain" class="mt-2 block w-full rounded-xl border border-[var(--admin-border)] bg-white px-3 py-3 text-sm">
+            </label>
+            <button type="submit" class="rounded-xl border border-[var(--admin-border)] px-5 py-3 text-sm font-bold">بارگذاری در ریشه سایت</button>
+        </form>
+    </section>
 
     <div class="grid gap-5 lg:grid-cols-2">
         <form method="POST" action="{{ route('admin.smtp-settings.test') }}" class="rounded-2xl border border-[var(--admin-border)] bg-[var(--admin-white)] p-5 shadow-sm">
