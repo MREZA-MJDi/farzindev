@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\SmtpSetting;
+use App\Services\Mail\ImapInboxReader;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Client\Request as ClientRequest;
 use Illuminate\Http\UploadedFile;
