@@ -49,7 +49,7 @@ Set these values in the project's server-side `.env` (never commit real tokens):
 
 - `MAIL_PROVIDER_API_URL`: provider origin, without `/api/v1`.
 - `MAIL_PROVIDER_API_TOKEN`: unique token scoped to this project's domain.
-- `MAIL_PROVIDER_farajihome.com`: the exact project domain.
+- `MAIL_PROVIDER_DOMAIN`: the exact project domain.
 - `MAIL_PROVIDER_SMTP_HOST`, `MAIL_PROVIDER_SMTP_PORT`, `MAIL_PROVIDER_SMTP_ENCRYPTION`.
 - `MAIL_PROVIDER_IMAP_HOST`, `MAIL_PROVIDER_IMAP_PORT`, `MAIL_PROVIDER_IMAP_ENCRYPTION`.
 
