@@ -53,7 +53,7 @@ Set these values in the project's server-side `.env` (never commit real tokens):
 - `MAIL_PROVIDER_SMTP_HOST`, `MAIL_PROVIDER_SMTP_PORT`, `MAIL_PROVIDER_SMTP_ENCRYPTION`.
 - `MAIL_PROVIDER_IMAP_HOST`, `MAIL_PROVIDER_IMAP_PORT`, `MAIL_PROVIDER_IMAP_ENCRYPTION`.
 
-The API URL must use HTTPS in production. The generated mailbox password is stored only in the existing encrypted SMTP/IMAP password columns.
+When the provider and Laravel application share this VPS, bind the API to loopback only (for example, `http://127.0.0.1:8091`) and do not expose that port publicly. For a remote provider, use HTTPS in production. The generated mailbox password is stored only in the existing encrypted SMTP/IMAP password columns.
 
 ## IMAP runtime
 
