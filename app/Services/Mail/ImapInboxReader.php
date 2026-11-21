@@ -81,6 +81,41 @@ class ImapInboxReader
         }
     }
 
+    private function fetchTextBody($connection, int $messageNumber, object $structure, string $partNumber = ''): string
+    {
+        if (! empty($structure->parts)) {
+            $chunks = [];
+            foreach ($structure->parts as $index => $part) {
+                $number = $partNumber === '' ? (string) ($index + 1) : $partNumber.'.'.($index + 1);
+                if ((int) ($part->type ?? -1) === 0) {
+                    $content = (string) @imap_fetchbody($connection, $messageNumber, $number, FT_PEEK);
+                    $encoding = (int) ($part->encoding ?? 0);
+                    if ($encoding === 3) {
+                        $content = base64_decode($content, true) ?: '';
+                    } elseif ($encoding === 4) {
+                        $content = quoted_printable_decode($content);
+                    }
+                    $chunks[] = $content;
+                } elseif (! empty($part->parts)) {
+                    $chunks[] = $this->fetchTextBody($connection, $messageNumber, $part, $number);
+                }
+            }
+            return implode("\\n", $chunks);
+        }
+
+        $content = $partNumber === ''
+            ? (string) @imap_body($connection, $messageNumber, FT_PEEK)
+            : (string) @imap_fetchbody($connection, $messageNumber, $partNumber, FT_PEEK);
+        $encoding = (int) ($structure->encoding ?? 0);
+        if ($encoding === 3) {
+            return base64_decode($content, true) ?: '';
+        }
+        if ($encoding === 4) {
+            return quoted_printable_decode($content);
+        }
+        return $content;
+    }
+
     private function decodeHeader(string $value): string
     {
         if (! function_exists('imap_mime_header_decode')) {
