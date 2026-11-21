@@ -24,6 +24,18 @@ class MailProviderClient
             throw new RuntimeException('اتصال سرویس مرکزی ایمیل هنوز روی سرور تنظیم نشده است.');
         }
 
+        $scheme = strtolower((string) parse_url($baseUrl, PHP_URL_SCHEME));
+        $providerHost = strtolower((string) parse_url($baseUrl, PHP_URL_HOST));
+        $isLoopback = in_array($providerHost, ['127.0.0.1', 'localhost', '::1'], true);
+
+        if ($scheme !== 'https' && ! $isLoopback) {
+            throw new RuntimeException('نشانی سرویس مرکزی ایمیل باید در محیط عملیاتی از HTTPS استفاده کند.');
+        }
+
+        if (! preg_match('/^[a-z0-9][a-z0-9._+-]{0,63}$/', $localPart)) {
+            throw new RuntimeException('نام صندوق ایمیل معتبر نیست.');
+        }
+
         $email = strtolower($localPart).'@'.$domain;
         if (! filter_var($email, FILTER_VALIDATE_EMAIL)) {
             throw new RuntimeException('آدرس ایمیل انتخاب‌شده معتبر نیست.');
