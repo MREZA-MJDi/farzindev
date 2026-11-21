@@ -27,7 +27,7 @@ class ImapInboxReader
 
         $encryption = match ($settings->imap_encryption) {
             'tls' => 'tls',
-            'none' => null,
+            'none' => '',
             default => 'ssl',
         };
 
@@ -46,15 +46,15 @@ class ImapInboxReader
                         'username' => $username,
                         'password' => (string) $password,
                         'timeout' => 15,
-                        'options' => [
-                            'fetch' => IMAP::FT_PEEK,
-                            'sequence' => IMAP::ST_MSGN,
-                            'fetch_body' => true,
-                            'fetch_flags' => false,
-                            'fetch_order' => 'desc',
-                            'soft_fail' => false,
-                        ],
                     ],
+                ],
+                'options' => [
+                    'fetch' => IMAP::FT_PEEK,
+                    'sequence' => IMAP::ST_MSGN,
+                    'fetch_body' => true,
+                    'fetch_flags' => false,
+                    'fetch_order' => 'desc',
+                    'soft_fail' => false,
                 ],
             ]))->account();
 
