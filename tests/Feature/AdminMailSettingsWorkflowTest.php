@@ -72,12 +72,13 @@ class AdminMailSettingsWorkflowTest extends TestCase
 
         try {
             $this->post(route('admin.smtp-settings.infor.upload'), [
-                'verification_file' => UploadedFile::fake()->create('infor', 1, 'text/plain'),
+                'verification_file' => UploadedFile::fake()->createWithContent('infor', 'test-verification-token'),
             ])->assertRedirect()
                 ->assertSessionHas('success');
 
             $this->assertFileExists($path);
-            $this->assertSame(url('/infor'), url('/infor'));
+            $this->assertSame('test-verification-token', file_get_contents($path));
+            $this->assertTrue(str_contains(session('success'), url('/infor')));
         } finally {
             if ($hadExistingFile) {
                 file_put_contents($path, $existingContents);
