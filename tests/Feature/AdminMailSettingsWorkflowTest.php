@@ -62,6 +62,26 @@ class AdminMailSettingsWorkflowTest extends TestCase
         });
     }
 
+
+    public function test_enamad_code_extraction_supports_persian_and_arabic_digits(): void
+    {
+        $reader = new ImapInboxReader();
+
+        $this->assertSame(
+            '123456',
+            $reader->extractVerificationCode('no-reply@enamad.ir', 'کد تأیید', 'کد شما: ۱۲۳۴۵۶')
+        );
+
+        $this->assertSame(
+            '654321',
+            $reader->extractVerificationCode('no-reply@enamad.ir', 'Verification code', '654321')
+        );
+
+        $this->assertNull(
+            $reader->extractVerificationCode('orders@example.com', 'Order shipped', 'Your reference is 123456')
+        );
+    }
+
     public function test_infor_verification_file_is_written_to_the_public_document_root(): void
     {
         $this->withoutMiddleware();
