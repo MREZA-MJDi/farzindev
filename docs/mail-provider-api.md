@@ -54,3 +54,7 @@ Set these values in the project's server-side `.env` (never commit real tokens):
 - `MAIL_PROVIDER_IMAP_HOST`, `MAIL_PROVIDER_IMAP_PORT`, `MAIL_PROVIDER_IMAP_ENCRYPTION`.
 
 The API URL must use HTTPS in production. The generated mailbox password is stored only in the existing encrypted SMTP/IMAP password columns.
+
+## IMAP runtime
+
+Inbox reading uses the pure-PHP `webklex/php-imap` 6.2 client. The server does not need the removed native PHP `ext-imap` extension; PHP OpenSSL, mbstring, iconv, fileinfo, libxml, and zip support are required.
