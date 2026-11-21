@@ -39,7 +39,7 @@
                 <label class="block text-sm font-medium">نام صندوق
                     <div class="mt-2 flex items-center rounded-xl border border-[var(--admin-border)] bg-white px-3" dir="ltr">
                         <input name="local_part" value="{{ old('local_part', 'info') }}" required maxlength="64" pattern="[a-z0-9][a-z0-9._+-]{0,63}" class="min-w-0 flex-1 border-0 bg-transparent py-3 text-sm outline-none" autocomplete="off">
-                        <span class="shrink-0 text-xs text-[var(--admin-muted)]">@{{ config('mail-provider.domain') }}</span>
+                        <span class="shrink-0 text-xs text-[var(--admin-muted)]">{{ config('mail-provider.domain') }}</span>
                     </div>
                 </label>
                 <label class="block text-sm font-medium">ظرفیت صندوق (MB)
