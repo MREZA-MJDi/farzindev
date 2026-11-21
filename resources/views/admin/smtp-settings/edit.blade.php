@@ -149,10 +149,10 @@
         </form>
     </div>
 
-    @if(session()->has('inboxMessages'))
+    @if(session()->has('enamadInboxMessages'))
         <section class="rounded-2xl border border-[var(--admin-border)] bg-[var(--admin-white)] p-5 shadow-sm">
             <h2 class="text-base font-bold text-[var(--admin-text)]">نتیجه بررسی ایمیل‌های اینماد</h2>
-            @forelse(session('inboxMessages', []) as $message)
+            @forelse(session('enamadInboxMessages', []) as $message)
                 <article class="mt-4 rounded-xl border border-[var(--admin-border)] p-4">
                     <div class="flex flex-wrap items-start justify-between gap-3">
                         <div class="min-w-0">
