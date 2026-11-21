@@ -128,8 +128,9 @@ class SmtpSettingsController extends Controller
             return back()->withErrors(['imap' => $exception->getMessage()]);
         }
 
+        session()->put('enamadInboxMessages', $messages);
+
         return back()
-            ->with('inboxMessages', $messages)
             ->with('success', count($messages) ? 'ایمیل‌های مرتبط با اینماد دریافت شدند.' : 'ایمیل مرتبط با اینماد در پیام‌های اخیر پیدا نشد.');
     }
 
