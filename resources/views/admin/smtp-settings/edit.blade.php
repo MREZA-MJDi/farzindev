@@ -149,10 +149,10 @@
         </form>
     </div>
 
-    @if(session()->has('enamadInboxMessages'))
-        <section class="rounded-2xl border border-[var(--admin-border)] bg-[var(--admin-white)] p-5 shadow-sm">
-            <h2 class="text-base font-bold text-[var(--admin-text)]">نتیجه بررسی ایمیل‌های اینماد</h2>
-            @forelse(session('enamadInboxMessages', []) as $message)
+    <section id="enamad-inbox-results" class="rounded-2xl border border-[var(--admin-border)] bg-[var(--admin-white)] p-5 shadow-sm">
+            <div class="flex flex-wrap items-center justify-between gap-2"><h2 class="text-base font-bold text-[var(--admin-text)]">نتیجه بررسی ایمیل‌های اینماد</h2><span id="enamad-inbox-sync-time" class="text-xs text-[var(--admin-muted)]">{{ $inboxLastSync ? 'آخرین بررسی: '.\\Illuminate\\Support\\Carbon::parse($inboxLastSync)->format('Y/m/d H:i') : 'هنوز بررسی خودکاری انجام نشده است' }}</span></div>
+            <p id="enamad-inbox-error" class="mt-2 text-xs text-rose-600">{{ $inboxLastError }}</p>
+            @forelse($inboxMessages as $message)
                 <article class="mt-4 rounded-xl border border-[var(--admin-border)] p-4">
                     <div class="flex flex-wrap items-start justify-between gap-3">
                         <div class="min-w-0">
@@ -173,7 +173,6 @@
                 <p class="mt-3 text-sm text-[var(--admin-muted)]">پیام مرتبطی در ایمیل‌های اخیر پیدا نشد.</p>
             @endforelse
         </section>
-    @endif
 </div>
 
 <script>
@@ -206,5 +205,47 @@ document.addEventListener('click', async (event) => {
         }
     }
 });
+
+<script>
+(() => {
+    const endpoint = @json(route('admin.smtp-settings.inbox.status'));
+    const container = document.querySelector('#enamad-inbox-results');
+    const time = document.getElementById('enamad-inbox-sync-time');
+    const error = document.getElementById('enamad-inbox-error');
+    if (!container || !endpoint) return;
+    const render = (messages) => {
+        container.querySelectorAll('[data-inbox-message]').forEach(node => node.remove());
+        const empty = container.querySelector('[data-inbox-empty]');
+        if (empty) empty.remove();
+        if (!messages.length) {
+            const p = document.createElement('p'); p.dataset.inboxEmpty = '1'; p.className = 'mt-3 text-sm text-[var(--admin-muted)]'; p.textContent = 'پیام مرتبطی در ایمیل‌های اخیر پیدا نشد.'; container.appendChild(p); return;
+        }
+        messages.forEach(message => {
+            const article = document.createElement('article'); article.dataset.inboxMessage = '1'; article.className = 'mt-4 rounded-xl border border-[var(--admin-border)] p-4';
+            const top = document.createElement('div'); top.className = 'flex flex-wrap items-start justify-between gap-3';
+            const meta = document.createElement('div'); meta.className = 'min-w-0';
+            const subject = document.createElement('p'); subject.className = 'break-all text-xs font-semibold text-[var(--admin-text)]'; subject.textContent = message.subject || 'بدون عنوان';
+            const from = document.createElement('p'); from.className = 'mt-1 break-all text-[11px] text-[var(--admin-muted)]'; from.textContent = (message.from || '') + ' · ' + (message.date || '');
+            meta.append(subject, from); top.appendChild(meta);
+            if (message.code) {
+                const codeWrap = document.createElement('div'); codeWrap.className = 'flex items-center gap-2 rounded-lg bg-emerald-50 px-3 py-2';
+                const code = document.createElement('strong'); code.className = 'font-mono text-lg tracking-widest text-emerald-800'; code.dir = 'ltr'; code.textContent = message.code;
+                const copy = document.createElement('button'); copy.type = 'button'; copy.dataset.copyValue = message.code; copy.className = 'text-xs font-bold text-emerald-800'; copy.textContent = 'کپی کد'; codeWrap.append(code, copy); top.appendChild(codeWrap);
+            } else { const noCode = document.createElement('span'); noCode.className = 'text-xs text-[var(--admin-muted)]'; noCode.textContent = 'کد مشخصی استخراج نشد'; top.appendChild(noCode); }
+            article.appendChild(top); container.appendChild(article);
+        });
+    };
+    const refresh = async () => {
+        try {
+            const response = await fetch(endpoint, {headers: {'Accept': 'application/json'}, credentials: 'same-origin'});
+            if (!response.ok) return;
+            const data = await response.json(); render(data.messages || []);
+            if (time && data.last_sync) time.textContent = 'آخرین بررسی: ' + new Date(data.last_sync).toLocaleString('fa-IR');
+            if (error) error.textContent = data.error || '';
+        } catch (_) { /* Keep the last successfully rendered inbox visible. */ }
+    };
+    window.setInterval(refresh, 60000);
+})();
+</script>
 </script>
 @endsection
