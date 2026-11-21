@@ -25,6 +25,9 @@ class SmtpSettingsController extends Controller
             'hasPassword' => filled($settings->password),
             'mailboxPassword' => $settings->imap_password ?: $settings->password,
             'trustBadgeImagePath' => $this->trustBadgeImagePath(),
+            'inboxMessages' => cache()->get('enamad.inbox.latest', []),
+            'inboxLastSync' => cache()->get('enamad.inbox.last_sync'),
+            'inboxLastError' => cache()->get('enamad.inbox.last_error'),
         ]);
     }
 
@@ -128,10 +131,22 @@ class SmtpSettingsController extends Controller
             return back()->withErrors(['imap' => $exception->getMessage()]);
         }
 
-        session()->put('enamadInboxMessages', $messages);
+        cache()->put('enamad.inbox.latest', $messages, now()->addDays(7));
+        cache()->put('enamad.inbox.last_sync', now()->toIso8601String(), now()->addDays(7));
+        cache()->forget('enamad.inbox.last_error');
 
         return back()
             ->with('success', count($messages) ? 'ایمیل‌های مرتبط با اینماد دریافت شدند.' : 'ایمیل مرتبط با اینماد در پیام‌های اخیر پیدا نشد.');
+    }
+
+
+    public function inboxStatus(): \\Illuminate\\Http\\JsonResponse
+    {
+        return response()->json([
+            'messages' => cache()->get('enamad.inbox.latest', []),
+            'last_sync' => cache()->get('enamad.inbox.last_sync'),
+            'error' => cache()->get('enamad.inbox.last_error'),
+        ]);
     }
 
     private function trustBadgeImagePath(): ?string
