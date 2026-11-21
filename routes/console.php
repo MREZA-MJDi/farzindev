@@ -30,7 +30,7 @@ Artisan::command('enamad:inbox-sync', function (\App\Services\Mail\ImapInboxRead
         return 0;
     } catch (\Throwable $exception) {
         report($exception);
-        cache()->put('enamad.inbox.last_error', 'خواندن صندوق ناموفق بود؛ تنظیمات IMAP و افزونه PHP IMAP را بررسی کنید.', now()->addHours(6));
+        cache()->put('enamad.inbox.last_error', 'خواندن صندوق ناموفق بود؛ تنظیمات IMAP و پیکربندی اتصال IMAP و گواهی TLS را بررسی کنید.', now()->addHours(6));
         $this->error('خواندن صندوق اینماد ناموفق بود.');
         return 1;
     }
