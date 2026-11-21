@@ -52,7 +52,10 @@ class ImapInboxReader
 
                 $from = $this->decodeHeader((string) ($overview->from ?? ''));
                 $subject = $this->decodeHeader((string) ($overview->subject ?? ''));
-                $rawBody = (string) @imap_body($connection, (int) $number, FT_PEEK);
+                $structure = imap_fetchstructure($connection, (int) $number);
+                $rawBody = $structure
+                    ? $this->fetchTextBody($connection, (int) $number, $structure)
+                    : (string) @imap_body($connection, (int) $number, FT_PEEK);
                 $body = trim(preg_replace('/\s+/u', ' ', strip_tags($rawBody)) ?? '');
 
                 $isEnamad = preg_match('/enamad|اینماد|نماد اعتماد/i', $from.' '.$subject.' '.$body) === 1;
