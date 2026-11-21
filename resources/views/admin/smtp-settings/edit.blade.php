@@ -153,7 +153,7 @@
             <div class="flex flex-wrap items-center justify-between gap-2"><h2 class="text-base font-bold text-[var(--admin-text)]">نتیجه بررسی ایمیل‌های اینماد</h2><span id="enamad-inbox-sync-time" class="text-xs text-[var(--admin-muted)]">{{ $inboxLastSync ? 'آخرین بررسی: '.\Illuminate\Support\Carbon::parse($inboxLastSync)->format('Y/m/d H:i') : 'هنوز بررسی خودکاری انجام نشده است' }}</span></div>
             <p id="enamad-inbox-error" class="mt-2 text-xs text-rose-600">{{ $inboxLastError }}</p>
             @forelse($inboxMessages as $message)
-                <article class="mt-4 rounded-xl border border-[var(--admin-border)] p-4">
+                <article data-inbox-message="1" class="mt-4 rounded-xl border border-[var(--admin-border)] p-4">
                     <div class="flex flex-wrap items-start justify-between gap-3">
                         <div class="min-w-0">
                             <p class="break-all text-xs font-semibold text-[var(--admin-text)]">{{ $message['subject'] ?: 'بدون عنوان' }}</p>
@@ -170,7 +170,7 @@
                     </div>
                 </article>
             @empty
-                <p class="mt-3 text-sm text-[var(--admin-muted)]">پیام مرتبطی در ایمیل‌های اخیر پیدا نشد.</p>
+                <p data-inbox-empty="1" class="mt-3 text-sm text-[var(--admin-muted)]">پیام مرتبطی در ایمیل‌های اخیر پیدا نشد.</p>
             @endforelse
         </section>
 </div>
