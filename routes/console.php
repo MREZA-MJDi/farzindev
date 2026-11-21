@@ -18,7 +18,7 @@ Artisan::command('enamad:inbox-sync', function (\App\Services\Mail\ImapInboxRead
     $settings = \App\Models\SmtpSetting::current();
     if (! $settings->enabled || blank($settings->imap_host ?: $settings->host) || blank($settings->imap_username ?: $settings->username) || blank($settings->imap_password ?: $settings->password)) {
         $this->comment('صندوق IMAP هنوز تنظیم نشده است؛ دریافت خودکار فعلاً رد شد.');
-        return self::SUCCESS;
+        return 0;
     }
 
     try {
@@ -27,12 +27,12 @@ Artisan::command('enamad:inbox-sync', function (\App\Services\Mail\ImapInboxRead
         cache()->put('enamad.inbox.last_sync', now()->toIso8601String(), now()->addDays(7));
         cache()->forget('enamad.inbox.last_error');
         $this->info('صندوق اینماد بررسی شد؛ '.count($messages).' پیام مرتبط یافت شد.');
-        return self::SUCCESS;
+        return 0;
     } catch (\Throwable $exception) {
         report($exception);
         cache()->put('enamad.inbox.last_error', 'خواندن صندوق ناموفق بود؛ تنظیمات IMAP و افزونه PHP IMAP را بررسی کنید.', now()->addHours(6));
         $this->error('خواندن صندوق اینماد ناموفق بود.');
-        return self::FAILURE;
+        return 1;
     }
 })->purpose('Read recent Enamad verification emails into the admin dashboard');
 
