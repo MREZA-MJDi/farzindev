@@ -225,7 +225,7 @@
                    'text-[var(--admin-text-soft)] hover:bg-[var(--admin-surface)] hover:text-[var(--admin-text)]' => !request()->routeIs('admin.smtp-settings.*'),
                ])>
                 <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-[var(--admin-surface)]">SMTP</span>
-                <span class="flex-1">تنظیمات ایمیل سازمانی</span>
+                <span class="flex-1">ایمیل و نماد اعتماد</span>
             </a>
         </div>
 
