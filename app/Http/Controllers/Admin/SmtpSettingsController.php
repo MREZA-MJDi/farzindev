@@ -140,7 +140,7 @@ class SmtpSettingsController extends Controller
     }
 
 
-    public function inboxStatus(): \\Illuminate\\Http\\JsonResponse
+    public function inboxStatus(): \Illuminate\Http\JsonResponse
     {
         return response()->json([
             'messages' => cache()->get('enamad.inbox.latest', []),
