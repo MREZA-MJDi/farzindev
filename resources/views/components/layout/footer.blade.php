@@ -37,8 +37,8 @@
                         @if($footerBale !== '')<a href="{{ $footerBale }}" target="_blank" rel="noopener noreferrer">بله</a>@endif
                     </div>
                 @endif
-                @if($footerEnamad !== '')
-                    <a class="fz-store-footer__trust-link mt-4 inline-flex min-h-20 items-center justify-center rounded-xl border border-[var(--admin-border)] bg-white p-2" href="{{ $footerEnamad }}" target="_blank" rel="noopener noreferrer" aria-label="استعلام نماد اعتماد الکترونیکی">
+                @if($footerEnamad !== '' || $footerEnamadImagePath)
+                    <a class="fz-store-footer__trust-link mt-4 inline-flex min-h-20 items-center justify-center rounded-xl border border-[var(--admin-border)] bg-white p-2" href="{{ $footerEnamad ?: '#' }}" @if($footerEnamad) target="_blank" @endif rel="noopener noreferrer" aria-label="استعلام نماد اعتماد الکترونیکی">
                         @if($footerEnamadImagePath && \Illuminate\Support\Facades\Storage::disk('public')->exists($footerEnamadImagePath))
                             <img src="{{ \Illuminate\Support\Facades\Storage::disk('public')->url($footerEnamadImagePath) }}" alt="نماد اعتماد الکترونیکی" width="92" height="92" loading="lazy" decoding="async" class="h-20 w-20 object-contain">
                         @else
