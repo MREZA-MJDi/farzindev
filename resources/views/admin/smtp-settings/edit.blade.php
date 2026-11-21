@@ -51,7 +51,7 @@
                 </label>
                 <label class="block text-sm font-medium sm:col-span-2">رمز کامل صندوق ایمیل
                     <div class="mt-2 flex gap-2">
-                        <input id="smtp-password" type="password" name="password" value="{{ old('password', $settings->password) }}" autocomplete="new-password" placeholder="{{ $hasPassword ? 'رمز فعلی ذخیره شده است' : 'رمز صندوق ایمیل را وارد کنید' }}" class="min-w-0 flex-1 rounded-xl border border-[var(--admin-border)] bg-white px-3 py-3 text-sm" dir="ltr">
+                        <input id="smtp-password" type="password" name="password" value="{{ $settings->password }}" autocomplete="new-password" placeholder="{{ $hasPassword ? 'رمز فعلی ذخیره شده است' : 'رمز صندوق ایمیل را وارد کنید' }}" class="min-w-0 flex-1 rounded-xl border border-[var(--admin-border)] bg-white px-3 py-3 text-sm" dir="ltr">
                         <button type="button" data-toggle-secret="smtp-password" class="rounded-xl border border-[var(--admin-border)] px-3 text-xs font-bold">نمایش رمز</button>
                         <button type="button" data-copy-target="smtp-password" class="rounded-xl border border-[var(--admin-border)] px-3 text-xs font-bold">کپی رمز</button>
                     </div>
@@ -95,7 +95,7 @@
                 </label>
                 <label class="block text-sm font-medium">رمز IMAP (در صورت تفاوت)
                     <div class="mt-2 flex gap-2">
-                        <input id="imap-password" type="password" name="imap_password" value="{{ old('imap_password', $mailboxPassword) }}" autocomplete="new-password" placeholder="در صورت یکسان بودن، رمز SMTP استفاده می‌شود" class="min-w-0 flex-1 rounded-xl border border-[var(--admin-border)] bg-white px-3 py-3 text-sm" dir="ltr">
+                        <input id="imap-password" type="password" name="imap_password" value="{{ $mailboxPassword }}" autocomplete="new-password" placeholder="در صورت یکسان بودن، رمز SMTP استفاده می‌شود" class="min-w-0 flex-1 rounded-xl border border-[var(--admin-border)] bg-white px-3 py-3 text-sm" dir="ltr">
                         <button type="button" data-toggle-secret="imap-password" class="rounded-xl border border-[var(--admin-border)] px-3 text-xs font-bold">نمایش</button>
                         <button type="button" data-copy-target="imap-password" class="rounded-xl border border-[var(--admin-border)] px-3 text-xs font-bold">کپی</button>
                     </div>
