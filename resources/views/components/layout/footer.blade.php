@@ -38,12 +38,22 @@
                     </div>
                 @endif
                 @if($footerEnamad !== '' || $footerEnamadImagePath)
-                    <a class="fz-store-footer__trust-link mt-4 inline-flex min-h-20 items-center justify-center rounded-xl border border-[var(--admin-border)] bg-white p-2" href="{{ $footerEnamad ?: '#' }}" @if($footerEnamad) target="_blank" @endif rel="noopener noreferrer" aria-label="استعلام نماد اعتماد الکترونیکی">
+                    @if($footerEnamad)
+                        <a class="fz-store-footer__trust-link mt-4 inline-flex min-h-20 items-center justify-center rounded-xl border border-white/15 bg-white p-2" href="{{ $footerEnamad }}" target="_blank" rel="noopener noreferrer" aria-label="استعلام نماد اعتماد الکترونیکی">
+                    @else
+                        <div class="fz-store-footer__trust-link mt-4 inline-flex min-h-20 items-center justify-center rounded-xl border border-white/15 bg-white p-2">
+                    @endif
                         @if($footerEnamadImagePath && \Illuminate\Support\Facades\Storage::disk('public')->exists($footerEnamadImagePath))
                             <img src="{{ \Illuminate\Support\Facades\Storage::disk('public')->url($footerEnamadImagePath) }}" alt="نماد اعتماد الکترونیکی" width="92" height="92" loading="lazy" decoding="async" class="h-20 w-20 object-contain">
                         @else
                             <span class="px-2 text-xs font-bold text-slate-700">نماد اعتماد الکترونیکی</span>
                         @endif
+                    @if($footerEnamad)
+                        </a>
+                    @else
+                        </div>
+                    @endif
+                @endif
                     </a>
                 @endif
             </div>
