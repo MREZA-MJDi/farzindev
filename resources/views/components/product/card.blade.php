@@ -27,6 +27,53 @@
     $availabilityLabel = $isAvailable
         ? ($hasActiveVariants ? 'موجود در گزینه‌ها' : 'موجود')
         : 'ناموجود';
+
+    // The homepage shelf shows up to three useful saved specifications.
+    // Prefer the structured category attributes and retain legacy JSON values
+    // so existing catalogue records do not lose their highlights.
+    $cardSpecifications = collect();
+    if ($variant === 'home-shelf') {
+        $categoryAttributes = $product->category?->relationLoaded('attributes')
+            ? $product->category->getRelation('attributes')
+            : collect();
+        $attributeValues = $product->relationLoaded('attributeValues')
+            ? $product->getRelation('attributeValues')
+            : collect();
+
+        if ($categoryAttributes->isNotEmpty() && $attributeValues->isNotEmpty()) {
+            $cardSpecifications = $categoryAttributes
+                ->filter(fn ($attribute) => (bool) $attribute->pivot->is_key_spec)
+                ->take(3)
+                ->map(function ($attribute) use ($attributeValues): ?string {
+                    $value = $attributeValues->where('attribute_id', $attribute->id)
+                        ->map(function ($row) use ($attribute) {
+                            if ($row->option) return $row->option->label;
+                            if ($row->value_boolean !== null) return $row->value_boolean ? 'بله' : 'خیر';
+                            if ($row->value_number !== null) {
+                                $number = rtrim(rtrim(number_format((float) $row->value_number, 3, '.', ''), '0'), '.');
+                                return \App\Helpers\PersianNumberHelper::format($number)
+                                    . ($attribute->unit ? ' ' . $attribute->unit : '');
+                            }
+                            return trim((string) $row->value_text);
+                        })
+                        ->filter(fn ($item) => $item !== '')
+                        ->unique()
+                        ->join('، ');
+
+                    return $value !== '' ? $attribute->label . ': ' . $value : null;
+                })
+                ->filter()
+                ->values();
+        }
+
+        if ($cardSpecifications->isEmpty() && is_array($product->specifications)) {
+            $cardSpecifications = collect($product->specifications)
+                ->filter(fn ($value) => is_scalar($value) && trim((string) $value) !== '')
+                ->map(fn ($value) => trim((string) $value))
+                ->take(3)
+                ->values();
+        }
+    }
 @endphp
 
 <article
@@ -108,6 +155,14 @@
                 {{ $product->name }}
             </h3>
         </a>
+
+        @if($cardSpecifications->isNotEmpty())
+            <ul class="farzin-product-card__specifications mt-2 space-y-1 text-xs leading-5 text-slate-600" aria-label="مشخصات کلیدی محصول">
+                @foreach($cardSpecifications as $specification)
+                    <li class="line-clamp-1">{{ $specification }}</li>
+                @endforeach
+            </ul>
+        @endif
 
         <div class="farzin-product-card__price-row mt-2.5 flex min-h-[56px] flex-col justify-end">
             <div class="h-5 leading-none">

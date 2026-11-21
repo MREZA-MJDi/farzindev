@@ -8,6 +8,11 @@
     $footerEitaa = trim((string) data_get($settings, 'eitaa_url', ''));
     $footerBale = trim((string) data_get($settings, 'bale_url', ''));
     $footerEnamad = trim((string) data_get($storefrontPageContent ?? [], 'page_home_enamad_url', ''));
+    $footerEnamadImagePath = \Illuminate\Support\Facades\Cache::remember(
+        'storefront.enamad-badge-image.v1',
+        now()->addMinutes(10),
+        fn () => \App\Models\StorefrontSetting::query()->where('key', 'page_home_enamad_image_path')->value('value')
+    );
     if (! \Illuminate\Support\Str::startsWith($footerEnamad, 'https://')) {
         $footerEnamad = '';
     }
@@ -32,8 +37,22 @@
                         @if($footerBale !== '')<a href="{{ $footerBale }}" target="_blank" rel="noopener noreferrer">بله</a>@endif
                     </div>
                 @endif
-                @if($footerEnamad !== '')
-                    <a class="fz-store-footer__trust-link mt-3 inline-flex items-center gap-1 text-xs font-bold text-[var(--livora-accent)]" href="{{ $footerEnamad }}" target="_blank" rel="noopener noreferrer">نماد اعتماد الکترونیکی <span aria-hidden="true">↗</span></a>
+                @if($footerEnamad !== '' || $footerEnamadImagePath)
+                    @if($footerEnamad)
+                        <a class="fz-store-footer__trust-link mt-4 inline-flex min-h-20 items-center justify-center rounded-xl border border-white/15 bg-white p-2" href="{{ $footerEnamad }}" target="_blank" rel="noopener noreferrer" aria-label="استعلام نماد اعتماد الکترونیکی">
+                    @else
+                        <div class="fz-store-footer__trust-link mt-4 inline-flex min-h-20 items-center justify-center rounded-xl border border-white/15 bg-white p-2">
+                    @endif
+                        @if($footerEnamadImagePath && \Illuminate\Support\Facades\Storage::disk('public')->exists($footerEnamadImagePath))
+                            <img src="{{ \Illuminate\Support\Facades\Storage::disk('public')->url($footerEnamadImagePath) }}" alt="نماد اعتماد الکترونیکی" width="92" height="92" loading="lazy" decoding="async" class="h-20 w-20 object-contain">
+                        @else
+                            <span class="px-2 text-xs font-bold text-slate-700">نماد اعتماد الکترونیکی</span>
+                        @endif
+                    @if($footerEnamad)
+                        </a>
+                    @else
+                        </div>
+                    @endif
                 @endif
             </div>
             <nav class="fz-store-footer__column farzin-footer-editorial__nav" aria-label="پیوندهای اصلی">
