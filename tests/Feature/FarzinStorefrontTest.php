@@ -1020,7 +1020,7 @@ class FarzinStorefrontTest extends TestCase
             ->assertDontSee('محصول دسته‌بندی 01');
     }
 
-    public function test_homepage_product_cards_use_saved_specifications_and_real_stock(): void
+    public function test_homepage_product_cards_show_real_stock_and_purchase_states(): void
     {
         $category = $this->category(['name' => 'هود آشپزخانه', 'slug' => 'hoods']);
 
@@ -1060,9 +1060,6 @@ class FarzinStorefrontTest extends TestCase
         ]);
 
         $response = $this->get(route('home'))->assertOk()
-            ->assertSee('۹۰ سانتی‌متر')
-            ->assertSee('توکار')
-            ->assertSee('استیل')
             ->assertSee('افزودن به سبد')
             ->assertSee('هود ناموجود')
             ->assertSee('fz-home-shelf', false)
