@@ -430,6 +430,7 @@ Route::prefix(config('farzin.admin_path', 'admin'))
         Route::put('smtp-settings', [SmtpSettingsController::class, 'update'])->name('smtp-settings.update');
         Route::post('smtp-settings/test', [SmtpSettingsController::class, 'test'])->middleware('throttle:5,1')->name('smtp-settings.test');
         Route::post('smtp-settings/inbox/sync', [SmtpSettingsController::class, 'syncInbox'])->middleware('throttle:5,1')->name('smtp-settings.inbox.sync');
+        Route::get('smtp-settings/inbox/status', [SmtpSettingsController::class, 'inboxStatus'])->name('smtp-settings.inbox.status');
 
         Route::get('cms', [AdminCmsController::class, 'index'])->name('cms.index');
 
