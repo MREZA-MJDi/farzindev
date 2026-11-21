@@ -3,12 +3,14 @@
 namespace Tests\Feature;
 
 use App\Models\SmtpSetting;
+use App\Models\StorefrontSetting;
 use App\Services\Mail\ImapInboxReader;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Client\Request as ClientRequest;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
 class AdminMailSettingsWorkflowTest extends TestCase
@@ -118,4 +120,25 @@ class AdminMailSettingsWorkflowTest extends TestCase
         ])->assertRedirect()
             ->assertSessionHasErrors('verification_file');
     }
+
+    public function test_enamad_badge_image_is_saved_for_the_storefront_footer(): void
+    {
+        $this->withoutMiddleware();
+        Storage::fake('public');
+
+        $this->put(route('admin.smtp-settings.update'), [
+            'port' => 587,
+            'encryption' => 'tls',
+            'imap_port' => 993,
+            'imap_encryption' => 'ssl',
+            'trust_badge_image' => UploadedFile::fake()->image('enamad-badge.png'),
+        ])->assertRedirect(route('admin.smtp-settings.edit'))
+            ->assertSessionHas('success');
+
+        $path = StorefrontSetting::query()->where('key', 'page_home_enamad_image_path')->value('value');
+
+        $this->assertNotEmpty($path);
+        Storage::disk('public')->assertExists($path);
+    }
+
 }
