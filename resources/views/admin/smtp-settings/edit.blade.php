@@ -150,7 +150,7 @@
     </div>
 
     <section id="enamad-inbox-results" class="rounded-2xl border border-[var(--admin-border)] bg-[var(--admin-white)] p-5 shadow-sm">
-            <div class="flex flex-wrap items-center justify-between gap-2"><h2 class="text-base font-bold text-[var(--admin-text)]">نتیجه بررسی ایمیل‌های اینماد</h2><span id="enamad-inbox-sync-time" class="text-xs text-[var(--admin-muted)]">{{ $inboxLastSync ? 'آخرین بررسی: '.\\Illuminate\\Support\\Carbon::parse($inboxLastSync)->format('Y/m/d H:i') : 'هنوز بررسی خودکاری انجام نشده است' }}</span></div>
+            <div class="flex flex-wrap items-center justify-between gap-2"><h2 class="text-base font-bold text-[var(--admin-text)]">نتیجه بررسی ایمیل‌های اینماد</h2><span id="enamad-inbox-sync-time" class="text-xs text-[var(--admin-muted)]">{{ $inboxLastSync ? 'آخرین بررسی: '.\Illuminate\Support\Carbon::parse($inboxLastSync)->format('Y/m/d H:i') : 'هنوز بررسی خودکاری انجام نشده است' }}</span></div>
             <p id="enamad-inbox-error" class="mt-2 text-xs text-rose-600">{{ $inboxLastError }}</p>
             @forelse($inboxMessages as $message)
                 <article class="mt-4 rounded-xl border border-[var(--admin-border)] p-4">
