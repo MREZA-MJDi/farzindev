@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\SmtpSetting;
-use App\\Models\\StorefrontSetting;
+use App\Models\StorefrontSetting;
 use App\Services\Mail\ImapInboxReader;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
