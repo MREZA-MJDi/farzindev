@@ -1,8 +1,8 @@
 <?php
 
-namespace App\\Services\\Mail;
+namespace App\Services\Mail;
 
-use Illuminate\\Support\\Facades\\Http;
+use Illuminate\Support\Facades\Http;
 use RuntimeException;
 
 class MailProviderClient
