@@ -246,5 +246,4 @@ document.addEventListener('click', async (event) => {
     window.setInterval(refresh, 60000);
 })();
 </script>
-</script>
 @endsection
