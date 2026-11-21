@@ -206,7 +206,6 @@ document.addEventListener('click', async (event) => {
     }
 });
 
-<script>
 (() => {
     const endpoint = @json(route('admin.smtp-settings.inbox.status'));
     const container = document.querySelector('#enamad-inbox-results');
