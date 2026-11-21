@@ -54,8 +54,6 @@
                         </div>
                     @endif
                 @endif
-                    </a>
-                @endif
             </div>
             <nav class="fz-store-footer__column farzin-footer-editorial__nav" aria-label="پیوندهای اصلی">
                 <h2>فروشگاه</h2><a href="{{ route('home') }}">خانه</a><a href="{{ route('shop.index') }}">همه محصولات</a><a href="{{ route('categories.index') }}">دسته‌بندی‌ها</a><a href="{{ route('blog.index') }}">راهنمای خرید و مجله</a><a href="{{ route('about') }}">درباره ما</a><a href="{{ route('contact') }}">تماس با ما</a>
