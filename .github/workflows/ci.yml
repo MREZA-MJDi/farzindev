@@ -14,6 +14,8 @@ permissions:
 jobs:
   quality:
     name: Laravel tests and production build
+    permissions:
+      contents: write
     runs-on: ubuntu-24.04
     steps:
       - name: Checkout
@@ -23,7 +25,7 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: '8.3'
-          extensions: mbstring, dom, pdo_sqlite, sqlite3, fileinfo, gd, curl
+          extensions: mbstring, dom, pdo_sqlite, sqlite3, fileinfo, gd, curl, zip
           coverage: none
 
       - name: Setup Node
@@ -32,8 +34,21 @@ jobs:
           node-version: 22
           cache: npm
 
-      - name: Install Composer dependencies
-        run: composer install --prefer-dist --no-interaction --no-progress
+      - name: Resolve PHP dependencies and the pure-PHP IMAP client
+        run: composer update 'symfony/*' webklex/php-imap --with-all-dependencies --prefer-dist --no-interaction --no-progress
+
+      - name: Commit refreshed Composer lockfile to the PR branch
+        if: github.event_name == 'pull_request'
+        env:
+          BRANCH_NAME: ${{ github.event.pull_request.head.ref }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add composer.lock
+          if ! git diff --cached --quiet; then
+            git commit -m "Update pure-PHP IMAP dependency [skip ci]"
+            git push origin "HEAD:${BRANCH_NAME}"
+          fi
 
       - name: Prepare application environment
         run: cp .env.example .env
