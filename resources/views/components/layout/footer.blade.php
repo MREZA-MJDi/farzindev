@@ -1,4 +1,4 @@
-@props(['contact' => [], 'settings' => [], 'brandLogoUrl' => null, 'brandName' => 'فرجی‌هوم'])
+@props(['contact' => [], 'settings' => [], 'pageContent' => [], 'brandLogoUrl' => null, 'brandName' => 'فرجی‌هوم'])
 @php
     $footerPhone = \App\Support\StorefrontContact::phone(data_get($contact, 'phone'));
     $footerWhatsapp = \App\Support\StorefrontContact::whatsapp(data_get($contact, 'whatsapp'));
@@ -7,7 +7,7 @@
     $footerHours = trim((string) data_get($contact, 'hours', ''));
     $footerEitaa = trim((string) data_get($settings, 'eitaa_url', ''));
     $footerBale = trim((string) data_get($settings, 'bale_url', ''));
-    $footerEnamad = trim((string) data_get($storefrontPageContent ?? [], 'page_home_enamad_url', ''));
+    $footerEnamad = trim((string) data_get($pageContent, 'page_home_enamad_url', ''));
     $footerEnamadParts = parse_url($footerEnamad);
     $footerEnamadQuery = [];
 
