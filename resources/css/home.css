@@ -1749,9 +1749,6 @@ body.home-body{
     font-weight:850;
 }
 
-.fz-home-enamad{ padding-block:1rem; border-top:1px solid #e5eaf0; background:#fff; }
-
-.fz-home-enamad a{ display:inline-flex; align-items:center; gap:.4rem; color:var(--fz-market-ink); font-size:.68rem; font-weight:800; }
 
 
 .fz-home-market :focus-visible{
@@ -2160,8 +2157,7 @@ body.home-body{
 .home-body .fz-home-categories,
 .home-body .fz-home-benefits,
 .home-body .fz-home-shelf,
-.home-body .fz-home-journal,
-.home-body .fz-home-enamad {
+.home-body .fz-home-journal {
     background: #fff !important;
 }
 .home-body .fz-home-header {
