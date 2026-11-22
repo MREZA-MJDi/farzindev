@@ -7,6 +7,7 @@ use App\Models\SmtpSetting;
 use App\Models\StorefrontSetting;
 use App\Services\Mail\ImapInboxReader;
 use App\Services\Mail\MailProviderClient;
+use App\Services\StorefrontPageContent;
 use RuntimeException;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
