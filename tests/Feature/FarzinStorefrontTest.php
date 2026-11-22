@@ -824,6 +824,21 @@ class FarzinStorefrontTest extends TestCase
             ->assertDontSee('fz-home-enamad', false);
     }
 
+    public function test_untrusted_external_url_is_not_rendered_as_an_enamad_badge(): void
+    {
+        StorefrontSetting::query()->updateOrCreate(
+            ['key' => 'page_home_enamad_url'],
+            ['value' => 'https://example.com/?id=358761&Code=not-an-official-token']
+        );
+
+        app(StorefrontPageContent::class)->clearCache();
+
+        $this->get(route('home'))
+            ->assertOk()
+            ->assertDontSee('example.com')
+            ->assertDontSee('fz-store-footer__trust-row', false);
+    }
+
     public function test_homepage_uses_sales_hero_one_combined_guide_and_eight_product_grid(): void
     {
         $category = $this->category([
