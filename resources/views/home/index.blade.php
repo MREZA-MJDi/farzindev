@@ -55,10 +55,6 @@
             'icon' => 'sink',
         ],
     ]);
-    $enamadUrl = trim((string) ($enamadUrl ?? ''));
-    if (!\Illuminate\Support\Str::startsWith($enamadUrl, 'https://')) {
-        $enamadUrl = '';
-    }
 @endphp
 
 <div class="fz-home-market" data-fz-home>
@@ -366,12 +362,5 @@
         </section>
     @endif
 
-    @if($enamadUrl !== '')
-        <div class="fz-home-enamad" aria-label="نماد اعتماد الکترونیکی">
-            <div class="fz-home-container">
-                <a href="{{ $enamadUrl }}" target="_blank" rel="noopener noreferrer">مشاهده نماد اعتماد الکترونیکی فرجی‌هوم <span aria-hidden="true">↗</span></a>
-            </div>
-        </div>
-    @endif
 </div>
 @endsection
