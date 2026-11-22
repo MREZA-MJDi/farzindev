@@ -132,6 +132,7 @@ class AdminMailSettingsWorkflowTest extends TestCase
             'imap_port' => 993,
             'imap_encryption' => 'ssl',
             'trust_badge_image' => UploadedFile::fake()->image('enamad-badge.png'),
+            'enamad_url' => 'https://trustseal.enamad.ir/?id=358761&Code=A7u8VvvuAI5mPX5ZuG3d',
         ])->assertRedirect(route('admin.smtp-settings.edit'))
             ->assertSessionHas('success');
 
@@ -139,6 +140,26 @@ class AdminMailSettingsWorkflowTest extends TestCase
 
         $this->assertNotEmpty($path);
         Storage::disk('public')->assertExists($path);
+        $this->assertSame(
+            'https://trustseal.enamad.ir/?id=358761&Code=A7u8VvvuAI5mPX5ZuG3d',
+            StorefrontSetting::query()->where('key', 'page_home_enamad_url')->value('value')
+        );
+    }
+
+    public function test_enamad_inquiry_url_rejects_non_official_domains(): void
+    {
+        $this->withoutMiddleware();
+        Storage::fake('public');
+
+        $this->put(route('admin.smtp-settings.update'), [
+            'port' => 587,
+            'encryption' => 'tls',
+            'imap_port' => 993,
+            'imap_encryption' => 'ssl',
+            'enamad_url' => 'https://example.com/?id=358761&Code=A7u8VvvuAI5mPX5ZuG3d',
+        ])->assertSessionHasErrors('enamad_url');
+
+        $this->assertDatabaseMissing('storefront_settings', ['key' => 'page_home_enamad_url']);
     }
 
 }
