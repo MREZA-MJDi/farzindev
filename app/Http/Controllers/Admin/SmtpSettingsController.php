@@ -28,6 +28,7 @@ class SmtpSettingsController extends Controller
             'hasPassword' => filled($settings->password),
             'mailboxPassword' => $settings->imap_password ?: $settings->password,
             'trustBadgeImagePath' => $this->trustBadgeImagePath(),
+            'trustBadgeEmbedCode' => StorefrontSetting::query()->where('key', 'page_home_enamad_embed_code')->value('value'),
             'inboxMessages' => cache()->get('enamad.inbox.latest', []),
             'inboxLastSync' => cache()->get('enamad.inbox.last_sync'),
             'inboxLastError' => cache()->get('enamad.inbox.last_error'),
