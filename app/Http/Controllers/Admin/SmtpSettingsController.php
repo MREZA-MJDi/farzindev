@@ -71,7 +71,6 @@ class SmtpSettingsController extends Controller
         ]);
 
         $settings = SmtpSetting::current();
-        $enamadEmbedCode = trim((string) ($data['enamad_embed_code'] ?? ''));
         unset($data['password'], $data['imap_password'], $data['trust_badge_image'], $data['enamad_url']);
 
         if ($request->filled('password')) {
@@ -101,6 +100,7 @@ class SmtpSettingsController extends Controller
             ['value' => trim((string) ($request->input('enamad_url') ?? ''))]
         );
         cache()->forget('storefront.enamad-badge-image.v1');
+        app(StorefrontPageContent::class)->clearCache();
 
         return redirect()->route('admin.smtp-settings.edit')
             ->with('success', 'تنظیمات ایمیل و نماد اعتماد ذخیره شد.');
