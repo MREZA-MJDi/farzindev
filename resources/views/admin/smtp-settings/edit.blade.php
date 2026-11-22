@@ -147,9 +147,9 @@
                 <h2 class="text-base font-bold text-[var(--admin-text)]">۳. تصویر و لینک نماد اعتماد برای فوتر</h2>
                 <p class="mt-1 text-xs leading-6 text-[var(--admin-muted)]">تصویر نمادی که قبلاً آپلود شده حفظ می‌شود. لینک رسمی استعلام را وارد کنید تا همان تصویر در فوتر داخل لینک قابل کلیک قرار بگیرد و کاربر به صفحه رسمی اینماد هدایت شود.</p>
             </div>
-            @if($trustBadgeImagePath && \Illuminate\\Support\\Facades\\Storage::disk('public')->exists($trustBadgeImagePath))
+            @if($trustBadgeImagePath && \Illuminate\Support\Facades\Storage::disk('public')->exists($trustBadgeImagePath))
                 <div class="flex flex-wrap items-center gap-4 rounded-xl border border-[var(--admin-border)] p-4">
-                    <img src="{{ \Illuminate\\Support\\Facades\\Storage::disk('public')->url($trustBadgeImagePath) }}" alt="پیش‌نمایش نماد اعتماد" class="h-24 w-24 rounded-lg bg-white object-contain p-2">
+                    <img src="{{ \Illuminate\Support\Facades\Storage::disk('public')->url($trustBadgeImagePath) }}" alt="پیش‌نمایش نماد اعتماد" class="h-24 w-24 rounded-lg bg-white object-contain p-2">
                     <div class="text-xs leading-6 text-[var(--admin-text-soft)]">تصویر فعلی نماد اعتماد؛ در صورت انتخاب تصویر جدید جایگزین می‌شود.</div>
                 </div>
             @endif
