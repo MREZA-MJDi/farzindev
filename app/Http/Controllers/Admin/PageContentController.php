@@ -43,7 +43,7 @@ class PageContentController extends Controller
                 'page_home_banner_4_button_label' => ['label' => 'بنر 4 — متن دکمه', 'type' => 'text', 'max' => 70],
                 'page_home_banner_4_button_url' => ['label' => 'بنر 4 — نشانی دکمه (مسیر داخلی یا لینک HTTPS)', 'type' => 'text', 'max' => 500],
                 'page_home_hero_description' => ['label' => 'زیرعنوان یک‌خطی Hero', 'type' => 'text', 'max' => 220],
-                'page_home_enamad_url' => ['label' => 'پیوند رسمی نماد اعتماد الکترونیکی (HTTPS)', 'type' => 'text', 'max' => 500],
+                'page_home_enamad_url' => ['label' => 'لینک رسمی استعلام اینماد (نشانی href همراه id و Code)', 'type' => 'text', 'max' => 500],
                 'page_home_warranty_text' => ['label' => 'توضیح ضمانت در صفحه اصلی', 'type' => 'textarea', 'max' => 300],
                 'page_home_hero_primary_label' => ['label' => 'متن دکمه اصلی', 'type' => 'text', 'max' => 80],
                 'page_home_technology_eyebrow' => ['label' => 'فناوری — برچسب', 'type' => 'text', 'max' => 120],
@@ -300,6 +300,39 @@ class PageContentController extends Controller
         }
 
         if ($tab === 'home') {
+            $rules['page_home_enamad_url'] = [
+                'present',
+                'nullable',
+                'string',
+                'max:500',
+                static function (string $attribute, mixed $value, \Closure $fail): void {
+                    $value = trim((string) $value);
+                    if ($value === '') {
+                        return;
+                    }
+
+                    $parts = parse_url($value);
+                    $query = [];
+                    if (is_array($parts)) {
+                        parse_str((string) ($parts['query'] ?? ''), $query);
+                    }
+
+                    $id = trim((string) ($query['id'] ?? ''));
+                    $code = trim((string) ($query['Code'] ?? ''));
+                    $valid = is_array($parts)
+                        && strtolower((string) ($parts['scheme'] ?? '')) === 'https'
+                        && strtolower((string) ($parts['host'] ?? '')) === 'trustseal.enamad.ir'
+                        && in_array((string) ($parts['path'] ?? ''), ['', '/'], true)
+                        && ! isset($parts['port'], $parts['user'])
+                        && preg_match('/^\d{1,12}$/', $id) === 1
+                        && preg_match('/^[A-Za-z0-9]{8,128}$/', $code) === 1;
+
+                    if (! $valid) {
+                        $fail('لطفاً لینک رسمی اینماد را با دامنه trustseal.enamad.ir و پارامترهای id و Code وارد کنید.');
+                    }
+                },
+            ];
+
             $rules['page_home_hero_image'] = [
                 'nullable',
                 'image',
