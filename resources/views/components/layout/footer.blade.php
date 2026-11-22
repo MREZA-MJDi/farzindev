@@ -21,11 +21,12 @@
         && strtolower((string) ($footerEnamadParts['scheme'] ?? '')) === 'https'
         && strtolower((string) ($footerEnamadParts['host'] ?? '')) === 'trustseal.enamad.ir'
         && in_array((string) ($footerEnamadParts['path'] ?? ''), ['', '/'], true)
-        && ! isset($footerEnamadParts['port'], $footerEnamadParts['user'])
+        && ! isset($footerEnamadParts['port'])
+        && ! isset($footerEnamadParts['user'])
         && preg_match('/^\d{1,12}$/', $footerEnamadId) === 1
         && preg_match('/^[A-Za-z0-9]{8,128}$/', $footerEnamadCode) === 1;
 
-    if (! \Illuminate\Support\Str::startsWith($footerEnamad, 'https://')) {
+    if (! $footerEnamadIsOfficial) {
         $footerEnamad = '';
     }
 
