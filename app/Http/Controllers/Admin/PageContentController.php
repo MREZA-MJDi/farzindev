@@ -323,7 +323,8 @@ class PageContentController extends Controller
                         && strtolower((string) ($parts['scheme'] ?? '')) === 'https'
                         && strtolower((string) ($parts['host'] ?? '')) === 'trustseal.enamad.ir'
                         && in_array((string) ($parts['path'] ?? ''), ['', '/'], true)
-                        && ! isset($parts['port'], $parts['user'])
+                        && ! isset($parts['port'])
+                        && ! isset($parts['user'])
                         && preg_match('/^\d{1,12}$/', $id) === 1
                         && preg_match('/^[A-Za-z0-9]{8,128}$/', $code) === 1;
 
