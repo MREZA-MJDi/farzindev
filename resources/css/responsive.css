@@ -214,6 +214,111 @@ body {
     overflow-wrap: anywhere;
 }
 
+/* Official eNamad badge: a distinct trust row below the footer navigation. */
+#app .farzin-site-footer .fz-store-footer__trust-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+    margin-block: 1.75rem;
+    padding: 1.1rem 1.35rem;
+    border: 1px solid rgba(255, 255, 255, .14);
+    border-radius: 12px;
+    background: rgba(255, 255, 255, .045);
+    direction: rtl;
+}
+
+#app .farzin-site-footer .fz-store-footer__trust-copy {
+    min-width: 0;
+}
+
+#app .farzin-site-footer .fz-store-footer__trust-copy > span {
+    color: rgba(255, 255, 255, .64);
+    font-size: .7rem;
+    font-weight: 700;
+}
+
+#app .farzin-site-footer .fz-store-footer__trust-copy h2 {
+    margin: .2rem 0 0;
+    color: #FFFFFF;
+    font-size: .95rem;
+    font-weight: 750;
+    line-height: 1.7;
+}
+
+#app .farzin-site-footer .fz-store-footer__trust-copy p {
+    margin: .2rem 0 0;
+    color: rgba(255, 255, 255, .72);
+    font-size: .75rem;
+    line-height: 1.9;
+}
+
+#app .farzin-site-footer .fz-store-footer__trust-link {
+    display: grid;
+    flex: 0 0 112px;
+    width: 112px;
+    height: 112px;
+    place-items: center;
+    padding: .45rem;
+    border: 1px solid #E5EAF0;
+    border-radius: 10px !important;
+    background: #FFFFFF;
+    box-shadow: 0 8px 22px rgba(0, 0, 0, .12);
+    transition: transform .2s ease, box-shadow .2s ease;
+}
+
+#app .farzin-site-footer .fz-store-footer__trust-link:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 28px rgba(0, 0, 0, .17);
+}
+
+#app .farzin-site-footer .fz-store-footer__trust-link:focus-visible {
+    outline: 3px solid rgba(255, 255, 255, .84);
+    outline-offset: 4px;
+}
+
+#app .farzin-site-footer .fz-store-footer__trust-link img {
+    display: block;
+    width: 96px;
+    height: 96px;
+    max-width: 100%;
+    object-fit: contain;
+}
+
+#app .farzin-site-footer .fz-store-footer__trust-placeholder {
+    display: grid;
+    width: 100%;
+    height: 100%;
+    place-items: center;
+    color: #334155;
+    font-size: .68rem;
+    font-weight: 700;
+    line-height: 1.7;
+    text-align: center;
+}
+
+@media (max-width: 767px) {
+    #app .farzin-site-footer .fz-store-footer__trust-row {
+        flex-direction: column;
+        align-items: center;
+        gap: 1rem;
+        margin-block: 1.25rem;
+        padding: 1.2rem 1rem;
+        text-align: center;
+    }
+
+    #app .farzin-site-footer .fz-store-footer__trust-link {
+        flex-basis: 104px;
+        width: 104px;
+        height: 104px;
+    }
+
+    #app .farzin-site-footer .fz-store-footer__trust-link img {
+        width: 88px;
+        height: 88px;
+    }
+}
+
 /* The catalog's real image files share a single frame. Product-detail galleries remain uncropped. */
 .farzin-shop-catalog .farzin-product-card__image-link {
     display: block;
