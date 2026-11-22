@@ -56,7 +56,7 @@ class SmtpSettingsController extends Controller
                 'nullable',
                 'string',
                 'max:3000',
-                static function (string $attribute, mixed $value, \\Closure $fail): void {
+                static function (string $attribute, mixed $value, \Closure $fail): void {
                     $value = trim((string) $value);
                     if ($value === '') {
                         return;
