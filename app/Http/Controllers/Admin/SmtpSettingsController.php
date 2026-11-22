@@ -7,7 +7,6 @@ use App\Models\SmtpSetting;
 use App\Models\StorefrontSetting;
 use App\Services\Mail\ImapInboxReader;
 use App\Services\Mail\MailProviderClient;
-use App\Services\StorefrontPageContent;
 use RuntimeException;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -28,7 +27,7 @@ class SmtpSettingsController extends Controller
             'hasPassword' => filled($settings->password),
             'mailboxPassword' => $settings->imap_password ?: $settings->password,
             'trustBadgeImagePath' => $this->trustBadgeImagePath(),
-            'trustBadgeEmbedCode' => StorefrontSetting::query()->where('key', 'page_home_enamad_embed_code')->value('value'),
+            'trustBadgeEnamadUrl' => StorefrontSetting::query()->where('key', 'page_home_enamad_url')->value('value'),
             'inboxMessages' => cache()->get('enamad.inbox.latest', []),
             'inboxLastSync' => cache()->get('enamad.inbox.last_sync'),
             'inboxLastError' => cache()->get('enamad.inbox.last_error'),
@@ -53,55 +52,27 @@ class SmtpSettingsController extends Controller
             'imap_encryption' => ['required', 'in:ssl,tls,none'],
             'imap_username' => ['nullable', 'string', 'max:255'],
             'imap_password' => ['nullable', 'string', 'max:1024'],
-            'enamad_embed_code' => [
-                'nullable',
-                'string',
-                'max:3000',
-                static function (string $attribute, mixed $value, \Closure $fail): void {
-                    $value = trim((string) $value);
-                    if ($value === '') {
-                        return;
-                    }
-
-                    $hasAnchor = preg_match('/<a\\b[^>]*href\\s*=\\s*([\"\\\'])(.*?)\\1/is', $value, $anchor) === 1;
-                    $hasImage = preg_match('/<img\\b[^>]*src\\s*=\\s*([\"\\\'])(.*?)\\1/is', $value, $image) === 1;
-                    $href = $hasAnchor ? html_entity_decode(trim($anchor[2]), ENT_QUOTES | ENT_HTML5, 'UTF-8') : '';
-                    $src = $hasImage ? html_entity_decode(trim($image[2]), ENT_QUOTES | ENT_HTML5, 'UTF-8') : '';
-                    $hrefParts = parse_url($href);
-                    $srcParts = parse_url($src);
-                    $hrefQuery = [];
-                    $srcQuery = [];
-
-                    if (is_array($hrefParts)) parse_str((string) ($hrefParts['query'] ?? ''), $hrefQuery);
-                    if (is_array($srcParts)) parse_str((string) ($srcParts['query'] ?? ''), $srcQuery);
-
-                    $id = trim((string) ($hrefQuery['id'] ?? ''));
-                    $code = trim((string) ($hrefQuery['Code'] ?? ''));
-                    $validHref = is_array($hrefParts)
-                        && strtolower((string) ($hrefParts['scheme'] ?? '')) === 'https'
-                        && strtolower((string) ($hrefParts['host'] ?? '')) === 'trustseal.enamad.ir'
-                        && in_array((string) ($hrefParts['path'] ?? ''), ['', '/'], true)
-                        && ! isset($hrefParts['port']) && ! isset($hrefParts['user'])
-                        && preg_match('/^\\d{1,12}$/', $id) === 1
-                        && preg_match('/^[A-Za-z0-9]{8,128}$/', $code) === 1;
-                    $validImage = is_array($srcParts)
-                        && strtolower((string) ($srcParts['scheme'] ?? '')) === 'https'
-                        && strtolower((string) ($srcParts['host'] ?? '')) === 'trustseal.enamad.ir'
-                        && ($srcParts['path'] ?? '') === '/logo.aspx'
-                        && ! isset($srcParts['port']) && ! isset($srcParts['user'])
-                        && (string) ($srcQuery['id'] ?? '') === $id
-                        && (string) ($srcQuery['Code'] ?? '') === $code;
-
-                    if (! $validHref || ! $validImage) {
-                        $fail('کد باید شامل لینک و تصویر رسمی اینماد از دامنه trustseal.enamad.ir و شناسه یکسان باشد.');
-                    }
-                },
-            ],
+            'trust_badge_image' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:5120'],
+            'enamad_url' => ['nullable', 'string', 'max:500', static function (string $attribute, mixed $value, \Closure $fail): void {
+                $value = trim((string) $value);
+                if ($value === '') return;
+                $parts = parse_url($value);
+                $query = [];
+                if (is_array($parts)) parse_str((string) ($parts['query'] ?? ''), $query);
+                $valid = is_array($parts)
+                    && strtolower((string) ($parts['scheme'] ?? '')) === 'https'
+                    && strtolower((string) ($parts['host'] ?? '')) === 'trustseal.enamad.ir'
+                    && in_array((string) ($parts['path'] ?? ''), ['', '/'], true)
+                    && ! isset($parts['port']) && ! isset($parts['user'])
+                    && preg_match('/^\\d{1,12}$/', trim((string) ($query['id'] ?? ''))) === 1
+                    && preg_match('/^[A-Za-z0-9]{8,128}$/', trim((string) ($query['Code'] ?? ''))) === 1;
+                if (! $valid) $fail('لینک باید نشانی رسمی استعلام اینماد از دامنه trustseal.enamad.ir و شامل id و Code معتبر باشد.');
+            }],
         ]);
 
         $settings = SmtpSetting::current();
         $enamadEmbedCode = trim((string) ($data['enamad_embed_code'] ?? ''));
-        unset($data['password'], $data['imap_password'], $data['enamad_embed_code']);
+        unset($data['password'], $data['imap_password'], $data['trust_badge_image'], $data['enamad_url']);
 
         if ($request->filled('password')) {
             $settings->password = $request->input('password');
@@ -114,21 +85,21 @@ class SmtpSettingsController extends Controller
         $settings->enabled = $request->boolean('enabled');
         $settings->save();
 
-        StorefrontSetting::query()->updateOrCreate(
-            ['key' => 'page_home_enamad_embed_code'],
-            ['value' => $enamadEmbedCode]
-        );
-
-        $enamadHref = '';
-        if ($enamadEmbedCode !== '' && preg_match('/<a\\b[^>]*href\\s*=\\s*([\"\\\'])(.*?)\\1/is', $enamadEmbedCode, $anchor) === 1) {
-            $enamadHref = html_entity_decode(trim($anchor[2]), ENT_QUOTES | ENT_HTML5, 'UTF-8');
+        if ($request->hasFile('trust_badge_image')) {
+            $newPath = $request->file('trust_badge_image')->store('trust-badges', 'public');
+            if (! $newPath) {
+                return back()->withErrors(['trust_badge_image' => 'ذخیره تصویر نماد ناموفق بود. تصویر قبلی حفظ شد.']);
+            }
+            $oldPath = $this->saveTrustBadgeImagePath($newPath);
+            if ($oldPath && $oldPath !== $newPath) {
+                Storage::disk('public')->delete($oldPath);
+            }
         }
 
         StorefrontSetting::query()->updateOrCreate(
             ['key' => 'page_home_enamad_url'],
-            ['value' => $enamadHref]
+            ['value' => trim((string) ($request->input('enamad_url') ?? ''))]
         );
-        app(StorefrontPageContent::class)->clearCache();
         cache()->forget('storefront.enamad-badge-image.v1');
 
         return redirect()->route('admin.smtp-settings.edit')
