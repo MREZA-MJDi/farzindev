@@ -7,6 +7,7 @@ use App\Models\SmtpSetting;
 use App\Models\StorefrontSetting;
 use App\Services\Mail\ImapInboxReader;
 use App\Services\Mail\MailProviderClient;
+use App\Services\StorefrontPageContent;
 use RuntimeException;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -27,6 +28,7 @@ class SmtpSettingsController extends Controller
             'hasPassword' => filled($settings->password),
             'mailboxPassword' => $settings->imap_password ?: $settings->password,
             'trustBadgeImagePath' => $this->trustBadgeImagePath(),
+            'trustBadgeEnamadUrl' => StorefrontSetting::query()->where('key', 'page_home_enamad_url')->value('value'),
             'inboxMessages' => cache()->get('enamad.inbox.latest', []),
             'inboxLastSync' => cache()->get('enamad.inbox.last_sync'),
             'inboxLastError' => cache()->get('enamad.inbox.last_error'),
@@ -52,10 +54,25 @@ class SmtpSettingsController extends Controller
             'imap_username' => ['nullable', 'string', 'max:255'],
             'imap_password' => ['nullable', 'string', 'max:1024'],
             'trust_badge_image' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:5120'],
+            'enamad_url' => ['nullable', 'string', 'max:500', static function (string $attribute, mixed $value, \Closure $fail): void {
+                $value = trim((string) $value);
+                if ($value === '') return;
+                $parts = parse_url($value);
+                $query = [];
+                if (is_array($parts)) parse_str((string) ($parts['query'] ?? ''), $query);
+                $valid = is_array($parts)
+                    && strtolower((string) ($parts['scheme'] ?? '')) === 'https'
+                    && strtolower((string) ($parts['host'] ?? '')) === 'trustseal.enamad.ir'
+                    && in_array((string) ($parts['path'] ?? ''), ['', '/'], true)
+                    && ! isset($parts['port']) && ! isset($parts['user'])
+                    && preg_match('/^\\d{1,12}$/', trim((string) ($query['id'] ?? ''))) === 1
+                    && preg_match('/^[A-Za-z0-9]{8,128}$/', trim((string) ($query['Code'] ?? ''))) === 1;
+                if (! $valid) $fail('لینک باید نشانی رسمی استعلام اینماد از دامنه trustseal.enamad.ir و شامل id و Code معتبر باشد.');
+            }],
         ]);
 
         $settings = SmtpSetting::current();
-        unset($data['password'], $data['imap_password'], $data['trust_badge_image']);
+        unset($data['password'], $data['imap_password'], $data['trust_badge_image'], $data['enamad_url']);
 
         if ($request->filled('password')) {
             $settings->password = $request->input('password');
@@ -71,13 +88,20 @@ class SmtpSettingsController extends Controller
         if ($request->hasFile('trust_badge_image')) {
             $newPath = $request->file('trust_badge_image')->store('trust-badges', 'public');
             if (! $newPath) {
-                return back()->withErrors(['trust_badge_image' => 'ذخیره تصویر نماد ناموفق بود. تنظیمات ایمیل ذخیره شد؛ تصویر قبلی حفظ شد.']);
+                return back()->withErrors(['trust_badge_image' => 'ذخیره تصویر نماد ناموفق بود. تصویر قبلی حفظ شد.']);
             }
             $oldPath = $this->saveTrustBadgeImagePath($newPath);
             if ($oldPath && $oldPath !== $newPath) {
                 Storage::disk('public')->delete($oldPath);
             }
         }
+
+        StorefrontSetting::query()->updateOrCreate(
+            ['key' => 'page_home_enamad_url'],
+            ['value' => trim((string) ($request->input('enamad_url') ?? ''))]
+        );
+        cache()->forget('storefront.enamad-badge-image.v1');
+        app(StorefrontPageContent::class)->clearCache();
 
         return redirect()->route('admin.smtp-settings.edit')
             ->with('success', 'تنظیمات ایمیل و نماد اعتماد ذخیره شد.');

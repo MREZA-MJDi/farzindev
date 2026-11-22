@@ -144,18 +144,28 @@
 
         <section class="space-y-4">
             <div>
-                <h2 class="text-base font-bold text-[var(--admin-text)]">۳. تصویر نماد اعتماد برای فوتر</h2>
-                <p class="mt-1 text-xs leading-6 text-[var(--admin-muted)]">تصویر رسمی نماد را بارگذاری کنید؛ پس از ذخیره، در بخش مناسب فوتر سایت نمایش داده می‌شود.</p>
+                <h2 class="text-base font-bold text-[var(--admin-text)]">۳. تصویر و لینک نماد اعتماد برای فوتر</h2>
+                <p class="mt-1 text-xs leading-6 text-[var(--admin-muted)]">تصویر نمادی که قبلاً آپلود شده حفظ می‌شود. لینک رسمی استعلام را وارد کنید تا همان تصویر در فوتر داخل لینک قابل کلیک قرار بگیرد و کاربر به صفحه رسمی اینماد هدایت شود.</p>
             </div>
             @if($trustBadgeImagePath && \Illuminate\Support\Facades\Storage::disk('public')->exists($trustBadgeImagePath))
                 <div class="flex flex-wrap items-center gap-4 rounded-xl border border-[var(--admin-border)] p-4">
                     <img src="{{ \Illuminate\Support\Facades\Storage::disk('public')->url($trustBadgeImagePath) }}" alt="پیش‌نمایش نماد اعتماد" class="h-24 w-24 rounded-lg bg-white object-contain p-2">
-                    <div class="text-xs leading-6 text-[var(--admin-text-soft)]">تصویر فعلی نماد اعتماد؛ با بارگذاری تصویر جدید جایگزین می‌شود.</div>
+                    <div class="text-xs leading-6 text-[var(--admin-text-soft)]">تصویر فعلی نماد اعتماد؛ در صورت انتخاب تصویر جدید جایگزین می‌شود.</div>
                 </div>
             @endif
             <label class="block text-sm font-medium">انتخاب تصویر نماد (JPG، PNG یا WEBP؛ حداکثر ۵ مگابایت)
                 <input type="file" name="trust_badge_image" accept="image/jpeg,image/png,image/webp" class="mt-2 block w-full rounded-xl border border-[var(--admin-border)] bg-white px-3 py-3 text-sm file:ml-3 file:rounded-lg file:border-0 file:bg-[var(--admin-surface)] file:px-3 file:py-2">
             </label>
+            <label class="block text-sm font-medium" for="enamad_url">لینک رسمی استعلام اینماد (href)
+                <input id="enamad_url" name="enamad_url" type="url" value="{{ old('enamad_url', $trustBadgeEnamadUrl) }}" dir="ltr" placeholder="https://trustseal.enamad.ir/?id=...&Code=..." class="mt-2 w-full rounded-xl border border-[var(--admin-border)] bg-white px-3 py-3 text-sm">
+            </label>
+            <p class="text-[11px] leading-6 text-[var(--admin-muted)]">لینک فقط از دامنه رسمی trustseal.enamad.ir پذیرفته می‌شود. پس از ذخیره، تصویر آپلودشده با کلیک به صفحه استعلام هدایت می‌کند؛ نیازی به وارد کردن کد HTML یا آپلود مجدد تصویر قبلی نیست.</p>
+            @error('trust_badge_image')
+                <p role="alert" class="text-xs text-[var(--admin-danger)]">{{ $message }}</p>
+            @enderror
+            @error('enamad_url')
+                <p role="alert" class="text-xs text-[var(--admin-danger)]">{{ $message }}</p>
+            @enderror
         </section>
 
         <div class="flex justify-end border-t border-[var(--admin-border)] pt-5">

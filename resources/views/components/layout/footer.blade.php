@@ -106,7 +106,16 @@
                         referrerpolicy="origin"
                         aria-label="مشاهده و استعلام نماد اعتماد الکترونیکی {{ $brandName }}"
                     >
-                        @if($footerEnamadLogoUrl !== '')
+                        @if($footerEnamadUploadedImageUrl)
+                            <img
+                                src="{{ $footerEnamadUploadedImageUrl }}"
+                                alt="نماد اعتماد الکترونیکی {{ $brandName }}"
+                                width="96"
+                                height="96"
+                                loading="lazy"
+                                decoding="async"
+                            >
+                        @elseif($footerEnamadLogoUrl !== '')
                             <img
                                 src="{{ $footerEnamadLogoUrl }}"
                                 alt="نماد اعتماد الکترونیکی {{ $brandName }}"
@@ -116,15 +125,6 @@
                                 decoding="async"
                                 referrerpolicy="origin"
                                 code="{{ $footerEnamadCode }}"
-                            >
-                        @elseif($footerEnamadUploadedImageUrl)
-                            <img
-                                src="{{ $footerEnamadUploadedImageUrl }}"
-                                alt="نماد اعتماد الکترونیکی {{ $brandName }}"
-                                width="96"
-                                height="96"
-                                loading="lazy"
-                                decoding="async"
                             >
                         @else
                             <span class="fz-store-footer__trust-placeholder">نماد اعتماد الکترونیکی</span>
