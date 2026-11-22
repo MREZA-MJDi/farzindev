@@ -1,4 +1,4 @@
-@props(['contact' => [], 'settings' => [], 'brandLogoUrl' => null, 'brandName' => 'فرجی‌هوم'])
+@props(['contact' => [], 'settings' => [], 'pageContent' => [], 'brandLogoUrl' => null, 'brandName' => 'فرجی‌هوم'])
 @php
     $footerPhone = \App\Support\StorefrontContact::phone(data_get($contact, 'phone'));
     $footerWhatsapp = \App\Support\StorefrontContact::whatsapp(data_get($contact, 'whatsapp'));
@@ -7,15 +7,45 @@
     $footerHours = trim((string) data_get($contact, 'hours', ''));
     $footerEitaa = trim((string) data_get($settings, 'eitaa_url', ''));
     $footerBale = trim((string) data_get($settings, 'bale_url', ''));
-    $footerEnamad = trim((string) data_get($storefrontPageContent ?? [], 'page_home_enamad_url', ''));
+    $footerEnamad = trim((string) data_get($pageContent, 'page_home_enamad_url', ''));
+    $footerEnamadParts = parse_url($footerEnamad);
+    $footerEnamadQuery = [];
+
+    if (is_array($footerEnamadParts)) {
+        parse_str((string) ($footerEnamadParts['query'] ?? ''), $footerEnamadQuery);
+    }
+
+    $footerEnamadId = trim((string) ($footerEnamadQuery['id'] ?? ''));
+    $footerEnamadCode = trim((string) ($footerEnamadQuery['Code'] ?? ''));
+    $footerEnamadIsOfficial = is_array($footerEnamadParts)
+        && strtolower((string) ($footerEnamadParts['scheme'] ?? '')) === 'https'
+        && strtolower((string) ($footerEnamadParts['host'] ?? '')) === 'trustseal.enamad.ir'
+        && in_array((string) ($footerEnamadParts['path'] ?? ''), ['', '/'], true)
+        && ! isset($footerEnamadParts['port'])
+        && ! isset($footerEnamadParts['user'])
+        && preg_match('/^\d{1,12}$/', $footerEnamadId) === 1
+        && preg_match('/^[A-Za-z0-9]{8,128}$/', $footerEnamadCode) === 1;
+
+    if (! $footerEnamadIsOfficial) {
+        $footerEnamad = '';
+    }
+
+    $footerEnamadLogoUrl = $footerEnamadIsOfficial
+        ? 'https://trustseal.enamad.ir/logo.aspx?id=' . rawurlencode($footerEnamadId) . '&Code=' . rawurlencode($footerEnamadCode)
+        : '';
+
     $footerEnamadImagePath = \Illuminate\Support\Facades\Cache::remember(
         'storefront.enamad-badge-image.v1',
         now()->addMinutes(10),
         fn () => \App\Models\StorefrontSetting::query()->where('key', 'page_home_enamad_image_path')->value('value')
     );
-    if (! \Illuminate\Support\Str::startsWith($footerEnamad, 'https://')) {
-        $footerEnamad = '';
+
+    $footerEnamadUploadedImageUrl = null;
+    if ($footerEnamadImagePath && \Illuminate\Support\Facades\Storage::disk('public')->exists($footerEnamadImagePath)) {
+        $footerEnamadUploadedImageUrl = \Illuminate\Support\Facades\Storage::disk('public')->url($footerEnamadImagePath);
     }
+
+    $footerHasTrustBadge = $footerEnamad !== '' || $footerEnamadUploadedImageUrl !== null;
 @endphp
 <footer class="farzin-site-footer farzin-site-footer--editorial fz-store-footer">
     <x-layout.container class="fz-store-footer__container">
@@ -36,23 +66,6 @@
                         @if($footerEitaa !== '')<a href="{{ $footerEitaa }}" target="_blank" rel="noopener noreferrer">ایتا</a>@endif
                         @if($footerBale !== '')<a href="{{ $footerBale }}" target="_blank" rel="noopener noreferrer">بله</a>@endif
                     </div>
-                @endif
-                @if($footerEnamad !== '' || $footerEnamadImagePath)
-                    @if($footerEnamad)
-                        <a class="fz-store-footer__trust-link mt-4 inline-flex min-h-20 items-center justify-center rounded-xl border border-white/15 bg-white p-2" href="{{ $footerEnamad }}" target="_blank" rel="noopener noreferrer" aria-label="استعلام نماد اعتماد الکترونیکی">
-                    @else
-                        <div class="fz-store-footer__trust-link mt-4 inline-flex min-h-20 items-center justify-center rounded-xl border border-white/15 bg-white p-2">
-                    @endif
-                        @if($footerEnamadImagePath && \Illuminate\Support\Facades\Storage::disk('public')->exists($footerEnamadImagePath))
-                            <img src="{{ \Illuminate\Support\Facades\Storage::disk('public')->url($footerEnamadImagePath) }}" alt="نماد اعتماد الکترونیکی" width="92" height="92" loading="lazy" decoding="async" class="h-20 w-20 object-contain">
-                        @else
-                            <span class="px-2 text-xs font-bold text-slate-700">نماد اعتماد الکترونیکی</span>
-                        @endif
-                    @if($footerEnamad)
-                        </a>
-                    @else
-                        </div>
-                    @endif
                 @endif
             </div>
             <nav class="fz-store-footer__column farzin-footer-editorial__nav" aria-label="پیوندهای اصلی">
@@ -77,6 +90,60 @@
                 <a class="fz-store-footer__contact-link" href="{{ route('contact') }}">رفتن به صفحه تماس <span aria-hidden="true">←</span></a>
             </div>
         </div>
+        @if($footerHasTrustBadge)
+            <section class="fz-store-footer__trust-row" aria-label="نماد اعتماد الکترونیکی">
+                <div class="fz-store-footer__trust-copy">
+                    <span>خرید امن و آگاهانه</span>
+                    <h2>نماد اعتماد الکترونیکی</h2>
+                    <p>برای مشاهده اطلاعات و اعتبار نماد، روی نشان کلیک کنید.</p>
+                </div>
+                @if($footerEnamad !== '')
+                    <a
+                        class="fz-store-footer__trust-link"
+                        href="{{ $footerEnamad }}"
+                        target="_blank"
+                        rel="noopener"
+                        referrerpolicy="origin"
+                        aria-label="مشاهده و استعلام نماد اعتماد الکترونیکی {{ $brandName }}"
+                    >
+                        @if($footerEnamadLogoUrl !== '')
+                            <img
+                                src="{{ $footerEnamadLogoUrl }}"
+                                alt="نماد اعتماد الکترونیکی {{ $brandName }}"
+                                width="96"
+                                height="96"
+                                loading="lazy"
+                                decoding="async"
+                                referrerpolicy="origin"
+                                code="{{ $footerEnamadCode }}"
+                            >
+                        @elseif($footerEnamadUploadedImageUrl)
+                            <img
+                                src="{{ $footerEnamadUploadedImageUrl }}"
+                                alt="نماد اعتماد الکترونیکی {{ $brandName }}"
+                                width="96"
+                                height="96"
+                                loading="lazy"
+                                decoding="async"
+                            >
+                        @else
+                            <span class="fz-store-footer__trust-placeholder">نماد اعتماد الکترونیکی</span>
+                        @endif
+                    </a>
+                @elseif($footerEnamadUploadedImageUrl)
+                    <div class="fz-store-footer__trust-link" aria-label="نماد اعتماد الکترونیکی">
+                        <img
+                            src="{{ $footerEnamadUploadedImageUrl }}"
+                            alt="نماد اعتماد الکترونیکی {{ $brandName }}"
+                            width="96"
+                            height="96"
+                            loading="lazy"
+                            decoding="async"
+                        >
+                    </div>
+                @endif
+            </section>
+        @endif
         <div class="fz-store-footer__bottom"><span>© {{ \App\Helpers\JalaliHelper::format(now(), 'Y') }} {{ $brandName }} · تمامی حقوق محفوظ است.</span><span>طراحی‌شده برای انتخاب بهتر تجهیزات آشپزخانه</span></div>
     </x-layout.container>
 </footer>

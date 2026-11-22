@@ -403,7 +403,6 @@ class HomeController extends Controller
             'benefits' => collect($benefits)->take(4),
             'blogPosts' => $blogPosts,
             'contactSetting' => $contactSetting,
-            'enamadUrl' => trim((string) ($copy['page_home_enamad_url'] ?? '')),
         ]);
     }
 }
