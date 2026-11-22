@@ -805,6 +805,25 @@ class FarzinStorefrontTest extends TestCase
             ->assertSee('تهران، نشانی آزمایشی');
     }
 
+    public function test_official_enamad_embed_is_rendered_once_in_the_shared_footer(): void
+    {
+        StorefrontSetting::query()->updateOrCreate(
+            ['key' => 'page_home_enamad_url'],
+            ['value' => 'https://trustseal.enamad.ir/?id=358761&Code=A7u8VvvuAI5mPX5ZuG3d']
+        );
+
+        app(StorefrontPageContent::class)->clearCache();
+
+        $this->get(route('home'))
+            ->assertOk()
+            ->assertSee('fz-store-footer__trust-row', false)
+            ->assertSee('href="https://trustseal.enamad.ir/?id=358761&amp;Code=A7u8VvvuAI5mPX5ZuG3d"', false)
+            ->assertSee('src="https://trustseal.enamad.ir/logo.aspx?id=358761&amp;Code=A7u8VvvuAI5mPX5ZuG3d"', false)
+            ->assertSee('referrerpolicy="origin"', false)
+            ->assertSee('code="A7u8VvvuAI5mPX5ZuG3d"', false)
+            ->assertDontSee('fz-home-enamad', false);
+    }
+
     public function test_homepage_uses_sales_hero_one_combined_guide_and_eight_product_grid(): void
     {
         $category = $this->category([
