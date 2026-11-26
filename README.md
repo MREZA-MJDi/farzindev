@@ -1,6 +1,15 @@
 # فرجی‌هوم | فروشگاه تجهیزات آشپزخانه
 
-فرجی‌هوم یک فروشگاه فارسی و راست‌چین برای بررسی و خرید هود، سینک و اجاق گاز صفحه‌ای است. پروژه با Laravel و Blade ساخته شده و شامل دسته‌بندی، مشخصات فنی ساختاریافته، تصاویر و گزینه‌های محصول، جستجو و فیلتر، سبد خرید، حساب مشتری، مدیریت سفارش و پنل مدیریت است. درگاه‌ها و جریان پرداخت باید بر اساس تنظیمات جاری و اتصال تأییدشده ارائه‌دهنده بررسی شوند. Payment and order workflows should be verified against the current implementation and configured gateway before production use.
+فرجی‌هوم یک فروشگاه فارسی و راست‌چین برای بررسی و خرید هود، سینک و اجاق گاز صفحه‌ای است. پروژه با Laravel و Blade ساخته شده و شامل دسته‌بندی، مشخصات فنی ساختاریافته، تصاویر و گزینه‌های محصول، جستجو و فیلتر، سبد خرید، حساب مشتری، مدیریت سفارش و پنل مدیریت است.
+
+**فروشگاه آنلاین** · [farajihome.com](https://farajihome.com/)
+
+## Technical highlights
+
+- Persian RTL catalog for kitchen appliances, with structured specifications and inventory reservations.
+- Laravel administration for products, stock, orders and a publishing workflow for blog articles.
+- Built-in SEO controls for canonical URLs, metadata and sitemap generation.
+- GitHub Actions builds a versioned release artifact for the Ubuntu VPS deployment workflow.
 
 ## Technology
 - PHP `^8.2`, Laravel `^12.0`
